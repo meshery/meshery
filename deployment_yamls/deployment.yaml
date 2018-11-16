@@ -193,7 +193,7 @@ metadata:
   name: productpage-auth
 spec:
   hosts:
-  - auth.layer5.ga
+  - auth.layer5.io
   location: MESH_EXTERNAL
   ports:
   - name: http
