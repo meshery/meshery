@@ -1,0 +1,53 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+  background-color: #f5f5f5;
+}
+
+.form-signin {
+  width: 100%;
+  /* max-width: 330px; */
+  /* padding: 15px; */
+  margin: auto;
+}
+
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  /* padding: 10rem;
+  font-size: 16rem; */
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.boxit {
+    width: 100%;
+    padding: 4rem;
+    margin: auto;
+}
+
+.btn-outline-primary {
+    color: #139FF0;
+    border-color: #139FF0;
+    background-image: url("/play/static/img/Twitter_Logo_Blue.png") !important;
+    background-size: 20rem auto;
+    /* background-position: center; */
+    background-repeat: no-repeat;
+}
+
+.btn-outline-primary:hover {
+    background-image: url("/play/static/img/Twitter_Logo_WhiteOnBlue.png") !important;
+    background-repeat: no-repeat;
+    background-color: #139FF0;
+}
