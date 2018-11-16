@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en"><head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Istio Playground</title>
+
+   </head>
+
+   <body class="bg-light">
+
+      <div class="container">
+        <div class="py-5 text-center">
+          <img class="d-block mx-auto mb-4" src="https://istio.io/img/istio-blue-logo.svg" alt="" width="72" height="72">
+          <h2>Istio Playground</h2>
+          <p class="lead">This is an istio playground where you can play with some predefined Istio rules, run load tests and view metrics from AppOptics.</p>
+        </div>
+      
+        <h4 class="mb-3">Controls</h4>
+        <div class="row">
+            <div class="col-sm">
+
+                <!-- load test section start -->
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Load test the istio canonical <a href="/productpage" target="_blank">product page</a> demo app</h5>
+                      <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#runTests">Configure & Run</button>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="runTests" tabindex="-1" role="dialog" aria-labelledby="runTestsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="runTestsModalLabel">Configure and Run Load test</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <form id="loadTestForm" class="needs-validation" novalidate>
+	                        <div class="modal-body">
+				                    <div id="loadTestSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+                                Load test request has been submitted!
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div id="loadTestError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                  Load test request could not be submitted. Please try again later.
+                                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+
+
+                        <div class="row">
+                        
+				                    <div class="col-md-6 mb-3">
+				                      <label for="c">Concurrent requests</label>
+				                      <input type="number" class="form-control" id="c" name="c" placeholder="" value="1" required="" min="1" max="5">
+				                      <div class="invalid-feedback">
+				                        Valid number is required.
+				                      </div>
+				                    </div>
+				                    <div class="col-md-6 mb-3">
+				                      <label for="t">Duration (in minutes)</label>
+				                      <input type="number" class="form-control" id="t" name="t" placeholder="" value="1" required="" min="1" max="5">
+				                      <div class="invalid-feedback">
+				                        Valid number is required.
+				                      </div>
+				                    </div>
+
+                            
+				                  </div>
+	                        </div>
+	                        <div class="modal-footer">
+	                          <button id="ldClose" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+	                          <button type="submit" class="btn btn-primary btn-sm">Run</button>
+	                        </div>
+                    	</form>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- load test section end -->
+            </div>
+            
+
+
+
+            
+            <div class="col-sm">
+              <!-- Istio config start -->
+               <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Configure Istio</h5>
+                    <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#istioConfigModal">Play with Istio</button>
+                  </div>
+                </div>
+                    
+                <div class="modal fade" id="istioConfigModal" tabindex="-1" role="dialog" aria-labelledby="istioConfigModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form id="istioForm" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="istioConfigModalLabel">Preconfigured Istio rules</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="istioConfigSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+                                Config change have been submitted!
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div id="istioConfigError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                  Config change could not be applied. Please try again later.
+                                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+
+                            <div class="form-group">
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query1" name="query" class="custom-control-input" name="v1" value="v1all" required>
+                                    <label class="custom-control-label" for="query1">Route all traffic to V1 of each microservice</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query2" name="query" class="custom-control-input" name="v2" value="reviewsv2user">
+                                    <label class="custom-control-label" for="query2">Route all traffic to V2 of Reviews service for your user</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query3" name="query" class="custom-control-input" name="v3" value="userTestDelay">
+                                    <label class="custom-control-label" for="query3">Inject a delay for ratings service for your user</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query4" name="query" class="custom-control-input" name="v4" value="userTestAbort">
+                                    <label class="custom-control-label" for="query4">Inject an abort for ratings service for your user</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query5" name="query" class="custom-control-input" name="v5" value="50v3">
+                                    <label class="custom-control-label" for="query5">Canary: shift 50% of traffic to reviews v3</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query6" name="query" class="custom-control-input" name="v6" value="100v3">
+                                    <label class="custom-control-label" for="query6">Canary: shift 100% of traffic to reviews v3</label>
+                                  </div>
+                                  <div class="custom-control custom-radio">
+                                    <input type="radio" id="query7" name="query" class="custom-control-input" name="v7" value="reset">
+                                    <label class="custom-control-label" for="query7">Reset all the applied rules</label>
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button id="isClose" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Istio config start -->
+
+            </div>
+        </div>
+        <hr>
+        <h4 class="mb-3">Metrics</h4>
+        <div class="row">
+          
+          {{range .ChartIds}}
+          <div class="col-sm">
+              <div class="card">
+                  <div class="card-body">
+                    <div
+                    class='librato-display-media'
+                    data-chart_id='{{.}}'
+                    data-duration='300'
+                    data-height='300'
+                    data-width='450'
+                    data-tag_group_by=""
+                    data-tag_filter=""
+                  ></div>
+                </div>
+              </div>
+          </div>
+          {{else}}
+          There are no dashboards to show at this time. Please ensure you have entered a valid AppOptics token.
+          {{end}}
+          
+        </div>
+
+  <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- AppOptics -->
+    <script
+      type='text/javascript'
+      src='https://sdk.librato.com/embedding/librato-sdk-v2.0.4-min.js'
+      charset='utf-8'
+      data-librato_email='{{.Token}}'
+      data-librato_token=''
+      >
+    </script>
+
+    <script type="text/javascript">
+
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      // source: https://getbootstrap.com/docs/4.1/examples/checkout/?
+      (function() {
+        'use strict';
+
+        window.addEventListener('load', function() {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+    
+
+
+
+
+
+
+
+
+    $('#loadTestSuccess').hide();
+    $('#loadTestError').hide();
+
+    $('#istioConfigSuccess').hide();
+    $('#istioConfigError').hide();
+
+    $("#loadTestForm").on( "submit", function( event ) {
+        event.preventDefault();
+        $theForm = $(this)[0];
+        if ((typeof($theForm.checkValidity) == "function") && !$theForm.checkValidity()) {
+          return;
+        }
+        data = $( this ).serialize();
+        console.log("serialized data: "+data);
+        jQuery.ajax({
+          url: "/play/load-test",
+          type: "POST", 
+          data: data, 
+          error: function(){
+          $("#loadTestError").fadeTo(2000, 500); 
+          },
+          success: function(result){
+           $("#loadTestSuccess").fadeTo(2000, 500).slideUp(500, function(){
+              $("#loadTestSuccess").slideUp(500);
+              $('#ldClose').click();
+            }); 
+          }
+        });
+      });
+
+      $("#istioForm").on('submit', function( event ) {
+        event.preventDefault();
+        $theForm = $(this)[0];
+        if ((typeof($theForm.checkValidity) == "function") && !$theForm.checkValidity()) {
+          return;
+        }
+        data = $( this ).serialize();
+        console.log("serialized data: "+data);
+        jQuery.ajax({
+          url: "/play/istio",
+          type: "POST", 
+          data: data, 
+          error: function(){
+            $("#istioConfigError").fadeTo(2000, 500); 
+          },
+          success: function(result){
+           $("#istioConfigSuccess").fadeTo(2000, 500).slideUp(500, function(){
+              $("#istioConfigSuccess").slideUp(500);
+              $('#isClose').click();
+            }); 
+          }
+        });
+      });
+    </script>
+</body></html>
