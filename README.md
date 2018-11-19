@@ -17,10 +17,8 @@ A sample Istio app is included in Meshery.
 1. The canonical Istio _bookinfo_ sample application deployed in the `default` namespace.
 
 #### Run
-To run the service mesh playground:
-1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
-1. Build the Meshery Docker image (`docker build . -t meshery`).
-1. Deploy Meshers (`kubectl apply -f deployment_yamls/deployment.yaml`).
+To run the service mesh playground either:
+1. Deploy Meshery (`kubectl apply -f deployment_yamls/deployment.yaml`).
 
 ## Linkerd Playground App
 _coming soon_
@@ -32,6 +30,9 @@ _coming soon_
 A sample Makefile is included to build and package the app as a Docker image.
 1. `Docker` to build the image.
 1. `Go` version 1.11+ installed if you want to make changes to the existing code.
+1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
+1. Build the Meshery Docker image (`docker build . -t meshery`).
+1.1. _pre-built images available: https://hub.docker.com/u/layer5/_
 
 # About - Layer 5 - Service Meshes
 
