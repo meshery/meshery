@@ -14,6 +14,7 @@ A sample Istio app is included in Meshery.
 ### Running Meshery
 #### Prerequisites
 1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
+1. Istio Solarwinds Mixer adapter is deployed and configured with AppOptics.
 1. The canonical Istio _bookinfo_ sample application deployed in the `default` namespace.
 
 #### Run
