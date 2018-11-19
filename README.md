@@ -19,7 +19,7 @@ A sample Istio app is included in Meshery.
 #### Run
 To run the service mesh playground:
 1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
-1. Build the Meshery Docker image (`docker build .`).
+1. Build the Meshery Docker image (`docker build . -t meshery`).
 1. Deploy Meshers (`kubectl apply -f deployment_yamls/deployment.yaml`).
 
 ## Linkerd Playground App
