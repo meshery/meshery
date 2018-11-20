@@ -4,6 +4,8 @@ A service mesh playground to faciliate learning about functionality and performa
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
 
+![Istio Playground](/static/img/istio-playground.png?raw=true "Istio Playground")
+
 ## Prequisites
 1. Docker engine (e.g. Docker for Desktop).
 1. Kubernetes cluster (preferably version 1.10+).
