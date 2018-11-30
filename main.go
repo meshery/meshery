@@ -76,7 +76,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 
-		http.Redirect(w, r, os.Getenv("TWITTER_APP_HOST")+"/twitter/login?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
+		http.Redirect(w, r, os.Getenv("TWITTER_APP_HOST")+"/auth/login?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
 		return
 	} else {
 		issueSession(w, r)
@@ -242,7 +242,7 @@ func istioHandler(iClient *istio.IstioClient) func(w http.ResponseWriter, req *h
 // logoutHandler destroys the session on POSTs and redirects to home.
 func logoutHandler(w http.ResponseWriter, req *http.Request) {
 	client := http.DefaultClient
-	cReq, err := http.NewRequest(http.MethodGet, os.Getenv("TWITTER_APP_HOST")+"/twitter/logout", req.Body)
+	cReq, err := http.NewRequest(http.MethodGet, os.Getenv("TWITTER_APP_HOST")+"/auth/logout", req.Body)
 	if err != nil {
 		logrus.Errorf("Error creating a client to logout from tweet app: %v", err)
 		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
@@ -276,7 +276,7 @@ func tweetHandler(w http.ResponseWriter, req *http.Request) {
 		defer req.Body.Close()
 
 		client := http.DefaultClient
-		cReq, err := http.NewRequest(http.MethodPost, os.Getenv("TWITTER_APP_HOST")+"/twitter/tweet", req.Body)
+		cReq, err := http.NewRequest(http.MethodPost, os.Getenv("TWITTER_APP_HOST")+"/auth/twitter/tweet", req.Body)
 		if err != nil {
 			logrus.Errorf("Error creating a client to post a tweet: %v", err)
 			http.Error(w, "unable to post a tweet at the moment", http.StatusInternalServerError)
