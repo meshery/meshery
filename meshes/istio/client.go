@@ -17,7 +17,7 @@ type IstioClient struct {
 	istioNetworkingApi *rest.RESTClient
 }
 
-func ConfigClient() (*rest.Config, error) {
+func configClient() (*rest.Config, error) {
 	kubeconfig := flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
 	flag.Parse()
 	if *kubeconfig != "" {
@@ -27,9 +27,9 @@ func ConfigClient() (*rest.Config, error) {
 	}
 }
 
-func NewClient() (*IstioClient, error) {
+func newClient() (*IstioClient, error) {
 	client := IstioClient{}
-	config, err := ConfigClient()
+	config, err := configClient()
 
 	if err != nil {
 		return nil, err

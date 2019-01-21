@@ -8,11 +8,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// struct for representing AppOptics Org
 type Org struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
+// AppOptics client instance
 type AppOptics struct {
 	token  string
 	client *ao.Client
@@ -20,11 +22,13 @@ type AppOptics struct {
 	charts []*ao.Chart
 }
 
+// struct used to collect token and chart ids in a dashboard. Used mainly to send data back to the UI.
 type AODash struct {
 	Token    string
 	ChartIds []int
 }
 
+// creates a new AppOptics client instance with the metadata
 func NewAOClient(token, spaceName string) (*AppOptics, error) {
 	logrus.Infof("AO: received token: %s", token)
 	a := &AppOptics{

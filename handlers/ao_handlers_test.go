@@ -1,5 +1,4 @@
-// main is an example web app using Login with Twitter.
-package main
+package handlers
 
 import (
 	"io/ioutil"
