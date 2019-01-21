@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: istio-play
+  name: meshery
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: istio-play-cr
+  name: meshery-cr
   labels:
     app: playground
 rules:
@@ -28,16 +28,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: istio-play-crb
+  name: meshery-crb
   labels:
     app: playground
 roleRef:
   kind: ClusterRole
-  name: istio-play-cr
+  name: meshery-cr
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
-  name: istio-play
+  name: meshery
   namespace: default
 ---
 ##################################################################################################
@@ -68,7 +68,7 @@ spec:
         app: playground
         version: v1
     spec: 
-      serviceAccount: istio-play
+      serviceAccount: meshery
       containers: 
         - env: 
           - name: TWITTER_APP_HOST
@@ -79,7 +79,7 @@ spec:
             value: "http://productpage:9080/productpage"
           - name: EVENT
             value: "istioPlay01"
-          image: layer5/meshery-istio:v1
+          image: layer5/meshery
           imagePullPolicy: IfNotPresent
           name: playground
           ports: 
