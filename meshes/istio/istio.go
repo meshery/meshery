@@ -2,18 +2,22 @@ package istio
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
+	"path"
 	"strings"
 	"text/template"
 
+	"github.com/layer5io/meshery/meshes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-func CreateIstioClient() (*IstioClient, error) {
-	iClient, err := NewClient()
+func CreateIstioClient(ctx context.Context) (meshes.MeshClient, error) {
+	iClient, err := newClient()
 	if err != nil {
 		err = errors.Wrapf(err, "unable to create a new istio client")
 		logrus.Error(err)
@@ -22,14 +26,14 @@ func CreateIstioClient() (*IstioClient, error) {
 	return iClient, nil
 }
 
-func DeleteAllCreatedResources(iClient *IstioClient, namespace string) {
+func (iClient *IstioClient) deleteAllCreatedResources(ctx context.Context, namespace string) {
 	resourceNames := []string{"productpage", "ratings", "reviews", "details"}
 	for _, rs := range resourceNames {
-		DeleteResource(iClient, virtualServices, namespace, rs)
+		iClient.deleteResource(ctx, virtualServices, namespace, rs)
 	}
 }
 
-func DeleteResource(iClient *IstioClient, overallType, namespace, resName string) error {
+func (iClient *IstioClient) deleteResource(ctx context.Context, overallType, namespace, resName string) error {
 	newRes := iClient.istioNetworkingApi.Delete().
 		Namespace(namespace).
 		Resource(overallType).SubResource(resName).Do()
@@ -43,7 +47,11 @@ func DeleteResource(iClient *IstioClient, overallType, namespace, resName string
 	return nil
 }
 
-func applyRulePayload(iClient *IstioClient, namespace string, newVSBytes []byte) error {
+func (iClient *IstioClient) MeshName() string {
+	return "Istio"
+}
+
+func (iClient *IstioClient) applyRulePayload(ctx context.Context, namespace string, newVSBytes []byte) error {
 	vs := &VirtualService{}
 	err := yaml.Unmarshal(newVSBytes, vs)
 	if err != nil {
@@ -96,8 +104,29 @@ func applyRulePayload(iClient *IstioClient, namespace string, newVSBytes []byte)
 	return nil
 }
 
-func ApplyYamlChange(iClient *IstioClient, yamlFile, username, namespace string) error {
-	DeleteAllCreatedResources(iClient, namespace)
+func (iClient *IstioClient) ApplyRule(ctx context.Context, opName, username, namespace string) error {
+	yamlFile := ""
+	reset := false
+	for _, op := range supportedOps {
+		if op.key == opName {
+			yamlFile = op.templateName
+			if op.resetOp == true {
+				reset = true
+			}
+		}
+	}
+	if yamlFile == "" && !reset {
+		return fmt.Errorf("error: %s is not a valid operation name", opName)
+	}
+	if reset {
+		iClient.deleteAllCreatedResources(ctx, namespace)
+		return nil
+	}
+	return iClient.applyConfigChange(ctx, path.Join("..", "meshes", "istio", "config_templates", yamlFile), username, namespace)
+}
+
+func (iClient *IstioClient) applyConfigChange(ctx context.Context, yamlFile, username, namespace string) error {
+	iClient.deleteAllCreatedResources(ctx, namespace)
 	tmpl := template.Must(template.ParseFiles(yamlFile))
 
 	buf := bytes.NewBufferString("")
@@ -115,11 +144,37 @@ func ApplyYamlChange(iClient *IstioClient, yamlFile, username, namespace string)
 
 	for _, yml := range yamls {
 		if strings.TrimSpace(yml) != "" {
-			err = applyRulePayload(iClient, namespace, []byte(yml))
+			err = iClient.applyRulePayload(ctx, namespace, []byte(yml))
 			if err != nil {
 				return err
 			}
 		}
 	}
 	return nil
+}
+
+func (iClient *IstioClient) Operations(ctx context.Context) (map[string]string, error) {
+	// yamlTemplate := "virtual-service-all-v1"
+	// switch query {
+	// case "v1all":
+	// 	yamlTemplate = "virtual-service-all-v1"
+	// case "reviewsv2user":
+	// 	yamlTemplate = "virtual-service-reviews-test-v2"
+	// case "userTestDelay":
+	// 	yamlTemplate = "virtual-service-ratings-test-delay"
+	// case "userTestAbort":
+	// 	yamlTemplate = "virtual-service-ratings-test-abort"
+	// case "50v3":
+	// 	yamlTemplate = "virtual-service-reviews-50-v3"
+	// case "100v3":
+	// 	yamlTemplate = "virtual-service-reviews-v3"
+	// case "reset":
+	// 	istio.DeleteAllCreatedResources(iClient, "default")
+	// 	return
+	// }
+	result := map[string]string{}
+	for _, op := range supportedOps {
+		result[op.key] = op.name
+	}
+	return result, nil
 }
