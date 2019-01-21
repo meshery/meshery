@@ -105,13 +105,20 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	q := req.Form
-	q.Set("t", q.Get("t")+"m") // following fortio time indication
+
+	tt, _ := strconv.Atoi(q.Get("t"))
+	if tt < 1 {
+		q.Set("t", "1m")
+	} else {
+		q.Set("t", q.Get("t")+"m") // following fortio time indication
+	}
+
 	q.Set("load", "Start")
 	q.Set("runner", "http")
 
 	cc, _ := strconv.Atoi(q.Get("c"))
-	if cc < 1 || cc > 5 {
-		q.Set("c", "5")
+	if cc < 1 {
+		q.Set("c", "1")
 	}
 
 	q.Set("url", os.Getenv("PRODUCT_PAGE_URL"))
