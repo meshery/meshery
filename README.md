@@ -2,10 +2,10 @@
 
 A service mesh playground to faciliate learning about functionality and performance of different service meshes. Meshery incorporates the collection and display of metrics from applications running in the playground.
 
---> See the [performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
+- [Website](https://layer5.io/meshery)
+- [Performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 
-Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
-
+## Functionality
 ![Istio Playground](/static/img/istio-playground.png?raw=true "Istio Playground")
 
 ## Prequisites
@@ -26,12 +26,16 @@ To run the service mesh playground either:
 1. Deploy Meshery (`kubectl apply -f deployment_yamls/deployment.yaml`).
 
 ## Linkerd Playground App
-_coming soon_
+_coming soon for Linkerd_
 ### Running Meshery
+_coming soon for Linkerd_
 #### Prerequisites
+_coming soon for Linkerd_
 #### Run
-
+_coming soon for Linkerd_
 ### Building Meshery
+Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
+
 A sample Makefile is included to build and package the app as a Docker image.
 1. `Docker` to build the image.
 1. `Go` version 1.11+ installed if you want to make changes to the existing code.
