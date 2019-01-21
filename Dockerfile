@@ -1,15 +1,14 @@
-FROM golang:1.11.2 as bd
-WORKDIR /app
+FROM golang:1.11.4 as bd
+WORKDIR /github.com/layer5io/meshery
 ADD . .
-RUN go build -a -o /istio-playground .
+RUN cd cmd; go build -a -o /meshery .
+RUN find . -name "*.go" -type f -delete; mv public /; mv meshes /
 
 FROM alpine
 RUN apk --update add ca-certificates
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
-COPY --from=bd /istio-playground /app/
-ADD dashboard.html /app/
-ADD get-ao-token.html /app/
-ADD static /app/static
-ADD templates /app/templates
-WORKDIR /app/
-CMD ./istio-playground
+COPY --from=bd /meshery /app/cmd/
+COPY --from=bd /public /app/public
+COPY --from=bd /meshes /app/meshes
+WORKDIR /app/cmd
+CMD ./meshery
