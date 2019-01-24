@@ -6,7 +6,7 @@ A service mesh playground to faciliate learning about functionality and performa
 - [Performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 
 ## Functionality
-![Istio Playground](/static/img/istio-playground.png?raw=true "Istio Playground")
+![Istio Playground](/static/img/meshery.png?raw=true "Istio Playground")
 
 ## Prequisites
 1. Docker engine (e.g. Docker for Desktop).
