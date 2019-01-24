@@ -27,7 +27,7 @@
                 <!-- load test section start -->
                 <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title">Load test the istio canonical <a href="/productpage" target="_blank">product page</a> demo app</h5>
+                      <h5 class="card-title">Load test the istio canonical <a href="{{.Url}}" target="_blank">product page</a> demo app</h5>
                       <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#runTests">Configure & Run</button>
                     </div>
                 </div>
@@ -78,8 +78,13 @@
 				                  </div>
 	                        </div>
 	                        <div class="modal-footer">
+                            <span id="ltCountDown">
+                              <span id="hour">00</span>:
+                              <span id="mins">00</span>:
+                              <span id="secs">00</span>
+                            </span>
 	                          <button id="ldClose" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-	                          <button type="submit" class="btn btn-primary btn-sm">Run</button>
+	                          <button id="loadRun" type="submit" class="btn btn-primary btn-sm">Run</button>
 	                        </div>
                     	</form>
                       </div>
@@ -148,6 +153,33 @@
 
             </div>
         </div>
+        <hr class="loadTestResults" style="display: none;">
+        <h4 class="mb-3 loadTestResults" style="display: none;">Load Test Results</h4>
+        <div class="row loadTestResults" style="display: none;">
+          <div class="col-sm">
+
+              <!-- load test section start -->
+              <div class="card">
+                  <div class="card-body">
+                    <div class="card-title small">Start time: <span id="loadTestRunTime"></span></div>
+                    <div id="running" style="display: none;"></div>
+                    <div class="chart-container" id="cc1" style="position: relative; min-height: 20rem; width: 100%; display: block;">
+                    <canvas style="background-color: rgba(255, 255, 255, 0.199); visibility: visible; display: block;" id="chart1" class="chartjs-render-monitor"></canvas>
+                    </div>
+                    <div id="update" style="visibility: visible;">
+                    <form id="updtForm" action="javascript:updateChart()" style="display: none;">
+                    <input type="submit" value="Update:">
+                    Time axis min <input type="text" name="xmin" size="5"> ms,
+                    max <input type="text" name="xmax" size="5"> ms,
+                    logarithmic: <input name="xlog" type="checkbox" onclick="updateChart()"> -
+                    Count axis logarithmic: <input name="ylog" type="checkbox" onclick="updateChart()">
+                    </form>
+                    </div>
+
+                  </div>
+              </div>
+          </div>
+        </div>
         <hr>
         <h4 class="mb-3">Metrics</h4>
         <div class="row">
@@ -173,6 +205,7 @@
           {{end}}
           
         </div>
+      </div>
 
   <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -190,90 +223,7 @@
       >
     </script>
 
-    <script type="text/javascript">
-
-      // Example starter JavaScript for disabling form submissions if there are invalid fields
-      // source: https://getbootstrap.com/docs/4.1/examples/checkout/?
-      (function() {
-        'use strict';
-
-        window.addEventListener('load', function() {
-          // Fetch all the forms we want to apply custom Bootstrap validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
-
-          // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-              form.classList.add('was-validated');
-            }, false);
-          });
-        }, false);
-      })();
-    
-
-
-
-
-
-
-
-
-    $('#loadTestSuccess').hide();
-    $('#loadTestError').hide();
-
-    $('#istioConfigSuccess').hide();
-    $('#istioConfigError').hide();
-
-    $("#loadTestForm").on( "submit", function( event ) {
-        event.preventDefault();
-        $theForm = $(this)[0];
-        if ((typeof($theForm.checkValidity) == "function") && !$theForm.checkValidity()) {
-          return;
-        }
-        data = $( this ).serialize();
-        console.log("serialized data: "+data);
-        jQuery.ajax({
-          url: "/play/load-test",
-          type: "POST", 
-          data: data, 
-          error: function(){
-          $("#loadTestError").fadeTo(2000, 500); 
-          },
-          success: function(result){
-           $("#loadTestSuccess").fadeTo(2000, 500).slideUp(500, function(){
-              $("#loadTestSuccess").slideUp(500);
-              $('#ldClose').click();
-            }); 
-          }
-        });
-      });
-
-      $("#istioForm").on('submit', function( event ) {
-        event.preventDefault();
-        $theForm = $(this)[0];
-        if ((typeof($theForm.checkValidity) == "function") && !$theForm.checkValidity()) {
-          return;
-        }
-        data = $( this ).serialize();
-        console.log("serialized data: "+data);
-        jQuery.ajax({
-          url: "/play/mesh",
-          type: "POST", 
-          data: data, 
-          error: function(){
-            $("#istioConfigError").fadeTo(2000, 500); 
-          },
-          success: function(result){
-           $("#istioConfigSuccess").fadeTo(2000, 500).slideUp(500, function(){
-              $("#istioConfigSuccess").slideUp(500);
-              $('#isClose').click();
-            }); 
-          }
-        });
-      });
-    </script>
+    <script src="/play/static/js/Chart.min.js"></script>
+    <script src="/play/static/js/fortio_chart.js"></script>
+    <script src="/play/static/js/meshery.js"></script>
 </body></html>

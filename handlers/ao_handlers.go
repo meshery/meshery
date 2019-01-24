@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/layer5io/meshery/appoptics"
 	"github.com/layer5io/meshery/meshes"
@@ -40,6 +41,7 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 		"Ops":  ops,
 		"AO":   ad,
 		"Name": meshClient.MeshName(),
+		"Url":  os.Getenv("PRODUCT_PAGE_URL"),
 	}
 
 	err = dashTempl.Execute(w, result)
