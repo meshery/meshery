@@ -44,7 +44,7 @@ func dashboardHandler(ctx context.Context, meshClient meshes.MeshClient) func(w 
 			// 	return
 			// }
 			// fmt.Fprintf(w, string(page))
-			err := getAOTokenTempl.Execute(w, nil)
+			err := getAOTokenTempl.Execute(w, byPassAuth)
 			if err != nil {
 				logrus.Errorf("error rendering the template for the page: %v", err)
 				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
@@ -76,10 +76,7 @@ func issueSession(w http.ResponseWriter, req *http.Request) {
 			if k == "username" {
 				// logrus.Infof("setting user in session: %s", v)
 				session.Values["user"] = v
-			} else {
-				// logrus.Infof("setting tweet cookie in session: %s", v)
-				session.Values["tweet-cookie-name"] = k
-				session.Values["tweet-cookie-value"] = v
+				break
 			}
 		}
 	}
@@ -104,66 +101,9 @@ func logoutHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
 		return
 	}
-	sess, err := sessionStore.Get(req, sessionName)
-	if err != nil {
-		logrus.Errorf("Error retrieving tweet cookie: %v", err)
-		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
-		return
-	}
-	ckNamei, ok := sess.Values["tweet-cookie-name"]
-	if ok {
-		ckVali, ok1 := sess.Values["tweet-cookie-value"]
-		if ok1 {
-			ckName, _ := ckNamei.(string)
-			ckVal, _ := ckVali.(string)
-			cReq.AddCookie(&http.Cookie{
-				Name:  ckName,
-				Value: ckVal,
-			})
-			client.Do(cReq)
-		}
-	}
+	client.Do(cReq)
 	sessionStore.Destroy(w, sessionName)
 	http.Redirect(w, req, req.Referer(), http.StatusFound)
-}
-
-func tweetHandler(w http.ResponseWriter, req *http.Request) {
-	if req.Method == http.MethodPost {
-		defer req.Body.Close()
-
-		client := http.DefaultClient
-		cReq, err := http.NewRequest(http.MethodPost, os.Getenv("TWITTER_APP_HOST")+"/twitter/tweet", req.Body)
-		if err != nil {
-			logrus.Errorf("Error creating a client to post a tweet: %v", err)
-			http.Error(w, "unable to post a tweet at the moment", http.StatusInternalServerError)
-			return
-		}
-		sess, err := sessionStore.Get(req, sessionName)
-		if err != nil {
-			logrus.Errorf("Error retrieving tweet cookie: %v", err)
-			http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
-			return
-		}
-		ckNamei, ok := sess.Values["tweet-cookie-name"]
-		if ok {
-			ckVali, ok1 := sess.Values["tweet-cookie-value"]
-			if ok1 {
-				ckName, _ := ckNamei.(string)
-				ckVal, _ := ckVali.(string)
-				cReq.AddCookie(&http.Cookie{
-					Name:  ckName,
-					Value: ckVal,
-				})
-				cReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-				_, err = client.Do(cReq)
-				if err != nil {
-					logrus.Errorf("Error while posting the tweet: %v", err)
-					http.Error(w, "unable to post a tweet at the moment", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-	}
 }
 
 func validateAuth(req *http.Request) bool {
@@ -173,4 +113,14 @@ func validateAuth(req *http.Request) bool {
 	}
 	logrus.Errorf("session invalid, error: %v", err)
 	return false
+}
+
+func setupSession(userName string, w http.ResponseWriter) {
+	sessionStore.Config.Path = "/play"
+	session := sessionStore.New(sessionName)
+	session.Values["user"] = userName
+	err := session.Save(w)
+	if err != nil {
+		logrus.Errorf("unable to save session: %v", err)
+	}
 }

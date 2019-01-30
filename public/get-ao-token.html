@@ -22,7 +22,10 @@
                   <form class="form-signin" method="POST">
                     <h5>Please enter your AppOptics details</h5>
                     <small>If no value is given below, default values will be used for both the token and dashboard name.</small>
-                    
+                    {{ if . }}
+                    <label for="user_name" class="sr-only">User Name</label>
+                    <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
+                    {{ end }}
                     <label for="token" class="sr-only">API Token</label>
                     <input type="text" name="token" id="token" class="form-control" placeholder="Token . . . " autofocus="">
 

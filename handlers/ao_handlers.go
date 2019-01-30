@@ -20,6 +20,13 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 	if spaceName == "" {
 		spaceName = "istio"
 	}
+	if byPassAuth {
+		user_name := req.FormValue("user_name")
+		if user_name == "" {
+			user_name = "Test User"
+		}
+		setupSession(user_name, w)
+	}
 	logrus.Infof("retrieved token from query: %s", token)
 	ao, err := appoptics.NewAOClient(token, spaceName)
 	if err != nil {
