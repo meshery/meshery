@@ -30,12 +30,13 @@ Sample applications will be included in Meshery.
 #### Run Istio Playground
 To run the service mesh playground either:
 - On Kubernetes
-  - You can deploy Meshery on an existing kubernetes cluster using the provided yaml file into any namespace of your choice: 
+  - You can deploy Meshery to an existing kubernetes cluster using the provided yaml file into any namespace of your choice. For now let us deploy it to a namespace `meshery`: 
 
     ```
-    kubectl apply -f deployment_yamls/deployment.yaml
+    kubectl create ns meshery
+    kubectl -n meshery apply -f deployment_yamls/deployment.yaml
     ```
-
+    If you want to use a different namespace, please change the name of the namespace in the `ClusterRoleBinding` section appropriately.
   - Meshery can be deployed either on/off the mesh.
   - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
   - please review the yaml and make necessary changes as needed for your cluster
