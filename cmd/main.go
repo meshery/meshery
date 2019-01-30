@@ -15,7 +15,7 @@ func main() {
 	ctx := context.Background()
 
 	twitterHost := os.Getenv("TWITTER_APP_HOST")
-	if twitterHost == "" {
+	if twitterHost == "" && os.Getenv("BYPASS_AUTH") != "true" {
 		logrus.Fatalf("TWITTER_APP_HOST environment variable not set.")
 	}
 

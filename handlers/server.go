@@ -15,7 +15,6 @@ func New(ctx context.Context, config *ServerConfig) *http.ServeMux {
 	mux.Handle("/play/load-test", authMiddleware(http.HandlerFunc(loadTestHandler)))
 	mux.Handle("/play/mesh", authMiddleware(http.HandlerFunc(meshOpsHandler(ctx, config.MeshClient))))
 	mux.HandleFunc("/play/logout", logoutHandler)
-	mux.Handle("/play/tweet", authMiddleware(http.HandlerFunc(tweetHandler)))
 	mux.HandleFunc("/play/login", loginHandler)
 
 	return mux

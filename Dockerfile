@@ -1,4 +1,4 @@
-FROM golang:1.11.4 as bd
+FROM golang:1.11.5 as bd
 WORKDIR /github.com/layer5io/meshery
 ADD . .
 RUN cd cmd; go build -a -o /meshery .
