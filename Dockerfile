@@ -1,8 +1,10 @@
-FROM golang:1.11.4 as bd
+FROM golang:1.11.5 as bd
 WORKDIR /github.com/layer5io/meshery
 ADD . .
 RUN cd cmd; go build -a -o /meshery .
 RUN find . -name "*.go" -type f -delete; mv public /; mv meshes /
+RUN cd /public/static/js; wget https://raw.githubusercontent.com/fortio/fortio/master/ui/static/js/Chart.min.js
+RUN cd /public/static/js; wget https://raw.githubusercontent.com/fortio/fortio/master/ui/static/js/fortio_chart.js
 
 FROM alpine
 RUN apk --update add ca-certificates

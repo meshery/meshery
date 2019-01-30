@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"net/http"
-	"net/url"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/layer5io/meshery/meshes"
@@ -46,7 +44,7 @@ func dashboardHandler(ctx context.Context, meshClient meshes.MeshClient) func(w 
 			// 	return
 			// }
 			// fmt.Fprintf(w, string(page))
-			err := getAOTokenTempl.Execute(w, nil)
+			err := getAOTokenTempl.Execute(w, byPassAuth)
 			if err != nil {
 				logrus.Errorf("error rendering the template for the page: %v", err)
 				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
@@ -78,10 +76,7 @@ func issueSession(w http.ResponseWriter, req *http.Request) {
 			if k == "username" {
 				// logrus.Infof("setting user in session: %s", v)
 				session.Values["user"] = v
-			} else {
-				// logrus.Infof("setting tweet cookie in session: %s", v)
-				session.Values["tweet-cookie-name"] = k
-				session.Values["tweet-cookie-value"] = v
+				break
 			}
 		}
 	}
@@ -97,49 +92,6 @@ func issueSession(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, reffURL, http.StatusFound)
 }
 
-func loadTestHandler(w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
-	if err != nil {
-		logrus.Errorf("Error: unable to parse form: %v", err)
-		http.Error(w, "unable to process the received data", http.StatusForbidden)
-		return
-	}
-	q := req.Form
-
-	tt, _ := strconv.Atoi(q.Get("t"))
-	if tt < 1 {
-		q.Set("t", "1m")
-	} else {
-		q.Set("t", q.Get("t")+"m") // following fortio time indication
-	}
-
-	q.Set("load", "Start")
-	q.Set("runner", "http")
-
-	cc, _ := strconv.Atoi(q.Get("c"))
-	if cc < 1 {
-		q.Set("c", "1")
-	}
-
-	q.Set("url", os.Getenv("PRODUCT_PAGE_URL"))
-
-	client := http.DefaultClient
-	fortioURL, err := url.Parse(os.Getenv("FORTIO_URL"))
-	if err != nil {
-		logrus.Errorf("unable to parse the provided fortio url: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
-		return
-	}
-	fortioURL.RawQuery = q.Encode()
-	logrus.Infof("load test constructed url: %s", fortioURL.String())
-	_, err = client.Get(fortioURL.String())
-	if err != nil {
-		logrus.Errorf("Error: unable to call fortio: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
-		return
-	}
-}
-
 // logoutHandler destroys the session on POSTs and redirects to home.
 func logoutHandler(w http.ResponseWriter, req *http.Request) {
 	client := http.DefaultClient
@@ -149,66 +101,9 @@ func logoutHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
 		return
 	}
-	sess, err := sessionStore.Get(req, sessionName)
-	if err != nil {
-		logrus.Errorf("Error retrieving tweet cookie: %v", err)
-		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
-		return
-	}
-	ckNamei, ok := sess.Values["tweet-cookie-name"]
-	if ok {
-		ckVali, ok1 := sess.Values["tweet-cookie-value"]
-		if ok1 {
-			ckName, _ := ckNamei.(string)
-			ckVal, _ := ckVali.(string)
-			cReq.AddCookie(&http.Cookie{
-				Name:  ckName,
-				Value: ckVal,
-			})
-			client.Do(cReq)
-		}
-	}
+	client.Do(cReq)
 	sessionStore.Destroy(w, sessionName)
 	http.Redirect(w, req, req.Referer(), http.StatusFound)
-}
-
-func tweetHandler(w http.ResponseWriter, req *http.Request) {
-	if req.Method == http.MethodPost {
-		defer req.Body.Close()
-
-		client := http.DefaultClient
-		cReq, err := http.NewRequest(http.MethodPost, os.Getenv("TWITTER_APP_HOST")+"/twitter/tweet", req.Body)
-		if err != nil {
-			logrus.Errorf("Error creating a client to post a tweet: %v", err)
-			http.Error(w, "unable to post a tweet at the moment", http.StatusInternalServerError)
-			return
-		}
-		sess, err := sessionStore.Get(req, sessionName)
-		if err != nil {
-			logrus.Errorf("Error retrieving tweet cookie: %v", err)
-			http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
-			return
-		}
-		ckNamei, ok := sess.Values["tweet-cookie-name"]
-		if ok {
-			ckVali, ok1 := sess.Values["tweet-cookie-value"]
-			if ok1 {
-				ckName, _ := ckNamei.(string)
-				ckVal, _ := ckVali.(string)
-				cReq.AddCookie(&http.Cookie{
-					Name:  ckName,
-					Value: ckVal,
-				})
-				cReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-				_, err = client.Do(cReq)
-				if err != nil {
-					logrus.Errorf("Error while posting the tweet: %v", err)
-					http.Error(w, "unable to post a tweet at the moment", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-	}
 }
 
 func validateAuth(req *http.Request) bool {
@@ -218,4 +113,14 @@ func validateAuth(req *http.Request) bool {
 	}
 	logrus.Errorf("session invalid, error: %v", err)
 	return false
+}
+
+func setupSession(userName string, w http.ResponseWriter) {
+	sessionStore.Config.Path = "/play"
+	session := sessionStore.New(sessionName)
+	session.Values["user"] = userName
+	err := session.Save(w)
+	if err != nil {
+		logrus.Errorf("unable to save session: %v", err)
+	}
 }

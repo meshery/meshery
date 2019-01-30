@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/layer5io/meshery/appoptics"
 	"github.com/layer5io/meshery/meshes"
@@ -18,6 +19,13 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 	spaceName := req.FormValue("dashboard")
 	if spaceName == "" {
 		spaceName = "istio"
+	}
+	if byPassAuth {
+		user_name := req.FormValue("user_name")
+		if user_name == "" {
+			user_name = "Test User"
+		}
+		setupSession(user_name, w)
 	}
 	logrus.Infof("retrieved token from query: %s", token)
 	ao, err := appoptics.NewAOClient(token, spaceName)
@@ -40,6 +48,7 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 		"Ops":  ops,
 		"AO":   ad,
 		"Name": meshClient.MeshName(),
+		"Url":  os.Getenv("PRODUCT_PAGE_URL"),
 	}
 
 	err = dashTempl.Execute(w, result)
