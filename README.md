@@ -29,7 +29,37 @@ Sample applications will be included in Meshery.
 
 #### Run Istio Playground
 To run the service mesh playground either:
-1. Deploy Meshery (`kubectl apply -f deployment_yamls/deployment.yaml`).
+- On Kubernetes
+  - You can deploy Meshery on an existing kubernetes cluster using the provided yaml file into any namespace of your choice: 
+
+    ```
+    kubectl apply -f deployment_yamls/deployment.yaml
+    ```
+
+  - Meshery can be deployed either on/off the mesh.
+  - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
+  - please review the yaml and make necessary changes as needed for your cluster
+- On Docker
+  - we will have to first deploy fortio: 
+  
+  ```
+  docker run --name fortio -p $(fortio_port):8080 -p 8079:8079 -d fortio/fortio server
+  ```
+  - next to run Meshery we will need to place the kubeconfig file with name `config` in the current directory
+  - next run Meshery <small>(please remember to update PRODUCT_PAGE_URL environment variable with a valid value)</small>:
+  ```
+  docker run --name meshery -d \
+	--link fortio:fortio \
+	-e BYPASS_AUTH=true \
+	-e EVENT=istioPlay01 \
+	-e FORTIO_URL="http://fortio:8080/fortio/" \
+	-e PRODUCT_PAGE_URL="<URL TO THE BOOK INFO APP ON THE MESH>" \
+	-p 9081:8080 \
+	-v `pwd`/config:/kubeconfig \
+	layer5/meshery ./meshery --kubeconfig /kubeconfig
+    ```
+  - If you prefer to use a Docker network you can remove the link from the above command
+  - Now you should be able to access Meshery in your browser at `http://localhost:9081/play`
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
@@ -50,8 +80,8 @@ A sample Makefile is included to build and package the app as a Docker image.
 1. `Docker` to build the image.
 1. `Go` version 1.11+ installed if you want to make changes to the existing code.
 1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
-1. Build the Meshery Docker image (`docker build . -t meshery`).
-1.1. _pre-built images available: https://hub.docker.com/u/layer5/_
+1. Build the Meshery Docker image (`docker build -t layer5/meshery .`).
+    1. _pre-built images available: https://hub.docker.com/u/layer5/_
 
 # About Layer5
 [Layer5.io](https://layer5.io) is a service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
