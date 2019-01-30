@@ -71,8 +71,10 @@ spec:
       serviceAccount: meshery
       containers: 
         - env: 
-          - name: TWITTER_APP_HOST
-            value: "http://auth.layer5.io"
+          # - name: TWITTER_APP_HOST
+          #   value: "http://auth.layer5.io"
+          - name: BYPASS_AUTH
+            value: "true"
           - name: FORTIO_URL
             value: "http://fortio:8080/fortio/"
           - name: PRODUCT_PAGE_URL
@@ -80,7 +82,7 @@ spec:
           - name: EVENT
             value: "istioPlay01"
           image: layer5/meshery
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: playground
           ports: 
             - containerPort: 8080
@@ -187,16 +189,16 @@ spec:
           number: 443
       weight: 100
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
-metadata:
-  name: productpage-auth
-spec:
-  hosts:
-  - auth.layer5.io
-  location: MESH_EXTERNAL
-  ports:
-  - name: http
-    number: 80
-    protocol: HTTP
-  resolution: DNS
+# apiVersion: networking.istio.io/v1alpha3
+# kind: ServiceEntry
+# metadata:
+#   name: productpage-auth
+# spec:
+#   hosts:
+#   - auth.layer5.io
+#   location: MESH_EXTERNAL
+#   ports:
+#   - name: http
+#     number: 80
+#     protocol: HTTP
+#   resolution: DNS
