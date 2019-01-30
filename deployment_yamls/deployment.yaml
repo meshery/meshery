@@ -38,7 +38,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: meshery
-  namespace: default
 ---
 ##################################################################################################
 # Playground
