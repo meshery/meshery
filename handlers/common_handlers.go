@@ -29,9 +29,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, os.Getenv("TWITTER_APP_HOST")+"/twitter/login?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
 		return
-	} else {
-		issueSession(w, r)
 	}
+	issueSession(w, r)
 }
 
 func dashboardHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, r *http.Request) {
