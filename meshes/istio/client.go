@@ -11,6 +11,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// IstioClient represents an Istio client in Meshery
 type IstioClient struct {
 	k8s                *kube.Clientset
 	istioConfigApi     *rest.RESTClient
@@ -22,9 +23,8 @@ func configClient() (*rest.Config, error) {
 	flag.Parse()
 	if *kubeconfig != "" {
 		return clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	} else {
-		return rest.InClusterConfig()
 	}
+	return rest.InClusterConfig()
 }
 
 func newClient() (*IstioClient, error) {

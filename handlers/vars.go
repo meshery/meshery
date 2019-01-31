@@ -27,8 +27,7 @@ var (
 	getAOTokenTempl = template.Must(template.ParseFiles("../public/get-ao-token.html"))
 )
 
+// ServerConfig - config type to hold the needed instances/properties
 type ServerConfig struct {
 	MeshClient meshes.MeshClient
-
-	CallbackURL string
 }

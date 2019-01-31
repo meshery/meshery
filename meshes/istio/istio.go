@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
+// CreateIstioClient is a function to create a Istio mesh client
 func CreateIstioClient(ctx context.Context) (meshes.MeshClient, error) {
 	iClient, err := newClient()
 	if err != nil {
@@ -47,6 +48,7 @@ func (iClient *IstioClient) deleteResource(ctx context.Context, overallType, nam
 	return nil
 }
 
+// MeshName just returns the name of the mesh the client is representing
 func (iClient *IstioClient) MeshName() string {
 	return "Istio"
 }
@@ -71,12 +73,12 @@ func (iClient *IstioClient) applyRulePayload(ctx context.Context, namespace stri
 	newVSRes := iClient.istioNetworkingApi.Post().SetHeader("content-type", runtime.ContentTypeJSON).
 		Namespace(namespace).
 		Resource(virtualServices).Body(newVSBytesJ).Do()
-	newVSResInst, err := newVSRes.Get()
+	_, err = newVSRes.Get()
 	if err != nil {
 		newVSRes = iClient.istioNetworkingApi.Get().SetHeader("content-type", runtime.ContentTypeJSON).
 			Namespace(namespace).Name(vs.ObjectMeta.Name).
 			Resource(virtualServices).Do()
-		newVSResInst, err = newVSRes.Get()
+		newVSResInst, err := newVSRes.Get()
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get the virtual service instance")
 			logrus.Error(err)
@@ -91,10 +93,9 @@ func (iClient *IstioClient) applyRulePayload(ctx context.Context, namespace stri
 			return err
 		}
 
-		newVSRes = iClient.istioNetworkingApi.Put().SetHeader("content-type", runtime.ContentTypeJSON).
+		_, err = iClient.istioNetworkingApi.Put().SetHeader("content-type", runtime.ContentTypeJSON).
 			Namespace(namespace).Name(vs.ObjectMeta.Name).
-			Resource(virtualServices).Body(newVSBytesJ).Do()
-		newVSResInst, err = newVSRes.Get()
+			Resource(virtualServices).Body(newVSBytesJ).Do().Get()
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get the virtual service instance from result")
 			logrus.Error(err)
@@ -104,6 +105,7 @@ func (iClient *IstioClient) applyRulePayload(ctx context.Context, namespace stri
 	return nil
 }
 
+// ApplyRule is a method invoked to apply a particular operation on the mesh in a namespace
 func (iClient *IstioClient) ApplyRule(ctx context.Context, opName, username, namespace string) error {
 	yamlFile := ""
 	reset := false
@@ -153,25 +155,8 @@ func (iClient *IstioClient) applyConfigChange(ctx context.Context, yamlFile, use
 	return nil
 }
 
+// Operations - returns a list of supported operations on the mesh
 func (iClient *IstioClient) Operations(ctx context.Context) (map[string]string, error) {
-	// yamlTemplate := "virtual-service-all-v1"
-	// switch query {
-	// case "v1all":
-	// 	yamlTemplate = "virtual-service-all-v1"
-	// case "reviewsv2user":
-	// 	yamlTemplate = "virtual-service-reviews-test-v2"
-	// case "userTestDelay":
-	// 	yamlTemplate = "virtual-service-ratings-test-delay"
-	// case "userTestAbort":
-	// 	yamlTemplate = "virtual-service-ratings-test-abort"
-	// case "50v3":
-	// 	yamlTemplate = "virtual-service-reviews-50-v3"
-	// case "100v3":
-	// 	yamlTemplate = "virtual-service-reviews-v3"
-	// case "reset":
-	// 	istio.DeleteAllCreatedResources(iClient, "default")
-	// 	return
-	// }
 	result := map[string]string{}
 	for _, op := range supportedOps {
 		result[op.key] = op.name
