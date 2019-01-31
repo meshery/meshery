@@ -1,3 +1,5 @@
+<img align="right" src="https://layer5.io/assets/images/cube-sh-small.png" />
+
 # Meshery
 
 A service mesh playground to faciliate learning about functionality and performance of different service meshes. Meshery incorporates the collection and display of metrics from applications running in the playground.
