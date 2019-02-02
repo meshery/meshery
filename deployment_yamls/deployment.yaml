@@ -156,39 +156,6 @@ spec:
         port:
           number: 8080
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
-metadata:
-  name: appoptics-play-01
-spec:
-  hosts:
-  - api.appoptics.com
-  ports:
-  - number: 443
-    name: https
-    protocol: HTTPS
-  resolution: DNS
-  location: MESH_EXTERNAL
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: appoptics
-spec:
-  hosts:
-  - api.appoptics.com
-  tls:
-  - match:
-    - port: 443
-      sni_hosts:
-      - api.appoptics.com
-    route:
-    - destination:
-        host: api.appoptics.com
-        port:
-          number: 443
-      weight: 100
----
 # apiVersion: networking.istio.io/v1alpha3
 # kind: ServiceEntry
 # metadata:

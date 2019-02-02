@@ -184,26 +184,6 @@
         <h4 class="mb-3">Metrics</h4>
         <div class="row">
           
-          {{range .AO.ChartIds}}
-          <div class="col-sm">
-              <div class="card">
-                  <div class="card-body">
-                    <div
-                    class='librato-display-media'
-                    data-chart_id='{{.}}'
-                    data-duration='300'
-                    data-height='300'
-                    data-width='450'
-                    data-tag_group_by=""
-                    data-tag_filter=""
-                  ></div>
-                </div>
-              </div>
-          </div>
-          {{else}}
-          There are no dashboards to show at this time. Please ensure you have entered a valid AppOptics token.
-          {{end}}
-          
         </div>
       </div>
 
@@ -212,16 +192,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
-    <!-- AppOptics -->
-    <script
-      type='text/javascript'
-      src='https://sdk.librato.com/embedding/librato-sdk-v2.0.4-min.js'
-      charset='utf-8'
-      data-librato_email='{{.AO.Token}}'
-      data-librato_token=''
-      >
-    </script>
 
     <script src="/play/static/js/Chart.min.js"></script>
     <script src="/play/static/js/fortio_chart.js"></script>

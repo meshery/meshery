@@ -26,7 +26,6 @@ Sample applications will be included in Meshery.
 
 #### Istio Playground Prerequisites
 1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
-1. Istio Solarwinds Mixer adapter is configured with a valid AppOptics token.
 1. The canonical Istio _bookinfo_ sample application deployed in the `default` namespace.
 
 #### Run Istio Playground

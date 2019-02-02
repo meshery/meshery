@@ -2,8 +2,6 @@ github.com/PuerkitoBio/purell v1.1.0 h1:rmGxhojJlM0tuKtfdvliR84CFHljx9ag64t2xmVk
 github.com/PuerkitoBio/purell v1.1.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 h1:d+Bc7a5rLufV/sSk/8dngufqelfh6jnri85riMAaF/M=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
-github.com/appoptics/appoptics-api-go v0.0.0-20181003115124-15d9e654ec9f h1:NU3clKmlPGsoj6bIEGMazDoyGS844THP3V92GaSdQ7E=
-github.com/appoptics/appoptics-api-go v0.0.0-20181003115124-15d9e654ec9f/go.mod h1:Cjx3iadjPyxxBU3dDqnthCeYWNIkkKTEi2MLc7G9j/o=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dghubble/sessions v0.0.0-20181016072817-1a1dc0d676d4 h1:ihKGdMmf2+E4pnQXDJZrGJve8CBfp49Bjye2LRyn6bI=
 github.com/dghubble/sessions v0.0.0-20181016072817-1a1dc0d676d4/go.mod h1:Yer1Cg1YNaHnbqksUbZN5x1jC6KHcalgs+rwMV8yBhE=

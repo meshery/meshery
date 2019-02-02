@@ -3,7 +3,6 @@ module github.com/layer5io/meshery
 require (
 	github.com/PuerkitoBio/purell v1.1.0
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
-	github.com/appoptics/appoptics-api-go v0.0.0-20181003115124-15d9e654ec9f
 	github.com/dghubble/sessions v0.0.0-20181016072817-1a1dc0d676d4
 	github.com/emicklei/go-restful v2.8.0+incompatible
 	github.com/ghodss/yaml v1.0.0
