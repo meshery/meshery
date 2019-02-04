@@ -14,6 +14,31 @@
    </head>
 
   <body class="text-center">
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <div class="container">
+            <a class="navbar-brand" href="/play">Meshery</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar01" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            {{ if not .ByPassAuth }}
+            <div id="navbar01" class="collapse navbar-collapse justify-content-end">
+              <ul class="navbar-nav text-align-right">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{ .User.AvatarURL }}" width="25rem" alt="">{{ .User.UserId }}</a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="/play/logout">Logout</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            {{ end }}
+          </div>
+        </nav>
+
+
+
         <div class="card card text-center boxit" style="width: 30rem;">
                 <div class="card-body">
                   <img class="card-img-top" src="/play/static/img/meshery-logo.png" alt="" style="width: 20%;">
@@ -22,7 +47,7 @@
                   <form class="form-signin" method="POST">
                     <h5>Please enter your AppOptics details</h5>
                     <small>If no value is given below, default values will be used for both the token and dashboard name.</small>
-                    {{ if . }}
+                    {{ if .ByPassAuth }}
                     <label for="user_name" class="sr-only">User Name</label>
                     <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
                     {{ end }}

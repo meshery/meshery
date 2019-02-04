@@ -3,13 +3,20 @@ package handlers
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
 
+	"net/url"
+
 	"github.com/layer5io/meshery/meshes"
+	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
+
+const saasTokenName = "meshery_saas"
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/play/dashboard", http.StatusPermanentRedirect)
@@ -17,7 +24,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	tu := "http://" + r.Host + r.RequestURI
-	username := r.URL.Query().Get("username")
+	username := r.URL.Query().Get(saasTokenName)
+
+	sess, err := sessionStore.Get(r, sessionName)
+	if err == nil {
+		sess.Config.MaxAge = -1
+		sess.Save(w)
+	}
+
 	if username == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     cookieName,
@@ -27,7 +41,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 
-		http.Redirect(w, r, os.Getenv("TWITTER_APP_HOST")+"/twitter/login?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
+		http.Redirect(w, r, os.Getenv("TWITTER_APP_HOST")+"?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
 		return
 	}
 	issueSession(w, r)
@@ -43,7 +57,22 @@ func dashboardHandler(ctx context.Context, meshClient meshes.MeshClient) func(w 
 			// 	return
 			// }
 			// fmt.Fprintf(w, string(page))
-			err := getAOTokenTempl.Execute(w, byPassAuth)
+			data := map[string]interface{}{
+				"ByPassAuth": byPassAuth,
+			}
+
+			if !byPassAuth {
+				session, err := sessionStore.Get(r, sessionName)
+				if err != nil {
+					logrus.Errorf("error getting session: %v", err)
+					http.Error(w, "unable to get session", http.StatusUnauthorized)
+					return
+				}
+				user, _ := session.Values["user"].(*models.User)
+				data["User"] = user
+			}
+
+			err := getAOTokenTempl.Execute(w, data)
 			if err != nil {
 				logrus.Errorf("error rendering the template for the page: %v", err)
 				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
@@ -70,39 +99,90 @@ func issueSession(w http.ResponseWriter, req *http.Request) {
 	}
 	sessionStore.Config.Path = "/play"
 	session := sessionStore.New(sessionName)
+
+	token := ""
 	for k, va := range req.URL.Query() {
 		for _, v := range va {
-			if k == "username" {
+			if k == saasTokenName {
 				// logrus.Infof("setting user in session: %s", v)
-				session.Values["user"] = v
+				token = v
 				break
 			}
 		}
 	}
-	if reffCk.Name != "" {
+	if reffCk != nil && reffCk.Name != "" {
 		reffCk.Expires = time.Now().Add(-2 * time.Second)
-		// http.SetCookie(w, reffCk)
+		http.SetCookie(w, reffCk)
 	}
+	session.Values[saasTokenName] = token
+	user, err := getUserDetails(saasTokenName, token)
+	if err != nil {
+		logrus.Errorf("unable to save session: %v", err)
 
-	err := session.Save(w)
+	}
+	session.Values["user"] = user
+	err = session.Save(w)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
 	http.Redirect(w, req, reffURL, http.StatusFound)
 }
 
+func getUserDetails(tokenKey, tokenVal string) (*models.User, error) {
+	saasURL, _ := url.Parse(os.Getenv("TWITTER_APP_HOST") + "/user")
+	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	req.AddCookie(&http.Cookie{
+		Name:     tokenKey,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to fetch user data: %v", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+	bd, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read body: %v", err)
+		return nil, err
+	}
+	u := &models.User{}
+	err = json.Unmarshal(bd, u)
+	if err != nil {
+		logrus.Errorf("unable to unmarshal user: %v", err)
+		return nil, err
+	}
+	logrus.Infof("retrieved user: %v", u)
+	return u, nil
+}
+
 // logoutHandler destroys the session on POSTs and redirects to home.
 func logoutHandler(w http.ResponseWriter, req *http.Request) {
-	client := http.DefaultClient
-	cReq, err := http.NewRequest(http.MethodGet, os.Getenv("TWITTER_APP_HOST")+"/twitter/logout", req.Body)
+	client := http.Client{}
+	cReq, err := http.NewRequest(http.MethodGet, os.Getenv("TWITTER_APP_HOST")+"/logout", req.Body)
 	if err != nil {
 		logrus.Errorf("Error creating a client to logout from tweet app: %v", err)
 		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
 		return
 	}
 	client.Do(cReq)
-	sessionStore.Destroy(w, sessionName)
-	http.Redirect(w, req, req.Referer(), http.StatusFound)
+	// sessionStore.Destroy(w, sessionName)
+
+	sess, err := sessionStore.Get(req, sessionName)
+	if err == nil {
+		sess.Config.MaxAge = -1
+		sess.Save(w)
+	}
+
+	if byPassAuth {
+		http.Redirect(w, req, req.Referer(), http.StatusFound)
+	} else {
+		http.Redirect(w, req, "/play/login", http.StatusFound)
+	}
 }
 
 func validateAuth(req *http.Request) bool {
@@ -114,12 +194,16 @@ func validateAuth(req *http.Request) bool {
 	return false
 }
 
-func setupSession(userName string, w http.ResponseWriter) {
+func setupSession(userName string, w http.ResponseWriter) *models.User {
 	sessionStore.Config.Path = "/play"
 	session := sessionStore.New(sessionName)
-	session.Values["user"] = userName
+	user := &models.User{
+		UserId: userName,
+	}
+	session.Values["user"] = user
 	err := session.Save(w)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
+	return user
 }

@@ -13,10 +13,31 @@
 
    <body class="bg-light">
 
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="container">
+            <a class="navbar-brand" href="/play">Meshery</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar01" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <div id="navbar01" class="collapse navbar-collapse justify-content-end">
+              <ul class="navbar-nav text-align-right">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{ .User.AvatarURL }}" width="25rem" alt="">{{ .User.UserId }}</a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="/play/logout">Logout</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+
       <div class="container">
         <div class="py-5 text-center">
           <img class="d-block mx-auto mb-4" src="/play/static/img/meshery-logo.png" alt="" width="20%" height="20%">
-          <h2>Meshery</h2>
+          <!-- <h2>Meshery</h2> -->
           <p class="lead">Meshery is where you can play with a service mesh, run load tests and view metrics.</p>
         </div>
       
