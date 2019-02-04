@@ -7,6 +7,7 @@ import (
 
 	"github.com/layer5io/meshery/appoptics"
 	"github.com/layer5io/meshery/meshes"
+	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,12 +21,21 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 	if spaceName == "" {
 		spaceName = "istio"
 	}
+	var user *models.User
 	if byPassAuth {
 		userName := req.FormValue("user_name")
 		if userName == "" {
 			userName = "Test User"
 		}
-		setupSession(userName, w)
+		user = setupSession(userName, w)
+	} else {
+		session, err := sessionStore.Get(req, sessionName)
+		if err != nil {
+			logrus.Errorf("error getting session: %v", err)
+			http.Error(w, "unable to get session", http.StatusUnauthorized)
+			return
+		}
+		user, _ = session.Values["user"].(*models.User)
 	}
 	logrus.Infof("retrieved token from query: %s", token)
 	ao, err := appoptics.NewAOClient(token, spaceName)
@@ -49,6 +59,7 @@ func aoDashRenderer(ctx context.Context, meshClient meshes.MeshClient, w http.Re
 		"AO":   ad,
 		"Name": meshClient.MeshName(),
 		"Url":  os.Getenv("PRODUCT_PAGE_URL"),
+		"User": user,
 	}
 
 	err = dashTempl.Execute(w, result)

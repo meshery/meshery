@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -11,7 +13,16 @@ import (
 )
 
 func loadTestHandler(w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
+	// ensuring session is intact before running load test
+	session, err := sessionStore.Get(req, sessionName)
+	if err != nil {
+		logrus.Errorf("Error: unable to get session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+	tokenVal, _ := session.Values[saasTokenName].(string)
+
+	err = req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
@@ -60,5 +71,40 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
 		return
 	}
+
+	publishResultsToSaaS(saasTokenName, tokenVal, bd)
+
 	w.Write(bd)
+}
+
+func publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) error {
+	logrus.Infof("attempting to publish results to SaaS")
+	bf := bytes.NewBuffer(bd)
+	saasURL, _ := url.Parse(os.Getenv("TWITTER_APP_HOST") + "/result")
+	req, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	req.AddCookie(&http.Cookie{
+		Name:     tokenKey,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to send results: %v", err)
+		return err
+	}
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("results successfully pushlished to SaaS")
+		return nil
+	}
+	defer resp.Body.Close()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return err
+	}
+	logrus.Errorf("error while sending results: %s", bdr)
+	return fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
