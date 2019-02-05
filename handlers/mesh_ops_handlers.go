@@ -8,11 +8,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func meshOpsHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) MeshOpsHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		opName := req.PostFormValue("query")
 
-		session, err := sessionStore.Get(req, sessionName)
+		session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 		if err != nil {
 			logrus.Error("unable to get session data")
 			http.Error(w, "unable to get user data", http.StatusUnauthorized)

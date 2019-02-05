@@ -6,21 +6,20 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
 )
 
-func loadTestHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// ensuring session is intact before running load test
-	session, err := sessionStore.Get(req, sessionName)
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("Error: unable to get session: %v", err)
 		http.Error(w, "unable to get session", http.StatusUnauthorized)
 		return
 	}
-	tokenVal, _ := session.Values[saasTokenName].(string)
+	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
 
 	err = req.ParseForm()
 	if err != nil {
@@ -45,12 +44,12 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		q.Set("c", "1")
 	}
 
-	q.Set("url", os.Getenv("PRODUCT_PAGE_URL"))
+	q.Set("url", h.config.LoadTestURL)
 
 	q.Set("json", "on")
 
 	client := http.DefaultClient
-	fortioURL, err := url.Parse(os.Getenv("FORTIO_URL"))
+	fortioURL, err := url.Parse(h.config.FortioURL)
 	if err != nil {
 		logrus.Errorf("unable to parse the provided fortio url: %v", err)
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
@@ -72,15 +71,15 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	publishResultsToSaaS(saasTokenName, tokenVal, bd)
+	h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 
 	w.Write(bd)
 }
 
-func publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) error {
+func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) error {
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(bd)
-	saasURL, _ := url.Parse(os.Getenv("TWITTER_APP_HOST") + "/result")
+	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result")
 	req, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	req.AddCookie(&http.Cookie{
 		Name:     tokenKey,
