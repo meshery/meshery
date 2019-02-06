@@ -1,17 +1,27 @@
 package handlers
 
 import (
+	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
 )
 
-func loadTestHandler(w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
+	// ensuring session is intact before running load test
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("Error: unable to get session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
+
+	err = req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
@@ -34,12 +44,23 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		q.Set("c", "1")
 	}
 
-	q.Set("url", os.Getenv("PRODUCT_PAGE_URL"))
+	loadTestURL := q.Get("url")
+	ltURL, err := url.Parse(loadTestURL)
+	if err != nil || !ltURL.IsAbs() {
+		logrus.Errorf("unable to parse the provided load test url: %v", err)
+		http.Error(w, "invalid load test URL", http.StatusBadRequest)
+		return
+	}
+
+	qps, _ := strconv.Atoi(q.Get("qps"))
+	if qps < 0 {
+		q.Set("qps", "0")
+	}
 
 	q.Set("json", "on")
 
 	client := http.DefaultClient
-	fortioURL, err := url.Parse(os.Getenv("FORTIO_URL"))
+	fortioURL, err := url.Parse(h.config.FortioURL)
 	if err != nil {
 		logrus.Errorf("unable to parse the provided fortio url: %v", err)
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
@@ -60,5 +81,40 @@ func loadTestHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
 		return
 	}
+
+	h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
+
 	w.Write(bd)
+}
+
+func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) error {
+	logrus.Infof("attempting to publish results to SaaS")
+	bf := bytes.NewBuffer(bd)
+	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result")
+	req, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	req.AddCookie(&http.Cookie{
+		Name:     tokenKey,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to send results: %v", err)
+		return err
+	}
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("results successfully pushlished to SaaS")
+		return nil
+	}
+	defer resp.Body.Close()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return err
+	}
+	logrus.Errorf("error while sending results: %s", bdr)
+	return fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
