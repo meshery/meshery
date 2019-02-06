@@ -7,7 +7,6 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
-	"github.com/layer5io/meshery/meshes/istio"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
 	"github.com/spf13/viper"
@@ -39,32 +38,24 @@ func main() {
 		logrus.Fatalf("FORTIO_URL environment variable not set.")
 	}
 
-	loadTestURL := viper.GetString("LOAD_TEST_URL")
-	if loadTestURL == "" {
-		logrus.Fatalf("LOAD_TEST_URL environment variable not set.")
-	}
-
-	meshClient, err := istio.CreateIstioClient(ctx)
-	if err != nil {
-		logrus.Fatalf("Error creating an istio client: %v", err)
-	}
+	fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
+	fileSessionStore.MaxLength(0)
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		ByPassAuth:  byPassAuth,
 		FortioURL:   fortio,
 		SaaSBaseURL: saasBaseURL,
-		LoadTestURL: loadTestURL,
 
 		RefCookieName: "meshery_ref",
 
 		SessionName:  "meshery",
-		SessionStore: sessions.NewCookieStore([]byte(uuid.NewV4().Bytes()), nil),
+		SessionStore: fileSessionStore,
 
 		SaaSTokenName: "meshery_saas",
 	})
 
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, meshClient, port)
+	r := router.NewRouter(ctx, h, port)
 
 	logrus.Infof("Starting Server listening on :%d", port)
 	if err := r.Run(); err != nil {

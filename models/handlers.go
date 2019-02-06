@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"github.com/layer5io/meshery/meshes"
 )
 
 type HandlerInterface interface {
@@ -13,11 +12,11 @@ type HandlerInterface interface {
 
 	IndexHandler(w http.ResponseWriter, r *http.Request)
 	LoginHandler(w http.ResponseWriter, r *http.Request)
-	K8SConfigHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, r *http.Request)
+	K8SConfigHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request)
 	LogoutHandler(w http.ResponseWriter, req *http.Request)
-	DashboardHandler(ctx context.Context, meshClient meshes.MeshClient, w http.ResponseWriter, req *http.Request)
+	DashboardHandler(ctx context.Context, w http.ResponseWriter, req *http.Request)
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
-	MeshOpsHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, req *http.Request)
+	MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {
@@ -32,9 +31,6 @@ type HandlerConfig struct {
 	SaaSBaseURL   string
 
 	ByPassAuth bool
-
-	// TODO: accept this from the UI. . . so as to dynamically change it
-	LoadTestURL string
 
 	FortioURL string
 }

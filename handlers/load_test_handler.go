@@ -44,7 +44,18 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		q.Set("c", "1")
 	}
 
-	q.Set("url", h.config.LoadTestURL)
+	loadTestURL := q.Get("url")
+	ltURL, err := url.Parse(loadTestURL)
+	if err != nil || !ltURL.IsAbs() {
+		logrus.Errorf("unable to parse the provided load test url: %v", err)
+		http.Error(w, "invalid load test URL", http.StatusBadRequest)
+		return
+	}
+
+	qps, _ := strconv.Atoi(q.Get("qps"))
+	if qps < 0 {
+		q.Set("qps", "0")
+	}
 
 	q.Set("json", "on")
 

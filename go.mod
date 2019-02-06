@@ -73,6 +73,7 @@ require (
 	golang.org/x/net v0.0.0-20181220203305-927f97764cc3
 	golang.org/x/sys v0.0.0-20181205085412-a5c9d58dba9a
 	golang.org/x/text v0.3.0
+	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922 // indirect
 	gopkg.in/inf.v0 v0.9.1
 	gopkg.in/yaml.v2 v2.2.2
 	k8s.io/api v0.0.0-20181027024800-9fcf73cc980b
