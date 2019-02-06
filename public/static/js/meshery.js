@@ -34,6 +34,28 @@ $('#loadTestError').hide();
 $('#istioConfigSuccess').hide();
 $('#istioConfigError').hide();
 
+
+// just to render the charts initially
+var data = fortioResultToJsChartData({
+	DurationHistogram: {
+		Count: 0,
+		Data: [
+            {
+				Start: new Date(),
+			}
+        ],
+		Max: 0,
+		Min: 0,
+		Avg: 0,
+		Percentiles: []
+	},
+	StartTime: new Date(),
+	URL: '',
+	Labels: '',
+	RetCodes: {}
+});
+showChart(data);
+
 $("#loadTestForm").on( "submit", function( event ) {
     event.preventDefault();
     $('#loadRun').addClass("disabled");
@@ -63,7 +85,7 @@ $("#loadTestForm").on( "submit", function( event ) {
         $('#loadTestRunTime').text(new Date(res.StartTime));
         var data = fortioResultToJsChartData(res);
         showChart(data);
-        $(".loadTestResults").show();
+        // $(".loadTestResults").show();
         }
     });
     });
@@ -81,8 +103,11 @@ $("#loadTestForm").on( "submit", function( event ) {
         url: "/play/mesh",
         type: "POST", 
         data: data, 
-        error: function(){
-        $("#istioConfigError").fadeTo(2000, 500); 
+        error: function(resp){
+            if (resp && resp.responseText) {
+                $('#istioConfigErrorResp').html(resp.responseText);
+            }
+            $("#istioConfigError").fadeTo(2000, 500); 
         },
         success: function(result){
         $("#istioConfigSuccess").fadeTo(2000, 500).slideUp(500, function(){

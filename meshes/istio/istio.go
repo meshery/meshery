@@ -18,7 +18,18 @@ import (
 
 // CreateIstioClient is a function to create a Istio mesh client
 func CreateIstioClient(ctx context.Context) (meshes.MeshClient, error) {
-	iClient, err := newClient()
+	// iClient, err := newClient(nil, "")
+	// if err != nil {
+	// 	err = errors.Wrapf(err, "unable to create a new istio client")
+	// 	logrus.Error(err)
+	// 	return nil, err
+	// }
+	// return iClient, nil
+	return CreateIstioClientWithK8SConfig(ctx, nil, "")
+}
+
+func CreateIstioClientWithK8SConfig(ctx context.Context, k8sConfig []byte, contextName string) (meshes.MeshClient, error) {
+	iClient, err := newClient(k8sConfig, contextName)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to create a new istio client")
 		logrus.Error(err)

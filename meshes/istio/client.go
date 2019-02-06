@@ -18,19 +18,31 @@ type IstioClient struct {
 	istioNetworkingApi *rest.RESTClient
 }
 
-func configClient() (*rest.Config, error) {
-	kubeconfig := flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	flag.Parse()
-	if *kubeconfig != "" {
-		return clientcmd.BuildConfigFromFlags("", *kubeconfig)
+func configClient(kubeconfig []byte, contextName string) (*rest.Config, error) {
+	if len(kubeconfig) > 0 {
+		// clientcmd.BuildConfigFromFlags("", kubeconfig)
+		ccfg, err := clientcmd.Load(kubeconfig)
+		if err != nil {
+			return nil, err
+		}
+		if contextName != "" {
+			ccfg.CurrentContext = contextName
+		}
+
+		return clientcmd.NewDefaultClientConfig(*ccfg, &clientcmd.ConfigOverrides{}).ClientConfig()
+	} else {
+		kConfig := flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		flag.Parse()
+		if *kConfig != "" {
+			return clientcmd.BuildConfigFromFlags("", *kConfig)
+		}
 	}
 	return rest.InClusterConfig()
 }
 
-func newClient() (*IstioClient, error) {
+func newClient(kubeconfig []byte, contextName string) (*IstioClient, error) {
 	client := IstioClient{}
-	config, err := configClient()
-
+	config, err := configClient(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
