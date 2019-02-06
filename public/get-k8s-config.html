@@ -13,7 +13,7 @@
 
    </head>
 
-  <body class="text-center">
+  <body>
 
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
           <div class="container">
@@ -37,34 +37,47 @@
           </div>
         </nav>
 
-
-
-        <div class="card card text-center boxit" style="width: 30rem;">
-                <div class="card-body">
-                  <img class="card-img-top" src="/play/static/img/meshery-logo.png" alt="" style="width: 20%;">
-                  <h3 class="card-title">Meshery</h3>
-                  <br />
-                  <form class="form-signin" method="POST">
-                    <h5>Please enter your AppOptics details</h5>
-                    <small>If no value is given below, default values will be used for both the token and dashboard name.</small>
-                    {{ if .ByPassAuth }}
-                    <label for="user_name" class="sr-only">User Name</label>
-                    <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
-                    {{ end }}
-                    <label for="token" class="sr-only">API Token</label>
-                    <input type="text" name="token" id="token" class="form-control" placeholder="Token . . . " autofocus="">
-
-                    <label for="dashboard" class="sr-only">Dashboard Name</label>
-                    <input type="text" name="dashboard" id="dashboard" class="form-control" placeholder="Dashboard name . . . " autofocus="">
-
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Enter</button>
-                  </form>
-                  
-                  <!-- <a class="btn btn-lg btn-outline-primary btn-block" href="/twitter/login">Sign in</a> -->
-                </div>
+        <div class="container-fluid" style="padding-top: 5rem;">
+          <div class="row">
+            <div class="float-right" style="margin-left: auto;">
+              {{ range $k, $v := .Flashes }}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  {{$v}}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
               </div>
+              {{ end }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="card card text-center boxit" style="width: 30rem;">
+              <div class="card-body">
+                <img class="card-img-top" src="/play/static/img/meshery-logo.png" alt="" style="width: 20%;">
+                <h3 class="card-title">Meshery</h3>
+                <br />
+                <form class="form-signin" method="POST" enctype="multipart/form-data">
+                  <h6>Please enter the following details to get started with Meshery</h6>
 
+                  {{ if .ByPassAuth }}
+                  <label for="user_name" class="sr-only">User Name</label>
+                  <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
+                  {{ end }}
 
+                  <label for="k8sfile">Kubernetes config file<small>(your kubeconfig file)</small></label>
+                  <input type="file" name="k8sfile" id="k8sfile" class="form-control" autofocus="">
+
+                  <label for="contextName">Context Name</label>
+                  <input type="text" name="contextName" id="contextName" class="form-control" placeholder="default" autofocus="">
+
+                  <button class="btn btn-lg btn-primary btn-block" type="submit">Enter</button>
+                </form>
+                
+                <!-- <a class="btn btn-lg btn-outline-primary btn-block" href="/twitter/login">Sign in</a> -->
+              </div>
+            </div>
+          </div>
+      </div>
   <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

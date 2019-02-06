@@ -10,7 +10,6 @@ import (
 
 	"net/url"
 
-	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
@@ -44,32 +43,36 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	h.issueSession(w, r)
 }
 
-func (h *Handler) K8SConfigHandler(ctx context.Context, meshClient meshes.MeshClient) func(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) K8SConfigHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			data := map[string]interface{}{
 				"ByPassAuth": h.config.ByPassAuth,
 			}
 
+			session, err := h.config.SessionStore.Get(r, h.config.SessionName)
+			if err != nil {
+				logrus.Errorf("error getting session: %v", err)
+				http.Error(w, "unable to get session", http.StatusUnauthorized)
+				return
+			}
+
 			if !h.config.ByPassAuth {
-				session, err := h.config.SessionStore.Get(r, h.config.SessionName)
-				if err != nil {
-					logrus.Errorf("error getting session: %v", err)
-					http.Error(w, "unable to get session", http.StatusUnauthorized)
-					return
-				}
 				user, _ := session.Values["user"].(*models.User)
 				data["User"] = user
 			}
 
-			err := getK8SConfigTempl.Execute(w, data)
+			data["Flashes"] = session.Flashes()
+			session.Save(r, w)
+
+			err = getK8SConfigTempl.Execute(w, data)
 			if err != nil {
 				logrus.Errorf("error rendering the template for the page: %v", err)
 				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
 				return
 			}
 		} else if r.Method == http.MethodPost {
-			h.DashboardHandler(ctx, meshClient, w, r)
+			h.DashboardHandler(ctx, w, r)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
