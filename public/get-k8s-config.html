@@ -53,35 +53,67 @@
           <div class="row">
             <div class="card card text-center boxit" style="width: 30rem;">
               <div class="card-body">
-                <img class="card-img-top" src="/play/static/img/meshery-logo.png" alt="" style="width: 20%;">
-                <h3 class="card-title">Meshery</h3>
+                <img class="card-img-top" src="/play/static/img/meshery-logo.png" alt="" style="width: 30%;">
+                <h4 class="card-title">Let us get you started with</h4>
+                <h3>Meshery</h3>
                 <br />
-                <form class="form-signin" method="POST" enctype="multipart/form-data">
-                  <h6>Please enter the following details to get started with Meshery</h6>
+                <form class="form-signin text-left" method="POST" enctype="multipart/form-data">
 
                   {{ if .ByPassAuth }}
-                  <label for="user_name" class="sr-only">User Name</label>
-                  <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
+                  <div class="form-group">
+                    <label for="user_name" class="sr-only">User Name</label>
+                    <input type="text" name="user_name" id="user_name" class="form-control" placeholder="Test User" autofocus="">
+                  </div>
                   {{ end }}
 
-                  <label for="k8sfile">Kubernetes config file<small>(your kubeconfig file)</small></label>
-                  <input type="file" name="k8sfile" id="k8sfile" class="form-control" autofocus="">
 
-                  <label for="contextName">Context Name</label>
-                  <input type="text" name="contextName" id="contextName" class="form-control" placeholder="default" autofocus="">
+                  <div class="form-group">
+                    <label for="contextName">Context Name</label>
+                    <input type="text" name="contextName" id="contextName" class="form-control" placeholder="default" autofocus="">
+                  </div>
 
+                  <div class="form-group">
+                    <label for="">K8S config file</label>
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="k8sfile" name="k8sfile">
+                      <label id="k8sfilelabel" class="custom-file-label" for="k8sfile">Choose file...</label>
+                    </div>
+                  </div>
+
+                  <div class="custom-control custom-checkbox mb-3">
+                    <input type="checkbox" class="custom-control-input" id="inClusterConfig" name="inClusterConfig">
+                    <label class="custom-control-label" for="inClusterConfig">Use in-cluster config instead</label>
+                  </div>
+                
+                  <div class="form-group">
+                    <label for="meshLocationURL">Mesh Adapter Location</label>
+                    <input type="url" name="meshLocationURL" id="meshLocationURL" class="form-control" placeholder="" autofocus="">
+                  </div>
+                
+                  
                   <button class="btn btn-lg btn-primary btn-block" type="submit">Enter</button>
                 </form>
                 
-                <!-- <a class="btn btn-lg btn-outline-primary btn-block" href="/twitter/login">Sign in</a> -->
               </div>
             </div>
           </div>
       </div>
-  <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+    <script>
+    $("#inClusterConfig").click(function(){
+      if($(this).is(':checked')){
+        $("#k8sfile").prop( "disabled", true );
+        $('#contextName').prop( "disabled", true );
+      } else {
+        $("#k8sfile").prop( "disabled", false );
+        $('#contextName').prop( "disabled", false );
+      }
+    });
+    $('#k8sfile').change(function(){
+      $('#k8sfilelabel').text($('#k8sfile').val().replace("C:\\fakepath\\", ""));
+    })
+    </script>
 </body></html>

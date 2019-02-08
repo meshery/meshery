@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/layer5io/meshery/meshes/istio"
+	"github.com/layer5io/meshery/meshes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,6 +35,12 @@ func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter
 		if ok && contextNameI != nil {
 			contextName, _ = contextNameI.(string)
 		}
+
+		inClusterConfig := ""
+		inClusterConfigI, ok := session.Values["k8sInCluster"]
+		if ok && contextNameI != nil {
+			inClusterConfig, _ = inClusterConfigI.(string)
+		}
 		// if !ok && contextNameI == nil {
 		// 	logrus.Error("unable to get session data")
 		// 	http.Error(w, "unable to get user data", http.StatusUnauthorized)
@@ -42,22 +48,36 @@ func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter
 		// }
 		logrus.Debugf("session values: %v", session.Values)
 		k8sConfigBytesI, ok := session.Values["k8sConfig"]
-		if !ok || k8sConfigBytesI == nil {
+		if inClusterConfig == "" && (!ok || k8sConfigBytesI == nil) {
 			logrus.Error("no valid kubernetes config found")
 			http.Error(w, `No valid kubernetes config found. Please go <a href="/play/dashboard">here</a> to upload your config file and try again.`, http.StatusBadRequest)
 			return
 		}
 		k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
 
-		meshClient, err := istio.CreateIstioClientWithK8SConfig(ctx, k8sConfigBytes, contextName)
-		if err != nil {
-			logrus.Fatalf("Error creating an istio client: %v", err)
-			logrus.Errorf("error creating an istio client: %v", err)
-			http.Error(w, "unable to create an istio client", http.StatusBadRequest)
+		meshLocationURL := ""
+		meshLocationURLI, ok := session.Values["meshLocationURL"]
+		if ok && meshLocationURLI != nil {
+			meshLocationURL, _ = meshLocationURLI.(string)
+		} else {
+			logrus.Error("no valid url for mesh adapter found")
+			http.Error(w, `No valid url for mesh adapter found. Please go <a href="/play/dashboard">here</a> to the mesh adapter url and try again.`, http.StatusBadRequest)
 			return
 		}
 
-		err = meshClient.ApplyRule(ctx, opName, userName, namespace)
+		mClient, err := meshes.CreateClient(ctx, k8sConfigBytes, contextName, meshLocationURL)
+		if err != nil {
+			logrus.Errorf("error creating a mesh client: %v", err)
+			http.Error(w, "unable to create a mesh client", http.StatusBadRequest)
+			return
+		}
+		defer mClient.Close()
+
+		_, err = mClient.MClient.ApplyOperation(ctx, &meshes.ApplyRuleRequest{
+			OpName:    opName,
+			Username:  userName,
+			Namespace: namespace,
+		})
 		if err != nil {
 			logrus.Error(err)
 			http.Error(w, "there was an error creating the services", http.StatusInternalServerError)
