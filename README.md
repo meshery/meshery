@@ -89,8 +89,6 @@ To run Meshery:
 - After creating the app you will be able to grab the Client ID and Secret from the app page.
 
 
-##### Using Github for SSO
-
 ## Linkerd Playground App
 _coming soon for Linkerd_
 ### Running Meshery
