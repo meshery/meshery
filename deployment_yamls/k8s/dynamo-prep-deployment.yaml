@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dynamo-prep
+  name: dynamo-prep
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: dynamo-prep
+    spec:
+      containers:
+      - args:
+        - sh
+        - -c
+        - sleep 5; aws dynamodb create-table --table-name MesheryResults --attribute-definitions
+          AttributeName=meshery_id,AttributeType=S AttributeName=test_start_time,AttributeType=S
+          --key-schema AttributeName=meshery_id,KeyType=HASH AttributeName=test_start_time,KeyType=RANGE
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url
+          http://dynamo:8000; aws dynamodb create-table --table-name MesheryUsers
+          --attribute-definitions AttributeName=user_id,AttributeType=S AttributeName=provider,AttributeType=S
+          --key-schema AttributeName=user_id,KeyType=HASH AttributeName=provider,KeyType=RANGE
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url
+          http://dynamo:8000; aws dynamodb create-table --table-name MesherySessions
+          --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url
+          http://dynamo:8000; aws dynamodb update-time-to-live --table-name MesherySessions
+          --time-to-live-specification 'Enabled=true, AttributeName=ttl' --endpoint-url
+          http://dynamo:8000; aws dynamodb list-tables --endpoint-url http://dynamo:8000
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          value: fdsafa
+        - name: AWS_DEFAULT_REGION
+          value: eu-west-1
+        - name: AWS_SECRET_ACCESS_KEY
+          value: fdsaf
+        image: infrastructureascode/aws-cli
+        name: dynamo-prep
+        resources: {}
+      restartPolicy: Always
+status: {}

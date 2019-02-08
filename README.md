@@ -26,43 +26,70 @@ Sample applications will be included in Meshery.
 
 #### Istio Playground Prerequisites
 1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
-1. Istio Solarwinds Mixer adapter is configured with a valid AppOptics token.
-1. The canonical Istio _bookinfo_ sample application deployed in the `default` namespace.
 
-#### Run Istio Playground
-To run the service mesh playground either:
+
+#### Run Meshery
+To run Meshery:
 - On Kubernetes
   - You can deploy Meshery to an existing kubernetes cluster using the provided yaml file into any namespace of your choice. For now let us deploy it to a namespace `meshery`: 
 
     ```
     kubectl create ns meshery
-    kubectl -n meshery apply -f deployment_yamls/deployment.yaml
+    kubectl -n meshery apply -f deployment_yamls/k8s
+
+    # additional step for running on Istio
+    kubectl -n meshery apply -f deployment_yamls/istio.yaml
     ```
     If you want to use a different namespace, please change the name of the namespace in the `ClusterRoleBinding` section appropriately.
   - Meshery can be deployed either on/off the mesh.
   - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
   - please review the yaml and make necessary changes as needed for your cluster
 - On Docker
-  - we will have to first deploy fortio: 
-  
-  ```
-  docker run --name fortio -p $(fortio_port):8080 -p 8079:8079 -d fortio/fortio server
-  ```
-  - next to run Meshery we will need to place the kubeconfig file with name `config` in the current directory
-  - next run Meshery <small>(please remember to update PRODUCT_PAGE_URL environment variable with a valid value)</small>:
-  ```
-  docker run --name meshery -d \
-	--link fortio:fortio \
-	-e BYPASS_AUTH=true \
-	-e EVENT=istioPlay01 \
-	-e FORTIO_URL="http://fortio:8080/fortio/" \
-	-e PRODUCT_PAGE_URL="<URL TO THE BOOK INFO APP ON THE MESH>" \
-	-p 9081:8080 \
-	-v `pwd`/config:/kubeconfig \
-	layer5/meshery ./meshery --kubeconfig /kubeconfig
-    ```
-  - If you prefer to use a Docker network you can remove the link from the above command
-  - Now you should be able to access Meshery in your browser at `http://localhost:9081/play`
+  - We have a docker-compose.yaml file which can be used to spin up the services quickly
+  - There a few requirements for running all the Meshery services on your local
+    - SSO, which uses Twitter and/or Github
+      - Instructions to setup Twitter for SSO can be found <a href="#twitter">here</a>
+      - Instructions to setup Github for SSO can be found <a href="#github">here</a>
+    - Add an entry for `meshery-saas` in your `/etc/hosts` file to point to 127.0.0.1 and save the file
+    - After setting up SSO, store the respective key and secret as variables in the shell as shown below.
+      - for Twitter:
+      ```
+      TWITTERKEY="PASTE TWITTER KEY"
+      ```
+      ```
+      TWITTERSECRET="PASTE TWITTER SECRET"
+      ```
+      - for Github:
+      ```
+      GITHUBKEY="PASTE GITHUB KEY"
+      ```
+      ```
+      GITHUBSECRET="PASTE GITHUB SECRET"
+      ```
+      __Note__: you can use Twitter and/or Github
+
+      Now that the environment variables are setup, we can start the containers by running:
+      ```
+      docker-compose up
+      ```
+      Please add a `-d` flag to the above command if you want to run it in the background.
+  - Now you should be able to access Meshery in your browser at `http://localhost:8080/play`
+
+##### <a name="twitter">Using Twitter for SSO</a>
+- Create an app in the Twitter developer console: [https://developer.twitter.com/en/apps](https://developer.twitter.com/en/apps) after logging in.
+- Fill appropriate details in the presented form
+  - Remember to enable to `Sign in with Twitter`
+  - For the callback url, please use this value: `http://meshery-saas:9876/auth/twitter/callback`
+- After creating the app you will be able to grab the API key and secret from the `Keys and tokens` section of the app.
+
+##### <a name="github">Using Github for SSO</a>
+- Create an OAuth app in the Github developer settings: [https://github.com/settings/developers](https://github.com/settings/developers) after logging in.
+- Fill appropriate details in the presented form
+  - For the callback url, please use this value: `http://meshery-saas:9876/auth/github/callback`
+- After creating the app you will be able to grab the Client ID and Secret from the app page.
+
+
+##### Using Github for SSO
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
