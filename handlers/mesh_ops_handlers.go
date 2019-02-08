@@ -77,7 +77,7 @@ func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter
 			OpName:    opName,
 			Username:  userName,
 			Namespace: namespace,
-		}) //ApplyRule(ctx, opName, userName, namespace)
+		})
 		if err != nil {
 			logrus.Error(err)
 			http.Error(w, "there was an error creating the services", http.StatusInternalServerError)
