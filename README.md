@@ -8,7 +8,7 @@ A service mesh playground to faciliate learning about functionality and performa
 - [Performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 - [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
 
-![Service Mesh Playground](/public/static/img/meshery.png?raw=true "Service Mesh Playground")
+![Service Mesh Playground](./public/static/img/meshery.png?raw=true "Service Mesh Playground")
 
 ## Functionality
 1. Multi-mesh Performannce Benchmark
@@ -33,7 +33,7 @@ To run Meshery:
 - On Kubernetes
   - You can deploy Meshery to an existing kubernetes cluster using the provided yaml file into any namespace of your choice. For now let us deploy it to a namespace `meshery`: 
 
-    ```
+    ```bash
     kubectl create ns meshery
     kubectl -n meshery apply -f deployment_yamls/k8s
 
