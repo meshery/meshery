@@ -29,6 +29,8 @@ message ApplyRuleRequest {
     string opName = 1;
     string namespace = 2;
     string username = 3;
+    string custom_body = 4;
+    bool delete_op = 5;
 }
 
 message ApplyRuleResponse {
