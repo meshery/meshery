@@ -64,17 +64,11 @@
                         </div>
                         <form id="loadTestForm" class="needs-validation" novalidate>
 	                        <div class="modal-body">
-				                    <div id="loadTestSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+				                    <div id="loadTestSuccess" class="alert alert-success fade show" role="alert">
                                 Load test request has been submitted!
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
                               </div>
-                              <div id="loadTestError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                              <div id="loadTestError" class="alert alert-danger fade show" role="alert">
                                   Load test request could not be submitted. Please try again later.
-                                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
                                 </div>
 
 
@@ -143,7 +137,7 @@
                 </div>
                     
                 <div class="modal fade" id="istioConfigModal" tabindex="-1" role="dialog" aria-labelledby="istioConfigModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
+                    <div class="modal-dialog modal-lg" role="document">
                       <div class="modal-content">
                         <form id="istioForm" class="needs-validation" novalidate>
                         <div class="modal-header">
@@ -153,17 +147,11 @@
                           </button>
                         </div>
                         <div class="modal-body">
-                            <div id="istioConfigSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <div id="istioConfigSuccess" class="alert alert-success fade show" role="alert">
                                 Config change have been submitted!
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
                               </div>
-                              <div id="istioConfigError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                              <div id="istioConfigError" class="alert alert-danger fade show" role="alert">
                                   Config change could not be applied. <span id="istioConfigErrorResp"></span>
-                                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
                                 </div>
 
                             <div class="form-group">
@@ -171,12 +159,21 @@
                                   <div class="custom-control custom-radio">
                                     <input type="radio" id="{{$k}}" class="custom-control-input" name="query" value="{{$k}}" required>
                                     <label class="custom-control-label" for="{{$k}}">{{$v}}</label>
+                                    {{ if eq $v "custom" }}
+                                      <div id="customBodyDiv" style="display:none; border: 1px solid black;">
+                                        <textarea id="customBody" name="customBody"></textarea>
+                                      </div>
+                                    {{ end }}
                                   </div>
                                 {{else}}
                                 There are no operations to show at this time.
                                 {{end}}
 
                                 {{if .Ops}}
+                                <div class="text-right">
+                                    <label for="customCheck1">Delete Op</label>
+                                    <input type="checkbox" id="deleteOp" name="deleteOp">
+                                </div>
                                 <hr>
                                 <div>
                                     <label for="namespace">Namespace</label>
@@ -210,9 +207,9 @@
                     <div class="chart-container" id="cc1" style="position: relative; min-height: 20rem; width: 100%; display: block;">
                     <canvas style="background-color: rgba(255, 255, 255, 0.199); visibility: visible; display: block;" id="chart1" class="chartjs-render-monitor"></canvas>
                     </div>
-                    <div id="update" style="visibility: visible;">
-                    <form id="updtForm" action="javascript:updateChart()" style="display: none;">
-                    <input type="submit" value="Update:">
+                    <div id="update" style="display: none;">
+                    <form id="updtForm" action="javascript:updateChart()">
+                    <!-- <input type="submit" value="Update:"> -->
                     Time axis min <input type="text" name="xmin" size="5"> ms,
                     max <input type="text" name="xmax" size="5"> ms,
                     logarithmic: <input name="xlog" type="checkbox" onclick="updateChart()"> -
@@ -235,5 +232,17 @@
 
     <script src="/play/static/js/Chart.min.js"></script>
     <script src="/play/static/js/fortio_chart.js"></script>
+    
+    <script src="/play/static/libs/codemirror/codemirror.js"></script>
+    <link rel="stylesheet" href="/play/static/libs/codemirror/codemirror.css">
+    <link rel="stylesheet" href="/play/static/libs/codemirror/monokai.css">
+    <link rel="stylesheet" href="/play/static/libs/codemirror/lint.css">
+    <script src="/play/static/libs/codemirror/yaml.js"></script>
+    <script src="/play/static/libs/codemirror/js-yaml.min.js"></script>
+    <script src="/play/static/libs/codemirror/lint.js"></script>
+    <script src="/play/static/libs/codemirror/yaml-lint.js"></script>
+    
     <script src="/play/static/js/meshery.js"></script>
+
+
 </body></html>

@@ -11,7 +11,9 @@ import (
 func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		opName := req.PostFormValue("query")
+		customBody := req.PostFormValue("customBody")
 		namespace := req.PostFormValue("namespace")
+		delete := req.PostFormValue("deleteOp")
 		if namespace == "" {
 			namespace = "default"
 		}
@@ -68,19 +70,21 @@ func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter
 		mClient, err := meshes.CreateClient(ctx, k8sConfigBytes, contextName, meshLocationURL)
 		if err != nil {
 			logrus.Errorf("error creating a mesh client: %v", err)
-			http.Error(w, "unable to create a mesh client", http.StatusBadRequest)
+			http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
 			return
 		}
 		defer mClient.Close()
 
 		_, err = mClient.MClient.ApplyOperation(ctx, &meshes.ApplyRuleRequest{
-			OpName:    opName,
-			Username:  userName,
-			Namespace: namespace,
+			OpName:     opName,
+			Username:   userName,
+			Namespace:  namespace,
+			CustomBody: customBody,
+			DeleteOp:   (delete != ""),
 		})
 		if err != nil {
 			logrus.Error(err)
-			http.Error(w, "there was an error creating the services", http.StatusInternalServerError)
+			http.Error(w, "There was an error applying the change", http.StatusInternalServerError)
 			return
 		}
 	}
