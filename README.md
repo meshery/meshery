@@ -15,10 +15,9 @@ A service mesh playground to faciliate learning about functionality and performa
 Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects, a number of different tools *and results* exist. For example, Istio's [Performance and Scalability WG](https://github.com/istio/community/blob/master/WORKING-GROUPS.md#performance-and-scalability) currently uses a couple of different tools to measure Istio performance: [BluePerf](https://ibmcloud-perf.istio.io/regpatrol/) and [Fortio](https://fortio.istio.io).
 
 1. Multi-mesh Functionalty Playground
+A service mesh playground to faciliate learning about functionality of different service meshes. Meshery incorporates a visual interface for manipulating traffic routing rules. Sample applications will be included in Meshery. 
 
 ### Running Meshery
-## Service Mesh Playground
-Sample applications will be included in Meshery. 
 
 #### General Prerequisites
 1. Docker engine (e.g. Docker for Desktop).
@@ -26,7 +25,6 @@ Sample applications will be included in Meshery.
 
 #### Istio Playground Prerequisites
 1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
-
 
 #### Run Meshery
 To run Meshery:
@@ -88,14 +86,7 @@ To run Meshery:
   - For the callback url, please use this value: `http://meshery-saas:9876/auth/github/callback`
 - After creating the app you will be able to grab the Client ID and Secret from the app page.
 
-
 ## Linkerd Playground App
-_coming soon for Linkerd_
-### Running Meshery
-_coming soon for Linkerd_
-#### Linkerd Prerequisites
-_coming soon for Linkerd_
-#### Run Linkerd Playground
 _coming soon for Linkerd_
 
 ## Contributing
