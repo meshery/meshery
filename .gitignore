@@ -21,3 +21,9 @@ meshery
 Chart.min.js
 
 fortio_chart.js
+
+**/node_modules/
+
+**/out/
+
+**/.next/
