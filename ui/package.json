@@ -1,0 +1,26 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "^3.0.2",
+    "isomorphic-unfetch": "^3.0.0",
+    "jss": "latest",
+    "next": "^8.0.1",
+    "prop-types": "latest",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-jss": "^8.1.0"
+  }
+}
