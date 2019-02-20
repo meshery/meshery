@@ -23,7 +23,9 @@
             <div id="navbar01" class="collapse navbar-collapse justify-content-end">
               <ul class="navbar-nav text-align-right">
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{ .User.AvatarURL }}" width="25rem" alt="">{{ .User.UserId }}</a>
+                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{ .User.AvatarURL }}" width="25rem" alt="">
+                    <span style="padding-left: 0.5rem;">{{ .User.UserId }}</span>
+                  </a>
                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
                     <a class="dropdown-item" href="/play/logout">Logout</a>
                   </div>
@@ -141,7 +143,7 @@
                       <div class="modal-content">
                         <form id="istioForm" class="needs-validation" novalidate>
                         <div class="modal-header">
-                          <h5 class="modal-title" id="istioConfigModalLabel">Preconfigured {{.Name}} rules</h5>
+                          <h5 class="modal-title" id="istioConfigModalLabel">Play with {{.Name}}</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -171,7 +173,7 @@
 
                                 {{if .Ops}}
                                 <div class="text-right">
-                                    <label for="customCheck1">Delete Op</label>
+                                    <label for="customCheck1">Delete</label>
                                     <input type="checkbox" id="deleteOp" name="deleteOp">
                                 </div>
                                 <hr>
