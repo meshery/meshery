@@ -13,8 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "latest",
-    "@material-ui/icons": "^3.0.2",
+    "@material-ui/core": "next",
+    "@material-ui/icons": "next",
+    "classnames": "^2.2.6",
     "isomorphic-unfetch": "^3.0.0",
     "jss": "latest",
     "next": "^8.0.1",
