@@ -93,9 +93,13 @@ function Navigator(props) {
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
         <ListItem className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-          Paperbase
+          Meshery
         </ListItem>
-        <ListItem className={classNames(classes.item, classes.itemCategory)}>
+        <ListItem 
+            button 
+            component="a"
+            href="https://layer5.io/meshery"
+            className={classNames(classes.item, classes.itemCategory)}>
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
