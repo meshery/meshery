@@ -9,37 +9,46 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
-import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
-import PermMediaOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActual';
-import PublicIcon from '@material-ui/icons/Public';
-import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+// import PeopleIcon from '@material-ui/icons/People';
+// import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
+// import PermMediaOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActual';
+// import PublicIcon from '@material-ui/icons/Public';
+// import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
-import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
+// import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
+import Link from "next/link";
 
 const categories = [
-  {
-    id: 'Develop',
-    children: [
-      { id: 'Authentication', icon: <PeopleIcon />, active: true },
-      { id: 'Database', icon: <DnsRoundedIcon /> },
-      { id: 'Storage', icon: <PermMediaOutlinedIcon /> },
-      { id: 'Hosting', icon: <PublicIcon /> },
-      { id: 'Functions', icon: <SettingsEthernetIcon /> },
-      { id: 'ML Kit', icon: <SettingsInputComponentIcon /> },
-    ],
-  },
-  {
-    id: 'Quality',
-    children: [
-      { id: 'Analytics', icon: <SettingsIcon /> },
-      { id: 'Performance', icon: <TimerIcon /> },
-      { id: 'Test Lab', icon: <PhonelinkSetupIcon /> },
-    ],
-  },
-];
+    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", active: true },
+    { id: 'Play', icon: <TimerIcon />, href: "/about" },
+    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/post" },
+]
+
+
+
+// [
+//   {
+//     // id: 'Develop',
+//     children: [
+//     //   { id: 'Authentication', icon: <PeopleIcon />, active: true },
+//     //   { id: 'Database', icon: <DnsRoundedIcon /> },
+//     //   { id: 'Storage', icon: <PermMediaOutlinedIcon /> },
+//     //   { id: 'Hosting', icon: <PublicIcon /> },
+//     //   { id: 'Functions', icon: <SettingsEthernetIcon /> },
+//     //   { id: 'ML Kit', icon: <SettingsInputComponentIcon /> },
+//     ],
+//   },
+// //   {
+// //     id: 'Quality',
+// //     children: [
+// //       { id: 'Analytics', icon: <SettingsIcon /> },
+// //       { id: 'Performance', icon: <TimerIcon /> },
+// //       { id: 'Test Lab', icon: <PhonelinkSetupIcon /> },
+// //     ],
+// //   },
+// ];
 
 const styles = theme => ({
   categoryHeader: {
@@ -65,6 +74,10 @@ const styles = theme => ({
     fontFamily: theme.typography.fontFamily,
     color: theme.palette.common.white,
   },
+  link: {
+    display: 'inline-flex',
+    width: '100%',
+  },
   itemActionable: {
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.08)',
@@ -86,70 +99,89 @@ const styles = theme => ({
   },
 });
 
-function Navigator(props) {
-  const { classes, ...other } = props;
+class Navigator extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            activePage: null,
+        };
+    }
+    // static async getInitialProps (appContext) {
+    //     return {
+    //         path: appContext.ctx.pathname,
+    //     }
+    // }
 
-  return (
-    <Drawer variant="permanent" {...other}>
-      <List disablePadding>
-        <ListItem className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-          Meshery
-        </ListItem>
-        <ListItem 
-            button 
-            component="a"
-            href="https://layer5.io/meshery"
-            className={classNames(classes.item, classes.itemCategory)}>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText
-            classes={{
-              primary: classes.itemPrimary,
-            }}
-          >
-            Project Overview
-          </ListItemText>
-        </ListItem>
-        {categories.map(({ id, children }) => (
-          <React.Fragment key={id}>
-            <ListItem className={classes.categoryHeader}>
-              <ListItemText
-                classes={{
-                  primary: classes.categoryHeaderPrimary,
-                }}
-              >
-                {id}
-              </ListItemText>
-            </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
-              <ListItem
-                button
-                dense
-                key={childId}
-                className={classNames(
-                  classes.item,
-                  classes.itemActionable,
-                  active && classes.itemActiveItem,
-                )}
-              >
-                <ListItemIcon>{icon}</ListItemIcon>
+    render() {
+        const { classes, ...other } = this.props;
+        const path = (typeof window !== 'undefined' ? window.location.pathname : '');
+        console.log("current page:"+path);
+        return (
+            <Drawer variant="permanent" {...other}>
+            <List disablePadding>
+                <ListItem className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
+                Meshery
+                </ListItem>
+                <ListItem 
+                    button 
+                    component="a"
+                    href="https://layer5.io/meshery"
+                    className={classNames(classes.item, classes.itemCategory)}>
+                <ListItemIcon>
+                    <HomeIcon />
+                </ListItemIcon>
                 <ListItemText
-                  classes={{
+                    classes={{
                     primary: classes.itemPrimary,
-                    textDense: classes.textDense,
-                  }}
+                    }}
                 >
-                  {childId}
+                    Project Overview
                 </ListItemText>
-              </ListItem>
-            ))}
-            <Divider className={classes.divider} />
-          </React.Fragment>
-        ))}
-      </List>
-    </Drawer>
-  );
+                </ListItem>
+                {/* {categories.map(({ id, children }) => (
+                <React.Fragment key={id}> */}
+                    {/* <ListItem className={classes.categoryHeader}>
+                    <ListItemText
+                        classes={{
+                        primary: classes.categoryHeaderPrimary,
+                        }}
+                    >
+                        {id}
+                    </ListItemText>
+                    </ListItem> */}
+                    {categories.map(({ id: childId, icon, href }) => (
+                    <ListItem
+                        button
+                        dense
+                        key={childId}
+                        className={classNames(
+                        classes.item,
+                        classes.itemActionable,
+                        path === href && classes.itemActiveItem,
+                        )}
+                    >
+                        <Link href={href}>
+                            <div className={classNames(classes.link)} >
+                                <ListItemIcon>{icon}</ListItemIcon>
+                                <ListItemText
+                                classes={{
+                                    primary: classes.itemPrimary,
+                                    textDense: classes.textDense,
+                                }}
+                                >
+                                {childId}
+                                </ListItemText>
+                            </div>
+                        </Link>
+                    </ListItem>
+                    ))}
+                    <Divider className={classes.divider} />
+                {/* </React.Fragment> */}
+                ))}
+            </List>
+            </Drawer>
+        );
+    }
 }
 
 Navigator.propTypes = {
