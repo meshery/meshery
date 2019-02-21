@@ -53,7 +53,7 @@ let theme = createMuiTheme({
       },
       MuiTabs: {
         root: {
-          marginLeft: theme.spacing.unit,
+          marginLeft: theme.spacing(1),
         },
         indicator: {
           height: 3,
@@ -80,7 +80,7 @@ let theme = createMuiTheme({
       },
       MuiIconButton: {
         root: {
-          padding: theme.spacing.unit,
+          padding: theme.spacing(1),
         },
       },
       MuiTooltip: {
@@ -166,7 +166,7 @@ let theme = createMuiTheme({
     //     display: 'block',
     //   },
     //   addUser: {
-    //     marginRight: theme.spacing.unit,
+    //     marginRight: theme.spacing(1),
     //   },
     //   contentWrapper: {
     //     margin: '40px 16px',
