@@ -27,3 +27,5 @@ fortio_chart.js
 **/out/
 
 **/.next/
+
+**/package-lock.json
