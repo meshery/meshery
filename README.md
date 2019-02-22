@@ -93,6 +93,8 @@ _coming soon for Linkerd_
 ## <a name="contributing">Contributing</a>
 Please do! Contributions, updates, [discrepancy reports](/../../issues) and [pull requests](/../../pulls) are welcome. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
+Not sure where to start? Grab an open issue with the [help-wanted label](../../labels/help%20wanted).
+
 ### <a name="adapter">Writing an Adapter</a>
 - Get the proto buf spec file from Meshery repo here:
 - `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
