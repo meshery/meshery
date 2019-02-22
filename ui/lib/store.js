@@ -4,8 +4,10 @@ import thunkMiddleware from 'redux-thunk'
 import { fromJS } from 'immutable'
 
 const initialState = fromJS({
-  path: '',
-  pageTitle: '',
+  page: {
+    path: '',
+    title: '',
+  },
 });
 
 export const actionTypes = {
@@ -17,9 +19,11 @@ export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_PAGE:
       console.log("received an action to update page: "+ action.path + " title: "+ action.title);
-      return state.merge({
-            pageTitle: action.title,
+      return state.mergeDeep({
+          page: {
+            title: action.title,
             path: action.path,
+          }
       })
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {
