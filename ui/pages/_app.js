@@ -10,6 +10,10 @@ import Header from '../components/Header';
 import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
 import Paper from '@material-ui/core/Paper';
+import withRedux from "next-redux-wrapper";
+import { makeStore } from '../lib/store';
+import {Provider} from "react-redux";
+import { fromJS } from 'immutable'
 
 let theme = createMuiTheme({
     typography: {
@@ -188,6 +192,11 @@ class MesheryApp extends App {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   };
 
+  static async getInitialProps({Component, ctx}) {
+        const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+        return {pageProps};
+    }
+
   componentDidMount() {
     // Remove the server-side injected CSS.
     // const jssStyles = document.querySelector('#jss-server-side');
@@ -197,49 +206,51 @@ class MesheryApp extends App {
   }
 
   render() {
-    const { Component, pageProps, classes } = this.props;
+    const { Component, store, pageProps, classes } = this.props;
     return (
       <Container>
-        <Head>
-          <title>Meshery</title>
-        </Head>
-        {/* Wrap every page in Jss and Theme providers */}
-        {/* <JssProvider
-          registry={this.pageContext.sheetsRegistry}
-          generateClassName={this.pageContext.generateClassName}
-        > */}
-          {/* MuiThemeProvider makes the theme available down the React
-              tree thanks to React context. */}
-          <MuiThemeProvider theme={theme}>
-                <div className={classes.root}>
-                    {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-                    <CssBaseline />
-                    <nav className={classes.drawer}>
-                        <Hidden smUp implementation="js">
-                        <Navigator
-                            PaperProps={{ style: { width: drawerWidth } }}
-                            variant="temporary"
-                            open={this.state.mobileOpen}
-                            onClose={this.handleDrawerToggle}
-                        />
-                        </Hidden>
-                        <Hidden xsDown implementation="css">
-                        <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-                        </Hidden>
-                    </nav>
-                    <div className={classes.appContent}>
-                        <Header onDrawerToggle={this.handleDrawerToggle} />
-                        <main className={classes.mainContent}>
-                    {/* Pass pageContext to the _document though the renderPage enhancer
-                        to render collected styles on server-side. */}
-                            <Paper className={classes.paper}>
-                                <Component pageContext={this.pageContext} {...pageProps} />
-                            </Paper>
-                        </main>
-                    </div>
-                </div>
-          </MuiThemeProvider>
-        {/* </JssProvider> */}
+            <Provider store={store}>
+                <Head>
+                <title>Meshery</title>
+                </Head>
+                {/* Wrap every page in Jss and Theme providers */}
+                {/* <JssProvider
+                registry={this.pageContext.sheetsRegistry}
+                generateClassName={this.pageContext.generateClassName}
+                > */}
+                {/* MuiThemeProvider makes the theme available down the React
+                    tree thanks to React context. */}
+                <MuiThemeProvider theme={theme}>
+                        <div className={classes.root}>
+                            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                            <CssBaseline />
+                            <nav className={classes.drawer}>
+                                <Hidden smUp implementation="js">
+                                <Navigator
+                                    PaperProps={{ style: { width: drawerWidth } }}
+                                    variant="temporary"
+                                    open={this.state.mobileOpen}
+                                    onClose={this.handleDrawerToggle}
+                                />
+                                </Hidden>
+                                <Hidden xsDown implementation="css">
+                                <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                                </Hidden>
+                            </nav>
+                            <div className={classes.appContent}>
+                                <Header onDrawerToggle={this.handleDrawerToggle} />
+                                <main className={classes.mainContent}>
+                            {/* Pass pageContext to the _document though the renderPage enhancer
+                                to render collected styles on server-side. */}
+                                    <Paper className={classes.paper}>
+                                        <Component pageContext={this.pageContext} {...pageProps} />
+                                    </Paper>
+                                </main>
+                            </div>
+                        </div>
+                </MuiThemeProvider>
+                {/* </JssProvider> */}
+            </Provider>
       </Container>
     );
   }
@@ -249,4 +260,7 @@ MesheryApp.propTypes = {
     classes: PropTypes.object.isRequired,
   };
   
-export default withStyles(styles)(MesheryApp);
+export default withStyles(styles)(withRedux(makeStore, {
+    serializeState: state => state.toJS(),
+    deserializeState: state => fromJS(state)
+  })(MesheryApp));

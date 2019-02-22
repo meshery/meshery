@@ -19,11 +19,14 @@ import TimerIcon from '@material-ui/icons/Timer';
 import SettingsIcon from '@material-ui/icons/Settings';
 // import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import Link from "next/link";
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux'
+import { updatepagepathandtitle } from '../lib/store';
 
 const categories = [
-    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", active: true },
-    { id: 'Play', icon: <TimerIcon />, href: "/about" },
-    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/post" },
+    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", title: 'Setup Mesh' },
+    { id: 'Play', icon: <TimerIcon />, href: "/about", title: 'Play with Mesh' },
+    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/post", title: 'Load Test and Charts' },
 ]
 
 
@@ -100,22 +103,35 @@ const styles = theme => ({
 });
 
 class Navigator extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            activePage: null,
-        };
-    }
-    // static async getInitialProps (appContext) {
+    // constructor(props){
+    //     super(props);
+    //     this.state = {
+    //         path: null,
+    //     };
+    // }
+    // static async getInitialProps ({store}) {
     //     return {
-    //         path: appContext.ctx.pathname,
+    //         store: store,
     //     }
     // }
 
-    render() {
-        const { classes, ...other } = this.props;
+    updateTitle(){
         const path = (typeof window !== 'undefined' ? window.location.pathname : '');
-        console.log("current page:"+path);
+        categories.map(({title, href}) => {
+            if (href === path) {
+                console.log("updating path: "+path+" and title: "+title);
+                this.props.updatepagepathandtitle({path, title});
+                return;
+            }
+        });
+        return path;
+    }
+
+    render() {
+        // accessing 'updatepagepathandtitle' to just keep it out of 'other'
+        const { classes, updatepagepathandtitle, ...other } = this.props;
+        const path = this.updateTitle();
+        // console.log("current page:" + path);
         return (
             <Drawer variant="permanent" {...other}>
             <List disablePadding>
@@ -188,4 +204,15 @@ Navigator.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Navigator);
+// const mapStateToProps = state => ({ count: state.get('count') })
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updatepagepathandtitle: bindActionCreators(updatepagepathandtitle, dispatch)
+  }
+}
+
+export default withStyles(styles)(connect(
+    null,
+    mapDispatchToProps
+  )(Navigator));
