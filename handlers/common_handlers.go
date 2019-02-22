@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
@@ -14,9 +13,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/play/dashboard", http.StatusPermanentRedirect)
-}
+// func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
+// 	http.Redirect(w, r, "/play/dashboard", http.StatusPermanentRedirect)
+// }
 
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	tu := "http://" + r.Host + r.RequestURI
@@ -31,9 +30,9 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if token == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     h.config.RefCookieName,
-			Value:    "/play/dashboard",
+			Value:    "/",
 			Expires:  time.Now().Add(5 * time.Minute),
-			Path:     "/play/",
+			Path:     "/",
 			HttpOnly: true,
 		})
 
@@ -41,42 +40,6 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.issueSession(w, r)
-}
-
-func (h *Handler) K8SConfigHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			data := map[string]interface{}{
-				"ByPassAuth": h.config.ByPassAuth,
-			}
-
-			session, err := h.config.SessionStore.Get(r, h.config.SessionName)
-			if err != nil {
-				logrus.Errorf("error getting session: %v", err)
-				http.Error(w, "unable to get session", http.StatusUnauthorized)
-				return
-			}
-
-			if !h.config.ByPassAuth {
-				user, _ := session.Values["user"].(*models.User)
-				data["User"] = user
-			}
-
-			data["Flashes"] = session.Flashes()
-			session.Save(r, w)
-
-			err = getK8SConfigTempl.Execute(w, data)
-			if err != nil {
-				logrus.Errorf("error rendering the template for the page: %v", err)
-				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
-				return
-			}
-		} else if r.Method == http.MethodPost {
-			h.DashboardHandler(ctx, w, r)
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}
 }
 
 // issueSession issues a cookie session after successful Twitter login
@@ -88,7 +51,7 @@ func (h *Handler) issueSession(w http.ResponseWriter, req *http.Request) {
 	}
 	logrus.Infof("preparing to issue session. retrieved reff url: %s", reffURL)
 	if reffURL == "" {
-		reffURL = "/play/"
+		reffURL = "/"
 	}
 	// session, err := h.config.SessionStore.New(req, h.config.SessionName)
 	session, _ := h.config.SessionStore.New(req, h.config.SessionName)
@@ -97,7 +60,7 @@ func (h *Handler) issueSession(w http.ResponseWriter, req *http.Request) {
 	// 	http.Error(w, "unable to create session", http.StatusInternalServerError)
 	// 	return
 	// }
-	session.Options.Path = "/play"
+	session.Options.Path = "/"
 	token := ""
 	for k, va := range req.URL.Query() {
 		for _, v := range va {
@@ -179,7 +142,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
 	if h.config.ByPassAuth {
 		http.Redirect(w, req, req.Referer(), http.StatusFound)
 	} else {
-		http.Redirect(w, req, "/play/login", http.StatusFound)
+		http.Redirect(w, req, "/login", http.StatusFound)
 	}
 }
 

@@ -116,8 +116,11 @@ class Navigator extends React.Component {
     // }
 
     updateTitle(){
-        const path = (typeof window !== 'undefined' ? window.location.pathname : '');
+        let path = (typeof window !== 'undefined' ? window.location.pathname : '');
         categories.map(({title, href}) => {
+            if (path.lastIndexOf('/') > 0) {
+                path = path.substring(0, path.lastIndexOf('/'));
+            }
             if (href === path) {
                 console.log("updating path: "+path+" and title: "+title);
                 this.props.updatepagepathandtitle({path, title});
@@ -131,7 +134,7 @@ class Navigator extends React.Component {
         // accessing 'updatepagepathandtitle' to just keep it out of 'other'
         const { classes, updatepagepathandtitle, ...other } = this.props;
         const path = this.updateTitle();
-        // console.log("current page:" + path);
+        console.log("current page:" + path);
         return (
             <Drawer variant="permanent" {...other}>
             <List disablePadding>

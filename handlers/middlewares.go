@@ -12,7 +12,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			isValid := h.validateAuth(req)
 			logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
-				http.Redirect(w, req, "/play/login", http.StatusFound)
+				http.Redirect(w, req, "/login", http.StatusFound)
 				return
 			}
 		}
