@@ -82,18 +82,18 @@ class Header extends React.Component {
                 </Grid>
               </Hidden>
               <Grid item xs />
-              <Grid item>
+              {/* <Grid item>
                 <Typography className={classes.link} component="a" href="#">
                   Go to docs
                 </Typography>
-              </Grid>
-              <Grid item>
+              </Grid> */}
+              {/* <Grid item>
                 <Tooltip title="Alerts • No alters">
                   <IconButton color="inherit">
                     <NotificationsIcon />
                   </IconButton>
                 </Tooltip>
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
@@ -116,22 +116,22 @@ class Header extends React.Component {
                   {title}
                 </Typography>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
                   Web setup
                 </Button>
-              </Grid>
-              <Grid item>
+              </Grid> */}
+              {/* <Grid item>
                 <Tooltip title="Help">
                   <IconButton color="inherit">
                     <HelpIcon />
                   </IconButton>
                 </Tooltip>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Toolbar>
         </AppBar>
-        <AppBar
+        {/* <AppBar
           component="div"
           className={classes.secondaryBar}
           color="primary"
@@ -144,7 +144,7 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Templates" />
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
-        </AppBar>
+        </AppBar> */}
       </React.Fragment>
     );
   }

@@ -8,6 +8,10 @@ const initialState = fromJS({
     path: '',
     title: '',
   },
+  user: {
+      avatar: '',
+      userName: '',
+  }
 });
 
 export const actionTypes = {
