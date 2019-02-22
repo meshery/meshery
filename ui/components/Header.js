@@ -156,9 +156,9 @@ Header.propTypes = {
 };
 
 const mapStateToProps = state => {
-  console.log("header - mapping state to props. . . new title: "+ state.get("pageTitle"));
+  console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   console.log("state: " + JSON.stringify(state));
-  return { title: state.get("pageTitle") }
+  return { title: state.get("page").get("title") }
 }
 
 // const mapDispatchToProps = dispatch => {
