@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import NoSsr from '@material-ui/core/NoSsr';
 
 class User extends React.Component {
 
@@ -66,6 +67,7 @@ class User extends React.Component {
     const { open } = this.state;
     return (
       <div>
+        <NoSsr>
       <IconButton color={color} className={iconButtonClassName} 
       buttonRef={node => {
         this.anchorEl = node;
@@ -100,6 +102,7 @@ class User extends React.Component {
               </Grow>
             )}
           </Popper>
+          </NoSsr>
     </div>
     )
   }

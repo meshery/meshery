@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from "react-redux";
 import User from './User';
+import NoSsr from '@material-ui/core/NoSsr';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -66,7 +67,8 @@ class Header extends React.Component {
 
     // console.log("header - retrieved title: "+ title);
     return (
-      <React.Fragment>
+
+      <React.Fragment><NoSsr>
         <AppBar color="primary" position="sticky" elevation={0}>
           <Toolbar>
             <Grid container spacing={8} alignItems="center">
@@ -147,6 +149,7 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
         </AppBar> */}
+        </NoSsr>
       </React.Fragment>
     );
   }
