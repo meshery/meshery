@@ -67,8 +67,8 @@ class Header extends React.Component {
 
     // console.log("header - retrieved title: "+ title);
     return (
-
-      <React.Fragment><NoSsr>
+      <NoSsr>
+      <React.Fragment>
         <AppBar color="primary" position="sticky" elevation={0}>
           <Toolbar>
             <Grid container spacing={8} alignItems="center">
@@ -149,8 +149,9 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
         </AppBar> */}
-        </NoSsr>
+        
       </React.Fragment>
+      </NoSsr>
     );
   }
 }
