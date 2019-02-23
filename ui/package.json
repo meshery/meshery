@@ -24,6 +24,7 @@
     "next-redux-wrapper": "^3.0.0-alpha.1",
     "prop-types": "latest",
     "react": "^16.8.2",
+    "react-countdown-clock": "^2.5.0",
     "react-dom": "^16.8.2",
     "react-jss": "^8.1.0",
     "react-redux": "^6.0.1",

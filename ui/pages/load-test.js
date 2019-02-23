@@ -1,60 +1,3 @@
-// import Layout from '../components/layout.js'
-// import Link from 'next/link'
-// import fetch from 'isomorphic-unfetch'
-
-// const Index = (props) => (
-//   <Layout>
-//     <h1>Batman TV Shows</h1>
-//     <ul>
-//       {props.shows.map(({show}) => (
-//         <li key={show.id}>
-//           <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
-//             <a>{show.name}</a>
-//           </Link>
-//         </li>
-//       ))}
-//     </ul>
-//     <style jsx>{`
-//       h1, a {
-//         font-family: "Arial";
-//       }
-
-//       ul {
-//         padding: 0;
-//       }
-
-//       li {
-//         list-style: none;
-//         margin: 5px 0;
-//       }
-
-//       a {
-//         text-decoration: none;
-//         color: blue;
-//       }
-
-//       a:hover {
-//         opacity: 0.6;
-//       }
-//     `}</style>
-//   </Layout>
-// )
-
-// Index.getInitialProps = async function() {
-//   const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-//   const data = await res.json()
-
-//   console.log(`Show data fetched. Count: ${data.length}`)
-
-//   return {
-//     shows: data
-//   }
-// }
-
-// export default Index
-
-/* eslint-disable jsx-a11y/anchor-is-valid */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -72,6 +15,7 @@ import { NoSsr } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 
 const styles = theme => ({
   root: {
@@ -91,6 +35,7 @@ const styles = theme => ({
 class LoadTest extends React.Component {
   state = {
     // duration: 1,
+    timerDialogOpen: false,
   };
 
   // handleDurationChange = (event, duration) => {
@@ -110,12 +55,16 @@ class LoadTest extends React.Component {
   // };
 
   handleSubmit = () => {
+    this.setState({timerDialogOpen: true});
+  }
 
+  handleTimerDialogClose = () => {
+    this.setState({timerDialogOpen: false});
   }
 
   render() {
     const { classes } = this.props;
-    const { duration } = this.state;
+    const { timerDialogOpen } = this.state;
 
     return (
       <NoSsr>
@@ -230,7 +179,11 @@ class LoadTest extends React.Component {
       </React.Fragment>
       </div>
     </React.Fragment>
-      
+    
+    <LoadTestTimerDialog open={timerDialogOpen} 
+      onClose={this.handleTimerDialogClose} 
+      countDownComplete={this.handleTimerDialogClose} />
+
         
       </NoSsr>
     );
