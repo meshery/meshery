@@ -27,7 +27,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 const categories = [
     { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", title: 'Setup Mesh' },
     { id: 'Play', icon: <TimerIcon />, href: "/about", title: 'Play with Mesh' },
-    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/post", title: 'Load Test and Charts' },
+    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/load-test", title: 'Load Test and Charts' },
 ]
 
 
