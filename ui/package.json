@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "node ui_dev_server.js",
+    "next": "next",
     "build": "next build",
     "start": "next start",
     "export": "next export"
@@ -30,5 +31,8 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-jsx": "latest"
+  },
+  "devDependencies": {
+    "http-proxy": "^1.17.0"
   }
 }

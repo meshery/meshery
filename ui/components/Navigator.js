@@ -169,30 +169,30 @@ class Navigator extends React.Component {
                     </ListItemText>
                     </ListItem> */}
                     {categories.map(({ id: childId, icon, href }) => (
-                    <ListItem
-                        button
-                        dense
-                        key={childId}
-                        className={classNames(
-                        classes.item,
-                        classes.itemActionable,
-                        path === href && classes.itemActiveItem,
-                        )}
-                    >
-                        <Link href={href}>
-                            <div className={classNames(classes.link)} >
-                                <ListItemIcon>{icon}</ListItemIcon>
-                                <ListItemText
-                                classes={{
-                                    primary: classes.itemPrimary,
-                                    textDense: classes.textDense,
-                                }}
-                                >
-                                {childId}
-                                </ListItemText>
-                            </div>
-                        </Link>
-                    </ListItem>
+                        <ListItem
+                            button
+                            dense
+                            key={childId}
+                            className={classNames(
+                            classes.item,
+                            classes.itemActionable,
+                            path === href && classes.itemActiveItem,
+                            )}
+                        >
+                            <Link href={href} prefetch>
+                                <div className={classNames(classes.link)} >
+                                    <ListItemIcon>{icon}</ListItemIcon>
+                                    <ListItemText
+                                    classes={{
+                                        primary: classes.itemPrimary,
+                                        textDense: classes.textDense,
+                                    }}
+                                    >
+                                    {childId}
+                                    </ListItemText>
+                                </div>
+                            </Link>
+                        </ListItem>
                     ))}
                     <Divider className={classes.divider} />
                 {/* </React.Fragment> */}

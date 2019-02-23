@@ -132,7 +132,7 @@ let theme = createMuiTheme({
   };
   
   const drawerWidth = 256;
-  console.log("theme.breakpoints: "+ JSON.stringify(theme.breakpoints));
+//   console.log("theme.breakpoints: "+ JSON.stringify(theme.breakpoints));
   
   const styles = {
     root: {
