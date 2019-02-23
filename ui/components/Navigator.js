@@ -22,6 +22,7 @@ import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
 import { updatepagepathandtitle } from '../lib/store';
+import NoSsr from '@material-ui/core/NoSsr';
 
 const categories = [
     { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", title: 'Setup Mesh' },
@@ -136,6 +137,7 @@ class Navigator extends React.Component {
         const path = this.updateTitle();
         console.log("current page:" + path);
         return (
+            <NoSsr>
             <Drawer variant="permanent" {...other}>
             <List disablePadding>
                 <ListItem className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
@@ -199,6 +201,7 @@ class Navigator extends React.Component {
                 ))}
             </List>
             </Drawer>
+            </NoSsr>
         );
     }
 }
