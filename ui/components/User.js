@@ -6,22 +6,32 @@ import { bindActionCreators } from 'redux'
 import { updateUser } from '../lib/store';
 
 import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
+import MenuList from '@material-ui/core/MenuList';
+import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
+import Popper from '@material-ui/core/Popper';
+import Paper from '@material-ui/core/Paper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 class User extends React.Component {
 
   state = {
     user: null,
-    userAnchorEl: null,
+    open: false,
   }
 
-  handleClick = event => {
-    this.setState({ userAnchorEl: event.currentTarget });
+  handleToggle = () => {
+    this.setState(state => ({ open: !state.open }));
   };
 
-  handleClose = () => {
-    this.setState({ userAnchorEl: null });
+  handleClose = event => {
+    if (this.anchorEl.contains(event.target)) {
+      return;
+    }
+    this.setState({ open: false });
+  };
+
+  handleLogout = () => {
     window.location = "/logout";
   };
 
@@ -53,30 +63,43 @@ class User extends React.Component {
       avatar_url = this.state.user.avatar_url;
       user_id = this.state.user.user_id;
     }
-    const { userAnchorEl } = this.state;
+    const { open } = this.state;
     return (
       <div>
-      <Button color={color} className={iconButtonClassName} 
-      aria-owns={userAnchorEl ? 'user-menu' : undefined}
+      <IconButton color={color} className={iconButtonClassName} 
+      buttonRef={node => {
+        this.anchorEl = node;
+      }}
+      aria-owns={open ? 'menu-list-grow' : undefined}
       aria-haspopup="true"
-      onClick={this.handleClick}>
+      onClick={this.handleToggle}>
         <Avatar className={avatarClassName}  src={avatar_url} />
-      </Button>
-      {/* <Button
-      aria-owns={anchorEl ? 'simple-menu' : undefined}
-      aria-haspopup="true"
-      onClick={this.handleClick}
-    >
-      Open Menu
-    </Button> */}
-    <Menu
+      </IconButton>
+      {/* <Menu
         id="user-menu"
         anchorEl={userAnchorEl}
         open={Boolean(userAnchorEl)}
         onClose={this.handleClose}
       >
-        <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-    </Menu>
+        <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+    </Menu> */}
+    <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={this.handleClose}>
+                    <MenuList>
+                      <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
     </div>
     )
   }
