@@ -16,6 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from "react-redux";
+import User from './User';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -95,9 +96,10 @@ class Header extends React.Component {
                 </Tooltip>
               </Grid> */}
               <Grid item>
-                <IconButton color="inherit" className={classes.iconButtonAvatar}>
+                {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
-                </IconButton>
+                </IconButton> */}
+                <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
               </Grid>
             </Grid>
           </Toolbar>

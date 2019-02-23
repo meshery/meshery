@@ -8,27 +8,29 @@ const initialState = fromJS({
     path: '',
     title: '',
   },
-  user: {
-      avatar: '',
-      userName: '',
-  }
+  user: {},
 });
 
 export const actionTypes = {
     UPDATE_PAGE: 'UPDATE_PAGE',
+    UPDATE_USER: 'UPDATE_USER',
 }
 
 // REDUCERS
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_PAGE:
-      console.log("received an action to update page: "+ action.path + " title: "+ action.title);
+      console.log(`received an action to update page: ${action.path} title: ${action.title}`);
       return state.mergeDeep({
           page: {
             title: action.title,
             path: action.path,
           }
-      })
+      });
+    case actionTypes.UPDATE_USER:
+      console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
+      return state.mergeDeep({ user: action.user });
+    
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {
     //     count: state.count + 1
@@ -51,6 +53,11 @@ export const updatepagepathandtitle = ({path, title}) => dispatch => {
     // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type: actionTypes.UPDATE_PAGE, path, title })
 }
+
+export const updateUser = ({user}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_USER, user })
+}
+
 
 // export const startClock = dispatch => {
 //   return setInterval(() => {
