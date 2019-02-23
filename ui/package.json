@@ -16,6 +16,7 @@
   "dependencies": {
     "@material-ui/core": "next",
     "@material-ui/icons": "next",
+    "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
@@ -24,6 +25,7 @@
     "next-redux-wrapper": "^3.0.0-alpha.1",
     "prop-types": "latest",
     "react": "^16.8.2",
+    "react-chartjs-2": "^2.7.4",
     "react-countdown-clock": "^2.5.0",
     "react-dom": "^16.8.2",
     "react-jss": "^8.1.0",

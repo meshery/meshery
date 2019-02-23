@@ -9,13 +9,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
-import Slider from '@material-ui/lab/Slider';
 import Grid from '@material-ui/core/Grid';
 import { NoSsr } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
+import MesheryChart from '../components/MesheryChart';
 
 const styles = theme => ({
   root: {
@@ -184,7 +184,8 @@ class LoadTest extends React.Component {
       onClose={this.handleTimerDialogClose} 
       countDownComplete={this.handleTimerDialogClose} />
 
-        
+    <MesheryChart />    
+    
       </NoSsr>
     );
   }
