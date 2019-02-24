@@ -15,6 +15,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
+import { NoSsr } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -27,6 +28,7 @@ function About(props) {
   const { classes } = props;
 
   return (
+    <NoSsr>
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
         Material-UI
@@ -43,6 +45,7 @@ function About(props) {
         Do nothing button
       </Button>
     </div>
+    </NoSsr>
   );
 }
 
