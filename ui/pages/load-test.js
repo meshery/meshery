@@ -132,6 +132,8 @@ class LoadTest extends React.Component {
             fullWidth
             value={url}
             error={urlError}
+            margin="normal"
+            variant="outlined"
             onChange={this.handleChange('url')}
           />
         </Grid>
@@ -146,6 +148,8 @@ class LoadTest extends React.Component {
             value={c}
             defaultValue={0}
             inputProps={{ min: "0", step: "1" }}
+            margin="normal"
+            variant="outlined"
             onChange={this.handleChange('c')}
           />
         </Grid>
@@ -160,6 +164,8 @@ class LoadTest extends React.Component {
             value={qps}
             defaultValue={0}
             inputProps={{ min: "0", step: "1" }}
+            margin="normal"
+            variant="outlined"
             onChange={this.handleChange('qps')}
           />
         </Grid>
@@ -174,6 +180,8 @@ class LoadTest extends React.Component {
             value={t}
             defaultValue={1}
             inputProps={{ min: "1", step: "1" }}
+            margin="normal"
+            variant="outlined"
             onChange={this.handleChange('t')}
           />
         </Grid>
