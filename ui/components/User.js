@@ -1,11 +1,9 @@
-import fetch from 'isomorphic-unfetch'
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
 import { updateUser } from '../lib/store';
 
-import Button from '@material-ui/core/Button';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,6 +11,7 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
+import dataFetch from '../lib/data-fetch';
 
 class User extends React.Component {
 
@@ -38,18 +37,10 @@ class User extends React.Component {
 
   componentDidMount() {
     console.log("fetching user data");
-    fetch('/api/user', { credentials: 'same-origin' })
-    .then(res => {
-      if (res.ok) {
-        // console.log(`res ok: ${res.ok}`);
-        return res.json();
-      } else {
-      }
-    }).then(user => {
+    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
       this.setState({user})
       this.props.updateUser({user})
-    })
-    .catch(error => {
+    }, error => {
       return {
         error
       };
@@ -57,7 +48,6 @@ class User extends React.Component {
   }
 
   render() {
-    console.log("user render called. . .")
     const {color, iconButtonClassName, avatarClassName, ...other} = this.props;
     let avatar_url, user_id;
     if (this.state.user !== null){
@@ -77,14 +67,6 @@ class User extends React.Component {
       onClick={this.handleToggle}>
         <Avatar className={avatarClassName}  src={avatar_url} />
       </IconButton>
-      {/* <Menu
-        id="user-menu"
-        anchorEl={userAnchorEl}
-        open={Boolean(userAnchorEl)}
-        onClose={this.handleClose}
-      >
-        <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-    </Menu> */}
     <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
             {({ TransitionProps, placement }) => (
               <Grow

@@ -1,29 +1,39 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import { NoSsr } from '@material-ui/core';
-// import dynamic from 'next/dynamic'
-// const ReactCountdownClock = dynamic(() => import('react-countdown-clock'), {
-//   ssr: false
-// })
 import { Line } from 'react-chartjs-2';
+import { fortioResultToJsChartData, makeChart } from '../lib/chartjs-formatter';
 
 class MesheryChart extends React.Component {
 
   render() {
-      const {countDownComplete, ...other} = this.props;
+      let { data } = this.props;
+      if (typeof data === 'undefined' || typeof data.URL === 'undefined'){
+          data = {
+            DurationHistogram: {
+                Count: 0,
+                Data: [
+                    {
+                        Start: new Date(),
+                    }
+                ],
+                Max: 0,
+                Min: 0,
+                Avg: 0,
+                Percentiles: []
+            },
+            StartTime: new Date(),
+            URL: '',
+            Labels: '',
+            RetCodes: {}
+        };
+      }
+      const chartData = makeChart(fortioResultToJsChartData(data));
     return (
       <NoSsr>
-        <Line />
+        <Line data={chartData.data} options={chartData.options} />
       </NoSsr>
     );
   }
 }
-
-// LoadTestTimerDialog.propTypes = {
-//   classes: PropTypes.object.isRequired,
-// };
 
 export default MesheryChart;
