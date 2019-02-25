@@ -9,11 +9,19 @@ const initialState = fromJS({
     title: '',
   },
   user: {},
+  k8sConfig: {
+    inClusterConfig: false,
+    k8sfile: '', 
+    contextName: '', 
+    meshLocationURL: '', 
+    reconfigureCluster: true,
+  },
 });
 
 export const actionTypes = {
     UPDATE_PAGE: 'UPDATE_PAGE',
     UPDATE_USER: 'UPDATE_USER',
+    UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
 }
 
 // REDUCERS
@@ -30,6 +38,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_USER:
       console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
       return state.mergeDeep({ user: action.user });
+    case actionTypes.UPDATE_CLUSTER_CONFIG:
+      console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.k8sConfig }))}`);
+      return state.mergeDeep({ k8sConfig: action.k8sConfig });
     
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {
@@ -56,6 +67,10 @@ export const updatepagepathandtitle = ({path, title}) => dispatch => {
 
 export const updateUser = ({user}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_USER, user })
+}
+
+export const updateK8SConfig = ({k8sConfig}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig })
 }
 
 

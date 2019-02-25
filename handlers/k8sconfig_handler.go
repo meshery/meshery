@@ -90,9 +90,10 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 			if err != nil {
 				logrus.Errorf("error getting k8s file: %v", err)
 				// http.Error(w, "error getting k8s file", http.StatusUnauthorized)
-				session.AddFlash("Unable to get kubernetes config file")
-				session.Save(req, w)
-				http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				// session.AddFlash("Unable to get kubernetes config file")
+				// session.Save(req, w)
+				// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				http.Error(w, "Unable to get kubernetes config file", http.StatusBadRequest)
 				return
 			}
 			defer k8sfile.Close()
@@ -100,9 +101,10 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 			if err != nil {
 				logrus.Errorf("error reading config: %v", err)
 				// http.Error(w, "unable to read config", http.StatusBadRequest)
-				session.AddFlash("Unable to read the kubernetes config file, please try again")
-				session.Save(req, w)
-				http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				// session.AddFlash("Unable to read the kubernetes config file, please try again")
+				// session.Save(req, w)
+				// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				http.Error(w, "Unable to read the kubernetes config file, please try again", http.StatusBadRequest)
 				return
 			}
 
@@ -112,9 +114,10 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 			if err != nil {
 				logrus.Errorf("error parsing k8s config: %v", err)
 				// http.Error(w, "k8s config file not valid", http.StatusBadRequest)
-				session.AddFlash("Given file is not a valid kubernetes config file, please try again")
-				session.Save(req, w)
-				http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				// session.AddFlash("Given file is not a valid kubernetes config file, please try again")
+				// session.Save(req, w)
+				// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+				http.Error(w, "Given file is not a valid kubernetes config file, please try again", http.StatusBadRequest)
 				return
 			}
 			logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", ccfg.CurrentContext, ccfg.Contexts, ccfg.Clusters)
@@ -123,9 +126,10 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 				if !ok || k8sCtx == nil {
 					logrus.Errorf("error specified context not found")
 					// http.Error(w, "context not valid", http.StatusBadRequest)
-					session.AddFlash("Given context name is not valid, please try again with a valid value")
-					session.Save(req, w)
-					http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+					// session.AddFlash("Given context name is not valid, please try again with a valid value")
+					// session.Save(req, w)
+					// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+					http.Error(w, "Given context name is not valid, please try again with a valid value", http.StatusBadRequest)
 					return
 				}
 				// all good, now set the current context to use
@@ -158,9 +162,10 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 		if err != nil {
 			logrus.Errorf("error creating a mesh client: %v", err)
 			// http.Error(w, "unable to create an istio client", http.StatusInternalServerError)
-			session.AddFlash("Unable to connect to the mesh using the given kubernetes config file, please try again")
-			session.Save(req, w)
-			http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+			// session.AddFlash("Unable to connect to the mesh using the given kubernetes config file, please try again")
+			// session.Save(req, w)
+			// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
+			http.Error(w, "Unable to connect to the mesh using the given kubernetes config file, please try again", http.StatusInternalServerError)
 			return
 		}
 		defer mClient.Close()
