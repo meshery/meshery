@@ -4,13 +4,17 @@
 
 A service mesh playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) incorporates the collection and display of metrics from applications running in the playground.
 
-- [Performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
+- [Functionality](#functionality)
+- [Running Meshery](#running)
 - [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
+  - [Design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 - [Contributing](CONTRIBUTING.md/#contributing)
   - [Write an adapter](CONTRIBUTING.md/#adapter)
   - [Build the project](CONTRIBUTING.md/#building)
+  
+In an effort to produce service mesh agnostic tooling, Meshery uses a common performance benchmark specification to capture and share environment information and test configuration. 
 
-## Functionality
+## <a name="functionality">Functionality</a>
 <img align="right" src="./public/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
 
 1. Multi-mesh Performannce Benchmark
@@ -19,7 +23,7 @@ Meshery is intended to be a vendor and project-neutral utility for uniformly ben
 1. Multi-mesh Functionalty Playground
 A service mesh playground to faciliate learning about functionality of different service meshes. Meshery incorporates a visual interface for manipulating traffic routing rules. Sample applications will be included in Meshery. 
 
-## Running Meshery
+## <a name="running">Running Meshery</a>
 
 ### General Prerequisites
 1. Docker engine (e.g. Docker for Desktop).
