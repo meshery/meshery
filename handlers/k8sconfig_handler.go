@@ -9,7 +9,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/layer5io/meshery/meshes"
-	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -59,25 +58,25 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 			return
 		}
 
-		var user *models.User
-		if h.config.ByPassAuth {
-			userName := req.FormValue("user_name")
-			if userName == "" {
-				userName = "Test User"
-			}
-			user = h.setupSession(userName, req, w)
-			if user == nil {
-				return
-			}
-		} else {
-			// session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-			// if err != nil {
-			// 	logrus.Errorf("error getting session: %v", err)
-			// 	http.Error(w, "unable to get session", http.StatusUnauthorized)
-			// 	return
-			// }
-			user, _ = session.Values["user"].(*models.User)
-		}
+		// var user *models.User
+		// if h.config.ByPassAuth {
+		// 	userName := req.FormValue("user_name")
+		// 	if userName == "" {
+		// 		userName = "Test User"
+		// 	}
+		// 	user = h.setupSession(userName, req, w)
+		// 	if user == nil {
+		// 		return
+		// 	}
+		// } else {
+		// 	// session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+		// 	// if err != nil {
+		// 	// 	logrus.Errorf("error getting session: %v", err)
+		// 	// 	http.Error(w, "unable to get session", http.StatusUnauthorized)
+		// 	// 	return
+		// 	// }
+		// 	user, _ = session.Values["user"].(*models.User)
+		// }
 		inClusterConfig := req.FormValue("inClusterConfig")
 		logrus.Debugf("inClusterConfig: %s", inClusterConfig)
 
@@ -198,7 +197,7 @@ func (h *Handler) K8SConfigHandler(ctx context.Context) func(http.ResponseWriter
 		result := map[string]interface{}{
 			"Ops":  respOps.Ops,
 			"Name": meshNameOps.GetName(),
-			"User": user,
+			// "User": user,
 		}
 
 		// err = dashTempl.Execute(w, result)

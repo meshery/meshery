@@ -15,7 +15,7 @@ import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { updateK8SConfig } from '../lib/store';
+import { updateK8SConfig, updateMeshInfo } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 
@@ -143,6 +143,7 @@ class K8sConfigLoader extends React.Component {
       if (typeof result !== 'undefined'){
         this.setState({reconfigureCluster: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
+        this.props.updateMeshInfo({mesh: result});
       }
     }, self.handleError);
   }
@@ -169,6 +170,8 @@ class K8sConfigLoader extends React.Component {
 
   alreadyConfiguredTemplate = () =>{
     const { classes } = this.props;
+    const {showSnackbar, 
+        snackbarVariant, snackbarMessage } = this.state;
       return (
     <NoSsr>
     <React.Fragment>
@@ -184,6 +187,22 @@ class K8sConfigLoader extends React.Component {
             </Button>
         </div>
     </React.Fragment>
+
+    <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={showSnackbar}
+        autoHideDuration={6000}
+        onClose={this.handleSnackbarClose}
+      >
+      <MesherySnackbarWrapper 
+        variant={snackbarVariant}
+        message={snackbarMessage}
+        onClose={this.handleSnackbarClose}
+        />
+    </Snackbar>
     </NoSsr>
   );
       }
@@ -371,7 +390,8 @@ K8sConfigLoader.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
+        updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+        updateMeshInfo: bindActionCreators(updateMeshInfo, dispatch),
     }
 }
 const mapStateToProps = state => {
