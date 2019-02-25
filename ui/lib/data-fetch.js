@@ -3,6 +3,10 @@ import fetch from 'isomorphic-unfetch'
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   fetch(url, options)
     .then(res => {
+      if (res.status === 401){
+        window.location = "/login"; // for local dev thru node server
+        // window.location.reload(); // for use with Go server
+      }
       if (res.ok) {
         return res.json();
       } else {

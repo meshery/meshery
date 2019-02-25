@@ -192,6 +192,7 @@ class LoadTest extends React.Component {
             type="submit"
             variant="contained"
             color="primary"
+            size="large"
             onClick={this.handleSubmit}
             className={classes.button}
           >

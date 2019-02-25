@@ -25,7 +25,7 @@ import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
 
 const categories = [
-    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/", title: 'Setup Mesh' },
+    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/k8s-config", title: 'Setup Mesh' },
     { id: 'Play', icon: <TimerIcon />, href: "/about", title: 'Play with Mesh' },
     { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/load-test", title: 'Load Test and Charts' },
 ]
