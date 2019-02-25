@@ -157,12 +157,13 @@ class K8sConfigLoader extends React.Component {
 
   handleReconfigure = () => {
       this.setState({
-        inClusterConfig: false,
-        k8sfile: '', 
-        k8sfileError: false,
-        contextName: '', 
-        meshLocationURL: '', 
-        meshLocationURLError: false,
+        // inClusterConfig: false,
+        // k8sfile: '', 
+        // k8sfileError: false,
+        // contextName: '', 
+        // meshLocationURL: '', 
+        // meshLocationURLError: false,
+        reconfigureCluster: true,
       })
   }
 
