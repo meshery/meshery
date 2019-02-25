@@ -3,7 +3,7 @@ import fetch from 'isomorphic-unfetch'
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   fetch(url, options)
     .then(res => {
-      if (res.status === 401){
+      if (res.status === 401 || res.redirected){
         window.location = "/login"; // for local dev thru node server
         // window.location.reload(); // for use with Go server
       }
