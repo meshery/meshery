@@ -105,7 +105,6 @@ class K8sConfigLoader extends React.Component {
   };
 
   handleSubmit = () => {
-    debugger;
     const { inClusterConfig, k8sfile, meshLocationURL } = this.state;
     if (!inClusterConfig && k8sfile === '') {
         this.setState({k8sfileError: true});
@@ -143,7 +142,7 @@ class K8sConfigLoader extends React.Component {
     }, result => {
       if (typeof result !== 'undefined'){
         this.setState({reconfigureCluster: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
-        this.props.updateK8SConfig({inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster});
+        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
       }
     }, self.handleError);
   }
@@ -378,14 +377,18 @@ const mapStateToProps = state => {
     // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
     // console.log("state: " + JSON.stringify(state));
     const k8sconfig = state.get("k8sConfig");
-    return { 
+    let newprops = {};
+    if (typeof k8sconfig !== 'undefined'){
+      newprops = { 
         inClusterConfig: k8sconfig.get('inClusterConfig'),
         // k8sfile: '', 
         contextName: k8sconfig.get('contextName'), 
         meshLocationURL: k8sconfig.get('meshLocationURL'), 
 
         reconfigureCluster: k8sconfig.get('reconfigureCluster'),
+      }
     }
+    return newprops;
 }
 
 export default withStyles(styles)(connect(
