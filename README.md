@@ -6,9 +6,9 @@ A service mesh playground to faciliate learning about functionality and performa
 
 - [Performance benchmark design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 - [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
-- [Contributing](#contributing)
-  - [Write an adapter](#adapter)
-  - [Build the project](#building)
+- [Contributing](CONTRIBUTING.md/#contributing)
+  - [Write an adapter](CONTRIBUTING.md/#adapter)
+  - [Build the project](CONTRIBUTING.md/#building)
 
 ## Functionality
 <img align="right" src="./public/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
@@ -89,34 +89,6 @@ A service mesh playground to faciliate learning about functionality of different
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
-
-## <a name="contributing">Contributing</a>
-Please do! Contributions, updates, [discrepancy reports](/../../issues) and [pull requests](/../../pulls) are welcome. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-Not sure where to start? Grab an open issue with the [help-wanted label](../../labels/help%20wanted).
-
-### <a name="adapter">Writing an Adapter</a>
-- Get the proto buf spec file from Meshery repo here:
-- `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
-- Generate client code
-- For a Go client:
-  - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
-  - install grpc: `go get -u google.golang.org/grpc`
-  - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-  - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
-- For other language, please refer to your guides online for your appropriate languages
-- expose a grpc server on a port of your choice
-- https://github.com/layer5io/meshery-istio is a good project you can use as a sample for a Meshery adapter written in Go
-
-### <a name="building">Building Meshery</a>
-Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
-
-A sample Makefile is included to build and package the app as a Docker image.
-1. `Docker` to build the image.
-1. `Go` version 1.11+ installed if you want to make changes to the existing code.
-1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
-1. Build the Meshery Docker image (`docker build -t layer5/meshery .`).
-    1. _pre-built images available: https://hub.docker.com/u/layer5/_
 
 #### License
 
