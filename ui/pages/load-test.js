@@ -11,6 +11,9 @@ import MesheryChart from '../components/MesheryChart';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux';
+import { updateLoadTestData } from '../lib/store';
 
 
 const styles = theme => ({
@@ -34,20 +37,24 @@ const styles = theme => ({
 });
 
 class LoadTest extends React.Component {
-  state = {
-    timerDialogOpen: false,
-    url: '',
-    qps: 0,
-    c: 0,
-    t: 1,
+  constructor(props){
+    super(props);
+    const {url, qps, c, t, result} = props;
 
-    urlError: false,
-    result: {},
+    this.state = {
+      url,
+      qps,
+      c,
+      t,
+      result: JSON.parse(result),
 
-    showSnackbar: false,
-    snackbarVariant: '',
-    snackbarMessage: '',
-  };
+      timerDialogOpen: false,
+      urlError: false,
+      showSnackbar: false,
+      snackbarVariant: '',
+      snackbarMessage: '',
+    };
+  }
 
   handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -99,6 +106,13 @@ class LoadTest extends React.Component {
     }, result => {
       if (typeof result !== 'undefined'){
         this.setState({result, timerDialogOpen: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
+        this.props.updateLoadTestData({loadTest: {
+          url,
+          qps,
+          c,
+          t, 
+          result: JSON.stringify(result),
+        }});
       }
     }, self.handleError);
   }
@@ -237,4 +251,29 @@ LoadTest.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LoadTest);
+const mapDispatchToProps = dispatch => {
+  return {
+    updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch)
+  }
+}
+const mapStateToProps = state => {
+  
+  const loadTest = state.get("loadTest");
+  let newprops = {};
+  if (typeof loadTest !== 'undefined'){
+    newprops = { 
+      url: loadTest.get('url'),
+      qps: loadTest.get('qps'), 
+      c: loadTest.get('c'), 
+      t: loadTest.get('t'),
+      result: loadTest.get('result'),
+    }
+  }
+  return newprops;
+}
+
+
+export default withStyles(styles)(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoadTest));

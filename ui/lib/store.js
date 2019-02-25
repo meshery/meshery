@@ -16,12 +16,20 @@ const initialState = fromJS({
     meshLocationURL: '', 
     reconfigureCluster: true,
   },
+  loadTest: {
+    url: '',
+    qps: 0,
+    c: 0,
+    t: 1,
+    result: '{}', // storing it as a string to overcome immutable js's way of storing data
+  },
 });
 
 export const actionTypes = {
     UPDATE_PAGE: 'UPDATE_PAGE',
     UPDATE_USER: 'UPDATE_USER',
     UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
+    UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
 }
 
 // REDUCERS
@@ -41,6 +49,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_CLUSTER_CONFIG:
       console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.k8sConfig }))}`);
       return state.mergeDeep({ k8sConfig: action.k8sConfig });
+    case actionTypes.UPDATE_LOAD_TEST_DATA:
+      console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
+      return state.mergeDeep({ loadTest: action.loadTest });
     
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {
@@ -71,6 +82,10 @@ export const updateUser = ({user}) => dispatch => {
 
 export const updateK8SConfig = ({k8sConfig}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig })
+}
+
+export const updateLoadTestData = ({loadTest}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_LOAD_TEST_DATA, loadTest })
 }
 
 
