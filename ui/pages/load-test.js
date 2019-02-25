@@ -46,7 +46,7 @@ class LoadTest extends React.Component {
       qps,
       c,
       t,
-      result: JSON.parse(result),
+      result: result.toObject(),
 
       timerDialogOpen: false,
       urlError: false,
@@ -111,7 +111,7 @@ class LoadTest extends React.Component {
           qps,
           c,
           t, 
-          result: JSON.stringify(result),
+          result,
         }});
       }
     }, self.handleError);
