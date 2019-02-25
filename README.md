@@ -12,7 +12,7 @@ A service mesh playground to faciliate learning about functionality and performa
   - [Write an adapter](CONTRIBUTING.md/#adapter)
   - [Build the project](CONTRIBUTING.md/#building)
   
-In an effort to produce service mesh agnostic tooling, Meshery uses a common performance benchmark specification to capture and share environment information and test configuration. 
+In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. 
 
 ## <a name="functionality">Functionality</a>
 <img align="right" src="./public/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
