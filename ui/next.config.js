@@ -1,12 +1,12 @@
 module.exports = {
     exportPathMap: function () {
       return {
-        '/': { page: '/performance' },
-        '/index': { page: '/performance' },
+        '/': { page: '/' },
+        '/index': { page: '/index' },
         '/performance': { page: '/performance' },
         '/configure': { page: '/configure' },
         '/play': { page: '/play' },
-        // '/post': { page: '/post' },
+        // '/about': { page: '/about' },
         '/404': { page: '/_error' },
       }
     }
