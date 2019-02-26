@@ -16,6 +16,7 @@ import HomeIcon from '@material-ui/icons/Home';
 // import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import TimerIcon from '@material-ui/icons/Timer';
+import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 // import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import Link from "next/link";
@@ -25,9 +26,10 @@ import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
 
 const categories = [
-    { id: 'Setup Mesh', icon: <SettingsIcon />, href: "/k8s-config", title: 'Setup Mesh' },
-    { id: 'Play', icon: <TimerIcon />, href: "/about", title: 'Play with Mesh' },
-    { id: 'Load Test', icon: <SettingsInputComponentIcon />, href: "/load-test", title: 'Load Test and Charts' },
+  { id: 'Performance', icon: <SettingsInputComponentIcon />, href: "/performance", title: 'Performance Test' },
+  { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
+  { id: 'Play', icon: <TimerIcon />, href: "/play", title: 'Play with Mesh' },  
+  { id: 'About', icon: <LinkIcon />, href: "https://layer5.io/meshery", title: 'Meshery'},  
 ]
 
 
@@ -140,10 +142,13 @@ class Navigator extends React.Component {
             <NoSsr>
             <Drawer variant="permanent" {...other}>
             <List disablePadding>
-                <ListItem className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
+                <ListItem 
+                  component="a"
+                  href="/"
+                  className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
                 Meshery
                 </ListItem>
-                <ListItem 
+                {/* <ListItem 
                     button 
                     component="a"
                     href="https://layer5.io/meshery"
@@ -158,7 +163,7 @@ class Navigator extends React.Component {
                 >
                     Project Overview
                 </ListItemText>
-                </ListItem>
+                </ListItem> */}
                 {/* {categories.map(({ id, children }) => (
                 <React.Fragment key={id}> */}
                     {/* <ListItem className={classes.categoryHeader}>
@@ -198,7 +203,7 @@ class Navigator extends React.Component {
                     ))}
                     <Divider className={classes.divider} />
                 {/* </React.Fragment> */}
-                ))}
+                {/* ))} */}
             </List>
             </Drawer>
             </NoSsr>
