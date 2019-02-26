@@ -17,6 +17,7 @@ import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
 import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
+import { withRouter } from 'next/router'
 
 const categories = [
   { id: 'Performance', icon: <SettingsInputComponentIcon />, href: "/performance", title: 'Performance Test' },
@@ -90,6 +91,10 @@ class Navigator extends React.Component {
         return path;
     }
 
+    handleTitleClick = (event) => {
+      this.props.router.push('/');
+    }
+
     render() {
         const { classes, updatepagepathandtitle, ...other } = this.props;
         const path = this.updateTitle();
@@ -100,37 +105,10 @@ class Navigator extends React.Component {
             <List disablePadding>
                 <ListItem 
                   component="a"
-                  href="/"
+                  onClick={this.handleTitleClick}
                   className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-                Meshery
+                  Meshery
                 </ListItem>
-                {/* <ListItem 
-                    button 
-                    component="a"
-                    href="https://layer5.io/meshery"
-                    className={classNames(classes.item, classes.itemCategory)}>
-                <ListItemIcon>
-                    <HomeIcon />
-                </ListItemIcon>
-                <ListItemText
-                    classes={{
-                    primary: classes.itemPrimary,
-                    }}
-                >
-                    Project Overview
-                </ListItemText>
-                </ListItem> */}
-                {/* {categories.map(({ id, children }) => (
-                <React.Fragment key={id}> */}
-                    {/* <ListItem className={classes.categoryHeader}>
-                    <ListItemText
-                        classes={{
-                        primary: classes.categoryHeaderPrimary,
-                        }}
-                    >
-                        {id}
-                    </ListItemText>
-                    </ListItem> */}
                     {categories.map(({ id: childId, icon, href }) => (
                         <ListItem
                             button
@@ -180,8 +158,6 @@ class Navigator extends React.Component {
                           </div>
                         </ListItem>
                     <Divider className={classes.divider} />
-                {/* </React.Fragment> */}
-                {/* ))} */}
             </List>
             </Drawer>
             </NoSsr>
@@ -193,8 +169,6 @@ Navigator.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-// const mapStateToProps = state => ({ count: state.get('count') })
-
 const mapDispatchToProps = dispatch => {
   return {
     updatepagepathandtitle: bindActionCreators(updatepagepathandtitle, dispatch)
@@ -204,4 +178,4 @@ const mapDispatchToProps = dispatch => {
 export default withStyles(styles)(connect(
     null,
     mapDispatchToProps
-  )(Navigator));
+  )(withRouter(Navigator)));

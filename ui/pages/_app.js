@@ -3,7 +3,6 @@ import App, { Container } from 'next/app';
 import Head from 'next/head';
 import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import JssProvider from 'react-jss/lib/JssProvider';
 import getPageContext from '../components/PageContext';
 import Navigator from '../components/Navigator';
 import Header from '../components/Header';
@@ -14,6 +13,7 @@ import withRedux from "next-redux-wrapper";
 import { makeStore } from '../lib/store';
 import {Provider} from "react-redux";
 import { fromJS } from 'immutable'
+import { NoSsr, Typography } from '@material-ui/core';
 
 let theme = createMuiTheme({
     typography: {
@@ -132,8 +132,7 @@ let theme = createMuiTheme({
   };
   
   const drawerWidth = 256;
-//   console.log("theme.breakpoints: "+ JSON.stringify(theme.breakpoints));
-  
+
   const styles = {
     root: {
       display: 'flex',
@@ -152,29 +151,20 @@ let theme = createMuiTheme({
     },
     mainContent: {
       flex: 1,
-      padding: '48px 36px 0',
+      padding: '48px 36px 24px',
       background: '#eaeff1',
     },
     paper: {
         maxWidth: '75%',
         margin: 'auto',
         overflow: 'hidden',
+
       },
-    //   searchBar: {
-    //     borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-    //   },
-    //   searchInput: {
-    //     fontSize: theme.typography.fontSize,
-    //   },
-    //   block: {
-    //     display: 'block',
-    //   },
-    //   addUser: {
-    //     marginRight: theme.spacing(1),
-    //   },
-    //   contentWrapper: {
-    //     margin: '40px 16px',
-    //   },
+      footer: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(2),
+        color: '#737373',
+      },
   };
 
 
@@ -197,32 +187,17 @@ class MesheryApp extends App {
         return {pageProps};
     }
 
-  componentDidMount() {
-    // Remove the server-side injected CSS.
-    // const jssStyles = document.querySelector('#jss-server-side');
-    // if (jssStyles && jssStyles.parentNode) {
-    //   jssStyles.parentNode.removeChild(jssStyles);
-    // }
-  }
-
   render() {
     const { Component, store, pageProps, classes } = this.props;
     return (
+      <NoSsr>
       <Container>
             <Provider store={store}>
                 <Head>
                 <title>Meshery</title>
                 </Head>
-                {/* Wrap every page in Jss and Theme providers */}
-                {/* <JssProvider
-                registry={this.pageContext.sheetsRegistry}
-                generateClassName={this.pageContext.generateClassName}
-                > */}
-                {/* MuiThemeProvider makes the theme available down the React
-                    tree thanks to React context. */}
                 <MuiThemeProvider theme={theme}>
                         <div className={classes.root}>
-                            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                             <CssBaseline />
                             <nav className={classes.drawer}>
                                 <Hidden smUp implementation="js">
@@ -240,18 +215,21 @@ class MesheryApp extends App {
                             <div className={classes.appContent}>
                                 <Header onDrawerToggle={this.handleDrawerToggle} />
                                 <main className={classes.mainContent}>
-                            {/* Pass pageContext to the _document though the renderPage enhancer
-                                to render collected styles on server-side. */}
                                     <Paper className={classes.paper}>
                                         <Component pageContext={this.pageContext} {...pageProps} />
                                     </Paper>
                                 </main>
+                              <footer className={classes.footer}>
+                                <Typography variant="body2" align="center" color="textSecondary" component="p">
+                                  footer placeholder
+                                </Typography>
+                              </footer>
                             </div>
                         </div>
                 </MuiThemeProvider>
-                {/* </JssProvider> */}
             </Provider>
       </Container>
+      </NoSsr>
     );
   }
 }
