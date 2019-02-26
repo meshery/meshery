@@ -2,17 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import HelpIcon from '@material-ui/icons/Help';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from "react-redux";
@@ -41,31 +35,19 @@ const styles = theme => ({
   button: {
     borderColor: lightColor,
   },
+  logo: {
+    marginTop: 8,
+    width: 50,
+    height: 50,
+    borderRadius: 'unset',
+  },
 });
 
 class Header extends React.Component {
-  // state = {
-  //   title: '',
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log("shouldComponentUpdate");
-  //   return (this.props.title !== nextProps.title);
-  // }
-
-  // componentDidUpdate(prevProps) {
-  //   console.log("componentDidUpdate");
-  //   // // Typical usage (don't forget to compare props):
-  //   // if (this.props.title !== prevProps.title) {
-  //   //   this.setState({title});
-  //   // }
-  // }
 
   render() {
-    // console.log("header - props: " + JSON.stringify(this.props));
     const { classes, title, onDrawerToggle } = this.props;
 
-    // console.log("header - retrieved title: "+ title);
     return (
       <NoSsr>
       <React.Fragment>
@@ -84,7 +66,11 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid item xs />
+              <Grid container xs justify="center">
+                <Grid item>
+                <Avatar className={classes.logo} src={'/static/img/meshery-logo.png'} />
+                </Grid>
+              </Grid>
               {/* <Grid item>
                 <Typography className={classes.link} component="a" href="#">
                   Go to docs
