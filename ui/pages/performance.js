@@ -160,7 +160,6 @@ class LoadTest extends React.Component {
             type="number"
             fullWidth
             value={c}
-            defaultValue={0}
             inputProps={{ min: "0", step: "1" }}
             margin="normal"
             variant="outlined"
@@ -176,7 +175,6 @@ class LoadTest extends React.Component {
             type="number"
             fullWidth
             value={qps}
-            defaultValue={0}
             inputProps={{ min: "0", step: "1" }}
             margin="normal"
             variant="outlined"
@@ -192,7 +190,6 @@ class LoadTest extends React.Component {
             type="number"
             fullWidth
             value={t}
-            defaultValue={1}
             inputProps={{ min: "1", step: "1" }}
             margin="normal"
             variant="outlined"
