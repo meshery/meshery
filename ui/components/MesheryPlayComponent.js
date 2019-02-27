@@ -12,12 +12,36 @@ import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/addon/lint/lint.css';
+// import 'codemirror/mode/yaml/yaml';
+
+// import dynamic from 'next/dynamic'
+// dynamic(() => import('codemirror/mode/yaml/yaml'), {
+//   ssr: false
+// })
+// import 'codemirror/mode/yaml/yaml';
+// import 'codemirror/addon/lint/lint';
+// import 'codemirror/addon/lint/yaml-lint';
+// import 'js-yaml';
+if (typeof window !== 'undefined') { 
+  require('codemirror/mode/yaml/yaml'); 
+  require('codemirror/addon/lint/lint');
+  require('codemirror/addon/lint/yaml-lint');
+  if (typeof window.jsyaml === 'undefined'){
+    window.jsyaml = require('js-yaml');
+  }
+}
+
 
 class MesheryPlayComponent extends React.Component {
 
   state = {
     user: null,
     open: false,
+    cmEditorVal: '',
   }
 
   handleToggle = () => {
@@ -31,22 +55,6 @@ class MesheryPlayComponent extends React.Component {
     this.setState({ open: false });
   };
 
-  handleLogout = () => {
-    window.location = "/logout";
-  };
-
-  componentDidMount() {
-    console.log("fetching user data");
-    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
-      this.setState({user})
-      this.props.updateUser({user})
-    }, error => {
-      return {
-        error
-      };
-    });
-  }
-
   render() {
     const {color, iconButtonClassName, avatarClassName, ...other} = this.props;
     let avatar_url, user_id;
@@ -54,70 +62,59 @@ class MesheryPlayComponent extends React.Component {
       avatar_url = this.state.user.avatar_url;
       user_id = this.state.user.user_id;
     }
-    const { open } = this.state;
+    const { cmEditorVal } = this.state;
     return (
-      <div>
-        <NoSsr>
-      <IconButton color={color} className={iconButtonClassName} 
-      buttonRef={node => {
-        this.anchorEl = node;
-      }}
-      aria-owns={open ? 'menu-list-grow' : undefined}
-      aria-haspopup="true"
-      onClick={this.handleToggle}>
-        <Avatar className={avatarClassName}  src={avatar_url} />
-      </IconButton>
-    <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <MenuList>
-                      <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-          </NoSsr>
-    </div>
+      <NoSsr>
+      <CodeMirror
+          value={cmEditorVal}
+          options={{
+            mode: 'yaml',
+            theme: 'material',
+            lineNumbers: true,
+            lineWrapping: true,
+            gutters: ["CodeMirror-lint-markers"],
+            lint: true,
+            mode: "text/x-yaml"
+          }}
+          onBeforeChange={(editor, data, value) => {
+            this.setState({cmEditorVal: value});
+          }}
+          onChange={(editor, data, value) => {
+          }}
+        />
+      </NoSsr>
     )
   }
 }
 
-MesheryPlayComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// MesheryPlayComponent.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
+        // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
     }
 }
 const mapStateToProps = state => {
     // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
     // console.log("state: " + JSON.stringify(state));
-    const k8sconfig = state.get("k8sConfig");
+    // const k8sconfig = state.get("k8sConfig");
     let newprops = {};
-    if (typeof k8sconfig !== 'undefined'){
-      newprops = { 
-        inClusterConfig: k8sconfig.get('inClusterConfig'),
-        // k8sfile: '', 
-        contextName: k8sconfig.get('contextName'), 
-        meshLocationURL: k8sconfig.get('meshLocationURL'), 
+    // if (typeof k8sconfig !== 'undefined'){
+    //   newprops = { 
+    //     inClusterConfig: k8sconfig.get('inClusterConfig'),
+    //     // k8sfile: '', 
+    //     contextName: k8sconfig.get('contextName'), 
+    //     meshLocationURL: k8sconfig.get('meshLocationURL'), 
 
-        reconfigureCluster: k8sconfig.get('reconfigureCluster'),
-      }
-    }
+    //     reconfigureCluster: k8sconfig.get('reconfigureCluster'),
+    //   }
+    // }
     return newprops;
 }
 
-export default withStyles(styles)(connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MesheryPlayComponent));
+  )(MesheryPlayComponent);

@@ -18,6 +18,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { updateK8SConfig } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
+import MesheryPlayComponent from '../components/MesheryPlayComponent';
 
 
 const styles = theme => ({
@@ -167,228 +168,43 @@ class Play extends React.Component {
       })
   }
 
-  alreadyConfiguredTemplate = () =>{
+
+  render() {
     const { classes } = this.props;
       return (
     <NoSsr>
     <React.Fragment>
-        <div className={classes.alreadyConfigured}>
-            <Typography variant="h4" gutterBottom>
-            Already configured
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-            example project
-            </Typography>
-            <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-        </div>
+        <MesheryPlayComponent />
     </React.Fragment>
     </NoSsr>
   );
       }
-
-  configureTemplate = () => {
-    const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileError, contextName, meshLocationURL, meshLocationURLError, showSnackbar, 
-        snackbarVariant, snackbarMessage } = this.state;
-    
-      return (
-    <NoSsr>
-    <React.Fragment>
-    <div className={classes.root}>
-    <Grid container spacing={5}>
-      <Grid item xs={12}>
-      <FormControlLabel
-            control={
-                <Switch
-                    checked={inClusterConfig}
-                    onChange={this.handleChange('inClusterConfig')}
-                    //   value="checkedA"
-                    classes={{
-                        switchBase: classes.colorSwitchBase,
-                        checked: classes.colorChecked,
-                        bar: classes.colorBar,
-                    }}
-                />
-            }
-            label="Use in-cluster Kubernetes config"
-        />
-        {/* <TextField
-          required
-          id="url"
-          name="url"
-          label="URL for the load test"
-          type="url"
-          autoFocus
-          fullWidth
-          value={url}
-          error={urlError}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('url')}
-        /> */}
-      </Grid>
-      <Grid item xs={12} sm={6}>
-      <FormGroup>
-        <input
-            hidden
-            className={classes.input}
-            id="k8sfile"
-            multiple
-            type="file"
-            value={k8sfile}
-            onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfig == true}
-        />
-        <label htmlFor="k8sfile">
-            <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button}>
-                Upload Config
-                <CloudUploadIcon className={classes.rightIcon} />
-            </Button>
-            {/* <Typography variant="body1" inline>
-            {k8sfile.replace('C:\\fakepath\\', '')}
-            </Typography> */}
-            <TextField
-                id="k8sfileLabel"
-                name="k8sfileLabel"
-                label=" "
-                // fullWidth
-                value={k8sfile.replace('C:\\fakepath\\', '')}
-                margin="normal"
-                InputProps={{
-                    readOnly: true,
-                  }}
-                // variant="outlined"
-                disabled
-                />
-        </label>
-        </FormGroup>
-      </Grid>
-    {/* <Grid item xs={12} sm={6}>
-      <FormControl className={classes.formControl} disabled={inClusterConfig == true} fullWidth variant="outlined">
-          <InputLabel htmlFor="k8sfile">Name</InputLabel>
-          <input
-            hidden
-            className={classes.input}
-            id="k8sfile"
-            multiple
-            type="file"
-            value={k8sfile}
-            onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfig == true}
-        />
-          <Input id="k8sfile" value={k8sfile} readOnly />
-        </FormControl>
-    </Grid> */}
-      <Grid item xs={12} sm={6}>
-        <TextField
-          id="contextName"
-          name="contextName"
-          label="Context Name"
-          fullWidth
-          value={contextName}
-          margin="normal"
-          variant="outlined"
-          disabled={inClusterConfig == true}
-          onChange={this.handleChange('contextName')}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="meshLocationURL"
-          name="meshLocationURL"
-          label="Mesh Adapter Location"
-          type="url"
-          fullWidth
-          value={meshLocationURL}
-          error={meshLocationURLError}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('meshLocationURL')}
-        />
-      </Grid>
-    </Grid>
-    <React.Fragment>
-      <div className={classes.buttons}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={this.handleSubmit}
-          className={classes.button}
-        >
-         Submit
-        </Button>
-      </div>
-    </React.Fragment>
-    </div>
-  </React.Fragment>
-  
-  {/* <LoadTestTimerDialog open={timerDialogOpen} 
-    t={t}
-    onClose={this.handleTimerDialogClose} 
-    countDownComplete={this.handleTimerDialogClose} />
-
-  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-      Results
-    </Typography>
-  <MesheryChart data={result} />     */}
-  
-  <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={showSnackbar}
-        autoHideDuration={6000}
-        onClose={this.handleSnackbarClose}
-      >
-      <MesherySnackbarWrapper 
-        variant={snackbarVariant}
-        message={snackbarMessage}
-        onClose={this.handleSnackbarClose}
-        />
-    </Snackbar>
-    </NoSsr>
-  );
-    }
-
-  render() {
-    const { reconfigureCluster } = this.state;
-    if (reconfigureCluster) {
-        return this.configureTemplate();
-    }
-    return this.alreadyConfiguredTemplate();
-  }
 }
 
-Play.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// Play.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
+        // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
     }
 }
 const mapStateToProps = state => {
     // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
     // console.log("state: " + JSON.stringify(state));
-    const k8sconfig = state.get("k8sConfig");
+    // const k8sconfig = state.get("k8sConfig");
     let newprops = {};
-    if (typeof k8sconfig !== 'undefined'){
-      newprops = { 
-        inClusterConfig: k8sconfig.get('inClusterConfig'),
-        // k8sfile: '', 
-        contextName: k8sconfig.get('contextName'), 
-        meshLocationURL: k8sconfig.get('meshLocationURL'), 
+    // if (typeof k8sconfig !== 'undefined'){
+    //   newprops = { 
+    //     inClusterConfig: k8sconfig.get('inClusterConfig'),
+    //     // k8sfile: '', 
+    //     contextName: k8sconfig.get('contextName'), 
+    //     meshLocationURL: k8sconfig.get('meshLocationURL'), 
 
-        reconfigureCluster: k8sconfig.get('reconfigureCluster'),
-      }
-    }
+    //     reconfigureCluster: k8sconfig.get('reconfigureCluster'),
+    //   }
+    // }
     return newprops;
 }
 
