@@ -55,8 +55,14 @@ const styles = theme => ({
     marginTop: theme.spacing(3),
   },
   rightIcon: {
-    marginLeft: theme.spacing(1),
+    // marginLeft: theme.spacing(1),
   },
+  fileLabel: {
+    width: '100%',
+  },
+  fileLabelText: {
+    width: '79%',
+  }
 });
 
 class K8sConfigLoader extends React.Component {
@@ -249,7 +255,7 @@ class K8sConfigLoader extends React.Component {
         /> */}
       </Grid>
       <Grid item xs={12} sm={6}>
-      <FormGroup>
+      <FormGroup row>
         <input
             hidden
             className={classes.input}
@@ -260,20 +266,18 @@ class K8sConfigLoader extends React.Component {
             onChange={this.handleChange('k8sfile')}
             disabled={inClusterConfig == true}
         />
-        <label htmlFor="k8sfile">
-            <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button}>
-                Upload Config
-                <CloudUploadIcon className={classes.rightIcon} />
-            </Button>
+        <label htmlFor="k8sfile" id="k8sfileLabel" className={classes.fileLabel}>
             {/* <Typography variant="body1" inline>
             {k8sfile.replace('C:\\fakepath\\', '')}
             </Typography> */}
             <TextField
-                id="k8sfileLabel"
-                name="k8sfileLabel"
-                label=" "
+                id="k8sfileLabelText"
+                name="k8sfileLabelText"
+                className={classes.fileLabelText}
+                label="Upload config"
                 // fullWidth
                 value={k8sfile.replace('C:\\fakepath\\', '')}
+                onClick={e => document.querySelector('#k8sfileLabel').click()}
                 margin="normal"
                 InputProps={{
                     readOnly: true,
@@ -281,6 +285,9 @@ class K8sConfigLoader extends React.Component {
                 // variant="outlined"
                 disabled
                 />
+                <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button}>
+                  <CloudUploadIcon className={classes.rightIcon} />
+              </Button>
         </label>
         </FormGroup>
       </Grid>
