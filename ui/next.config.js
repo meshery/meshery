@@ -1,4 +1,9 @@
-module.exports = {
+const withCSS = require('@zeit/next-css')
+const compose = require('next-compose')
+
+module.exports = compose([
+  [withCSS, {}],
+  {
     exportPathMap: function () {
       return {
         '/': { page: '/' },
@@ -10,4 +15,4 @@ module.exports = {
         '/404': { page: '/_error' },
       }
     }
-  }
+  }]);
