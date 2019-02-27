@@ -15,6 +15,20 @@ import {Provider} from "react-redux";
 import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 
+// codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
+// link clicks, hence attemtpting to add them here
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/addon/lint/lint.css';
+if (typeof window !== 'undefined') { 
+  require('codemirror/mode/yaml/yaml'); 
+  require('codemirror/addon/lint/lint');
+  require('codemirror/addon/lint/yaml-lint');
+  if (typeof window.jsyaml === 'undefined'){
+    window.jsyaml = require('js-yaml');
+  }
+}
+
 let theme = createMuiTheme({
     typography: {
       useNextVariants: true,

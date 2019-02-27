@@ -1,23 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import { NoSsr, IconButton, FormGroup, FormControl, InputLabel, Input } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import LoadTestTimerDialog from '../components/load-test-timer-dialog';
-import MesheryChart from '../components/MesheryChart';
-import Snackbar from '@material-ui/core/Snackbar';
-import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
-import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { updateK8SConfig } from '../lib/store';
 import {connect} from "react-redux";
-import { bindActionCreators } from 'redux';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
 
 
@@ -64,23 +50,23 @@ class Play extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, meshLocationURL, reconfigureCluster} = props;
-    this.state = {
-        showSnackbar: false,
-        snackbarVariant: '',
-        snackbarMessage: '',
+    // const {inClusterConfig, contextName, meshLocationURL, reconfigureCluster} = props;
+    // this.state = {
+    //     showSnackbar: false,
+    //     snackbarVariant: '',
+    //     snackbarMessage: '',
     
         
-        inClusterConfig, // read from store
-        k8sfile: '', // leaving this one out just to play it safe for now
-        contextName, // read from store
-        meshLocationURL, // read from store
+    //     inClusterConfig, // read from store
+    //     k8sfile: '', // leaving this one out just to play it safe for now
+    //     contextName, // read from store
+    //     meshLocationURL, // read from store
     
-        reconfigureCluster, // read from store
+    //     reconfigureCluster, // read from store
     
-        k8sfileError: false,
-        meshLocationURLError: false,
-      };
+    //     k8sfileError: false,
+    //     meshLocationURLError: false,
+    //   };
   }
 
   handleSnackbarClose = (event, reason) => {
