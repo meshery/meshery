@@ -13,27 +13,31 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
-import 'codemirror/addon/lint/lint.css';
-// import 'codemirror/mode/yaml/yaml';
 
-// import dynamic from 'next/dynamic'
-// dynamic(() => import('codemirror/mode/yaml/yaml'), {
-//   ssr: false
-// })
-// import 'codemirror/mode/yaml/yaml';
-// import 'codemirror/addon/lint/lint';
-// import 'codemirror/addon/lint/yaml-lint';
-// import 'js-yaml';
-if (typeof window !== 'undefined') { 
-  require('codemirror/mode/yaml/yaml'); 
-  require('codemirror/addon/lint/lint');
-  require('codemirror/addon/lint/yaml-lint');
-  if (typeof window.jsyaml === 'undefined'){
-    window.jsyaml = require('js-yaml');
-  }
-}
+// sdf
+// // import 'codemirror/mode/yaml/yaml';
+
+// // import dynamic from 'next/dynamic'
+// // dynamic(() => import('codemirror/mode/yaml/yaml'), {
+// //   ssr: false
+// // })
+// // import 'codemirror/mode/yaml/yaml';
+// // import 'codemirror/addon/lint/lint';
+// // import 'codemirror/addon/lint/yaml-lint';
+// // import 'js-yaml';
+
+
+// import 'codemirror/lib/codemirror.css';
+// import 'codemirror/theme/material.css';
+// import 'codemirror/addon/lint/lint.css';
+// if (typeof window !== 'undefined') { 
+//   require('codemirror/mode/yaml/yaml'); 
+//   require('codemirror/addon/lint/lint');
+//   require('codemirror/addon/lint/yaml-lint');
+//   if (typeof window.jsyaml === 'undefined'){
+//     window.jsyaml = require('js-yaml');
+//   }
+// }
 
 
 class MesheryPlayComponent extends React.Component {
