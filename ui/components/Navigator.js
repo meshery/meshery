@@ -20,9 +20,9 @@ import NoSsr from '@material-ui/core/NoSsr';
 import { withRouter } from 'next/router'
 
 const categories = [
-  { id: 'Performance', icon: <SettingsInputComponentIcon />, href: "/performance", title: 'Performance Test' },
+  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
-  { id: 'Play', icon: <TimerIcon />, href: "/play", title: 'Play with Mesh' },
+  { id: 'Play', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
 ]
 
 const styles = theme => ({
