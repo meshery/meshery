@@ -10,11 +10,19 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
           window.location.reload(); // for use with Go server
         }
       }
+      let result;
       if (res.ok) {
-        return res.json();
+        console.log(`res type: ${res.type}`);
+        try {
+          result = res.json();
+        } catch(e){
+          result = res.text();
+        }
+        return result;
       } else {
         res.text().then(errorFn);
       }
+
     }).then(successFn)
     .catch(errorFn);
 }

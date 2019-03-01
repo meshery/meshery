@@ -17,7 +17,7 @@ import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
 import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
-import { withRouter } from 'next/router'
+import { withRouter } from 'next/router';
 
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
