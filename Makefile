@@ -6,10 +6,52 @@ fortio:
 docker:
 	docker build -t layer5/meshery .
 
-docker-run:
-	docker run -d \
-	-e TWITTER_APP_HOST="http://auth.layer5.ga" \
+docker-run-local-saas:
+	(docker rm -f meshery) || true
+	docker run --name meshery -d \
+	--link fortio:fortio \
+	--link meshery-saas:meshery-saas \
+	-e SAAS_BASE_URL="http://meshery-saas:9876" \
 	-e EVENT=istioPlay01 \
-	-e FORTIO_URL="http://localhost:$(fortio_port)/fortio/" \
-	-e PRODUCT_PAGE_URL="http://localhost:8080/" \
-	layer5/meshery
+	-e FORTIO_URL="http://fortio:8080/fortio/" \
+	-e DEBUG=true \
+	-p 9081:8080 \
+	layer5/meshery ./meshery
+
+docker-run-saas:
+	(docker rm -f meshery) || true
+	docker run --name meshery -d \
+	--link fortio:fortio \
+	-e SAAS_BASE_URL="https://meshery.layer5.io" \
+	-e EVENT=istioPlay01 \
+	-e FORTIO_URL="http://fortio:8080/fortio/" \
+	-e DEBUG=true \
+	-p 9081:8080 \
+	layer5/meshery ./meshery
+
+run-local-saas:
+	cd cmd; go clean; go build -a -o meshery; \
+	SAAS_BASE_URL="http://meshery-saas:9876" \
+	EVENT=istioPlay01 \
+	FORTIO_URL="http://localhost:9080/fortio/" \
+	PORT=9081 \
+	DEBUG=true \
+	./meshery; \
+	cd ..
+
+run-saas:
+	cd cmd; go clean; go build -a -o meshery; \
+	SAAS_BASE_URL="https://meshery.layer5.io" \
+	EVENT=istioPlay01 \
+	FORTIO_URL="http://localhost:9080/fortio/" \
+	PORT=9081 \
+	DEBUG=true \
+	./meshery; \
+	cd ..
+
+
+proto:
+	# go get -u google.golang.org/grpc
+	# go get -u github.com/golang/protobuf/protoc-gen-go
+	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
+	protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/
