@@ -8,7 +8,7 @@ import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { updateK8SConfig } from "../lib/store";
-import { bindActionCreators } from "../../../../../Library/Caches/typescript/3.3/node_modules/@types/react-redux/node_modules/redux";
+import { bindActionCreators } from "redux";
 
 const styles = theme => ({
   root: {
