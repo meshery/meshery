@@ -1,36 +1,5 @@
 version: '3'
 services:
-  dynamo:
-    image: instructure/dynamo-local-admin
-    restart: always
-    ports:
-      - "8000:8000"
-  dynamo-prep:
-    image: infrastructureascode/aws-cli
-    environment:
-      - "AWS_ACCESS_KEY_ID=fdsafa"
-      - "AWS_SECRET_ACCESS_KEY=fdsaf"
-      - "AWS_DEFAULT_REGION=eu-west-1"
-    command: sh -c "sleep 5; aws dynamodb create-table --table-name MesheryResults --attribute-definitions AttributeName=meshery_id,AttributeType=S AttributeName=test_start_time,AttributeType=S --key-schema AttributeName=meshery_id,KeyType=HASH AttributeName=test_start_time,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url http://dynamo:8000; aws dynamodb create-table --table-name MesheryUsers --attribute-definitions AttributeName=user_id,AttributeType=S AttributeName=provider,AttributeType=S --key-schema AttributeName=user_id,KeyType=HASH AttributeName=provider,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url http://dynamo:8000; aws dynamodb create-table --table-name MesherySessions --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --endpoint-url http://dynamo:8000; aws dynamodb update-time-to-live --table-name MesherySessions --time-to-live-specification 'Enabled=true, AttributeName=ttl' --endpoint-url http://dynamo:8000; aws dynamodb list-tables --endpoint-url http://dynamo:8000"
-    depends_on:
-      - dynamo
-  meshery-saas:
-    image: layer5/meshery-saas
-    environment:
-      - "HOST=meshery-saas"
-      - "TWITTERKEY=$TWITTERKEY"
-      - "TWITTERSECRET=$TWITTERSECRET"
-      - "GITHUBKEY=$GITHUBKEY"
-      - "GITHUBSECRET=$GITHUBSECRET"
-      - "AWS_ENDPOINT=http://dynamo:8000"
-      - "AWS_REGION=eu-west-1"
-      - "AWS_ACCESS_KEY_ID=blah"
-      - "AWS_SECRET_ACCESS_KEY=blah"
-    restart: always
-    ports:
-     - "9876:9876"
-    depends_on:
-      - dynamo
   fortio:
     image: fortio/fortio
     command: server
@@ -38,13 +7,12 @@ services:
   meshery:
     image: layer5/meshery
     environment:
-      - "SAAS_BASE_URL=http://meshery-saas:9876"
+      - "SAAS_BASE_URL=https://meshery.layer5.io"
       - "EVENT=mesheryLocal"
       - "FORTIO_URL=http://fortio:8080/fortio/"
     ports:
       - "8080:8080"
     depends_on:
-      - meshery-saas
       - fortio
   meshery-istio:
     image: layer5/meshery-istio
