@@ -35,6 +35,12 @@ message ApplyRuleRequest {
 
 message ApplyRuleResponse {
     string error = 1;
+    repeated ErrorDetails error_details = 2;
+}
+
+message ErrorDetails {
+    string summary = 1;
+    string message = 2;
 }
 
 message SupportedOperationsRequest {}
