@@ -43,48 +43,12 @@ To run Meshery:
   - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
   - please review the yaml and make necessary changes as needed for your cluster
 - On Docker
-  - We have a docker-compose.yaml file which can be used to spin up the services quickly
-  - There a few requirements for running all the Meshery services on your local
-    - SSO, which uses Twitter and/or Github
-      - Instructions to setup Twitter for SSO can be found <a href="#twitter">here</a>
-      - Instructions to setup Github for SSO can be found <a href="#github">here</a>
-    - Add an entry for `meshery-saas` in your `/etc/hosts` file to point to 127.0.0.1 and save the file
-    - After setting up SSO, store the respective key and secret as variables in the shell as shown below.
-      - for Twitter:
-      ```
-      TWITTERKEY="PASTE TWITTER KEY"
-      ```
-      ```
-      TWITTERSECRET="PASTE TWITTER SECRET"
-      ```
-      - for Github:
-      ```
-      GITHUBKEY="PASTE GITHUB KEY"
-      ```
-      ```
-      GITHUBSECRET="PASTE GITHUB SECRET"
-      ```
-      __Note__: you can use Twitter and/or Github
-
-      Now that the environment variables are setup, we can start the containers by running:
+  - We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
       ```
       docker-compose up
       ```
       Please add a `-d` flag to the above command if you want to run it in the background.
-  - Now you should be able to access Meshery in your browser at `http://localhost:8080/play`
-
-##### <a name="twitter">Using Twitter for SSO</a>
-- Create an app in the Twitter developer console: [https://developer.twitter.com/en/apps](https://developer.twitter.com/en/apps) after logging in.
-- Fill appropriate details in the presented form
-  - Remember to enable to `Sign in with Twitter`
-  - For the callback url, please use this value: `http://meshery-saas:9876/auth/twitter/callback`
-- After creating the app you will be able to grab the API key and secret from the `Keys and tokens` section of the app.
-
-##### <a name="github">Using Github for SSO</a>
-- Create an OAuth app in the Github developer settings: [https://github.com/settings/developers](https://github.com/settings/developers) after logging in.
-- Fill appropriate details in the presented form
-  - For the callback url, please use this value: `http://meshery-saas:9876/auth/github/callback`
-- After creating the app you will be able to grab the Client ID and Secret from the app page.
+  - Now you should be able to access Meshery in your browser at `http://localhost:9080/`
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
