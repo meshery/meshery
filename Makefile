@@ -55,3 +55,12 @@ proto:
 	# go get -u github.com/golang/protobuf/protoc-gen-go
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/
+
+setup-ui-libs:
+	cd ui; npm i; cd ..
+
+run-ui-dev:
+	cd ui; npm run dev; cd ..
+
+build-ui:
+	cd ui; npm run build && npm run export; cd ..
