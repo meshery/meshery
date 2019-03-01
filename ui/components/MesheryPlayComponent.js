@@ -208,7 +208,7 @@ class MesheryPlayComponent extends React.Component {
           <div className={classes.root}>
           <Grid container spacing={5}>
           <Grid item xs={12} className={classes.alignRight}>
-            <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
+            <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
             Reconfigure
             </Button>
           </Grid>
