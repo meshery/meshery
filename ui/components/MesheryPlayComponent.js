@@ -7,6 +7,8 @@ import { blue } from '@material-ui/core/colors';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
+import { updateK8SConfig } from "../lib/store";
+import { bindActionCreators } from "../../../../../Library/Caches/typescript/3.3/node_modules/@types/react-redux/node_modules/redux";
 
 const styles = theme => ({
   root: {
@@ -175,6 +177,13 @@ class MesheryPlayComponent extends React.Component {
     this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Operation failed: ${error}`});
   }
 
+  handleReconfigure = () => {
+    const { k8sConfig } = this.props;
+    k8sConfig.reconfigureCluster = true;
+    this.props.updateK8SConfig({k8sConfig});
+    this.props.router.push('/configure');
+  }
+
   render() {
     const {classes, color, iconButtonClassName, avatarClassName, ...other} = this.props;
     const {
@@ -198,6 +207,11 @@ class MesheryPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
+          <Grid item xs={12} className={classes.alignRight}>
+            <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
+            Reconfigure
+            </Button>
+          </Grid>
           <Grid item xs={12}>
             <TextField
               required
@@ -326,19 +340,22 @@ MesheryPlayComponent.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch)
-    }
+  return {
+      updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+  }
 }
+
 const mapStateToProps = state => {
     // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
     // console.log("state: " + JSON.stringify(state));
     const mesh = state.get("mesh");
+    // const k8sConfig = state.get("k8sConfig").toObject();
     let newprops = {};
     if (typeof mesh !== 'undefined'){
       newprops = { 
         Name: mesh.get("Name"),
         Ops: mesh.get("Ops").toObject(),
+        k8sConfig: state.get("k8sConfig").toObject(),
       }
     }
     return newprops;

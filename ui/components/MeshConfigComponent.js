@@ -4,10 +4,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, IconButton, FormGroup, FormControl, InputLabel, Input } from '@material-ui/core';
+import { NoSsr,  FormGroup } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import LoadTestTimerDialog from '../components/load-test-timer-dialog';
-import MesheryChart from '../components/MesheryChart';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
@@ -18,6 +16,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { updateK8SConfig, updateMeshInfo } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'next/router';
 
 
 const styles = theme => ({
@@ -163,6 +162,7 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
+    const { inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster } = this.state;
       this.setState({
         // inClusterConfig: false,
         // k8sfile: '', 
@@ -172,6 +172,7 @@ class MeshConfigComponent extends React.Component {
         // meshLocationURLError: false,
         reconfigureCluster: true,
       })
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: true}});
   }
 
   alreadyConfiguredTemplate = () =>{
@@ -183,13 +184,13 @@ class MeshConfigComponent extends React.Component {
     <React.Fragment>
         <div className={classes.alreadyConfigured}>
             <Typography variant="h4" gutterBottom>
-            Already configured
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-            example project
+            Mesh is already configured
             </Typography>
             <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
             Reconfigure
+            </Button>
+            <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
+            Continue to Play
             </Button>
         </div>
     </React.Fragment>
@@ -408,4 +409,4 @@ const mapStateToProps = state => {
 export default withStyles(styles)(connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MeshConfigComponent));
+  )(withRouter(MeshConfigComponent)));
