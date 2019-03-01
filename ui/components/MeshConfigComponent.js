@@ -197,7 +197,7 @@ class MeshConfigComponent extends React.Component {
     <Grid container spacing={5} alignItems="flex-end">
       <Grid item xs={12} className={classes.alignCenter}>
           <Typography variant="h5" gutterBottom>
-            Mesh is already configured
+            Mesh is configured
             </Typography>
       </Grid>
       <Grid item xs={12} sm={6} className={classes.alignRight}>
