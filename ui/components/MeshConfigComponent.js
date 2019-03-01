@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
@@ -49,18 +49,29 @@ const styles = theme => ({
   },
   colorBar: {},
   colorChecked: {},
-  uploadButton: {
-    margin: theme.spacing(1),
-    marginTop: theme.spacing(3),
-  },
-  rightIcon: {
-    // marginLeft: theme.spacing(1),
-  },
+  // uploadButton: {
+  //   // margin: theme.spacing(1),
+  //   // marginTop: theme.spacing(3),
+  //   float: 'right',
+  // },
+  // rightIcon: {
+  //   // marginLeft: theme.spacing(1),
+  // },
   fileLabel: {
     width: '100%',
+    // paddingBottom: theme.spacing(1),
   },
   fileLabelText: {
     // width: '79%',
+  },
+  inClusterLabel: {
+    paddingRight: theme.spacing(2),
+  },
+  alignCenter: {
+    textAlign: 'center',
+  },
+  alignRight: {
+    textAlign: 'right',
   }
 });
 
@@ -182,6 +193,26 @@ class MeshConfigComponent extends React.Component {
       return (
     <NoSsr>
     <React.Fragment>
+    <div className={classes.root}>
+    <Grid container spacing={5} alignItems="flex-end">
+      <Grid item xs={12} className={classes.alignCenter}>
+          <Typography variant="h5" gutterBottom>
+            Mesh is already configured
+            </Typography>
+      </Grid>
+      <Grid item xs={12} sm={6} className={classes.alignRight}>
+          <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
+            Reconfigure
+            </Button>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.props.router.push('/play')}>
+            Continue to Play
+            </Button>
+      </Grid>
+      </Grid>
+      </div>
+{/*         
         <div className={classes.alreadyConfigured}>
             <Typography variant="h4" gutterBottom>
             Mesh is already configured
@@ -192,7 +223,7 @@ class MeshConfigComponent extends React.Component {
             <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
             Continue to Play
             </Button>
-        </div>
+        </div> */}
     </React.Fragment>
 
     <Snackbar
@@ -224,21 +255,43 @@ class MeshConfigComponent extends React.Component {
     <React.Fragment>
     <div className={classes.root}>
     <Grid container spacing={5} alignItems="flex-end">
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
-            control={
-                <Switch
-                    checked={inClusterConfig}
-                    onChange={this.handleChange('inClusterConfig')}
-                    //   value="checkedA"
-                    // classes={{
-                    //     switchBase: classes.colorSwitchBase,
-                    //     checked: classes.colorChecked,
-                    //     bar: classes.colorBar,
-                    // }}
-                />
-            }
+            key="inCluster"
+            control={<FormControlLabel
+                      key="notInCluster"
+                      control={
+                          <Switch
+                              checked={inClusterConfig}
+                              onChange={this.handleChange('inClusterConfig')}
+                              color="default"
+                              //   value="checkedA"
+                              // classes={{
+                              //     switchBase: classes.colorSwitchBase,
+                              //     checked: classes.colorChecked,
+                              //     bar: classes.colorBar,
+                              // }}
+                          />
+                      }
+                      label="Use attached config"          
+                      labelPlacement="start"
+                      className={classes.inClusterLabel}
+                  />}
+            labelPlacement="end"
             label="Use in-cluster Kubernetes config"
+      />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          id="contextName"
+          name="contextName"
+          label="Context Name"
+          fullWidth
+          value={contextName}
+          margin="normal"
+          variant="outlined"
+          disabled={inClusterConfig == true}
+          onChange={this.handleChange('contextName')}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -262,19 +315,28 @@ class MeshConfigComponent extends React.Component {
                 name="k8sfileLabelText"
                 className={classes.fileLabelText}
                 label="Upload config"
-                // fullWidth
+                variant="outlined"
+                fullWidth
                 value={k8sfile.replace('C:\\fakepath\\', '')}
                 onClick={e => document.querySelector('#k8sfileLabel').click()}
                 margin="normal"
+                // InputProps={{
+                //     readOnly: true,
+                //   }}
                 InputProps={{
                     readOnly: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CloudUploadIcon />
+                      </InputAdornment>
+                    ),
                   }}
                 // variant="outlined"
                 disabled
                 />
-                <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button}>
+                {/* <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button, classes.uploadButton}>
                   <CloudUploadIcon className={classes.rightIcon} />
-              </Button>
+              </Button> */}
         </label>
         </FormGroup>
       </Grid>
@@ -294,20 +356,7 @@ class MeshConfigComponent extends React.Component {
           <Input id="k8sfile" value={k8sfile} readOnly />
         </FormControl>
     </Grid> */}
-      <Grid item xs={12} sm={6}>
-        <TextField
-          id="contextName"
-          name="contextName"
-          label="Context Name"
-          fullWidth
-          value={contextName}
-          margin="normal"
-          variant="outlined"
-          disabled={inClusterConfig == true}
-          onChange={this.handleChange('contextName')}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12}>
         <TextField
           required
           id="meshLocationURL"
