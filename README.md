@@ -53,7 +53,7 @@ A service mesh playground to faciliate learning about functionality of different
     docker-compose up
     ```
     Please add a `-d` flag to the above command if you want to run it in the background.
-- Now you should be able to access Meshery in your browser at `http://localhost:9080/`
+- Now you should be able to access Meshery in your browser at `http://localhost:9081/`
 
 ## Linkerd Playground App
 _coming soon for Linkerd_

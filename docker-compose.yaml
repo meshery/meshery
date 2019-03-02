@@ -11,7 +11,7 @@ services:
       - "EVENT=mesheryLocal"
       - "FORTIO_URL=http://fortio:8080/fortio/"
     ports:
-      - "9080:8080"
+      - "9081:8080"
     depends_on:
       - fortio
   meshery-istio:
