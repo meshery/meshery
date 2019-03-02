@@ -28,7 +28,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hr
-		http.ServeFile(w, r, "../public/static/img/meshery-logo.png")
+		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo.png")
 	}))
 	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
 	// mux.Handle("/static/", h.AuthMiddleware(http.StripPrefix("/static/", http.FileServer(http.Dir("../ui/out/_next/static/")))))

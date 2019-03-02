@@ -1,0 +1,3 @@
+#!/bin/bash
+docker push layer5/meshery:$SOURCE_COMMIT
+docker push layer5/meshery:latest
