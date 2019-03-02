@@ -4,7 +4,7 @@ fortio:
 	docker run --name fortio -p $(fortio_port):8080 -p 8079:8079 -d fortio/fortio server
 
 docker:
-	docker build -t layer5/meshery .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
 
 docker-run-local-saas:
 	(docker rm -f meshery) || true
