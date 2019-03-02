@@ -20,6 +20,7 @@ import { NoSsr, Typography } from '@material-ui/core';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
+import { blueGrey, grey } from '@material-ui/core/colors';
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
   require('codemirror/addon/lint/lint');
@@ -39,10 +40,14 @@ let theme = createMuiTheme({
       },
     },
     palette: {
-      primary: {
-        light: '#63ccff',
-        main: '#009be5',
-        dark: '#006db3',
+      // primary: {
+      //   light: '#cfd8dc',
+      //   main: '#607d8b',
+      //   dark: '#455a64',
+      // },
+      primary: blueGrey,
+      secondary: {
+        main: '#EE5351',
       },
     },
     shape: {
@@ -55,7 +60,7 @@ let theme = createMuiTheme({
     overrides: {
       MuiDrawer: {
         paper: {
-          backgroundColor: '#18202c',
+          backgroundColor: '#263238',
         },
       },
       MuiButton: {
