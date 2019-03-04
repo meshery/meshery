@@ -17,7 +17,7 @@ class LoadTestTimerDialog extends React.Component {
             {...other}>
             <DialogContent>
                     <ReactCountdownClock seconds={t * 60}
-                        color="#029BE5"
+                        color="#667C89"
                         alpha={0.9}
                         size={300}
                         onComplete={countDownComplete} />
