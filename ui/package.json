@@ -26,6 +26,7 @@
     "jss": "latest",
     "next": "^8.0.1",
     "next-compose": "0.0.2",
+    "next-page-transitions": "^1.0.0-alpha.6",
     "next-redux-wrapper": "^3.0.0-alpha.1",
     "prop-types": "latest",
     "react": "^16.8.2",
