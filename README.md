@@ -42,18 +42,18 @@ A service mesh playground to faciliate learning about functionality of different
     # additional step for running on Istio
     kubectl -n meshery apply -f deployment_yamls/istio.yaml
     ```
-    If you want to use a different namespace, please change the name of the namespace in the `ClusterRoleBinding` section appropriately.
+    If you want to use a different namespace, change the name of the namespace in the `ClusterRoleBinding` section appropriately.
   - Meshery can be deployed either on/off the mesh.
   - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
-  - please review the yaml and make necessary changes as needed for your cluster
+  - Review the yaml and make necessary changes as needed for your cluster.
 
 ### Running Meshery on Docker
 - We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
     ```
     docker-compose up
     ```
-    Please add a `-d` flag to the above command if you want to run it in the background.
-- Now you should be able to access Meshery in your browser at `http://localhost:9081/`
+    Add a `-d` flag to the above command if you want to run it in the background.
+- Now you should be able to access Meshery in your browser at [http://localhost:9081](http://localhost:9081).
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
