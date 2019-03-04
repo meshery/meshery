@@ -22,9 +22,6 @@ import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
 import { blueGrey, grey } from '@material-ui/core/colors';
 
-import { PageTransition } from 'next-page-transitions'
-
-
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
   require('codemirror/addon/lint/lint');
@@ -237,31 +234,11 @@ class MesheryApp extends App {
                             </nav>
                             <div className={classes.appContent}>
                                 <Header onDrawerToggle={this.handleDrawerToggle} />
-                                <PageTransition
-                                  timeout={500}
-                                  classNames="page-transition">
-                                  <main className={classes.mainContent}>
+                                <main className={classes.mainContent}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
-                                  </main>
-                                </PageTransition>
-                                <style jsx global>{`
-                                    .page-transition-enter {
-                                      opacity: 0;
-                                    }
-                                    .page-transition-enter-active {
-                                      opacity: 1;
-                                      transition: opacity 500ms;
-                                    }
-                                    .page-transition-exit {
-                                      opacity: 1;
-                                    }
-                                    .page-transition-exit-active {
-                                      opacity: 0;
-                                      transition: opacity 500ms;
-                                    }
-                                  `}</style>
+                                </main>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
                                   footer placeholder
