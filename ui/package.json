@@ -1,0 +1,47 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node ui_dev_server.js",
+    "next": "next",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "next",
+    "@material-ui/icons": "next",
+    "@zeit/next-css": "^1.0.1",
+    "chart.js": "^2.7.3",
+    "classnames": "^2.2.6",
+    "codemirror": "^5.44.0",
+    "immutable": "^4.0.0-rc.12",
+    "isomorphic-unfetch": "^3.0.0",
+    "js-yaml": "^3.12.2",
+    "jss": "latest",
+    "next": "^8.0.1",
+    "next-compose": "0.0.2",
+    "next-page-transitions": "^1.0.0-alpha.6",
+    "next-redux-wrapper": "^3.0.0-alpha.1",
+    "prop-types": "latest",
+    "react": "^16.8.2",
+    "react-chartjs-2": "^2.7.4",
+    "react-codemirror2": "^5.1.0",
+    "react-countdown-clock": "^2.5.0",
+    "react-dom": "^16.8.2",
+    "react-jss": "^8.1.0",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
+    "styled-jsx": "latest"
+  },
+  "devDependencies": {
+    "http-proxy": "^1.17.0"
+  }
+}

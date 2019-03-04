@@ -82,8 +82,12 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
-
+	err = h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
+	if err != nil {
+		// logrus.Errorf("Error: unable to parse response from fortio: %v", err)
+		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		return
+	}
 	w.Write(bd)
 }
 

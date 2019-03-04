@@ -16,17 +16,32 @@ type Router struct {
 // New returns a new ServeMux with app routes.
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	mux := http.NewServeMux()
-	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../public/static/img/meshery-logo.png")
-	}))
-	mux.Handle("/play/static/", http.StripPrefix("/play/static/", http.FileServer(http.Dir("../public/static/"))))
-	mux.Handle("/play/dashboard", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler(ctx))))
-	mux.HandleFunc("/play/", h.IndexHandler)
 
-	mux.Handle("/play/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
-	mux.Handle("/play/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler(ctx))))
-	mux.HandleFunc("/play/logout", h.LogoutHandler)
-	mux.HandleFunc("/play/login", h.LoginHandler)
+	mux.Handle("/api/user", h.AuthMiddleware(http.HandlerFunc(h.UserHandler(ctx))))
+	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler(ctx))))
+	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
+	mux.Handle("/api/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler(ctx))))
+
+	mux.HandleFunc("/logout", h.LogoutHandler)
+	mux.HandleFunc("/login", h.LoginHandler)
+
+	// TODO: have to change this too
+	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hr
+		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo.png")
+	}))
+	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
+	// mux.Handle("/static/", h.AuthMiddleware(http.StripPrefix("/static/", http.FileServer(http.Dir("../ui/out/_next/static/")))))
+	// mux.Handle("/", h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	logrus.Debugf("requesting index.html file")
+	// 	_, err := os.Stat("../ui/out/index.html")
+	// 	if err != nil {
+	// 		if os.IsNotExist(err) {
+	// 			logrus.Debugf("index file not exists")
+	// 		}
+	// 	}
+	// 	http.ServeFile(w, r, "../ui/out/index.html")
+	// })))
 
 	return &Router{
 		s:    mux,
