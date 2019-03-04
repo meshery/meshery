@@ -76,19 +76,37 @@ const styles = theme => ({
 
 class Navigator extends React.Component {
 
-    updateTitle(){
-        let path = (typeof window !== 'undefined' ? window.location.pathname : '');
-        categories.map(({title, href}) => {
-            if (path.lastIndexOf('/') > 0) {
-                path = path.substring(0, path.lastIndexOf('/'));
-            }
-            if (href === path) {
-                console.log("updating path: "+path+" and title: "+title);
-                this.props.updatepagepathandtitle({path, title});
-                return;
-            }
-        });
-        return path;
+  state = {
+        path: '',
+    }
+
+    // static updateTitle = (props) => {
+    //     let path = (typeof window !== 'undefined' ? window.location.pathname : '');
+    //     categories.map(({title, href}) => {
+    //         if (path.lastIndexOf('/') > 0) {
+    //             path = path.substring(0, path.lastIndexOf('/'));
+    //         }
+    //         if (href === path) {
+    //             console.log("updating path: "+path+" and title: "+title);
+    //             props.updatepagepathandtitle({path, title});
+    //             return;
+    //         }
+    //     });
+    //     return path;
+    // }
+    static getDerivedStateFromProps(props, state) {
+      let path = (typeof window !== 'undefined' ? window.location.pathname : '');
+      categories.map(({title, href}) => {
+          if (path.lastIndexOf('/') > 0) {
+              path = path.substring(0, path.lastIndexOf('/'));
+          }
+          if (href === path) {
+              console.log("updating path: "+path+" and title: "+title);
+              props.updatepagepathandtitle({path, title});
+              return;
+          }
+      });
+      return {path};
     }
 
     handleTitleClick = (event) => {
@@ -97,7 +115,8 @@ class Navigator extends React.Component {
 
     render() {
         const { classes, updatepagepathandtitle, ...other } = this.props;
-        const path = this.updateTitle();
+        const { path } = this.state;
+        // const path = this.updateTitle();
         console.log("current page:" + path);
         return (
             <NoSsr>
