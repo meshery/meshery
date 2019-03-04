@@ -25,44 +25,10 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /play
+        prefix: /
     route:
     - destination:
         host: meshery
         port:
           number: 8080
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: meshery-saas-gateway
-spec:
-  selector:
-    istio: ingressgateway # use istio default controller
-  servers:
-  - port:
-      number: 9876
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: meshery-saas
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - meshery-saas-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: meshery-saas
-        port:
-          number: 9876
 ---

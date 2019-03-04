@@ -87,5 +87,6 @@ func (h *Handler) MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter
 			http.Error(w, "There was an error applying the change", http.StatusInternalServerError)
 			return
 		}
+		w.Write([]byte("{}"))
 	}
 }

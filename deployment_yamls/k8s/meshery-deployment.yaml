@@ -24,7 +24,7 @@ spec:
         - name: FORTIO_URL
           value: http://fortio:8080/fortio/
         - name: SAAS_BASE_URL
-          value: http://meshery-saas:9876
+          value: https://meshery.layer5.io
         image: layer5/meshery
         name: meshery
         ports:
