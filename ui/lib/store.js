@@ -26,7 +26,11 @@ const initialState = fromJS({
   mesh: {
     Name: '',
     Ops: {},
-  }
+  },
+  results: {
+    startKey: '',
+    results: [],
+  },
 });
 
 export const actionTypes = {
@@ -35,6 +39,7 @@ export const actionTypes = {
     UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
     UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
     UPDATE_MESH_INFO: 'UPDATE_MESH_INFO',
+    UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
 }
 
 // REDUCERS
@@ -60,6 +65,12 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_MESH_INFO:
       console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       return state.mergeDeep({ mesh: action.mesh });
+    case actionTypes.UPDATE_MESH_RESULTS:
+      console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
+      const results = state.get('results').get('results').toArray().concat(action.results);
+      return state.mergeDeep({ results: { startKey: action.startKey, results }}); 
+      
+      
     
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {
@@ -98,6 +109,9 @@ export const updateLoadTestData = ({loadTest}) => dispatch => {
 
 export const updateMeshInfo = ({mesh}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_MESH_INFO, mesh });
+}
+export const updateMeshResults = ({startKey, results}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
 }
 
 
