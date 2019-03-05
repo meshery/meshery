@@ -20,6 +20,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/user", h.AuthMiddleware(http.HandlerFunc(h.UserHandler(ctx))))
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler(ctx))))
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
+	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))
 	mux.Handle("/api/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler(ctx))))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)

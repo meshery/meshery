@@ -23,6 +23,7 @@ const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
   { id: 'Play', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
+  { id: 'Results', icon: <SettingsInputComponentIcon />, href: "/results", title: 'View & Compare Results' },
 ]
 
 const styles = theme => ({
