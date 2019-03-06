@@ -67,7 +67,9 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ mesh: action.mesh });
     case actionTypes.UPDATE_MESH_RESULTS:
       console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
-      const results = state.get('results').get('results').toArray().concat(action.results);
+      // const results = state.get('results').get('results').toArray().concat(action.results);
+      // do a more intelligent merge based on meshery_id
+      const results = resultsMerge(state.get('results').get('results').toArray(), action.results);
       return state.mergeDeep({ results: { startKey: action.startKey, results }}); 
       
       
@@ -140,4 +142,18 @@ export const makeStore = (initialState, options) => {
     initialState,
     composeWithDevTools(applyMiddleware(thunkMiddleware))
   )
+}
+
+export const resultsMerge = (arr1, arr2) => {
+  const keys = {}
+  const arr = [];
+  const compareAndAdd = (a) => {
+    if (typeof keys[a.meshery_id] === 'undefined'){
+      keys[a.meshery_id] = true;
+      arr = arr.push(a);
+    }
+  }
+  arr1.map(compareAndAdd);
+  arr2.map(compareAndAdd);
+  return arr;
 }
