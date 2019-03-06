@@ -57,7 +57,8 @@ class MesheryResults extends Component {
               let {count} = this.state;
               if (typeof result.last_key !== 'undefined'){
                 pageMap[page+1] = result.last_key;
-                count += 10;
+                // count += 10;
+                count = (page + 1) * 10 + 10;
               }
               this.setState({
                 results: res,
