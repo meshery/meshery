@@ -149,7 +149,7 @@ class MesheryResults extends Component {
             );
           },
           customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-            <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} />
+            <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={results} />
           ),
           expandableRows: true,
           renderExpandableRow: (rowData, rowMeta) => {

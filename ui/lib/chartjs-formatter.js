@@ -67,9 +67,9 @@ export function makeTitle (res) {
       }
     }
     percStr += ', max ' + myRound(1000.0 * res.DurationHistogram.Max, 3) + ' ms'
-    var statusOk = res.RetCodes[200]
+    var statusOk = typeof res.RetCodes !== 'undefined'?res.RetCodes[200]:0;
     if (!statusOk) { // grpc results
-      statusOk = res.RetCodes["SERVING"]
+      statusOk = typeof res.RetCodes !== 'undefined'?res.RetCodes["SERVING"]:0;
     }
     var total = res.DurationHistogram.Count
     var errStr = 'no error'
@@ -231,3 +231,280 @@ export function makeChart (data) {
     //   updateChart(chart)
     // }
   }
+
+  export function makeOverlayChartTitle (titleA, titleB) {
+    // Each string in the array is a separate line
+    return [
+      'A: ' + titleA[0], titleA[1], // Skip 3rd line.
+      '',
+      'B: ' + titleB[0], titleB[1], // Skip 3rd line.
+    ]
+  }
+  
+  export function makeOverlayChart (dataA, dataB) {
+    // var chartEl = document.getElementById('chart1')
+    // chartEl.style.visibility = 'visible'
+    // if (Object.keys(overlayChart).length !== 0) {
+    //   return
+    // }
+    // deleteSingleChart()
+    // deleteMultiChart()
+    // var ctx = chartEl.getContext('2d')
+    var title = makeOverlayChartTitle(dataA.title, dataB.title)
+    return {
+      data: {
+        // "Cumulative %" datasets are listed first so they are drawn on top of the histograms.
+        datasets: [{
+          label: 'A: Cumulative %',
+          data: dataA.dataP,
+          fill: false,
+          yAxisID: 'P',
+          stepped: true,
+          backgroundColor: 'rgba(134, 87, 167, 1)',
+          borderColor: 'rgba(134, 87, 167, 1)',
+          cubicInterpolationMode: 'monotone'
+        }, {
+          label: 'B: Cumulative %',
+          data: dataB.dataP,
+          fill: false,
+          yAxisID: 'P',
+          stepped: true,
+          backgroundColor: 'rgba(204, 102, 0)',
+          borderColor: 'rgba(204, 102, 0)',
+          cubicInterpolationMode: 'monotone'
+        }, {
+          label: 'A: Histogram: Count',
+          data: dataA.dataH,
+          yAxisID: 'H',
+          pointStyle: 'rect',
+          radius: 1,
+          borderColor: 'rgba(87, 167, 134, .9)',
+          backgroundColor: 'rgba(87, 167, 134, .75)',
+          lineTension: 0
+        }, {
+          label: 'B: Histogram: Count',
+          data: dataB.dataH,
+          yAxisID: 'H',
+          pointStyle: 'rect',
+          radius: 1,
+          borderColor: 'rgba(36, 64, 238, .9)',
+          backgroundColor: 'rgba(36, 64, 238, .75)',
+          lineTension: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          fontStyle: 'normal',
+          text: title
+        },
+        scales: {
+          xAxes: [
+            linearXAxe
+          ],
+          yAxes: [{
+            id: 'P',
+            position: 'right',
+            ticks: {
+              beginAtZero: true,
+              max: 100
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '%'
+            }
+          },
+            linearYAxe
+          ]
+        }
+      }
+    }
+    // updateChart(overlayChart)
+  }
+  
+  export function makeMultiChart (results) {
+    // document.getElementById('running').style.display = 'none'
+    // document.getElementById('update').style.visibility = 'hidden'
+    // var chartEl = document.getElementById('chart1')
+    // chartEl.style.visibility = 'visible'
+    // if (Object.keys(mchart).length !== 0) {
+    //   return
+    // }
+    // deleteSingleChart()
+    // deleteOverlayChart()
+    // var ctx = chartEl.getContext('2d')
+    let data = {
+      // type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Min',
+            fill: false,
+            stepped: true,
+            borderColor: 'hsla(111, 100%, 40%, .8)',
+            backgroundColor: 'hsla(111, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'Median',
+            fill: false,
+            stepped: true,
+            borderDash: [5, 5],
+            borderColor: 'hsla(220, 100%, 40%, .8)',
+            backgroundColor: 'hsla(220, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'Avg',
+            fill: false,
+            stepped: true,
+            backgroundColor: 'hsla(266, 100%, 40%, .8)',
+            borderColor: 'hsla(266, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'p75',
+            fill: false,
+            stepped: true,
+            backgroundColor: 'hsla(60, 100%, 40%, .8)',
+            borderColor: 'hsla(60, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'p90',
+            fill: false,
+            stepped: true,
+            backgroundColor: 'hsla(45, 100%, 40%, .8)',
+            borderColor: 'hsla(45, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'p99',
+            fill: false,
+            stepped: true,
+            backgroundColor: 'hsla(30, 100%, 40%, .8)',
+            borderColor: 'hsla(30, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'p99.9',
+            fill: false,
+            stepped: true,
+            backgroundColor: 'hsla(15, 100%, 40%, .8)',
+            borderColor: 'hsla(15, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'Max',
+            fill: false,
+            stepped: true,
+            borderColor: 'hsla(0, 100%, 40%, .8)',
+            backgroundColor: 'hsla(0, 100%, 40%, .8)',
+            data: [],
+          },
+          {
+            label: 'QPS',
+            yAxisID: 'qps',
+            fill: false,
+            stepped: true,
+            borderColor: 'rgba(0, 0, 0, .8)',
+            backgroundColor: 'rgba(0, 0, 0, .8)',
+            data: [],
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          fontStyle: 'normal',
+          text: ['Latency in milliseconds']
+        },
+        elements: {
+          line: {
+            tension: 0 // disables bezier curves
+          }
+        },
+        scales: {
+          yAxes: [{
+            id: 'ms',
+            ticks: {
+              beginAtZero: true
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'ms'
+            }
+          }, {
+            id: 'qps',
+            position: 'right',
+            ticks: {
+              beginAtZero: true
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'QPS'
+            }
+          }]
+        }
+      }
+    }
+
+const multiLabel = (res) => {
+  var l = formatDate(res.StartTime)
+  if (res.Labels !== '') {
+    l += ' - ' + res.Labels
+  }
+  return l
+}
+  
+const findData = (slot, idx, res, p) => {
+    // Not very efficient but there are only a handful of percentiles
+    var pA = res.DurationHistogram.Percentiles
+    if (!pA) {
+  //    console.log('No percentiles in res', res)
+      return
+    }
+    var pN = Number(p)
+    for (var i = 0; i < pA.length; i++) {
+      if (pA[i].Percentile === pN) {
+        data.data.datasets[slot].data[idx] = 1000.0 * pA[i].Value
+        return
+      }
+    }
+    console.log('Not Found', p, pN, pA)
+    // not found, not set
+  }
+
+  const fortioAddToMultiResult = (i, res) => {
+    data.data.labels[i] = multiLabel(res)
+    data.data.datasets[0].data[i] = 1000.0 * res.DurationHistogram.Min
+    findData(1, i, res, '50')
+    data.data.datasets[2].data[i] = 1000.0 * res.DurationHistogram.Avg
+    findData(3, i, res, '75')
+    findData(4, i, res, '90')
+    findData(5, i, res, '99')
+    findData(6, i, res, '99.9')
+    data.data.datasets[7].data[i] = 1000.0 * res.DurationHistogram.Max
+    data.data.datasets[8].data[i] = res.ActualQPS
+  }
+
+  const endMultiChart = (len) => {
+    data.data.labels = data.data.labels.slice(0, len)
+    for (var i = 0; i < data.data.datasets.length; i++) {
+      data.data.datasets[i].data = data.data.datasets[i].data.slice(0, len)
+    }
+    // mchart.update()
+  }
+
+  for(var i=0;i<results.length; i++){
+    fortioAddToMultiResult(i, results[i]);
+  }
+  endMultiChart(results.length);
+
+  return data;
+}
