@@ -5,7 +5,7 @@ import { fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart 
 
 class MesheryChart extends React.Component {
   singleChart = (data) => {
-      if (typeof data === 'undefined' || typeof data.URL === 'undefined'){
+      if (typeof data === 'undefined' || typeof data.StartTime === 'undefined'){
           data = {
             DurationHistogram: {
                 Count: 0,
@@ -38,7 +38,8 @@ class MesheryChart extends React.Component {
       }
     }
     if (typeof chartData === 'undefined') {
-      chartData = singleChart(this.props.data);
+      const tmpData = (typeof this.props.data !== 'undefined')?(this.props.data.length == 1?this.props.data[0]:{}):{};
+      chartData = this.singleChart(tmpData);
     }
     return (
       <NoSsr>
