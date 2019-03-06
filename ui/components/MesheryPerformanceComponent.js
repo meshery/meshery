@@ -222,7 +222,7 @@ class MesheryPerformanceComponent extends React.Component {
     <Typography variant="h6" gutterBottom className={classes.chartTitle}>
         Results
       </Typography>
-    <MesheryChart data={result} />    
+    <MesheryChart data={[result]} />    
     
     <Snackbar
           anchorOrigin={{
