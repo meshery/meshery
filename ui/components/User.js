@@ -36,7 +36,7 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    console.log("fetching user data");
+    // console.log("fetching user data");
     dataFetch('/api/user', { credentials: 'same-origin' }, user => {
       this.setState({user})
       this.props.updateUser({user})

@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, TableRow, TableCell } from '@material-ui/core';
-import MesheryResult from './MesheryResult';
+// import MesheryResult from './MesheryResult';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateMeshResults } from '../lib/store';
+import { updateMeshResults, updateResultsSelection, clearResultsSelection } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
 import CustomToolbarSelect from './CustomToolbarSelect';
@@ -77,7 +77,7 @@ class MesheryResults extends Component {
       }
 
     render() {
-        const { classes } = this.props; // data here maps to the MesheryResult model
+        const { classes, results_selection } = this.props; // data here maps to the MesheryResult model
 
         // const columns = ["RunType", "StartTime", "RequestedQPS", "RequestedDuration"];
         const columns = [
@@ -116,6 +116,13 @@ class MesheryResults extends Component {
         ];
         const { results, page, count } = this.state;
 
+        let rowsSelected = [];
+        if (typeof results_selection[page] !== 'undefined') {
+          Object.keys(results_selection[page]).map((k2) => {
+                rowsSelected.push(k2);
+            });
+        }
+
         const options = {
           filter: true,
           filterType: 'textField',
@@ -129,11 +136,28 @@ class MesheryResults extends Component {
           rowsPerPageOptions: [10],
           fixedHeader: true,
           page: page,
+          rowsSelected,
           print: false,
           download: false,
+          onRowsSelect: (currentRowsSelected, allRowsSelected) => {
+            // console.log(`currentRowsSelected: ${JSON.stringify(currentRowsSelected)}`);
+            // console.log(`allRowsSelected: ${JSON.stringify(allRowsSelected)}`);
+            let res = {};
+            allRowsSelected.map(({dataIndex}) => {
+              if (typeof res[dataIndex] !== 'undefined'){
+                delete res[dataIndex];
+              } else {
+                res[dataIndex] = results[dataIndex];
+              }
+            });
+            this.props.updateResultsSelection({page, results: res});
+          },
+          // onRowsDelete: (rowsDeleted) => {
+          //   console.log(`delete rows: ${JSON.stringify(rowsDeleted)}`);
+          // },
           onTableChange: (action, tableState) => {
 
-            console.log(action, tableState);
+            // console.log(action, tableState);
             // a developer could react to change on an action basis or
             // examine the state as a whole and do whatever they want
 
@@ -184,16 +208,19 @@ MesheryResults.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateMeshResults: bindActionCreators(updateMeshResults, dispatch)
+        updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
+        updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
+        clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
     }
   }
   const mapStateToProps = state => {
     const startKey = state.get("results").get('startKey');
     const results =  state.get("results").get('results').toArray();
+    const results_selection = state.get("results_selection").toObject();
     if (typeof results !== 'undefined'){
-        return {startKey: startKey, results: results};
+        return {startKey: startKey, results: results, results_selection};
     }
-    return {};
+    return {results_selection};
   }
   
 export default withStyles(styles)(connect(

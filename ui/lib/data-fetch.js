@@ -12,7 +12,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
       }
       let result;
       if (res.ok) {
-        console.log(`res type: ${res.type}`);
+        // console.log(`res type: ${res.type}`);
         try {
           result = res.json();
         } catch(e){

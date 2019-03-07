@@ -1,13 +1,16 @@
 import React from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
+// import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
 import IndeterminateCheckBoxIcon from "@material-ui/icons/IndeterminateCheckBox";
 import WavesIcon from "@material-ui/icons/Waves";
 import { withStyles } from "@material-ui/core/styles";
 import { NoSsr } from "@material-ui/core";
 import MesheryChartDialog from "./MesheryChartDialog";
 import MesheryChart from "./MesheryChart";
+import {connect} from "react-redux";
+import { bindActionCreators } from "redux";
+import { updateResultsSelection, clearResultsSelection } from "../lib/store";
 
 const defaultToolbarSelectStyles = {
   iconButton: {
@@ -52,17 +55,25 @@ class CustomToolbarSelect extends React.Component {
 
   handleClickDeselectAll = () => {
     this.props.setSelectedRows([]);
+    this.props.clearResultsSelection();
   };
 
   handleCompareSelected = () => {
-      console.log(`selected rows: ${JSON.stringify(this.props.selectedRows.data)}`);
-      const self = this;
+    //   console.log(`selected rows: ${JSON.stringify(this.props.selectedRows.data)}`);
+    //   const self = this;
       let data = [];
-      this.props.selectedRows.data.map(({dataIndex}) => {
-        // console.log(`data for selected rows: ${JSON.stringify(self.props.results[dataIndex])}`);
-        data.push(self.props.results[dataIndex]);
-      });
-      this.setState({data, dialogOpen: true});
+    //   this.props.selectedRows.data.map(({dataIndex}) => {
+    //     // console.log(`data for selected rows: ${JSON.stringify(self.props.results[dataIndex])}`);
+    //     data.push(self.props.results[dataIndex]);
+    //   });
+    //   this.setState({data, dialogOpen: true});
+    const rs = this.props.results_selection;
+    Object.keys(rs).map((k1) => {
+        Object.keys(rs[k1]).map((k2) => {
+            data.push(rs[k1][k2]);
+        });
+    })
+    this.setState({data, dialogOpen: true});
     // console.log(`block users with dataIndexes: ${this.props.selectedRows.data.map(row => row.dataIndex)}`);
   };
 
@@ -97,4 +108,22 @@ class CustomToolbarSelect extends React.Component {
   }
 }
 
-export default withStyles(defaultToolbarSelectStyles, { name: "CustomToolbarSelect" })(CustomToolbarSelect);
+
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
+        clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
+    }
+}
+  
+const mapStateToProps = state => {
+    const results_selection = state.get("results_selection").toObject();
+    return {results_selection};
+}
+
+export default withStyles(defaultToolbarSelectStyles, { name: "CustomToolbarSelect" })(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+      )(CustomToolbarSelect));

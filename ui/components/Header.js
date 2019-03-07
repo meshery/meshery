@@ -148,8 +148,8 @@ Header.propTypes = {
 };
 
 const mapStateToProps = state => {
-  console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-  console.log("state: " + JSON.stringify(state));
+  // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
+  // console.log("state: " + JSON.stringify(state));
   return { title: state.get("page").get("title") }
 }
 
