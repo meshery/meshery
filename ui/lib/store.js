@@ -96,8 +96,11 @@ export const reducer = (state = initialState, action) => {
     //   delete(rs[action.page][action.index]);
     //   return state.mergeDeep({results_selection: rs});
     case actionTypes.CLEAR_RESULTS_SELECTION:
+      state = state.deleteIn(['results_selection']);
+      return state.mergeDeep({results_selection: fromJS({})});
       // return state.mergeDeep({results_selection: {}});
-      return state.deleteIn(state.get('results_selection').keys());
+      // console.log(`keys: ${state.get('results_selection').keys()}`);
+      // return state.deleteIn(state.get('results_selection').keys());
     
     // case actionTypes.INCREMENT:
     //   return Object.assign({}, state, {

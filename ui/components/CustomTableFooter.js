@@ -141,7 +141,7 @@ class CustomTableFooter extends Component {
     //     this.setState({ page: 0, rowsPerPage: event.target.value });
     // };
     customLabelDisplayedRows = ({ from, to, count }) => {
-      return '';
+      return `Page ${this.props.page + 1}`;
     }
 
     render() {
