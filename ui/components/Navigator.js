@@ -102,7 +102,7 @@ class Navigator extends React.Component {
               path = path.substring(0, path.lastIndexOf('/'));
           }
           if (href === path) {
-              console.log("updating path: "+path+" and title: "+title);
+              // console.log("updating path: "+path+" and title: "+title);
               props.updatepagepathandtitle({path, title});
               return;
           }
@@ -118,7 +118,7 @@ class Navigator extends React.Component {
         const { classes, updatepagepathandtitle, ...other } = this.props;
         const { path } = this.state;
         // const path = this.updateTitle();
-        console.log("current page:" + path);
+        // console.log("current page:" + path);
         return (
             <NoSsr>
             <Drawer variant="permanent" {...other}>
