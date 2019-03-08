@@ -25,6 +25,7 @@ class MesheryResults extends Component {
           0: '',
         },
         count: 10,
+        pageSize: 10,
         results: [],
         // startKey: '',
     }
@@ -57,8 +58,7 @@ class MesheryResults extends Component {
               let {count} = this.state;
               if (typeof result.last_key !== 'undefined'){
                 pageMap[page+1] = result.last_key;
-                // count += 10;
-                count = (page + 1) * 10 + 10;
+                count = (page + 1) * self.state.pageSize + self.state.pageSize;
               }
               this.setState({
                 results: res,
@@ -78,53 +78,66 @@ class MesheryResults extends Component {
 
     render() {
         const { classes, results_selection } = this.props; // data here maps to the MesheryResult model
+        const { results, page, count, pageSize } = this.state;
 
-        // const columns = ["RunType", "StartTime", "RequestedQPS", "RequestedDuration"];
         const columns = [
           {
            name: "RunType",
            label: "RunType",
-           options: {
-            filter: false,
-            sort: false,
-           }
+          //  options: {
+          //   filter: false,
+          //   sort: false,
+          //   searchable: false,
+          //  }
           },
           {
            name: "StartTime",
            label: "StartTime",
-           options: {
-            filter: false,
-            sort: false,
-           }
+          //  options: {
+          //   filter: false,
+          //   sort: false,
+          //   searchable: false,
+          //  }
           },
           {
             name: "RequestedQPS",
             label: "RequestedQPS",
-            options: {
-              filter: false,
-              sort: false,
-             }
+            // options: {
+            //   filter: false,
+            //   sort: false,
+            //   searchable: false,
+            //  }
            },
            {
             name: "RequestedDuration",
             label: "RequestedDuration",
-            options: {
-              filter: false,
-              sort: false,
-             }
+            // options: {
+            //   filter: false,
+            //   sort: false,
+            //   searchable: false,
+            //  }
            },
         ];
-        const { results, page, count } = this.state;
 
         let rowsSelected = [];
-        if (typeof results_selection[page] !== 'undefined') {
-          Object.keys(results_selection[page]).map((k2) => {
-                rowsSelected.push(k2);
+        Object.keys(results_selection).forEach((pg) => {
+          if (parseInt(pg) !== page) {
+            Object.keys(results_selection[parseInt(pg)]).forEach((ind) => {
+              const val = ((parseInt(pg) + 1) * pageSize + parseInt(ind) + 1);
+              rowsSelected.push(val);
             });
-        }
+          } else {
+            Object.keys(results_selection[page]).forEach((ind) => {
+              rowsSelected.push(ind);
+            });
+          }
+        });
+        // console.log(`selected rows after adjustments: ${JSON.stringify(rowsSelected)}`);
 
         const options = {
-          filter: true,
+          filter: false,
+          sort: false,
+          search: false,
           filterType: 'textField',
           responsive: 'stacked',
           // pagination: true, // default
@@ -133,7 +146,7 @@ class MesheryResults extends Component {
           serverSide: true,
           count: count,
           // rowsPerPage: count,
-          rowsPerPageOptions: [10],
+          rowsPerPageOptions: [pageSize],
           fixedHeader: true,
           page: page,
           rowsSelected,
@@ -143,14 +156,15 @@ class MesheryResults extends Component {
             // console.log(`currentRowsSelected: ${JSON.stringify(currentRowsSelected)}`);
             // console.log(`allRowsSelected: ${JSON.stringify(allRowsSelected)}`);
             let res = {};
-            allRowsSelected.map(({dataIndex}) => {
-              if (typeof res[dataIndex] !== 'undefined'){
-                delete res[dataIndex];
-              } else {
-                res[dataIndex] = results[dataIndex];
-              }
-            });
-            this.props.updateResultsSelection({page, results: res});
+            allRowsSelected.forEach(({dataIndex}) => {
+              if (dataIndex < pageSize) {
+                if (typeof res[dataIndex] !== 'undefined'){
+                    delete res[dataIndex];
+                  } else {
+                    res[dataIndex] = results[dataIndex];
+                  }  
+              }});
+              this.props.updateResultsSelection({page, results: res});
           },
           // onRowsDelete: (rowsDeleted) => {
           //   console.log(`delete rows: ${JSON.stringify(rowsDeleted)}`);
@@ -165,6 +179,25 @@ class MesheryResults extends Component {
               case 'changePage':
                 this.fetchResults(tableState.page);
                 break;
+            //   case 'rowsSelect':
+            //     // TODO: get the updated list of items from state
+            //     console.log(`current table state: ${JSON.stringify(tableState.selectedRows.data)}`);
+            //     tableState.selectedRows.data = tableState.selectedRows.data.filter(({dataIndex}) => {
+            //       return (typeof dataIndex !== 'undefined' && parseInt(dataIndex) < pageSize);
+            //     })
+            //     console.log(`current table state after cleanup: ${JSON.stringify(tableState.selectedRows.data)}`);
+            //     console.log(`selected rows: ${JSON.stringify(tableState.selectedRows.data)}`);
+            //     Object.keys(results_selection).forEach((pg) => {
+            //       if (parseInt(pg) !== page) {
+            //         Object.keys(results_selection[parseInt(pg)]).forEach((ind) => {
+            //           const val = ((parseInt(pg) + 1) * pageSize + parseInt(ind) + 1);
+            //           tableState.selectedRows.data.push({index: val+'', dataIndex: val+''});
+            //           tableState.selectedRows.lookup[val+''] = true;
+            //         });
+            //       }
+            //     });
+            //     console.log(`selected rows after adjustments: ${JSON.stringify(tableState.selectedRows.data)}`);
+            //     break;
             }
           }, 
           customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage) => {
@@ -172,9 +205,11 @@ class MesheryResults extends Component {
               <CustomTableFooter changePage={changePage} rowsPerPage={rowsPerPage} page={page} count={count} />
             );
           },
-          customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-            <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={results} />
-          ),
+          customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+            return (
+              <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={results} />
+            );
+          },
           expandableRows: true,
           renderExpandableRow: (rowData, rowMeta) => {
             const colSpan = rowData.length + 1;
