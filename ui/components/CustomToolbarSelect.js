@@ -70,7 +70,9 @@ class CustomToolbarSelect extends React.Component {
     const rs = this.props.results_selection;
     Object.keys(rs).map((k1) => {
         Object.keys(rs[k1]).map((k2) => {
+          if (typeof rs[k1][k2] !== 'undefined'){
             data.push(rs[k1][k2]);
+          }
         });
     })
     this.setState({data, dialogOpen: true});
