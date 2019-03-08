@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, TableRow, TableCell } from '@material-ui/core';
-// import MesheryResult from './MesheryResult';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateMeshResults, updateResultsSelection, clearResultsSelection } from '../lib/store';
@@ -10,12 +9,17 @@ import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
 import CustomToolbarSelect from './CustomToolbarSelect';
 import CustomTableFooter from './CustomTableFooter';
+import Moment from 'react-moment';
+import MesheryChart from './MesheryChart';
 
 
 const styles = theme => ({
   grid: {
     padding: theme.spacing(2),
   },
+  chartContent: {
+    minHeight: window.innerHeight * 0.7, //'30rem',
+  }
 });
 
 class MesheryResults extends Component {
@@ -48,12 +52,12 @@ class MesheryResults extends Component {
           }, result => {
             // console.log(`received results: ${JSON.stringify(result)}`);
             if (typeof result !== 'undefined'){
-              let res = [];
-              if (typeof result.results !== 'undefined'){
-                res = result.results.map((r) => {
-                  return r.runner_results;
-                });
-              }
+            //   let res = [];
+            //   if (typeof result.results !== 'undefined'){
+            //     res = result.results.map((r) => {
+            //       return r.runner_results;
+            //     });
+            //   }
               const {pageMap} = this.state;
               let {count} = this.state;
               if (typeof result.last_key !== 'undefined'){
@@ -61,7 +65,8 @@ class MesheryResults extends Component {
                 count = (page + 1) * self.state.pageSize + self.state.pageSize;
               }
               this.setState({
-                results: res,
+                // results: res,
+                results: result.results,
                 page,
                 pageMap,
                 count,
@@ -80,10 +85,34 @@ class MesheryResults extends Component {
         const { classes, results_selection } = this.props; // data here maps to the MesheryResult model
         const { results, page, count, pageSize } = this.state;
 
+        const resultsForDisplay = [];
+        results.forEach((record) => {
+          const row = {
+            mesh: record.mesh,
+            start_time: record.runner_results.StartTime,
+            qps: record.runner_results.ActualQPS.toFixed(1),
+            duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
+            threads: record.runner_results.NumThreads,
+          }
+          if (record.runner_results.DurationHistogram && record.runner_results.DurationHistogram.Percentiles) {
+            record.runner_results.DurationHistogram.Percentiles.forEach(({Percentile, Value}) => {
+              row['p'+Percentile] = Value.toFixed(3);
+            });
+          } else {
+            row['p50'] = 0;
+            row['p75'] = 0;
+            row['p90'] = 0;
+            row['p99'] = 0;
+            row['p99.9'] = 0;
+          }
+          resultsForDisplay.push(row);
+          console.log(`adding custom row: ${JSON.stringify(row)}`);
+        });
+        
         const columns = [
           {
-           name: "RunType",
-           label: "RunType",
+           name: "mesh",
+           label: "Mesh",
           //  options: {
           //   filter: false,
           //   sort: false,
@@ -91,17 +120,22 @@ class MesheryResults extends Component {
           //  }
           },
           {
-           name: "StartTime",
+           name: "start_time",
            label: "StartTime",
-          //  options: {
+           options: {
           //   filter: false,
           //   sort: false,
           //   searchable: false,
-          //  }
+              customBodyRender: (value, tableMeta, updateValue) => {
+                return (
+                  <Moment format="LLLL">{value}</Moment>
+                );
+              }
+            }
           },
           {
-            name: "RequestedQPS",
-            label: "RequestedQPS",
+            name: "qps",
+            label: "QPS",
             // options: {
             //   filter: false,
             //   sort: false,
@@ -109,14 +143,68 @@ class MesheryResults extends Component {
             //  }
            },
            {
-            name: "RequestedDuration",
-            label: "RequestedDuration",
+            name: "duration",
+            label: "Duration",
             // options: {
             //   filter: false,
             //   sort: false,
             //   searchable: false,
             //  }
            },
+           {
+            name: "threads",
+            label: "Threads",
+            // options: {
+            //   filter: false,
+            //   sort: false,
+            //   searchable: false,
+            //  }
+           },
+           {
+            name: "p50",
+            label: "P50",
+            // options: {
+            //   filter: false,
+            //   sort: false,
+            //   searchable: false,
+            //  }
+           },
+          //  {
+          //   name: "p75",
+          //   label: "P75",
+          //   // options: {
+          //   //   filter: false,
+          //   //   sort: false,
+          //   //   searchable: false,
+          //   //  }
+          //  },
+          //  {
+          //   name: "p90",
+          //   label: "P90",
+          //   // options: {
+          //   //   filter: false,
+          //   //   sort: false,
+          //   //   searchable: false,
+          //   //  }
+          //  },
+          //  {
+          //   name: "p99",
+          //   label: "P99",
+          //   // options: {
+          //   //   filter: false,
+          //   //   sort: false,
+          //   //   searchable: false,
+          //   //  }
+          //  },
+           {
+            name: "p99.9",
+            label: "P99.9",
+            // options: {
+            //   filter: false,
+            //   sort: false,
+            //   searchable: false,
+            //  }
+           }
         ];
 
         let rowsSelected = [];
@@ -212,11 +300,14 @@ class MesheryResults extends Component {
           },
           expandableRows: true,
           renderExpandableRow: (rowData, rowMeta) => {
+            const row = results[rowMeta.dataIndex].runner_results;
             const colSpan = rowData.length + 1;
             return (
               <TableRow>
                 <TableCell colSpan={colSpan}>
-                  Custom expandable row option. Data: {JSON.stringify(rowData)}
+                  <div className={classes.chartContent}>
+                    <MesheryChart data={[row]} />
+                  </div>
                 </TableCell>
               </TableRow>
             );
@@ -232,7 +323,7 @@ class MesheryResults extends Component {
                 </Grid>
                 ))}
             </Grid> */}
-              <MUIDataTable title={"Meshery Results"} data={results} columns={columns} options={options} />
+              <MUIDataTable title={"Meshery Results"} data={resultsForDisplay} columns={columns} options={options} />
             </NoSsr>
         );
     }

@@ -71,7 +71,7 @@ class CustomToolbarSelect extends React.Component {
     Object.keys(rs).map((k1) => {
         Object.keys(rs[k1]).map((k2) => {
           if (typeof rs[k1][k2] !== 'undefined'){
-            data.push(rs[k1][k2]);
+            data.push(rs[k1][k2].runner_results);
           }
         });
     })
