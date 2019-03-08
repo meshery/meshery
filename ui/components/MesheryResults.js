@@ -106,7 +106,7 @@ class MesheryResults extends Component {
             row['p99.9'] = 0;
           }
           resultsForDisplay.push(row);
-          console.log(`adding custom row: ${JSON.stringify(row)}`);
+          // console.log(`adding custom row: ${JSON.stringify(row)}`);
         });
         
         const columns = [
