@@ -50,6 +50,7 @@ A service mesh playground to faciliate learning about functionality of different
 ### Running Meshery on Docker
 - We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
     ```
+    docker-compose pull
     docker-compose up
     ```
     Add a `-d` flag to the above command if you want to run it in the background.
