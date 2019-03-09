@@ -18,8 +18,8 @@ const styles = theme => ({
     padding: theme.spacing(2),
   },
   chartContent: {
-    minHeight: window.innerHeight * 0.7, //'30rem',
-  }
+    minHeight: window.innerHeight * 0.7,
+  },
 });
 
 class MesheryResults extends Component {

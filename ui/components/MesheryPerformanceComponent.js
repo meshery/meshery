@@ -93,7 +93,7 @@ class MesheryPerformanceComponent extends React.Component {
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
-    console.log(`data to be submitted for load test: ${params}`);
+    // console.log(`data to be submitted for load test: ${params}`);
     let self = this;
     dataFetch('/api/load-test', { 
       credentials: 'same-origin',
