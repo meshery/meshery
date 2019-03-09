@@ -17,6 +17,7 @@ type HandlerInterface interface {
 	// DashboardHandler(ctx context.Context, w http.ResponseWriter, req *http.Request)
 	UserHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request)
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
+	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
 	MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter, req *http.Request)
 }
 

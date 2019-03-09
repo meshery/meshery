@@ -9,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
+import CollectionsIcon from '@material-ui/icons/Collections';
 import TimerIcon from '@material-ui/icons/Timer';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -23,6 +24,7 @@ const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
   { id: 'Play', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
+  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
 ]
 
 const styles = theme => ({
@@ -101,7 +103,7 @@ class Navigator extends React.Component {
               path = path.substring(0, path.lastIndexOf('/'));
           }
           if (href === path) {
-              console.log("updating path: "+path+" and title: "+title);
+              // console.log("updating path: "+path+" and title: "+title);
               props.updatepagepathandtitle({path, title});
               return;
           }
@@ -117,7 +119,7 @@ class Navigator extends React.Component {
         const { classes, updatepagepathandtitle, ...other } = this.props;
         const { path } = this.state;
         // const path = this.updateTitle();
-        console.log("current page:" + path);
+        // console.log("current page:" + path);
         return (
             <NoSsr>
             <Drawer variant="permanent" {...other}>

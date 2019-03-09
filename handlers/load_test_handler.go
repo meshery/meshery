@@ -59,7 +59,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 
 	q.Set("json", "on")
 
-	client := http.DefaultClient
+	client := &http.Client{}
 	fortioURL, err := url.Parse(h.config.FortioURL)
 	if err != nil {
 		logrus.Errorf("unable to parse the provided fortio url: %v", err)

@@ -175,7 +175,7 @@ let theme = createMuiTheme({
       background: '#eaeff1',
     },
     paper: {
-        maxWidth: '75%',
+        maxWidth: '90%',
         margin: 'auto',
         overflow: 'hidden',
 
