@@ -1,7 +1,8 @@
 fortio_port := 9080
 
 fortio:
-	docker run --name fortio -p $(fortio_port):8080 -p 8079:8079 -d fortio/fortio server
+	(docker rm -f fortio) || true
+	docker run --name fortio -p $(fortio_port):8080 -p 8079:8079 -d fortio/fortio:1.3.1 server
 
 docker:
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .

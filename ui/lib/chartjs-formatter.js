@@ -54,9 +54,10 @@ export function makeTitle (res) {
     var title = []
     if (res.Labels !== '') {
       if (res.URL) { // http results
-          title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
+          // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
+          title.push(res.URL + ' - ' + formatDate(res.StartTime))
       } else { // grpc results
-          title.push(res.Labels + ' - ' + res.Destination + ' - ' + formatDate(res.StartTime))
+          title.push(res.Destination + ' - ' + formatDate(res.StartTime))
       }
     }
     var percStr = 'min ' + myRound(1000.0 * res.DurationHistogram.Min, 3) + ' ms, average ' + myRound(1000.0 * res.DurationHistogram.Avg, 3) + ' ms'
@@ -67,9 +68,9 @@ export function makeTitle (res) {
       }
     }
     percStr += ', max ' + myRound(1000.0 * res.DurationHistogram.Max, 3) + ' ms'
-    var statusOk = typeof res.RetCodes !== 'undefined'?res.RetCodes[200]:0;
+    var statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes[200]:0;
     if (!statusOk) { // grpc results
-      statusOk = typeof res.RetCodes !== 'undefined'?res.RetCodes["SERVING"]:0;
+      statusOk = typeof res.RetCodes !== 'undefined' && res.RetCodes !== null?res.RetCodes["SERVING"]:0;
     }
     var total = res.DurationHistogram.Count
     var errStr = 'no error'
