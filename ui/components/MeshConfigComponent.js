@@ -148,7 +148,6 @@ class MeshConfigComponent extends React.Component {
     }
     formData.append('meshLocationURL', meshLocationURL);
 
-    // console.log(`data to be submitted for load test: ${params}`);
     let self = this;
     dataFetch('/api/k8sconfig', { 
       credentials: 'same-origin',
