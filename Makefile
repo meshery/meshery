@@ -31,7 +31,7 @@ docker-run-saas:
 	layer5/meshery ./meshery
 
 run-local-saas:
-	cd cmd; go clean; go build -a -o meshery; \
+	cd cmd; go clean; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="http://meshery-saas:9876" \
 	EVENT=istioPlay01 \
 	FORTIO_URL="http://localhost:9080/fortio/" \
@@ -41,7 +41,7 @@ run-local-saas:
 	cd ..
 
 run-saas:
-	cd cmd; go clean; go build -a -o meshery; \
+	cd cmd; go clean; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	EVENT=istioPlay01 \
 	FORTIO_URL="http://localhost:9080/fortio/" \

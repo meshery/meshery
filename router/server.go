@@ -17,11 +17,14 @@ type Router struct {
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	mux := http.NewServeMux()
 
-	mux.Handle("/api/user", h.AuthMiddleware(http.HandlerFunc(h.UserHandler(ctx))))
-	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler(ctx))))
+	mux.Handle("/api/user", h.AuthMiddleware(http.HandlerFunc(h.UserHandler)))
+	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler)))
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))
-	mux.Handle("/api/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler(ctx))))
+	mux.Handle("/api/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler)))
+	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))
+	mux.Handle("/api/grafana/boards", h.AuthMiddleware(http.HandlerFunc(h.GrafanaBoardsHandler)))
+	mux.Handle("/api/grafana/query", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
 	mux.HandleFunc("/login", h.LoginHandler)
