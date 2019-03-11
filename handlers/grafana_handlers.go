@@ -30,6 +30,9 @@ func (h *Handler) grafanaRequest(ctx context.Context, queryURL, key string) ([]b
 	if err != nil {
 		return nil, err
 	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%s", data)
+	}
 	return data, nil
 }
 
