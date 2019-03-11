@@ -40,6 +40,8 @@ require (
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.1.3
+	github.com/gosimple/slug v1.4.2
+	github.com/grafana-tools/sdk v0.0.0-20190105141347-81363f3bb393
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
@@ -70,6 +72,7 @@ require (
 	github.com/prometheus/common v0.2.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190203183350-488faf799f86 // indirect
 	github.com/prometheus/promu v0.2.0 // indirect
+	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/satori/go.uuid v1.2.0

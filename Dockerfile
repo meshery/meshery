@@ -2,7 +2,7 @@ FROM golang:1.12 as bd0
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery
 ADD . .
-RUN cd cmd; go build -ldflags="-w -s" -a -o /meshery .
+RUN cd cmd; go build -ldflags="-w -s" -tags draft -a -o /meshery .
 
 FROM node as bd1
 ADD ui ui
