@@ -24,4 +24,5 @@ type GrafanaDataSource struct {
 type GrafanaPanel struct {
 	PType string `json:"type,omitempty"`
 	ID    uint   `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
 }

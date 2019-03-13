@@ -62,8 +62,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 		return
 	}
 	logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
-
 	// TODO: save the grafana configs with user data
+	w.Write([]byte("{}"))
 }
 
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
@@ -123,11 +123,14 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 			}
 		}
 		for _, panel := range board.Panels {
-			grafPanel := &models.GrafanaPanel{
-				ID:    panel.ID,
-				PType: panel.Type,
+			if panel.Type != "text" { // turning off text panels for now
+				grafPanel := &models.GrafanaPanel{
+					ID:    panel.ID,
+					PType: panel.Type,
+					Title: panel.Title,
+				}
+				grafBoard.Panels = append(grafBoard.Panels, grafPanel)
 			}
-			grafBoard.Panels = append(grafBoard.Panels, grafPanel)
 		}
 		boards = append(boards, grafBoard)
 	}
