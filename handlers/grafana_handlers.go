@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -171,7 +172,11 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 				val = strings.Replace(val, "$"+key, kVal, -1)
 			}
 		}
-		queryURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query?query=%s", grafanaURL, dsID, val)
+		newURL, _ := url.Parse(fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query", grafanaURL, dsID))
+		q := url.Values{}
+		q.Set("query", val)
+		newURL.RawQuery = q.Encode()
+		queryURL = newURL.String()
 	}
 	logrus.Infof("derived query url: %s", queryURL)
 
