@@ -250,6 +250,7 @@ class GrafanaSelectionComponent extends Component {
                     </FormControl>
                 </Grid>
                 {templateVars.map(({name}, ind) => {
+                    if (ind ===0 || this.getSelectedTemplateVar(ind-1) !== ''){
                     return (
                     <Grid item xs={12} sm={4}>
                         <FormControl variant="outlined" className={classes.formControl}>
@@ -280,6 +281,9 @@ class GrafanaSelectionComponent extends Component {
                         </FormControl>
                     </Grid>
                     );
+                    } else {
+                      return null;
+                    }
                   })}
 
                 <Grid item xs={12}>
