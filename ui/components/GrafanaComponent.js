@@ -212,6 +212,7 @@ class GrafanaComponent extends Component {
                   handleGrafanaBoardSearchChange={this.handleChange}
                   handleGrafanaChipDelete={this.handleGrafanaChipDelete}
                   addSelectedPanels={this.addSelectedPanels}
+                  handleError={this.handleError}
                 />
                 {this.snackbarTmpl(showSnackbar, snackbarVariant, snackbarMessage)}
               </React.Fragment>

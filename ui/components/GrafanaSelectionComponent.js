@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, TextField, Grid, Button, Chip, FormControl, InputLabel, Select, MenuItem, OutlinedInput } from '@material-ui/core';
 import ReactDOM from 'react-dom';
+import dataFetch from '../lib/data-fetch';
 
 const grafanaStyles = theme => ({
     root: {
@@ -60,12 +61,16 @@ class GrafanaSelectionComponent extends Component {
             grafanaBoards: [],
             grafanaBoard: '',
             grafanaBoardObject: {},
+            templateVars: [],
+            templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
 
             panels: [],
             selectedPanels: [],
+            selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
 
             boardLabelWidth: 0,
             panelLabelWidth: 0,
+            templateVarLabelWidth: 0,
           };
     }
 
@@ -82,25 +87,73 @@ class GrafanaSelectionComponent extends Component {
                 panelLabelWidth: ReactDOM.findDOMNode(this.PanelInputLabelRef).offsetWidth,
             });
         }
+        if (this.TemplateVarLabelRef) { // this is mostly not going to work bcoz this section wont exist when the component mounts
+          console.log(`panel label width: ${ReactDOM.findDOMNode(this.TemplateVarLabelRef).offsetWidth}`)
+          this.setState({
+            templateVarLabelWidth: ReactDOM.findDOMNode(this.TemplateVarLabelRef).offsetWidth,
+          });
+        }
       }
     
       handleChange = name => event => {
         if (name === "grafanaBoard"){
-            this.props.grafanaBoards.forEach((board) => {
-                if (board.uri === this.state.grafanaBoard) {
-                    this.setState({panels: board.panels, selectedPanels: board.panels.map(panel=>panel.id)}); // selecting all panels by default
-                }
-            });
+            this.boardChange(event.target.value);
+        } else {
+          this.setState({ [name]: event.target.value });
         }
-
-        this.setState({ [name]: event.target.value });
       };
+
+      boardChange = (newVal) => {
+        this.props.grafanaBoards.forEach((board) => {
+          // if (board.uri === this.state.grafanaBoard) {
+          if (board.uri === newVal) {
+              this.setState({
+                grafanaBoard: newVal,
+                panels: board.panels, 
+                selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
+                templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
+                templateVarOptions: [],
+                selectedTemplateVars: [],
+              });
+              if(board.template_vars && board.template_vars.length > 0){
+                this.queryTemplateVars(0, board.template_vars, [], []);
+              }
+          }
+        });
+      }
     
       
-    
-    handleError = error => {
-      // this.setState({timerDialogOpen: false });
-      // this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Grafana was not configured successfully with msg: ${error}`});
+      queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
+        // const {templateVars, templateVarOptions, selectedTemplateVars} = this.state;
+        if (templateVars.length > 0) {
+          let queryURL = `/api/grafana/query?query=${encodeURIComponent(templateVars[ind].query)}&dsid=${templateVars[ind].datasource.id}`;
+          for(let i=ind;i>0;i--){ // assumption
+            queryURL += `&${templateVars[i-1].name}=${selectedTemplateVars[i-1]}`;
+          }
+          
+          let self = this;
+          dataFetch(queryURL, { 
+            credentials: 'same-origin',
+            credentials: 'include',
+          }, result => {
+            if (typeof result !== 'undefined'){
+              var tmpVarOpts = [];
+              // result.data check if it is an array or object
+              if (Array.isArray(result.data)){
+                tmpVarOpts = result.data;
+              } else {
+                tmpVarOpts = result.data.result.map(({metric}) => {
+                  const tmpArr = Object.keys(metric);
+                  if (tmpArr.length > 0) {
+                    return metric[tmpArr[0]];
+                  }
+                })
+              }
+              templateVarOptions[ind] = tmpVarOpts;
+              this.setState({templateVarOptions});
+            }
+          }, self.props.handleError);
+      }
     }
 
     static getDerivedStateFromProps(props, state){
@@ -115,8 +168,11 @@ class GrafanaSelectionComponent extends Component {
     }
     
     render = () => {
-        const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, handleGrafanaChipDelete, addSelectedPanels } = this.props;
-        const { panels, grafanaBoards, selectedPanels, panelLabelWidth, boardLabelWidth, grafanaBoard } = this.state;
+        const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
+          handleGrafanaChipDelete, addSelectedPanels } = this.props;
+        const { panels, grafanaBoards, selectedPanels, panelLabelWidth, boardLabelWidth, 
+          templateVarLabelWidth, grafanaBoard, templateVars, templateVarOptions, 
+          selectedTemplateVars } = this.state;
         return (
           <NoSsr>
         <React.Fragment>
@@ -141,7 +197,7 @@ class GrafanaSelectionComponent extends Component {
                     onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')} // this event will be sent to the parent
                 />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12}>
                     <FormControl variant="outlined" className={classes.formControl}>
                         <InputLabel
                             ref={ref => {
@@ -167,13 +223,44 @@ class GrafanaSelectionComponent extends Component {
                             //     id: 'grafanaBoard',
                             // }}
                         >
-                            {grafanaBoards.map((board) => (
+                            {grafanaBoards && grafanaBoards.map((board) => (
                                 <MenuItem key={board.uri} value={board.uri}>{board.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                 </Grid>
-                
+                {templateVars.map(({name}, ind) => {
+                    return (
+                    <Grid item xs={12} sm={4}>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel
+                                ref={ref => {
+                                this.TemplateVarLabelRef = ref;
+                                }}
+                                htmlFor={'template_var_'+ind}
+                            >
+                                {name}
+                            </InputLabel>
+                            <Select
+                                value={name}
+                                onChange={this.handleChange('template_var_'+ind)}
+                                input={
+                                    <OutlinedInput
+                                      name={'template_var_'+ind}
+                                      // labelWidth={templateVarLabelWidth}
+                                      id={'template_var_'+ind}
+                                    />
+                                }
+                            >
+                                {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
+                                    <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    );
+                  })}
+
                 <Grid item xs={12}>
                     <FormControl variant="outlined" className={classes.formControl}>
                         <InputLabel
@@ -244,6 +331,12 @@ class GrafanaSelectionComponent extends Component {
 
 GrafanaSelectionComponent.propTypes = {
   classes: PropTypes.object.isRequired,
+  grafanaURL: PropTypes.string.isRequired,
+  grafanaBoards: PropTypes.array.isRequired,
+  handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
+  handleGrafanaChipDelete: PropTypes.func.isRequired,
+  addSelectedPanels: PropTypes.func.isRequired,
+  handleError: PropTypes.func.isRequired,
 };
 
 export default withStyles(grafanaStyles)(GrafanaSelectionComponent);
