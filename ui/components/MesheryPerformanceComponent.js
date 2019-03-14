@@ -138,6 +138,9 @@ class MesheryPerformanceComponent extends React.Component {
     if (grafana.selectedBoardsConfigs.length > 0) {
       displayGCharts = (
         <React.Fragment>
+          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            Grafana charts
+          </Typography>
         <GrafanaCharts 
           boardPanelConfigs={grafana.selectedBoardsConfigs} 
           grafanaURL={grafana.grafanaURL} />
