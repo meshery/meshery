@@ -186,10 +186,27 @@ class GrafanaSelectionComponent extends Component {
       }
       return null;
     }
+
+    addSelectedBoardPanelConfig = () => {
+      const {grafanaBoard, grafanaBoards, templateVars, selectedTemplateVars, selectedPanels, panels} = this.state;
+      const boardConfig = {};
+      grafanaBoards.forEach((board) => {
+        if (grafanaBoard === board.uri){
+          boardConfig.board = board;
+          return;
+        }
+      })
+      
+      boardConfig.panels = panels.filter(({id}) => selectedPanels.indexOf(id) > -1);
+
+      boardConfig.templateVars = templateVars.map(({name}, index) => `${name}=${selectedTemplateVars[index]}`);
+
+      this.props.addSelectedBoardPanelConfig(boardConfig);
+    }
     
     render = () => {
         const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
-          handleGrafanaChipDelete, addSelectedPanels } = this.props;
+          handleGrafanaChipDelete } = this.props;
         const { panels, grafanaBoards, selectedPanels, panelLabelWidth, boardLabelWidth, 
           templateVarLabelWidth, grafanaBoard, templateVars, templateVarOptions, 
           selectedTemplateVars } = this.state;
@@ -339,7 +356,7 @@ class GrafanaSelectionComponent extends Component {
                         variant="contained"
                         color="primary"
                         size="large"
-                        onClick={addSelectedPanels}
+                        onClick={this.addSelectedBoardPanelConfig}
                         className={classes.button}
                     >
                     Add
@@ -360,7 +377,7 @@ GrafanaSelectionComponent.propTypes = {
   grafanaBoards: PropTypes.array.isRequired,
   handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
   handleGrafanaChipDelete: PropTypes.func.isRequired,
-  addSelectedPanels: PropTypes.func.isRequired,
+  addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
 };
 

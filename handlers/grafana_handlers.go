@@ -100,6 +100,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 		grafBoard := &models.GrafanaBoard{
 			URI:          link.URI,
 			Title:        link.Title,
+			UID:          board.UID,
 			Slug:         slug.Make(board.Title),
 			TemplateVars: []*models.GrafanaTemplateVars{},
 			Panels:       []*models.GrafanaPanel{},
