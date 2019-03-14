@@ -7,6 +7,7 @@ import dataFetch from '../lib/data-fetch';
 import ReactDOM from 'react-dom';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
+import GrafanaDisplaySelection from './GrafanaDisplaySelection';
 
 const grafanaStyles = theme => ({
     root: {
@@ -45,17 +46,6 @@ const grafanaStyles = theme => ({
     }
   });
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-        },
-    },
-};
-
 class GrafanaComponent extends Component {
     constructor(props) {
         super(props);
@@ -74,6 +64,8 @@ class GrafanaComponent extends Component {
 
             grafanaBoardSearch: '',
             grafanaBoards: [],
+
+            selectedBoardsConfigs: [],
           };
     }
 
@@ -194,14 +186,23 @@ class GrafanaComponent extends Component {
             );
     }
 
-    addSelectedPanels = () => {
-
+    addSelectedBoardPanelConfig = (boardsSelection) => {
+      // %s/d-solo/%s/%s?orgId=%d&panelId=%d&refresh=10s\n\n", grafanaURL, board.UID, slug.Make(board.Title), board.orgID, panel.ID)
+      // http://10.199.75.64:30487/d/LJ_uJAvmk/istio-service-dashboard?refresh=10s&orgId=1&var-service=istio-policy.istio-system.svc.cluster.local&var-srcns=All&var-srcwl=All&var-dstns=All&var-dstwl=All
+      let {selectedBoardsConfigs} = this.state;
+      selectedBoardsConfigs.push(boardsSelection);
+      this.setState({selectedBoardsConfigs});
     }
 
     render() {
         const { grafanaURL, grafanaAPIKey, urlError, grafanaBoards, grafanaBoardSearch, showSnackbar, 
-            snackbarVariant, snackbarMessage, grafanaConfigSuccess } = this.state;
+            snackbarVariant, snackbarMessage, grafanaConfigSuccess, selectedBoardsConfigs } = this.state;
         if (grafanaConfigSuccess) {
+            let displaySelec = '';
+            if (selectedBoardsConfigs.length > 0) {
+              displaySelec = (<GrafanaDisplaySelection boardPanelConfigs={selectedBoardsConfigs} />);
+            }
+
             return (
               <NoSsr>
               <React.Fragment>
@@ -211,9 +212,10 @@ class GrafanaComponent extends Component {
                   grafanaBoardSearch={grafanaBoardSearch}
                   handleGrafanaBoardSearchChange={this.handleChange}
                   handleGrafanaChipDelete={this.handleGrafanaChipDelete}
-                  addSelectedPanels={this.addSelectedPanels}
+                  addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
                   handleError={this.handleError}
                 />
+                {displaySelec}
                 {this.snackbarTmpl(showSnackbar, snackbarVariant, snackbarMessage)}
               </React.Fragment>
               </NoSsr>
