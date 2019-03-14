@@ -194,13 +194,24 @@ class GrafanaComponent extends Component {
       this.setState({selectedBoardsConfigs});
     }
 
+    deleteSelectedBoardPanelConfig = (indexes) => {
+      let {selectedBoardsConfigs} = this.state;
+      indexes.sort();
+      for(let i=indexes.length-1;i>=0;i--){
+        selectedBoardsConfigs.splice(i, 1)
+      }
+      // indexes.forEach(ind => selectedBoardsConfigs.splice(ind, 1));
+      this.setState({selectedBoardsConfigs});
+    }
+    
+
     render() {
         const { grafanaURL, grafanaAPIKey, urlError, grafanaBoards, grafanaBoardSearch, showSnackbar, 
             snackbarVariant, snackbarMessage, grafanaConfigSuccess, selectedBoardsConfigs } = this.state;
         if (grafanaConfigSuccess) {
             let displaySelec = '';
             if (selectedBoardsConfigs.length > 0) {
-              displaySelec = (<GrafanaDisplaySelection boardPanelConfigs={selectedBoardsConfigs} />);
+              displaySelec = (<GrafanaDisplaySelection boardPanelConfigs={selectedBoardsConfigs} deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />);
             }
 
             return (
