@@ -374,7 +374,7 @@ class GrafanaSelectionComponent extends Component {
 GrafanaSelectionComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
-  grafanaBoards: PropTypes.array.isRequired,
+  // grafanaBoards: PropTypes.array.isRequired,
   handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
   handleGrafanaChipDelete: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
