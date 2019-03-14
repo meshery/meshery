@@ -268,14 +268,14 @@ class GrafanaSelectionComponent extends Component {
                                 input={
                                     <OutlinedInput
                                       name={'template_var_'+ind}
-                                      // labelWidth={templateVarLabelWidth}
+                                      labelWidth={boardLabelWidth}
                                       id={'template_var_'+ind}
                                     />
                                 }
                             >   
                                 <MenuItem key={'tmplVarOpt__'+ind} value={''}></MenuItem>
                                 {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
-                                    <MenuItem key={'tmplVarOpt_'+opt+'_'+ind} value={opt}>{opt}</MenuItem>
+                                    <MenuItem key={'tmplVarOpt_'+name+'_'+opt+'_'+ind} value={opt}>{opt}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
