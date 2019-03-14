@@ -188,8 +188,6 @@ class GrafanaComponent extends Component {
     }
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
-      // %s/d-solo/%s/%s?orgId=%d&panelId=%d&refresh=10s\n\n", grafanaURL, board.UID, slug.Make(board.Title), board.orgID, panel.ID)
-      // http://10.199.75.64:30487/d/LJ_uJAvmk/istio-service-dashboard?refresh=10s&orgId=1&var-service=istio-policy.istio-system.svc.cluster.local&var-srcns=All&var-srcwl=All&var-dstns=All&var-dstwl=All
       let {selectedBoardsConfigs} = this.state;
       selectedBoardsConfigs.push(boardsSelection);
       this.setState({selectedBoardsConfigs});
@@ -201,7 +199,6 @@ class GrafanaComponent extends Component {
       for(let i=indexes.length-1;i>=0;i--){
         selectedBoardsConfigs.splice(i, 1)
       }
-      // indexes.forEach(ind => selectedBoardsConfigs.splice(ind, 1));
       this.setState({selectedBoardsConfigs});
     }
     
