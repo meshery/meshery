@@ -125,7 +125,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 			}
 		}
 		for _, panel := range board.Panels {
-			if panel.Type != "text" { // turning off text panels for now
+			if panel.Type != "text" && panel.Type != "table" { // turning off text and table panels for now
 				grafPanel := &models.GrafanaPanel{
 					ID:    panel.ID,
 					PType: panel.Type,

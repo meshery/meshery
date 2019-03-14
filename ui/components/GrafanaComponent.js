@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
+import GrafanaCharts from './GrafanaCharts';
 
 const grafanaStyles = theme => ({
     root: {
@@ -211,7 +212,12 @@ class GrafanaComponent extends Component {
         if (grafanaConfigSuccess) {
             let displaySelec = '';
             if (selectedBoardsConfigs.length > 0) {
-              displaySelec = (<GrafanaDisplaySelection boardPanelConfigs={selectedBoardsConfigs} deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />);
+              displaySelec = (
+                <React.Fragment>
+                <GrafanaDisplaySelection boardPanelConfigs={selectedBoardsConfigs} deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />
+                <GrafanaCharts boardPanelConfigs={selectedBoardsConfigs} grafanaURL={grafanaURL} />
+                </React.Fragment>
+              );
             }
 
             return (
