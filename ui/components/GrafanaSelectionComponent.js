@@ -261,7 +261,7 @@ class GrafanaSelectionComponent extends Component {
                             // }}
                         >
                             {grafanaBoards && grafanaBoards.map((board) => (
-                                <MenuItem key={board.uri} value={board.uri}>{board.title}</MenuItem>
+                                <MenuItem key={'bd_---_'+board.uri} value={board.uri}>{board.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -290,9 +290,9 @@ class GrafanaSelectionComponent extends Component {
                                     />
                                 }
                             >   
-                                <MenuItem key={'tmplVarOpt__'+ind} value={''}></MenuItem>
+                                <MenuItem key={'tmplVarOpt__-___'+ind} value={''}></MenuItem>
                                 {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
-                                    <MenuItem key={'tmplVarOpt_'+name+'_'+opt+'_'+ind} value={opt}>{opt}</MenuItem>
+                                    <MenuItem key={'tmplVarOpt__-__'+name+'_'+opt+'_'+ind} value={opt}>{opt}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -336,7 +336,7 @@ class GrafanaSelectionComponent extends Component {
                                         }
                                       })
                                       return (
-                                    <Chip key={panelId} label={selVal} className={classes.panelChip} />
+                                    <Chip key={'pl_--_'+panelId} label={selVal} className={classes.panelChip} />
                                       )
                                   })}
                                 </div>
@@ -344,7 +344,7 @@ class GrafanaSelectionComponent extends Component {
                             // MenuProps={MenuProps}
                         >
                             {panels.map((panel) => (
-                                <MenuItem key={'panel_'+panel.id} value={panel.id}>{panel.title}</MenuItem>
+                                <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
