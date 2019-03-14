@@ -83,7 +83,8 @@ class GrafanaComponent extends Component {
           this.setState({urlError: false});
         }
         if (name === 'grafanaBoardSearch') {
-            this.getGrafanaBoards();
+            if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
+            this.boardSearchTimeout = setTimeout(this.getGrafanaBoards, 500); // to delay the search by a few.
         }
 
         this.setState({ [name]: event.target.value });
@@ -136,7 +137,6 @@ class GrafanaComponent extends Component {
 
       getGrafanaBoards = () => {
         const {grafanaBoardSearch} = this.state;
-        
         let self = this;
         dataFetch(`/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`, { 
           credentials: 'same-origin',
@@ -144,7 +144,7 @@ class GrafanaComponent extends Component {
           credentials: 'include',
         }, result => {
           if (typeof result !== 'undefined'){
-            this.setState({grafanaBoards: result});
+            self.setState({grafanaBoards: result});
             // TODO: push the grafana info to store
             // this.setState({result, grafanaConfigSuccess: true, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Grafana boards retrieved successfully!'});
             // this.props.updateLoadTestData({loadTest: {

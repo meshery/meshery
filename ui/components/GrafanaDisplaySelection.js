@@ -56,6 +56,8 @@ class GrafanaDisplaySelection extends Component {
           count: selectedValsForDisplay.length,
           print: false,
           download: false,
+          pagination: false,
+          viewColumns: false,
           onRowsDelete: (rowsDeleted) => {
             // console.log(`delete rows: ${JSON.stringify(rowsDeleted)}`);
             const delRows = rowsDeleted.data.map(({dataIndex}) => dataIndex);
