@@ -45,8 +45,10 @@ class GrafanaCharts extends Component {
                               <iframe 
                                 key={'url_-_-'+ind} 
                                 src={`${grafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=10s&${config.templateVars.map(tv => `var-${tv}`).join('&')}`} 
-                                width='450' 
-                                height='250' 
+                                // width='450' 
+                                width='100%'
+                                // height='250' 
+                                height='100%'
                                 frameBorder='0'>
                               </iframe>
                             </Grid>
