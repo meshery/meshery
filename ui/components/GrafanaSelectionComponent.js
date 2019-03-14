@@ -96,12 +96,32 @@ class GrafanaSelectionComponent extends Component {
       }
     
       handleChange = name => event => {
-        if (name === "grafanaBoard"){
+        if (name === 'grafanaBoard'){
             this.boardChange(event.target.value);
+        } else if (name.startsWith('template_var_')) {
+          this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
           this.setState({ [name]: event.target.value });
         }
       };
+
+      getSelectedTemplateVar = (ind) => {
+        const {selectedTemplateVars} = this.state;
+        return selectedTemplateVars[ind]?selectedTemplateVars[ind]:'';
+      }
+
+      setSelectedTemplateVar = (ind, val) => {
+        const {templateVars, templateVarOptions, selectedTemplateVars} = this.state;
+        selectedTemplateVars[ind] = val;
+        for (let i=ind+1; i<selectedTemplateVars.length;i++){
+          selectedTemplateVars[i] = '';
+        }
+        this.setState({selectedTemplateVars});
+        if (templateVars.length > ind+1){
+          this.queryTemplateVars(ind+1, templateVars, templateVarOptions, selectedTemplateVars);
+        }
+      }
+
 
       boardChange = (newVal) => {
         this.props.grafanaBoards.forEach((board) => {
@@ -157,7 +177,7 @@ class GrafanaSelectionComponent extends Component {
     }
 
     static getDerivedStateFromProps(props, state){
-      if (state.grafanaBoards.sort().join() !== props.grafanaBoards.sort().join()) {
+      if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
         return {
           grafanaBoards: props.grafanaBoards,
           grafanaBoard: '',
@@ -242,7 +262,7 @@ class GrafanaSelectionComponent extends Component {
                                 {name}
                             </InputLabel>
                             <Select
-                                value={name}
+                                value={this.getSelectedTemplateVar(ind)}
                                 onChange={this.handleChange('template_var_'+ind)}
                                 input={
                                     <OutlinedInput
@@ -251,9 +271,10 @@ class GrafanaSelectionComponent extends Component {
                                       id={'template_var_'+ind}
                                     />
                                 }
-                            >
+                            >   
+                                <MenuItem key={'tmplVarOpt__'+ind} value={''}></MenuItem>
                                 {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
-                                    <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                                    <MenuItem key={'tmplVarOpt_'+opt+'_'+ind} value={opt}>{opt}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -302,7 +323,7 @@ class GrafanaSelectionComponent extends Component {
                             // MenuProps={MenuProps}
                         >
                             {panels.map((panel) => (
-                                <MenuItem key={panel.id} value={panel.id}>{panel.title}</MenuItem>
+                                <MenuItem key={'panel_'+panel.id} value={panel.id}>{panel.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
