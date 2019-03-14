@@ -14,6 +14,7 @@ import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateLoadTestData } from '../lib/store';
+import GrafanaCharts from './GrafanaCharts';
 
 
 const styles = theme => ({
@@ -33,7 +34,10 @@ const styles = theme => ({
   },
   chartTitle: {
     textAlign: 'center',
-  }
+  },
+  chartContent: {
+    minHeight: window.innerHeight * 0.7,
+  },
 });
 
 class MesheryPerformanceComponent extends React.Component {
@@ -127,9 +131,19 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, grafana } = this.props;
     const { timerDialogOpen, qps, url, t, c, result, urlError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
 
+    let displayGCharts = '';
+    if (grafana.selectedBoardsConfigs.length > 0) {
+      displayGCharts = (
+        <React.Fragment>
+        <GrafanaCharts 
+          boardPanelConfigs={grafana.selectedBoardsConfigs} 
+          grafanaURL={grafana.grafanaURL} />
+        </React.Fragment>
+      );
+    }
     return (
       <NoSsr>
       <React.Fragment>
@@ -211,18 +225,22 @@ class MesheryPerformanceComponent extends React.Component {
           </Button>
         </div>
       </React.Fragment>
+
+      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+        Results
+      </Typography>
+        <div className={classes.chartContent}>
+          <MesheryChart data={[result]} />    
+        </div>
       </div>
     </React.Fragment>
     
+    {displayGCharts}
+
     <LoadTestTimerDialog open={timerDialogOpen} 
       t={t}
       onClose={this.handleTimerDialogClose} 
       countDownComplete={this.handleTimerDialogClose} />
-
-    <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        Results
-      </Typography>
-    <MesheryChart data={[result]} />    
     
     <Snackbar
           anchorOrigin={{
@@ -255,18 +273,19 @@ const mapDispatchToProps = dispatch => {
 }
 const mapStateToProps = state => {
   
-  const loadTest = state.get("loadTest");
-  let newprops = {};
-  if (typeof loadTest !== 'undefined'){
-    newprops = { 
-      url: loadTest.get('url'),
-      qps: loadTest.get('qps'), 
-      c: loadTest.get('c'), 
-      t: loadTest.get('t'),
-      result: loadTest.get('result'),
-    }
-  }
-  return newprops;
+  const loadTest = state.get("loadTest").toObject();
+  // let newprops = {};
+  // if (typeof loadTest !== 'undefined'){
+  //   newprops = { 
+  //     url: loadTest.get('url'),
+  //     qps: loadTest.get('qps'), 
+  //     c: loadTest.get('c'), 
+  //     t: loadTest.get('t'),
+  //     result: loadTest.get('result'),
+  //   }
+  // }
+  const grafana = state.get("grafana").toJS();
+  return {...loadTest, grafana};
 }
 
 
