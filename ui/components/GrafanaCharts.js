@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import LazyLoad from 'react-lazyload';
 
 const grafanaStyles = theme => ({
     root: {
@@ -42,15 +43,17 @@ class GrafanaCharts extends Component {
                         <Grid container spacing={5}>
                           {config.panels.map(panel => (
                             <Grid item xs={12} sm={4}>
-                              <iframe 
-                                key={'url_-_-'+ind} 
-                                src={`${grafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=10s&${config.templateVars.map(tv => `var-${tv}`).join('&')}`} 
-                                // width='450' 
-                                width='100%'
-                                // height='250' 
-                                height='100%'
-                                frameBorder='0'>
-                              </iframe>
+                              <LazyLoad once>
+                                <iframe 
+                                  key={'url_-_-'+ind} 
+                                  src={`${grafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=10s&${config.templateVars.map(tv => `var-${tv}`).join('&')}`} 
+                                  // width='450' 
+                                  width='100%'
+                                  // height='250' 
+                                  height='100%'
+                                  frameBorder='0'>
+                                </iframe>
+                              </LazyLoad>
                             </Grid>
                           ))}
                         </Grid>
