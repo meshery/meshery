@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Snackbar } from '@material-ui/core';
+import { NoSsr, Snackbar, Typography } from '@material-ui/core';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
@@ -46,6 +46,10 @@ const grafanaStyles = theme => ({
     },
     panelChip: {
         margin: theme.spacing(0.25),
+    },
+    chartTitle: {
+      marginLeft: theme.spacing(3),
+      marginTop: theme.spacing(2),
     }
   });
 
@@ -211,7 +215,7 @@ class GrafanaComponent extends Component {
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
       selectedBoardsConfigs.push(boardsSelection);
-      // this.setState({selectedBoardsConfigs});
+      this.setState({selectedBoardsConfigs});
       this.props.updateGrafanaConfig({
         grafana: {
           grafanaURL,
@@ -243,6 +247,7 @@ class GrafanaComponent extends Component {
     
 
     render() {
+        const {classes} = this.props;
         const { urlError, showSnackbar, snackbarVariant, snackbarMessage, grafanaURL, grafanaConfigSuccess,
           grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } = this.state;
         if (grafanaConfigSuccess) {
@@ -253,6 +258,10 @@ class GrafanaComponent extends Component {
                 <GrafanaDisplaySelection 
                   boardPanelConfigs={selectedBoardsConfigs} 
                   deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />
+
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Grafana charts
+                </Typography>  
                 <GrafanaCharts 
                   boardPanelConfigs={selectedBoardsConfigs} 
                   grafanaURL={grafanaURL} />

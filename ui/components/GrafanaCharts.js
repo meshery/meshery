@@ -33,10 +33,10 @@ class GrafanaCharts extends Component {
                   <ExpansionPanel defaultExpanded={ind === 0?true:false}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                       <div className={classes.column}>
-                        <Typography className={classes.heading}>{config.board.title}</Typography>
+                      <Typography variant="subtitle1" gutterBottom>{config.board.title}</Typography>
                       </div>
                       <div className={classes.column}>
-                        <Typography className={classes.secondaryHeading}>{config.templateVars.join(', ')}</Typography>
+                        <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0?'Template variables: '+config.templateVars.join(' '):''}</Typography>
                       </div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Snackbar, TextField, Grid, Button, Chip, FormControl, InputLabel, Select, MenuItem, OutlinedInput } from '@material-ui/core';
-import MesherySnackbarWrapper from './MesherySnackbarWrapper';
-import dataFetch from '../lib/data-fetch';
-import ReactDOM from 'react-dom';
+import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
 
 const grafanaStyles = theme => ({
     root: {
