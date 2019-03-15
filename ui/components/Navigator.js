@@ -10,6 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import CollectionsIcon from '@material-ui/icons/Collections';
+import ShowChartIcon from '@material-ui/icons/ShowChart';
 import TimerIcon from '@material-ui/icons/Timer';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -25,6 +26,7 @@ const categories = [
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
   { id: 'Play', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
+  { id: 'Grafana', icon: <ShowChartIcon />, href: "/grafana", title: 'Grafana Charts' },
 ]
 
 const styles = theme => ({

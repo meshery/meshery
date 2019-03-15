@@ -32,6 +32,13 @@ const initialState = fromJS({
     results: [],
   },
   results_selection: {}, // { page: {index: content}}
+  grafana: {
+    grafanaURL: '',
+    grafanaAPIKey: '',
+    grafanaBoardSearch: '',
+    grafanaBoards: [],
+    selectedBoardsConfigs: [],
+  },
 });
 
 export const actionTypes = {
@@ -44,6 +51,7 @@ export const actionTypes = {
     UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
     // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
     CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
+    UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
 }
 
 // REDUCERS
@@ -87,6 +95,8 @@ export const reducer = (state = initialState, action) => {
       } else {
         return state.deleteIn(['results_selection', action.page]);
       }
+    case actionTypes.UPDATE_GRAFANA_CONFIG:
+      return state.updateIn(['grafana'], val => fromJS(action.grafana));
       
     // case actionTypes.DELETE_RESULTS_SELECTION:
     //   const rs = state.get('results_selection').toObject();
@@ -144,7 +154,6 @@ export const updateMeshResults = ({startKey, results}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
 }
 export const updateResultsSelection = ({page, results}) => dispatch => {
-  // console.log(`update results selection: ${page}, ${index}, ${JSON.stringify(result)}`);
   return dispatch({ type: actionTypes.UPDATE_RESULTS_SELECTION, page, results });
 }
 // export const deleteFromResultsSelection = ({page, index}) => dispatch => {
@@ -152,6 +161,9 @@ export const updateResultsSelection = ({page, results}) => dispatch => {
 // }
 export const clearResultsSelection = () => dispatch => {
   return dispatch({ type: actionTypes.CLEAR_RESULTS_SELECTION});
+}
+export const updateGrafanaConfig = ({grafana}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana });
 }
 
 
