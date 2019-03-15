@@ -28,9 +28,15 @@ class GrafanaDisplaySelection extends Component {
             panels: cf.panels.map((panel, ind) => (
               <Chip key={panel.id + '_-_' + ind} label={panel.title} className={classes.panelChip} />
             )),
-            template_variables: cf.templateVars.map((tv, ind) => (
-              <Chip key={tv + '-_-' + ind} label={tv} className={tv} />
-            )),
+            template_variables: cf.templateVars.map((tv, ind) => {
+              if (tv && tv !== '') {
+                return (
+                  <Chip key={tv + '-_-' + ind} label={tv} className={tv} />
+                )
+              } else {
+                return null;
+              }
+            }),
           });
         });
 
@@ -59,7 +65,6 @@ class GrafanaDisplaySelection extends Component {
           pagination: false,
           viewColumns: false,
           onRowsDelete: (rowsDeleted) => {
-            // console.log(`delete rows: ${JSON.stringify(rowsDeleted)}`);
             const delRows = rowsDeleted.data.map(({dataIndex}) => dataIndex);
             deleteSelectedBoardPanelConfig(delRows);
           },
