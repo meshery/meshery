@@ -1,7 +1,6 @@
 package models
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -12,13 +11,17 @@ type HandlerInterface interface {
 
 	// IndexHandler(w http.ResponseWriter, r *http.Request)
 	LoginHandler(w http.ResponseWriter, r *http.Request)
-	K8SConfigHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request)
+	K8SConfigHandler(w http.ResponseWriter, r *http.Request)
 	LogoutHandler(w http.ResponseWriter, req *http.Request)
 	// DashboardHandler(ctx context.Context, w http.ResponseWriter, req *http.Request)
-	UserHandler(ctx context.Context) func(w http.ResponseWriter, r *http.Request)
+	UserHandler(w http.ResponseWriter, r *http.Request)
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
-	MeshOpsHandler(ctx context.Context) func(w http.ResponseWriter, req *http.Request)
+	MeshOpsHandler(w http.ResponseWriter, req *http.Request)
+
+	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {

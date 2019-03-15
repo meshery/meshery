@@ -35,6 +35,7 @@
     "react-countdown-clock": "^2.5.0",
     "react-dom": "^16.8.2",
     "react-jss": "^8.1.0",
+    "react-lazyload": "^2.5.0",
     "react-moment": "^0.8.4",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
