@@ -1,6 +1,6 @@
 import { Component } from "react";
 import MesheryDateTimePicker from "./MesheryDateTimePicker";
-import { NoSsr, Grow, Paper, Button, Popper, TextField, MenuItem, Grid } from "@material-ui/core";
+import { NoSsr, Grow, Paper, Button, Popper, TextField, MenuItem, Grid, Popover } from "@material-ui/core";
 import Moment from "react-moment";
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import { withStyles } from '@material-ui/core/styles';
@@ -29,18 +29,28 @@ const refreshIntervals = [
         startDate: new Date(),
         endDate: new Date(),
         refreshInterval: '',
-        open: false,
+        // open: false,
+        anchorEl: null,
     }
-        
-    handleToggle = () => {
-        this.setState(state => ({ open: !state.open }));
+
+    handleClick = event => {
+        this.setState({
+            anchorEl: event.currentTarget,
+        });
     };
+        
+    // handleToggle = () => {
+    //     this.setState(state => ({ open: !state.open }));
+    // };
 
     handleClose = event => {
-        if (this.anchorEl.contains(event.target)) {
-            return;
-        }
-        this.setState({ open: false });
+        // if (this.anchorEl.contains(event.target)) {
+        //     return;
+        // }
+        // this.setState({ open: false });
+        this.setState({
+            anchorEl: null,
+          });
     };
 
     handleChange = name => event => {
@@ -65,28 +75,43 @@ const refreshIntervals = [
     };
 
     render() {
-        const {open, startDate, endDate, refreshInterval} = this.state;
+        const {startDate, endDate, refreshInterval, anchorEl} = this.state;
+        const open = Boolean(anchorEl);
         return (
             <NoSsr>
             <React.Fragment>
             <Button
                 variant="outlined"
-                buttonRef={node => {
-                    this.anchorEl = node;
-                }}
-                aria-owns={open ? 'dateRange-list-grow' : undefined}
+                // buttonRef={node => {
+                //     this.anchorEl = node;
+                // }}
+                aria-owns={open ? 'daterange-popper' : undefined}
                 aria-haspopup="true"
-                onClick={this.handleToggle}>
+                onClick={this.handleClick}>
                 <AccessTimeIcon /> <Moment format="LLLL">{startDate}</Moment>{' - '}<Moment format="LLLL">{endDate}</Moment>
             </Button>
-            <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
+            {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="dateRange-list-grow"
                 style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
-              >
-                <Paper>
+              > */}
+              <Popover 
+                 id="daterange-popper"
+                 open={open}
+                 anchorEl={anchorEl}
+                 onClose={this.handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                >
+                {/* <Paper> */}
                 <Grid container spacing={5}>
                     <Grid item xs={12} sm={4}>
                     <MesheryDateTimePicker selectedDate={startDate} onChange={this.handleChange('startDate')} label={"Start"} />
@@ -112,10 +137,11 @@ const refreshIntervals = [
                     </Grid>
                 </Grid>
                     
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
+                {/* </Paper> */}
+                </Popover>
+              {/* </Grow> */}
+            {/* )} */}
+          {/* </Popper> */}
             </React.Fragment>
             </NoSsr>
         );
