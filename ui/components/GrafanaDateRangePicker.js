@@ -4,6 +4,7 @@ import { NoSsr, Grow, Paper, Button, Popper, TextField, MenuItem, Grid, Popover,
 import Moment from "react-moment";
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 
 const styles = theme => ({
     rangeDialog: {
@@ -77,13 +78,14 @@ const quickRanges = [
     constructor(props) {
         super(props);
 
-        const startDate = new Date();
-        startDate.setMinutes(startDate.getMinutes() - 5);
+        
         this.state = {
-            startDate,
-            endDate: new Date(),
-            liveTail: true,
-            refreshInterval: '10s',
+            // startDate: props.startDate,
+            // endDate: props.endDate,
+            // startGDate: props.from,
+            // endGDate: props.to,
+            // liveTail: true,
+            // refreshInterval: props.refresh,
             open: false,
         }
     }
@@ -95,55 +97,71 @@ const quickRanges = [
     };
 
     setRange = range => () => {
-        let startDate, endDate, liveTail;
+        let startDate, endDate, liveTail, startGDate, endGDate;
         switch (range) {
             case 'Last 2 days':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 2);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-2d';
+                endGDate = 'now';
                 break;
             case 'Last 7 days':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 7);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-7d';
+                endGDate = 'now';
                 break;
             case 'Last 30 days':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 30);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-30d';
+                endGDate = 'now';
                 break;
             case 'Last 90 days':
                 startDate = new Date();
                 startDate.setDate(startDate.getDate() - 90);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-90d';
+                endGDate = 'now';
                 break;
             case 'Last 6 months':
                 startDate = new Date();
                 startDate.setMonth(startDate.getMonth() - 6);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-6M';
+                endGDate = 'now';
                 break;
             case 'Last 1 year':
                 startDate = new Date();
                 startDate.setFullYear(startDate.getFullYear() - 1);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-1y';
+                endGDate = 'now';
                 break;
             case 'Last 2 years':
                 startDate = new Date();
                 startDate.setFullYear(startDate.getFullYear() - 2);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-2y';
+                endGDate = 'now';
                 break;
             case 'Last 5 years':
                 startDate = new Date();
                 startDate.setFullYear(startDate.getFullYear() - 5);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-5y';
+                endGDate = 'now';
                 break;
 
             case 'Yesterday':
@@ -160,6 +178,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-1d/d';
+                endGDate = 'now-1d/d';
                 break;
             case 'Day before yesterday':
                 startDate = new Date();
@@ -175,6 +195,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-2d/d';
+                endGDate = 'now-2d/d';
                 break;
             case 'This day last week':
                 startDate = new Date();
@@ -190,6 +212,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-7d/d';
+                endGDate = 'now-7d/d';
                 break;
             case 'Previous week':
                 startDate = new Date();
@@ -205,6 +229,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-1w/w';
+                endGDate = 'now-1w/w';
                 break;
             case 'Previous month':
                 startDate = new Date();
@@ -222,6 +248,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-1M/M';
+                endGDate = 'now-1M/M';
                 break;
             case 'Previous year':
                 startDate = new Date();
@@ -241,6 +269,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now-1y/y';
+                endGDate = 'now-1y/y';
                 break;
 
             case 'Today':
@@ -255,6 +285,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now/d';
+                endGDate = 'now/d';
                 break;
             case 'Today so far':
                 startDate = new Date();
@@ -264,6 +296,8 @@ const quickRanges = [
                 startDate.setMilliseconds(0);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now/d';
+                endGDate = 'now';
                 break;
             case 'This week':
                 startDate = new Date();
@@ -279,6 +313,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now/w';
+                endGDate = 'now/w';
                 break;
             case 'This week so far':
                 startDate = new Date();
@@ -289,6 +325,8 @@ const quickRanges = [
                 startDate.setMilliseconds(0);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now/w';
+                endGDate = 'now';
                 break;
             case 'This month':
                 startDate = new Date();
@@ -305,6 +343,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now/M';
+                endGDate = 'now/M';
                 break;
             case 'This month so far':
                 startDate = new Date();
@@ -315,6 +355,8 @@ const quickRanges = [
                 startDate.setMilliseconds(0);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now/M';
+                endGDate = 'now';
                 break;
             case 'This year':
                 startDate = new Date();
@@ -332,6 +374,8 @@ const quickRanges = [
                 endDate.setSeconds(59);
                 endDate.setMilliseconds(999);
                 liveTail = false;
+                startGDate = 'now/y';
+                endGDate = 'now/y';
                 break;
             case 'This year so far':
                 startDate = new Date();
@@ -343,6 +387,8 @@ const quickRanges = [
                 startDate.setMilliseconds(0);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now/y';
+                endGDate = 'now';
                 break;
 
             case 'Last 5 minutes':
@@ -350,51 +396,68 @@ const quickRanges = [
                 startDate.setMinutes(startDate.getMinutes() - 5);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-5m';
+                endGDate = 'now';
                 break;
             case 'Last 15 minutes':
                 startDate = new Date();
                 startDate.setMinutes(startDate.getMinutes() - 15);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-15m';
+                endGDate = 'now';
                 break;
             case 'Last 30 minutes':
                 startDate = new Date();
                 startDate.setMinutes(startDate.getMinutes() - 30);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-30m';
+                endGDate = 'now';
                 break;
             case 'Last 1 hour':
                 startDate = new Date();
                 startDate.setHours(startDate.getHours() - 1);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-1h';
+                endGDate = 'now';
                 break;
             case 'Last 3 hours':
                 startDate = new Date();
                 startDate.setHours(startDate.getHours() - 3);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-3h';
+                endGDate = 'now';
                 break;
             case 'Last 6 hours':
                 startDate = new Date();
                 startDate.setHours(startDate.getHours() - 6);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-6h';
+                endGDate = 'now';
                 break;
             case 'Last 12 hours':
                 startDate = new Date();
                 startDate.setHours(startDate.getHours() - 12);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-12h';
+                endGDate = 'now';
                 break;
             case 'Last 24 hours':
                 startDate = new Date();
                 startDate.setHours(startDate.getHours() - 24);
                 endDate = new Date();
                 liveTail = true;
+                startGDate = 'now-24h';
+                endGDate = 'now';
                 break;
         }
-        this.setState({startDate, endDate, liveTail})
+        // this.setState({startDate, startendDate, liveTail})
+        this.props.updateDateRange(startGDate, startDate, endGDate, endDate, liveTail, this.props.refresh);
     }
         
     // handleToggle = () => {
@@ -417,29 +480,43 @@ const quickRanges = [
             const dt = event.toDate();
             if (name === 'startDate') {
                 if (dt > endDate) {
-                    this.setState({ [name]: dt, endDate: dt });        
+                    // this.setState({ [name]: dt, endDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
+                    this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);  
                     return;
                 }
+                // this.setState({ [name]: dt,  startGDate: dt.getTime().toString()});
+                this.props.updateDateRange(dt.getTime().toString(), dt, this.props.to, this.props.endDate, this.props.liveTail, this.props.refresh);  
+                    
             } else if(name === 'endDate') {
                 if ( dt < startDate ){
-                    this.setState({ [name]: dt, startDate: dt });        
+                    // this.setState({ [name]: dt, startDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });        
+                    this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);  
                     return;
                 }
+                // this.setState({ [name]: dt, endGDate: dt.getTime().toString() });
+                // this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);  
+                this.props.updateDateRange(this.props.from, this.props.startDate, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);  
+                    
             }
-            this.setState({ [name]: dt });
             return;
-        }
-        if (name === 'liveTail') {
-            this.setState({liveTail: event.target.checked});
-            return
+        } else if (name === 'liveTail') {
+            // this.setState({liveTail: event.target.checked});
+            if (event.target.checked){
+                this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);  
+                return    
+            } else {
+                this.props.updateDateRange(this.props.startDate.getTime().toString(), this.props.startDate, this.props.endDate.getTime().toString(), this.props.endDate, event.target.checked, this.props.refresh);  
+                return
+            }
+        } else if (name === 'refresh'){
+            this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);  
         }
         this.setState({ [name]: event.target.value });
     };
 
     render() {
-        const {startDate, endDate, liveTail, refreshInterval, open} = this.state;
-        // const open = Boolean(anchorEl);
-        const {classes} = this.props;
+        const { open } = this.state;
+        const { startDate, endDate, liveTail, refresh, classes } = this.props;
         return (
             <NoSsr>
             <React.Fragment>
@@ -499,14 +576,14 @@ const quickRanges = [
                                             onChange={this.handleChange('liveTail')} />} label="Live tail" />
                                         <TextField
                                             select
-                                            id="refreshInterval"
-                                            name="refreshInterval"
+                                            id="refresh"
+                                            name="refresh"
                                             label="Refresh Interval"
                                             fullWidth
-                                            value={refreshInterval}
+                                            value={refresh}
                                             margin="normal"
                                             variant="outlined"
-                                            onChange={this.handleChange('refreshInterval')}>
+                                            onChange={this.handleChange('refresh')}>
                                             {refreshIntervals.map((ri) => (
                                                 <MenuItem key={'ri_-_-_'+ri} value={ri}>{ri}</MenuItem>
                                             ))}
@@ -543,6 +620,16 @@ const quickRanges = [
             </NoSsr>
         );
     }
+}
+
+GrafanaDateRangePicker.propTypes = {
+    updateDateRange: PropTypes.func.isRequired,
+    from: PropTypes.string.isRequired,
+    startDate: PropTypes.object.isRequired,
+    to: PropTypes.string.isRequired,
+    endDate: PropTypes.object.isRequired,
+    // liveTail: PropTypes.bool.isRequired,
+    refresh: PropTypes.string.isRequired,
 }
 
 export default withStyles(styles)(GrafanaDateRangePicker);
