@@ -28,15 +28,35 @@ const grafanaStyles = theme => ({
   });
 
 class GrafanaCharts extends Component {
+  constructor(props) {
+    super(props);
+
+    const startDate = new Date();
+    startDate.setMinutes(startDate.getMinutes() - 5);
+    this.state = {
+      startDate,
+      from: 'now-5m',
+      endDate: new Date(),
+      to: 'now',
+      liveTail: true,
+      refresh: '10s',
+    }
+
+  }
+    updateDateRange = (from, startDate, to, endDate, liveTail, refresh) => {
+      this.setState({from, startDate, to, endDate, liveTail, refresh});
+    }
     
     render() {
+        const {from, startDate, to, endDate, liveTail, refresh} = this.state;
         const { classes, grafanaURL, boardPanelConfigs } = this.props;
         return (
               <NoSsr>
               <React.Fragment>
               <div className={classes.root}>
                 <div className={classes.alignRight}>
-                  <GrafanaDateRangePicker />
+                  <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
+                    refresh={refresh} updateDateRange={this.updateDateRange} />
                 </div>
                 {boardPanelConfigs.map((config, ind) => (
                   <ExpansionPanel defaultExpanded={ind === 0?true:false}>
@@ -55,7 +75,7 @@ class GrafanaCharts extends Component {
                               <LazyLoad once>
                                 <iframe 
                                   key={'url_-_-'+ind} 
-                                  src={`${grafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=10s&${config.templateVars.map(tv => `var-${tv}`).join('&')}`} 
+                                  src={`${grafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars.map(tv => `var-${tv}`).join('&')}`} 
                                   // width='450' 
                                   width='100%'
                                   // height='250' 
