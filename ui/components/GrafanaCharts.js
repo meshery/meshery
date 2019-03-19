@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LazyLoad from 'react-lazyload';
+import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 
 const grafanaStyles = theme => ({
     root: {
@@ -19,6 +20,10 @@ const grafanaStyles = theme => ({
       fontSize: theme.typography.pxToRem(15),
       color: theme.palette.text.secondary,
     },
+    alignRight: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+    }
   });
 
 class GrafanaCharts extends Component {
@@ -29,6 +34,9 @@ class GrafanaCharts extends Component {
               <NoSsr>
               <React.Fragment>
               <div className={classes.root}>
+                <div className={classes.alignRight}>
+                  <GrafanaDateRangePicker />
+                </div>
                 {boardPanelConfigs.map((config, ind) => (
                   <ExpansionPanel defaultExpanded={ind === 0?true:false}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
