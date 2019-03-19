@@ -509,7 +509,8 @@ const quickRanges = [
                 return
             }
         } else if (name === 'refresh'){
-            this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);  
+            this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value); 
+            return; 
         }
         this.setState({ [name]: event.target.value });
     };
