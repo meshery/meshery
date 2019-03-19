@@ -10,7 +10,7 @@ class MesheryDateTimePicker extends Component {
         return (
             <MuiPickersUtilsProvider utils={MomentUtils}>
             <div>
-                <DateTimePicker value={selectedDate} onChange={onChange} label={label} />
+                <DateTimePicker value={selectedDate} onChange={onChange} label={label} variant="outlined" fullWidth />
             </div>
             </MuiPickersUtilsProvider>
         );
