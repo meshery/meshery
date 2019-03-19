@@ -23,6 +23,7 @@ const grafanaStyles = theme => ({
     alignRight: {
       display: 'flex',
       justifyContent: 'flex-end',
+      marginRight: theme.spacing(1),
     }
   });
 
