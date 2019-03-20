@@ -196,8 +196,8 @@ class GrafanaComponent extends Component {
         return (
             <Snackbar
                 anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
+                    vertical: 'top',
+                    horizontal: 'right',
                 }}
                 open={showSnackbar}
                 autoHideDuration={6000}
