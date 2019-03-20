@@ -533,6 +533,7 @@ const quickRanges = [
                 <Moment format="LLLL">{startDate}</Moment>
                 <span className={classes.space}>-</span>
                 {liveTail?'now':(<Moment format="LLLL">{endDate}</Moment>)}
+                <span className={classes.space}>, {refresh}</span>
             </Button>
             {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
