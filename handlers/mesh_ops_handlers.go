@@ -41,16 +41,12 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	if ok && contextNameI != nil {
 		inClusterConfig, _ = inClusterConfigI.(string)
 	}
-	// if !ok && contextNameI == nil {
-	// 	logrus.Error("unable to get session data")
-	// 	http.Error(w, "unable to get user data", http.StatusUnauthorized)
-	// 	return
-	// }
-	logrus.Debugf("session values: %v", session.Values)
+
+	// logrus.Debugf("session values: %v", session.Values)
 	k8sConfigBytesI, ok := session.Values["k8sConfig"]
 	if inClusterConfig == "" && (!ok || k8sConfigBytesI == nil) {
 		logrus.Error("no valid kubernetes config found")
-		http.Error(w, `No valid kubernetes config found. Please go <a href="/play/dashboard">here</a> to upload your config file and try again.`, http.StatusBadRequest)
+		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
 	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
@@ -61,7 +57,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		meshLocationURL, _ = meshLocationURLI.(string)
 	} else {
 		logrus.Error("no valid url for mesh adapter found")
-		http.Error(w, `No valid url for mesh adapter found. Please go <a href="/play/dashboard">here</a> to the mesh adapter url and try again.`, http.StatusBadRequest)
+		http.Error(w, `No valid url for mesh adapter found.`, http.StatusBadRequest)
 		return
 	}
 

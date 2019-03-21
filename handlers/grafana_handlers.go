@@ -189,10 +189,3 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 	}
 	w.Write(data)
 }
-
-// http://10.199.75.64:30487/api/datasources/proxy/1/api/v1/label/destination_service/values
-// /api/datasources/proxy/1/api/v1/query?query=sum(istio_requests_total{reporter="destination",%20destination_service="unknown"})%20by%20(source_workload_namespace)%20or%20sum(istio_tcp_sent_bytes_total{reporter="destination",%20destination_service=~"unknown"})
-
-// func (h *Handler) GrafanaPanelHandler(w http.ResponseWriter, req *http.Request) {
-
-// }
