@@ -18,10 +18,14 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/user", h.AuthMiddleware(http.HandlerFunc(h.UserHandler)))
+
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler)))
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))
+
 	mux.Handle("/api/mesh", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler)))
+	mux.Handle("/api/events", h.AuthMiddleware(http.HandlerFunc(h.EventStreamHandler)))
+
 	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(http.HandlerFunc(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryHandler)))
@@ -35,17 +39,6 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo.png")
 	}))
 	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
-	// mux.Handle("/static/", h.AuthMiddleware(http.StripPrefix("/static/", http.FileServer(http.Dir("../ui/out/_next/static/")))))
-	// mux.Handle("/", h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	logrus.Debugf("requesting index.html file")
-	// 	_, err := os.Stat("../ui/out/index.html")
-	// 	if err != nil {
-	// 		if os.IsNotExist(err) {
-	// 			logrus.Debugf("index file not exists")
-	// 		}
-	// 	}
-	// 	http.ServeFile(w, r, "../ui/out/index.html")
-	// })))
 
 	return &Router{
 		s:    mux,
