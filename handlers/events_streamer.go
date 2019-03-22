@@ -85,8 +85,8 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	// 	// an attempt to re-establish connection
 	// 	// mClient, _ = meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
 	// }()
-	logrus.Debugf("waiting to receive events")
 	for {
+		logrus.Debugf("waiting to receive events")
 		event, err := streamClient.Recv()
 		if err != nil {
 			if err == io.EOF {
