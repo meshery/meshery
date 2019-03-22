@@ -2,7 +2,7 @@ import IconButton from '@material-ui/core/IconButton';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import NoSsr from '@material-ui/core/NoSsr';
-import { Badge, Drawer, Tooltip } from '@material-ui/core';
+import { Badge, Drawer, Tooltip, Divider, Typography } from '@material-ui/core';
 import MesheryEventViewer from './MesheryEventViewer';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { withStyles } from '@material-ui/core/styles';
@@ -11,6 +11,12 @@ const styles = {
     sidelist: {
         width: 350,
     },
+    notficiationDrawer: {
+        backgroundColor: '#FFFFFF',
+    },
+    notificationTitle: {
+        textAlign: 'center',
+    }
 };
 
 class MesheryNotification extends React.Component {
@@ -114,7 +120,11 @@ class MesheryNotification extends React.Component {
         </IconButton>
         </Tooltip>
 
-        <Drawer anchor="right" open={open} onClose={this.handleClose}>
+        <Drawer anchor="right" open={open} onClose={this.handleClose} 
+        classes={{
+            paper: classes.notficiationDrawer,
+        }}
+        >
           <div
             tabIndex={0}
             role="button"
@@ -122,6 +132,10 @@ class MesheryNotification extends React.Component {
             onKeyDown={this.handleClose}
           >
             <div className={classes.sidelist}>
+            <div className={classes.notificationTitle}>
+                <Typography variant="subtitle2">Notifications</Typography>
+            </div>
+            <Divider light />
             {events && events.map((event, ind) => (
                 <MesheryEventViewer eventVariant={event.event_type} eventSummary={event.summary} 
                     eventDetail={event.details} eventIndex={ind} deleteEvent={self.deleteEvent} />
