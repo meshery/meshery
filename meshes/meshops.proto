@@ -7,7 +7,7 @@ package meshes;
 service MeshService {
     rpc CreateMeshInstance(CreateMeshInstanceRequest) returns (CreateMeshInstanceResponse) {}
     rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
-	rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
+    rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
 }
@@ -18,7 +18,6 @@ message CreateMeshInstanceRequest {
 }
 
 message CreateMeshInstanceResponse {}
-
 
 message MeshNameRequest{}
 
