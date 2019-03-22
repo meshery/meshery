@@ -40,6 +40,9 @@ const styles = theme => ({
     iconVariant: {
         opacity: 0.9,
         marginRight: theme.spacing(1),
+    },
+    event: {
+        margin: theme.spacing(1),
     }
 })
 
@@ -90,6 +93,7 @@ class MesheryEventViewer extends React.Component {
                     message={eventSummary}
                     onClose={this.handleSnackbarClose}
                     onClick={this.handleSnackbarClick}
+                    className={classes.event}
                     />
                 {/* </Snackbar> */}
 
