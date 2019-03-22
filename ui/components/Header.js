@@ -47,8 +47,12 @@ const styles = theme => ({
     paddingRight: theme.spacing(0),
     marginLeft: theme.spacing(4),
   },
-  user: {
+  userContainer: {
     paddingLeft: 1,
+    display: 'flex',
+  },
+  userSpan: {
+    marginLeft: theme.spacing(1),
   }
 });
 
@@ -80,19 +84,17 @@ class Header extends React.Component {
                 <Avatar className={classes.logo} src={'/static/img/meshery-logo.png'} />
                 </Grid>
               </Grid>
-              <Grid item className={classes.notifications}>
-                {/* <Tooltip title="Alerts • No alters">
-                  <IconButton color="inherit">
-                    <NotificationsIcon />
-                  </IconButton>
-                </Tooltip> */}
+              {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
-              </Grid>
-              <Grid item className={classes.user}>
+              </Grid> */}
+              <Grid item className={classes.userContainer}>
                 {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                <MesheryNotification />
+                <span className={classes.userSpan}>
                 <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                </span>
               </Grid>
             </Grid>
           </Toolbar>
