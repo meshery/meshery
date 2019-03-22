@@ -9,17 +9,18 @@ This repository and site are available as open source under the terms of the [Ap
 # <a name="adapter">Writing an Adapter</a>
 Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
 
-- Get the proto buf spec file from Meshery repo here:
-- `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
-- Generate client code
-- For a Go client:
-  - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
-  - install grpc: `go get -u google.golang.org/grpc`
-  - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-  - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
-- For other language, please refer to your guides online for your appropriate languages
-- expose a grpc server on a port of your choice
-- https://github.com/layer5io/meshery-istio is a good project you can use as a sample for a Meshery adapter written in Go
+1. Get the proto buf spec file from Meshery repo: 
+```wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto```
+1. Generate code
+    1. Using Go as an example, do the following:
+        - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
+        - install grpc: `go get -u google.golang.org/grpc`
+        - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
+        - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
+    1. For other languages, please refer to gRPC.io for language-specific guides.
+1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000). 
+
+_Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 # <a name="building">Building Meshery</a>
 Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
