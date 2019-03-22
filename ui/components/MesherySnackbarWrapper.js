@@ -19,7 +19,7 @@ const variantIcon = {
   info: InfoIcon,
 };
 
-const styles1 = theme => ({
+const styles = theme => ({
   success: {
     backgroundColor: green[600],
   },
@@ -83,4 +83,4 @@ MesherySnackbarWrapper.propTypes = {
   variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
 };
 
-export default withStyles(styles1)(MesherySnackbarWrapper);
+export default withStyles(styles)(MesherySnackbarWrapper);

@@ -24,7 +24,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 func (h *Handler) validateAuth(req *http.Request) bool {
 	sess, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err == nil {
-		logrus.Debugf("session: %v", sess)
+		// logrus.Debugf("session: %v", sess)
 		return !sess.IsNew
 	}
 	logrus.Errorf("session invalid, error: %v", err)

@@ -12,6 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {connect} from "react-redux";
 import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
+import MesheryNotification from './MesheryNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -41,6 +42,18 @@ const styles = theme => ({
     height: 50,
     borderRadius: 'unset',
   },
+  notifications: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(0),
+    marginLeft: theme.spacing(4),
+  },
+  userContainer: {
+    paddingLeft: 1,
+    display: 'flex',
+  },
+  userSpan: {
+    marginLeft: theme.spacing(1),
+  }
 });
 
 class Header extends React.Component {
@@ -71,23 +84,17 @@ class Header extends React.Component {
                 <Avatar className={classes.logo} src={'/static/img/meshery-logo.png'} />
                 </Grid>
               </Grid>
-              {/* <Grid item>
-                <Typography className={classes.link} component="a" href="#">
-                  Go to docs
-                </Typography>
+              {/* <Grid item className={classes.notifications}>
+                <MesheryNotification />
               </Grid> */}
-              {/* <Grid item>
-                <Tooltip title="Alerts • No alters">
-                  <IconButton color="inherit">
-                    <NotificationsIcon />
-                  </IconButton>
-                </Tooltip>
-              </Grid> */}
-              <Grid item>
+              <Grid item className={classes.userContainer}>
                 {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                <MesheryNotification />
+                <span className={classes.userSpan}>
                 <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                </span>
               </Grid>
             </Grid>
           </Toolbar>
