@@ -28,12 +28,14 @@ A service mesh playground to faciliate learning about functionality of different
 ## <a name="running">Running Meshery</a>
 
 ### General Prerequisites
+1. `git clone https://github.com/layer5io/meshery.git`
 1. Docker engine (e.g. Docker for Desktop).
 1. Kubernetes cluster (preferably version 1.10+).
 
 #### Istio Playground Prerequisites
 1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
 
+##
 ### Running Meshery on Kubernetes
 - You can deploy Meshery to an existing kubernetes cluster using the provided yaml file into any namespace of your choice. For now let us deploy it to a namespace `meshery`: 
 
