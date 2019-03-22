@@ -60,7 +60,6 @@ class MesheryNotification extends React.Component {
         summary: 'Logs from Istio vet',
         details:'E0322 15:36:13.527222       1 reflector.go:205] github.com/aspenmesh/istio-vet/vendor/k8s.io/client-go/informers/factory.go:86: Failed to list *v1.Endpoints: Unauthorized↵E0322 15:36:13.531716       1 reflector.go:205] github.com/aspenmesh/istio-vet/vendor/k8s.io/client-go/informers/factory.go:86: Failed to list *v1.ConfigMap: '
     }],
-    badgeContent: 1,
     open: false,
     dialogShow: false,
     k8sConfig: {
@@ -115,7 +114,7 @@ class MesheryNotification extends React.Component {
     const {events} = this.state;
     const data = JSON.parse(e.data);
     events.push(data);
-    this.setState({events, badgeContent: events.length});
+    this.setState({events});
   }
 
   closeEventStream() {
@@ -129,7 +128,7 @@ class MesheryNotification extends React.Component {
       if (events[ind]){
         events.splice(ind, 1);
       }
-      this.setState({events, dialogShow: false, badgeContent: events.length});
+      this.setState({events, dialogShow: false});
   }
 
   clickEvent = (event,ind) => () => {
@@ -192,19 +191,27 @@ class MesheryNotification extends React.Component {
 
   render() {
     const {classes} = this.props;
-    const { open, badgeContent, events, ev, ind } = this.state;
+    const { open, events, ev, ind } = this.state;
     const self = this;
+
+    let toolTipMsg = `There are ${events.length} events`;
+    switch (events.length) {
+        case 0:
+            toolTipMsg = `There are no events`;
+        case 1:
+            toolTipMsg = `There is 1 event`;
+    }
 
     return (
       <div>
         <NoSsr>
-        <Tooltip title={`There are ${badgeContent} events`}>
+        <Tooltip title={toolTipMsg}>
         <IconButton 
             buttonRef={node => {
                 this.anchorEl = node;
               }}
             color="inherit" onClick={this.handleToggle}>
-            <Badge badgeContent={badgeContent} color="secondary">
+            <Badge badgeContent={events.length} color="secondary">
                 <NotificationsIcon />
             </Badge>
         </IconButton>
