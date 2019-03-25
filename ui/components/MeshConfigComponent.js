@@ -49,20 +49,10 @@ const styles = theme => ({
   },
   colorBar: {},
   colorChecked: {},
-  // uploadButton: {
-  //   // margin: theme.spacing(1),
-  //   // marginTop: theme.spacing(3),
-  //   float: 'right',
-  // },
-  // rightIcon: {
-  //   // marginLeft: theme.spacing(1),
-  // },
   fileLabel: {
     width: '100%',
-    // paddingBottom: theme.spacing(1),
   },
   fileLabelText: {
-    // width: '79%',
   },
   inClusterLabel: {
     paddingRight: theme.spacing(2),
@@ -72,6 +62,9 @@ const styles = theme => ({
   },
   alignRight: {
     textAlign: 'right',
+  },
+  fileInputStyle: {
+    opacity: '0.01',
   }
 });
 
@@ -296,19 +289,14 @@ class MeshConfigComponent extends React.Component {
       <Grid item xs={12} sm={6}>
       <FormGroup row>
         <input
-            hidden
             className={classes.input}
             id="k8sfile"
-            multiple
             type="file"
             value={k8sfile}
             onChange={this.handleChange('k8sfile')}
             disabled={inClusterConfig == true}
+            className={classes.fileInputStyle}
         />
-        <label htmlFor="k8sfile" id="k8sfileLabel" className={classes.fileLabel}>
-            {/* <Typography variant="body1" inline>
-            {k8sfile.replace('C:\\fakepath\\', '')}
-            </Typography> */}
             <TextField
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
@@ -317,11 +305,8 @@ class MeshConfigComponent extends React.Component {
                 variant="outlined"
                 fullWidth
                 value={k8sfile.replace('C:\\fakepath\\', '')}
-                onClick={e => document.querySelector('#k8sfileLabel').click()}
+                onClick={e => document.querySelector('#k8sfile').click()}
                 margin="normal"
-                // InputProps={{
-                //     readOnly: true,
-                //   }}
                 InputProps={{
                     readOnly: true,
                     startAdornment: (
@@ -330,31 +315,10 @@ class MeshConfigComponent extends React.Component {
                       </InputAdornment>
                     ),
                   }}
-                // variant="outlined"
                 disabled
                 />
-                {/* <Button component="span" variant="outlined" size="large" color={k8sfileError?"secondary":"primary"} disabled={inClusterConfig == true} className={classes.button, classes.uploadButton}>
-                  <CloudUploadIcon className={classes.rightIcon} />
-              </Button> */}
-        </label>
         </FormGroup>
       </Grid>
-    {/* <Grid item xs={12} sm={6}>
-      <FormControl className={classes.formControl} disabled={inClusterConfig == true} fullWidth variant="outlined">
-          <InputLabel htmlFor="k8sfile">Name</InputLabel>
-          <input
-            hidden
-            className={classes.input}
-            id="k8sfile"
-            multiple
-            type="file"
-            value={k8sfile}
-            onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfig == true}
-        />
-          <Input id="k8sfile" value={k8sfile} readOnly />
-        </FormControl>
-    </Grid> */}
       <Grid item xs={12}>
         <TextField
           required
