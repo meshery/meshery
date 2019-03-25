@@ -309,8 +309,8 @@ class MeshConfigComponent extends React.Component {
                 margin="normal"
                 InputProps={{
                     readOnly: true,
-                    startAdornment: (
-                      <InputAdornment position="start">
+                    endAdornment: (
+                      <InputAdornment position="end">
                         <CloudUploadIcon />
                       </InputAdornment>
                     ),
