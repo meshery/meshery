@@ -24,6 +24,9 @@ const grafanaStyles = theme => ({
       display: 'flex',
       justifyContent: 'flex-end',
       marginRight: theme.spacing(1),
+    },
+    iframe: {
+      minHeight: theme.spacing(40),
     }
   });
 
@@ -71,7 +74,7 @@ class GrafanaCharts extends Component {
                     <ExpansionPanelDetails>
                         <Grid container spacing={5}>
                           {config.panels.map(panel => (
-                            <Grid item xs={12} sm={4}>
+                            <Grid item xs={12} sm={6} className={classes.iframe}>
                               <LazyLoad once>
                                 <iframe 
                                   key={'url_-_-'+ind} 
