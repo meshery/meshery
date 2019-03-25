@@ -26,7 +26,8 @@ const grafanaStyles = theme => ({
       marginRight: theme.spacing(1),
     },
     iframe: {
-      minHeight: theme.spacing(40),
+      minHeight: theme.spacing(55),
+      minWidth: theme.spacing(55),
     }
   });
 
