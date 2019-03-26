@@ -146,7 +146,7 @@ class MesheryNotification extends React.Component {
       const {classes} = this.props;
     const {ev, ind, dialogShow} = this.state;
     if (ev && typeof ind !== 'undefined') {
-        console.log(`decided icon class: ${JSON.stringify(eventTypes[ev.event_type]?eventTypes[ev.event_type].icon:eventTypes[0].icon)}`);
+        // console.log(`decided icon class: ${JSON.stringify(eventTypes[ev.event_type]?eventTypes[ev.event_type].icon:eventTypes[0].icon)}`);
         const Icon = eventTypes[ev.event_type]?eventTypes[ev.event_type].icon:eventTypes[0].icon;
     return (
     <Dialog
