@@ -50,6 +50,7 @@ A service mesh playground to faciliate learning about functionality of different
   - Meshery can be deployed either on/off the mesh.
   - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
   - Review the yaml and make necessary changes as needed for your cluster.
+  - In the UI please use `meshery-istio:10000` for the Mesh Adapter Location when configuring Kubernetes from within Meshery.
 
 ### Running Meshery on Docker
 - We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
@@ -59,6 +60,7 @@ A service mesh playground to faciliate learning about functionality of different
     ```
     Add a `-d` flag to the above command if you want to run it in the background.
 - Now you should be able to access Meshery in your browser at [http://localhost:9081](http://localhost:9081).
+- In the UI please use `meshery-istio:10000` for the Mesh Adapter Location when configuring Kubernetes from within Meshery.
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
