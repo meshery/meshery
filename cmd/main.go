@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 
-	"github.com/satori/go.uuid"
-
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -38,7 +36,8 @@ func main() {
 		logrus.Fatalf("FORTIO_URL environment variable not set.")
 	}
 
-	fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
+	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes())) // this is making us re-initiate login after every restart
+	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery2019"))
 	fileSessionStore.MaxLength(0)
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
