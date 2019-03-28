@@ -267,7 +267,7 @@ class MesheryPlayComponent extends React.Component {
            
             <Grid item xs={12} hidden={selectedOp != 'custom'}>
             <FormControl required error={cmEditorValError} component="fieldset" className={classes.editorContainer}>
-            <FormLabel component="legend">Custom yaml</FormLabel>
+            <FormLabel component="legend">Custom YAML</FormLabel>
             <CodeMirror
                 editorDidMount={editor => { this.cmEditor = editor }}
                 value={cmEditorVal}
