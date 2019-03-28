@@ -31,18 +31,12 @@ func main() {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 	}
 
-	fortio := viper.GetString("FORTIO_URL")
-	if fortio == "" {
-		logrus.Fatalf("FORTIO_URL environment variable not set.")
-	}
-
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes())) // this is making us re-initiate login after every restart
 	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery2019"))
 	fileSessionStore.MaxLength(0)
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		ByPassAuth:  byPassAuth,
-		FortioURL:   fortio,
 		SaaSBaseURL: saasBaseURL,
 
 		RefCookieName: "meshery_ref",

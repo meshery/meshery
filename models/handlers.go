@@ -28,21 +28,9 @@ type HandlerInterface interface {
 type HandlerConfig struct {
 	SessionName   string
 	RefCookieName string
-	// SessionUserKey
-	// SessionSecret string
 
 	SessionStore sessions.Store
 
 	SaaSTokenName string
 	SaaSBaseURL   string
-
-	ByPassAuth bool
-
-	FortioURL string
 }
-
-//
-// sessionUserKey       = "twitterID"
-// 	sessionUserName      = "twitterUserName"
-// cookieSuffix         = "_referrer"
-// saasTokenName        = "meshery_saas"
