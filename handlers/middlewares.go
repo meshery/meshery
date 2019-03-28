@@ -10,7 +10,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		if !h.config.ByPassAuth {
 			isValid := h.validateAuth(req)
-			logrus.Debugf("validate auth: %t", isValid)
+			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
 				http.Redirect(w, req, "/login", http.StatusFound)
 				return
