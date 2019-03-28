@@ -31,7 +31,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     h.config.RefCookieName,
 			Value:    "/",
-			Expires:  time.Now().Add(5 * time.Minute),
+			Expires:  time.Now().Add(loginCookieDuration),
 			Path:     "/",
 			HttpOnly: true,
 		})

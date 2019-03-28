@@ -4,6 +4,7 @@ require (
 	cloud.google.com/go v0.36.0 // indirect
 	dmitri.shuralyov.com/app/changes v0.0.0-20181114035150-5af16e21babb // indirect
 	dmitri.shuralyov.com/service/change v0.0.0-20190203163610-217368fe4577 // indirect
+	fortio.org/fortio v1.3.1
 	git.apache.org/thrift.git v0.12.0 // indirect
 	github.com/Joker/jade v1.0.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.0
