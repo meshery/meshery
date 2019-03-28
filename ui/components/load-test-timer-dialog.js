@@ -10,19 +10,22 @@ const ReactCountdownClock = dynamic(() => import('react-countdown-clock'), {
 class LoadTestTimerDialog extends React.Component {
 
   render() {
-      const {countDownComplete, t, ...other} = this.props;
+      const {open, countDownComplete, t, className} = this.props;
     return (
       <NoSsr>
-        <Dialog onClose={this.handleTimerDialogClose} 
+        {/* <Dialog onClose={this.handleTimerDialogClose} 
             {...other}>
-            <DialogContent>
+            <DialogContent> */}
+            <div hidden={!open} className={className}>
                     <ReactCountdownClock seconds={t * 60}
                         color="#667C89"
                         alpha={0.9}
-                        size={300}
-                        onComplete={countDownComplete} />
-            </DialogContent>
-        </Dialog>
+                        size={50}
+                        onComplete={countDownComplete}
+                        />
+            </div>
+            {/* </DialogContent>
+        </Dialog> */}
       </NoSsr>
     );
   }
