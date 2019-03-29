@@ -132,7 +132,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana } = this.props;
-    const { timerDialogOpen, qps, url, t, c, urlError, result, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
+    const { timerDialogOpen, qps, url, t, c, result, urlError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
 
     let displayGCharts = '';
     if (grafana.selectedBoardsConfigs.length > 0) {
@@ -216,13 +216,6 @@ class MesheryPerformanceComponent extends React.Component {
       </Grid>
       <React.Fragment>
         <div className={classes.buttons}>
-          
-          <LoadTestTimerDialog open={timerDialogOpen} 
-              t={t}
-              onClose={this.handleTimerDialogClose} 
-              countDownComplete={this.handleTimerDialogClose}
-              className={classes.button} />
-
           <Button
             type="submit"
             variant="contained"
@@ -237,16 +230,22 @@ class MesheryPerformanceComponent extends React.Component {
         </div>
       </React.Fragment>
 
-      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+      <Typography variant="h6" gutterBottom className={classes.chartTitle} id="resultContainer">
         Results
       </Typography>
         <div className={classes.chartContent}>
-          <MesheryChart data={[result]} />
+          <MesheryChart data={[result]} />    
         </div>
       </div>
     </React.Fragment>
     
     {displayGCharts}
+
+    <LoadTestTimerDialog open={timerDialogOpen} 
+      t={t}
+      onClose={this.handleTimerDialogClose} 
+      countDownComplete={this.handleTimerDialogClose}
+      container={() => document.querySelector('#resultContainer')} />
     
     <Snackbar
           anchorOrigin={{
