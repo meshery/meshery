@@ -7,7 +7,11 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
+	"github.com/layer5io/meshery/helpers"
+
+	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,20 +33,21 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	q := req.Form
 
+	loadTestOptions := &models.LoadTestOptions{}
+
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
-		q.Set("t", "1m")
-	} else {
-		q.Set("t", q.Get("t")+"m") // following fortio time indication
+		tt = 1
 	}
+	loadTestOptions.Duration = time.Duration(tt) * time.Minute
 
-	q.Set("load", "Start")
-	q.Set("runner", "http")
+	loadTestOptions.IsGRPC = false
 
 	cc, _ := strconv.Atoi(q.Get("c"))
 	if cc < 1 {
-		q.Set("c", "1")
+		cc = 1
 	}
+	loadTestOptions.HTTPNumThreads = cc
 
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
@@ -51,36 +56,42 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "invalid load test URL", http.StatusBadRequest)
 		return
 	}
+	loadTestOptions.URL = loadTestURL
 
-	qps, _ := strconv.Atoi(q.Get("qps"))
+	qps, _ := strconv.ParseFloat(q.Get("qps"), 64)
 	if qps < 0 {
-		q.Set("qps", "0")
+		qps = 0
+	}
+	loadTestOptions.HTTPQPS = qps
+
+	// q.Set("json", "on")
+
+	// client := &http.Client{}
+	// fortioURL, err := url.Parse(h.config.FortioURL)
+	// if err != nil {
+	// 	logrus.Errorf("unable to parse the provided fortio url: %v", err)
+	// 	http.Error(w, "error while running load test", http.StatusInternalServerError)
+	// 	return
+	// }
+	// fortioURL.RawQuery = q.Encode()
+	// logrus.Infof("load test constructed url: %s", fortioURL.String())
+	// fortioResp, err := client.Get(fortioURL.String())
+
+	bd, err := helpers.FortioHTTP(loadTestOptions)
+	if err != nil {
+		logrus.Errorf("error: unable to perform load test: %v", err)
+		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		return
 	}
 
-	q.Set("json", "on")
-
-	client := &http.Client{}
-	fortioURL, err := url.Parse(h.config.FortioURL)
-	if err != nil {
-		logrus.Errorf("unable to parse the provided fortio url: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
-		return
-	}
-	fortioURL.RawQuery = q.Encode()
-	logrus.Infof("load test constructed url: %s", fortioURL.String())
-	fortioResp, err := client.Get(fortioURL.String())
-	if err != nil {
-		logrus.Errorf("Error: unable to call fortio: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
-		return
-	}
-	defer fortioResp.Body.Close()
-	bd, err := ioutil.ReadAll(fortioResp.Body)
-	if err != nil {
-		logrus.Errorf("Error: unable to parse response from fortio: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
-		return
-	}
+	// // defer fortioResp.Body.Close()
+	// // bd, err := ioutil.ReadAll(fortioResp.Body)
+	// bd, err := json.Marshal(resp)
+	// if err != nil {
+	// 	logrus.Errorf("Error: unable to parse response from fortio: %v", err)
+	// 	http.Error(w, "error while running load test", http.StatusInternalServerError)
+	// 	return
+	// }
 
 	err = h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 	if err != nil {

@@ -244,21 +244,13 @@ class MesheryPlayComponent extends React.Component {
            </Grid>
            <Grid item xs={12} sm={6} className={classes.alignRight}>
             <FormControlLabel
-                  key="addUpdate"
+                  key="delete"
                   control={
-                    <FormControlLabel
-                    key="delete"
-                    control={
-                        <Switch
+                    <Switch
                             checked={deleteOp}
                             onChange={this.handleChange('deleteOp')}
                         />
                     }
-                    label="Add/Update"
-                    labelPlacement="start"
-                    className={classes.deleteLabel}
-                />
-                  }
                   label="Delete"
                   labelPlacement="end"
               />
@@ -267,7 +259,7 @@ class MesheryPlayComponent extends React.Component {
            
             <Grid item xs={12} hidden={selectedOp != 'custom'}>
             <FormControl required error={cmEditorValError} component="fieldset" className={classes.editorContainer}>
-            <FormLabel component="legend">Custom yaml</FormLabel>
+            <FormLabel component="legend">Custom YAML</FormLabel>
             <CodeMirror
                 editorDidMount={editor => { this.cmEditor = editor }}
                 value={cmEditorVal}

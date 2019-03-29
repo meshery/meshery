@@ -19,12 +19,13 @@ import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
 import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
+import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
-  { id: 'Play', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
+  { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
   { id: 'Grafana', icon: <ShowChartIcon />, href: "/grafana", title: 'Grafana Charts' },
 ]
@@ -76,6 +77,16 @@ const styles = theme => ({
   divider: {
     marginTop: theme.spacing(2),
   },
+  mainLogo: {
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: 30,
+    height: 30,
+    borderRadius: 'unset',
+  },
+  community: {
+    marginTop: theme.spacing(2),
+  }
 });
 
 class Navigator extends React.Component {
@@ -130,6 +141,7 @@ class Navigator extends React.Component {
                   component="a"
                   onClick={this.handleTitleClick}
                   className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
+                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} />
                   Meshery
                 </ListItem>
                     {categories.map(({ id: childId, icon, href }) => (
@@ -158,7 +170,7 @@ class Navigator extends React.Component {
                             </Link>
                         </ListItem>
                     ))}
-
+                      <Divider className={classes.divider} />
                       <ListItem
                             component="a"
                             href="https://layer5.io/meshery"
@@ -166,6 +178,7 @@ class Navigator extends React.Component {
                             className={classNames(
                             classes.item,
                             classes.itemActionable,
+                            classes.community,
                             )}
                         >
                           <div className={classNames(classes.link)} >
@@ -176,7 +189,7 @@ class Navigator extends React.Component {
                                   textDense: classes.textDense,
                               }}
                               >
-                              {'About'}
+                              {'Community'}
                               </ListItemText>
                           </div>
                         </ListItem>
