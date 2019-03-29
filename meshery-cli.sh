@@ -24,6 +24,11 @@ case $1 in
     logs)
         docker-compose logs -f
     ;;
+    update)
+        echo "Updating Meshery. . ."
+        docker-compose pull
+        echo "Meshery is now up-to-date."
+    ;;
     *)
         echo "Please enter 'start' or 'stop' to take an appropriate action"
     ;;
