@@ -32,7 +32,9 @@ func (h *Handler) grafanaRequest(ctx context.Context, queryURL, key string) ([]b
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%s", data)
+		// return nil, fmt.Errorf("%s", data)
+		logrus.Errorf("unable to get data from URL: %s due to status code: %d", queryURL, resp.StatusCode)
+		return nil, fmt.Errorf("unable to fetch data from url: %s", queryURL)
 	}
 	return data, nil
 }
@@ -157,7 +159,9 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 	query := strings.TrimSpace(req.URL.Query().Get("query"))
 	dsID := req.URL.Query().Get("dsid")
 	// c := sdk.NewClient(grafanaURL, grafanaAPIKey, &http.Client{})
-
+	if strings.HasSuffix(grafanaURL, "/") {
+		grafanaURL = strings.Trim(grafanaURL, "/")
+	}
 	var queryURL string
 	switch {
 	case strings.HasPrefix(query, "label_values("):

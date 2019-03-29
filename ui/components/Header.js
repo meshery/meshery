@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
-import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
@@ -35,12 +34,6 @@ const styles = theme => ({
   },
   button: {
     borderColor: lightColor,
-  },
-  logo: {
-    marginTop: 8,
-    width: 50,
-    height: 50,
-    borderRadius: 'unset',
   },
   notifications: {
     paddingLeft: theme.spacing(4),
@@ -81,7 +74,6 @@ class Header extends React.Component {
               </Hidden>
               <Grid container xs justify="center">
                 <Grid item>
-                <Avatar className={classes.logo} src={'/static/img/meshery-logo.png'} />
                 </Grid>
               </Grid>
               {/* <Grid item className={classes.notifications}>

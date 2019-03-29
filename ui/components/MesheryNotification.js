@@ -9,6 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { eventTypes } from '../lib/event-types';
 import classNames from 'classnames';
 import amber from '@material-ui/core/colors/amber';
+import dataFetch from '../lib/data-fetch';
 
 
 const styles = theme => ({
@@ -107,8 +108,13 @@ class MesheryNotification extends React.Component {
   }
 
   handleError = e => {
-    // attempting to reestablish connection
-    this.startEventStream();
+    // check if server is available
+    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
+      // attempting to reestablish connection
+      this.startEventStream();
+    }, error => {
+      // do nothing here
+    });
   }
 
   closeEventStream() {
@@ -196,8 +202,10 @@ class MesheryNotification extends React.Component {
     switch (events.length) {
         case 0:
             toolTipMsg = `There are no events`;
+            break;
         case 1:
             toolTipMsg = `There is 1 event`;
+            break;
     }
 
     return (

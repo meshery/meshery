@@ -134,6 +134,11 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana } = this.props;
     const { timerDialogOpen, qps, url, t, c, result, urlError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
 
+    let chartStyle = {}
+    if (timerDialogOpen) {
+      chartStyle = {opacity: .3};
+    }
+
     let displayGCharts = '';
     if (grafana.selectedBoardsConfigs.length > 0) {
       displayGCharts = (
@@ -223,16 +228,17 @@ class MesheryPerformanceComponent extends React.Component {
             size="large"
             onClick={this.handleSubmit}
             className={classes.button}
+            disabled={timerDialogOpen}
           >
-           Submit
+           Test
           </Button>
         </div>
       </React.Fragment>
 
-      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+      <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
         Results
       </Typography>
-        <div className={classes.chartContent}>
+        <div className={classes.chartContent} style={chartStyle}>
           <MesheryChart data={[result]} />    
         </div>
       </div>
@@ -243,7 +249,8 @@ class MesheryPerformanceComponent extends React.Component {
     <LoadTestTimerDialog open={timerDialogOpen} 
       t={t}
       onClose={this.handleTimerDialogClose} 
-      countDownComplete={this.handleTimerDialogClose} />
+      countDownComplete={this.handleTimerDialogClose}
+      container={() => document.querySelector('#timerAnchor')} />
     
     <Snackbar
           anchorOrigin={{

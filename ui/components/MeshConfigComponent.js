@@ -250,25 +250,19 @@ class MeshConfigComponent extends React.Component {
       <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
             key="inCluster"
-            control={<FormControlLabel
-                      key="notInCluster"
-                      control={
-                          <Switch
-                              checked={inClusterConfig}
-                              onChange={this.handleChange('inClusterConfig')}
-                              color="default"
-                              //   value="checkedA"
-                              // classes={{
-                              //     switchBase: classes.colorSwitchBase,
-                              //     checked: classes.colorChecked,
-                              //     bar: classes.colorBar,
-                              // }}
-                          />
-                      }
-                      label="Use attached config"          
-                      labelPlacement="start"
-                      className={classes.inClusterLabel}
-                  />}
+            control={
+              <Switch
+                    checked={inClusterConfig}
+                    onChange={this.handleChange('inClusterConfig')}
+                    color="default"
+                    //   value="checkedA"
+                    // classes={{
+                    //     switchBase: classes.colorSwitchBase,
+                    //     checked: classes.colorChecked,
+                    //     bar: classes.colorBar,
+                    // }}
+                />
+                }
             labelPlacement="end"
             label="Use in-cluster Kubernetes config"
       />

@@ -1,5 +1,7 @@
 package handlers
 
+import "time"
+
 const (
 	// sessionUserKey       = "twitterID"
 	// sessionUserName      = "twitterUserName"
@@ -7,4 +9,6 @@ const (
 	// sessionTwitterSecret = "secret"
 	cookieSuffix = "_referrer"
 	// saasTokenName        = "meshery_saas"
+
+	loginCookieDuration = 1 * time.Hour
 )

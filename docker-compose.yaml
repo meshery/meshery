@@ -1,19 +1,12 @@
 version: '3'
 services:
-  fortio:
-    image: fortio/fortio
-    command: server
-    restart: always
   meshery:
     image: layer5/meshery
     environment:
       - "SAAS_BASE_URL=https://meshery.layer5.io"
       - "EVENT=mesheryLocal"
-      - "FORTIO_URL=http://fortio:8080/fortio/"
     ports:
       - "9081:8080"
-    depends_on:
-      - fortio
   meshery-istio:
     image: layer5/meshery-istio
     ports:
