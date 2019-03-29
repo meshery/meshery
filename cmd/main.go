@@ -24,10 +24,8 @@ func main() {
 	}
 	logrus.Infof("Log level: %s", logrus.GetLevel())
 
-	byPassAuth := viper.GetBool("BYPASS_AUTH")
-
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
-	if saasBaseURL == "" && !byPassAuth {
+	if saasBaseURL == "" {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 	}
 
@@ -36,7 +34,6 @@ func main() {
 	fileSessionStore.MaxLength(0)
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
-		ByPassAuth:  byPassAuth,
 		SaaSBaseURL: saasBaseURL,
 
 		RefCookieName: "meshery_ref",

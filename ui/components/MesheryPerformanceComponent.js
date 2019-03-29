@@ -235,11 +235,9 @@ class MesheryPerformanceComponent extends React.Component {
         </div>
       </React.Fragment>
 
-      <Typography variant="h6" gutterBottom className={classes.chartTitle} id="resultContainer">
+      <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
         Results
       </Typography>
-        <Button id="blah" style={{height:0,width:0}}>
-        </Button>
         <div className={classes.chartContent} style={chartStyle}>
           <MesheryChart data={[result]} />    
         </div>
@@ -252,7 +250,7 @@ class MesheryPerformanceComponent extends React.Component {
       t={t}
       onClose={this.handleTimerDialogClose} 
       countDownComplete={this.handleTimerDialogClose}
-      container={() => document.querySelector('#resultContainer')} />
+      container={() => document.querySelector('#timerAnchor')} />
     
     <Snackbar
           anchorOrigin={{
