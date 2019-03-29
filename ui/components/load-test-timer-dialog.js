@@ -1,7 +1,5 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import { NoSsr, Menu, MenuItem, Popper, Grow, Paper, ClickAwayListener } from '@material-ui/core';
+import { NoSsr, Popper, Paper } from '@material-ui/core';
 import dynamic from 'next/dynamic'
 const ReactCountdownClock = dynamic(() => import('react-countdown-clock'), {
   ssr: false

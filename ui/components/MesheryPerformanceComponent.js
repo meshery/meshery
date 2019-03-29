@@ -134,6 +134,11 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana } = this.props;
     const { timerDialogOpen, qps, url, t, c, result, urlError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
 
+    let chartStyle = {}
+    if (timerDialogOpen) {
+      chartStyle = {opacity: .3};
+    }
+
     let displayGCharts = '';
     if (grafana.selectedBoardsConfigs.length > 0) {
       displayGCharts = (
@@ -233,7 +238,9 @@ class MesheryPerformanceComponent extends React.Component {
       <Typography variant="h6" gutterBottom className={classes.chartTitle} id="resultContainer">
         Results
       </Typography>
-        <div className={classes.chartContent}>
+        <Button id="blah" style={{height:0,width:0}}>
+        </Button>
+        <div className={classes.chartContent} style={chartStyle}>
           <MesheryChart data={[result]} />    
         </div>
       </div>
