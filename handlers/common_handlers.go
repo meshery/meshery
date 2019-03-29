@@ -139,11 +139,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
 		sess.Save(req, w)
 	}
 
-	if h.config.ByPassAuth {
-		http.Redirect(w, req, req.Referer(), http.StatusFound)
-	} else {
-		http.Redirect(w, req, "/login", http.StatusFound)
-	}
+	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
 func (h *Handler) setupSession(userName string, req *http.Request, w http.ResponseWriter) *models.User {

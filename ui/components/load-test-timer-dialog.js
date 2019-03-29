@@ -18,13 +18,13 @@ class LoadTestTimerDialog extends React.Component {
           // onClose={this.handleClose}
         > */}
         <Popper open={open} anchorEl={container} 
-            disablePortal placement="bottom" 
+           placement='bottom' 
             modifiers={{
               flip: {
                 enabled: false,
               },
             }}>
-                <Paper>
+                {/* <Paper> */}
                   {/* <ClickAwayListener onClickAway={this.handleClose}></ClickAwayListener> */}
 
           {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
@@ -33,9 +33,10 @@ class LoadTestTimerDialog extends React.Component {
           <ReactCountdownClock seconds={t * 60}
                         color="#667C89"
                         alpha={0.9}
-                        size={300}
-                        onComplete={countDownComplete} />
-                        </Paper>
+                        size={400}
+                        onComplete={countDownComplete} 
+                        />
+                        {/* </Paper> */}
                         </Popper>
         {/* </Menu> */}
         
