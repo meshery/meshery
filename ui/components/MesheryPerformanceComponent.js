@@ -230,7 +230,7 @@ class MesheryPerformanceComponent extends React.Component {
             className={classes.button}
             disabled={timerDialogOpen}
           >
-           Submit
+           Test
           </Button>
         </div>
       </React.Fragment>
