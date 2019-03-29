@@ -30,6 +30,6 @@ case $1 in
         echo "Meshery is now up-to-date."
     ;;
     *)
-        echo "Please enter 'start' or 'stop' to take an appropriate action"
+        echo "Please enter 'start/stop/logs/update' to take an appropriate action"
     ;;
 esac
