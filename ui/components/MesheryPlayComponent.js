@@ -244,21 +244,13 @@ class MesheryPlayComponent extends React.Component {
            </Grid>
            <Grid item xs={12} sm={6} className={classes.alignRight}>
             <FormControlLabel
-                  key="addUpdate"
+                  key="delete"
                   control={
-                    <FormControlLabel
-                    key="delete"
-                    control={
-                        <Switch
+                    <Switch
                             checked={deleteOp}
                             onChange={this.handleChange('deleteOp')}
                         />
                     }
-                    label="Add/Update"
-                    labelPlacement="start"
-                    className={classes.deleteLabel}
-                />
-                  }
                   label="Delete"
                   labelPlacement="end"
               />
