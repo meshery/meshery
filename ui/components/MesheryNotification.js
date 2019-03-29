@@ -202,8 +202,10 @@ class MesheryNotification extends React.Component {
     switch (events.length) {
         case 0:
             toolTipMsg = `There are no events`;
+            break;
         case 1:
             toolTipMsg = `There is 1 event`;
+            break;
     }
 
     return (
