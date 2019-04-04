@@ -25,26 +25,32 @@ const styles = theme => ({
 class MesheryResults extends Component {
     state = {
         page: 0,
-        pageMap: {
-          0: '',
-        },
-        count: 10,
+        search: '',
+        sortOrder: '',
+        // pageMap: {
+        //   0: '',
+        // },
+        count: 0,
         pageSize: 10,
         results: [],
         // startKey: '',
     }
 
     componentDidMount = () => {
-      this.fetchResults(0);
+      const {page, pageSize, search, sortOrder} = this.state;
+      this.fetchResults(page, pageSize, search, sortOrder);
     }
 
-    fetchResults = (page) => {
+    fetchResults = (page, pageSize, search, sortOrder) => {
           let self = this;
           let query = '';
-          const startKey = (typeof this.state.pageMap[page] !== 'undefined')?this.state.pageMap[page]:'';
-          if (startKey !== ''){
-            query = `?startKey=${encodeURIComponent(startKey)}`;
+          if (typeof search === 'undefined' || search === null) {
+            search = '';
           }
+          if (typeof sortOrder === 'undefined' || sortOrder === null) {
+            sortOrder = '';
+          }
+          query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
           dataFetch(`/api/results${query}`, { 
             credentials: 'same-origin',
             method: 'GET',
@@ -52,44 +58,31 @@ class MesheryResults extends Component {
           }, result => {
             // console.log(`received results: ${JSON.stringify(result)}`);
             if (typeof result !== 'undefined'){
-            //   let res = [];
-            //   if (typeof result.results !== 'undefined'){
-            //     res = result.results.map((r) => {
-            //       return r.runner_results;
-            //     });
-            //   }
-              const {pageMap} = this.state;
-              let {count} = this.state;
-              if (typeof result.last_key !== 'undefined'){
-                pageMap[page+1] = result.last_key;
-                count = (page + 1) * self.state.pageSize + self.state.pageSize;
-              }
               this.setState({
-                // results: res,
                 results: result.results,
-                page,
-                pageMap,
-                count,
+                search: search,
+                sortOrder: sortOrder,
+                page: result.page,
+                pageSize: result.page_size,
+                count: result.total_count,
               });
-              // this.props.updateMeshResults({startKey: result.last_key, results: result.results});
             }
           }, self.handleError);
     }
 
     handleError = error => {
-        // this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Load test did not run successfully with msg: ${error}`});
         console.log(`error fetching results: ${error}`);
       }
 
     render() {
-        const { classes, results_selection } = this.props; // data here maps to the MesheryResult model
-        const { results, page, count, pageSize } = this.state;
+        const { classes, results_selection } = this.props;
+        const { results, page, count, pageSize, search, sortOrder } = this.state;
 
         const resultsForDisplay = [];
         results.forEach((record) => {
           const row = {
             mesh: record.mesh,
-            start_time: record.runner_results.StartTime,
+            test_start_time: record.runner_results.StartTime,
             qps: record.runner_results.ActualQPS.toFixed(1),
             duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
             threads: record.runner_results.NumThreads,
@@ -113,19 +106,19 @@ class MesheryResults extends Component {
           {
            name: "mesh",
            label: "Mesh",
-          //  options: {
-          //   filter: false,
-          //   sort: false,
-          //   searchable: false,
-          //  }
+           options: {
+            filter: false,
+            sort: true,
+            searchable: true,
+           }
           },
           {
-           name: "start_time",
+           name: "test_start_time",
            label: "StartTime",
            options: {
-          //   filter: false,
-          //   sort: false,
-          //   searchable: false,
+              filter: false,
+              sort: true,
+              searchable: false,
               customBodyRender: (value, tableMeta, updateValue) => {
                 return (
                   <Moment format="LLLL">{value}</Moment>
@@ -136,38 +129,38 @@ class MesheryResults extends Component {
           {
             name: "qps",
             label: "QPS",
-            // options: {
-            //   filter: false,
-            //   sort: false,
-            //   searchable: false,
-            //  }
+            options: {
+              filter: false,
+              sort: false,
+              searchable: false,
+             }
            },
            {
             name: "duration",
             label: "Duration",
-            // options: {
-            //   filter: false,
-            //   sort: false,
-            //   searchable: false,
-            //  }
+            options: {
+              filter: false,
+              sort: false,
+              searchable: false,
+             }
            },
            {
             name: "threads",
             label: "Threads",
-            // options: {
-            //   filter: false,
-            //   sort: false,
-            //   searchable: false,
-            //  }
+            options: {
+              filter: false,
+              sort: false,
+              searchable: false,
+             }
            },
            {
             name: "p50",
             label: "P50",
-            // options: {
-            //   filter: false,
-            //   sort: false,
-            //   searchable: false,
-            //  }
+            options: {
+              filter: false,
+              sort: false,
+              searchable: false,
+             }
            },
           //  {
           //   name: "p75",
@@ -199,11 +192,11 @@ class MesheryResults extends Component {
            {
             name: "p99.9",
             label: "P99.9",
-            // options: {
-            //   filter: false,
-            //   sort: false,
-            //   searchable: false,
-            //  }
+            options: {
+              filter: false,
+              sort: false,
+              searchable: false,
+             }
            }
         ];
 
@@ -224,25 +217,22 @@ class MesheryResults extends Component {
 
         const options = {
           filter: false,
-          sort: false,
-          search: false,
+          sort: true,
+          search: true,
           filterType: 'textField',
           responsive: 'stacked',
-          // pagination: true, // default
           // resizableColumns: true,
           // selectableRows: true,
           serverSide: true,
           count: count,
-          // rowsPerPage: count,
-          rowsPerPageOptions: [pageSize],
+          rowsPerPage: pageSize,
+          rowsPerPageOptions: [10, 20, 25],
           fixedHeader: true,
           page: page,
           rowsSelected,
           print: false,
           download: false,
           onRowsSelect: (currentRowsSelected, allRowsSelected) => {
-            // console.log(`currentRowsSelected: ${JSON.stringify(currentRowsSelected)}`);
-            // console.log(`allRowsSelected: ${JSON.stringify(allRowsSelected)}`);
             let res = {};
             allRowsSelected.forEach(({dataIndex}) => {
               if (dataIndex < pageSize) {
@@ -254,45 +244,42 @@ class MesheryResults extends Component {
               }});
               this.props.updateResultsSelection({page, results: res});
           },
-          // onRowsDelete: (rowsDeleted) => {
-          //   console.log(`delete rows: ${JSON.stringify(rowsDeleted)}`);
-          // },
           onTableChange: (action, tableState) => {
 
             // console.log(action, tableState);
-            // a developer could react to change on an action basis or
-            // examine the state as a whole and do whatever they want
-
+          
             switch (action) {
               case 'changePage':
-                this.fetchResults(tableState.page);
+                this.fetchResults(tableState.page, pageSize, search, sortOrder);
                 break;
-            //   case 'rowsSelect':
-            //     // TODO: get the updated list of items from state
-            //     console.log(`current table state: ${JSON.stringify(tableState.selectedRows.data)}`);
-            //     tableState.selectedRows.data = tableState.selectedRows.data.filter(({dataIndex}) => {
-            //       return (typeof dataIndex !== 'undefined' && parseInt(dataIndex) < pageSize);
-            //     })
-            //     console.log(`current table state after cleanup: ${JSON.stringify(tableState.selectedRows.data)}`);
-            //     console.log(`selected rows: ${JSON.stringify(tableState.selectedRows.data)}`);
-            //     Object.keys(results_selection).forEach((pg) => {
-            //       if (parseInt(pg) !== page) {
-            //         Object.keys(results_selection[parseInt(pg)]).forEach((ind) => {
-            //           const val = ((parseInt(pg) + 1) * pageSize + parseInt(ind) + 1);
-            //           tableState.selectedRows.data.push({index: val+'', dataIndex: val+''});
-            //           tableState.selectedRows.lookup[val+''] = true;
-            //         });
-            //       }
-            //     });
-            //     console.log(`selected rows after adjustments: ${JSON.stringify(tableState.selectedRows.data)}`);
-            //     break;
+              case 'changeRowsPerPage':
+                this.fetchResults(page, tableState.rowsPerPage, search, sortOrder);
+                break;
+              case 'search':
+                const self = this;
+                if (self.searchTimeout) {
+                  clearTimeout(self.searchTimeout);
+                }
+                self.searchTimeout = setTimeout(function(){
+                  if (search !== tableState.searchText){
+                    self.fetchResults(page, pageSize, tableState.searchText !== null?tableState.searchText:'', sortOrder);
+                  }
+                }, 500);
+                break;
+              case 'sort':
+                const sortInfo = tableState.announceText.split(' : ');
+                let order = 'asc';
+                if (sortInfo.length == 2) {
+                  if (sortInfo[1] === 'descending'){
+                    order = 'desc';
+                  }
+                }
+                if (order !== sortOrder){
+                  this.fetchResults(page, pageSize, search, columns[tableState.activeColumn].name+ ' ' + order);
+                }
+                break;
             }
           }, 
-          customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage) => {
-            return (  
-              <CustomTableFooter changePage={changePage} rowsPerPage={rowsPerPage} page={page} count={count} />
-            );
-          },
           customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
             return (
               <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={results} />
@@ -316,14 +303,7 @@ class MesheryResults extends Component {
 
         return (
             <NoSsr>
-            {/* <Grid container spacing={5} className={classes.grid}>
-                {results.map((result) => (
-                <Grid item xs={12} sm={6}>
-                    <MesheryResult key={result.meshery_id} data={result} />
-                </Grid>
-                ))}
-            </Grid> */}
-              <MUIDataTable title={"Meshery Results"} data={resultsForDisplay} columns={columns} options={options} />
+            <MUIDataTable title={"Meshery Results"} data={resultsForDisplay} columns={columns} options={options} />
             </NoSsr>
         );
     }
