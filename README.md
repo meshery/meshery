@@ -14,6 +14,10 @@ A service mesh playground to faciliate learning about functionality and performa
   
 In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. 
 
+## Presentations
+- Service Mesh Day - [Slides](https://docs.google.com/presentation/d/1T0w5sXiUYtjHhmwJYF7VI-q5lgYAN46-Yn8ey0EZV-A/edit?usp=sharing)
+- Innotech San Antonio - [Slides](https://calcotestudios.com/talks/decks/slides-innotech-san-antonio-2019-the-enterprise-path-to-service-mesh.html)
+
 ## <a name="functionality">Functionality</a>
 <img align="right" src="./ui/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
 
