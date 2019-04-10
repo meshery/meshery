@@ -140,11 +140,12 @@ class MesheryPlayComponent extends React.Component {
   }
 
   submitOp = () => {
-    const { selectedOp, cmEditorVal, deleteOp } = this.state;
+    const { namespace, selectedOp, cmEditorVal, deleteOp } = this.state;
     // const fileInput = document.querySelector('#k8sfile') ;
 
     const data = {
       'query': selectedOp,
+      'namespace': namespace,
       'customBody': cmEditorVal,
       'deleteOp': deleteOp? 'on':'',
     }
