@@ -76,6 +76,7 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ loadTest: action.loadTest });
     case actionTypes.UPDATE_MESH_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
+      state = state.updateIn(['mesh', 'Ops'], val => fromJS({}));
       return state.mergeDeep({ mesh: action.mesh });
     case actionTypes.UPDATE_MESH_RESULTS:
       // console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
