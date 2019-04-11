@@ -25,3 +25,10 @@ type LoadTestOptions struct {
 	GRPCDoPing       bool
 	GRPCPingDelay    time.Duration
 }
+
+// MesheryResult - represents the results from Meshery test run to be shipped
+type MesheryResult struct {
+	Name   string                 `json:"name,omitempty"`
+	Mesh   string                 `json:"mesh,omitempty"`
+	Result map[string]interface{} `json:"runner_results,omitempty"`
+}

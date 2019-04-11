@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr, Tooltip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
@@ -43,9 +43,11 @@ const styles = theme => ({
 class MesheryPerformanceComponent extends React.Component {
   constructor(props){
     super(props);
-    const {url, qps, c, t, result} = props;
+    const {testName, meshName, url, qps, c, t, result} = props;
 
     this.state = {
+      testName, 
+      meshName, 
       url,
       qps,
       c,
@@ -54,6 +56,8 @@ class MesheryPerformanceComponent extends React.Component {
 
       timerDialogOpen: false,
       urlError: false,
+      tError: false,
+      testNameError: false,
       showSnackbar: false,
       snackbarVariant: '',
       snackbarMessage: '',
@@ -72,14 +76,39 @@ class MesheryPerformanceComponent extends React.Component {
     if (name === 'url' && event.target.value !== ''){
       this.setState({urlError: false});
     }
+    if (name === 'testName`' && event.target.value !== ''){
+      this.setState({testNameError: false});
+    }
+    if (name === 't' && (event.target.value.toLowerCase().endsWith('h') || 
+      event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))){
+      this.setState({tError: false});
+    }
     this.setState({ [name]: event.target.value });
   };
 
   handleSubmit = () => {
 
-    const { url } = this.state;
+    const { url, t, testName } = this.state;
     if (url === ''){
       this.setState({urlError: true})
+      return;
+    }
+
+    if (testName === ''){
+      this.setState({testNameError: true})
+      return;
+    }
+
+    let err = false, tNum = 0;
+    try {
+      tNum = parseInt(t.substring(0, t.length - 1))
+    }catch(ex){
+      err = true;
+    }
+
+    if (t === '' || !(t.toLowerCase().endsWith('h') || 
+      t.toLowerCase().endsWith('m') || t.toLowerCase().endsWith('s')) || err || tNum <= 0){
+      this.setState({tError: true})
       return;
     }
     this.submitLoadTest()
@@ -87,13 +116,20 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   submitLoadTest = () => {
-    const {url, qps, c, t} = this.state;
+    const {testName, meshName, url, qps, c, t} = this.state;
+
+    const t1 = t.substring(0, t.length - 1);
+    const dur = t.substring(t.length - 1, t.length).toLowerCase();
+
     const data = {
+      name: testName, 
+      mesh: meshName, 
       url,
       qps,
       c,
-      t
-    }
+      t: t1, 
+      dur,
+    };
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
@@ -108,7 +144,7 @@ class MesheryPerformanceComponent extends React.Component {
       },
       body: params
     }, result => {
-      if (typeof result !== 'undefined'){
+      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
         this.setState({result, timerDialogOpen: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
         this.props.updateLoadTestData({loadTest: {
           url,
@@ -132,7 +168,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana } = this.props;
-    const { timerDialogOpen, qps, url, t, c, result, urlError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
+    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, urlError, tError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
 
     let chartStyle = {}
     if (timerDialogOpen) {
@@ -157,6 +193,34 @@ class MesheryPerformanceComponent extends React.Component {
       <React.Fragment>
       <div className={classes.root}>
       <Grid container spacing={5}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            id="testName"
+            name="testName"
+            label="Friendly Name for this test"
+            autoFocus
+            fullWidth
+            value={testName}
+            error={testNameError}
+            margin="normal"
+            variant="outlined"
+            onChange={this.handleChange('testName')}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id="meshName"
+            name="meshName"
+            label="Service Mesh Name"
+            autoFocus
+            fullWidth
+            value={meshName}
+            margin="normal"
+            variant="outlined"
+            onChange={this.handleChange('meshName')}
+          />
+        </Grid>
         <Grid item xs={12}>
           <TextField
             required
@@ -204,19 +268,20 @@ class MesheryPerformanceComponent extends React.Component {
           />
         </Grid>
         <Grid item xs={12} sm={4}>
-          <TextField
-            required
-            id="t"
-            name="t"
-            label="Duration in minutes"
-            type="number"
-            fullWidth
-            value={t}
-            inputProps={{ min: "1", step: "1" }}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('t')}
-          />
+          <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
+            <TextField
+              required
+              id="t"
+              name="t"
+              label="Duration"
+              fullWidth
+              value={t}
+              error={tError}
+              margin="normal"
+              variant="outlined"
+              onChange={this.handleChange('t')}
+            />
+          </Tooltip>
         </Grid>
       </Grid>
       <React.Fragment>

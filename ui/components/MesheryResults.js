@@ -81,6 +81,7 @@ class MesheryResults extends Component {
         const resultsForDisplay = [];
         results.forEach((record) => {
           const row = {
+            name: record.name,
             mesh: record.mesh,
             test_start_time: record.runner_results.StartTime,
             qps: record.runner_results.ActualQPS.toFixed(1),
@@ -103,6 +104,15 @@ class MesheryResults extends Component {
         });
         
         const columns = [
+          {
+            name: "name",
+            label: "Name",
+            options: {
+             filter: false,
+             sort: true,
+             searchable: true,
+            }
+           },
           {
            name: "mesh",
            label: "Mesh",
