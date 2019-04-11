@@ -57,14 +57,22 @@ A service mesh playground to faciliate learning about functionality of different
   - In the UI please use `meshery-istio:10000` for the Mesh Adapter Location when configuring Kubernetes from within Meshery.
 
 ### Running Meshery on Docker
-- We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
+- We have an easy setup script here: https://meshery.layer5.io/cli
+  ```
+  curl https://meshery.layer5.io/cli > meshery-cli
+  chmod +x meshery-cli
+  ./meshery-cli start
+  ```
+  (OR)
+  We have a docker-compose.yaml file which can be used to spin up the services quickly by running:
     ```
     docker-compose pull
     docker-compose up
     ```
     Add a `-d` flag to the above command if you want to run it in the background.
+  
 - Now you should be able to access Meshery in your browser at [http://localhost:9081](http://localhost:9081).
-- In the UI please use `meshery-istio:10000` for the Mesh Adapter Location when configuring Kubernetes from within Meshery.
+- In the UI please use `meshery-istio:10000` for the Istio Adapter Location or `meshery-linkerd:10001` for the Linkerd Adapter Location for connecting to the respective adpaters from within Meshery.
 
 ## Linkerd Playground App
 _coming soon for Linkerd_
