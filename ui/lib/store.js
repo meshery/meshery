@@ -17,10 +17,12 @@ const initialState = fromJS({
     reconfigureCluster: true,
   },
   loadTest: {
+    testName: '',
+    meshName: '',
     url: '',
     qps: 0,
     c: 0,
-    t: 1,
+    t: '30s',
     result: {},
   },
   mesh: {

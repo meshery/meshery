@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
@@ -33,13 +35,36 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	q := req.Form
 
+	testName := q.Get("name")
+	if testName == "" {
+		logrus.Errorf("Error: name field is blank")
+		http.Error(w, "friendly name needs to have a value", http.StatusForbidden)
+		return
+	}
+	meshName := q.Get("mesh")
+
 	loadTestOptions := &models.LoadTestOptions{}
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
 		tt = 1
 	}
-	loadTestOptions.Duration = time.Duration(tt) * time.Minute
+	dur := ""
+	switch strings.ToLower(q.Get("dur")) {
+	case "h":
+		dur = "h"
+	case "m":
+		dur = "m"
+	// case "s":
+	default:
+		dur = "s"
+	}
+	loadTestOptions.Duration, err = time.ParseDuration(fmt.Sprintf("%d%s", tt, dur))
+	if err != nil {
+		logrus.Errorf("Error: unable to parse load test duration: %v", err)
+		http.Error(w, "unable to process the received data", http.StatusForbidden)
+		return
+	}
 
 	loadTestOptions.IsGRPC = false
 
@@ -77,7 +102,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
-	bd, err := helpers.FortioHTTP(loadTestOptions)
+	resultsMap, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
 		logrus.Errorf("error: unable to perform load test: %v", err)
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
@@ -93,6 +118,17 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// 	return
 	// }
 
+	result := &models.MesheryResult{
+		Name:   testName,
+		Mesh:   meshName,
+		Result: resultsMap,
+	}
+	bd, err := json.Marshal(result)
+	if err != nil {
+		logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
+		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		return
+	}
 	err = h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 	if err != nil {
 		// logrus.Errorf("Error: unable to parse response from fortio: %v", err)
