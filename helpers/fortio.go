@@ -37,7 +37,8 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	return &httpOpts
 }
 
-func FortioHTTP(opts *models.LoadTestOptions) ([]byte, error) {
+// FortioLoadTest is the actual code which invokes Fortio to run the load test
+func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, error) {
 	defaults := &periodic.DefaultRunnerOptions
 	// httpOpts := bincommon.SharedHTTPOptions()
 	httpOpts := sharedHTTPOptions(opts)
@@ -120,6 +121,8 @@ func FortioHTTP(opts *models.LoadTestOptions) ([]byte, error) {
 		logrus.Error(err)
 		return nil, err
 	}
+	logrus.Debugf("original version of the test: %+#v", res)
+	resultsMap := map[string]interface{}{}
 	var bd []byte
 	if opts.IsGRPC {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
@@ -133,5 +136,12 @@ func FortioHTTP(opts *models.LoadTestOptions) ([]byte, error) {
 		logrus.Error(err)
 		return nil, err
 	}
-	return bd, nil
+	err = json.Unmarshal(bd, &resultsMap)
+	if err != nil {
+		err = errors.Wrap(err, "error while unmarshaling data to map")
+		logrus.Error(err)
+		return nil, err
+	}
+	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
+	return resultsMap, nil
 }

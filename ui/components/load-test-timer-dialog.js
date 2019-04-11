@@ -9,6 +9,21 @@ class LoadTestTimerDialog extends React.Component {
 
   render() {
       const {countDownComplete, t, container, open} = this.props;
+      let tNum = 0, dur;
+      try {
+        tNum = parseInt(t.substring(0, t.length - 1))
+      }catch(ex){
+      }
+      switch(t.substring(t.length - 1, t.length).toLowerCase()) {
+        case 'h':
+          dur = tNum * 60 * 60;
+          break;
+        case 'm':
+          dur = tNum * 60;
+          break;
+        default:
+          dur = tNum;
+      }
     return (
       <NoSsr>
         {/* <Menu
@@ -30,7 +45,7 @@ class LoadTestTimerDialog extends React.Component {
           {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
           <MenuItem onClick={this.handleClose}>My account</MenuItem>
           <MenuItem onClick={this.handleClose}>Logout</MenuItem> */}
-          <ReactCountdownClock seconds={t * 60}
+          <ReactCountdownClock seconds={dur}
                         color="#667C89"
                         alpha={0.9}
                         size={400}
