@@ -30,7 +30,9 @@ print_help() {
    [start]     runs 'docker-compose' to spin up Meshery and each of each service mesh adapters.
    [stop]      stops all Meshery containers, removes their instances and prunes their connected volumes.
    [update]    polls Docker Hub for new Meshery container images and pulls if new version are available.
-   [logs]      prints history of Meshery's container logs and begins tailing them."
+   [logs]      prints history of Meshery's container logs and begins tailing them.
+   [status]    checks the status of the running services.
+   [cleanup]   cleans up Meshery config."
 }
 
 preflight_check() {
@@ -119,6 +121,23 @@ case $1 in
             echo "Updating Meshery..."
             docker-compose -f $dockerComposeFile pull
             echo "Meshery is now up-to-date."
+        fi
+    ;;
+    status)
+        if [ ! -f $dockerComposeFile ]; then
+            echo $unableToDownloadYAML
+        else
+            echo "Meshery status..."
+            docker-compose -f $dockerComposeFile ps
+        fi
+    ;;
+    cleanup)
+        if [ ! -f $dockerComposeFile ]; then
+            echo $unableToDownloadYAML
+        else
+            echo "Cleaning old Meshery config..."
+            rm -f $dockerComposeFile
+            echo "Meshery config is now cleaned up."
         fi
     ;;
     *)
