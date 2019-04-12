@@ -17,13 +17,16 @@
 ####### COMMON FUNCTIONS
 ############################
 
+mesheryLocalFolder="$HOME/.meshery"
+dockerComposeFile="${mesheryLocalFolder}/meshery.yaml"
+
 command_exists() {
     command -v $1 >/dev/null 2>&1
 }
 
 print_help() {
     echo "usage: mesheryctl [start] [stop] [update] [logs] \n
-   [start]     runs 'docker-compose up -d' to spin up Meshery and each of each service mesh adapters.
+   [start]     runs 'docker-compose' to spin up Meshery and each of each service mesh adapters.
    [stop]      stops all Meshery containers, removes their instances and prunes their connected volumes.
    [update]    polls Docker Hub for new Meshery container images and pulls if new version are available.
    [logs]      prints history of Meshery's container logs and begins tailing them."
@@ -32,10 +35,10 @@ print_help() {
 preflight_check() {
     # https://stackoverflow.com/questions/592620/how-to-check-if-a-program-exists-from-a-bash-script
     if command_exists wget ; then
-        DOWNLOADCMD="wget"
+        DOWNLOADCMD="wget -O ${dockerComposeFile}"
     else
         if command_exists curl ; then
-            DOWNLOADCMD="curl -L"
+            DOWNLOADCMD="curl -L -o ${dockerComposeFile}"
         else
             echo "Missing 'wget' and 'curl'. Please install 'wget' or 'curl' and try again."
             exit;
@@ -51,6 +54,14 @@ preflight_check() {
 
     if command_exists open ; then
         BROWSERCMD="open"
+    fi
+
+    if [ ! -f $dockerComposeFile ]; then
+        if [ ! -f $mesheryLocalFolder ]; then
+            mkdir $mesheryLocalFolder
+        fi
+        echo "Downloading Meshery's docker-compose.yml file..."
+        `$DOWNLOADCMD https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml`
     fi
 }
 
@@ -72,35 +83,42 @@ case $1 in
     --help) print_help ;;
 
     start)
-        if [ ! -f ./docker-compose.yaml ]; then
-            echo "Downloading Meshery's docker-compose.yml file..."
-            `$DOWNLOADCMD https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml`
-        fi
-        if [ ! -f ./docker-compose.yaml ]; then
+        if [ ! -f $dockerComposeFile ]; then
             echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
         else
             echo "Starting Meshery now..."
-            docker-compose up -d && \
+            docker-compose -f $dockerComposeFile up -d && \
             echo "Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery."
             [[ -z $BROWSERCMD ]] >/dev/null 2>&1 || `$BROWSERCMD http://localhost:9081`
         fi
     ;;
 
     stop)
-        echo "Stopping Meshery. . ."
-        docker-compose stop
-        (docker-compose rm -f) || true
-        (docker volume prune -f) || true
-        echo "Meshery is now stopped"
+        if [ ! -f $dockerComposeFile ]; then
+            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+        else
+            echo "Stopping Meshery. . ."
+            docker-compose -f $dockerComposeFile stop
+            (docker-compose -f $dockerComposeFile rm -f) || true
+            (docker volume prune -f) || true
+            echo "Meshery is now stopped"
+        fi
     ;;
     logs)
-        [[ -z $DOCKER_COMPOSE_VERSION ]] >/dev/null 2>&1 || echo>$2 "Missing 'docker-compose'. Please install and try again." ;
-        docker-compose logs -f
+        if [ ! -f $dockerComposeFile ]; then
+            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+        else
+            docker-compose -f $dockerComposeFile logs -f
+        fi
     ;;
     update)
-        echo "Updating Meshery..."
-        docker-compose pull
-        echo "Meshery is now up-to-date."
+        if [ ! -f $dockerComposeFile ]; then
+            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+        else
+            echo "Updating Meshery..."
+            docker-compose -f $dockerComposeFile pull
+            echo "Meshery is now up-to-date."
+        fi
     ;;
     *)
         print_help

@@ -16,8 +16,6 @@
 
 config
 
-meshery
-
 Chart.min.js
 
 fortio_chart.js
@@ -29,3 +27,5 @@ fortio_chart.js
 **/.next/
 
 **/package-lock.json
+
+cmd/meshery
