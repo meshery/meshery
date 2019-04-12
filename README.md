@@ -31,55 +31,11 @@ A service mesh playground to faciliate learning about functionality of different
 
 ## <a name="running">Running Meshery</a>
 
-### General Prerequisites
-1. `git clone https://github.com/layer5io/meshery.git`
-1. Docker engine (e.g. Docker for Desktop).
-1. Kubernetes cluster (preferably version 1.10+).
+Please checkout [https://layer5.io/meshery](https://layer5.io/meshery) for detailed instructions to run Meshery.
 
-#### Istio Playground Prerequisites
-1. Istio version 1.0.3+ in `istio-system` namespace along with the Istio ingress gateway.
-
-##
-### Running Meshery on Kubernetes
-- You can deploy Meshery to an existing kubernetes cluster using the provided yaml file into any namespace of your choice. For now let us deploy it to a namespace `meshery`: 
-
-    ```bash
-    kubectl create ns meshery
-    kubectl -n meshery apply -f deployment_yamls/k8s
-
-    # additional step for running on Istio
-    kubectl -n meshery apply -f deployment_yamls/istio.yaml
-    ```
-    If you want to use a different namespace, change the name of the namespace in the `ClusterRoleBinding` section appropriately.
-  - Meshery can be deployed either on/off the mesh.
-  - If deployed on the same Kubernetes cluster as the mesh, you dont have to provide a kubeconfig file.
-  - Review the yaml and make necessary changes as needed for your cluster.
-  - In the UI please use `meshery-istio:10000` for the Mesh Adapter Location when configuring Kubernetes from within Meshery.
-
-### Running Meshery on Docker
-- Install Meshery by running the following:
-  ```
-  sudo curl -L https://meshery.layer5.io/cli -o /usr/local/bin/mesheryctl
-  sudo chmod a+x /usr/local/bin/mesheryctl
-  mesheryctl start
-  ```
-  (OR)
-  Alternatively, install Meshery by running the following:
-    ```
-    docker-compose pull
-    docker-compose up
-    ```
-    Add a `-d` flag to the above command if you want to run it in the background.
-  
-- Now you should be able to access Meshery in your browser at [http://localhost:9081](http://localhost:9081).
-- Use `meshery-istio:10000` for the Adapter Location or `meshery-linkerd:10001` for the Adapter Location when connecting to these adpaters, respectively.
-
-## Linkerd Playground App
-_coming soon for Linkerd_
-
-#### License
+## License
 
 This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
-#### About Layer5
+## About Layer5
 [Layer5.io](https://layer5.io) is a service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
