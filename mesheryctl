@@ -1,0 +1,108 @@
+# Copyright 2019 Layer5 Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+#!/bin/sh
+
+####### COMMON FUNCTIONS
+############################
+
+command_exists() {
+    command -v $1 >/dev/null 2>&1
+}
+
+print_help() {
+    echo "usage: mesheryctl [start] [stop] [update] [logs] \n
+   [start]     runs 'docker-compose up -d' to spin up Meshery and each of each service mesh adapters.
+   [stop]      stops all Meshery containers, removes their instances and prunes their connected volumes.
+   [update]    polls Docker Hub for new Meshery container images and pulls if new version are available.
+   [logs]      prints history of Meshery's container logs and begins tailing them."
+}
+
+preflight_check() {
+    # https://stackoverflow.com/questions/592620/how-to-check-if-a-program-exists-from-a-bash-script
+    if command_exists wget ; then
+        DOWNLOADCMD="wget"
+    else
+        if command_exists curl ; then
+            DOWNLOADCMD="curl -L"
+        else
+            echo "Missing 'wget' and 'curl'. Please install 'wget' or 'curl' and try again."
+            exit;
+        fi
+    fi
+
+    if command_exists docker-compose ; then
+        DOCKER_COMPOSE_VERSION=`docker-compose version --short`
+    else
+        echo "Missing 'docker-compose'. Please install 'docker-compose' and try again."
+        exit;
+    fi
+
+    if command_exists open ; then
+        BROWSERCMD="open"
+    fi
+}
+
+####### FUTURE USE
+############################
+
+#if [ "x${MESHERY_VERSION}" = "x" ] ; then
+#  echo "Unable to get latest Meshery version. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=0.1"
+#  exit;
+#fi
+
+####### MAIN SCRIPT
+############################
+
+preflight_check
+
+case $1 in
+    -h) print_help ;;
+    --help) print_help ;;
+
+    start)
+        if [ ! -f ./docker-compose.yaml ]; then
+            echo "Downloading Meshery's docker-compose.yml file..."
+            `$DOWNLOADCMD https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml`
+        fi
+        if [ ! -f ./docker-compose.yaml ]; then
+            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+        else
+            echo "Starting Meshery now..."
+            docker-compose up -d && \
+            echo "Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery."
+            [[ -z $BROWSERCMD ]] >/dev/null 2>&1 || `$BROWSERCMD http://localhost:9081`
+        fi
+    ;;
+
+    stop)
+        echo "Stopping Meshery. . ."
+        docker-compose stop
+        (docker-compose rm -f) || true
+        (docker volume prune -f) || true
+        echo "Meshery is now stopped"
+    ;;
+    logs)
+        [[ -z $DOCKER_COMPOSE_VERSION ]] >/dev/null 2>&1 || echo>$2 "Missing 'docker-compose'. Please install and try again." ;
+        docker-compose logs -f
+    ;;
+    update)
+        echo "Updating Meshery..."
+        docker-compose pull
+        echo "Meshery is now up-to-date."
+    ;;
+    *)
+        print_help
+    ;;
+esac
