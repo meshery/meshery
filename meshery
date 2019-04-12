@@ -19,6 +19,7 @@
 
 mesheryLocalFolder="$HOME/.meshery"
 dockerComposeFile="${mesheryLocalFolder}/meshery.yaml"
+unableToDownloadYAML="Unable to download Meshery's config file. Please try again later."
 
 command_exists() {
     command -v $1 >/dev/null 2>&1
@@ -84,7 +85,7 @@ case $1 in
 
     start)
         if [ ! -f $dockerComposeFile ]; then
-            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+            echo $unableToDownloadYAML
         else
             echo "Starting Meshery now..."
             docker-compose -f $dockerComposeFile up -d && \
@@ -95,7 +96,7 @@ case $1 in
 
     stop)
         if [ ! -f $dockerComposeFile ]; then
-            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+            echo $unableToDownloadYAML
         else
             echo "Stopping Meshery. . ."
             docker-compose -f $dockerComposeFile stop
@@ -106,14 +107,14 @@ case $1 in
     ;;
     logs)
         if [ ! -f $dockerComposeFile ]; then
-            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+            echo $unableToDownloadYAML
         else
             docker-compose -f $dockerComposeFile logs -f
         fi
     ;;
     update)
         if [ ! -f $dockerComposeFile ]; then
-            echo "Unable to download Meshery's docker-compose.yaml file. Please try again later."
+            echo $unableToDownloadYAML
         else
             echo "Updating Meshery..."
             docker-compose -f $dockerComposeFile pull
