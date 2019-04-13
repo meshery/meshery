@@ -198,7 +198,7 @@ class MesheryPerformanceComponent extends React.Component {
             required
             id="testName"
             name="testName"
-            label="Friendly Name for this test"
+            label="Name of this test"
             autoFocus
             fullWidth
             value={testName}
@@ -212,7 +212,7 @@ class MesheryPerformanceComponent extends React.Component {
           <TextField
             id="meshName"
             name="meshName"
-            label="Service Mesh Name"
+            label="Name of the service mesh"
             autoFocus
             fullWidth
             value={meshName}
@@ -226,7 +226,7 @@ class MesheryPerformanceComponent extends React.Component {
             required
             id="url"
             name="url"
-            label="URL for the load test"
+            label="URL of the endpoint to load test"
             type="url"
             autoFocus
             fullWidth
@@ -295,13 +295,13 @@ class MesheryPerformanceComponent extends React.Component {
             className={classes.button}
             disabled={timerDialogOpen}
           >
-           Test
+           Run Test
           </Button>
         </div>
       </React.Fragment>
 
       <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
-        Results
+        Test Results
       </Typography>
         <div className={classes.chartContent} style={chartStyle}>
           <MesheryChart data={[result]} />    
