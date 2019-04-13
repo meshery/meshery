@@ -38,7 +38,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	testName := q.Get("name")
 	if testName == "" {
 		logrus.Errorf("Error: name field is blank")
-		http.Error(w, "friendly name needs to have a value", http.StatusForbidden)
+		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
 		return
 	}
 	meshName := q.Get("mesh")
