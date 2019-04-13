@@ -12,7 +12,7 @@ import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponen
 import CollectionsIcon from '@material-ui/icons/Collections';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import TimerIcon from '@material-ui/icons/Timer';
-import ExternalLinkIcon from '@material-ui/icons/ExternalLink';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Link from "next/link";
 import {connect} from "react-redux";
@@ -182,7 +182,7 @@ class Navigator extends React.Component {
                             )}
                         >
                           <div className={classNames(classes.link)} >
-                              <ListItemIcon><ExternalLinkIcon /></ListItemIcon>
+                              <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                               <ListItemText
                               classes={{
                                   primary: classes.itemPrimary,

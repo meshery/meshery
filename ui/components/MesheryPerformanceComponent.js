@@ -206,6 +206,7 @@ class MesheryPerformanceComponent extends React.Component {
             margin="normal"
             variant="outlined"
             onChange={this.handleChange('testName')}
+            inputProps={{ maxLength: 300 }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -219,6 +220,7 @@ class MesheryPerformanceComponent extends React.Component {
             margin="normal"
             variant="outlined"
             onChange={this.handleChange('meshName')}
+            inputProps={{ maxLength: 100 }}
           />
         </Grid>
         <Grid item xs={12}>
