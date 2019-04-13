@@ -241,7 +241,7 @@ class MesheryApp extends App {
                                 </main>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                  footer placeholder
+                                  <a href="https://layer5.io">Layer5 Community</a>
                                 </Typography>
                               </footer>
                             </div>
