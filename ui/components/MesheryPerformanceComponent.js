@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Tooltip } from '@material-ui/core';
+import { NoSsr, Tooltip, MenuItem } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
@@ -16,6 +16,20 @@ import { bindActionCreators } from 'redux';
 import { updateLoadTestData } from '../lib/store';
 import GrafanaCharts from './GrafanaCharts';
 
+
+const meshes = [
+  'AspenMesh',
+  'Consul Connect',
+  'Grey Matter',
+  'Istio',
+  'Kong',
+  'Linkerd 1.x',
+  'Linkerd 2.x',
+  'Mesher',
+  'Rotor',
+  'SOFAMesh',
+  'Zuul',
+]
 
 const styles = theme => ({
   root: {
@@ -147,6 +161,8 @@ class MesheryPerformanceComponent extends React.Component {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
         this.setState({result, timerDialogOpen: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
         this.props.updateLoadTestData({loadTest: {
+          testName,
+          meshName,
           url,
           qps,
           c,
@@ -211,17 +227,21 @@ class MesheryPerformanceComponent extends React.Component {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="meshName"
-            name="meshName"
-            label="Name of the service mesh"
-            autoFocus
-            fullWidth
-            value={meshName}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('meshName')}
-            inputProps={{ maxLength: 100 }}
-          />
+              select
+              id="meshName"
+              name="meshName"
+              label="Name of the service mesh"
+              fullWidth
+              value={meshName}
+              margin="normal"
+              variant="outlined"
+              onChange={this.handleChange('meshName')}
+          >
+                <MenuItem key={'mh_-_none'} value={''}>None</MenuItem>
+              {meshes && meshes.map((mesh) => (
+                  <MenuItem key={'mh_-_'+mesh} value={mesh}>{mesh}</MenuItem>
+              ))}
+          </TextField>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -306,7 +326,7 @@ class MesheryPerformanceComponent extends React.Component {
         Test Results
       </Typography>
         <div className={classes.chartContent} style={chartStyle}>
-          <MesheryChart data={[result]} />    
+          <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
         </div>
       </div>
     </React.Fragment>
