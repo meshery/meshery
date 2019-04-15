@@ -14,7 +14,7 @@ const initialState = fromJS({
     k8sfile: '', 
     contextName: '', 
     meshLocationURL: '', 
-    reconfigureCluster: true,
+    clusterConfigured: false,
   },
   loadTest: {
     testName: '',
