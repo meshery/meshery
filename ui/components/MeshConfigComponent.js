@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment, Chip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
@@ -62,17 +62,21 @@ const styles = theme => ({
   },
   alignRight: {
     textAlign: 'right',
+    marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
     opacity: '0.01',
-  }
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
 });
 
 class MeshConfigComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, meshLocationURL, reconfigureCluster} = props;
+    const {inClusterConfig, contextName, meshLocationURL, clusterConfigured} = props;
     this.state = {
         showSnackbar: false,
         snackbarVariant: '',
@@ -84,7 +88,7 @@ class MeshConfigComponent extends React.Component {
         contextName, // read from store
         meshLocationURL, // read from store
     
-        reconfigureCluster, // read from store
+        clusterConfigured, // read from store
     
         k8sfileError: false,
         meshLocationURLError: false,
@@ -128,7 +132,7 @@ class MeshConfigComponent extends React.Component {
   }
 
   submitConfig = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster } = this.state;
+    const { inClusterConfig, k8sfile, meshLocationURL, contextName } = this.state;
     // const data = {
     //     inClusterConfig, k8sfile, meshLocationURL, contextName
     // }
@@ -149,7 +153,7 @@ class MeshConfigComponent extends React.Component {
       body: formData
     }, result => {
       if (typeof result !== 'undefined'){
-        this.setState({reconfigureCluster: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
+        this.setState({clusterConfigured: true, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
         this.props.updateMeshInfo({mesh: result});
       }
@@ -165,7 +169,7 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster } = this.state;
+    const { inClusterConfig, k8sfile, meshLocationURL, contextName } = this.state;
       this.setState({
         // inClusterConfig: false,
         // k8sfile: '', 
@@ -173,79 +177,97 @@ class MeshConfigComponent extends React.Component {
         // contextName: '', 
         // meshLocationURL: '', 
         // meshLocationURLError: false,
-        reconfigureCluster: true,
+        clusterConfigured: false,
       })
-      this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: true}});
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, clusterConfigured: false}});
   }
 
-  alreadyConfiguredTemplate = () =>{
-    const { classes } = this.props;
-    const {showSnackbar, 
-        snackbarVariant, snackbarMessage } = this.state;
-      return (
-    <NoSsr>
-    <React.Fragment>
-    <div className={classes.root}>
-    <Grid container spacing={5} alignItems="flex-end">
-      <Grid item xs={12} className={classes.alignCenter}>
-          <Typography variant="h5" gutterBottom>
-            Mesh is configured
-            </Typography>
-      </Grid>
-      <Grid item xs={12} sm={6} className={classes.alignRight}>
-          <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-      </Grid>
-      <Grid item xs={12} sm={6}>
-          <Button variant="contained" color="primary" size="large" onClick={() => this.props.router.push('/play')}>
-            Continue to Play
-            </Button>
-      </Grid>
-      </Grid>
-      </div>
-{/*         
-        <div className={classes.alreadyConfigured}>
-            <Typography variant="h4" gutterBottom>
-            Mesh is already configured
-            </Typography>
-            <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-            <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
-            Continue to Play
-            </Button>
-        </div> */}
-    </React.Fragment>
+//   alreadyConfiguredTemplate = () =>{
+//     const { classes } = this.props;
+//     const {showSnackbar, 
+//         snackbarVariant, snackbarMessage } = this.state;
+//       return (
+//     <NoSsr>
+//     <React.Fragment>
+//     <div className={classes.root}>
+//     <Grid container spacing={5} alignItems="flex-end">
+//       <Grid item xs={12} className={classes.alignCenter}>
+//           <Typography variant="h5" gutterBottom>
+//             Mesh is configured
+//             </Typography>
+//       </Grid>
+//       <Grid item xs={12} sm={6} className={classes.alignRight}>
+//           <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
+//             Reconfigure
+//             </Button>
+//       </Grid>
+//       <Grid item xs={12} sm={6}>
+//           <Button variant="contained" color="primary" size="large" onClick={() => this.props.router.push('/play')}>
+//             Continue to Play
+//             </Button>
+//       </Grid>
+//       </Grid>
+//       </div>
+// {/*         
+//         <div className={classes.alreadyConfigured}>
+//             <Typography variant="h4" gutterBottom>
+//             Mesh is already configured
+//             </Typography>
+//             <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
+//             Reconfigure
+//             </Button>
+//             <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
+//             Continue to Play
+//             </Button>
+//         </div> */}
+//     </React.Fragment>
 
-    <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={showSnackbar}
-        autoHideDuration={6000}
-        onClose={this.handleSnackbarClose}
-      >
-      <MesherySnackbarWrapper 
-        variant={snackbarVariant}
-        message={snackbarMessage}
-        onClose={this.handleSnackbarClose}
-        />
-    </Snackbar>
-    </NoSsr>
-  );
-      }
+//     <Snackbar
+//         anchorOrigin={{
+//           vertical: 'top',
+//           horizontal: 'right',
+//         }}
+//         open={showSnackbar}
+//         autoHideDuration={6000}
+//         onClose={this.handleSnackbarClose}
+//       >
+//       <MesherySnackbarWrapper 
+//         variant={snackbarVariant}
+//         message={snackbarMessage}
+//         onClose={this.handleSnackbarClose}
+//         />
+//     </Snackbar>
+//     </NoSsr>
+//   );
+//       }
 
   configureTemplate = () => {
     const { classes } = this.props;
     const { inClusterConfig, k8sfile, k8sfileError, contextName, meshLocationURL, meshLocationURLError, showSnackbar, 
-        snackbarVariant, snackbarMessage } = this.state;
+        snackbarVariant, snackbarMessage, clusterConfigured } = this.state;
     
+    let showConfigured = '';
+    const self = this;
+    if (clusterConfigured) {
+      showConfigured = (
+        <div className={classes.alignRight}>
+          <Chip 
+              label={''}
+              onDelete={self.handleReconfigure} 
+              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
+              variant="outlined" />
+        </div>
+      )
+    }
+
+
       return (
     <NoSsr>
     <React.Fragment>
     <div className={classes.root}>
+    
+    {showConfigured}
+    
     <Grid container spacing={5} alignItems="flex-end">
       <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
@@ -377,10 +399,10 @@ class MeshConfigComponent extends React.Component {
 
   render() {
     const { reconfigureCluster } = this.state;
-    if (reconfigureCluster) {
-        return this.configureTemplate();
-    }
-    return this.alreadyConfiguredTemplate();
+    // if (reconfigureCluster) {
+    return this.configureTemplate();
+    // }
+    // return this.alreadyConfiguredTemplate();
   }
 }
 
