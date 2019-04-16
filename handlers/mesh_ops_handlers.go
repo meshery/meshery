@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
@@ -71,6 +72,25 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 }
 
 func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
+
+	meshLocationURL := req.FormValue("meshLocationURL")
+	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
+	if strings.TrimSpace(meshLocationURL) == "" {
+		err := errors.New("meshLocationURL cannot be empty to add an adapter")
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return nil, err
+	}
+
+	for _, adapter := range meshAdapters {
+		if adapter.Location == meshLocationURL {
+			err := errors.New("Adapter with the given meshLocationURL already exists.")
+			logrus.Error(err)
+			http.Error(w, err.Error(), http.StatusForbidden)
+			return nil, err
+		}
+	}
+
 	contextName := ""
 	contextNameI, ok := session.Values["k8sContext"]
 	if ok && contextNameI != nil {
@@ -92,10 +112,6 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.S
 		return nil, err
 	}
 	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
-
-	meshLocationURL := req.FormValue("meshLocationURL")
-	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
-	// session.Values["meshLocationURL"] = meshLocationURL
 
 	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
 	if err != nil {

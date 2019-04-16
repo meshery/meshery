@@ -387,19 +387,8 @@ const mapDispatchToProps = dispatch => {
     }
 }
 const mapStateToProps = state => {
-    // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-    // console.log("state: " + JSON.stringify(state));
-    const k8sconfig = state.get("k8sConfig");
-    let newprops = {};
-    if (typeof k8sconfig !== 'undefined'){
-      newprops = { 
-        inClusterConfig: k8sconfig.get('inClusterConfig'),
-        k8sfile: k8sconfig.get('k8sfile'),
-        contextName: k8sconfig.get('contextName'),
-        clusterConfigured: k8sconfig.get('clusterConfigured'),
-      }
-    }
-    return newprops;
+    const k8sconfig = state.get("k8sConfig").toJS();
+    return k8sconfig;
 }
 
 export default withStyles(styles)(connect(
