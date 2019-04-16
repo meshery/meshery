@@ -17,6 +17,7 @@ type HandlerInterface interface {
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
 
+	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request)
 

@@ -25,10 +25,7 @@ const initialState = fromJS({
     t: '30s',
     result: {},
   },
-  mesh: {
-    Name: '',
-    Ops: {},
-  },
+  meshAdapters: [],
   results: {
     startKey: '',
     results: [],
@@ -48,8 +45,8 @@ export const actionTypes = {
     UPDATE_USER: 'UPDATE_USER',
     UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
     UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
-    UPDATE_MESH_INFO: 'UPDATE_MESH_INFO',
-    UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
+    UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
+    // UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
     UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
     // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
     CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
@@ -76,16 +73,16 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
       return state.mergeDeep({ loadTest: action.loadTest });
-    case actionTypes.UPDATE_MESH_INFO:
+    case actionTypes.UPDATE_ADAPTERS_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
-      state = state.updateIn(['mesh', 'Ops'], val => fromJS({}));
-      return state.mergeDeep({ mesh: action.mesh });
-    case actionTypes.UPDATE_MESH_RESULTS:
-      // console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
-      // const results = state.get('results').get('results').toArray().concat(action.results);
-      // do a more intelligent merge based on meshery_id
-      const results = resultsMerge(state.get('results').get('results').toArray(), action.results);
-      return state.mergeDeep({ results: { startKey: action.startKey, results }}); 
+      state = state.updateIn(['meshAdapters'], val => fromJS([]));
+      return state.mergeDeep({ meshAdapters: action.meshAdapters });
+    // case actionTypes.UPDATE_MESH_RESULTS:
+    //   // console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
+    //   // const results = state.get('results').get('results').toArray().concat(action.results);
+    //   // do a more intelligent merge based on meshery_id
+    //   const results = resultsMerge(state.get('results').get('results').toArray(), action.results);
+    //   return state.mergeDeep({ results: { results }}); 
     case actionTypes.UPDATE_RESULTS_SELECTION:
       // console.log(`current results_selection: ${JSON.stringify(rs)}`);
       // if (typeof rs[action.page] === 'undefined'){
@@ -150,12 +147,12 @@ export const updateLoadTestData = ({loadTest}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_LOAD_TEST_DATA, loadTest });
 }
 
-export const updateMeshInfo = ({mesh}) => dispatch => {
-  return dispatch({ type: actionTypes.UPDATE_MESH_INFO, mesh });
+export const updateAdaptersInfo = ({meshAdapters}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters });
 }
-export const updateMeshResults = ({startKey, results}) => dispatch => {
-  return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
-}
+// export const updateMeshResults = ({startKey, results}) => dispatch => {
+//   return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
+// }
 export const updateResultsSelection = ({page, results}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_RESULTS_SELECTION, page, results });
 }
