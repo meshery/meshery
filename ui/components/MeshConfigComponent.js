@@ -76,7 +76,7 @@ class MeshConfigComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, meshLocationURL, clusterConfigured} = props;
+    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
     this.state = {
         showSnackbar: false,
         snackbarVariant: '',
@@ -84,14 +84,12 @@ class MeshConfigComponent extends React.Component {
     
         
         inClusterConfig, // read from store
-        k8sfile: '', // leaving this one out just to play it safe for now
+        k8sfile, // read from store
         contextName, // read from store
-        meshLocationURL, // read from store
     
         clusterConfigured, // read from store
-    
+        configuredServer,
         k8sfileError: false,
-        meshLocationURLError: false,
       };
   }
 
@@ -111,31 +109,21 @@ class MeshConfigComponent extends React.Component {
     if (name === 'k8sfile' && event.target.value !== ''){
         this.setState({ k8sfileError: false });    
     }
-    if (name === 'meshLocationURL' && event.target.value !== '') {
-        this.setState({meshLocationURLError: false})
-    }
     this.setState({ [name]: event.target.value });
   };
 
   handleSubmit = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL } = this.state;
+    const { inClusterConfig, k8sfile } = this.state;
     if (!inClusterConfig && k8sfile === '') {
         this.setState({k8sfileError: true});
         return;
     }
-    if (meshLocationURL === ''){
-        this.setState({meshLocationURLError: true})
-        return;
-      }
-
+    
     this.submitConfig()
   }
 
   submitConfig = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName } = this.state;
-    // const data = {
-    //     inClusterConfig, k8sfile, meshLocationURL, contextName
-    // }
+    const { inClusterConfig, k8sfile, contextName } = this.state;
     const fileInput = document.querySelector('#k8sfile') ;
     const formData = new FormData();
     formData.append('inClusterConfig', inClusterConfig?"on":''); // to simulate form behaviour of a checkbox
@@ -143,8 +131,7 @@ class MeshConfigComponent extends React.Component {
         formData.append('contextName', contextName);
         formData.append('k8sfile', fileInput.files[0]);
     }
-    formData.append('meshLocationURL', meshLocationURL);
-
+    
     let self = this;
     dataFetch('/api/k8sconfig', { 
       credentials: 'same-origin',
@@ -153,9 +140,10 @@ class MeshConfigComponent extends React.Component {
       body: formData
     }, result => {
       if (typeof result !== 'undefined'){
-        this.setState({clusterConfigured: true, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
-        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
-        this.props.updateMeshInfo({mesh: result});
+        const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.context + (result.server?' - ' + result.server:'');
+
+        this.setState({clusterConfigured: true, configuredServer, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
+        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }
     }, self.handleError);
   }
@@ -169,17 +157,15 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName } = this.state;
+    const { inClusterConfig, k8sfile, contextName } = this.state;
       this.setState({
-        // inClusterConfig: false,
-        // k8sfile: '', 
-        // k8sfileError: false,
-        // contextName: '', 
-        // meshLocationURL: '', 
-        // meshLocationURLError: false,
+        inClusterConfig: false,
+        k8sfile: '', 
+        k8sfileError: false,
+        contextName: '', 
         clusterConfigured: false,
       })
-      this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, clusterConfigured: false}});
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
   }
 
 //   alreadyConfiguredTemplate = () =>{
@@ -243,8 +229,8 @@ class MeshConfigComponent extends React.Component {
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileError, contextName, meshLocationURL, meshLocationURLError, showSnackbar, 
-        snackbarVariant, snackbarMessage, clusterConfigured } = this.state;
+    const { inClusterConfig, k8sfile, k8sfileError, contextName, showSnackbar, 
+        snackbarVariant, snackbarMessage, clusterConfigured, configuredServer } = this.state;
     
     let showConfigured = '';
     const self = this;
@@ -252,7 +238,7 @@ class MeshConfigComponent extends React.Component {
       showConfigured = (
         <div className={classes.alignRight}>
           <Chip 
-              label={''}
+              label={configuredServer}
               onDelete={self.handleReconfigure} 
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               variant="outlined" />
@@ -335,21 +321,6 @@ class MeshConfigComponent extends React.Component {
                 />
         </FormGroup>
       </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="meshLocationURL"
-          name="meshLocationURL"
-          label="Mesh Adapter Location"
-          type="url"
-          fullWidth
-          value={meshLocationURL}
-          error={meshLocationURLError}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('meshLocationURL')}
-        />
-      </Grid>
     </Grid>
     <React.Fragment>
       <div className={classes.buttons}>
@@ -424,11 +395,9 @@ const mapStateToProps = state => {
     if (typeof k8sconfig !== 'undefined'){
       newprops = { 
         inClusterConfig: k8sconfig.get('inClusterConfig'),
-        // k8sfile: '', 
-        contextName: k8sconfig.get('contextName'), 
-        meshLocationURL: k8sconfig.get('meshLocationURL'), 
-
-        reconfigureCluster: k8sconfig.get('reconfigureCluster'),
+        k8sfile: k8sconfig.get('k8sfile'),
+        contextName: k8sconfig.get('contextName'),
+        clusterConfigured: k8sconfig.get('clusterConfigured'),
       }
     }
     return newprops;

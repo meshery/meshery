@@ -55,8 +55,6 @@ class MesheryNotification extends React.Component {
         inClusterConfig: false,
         k8sfile: '', 
         contextName: '', 
-        meshLocationURL: '', 
-        reconfigureCluster: true,
     },
     createStream: false,
   }
@@ -87,7 +85,7 @@ class MesheryNotification extends React.Component {
     if (k8sConfig.k8sfile === '' && k8sConfig.meshLocationURL === '') {
         this.closeEventStream();
     }
-    if (createStream && k8sConfig.k8sfile !== '' && k8sConfig.meshLocationURL !== '') {
+    if (createStream && k8sConfig.k8sfile !== '' && typeof k8sConfig.meshLocationURL !== 'undefined' && k8sConfig.meshLocationURL !== '') {
         this.startEventStream();
     }
   }

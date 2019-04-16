@@ -13,8 +13,8 @@ const initialState = fromJS({
     inClusterConfig: false,
     k8sfile: '', 
     contextName: '', 
-    meshLocationURL: '', 
     clusterConfigured: false,
+    configuredServer: '',
   },
   loadTest: {
     testName: '',
