@@ -85,6 +85,7 @@ class MeshConfigComponent extends React.Component {
         
         inClusterConfig, // read from store
         k8sfile, // read from store
+        k8sfileElementVal: '',
         contextName, // read from store
     
         clusterConfigured, // read from store
@@ -108,6 +109,9 @@ class MeshConfigComponent extends React.Component {
     }
     if (name === 'k8sfile' && event.target.value !== ''){
         this.setState({ k8sfileError: false });    
+    }
+    if (name === 'k8sfile') {
+      this.setState({k8sfileElementVal: event.target.value});
     }
     this.setState({ [name]: event.target.value });
   };
@@ -157,10 +161,11 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
-    const { inClusterConfig, k8sfile, contextName } = this.state;
+    // const { inClusterConfig, k8sfile, contextName } = this.state;
       this.setState({
         inClusterConfig: false,
         k8sfile: '', 
+        k8sfileElementVal: '',
         k8sfileError: false,
         contextName: '', 
         clusterConfigured: false,
@@ -168,68 +173,9 @@ class MeshConfigComponent extends React.Component {
       this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
   }
 
-//   alreadyConfiguredTemplate = () =>{
-//     const { classes } = this.props;
-//     const {showSnackbar, 
-//         snackbarVariant, snackbarMessage } = this.state;
-//       return (
-//     <NoSsr>
-//     <React.Fragment>
-//     <div className={classes.root}>
-//     <Grid container spacing={5} alignItems="flex-end">
-//       <Grid item xs={12} className={classes.alignCenter}>
-//           <Typography variant="h5" gutterBottom>
-//             Mesh is configured
-//             </Typography>
-//       </Grid>
-//       <Grid item xs={12} sm={6} className={classes.alignRight}>
-//           <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
-//             Reconfigure
-//             </Button>
-//       </Grid>
-//       <Grid item xs={12} sm={6}>
-//           <Button variant="contained" color="primary" size="large" onClick={() => this.props.router.push('/play')}>
-//             Continue to Play
-//             </Button>
-//       </Grid>
-//       </Grid>
-//       </div>
-// {/*         
-//         <div className={classes.alreadyConfigured}>
-//             <Typography variant="h4" gutterBottom>
-//             Mesh is already configured
-//             </Typography>
-//             <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
-//             Reconfigure
-//             </Button>
-//             <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
-//             Continue to Play
-//             </Button>
-//         </div> */}
-//     </React.Fragment>
-
-//     <Snackbar
-//         anchorOrigin={{
-//           vertical: 'top',
-//           horizontal: 'right',
-//         }}
-//         open={showSnackbar}
-//         autoHideDuration={6000}
-//         onClose={this.handleSnackbarClose}
-//       >
-//       <MesherySnackbarWrapper 
-//         variant={snackbarVariant}
-//         message={snackbarMessage}
-//         onClose={this.handleSnackbarClose}
-//         />
-//     </Snackbar>
-//     </NoSsr>
-//   );
-//       }
-
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileError, contextName, showSnackbar, 
+    const { inClusterConfig, k8sfile, k8sfileElementVal, k8sfileError, contextName, showSnackbar, 
         snackbarVariant, snackbarMessage, clusterConfigured, configuredServer } = this.state;
     
     let showConfigured = '';
@@ -294,7 +240,8 @@ class MeshConfigComponent extends React.Component {
             className={classes.input}
             id="k8sfile"
             type="file"
-            value={k8sfile}
+            // value={k8sfile}
+            value={k8sfileElementVal}
             onChange={this.handleChange('k8sfile')}
             disabled={inClusterConfig == true}
             className={classes.fileInputStyle}
