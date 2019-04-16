@@ -16,6 +16,8 @@
 
 config
 
+*.config
+
 Chart.min.js
 
 fortio_chart.js
