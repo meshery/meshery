@@ -183,14 +183,6 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, session *session
 }
 
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
-	opName := req.PostFormValue("query")
-	customBody := req.PostFormValue("customBody")
-	namespace := req.PostFormValue("namespace")
-	delete := req.PostFormValue("deleteOp")
-	if namespace == "" {
-		namespace = "default"
-	}
-
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Error("unable to get session data")
@@ -204,6 +196,43 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userName, _ := userNameI.(string)
+
+	adapterID := req.PostFormValue("index")
+	logrus.Debugf("adapterID of adapter to be removed: %s", adapterID)
+
+	var meshAdapters []*models.Adapter
+
+	meshAdaptersI, ok := session.Values["meshAdapters"]
+	if ok && meshAdaptersI != nil {
+		meshAdapters, _ = meshAdaptersI.([]*models.Adapter)
+	}
+
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	adaptersLen := len(meshAdapters)
+
+	aId, err := strconv.Atoi(adapterID)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse the given adapter id")
+		logrus.Error(err)
+		http.Error(w, "given adapter id is not valid", http.StatusBadRequest)
+		return
+	}
+	if aId < 0 || aId >= adaptersLen {
+		err := errors.New("given adapter id is outside the valid range")
+		logrus.Error(err)
+		http.Error(w, "given adapter id is not valid", http.StatusBadRequest)
+		return
+	}
+	opName := req.PostFormValue("query")
+	customBody := req.PostFormValue("customBody")
+	namespace := req.PostFormValue("namespace")
+	delete := req.PostFormValue("deleteOp")
+	if namespace == "" {
+		namespace = "default"
+	}
 
 	contextName := ""
 	contextNameI, ok := session.Values["k8sContext"]
@@ -226,17 +255,17 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
 
-	meshLocationURL := ""
-	meshLocationURLI, ok := session.Values["meshLocationURL"]
-	if ok && meshLocationURLI != nil {
-		meshLocationURL, _ = meshLocationURLI.(string)
-	} else {
-		logrus.Error("no valid url for mesh adapter found")
-		http.Error(w, `No valid url for mesh adapter found.`, http.StatusBadRequest)
-		return
-	}
+	// meshLocationURL := ""
+	// meshLocationURLI, ok := session.Values["meshLocationURL"]
+	// if ok && meshLocationURLI != nil {
+	// 	meshLocationURL, _ = meshLocationURLI.(string)
+	// } else {
+	// 	logrus.Error("no valid url for mesh adapter found")
+	// 	http.Error(w, `No valid url for mesh adapter found.`, http.StatusBadRequest)
+	// 	return
+	// }
 
-	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
+	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshAdapters[aId].Location)
 	if err != nil {
 		logrus.Errorf("error creating a mesh client: %v", err)
 		http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
