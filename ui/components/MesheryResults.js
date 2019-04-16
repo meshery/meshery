@@ -324,7 +324,7 @@ MesheryResults.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
+        // updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
         updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
         clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
     }

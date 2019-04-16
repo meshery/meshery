@@ -167,7 +167,6 @@ class MesheryPlayComponent extends React.Component {
       if (typeof result !== 'undefined'){
         this.setState({showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Operation success!'});
         // this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
-        // this.props.updateMeshInfo({mesh: result});
       }
     }, self.handleError);
   }

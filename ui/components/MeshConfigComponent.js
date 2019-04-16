@@ -13,7 +13,7 @@ import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { updateK8SConfig, updateMeshInfo } from '../lib/store';
+import { updateK8SConfig } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -384,7 +384,6 @@ MeshConfigComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
     return {
         updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-        updateMeshInfo: bindActionCreators(updateMeshInfo, dispatch),
     }
 }
 const mapStateToProps = state => {
