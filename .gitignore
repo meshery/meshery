@@ -29,3 +29,5 @@ fortio_chart.js
 **/package-lock.json
 
 cmd/meshery
+
+log.txt
