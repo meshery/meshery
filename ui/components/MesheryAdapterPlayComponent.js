@@ -12,7 +12,7 @@ import { bindActionCreators } from "redux";
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing(10),
+    padding: theme.spacing(1),
   },
   buttons: {
     display: 'flex',
@@ -330,20 +330,21 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-      // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-  }
-}
+// const mapDispatchToProps = dispatch => {
+//   return {
+//       // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+//   }
+// }
 
-const mapStateToProps = state => {
-    // const k8sconfig = state.get("k8sConfig").toJS();
-    // const meshAdapters = state.get("meshAdapters").toJS();
-    // return {k8sconfig, meshAdapters};
-    return null;
-}
+// const mapStateToProps = state => {
+//     // const k8sconfig = state.get("k8sConfig").toJS();
+//     // const meshAdapters = state.get("meshAdapters").toJS();
+//     // return {k8sconfig, meshAdapters};
+//     return null;
+// }
 
-export default withStyles(styles)(connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(withRouter(MesheryAdapterPlayComponent)));
+// export default withStyles(styles)(connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+//   )(withRouter(MesheryAdapterPlayComponent)));
+export default withStyles(styles)(withRouter(MesheryAdapterPlayComponent));

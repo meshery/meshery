@@ -10,6 +10,7 @@ import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import {connect} from "react-redux";
+import { Divider } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -29,11 +30,20 @@ const styles = theme => ({
   titleDecorate: {
     borderBottom: '1px solid',
     paddingBottom: theme.spacing(1),
+  },
+  stepperButtons: {
+    textAlign: 'right',
+    marginTop: theme.spacing(2),
+    marginRight: theme.spacing(3),
   }
 });
 
 function getSteps() {
   return ['Kubernetes Configuration', 'Meshery Adapter Configuration', 'Grafana Configuration'];
+}
+
+function getRequiredSteps(){
+  return [true, true, false];
 }
 
 function getStepContent(step) {
@@ -174,7 +184,7 @@ class MesheryConfigSteps extends React.Component {
           {steps.map((label, index) => (
             <Step key={label}>
               <StepButton onClick={this.handleStep(index)} completed={this.state.completed[index]}>
-                <span className={activeStep == index?classes.titleDecorate:''}>{label}</span>
+                <span className={activeStep == index?classes.titleDecorate:''}>{label}{getRequiredSteps()[index] && (<sup>*</sup>)}</span>
               </StepButton>
             </Step>
           ))}
@@ -183,7 +193,14 @@ class MesheryConfigSteps extends React.Component {
           
             <div>
               <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-              <div>
+              <Divider light variant="fullWidth" />
+              <div className={classes.stepperButtons}>
+              {activeStep !== steps.length &&
+                  (this.state.completed[this.state.activeStep] ? (
+                    <Typography variant="caption" className={classes.completed}>
+                      Step {activeStep + 1} is complete
+                    </Typography>
+                  ) : '')}
                 <Button
                   size='large'
                   // disabled={activeStep === 0}
@@ -201,12 +218,6 @@ class MesheryConfigSteps extends React.Component {
                 >
                   Next
                 </Button>
-                {activeStep !== steps.length &&
-                  (this.state.completed[this.state.activeStep] ? (
-                    <Typography variant="caption" className={classes.completed}>
-                      Step {activeStep + 1} already completed
-                    </Typography>
-                  ) : '')}
               </div>
             </div>
         </div>

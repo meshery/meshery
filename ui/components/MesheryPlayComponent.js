@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Button } from '@material-ui/core';
+import { withStyles, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Button, Divider } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 // import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
@@ -105,8 +105,8 @@ class MesheryPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.alreadyConfigured}>
             <Typography variant="subtitle1" gutterBottom>
-              Before we let you play with Service Meshes from Meshery, please complete the needed steps in the "Configure" section.
-              </Typography>
+            Connect to an existing service mesh adapter to use the playground
+            </Typography>
 
             <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
               Here
@@ -139,6 +139,7 @@ class MesheryPlayComponent extends React.Component {
                     <div className={classes.column}>
                     <Typography variant="subtitle1" gutterBottom><img src={image} className={classes.icon} /> <span className={classes.expTitle}>{adapter.adapter_location}</span></Typography>
                     </div>
+                    <Divider light variant="fullWidth" />
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                       <MesheryAdapterPlayComponent index={ind} adapter={adapter} />
