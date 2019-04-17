@@ -20,7 +20,7 @@ import { withRouter } from 'next/router';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing(10),
+    padding: theme.spacing(5),
   },
   buttons: {
     display: 'flex',

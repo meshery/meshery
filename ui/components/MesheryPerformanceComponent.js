@@ -208,7 +208,7 @@ class MesheryPerformanceComponent extends React.Component {
       <NoSsr>
       <React.Fragment>
       <div className={classes.root}>
-      <Grid container spacing={5}>
+      <Grid container spacing={1}>
         <Grid item xs={12} sm={6}>
           <TextField
             required

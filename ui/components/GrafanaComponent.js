@@ -14,7 +14,7 @@ import { updateGrafanaConfig } from '../lib/store';
 
 const grafanaStyles = theme => ({
     root: {
-      padding: theme.spacing(10),
+      padding: theme.spacing(5),
     },
     buttons: {
       display: 'flex',
