@@ -205,6 +205,12 @@ class MesheryNotification extends React.Component {
             toolTipMsg = `There is 1 event`;
             break;
     }
+    let badgeColorVariant = 'default';
+    events.forEach(eev => {
+      if(eev.event_type === 'error'){
+        badgeColorVariant = 'error';
+      }
+    });
 
     return (
       <div>
@@ -215,7 +221,7 @@ class MesheryNotification extends React.Component {
                 this.anchorEl = node;
               }}
             color="inherit" onClick={this.handleToggle}>
-            <Badge badgeContent={events.length} color="secondary">
+            <Badge badgeContent={events.length} color={badgeColorVariant}>
                 <NotificationsIcon />
             </Badge>
         </IconButton>
