@@ -24,7 +24,7 @@ import { withRouter } from 'next/router';
 
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
-  { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
+  // { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
   { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
 ]
@@ -85,6 +85,9 @@ const styles = theme => ({
   },
   community: {
     marginTop: theme.spacing(2),
+  },
+  settingsIcon: {
+    marginLeft: theme.spacing(2),
   }
 });
 
@@ -94,20 +97,6 @@ class Navigator extends React.Component {
         path: '',
     }
 
-    // static updateTitle = (props) => {
-    //     let path = (typeof window !== 'undefined' ? window.location.pathname : '');
-    //     categories.map(({title, href}) => {
-    //         if (path.lastIndexOf('/') > 0) {
-    //             path = path.substring(0, path.lastIndexOf('/'));
-    //         }
-    //         if (href === path) {
-    //             console.log("updating path: "+path+" and title: "+title);
-    //             props.updatepagepathandtitle({path, title});
-    //             return;
-    //         }
-    //     });
-    //     return path;
-    // }
     static getDerivedStateFromProps(props, state) {
       let path = (typeof window !== 'undefined' ? window.location.pathname : '');
       categories.map(({title, href}) => {
@@ -138,10 +127,13 @@ class Navigator extends React.Component {
             <List disablePadding>
                 <ListItem 
                   component="a"
-                  onClick={this.handleTitleClick}
+                  // onClick={this.handleTitleClick}
                   className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} />
-                  Meshery
+                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
+                  <a onClick={this.handleTitleClick}>Meshery</a>
+                  <Link href={"/configure"} prefetch>
+                      <SettingsIcon className={classes.settingsIcon} />
+                  </Link>
                 </ListItem>
                     {categories.map(({ id: childId, icon, href }) => (
                         <ListItem
