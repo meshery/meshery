@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
+import { NoSsr, Grid, ExpansionPanelDetails, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
+import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
 const grafanaStyles = theme => ({
     root: {
@@ -20,10 +21,11 @@ const grafanaStyles = theme => ({
       fontSize: theme.typography.pxToRem(15),
       color: theme.palette.text.secondary,
     },
-    alignRight: {
+    dateRangePicker: {
       display: 'flex',
       justifyContent: 'flex-end',
       marginRight: theme.spacing(1),
+      marginBottom: theme.spacing(2),
     },
     iframe: {
       minHeight: theme.spacing(55),
@@ -62,13 +64,13 @@ class GrafanaCharts extends Component {
               <NoSsr>
               <React.Fragment>
               <div className={classes.root}>
-                <div className={classes.alignRight}>
+                <div className={classes.dateRangePicker}>
                   <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
                     refresh={refresh} updateDateRange={this.updateDateRange} />
                 </div>
                 {boardPanelConfigs.map((config, ind) => (
                   // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-                  <ExpansionPanel defaultExpanded={false}>
+                  <ExpansionPanel square defaultExpanded={false}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                       <div className={classes.column}>
                       <Typography variant="subtitle1" gutterBottom>{config.board.title}</Typography>

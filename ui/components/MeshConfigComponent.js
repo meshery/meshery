@@ -21,7 +21,7 @@ import { withRouter } from 'next/router';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing(10),
+    padding: theme.spacing(5),
   },
   buttons: {
     display: 'flex',
@@ -200,7 +200,7 @@ class MeshConfigComponent extends React.Component {
     
     {showConfigured}
     
-    <Grid container spacing={5} alignItems="flex-end">
+    <Grid container spacing={1} alignItems="flex-end">
       <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
             key="inCluster"

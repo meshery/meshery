@@ -1,14 +1,11 @@
-import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, Switch, FormGroup, TextField, Button, Snackbar, RadioGroup, Radio, FormLabel, FormControl } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, Switch, TextField, Button, Snackbar, RadioGroup, Radio, FormLabel, FormControl } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import { updateK8SConfig } from "../lib/store";
-import { bindActionCreators } from "redux";
 
 const styles = theme => ({
   root: {
@@ -165,20 +162,12 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, result => {
       if (typeof result !== 'undefined'){
         this.setState({showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Operation success!'});
-        // this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
       }
     }, self.handleError);
   }
 
   handleError = error => {
     this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Operation failed: ${error}`});
-  }
-
-  handleReconfigure = () => {
-    // const { k8sConfig } = this.props;
-    // k8sConfig.reconfigureCluster = true;
-    // this.props.updateK8SConfig({k8sConfig});
-    // this.props.router.push('/configure'); // TODO: need to thing about this
   }
 
   render() {
@@ -204,11 +193,6 @@ class MesheryAdapterPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
-          {/* <Grid item xs={12} className={classes.alignRight}>
-            <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-          </Grid> */}
           <Grid item xs={12}>
             <TextField
               required
@@ -268,10 +252,6 @@ class MesheryAdapterPlayComponent extends React.Component {
                   lineNumbers: true,
                   lineWrapping: true,
                   gutters: ["CodeMirror-lint-markers"],
-                  // lint: {
-                  //   "getAnnotations": self.customBodyLinter,
-                  //   "async": true 
-                  // },
                   lint: true,
                   mode: "text/x-yaml"
                 }}
@@ -330,21 +310,4 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//       // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-//   }
-// }
-
-// const mapStateToProps = state => {
-//     // const k8sconfig = state.get("k8sConfig").toJS();
-//     // const meshAdapters = state.get("meshAdapters").toJS();
-//     // return {k8sconfig, meshAdapters};
-//     return null;
-// }
-
-// export default withStyles(styles)(connect(
-//     mapStateToProps,
-//     mapDispatchToProps
-//   )(withRouter(MesheryAdapterPlayComponent)));
 export default withStyles(styles)(withRouter(MesheryAdapterPlayComponent));

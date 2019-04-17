@@ -2,51 +2,11 @@ import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
 import { withStyles, Typography, Button, Divider, ExpansionPanelDetails } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
-// import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import { updateK8SConfig } from "../lib/store";
-import { bindActionCreators } from "redux";
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-// import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-
-const ExpansionPanel = withStyles({
-  root: {
-    border: '1px solid rgba(0,0,0,.125)',
-    // boxShadow: 'none',
-    // '&:not(:last-child)': {
-    //   borderBottom: 0,
-    // },
-    // '&:before': {
-    //   display: 'none',
-    // },
-  },
-  expanded: {
-    margin: 'auto',
-  },
-})(MuiExpansionPanel);
-
-const ExpansionPanelSummary = withStyles({
-  root: {
-    // backgroundColor: 'rgba(0,0,0,.03)',
-    borderBottom: '1px solid rgba(0,0,0,.125)',
-    // borderTop: '1px solid rgba(0,0,0,.125)',
-    // marginBottom: -1,
-    // minHeight: 56,
-    // '&$expanded': {
-    //   minHeight: 56,
-    // },
-  },
-  content: {
-    '&$expanded': {
-      margin: '12px 0',
-    },
-  },
-  expanded: {},
-})(props => <MuiExpansionPanelSummary {...props} />);
+import { ExpansionPanel, ExpansionPanelSummary } from "./ExpansionPanels";
 
 const styles = theme => ({
   root: {
@@ -119,9 +79,6 @@ class MesheryPlayComponent extends React.Component {
     super(props);
     
     const {k8sconfig, meshAdapters} = props;
-    // if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
-    //   props.router.push('/configure'); // TODO: need to figure out a better way to do this
-    // }
 
     this.state = {
       k8sconfig,
@@ -130,9 +87,6 @@ class MesheryPlayComponent extends React.Component {
   }
 
   handleConfigure = () => {
-    // const { k8sConfig } = this.props;
-    // k8sConfig.reconfigureCluster = true;
-    // this.props.updateK8SConfig({k8sConfig});
     this.props.router.push('/configure');
   }
 
@@ -140,7 +94,6 @@ class MesheryPlayComponent extends React.Component {
     const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters, ...other} = this.props;
 
     if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
-      // props.router.push('/configure'); // TODO: need to figure out a better way to do this
       return (
         <NoSsr>
         <React.Fragment>
