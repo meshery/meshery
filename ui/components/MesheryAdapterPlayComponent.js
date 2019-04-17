@@ -70,7 +70,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     
     this.cmEditor = null;
 
-    const {Name, Ops} = props;
+    // const {Name, Ops} = props;
     
     this.state = {
       showSnackbar: false,
@@ -120,8 +120,8 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   handleSubmit = () => {
     const { selectedOp, selectionError, namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
-    const {Ops} = this.props;
-    if (selectedOp === '' || typeof Ops[selectedOp] === 'undefined') {
+    const {adapter} = this.props;
+    if (selectedOp === '' || typeof adapter.ops[selectedOp] === 'undefined') {
         this.setState({selectionError: true});
         return;
     }
