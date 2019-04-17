@@ -14,6 +14,7 @@ import { makeStore } from '../lib/store';
 import {Provider} from "react-redux";
 import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
 // link clicks, hence attemtpting to add them here
@@ -185,6 +186,15 @@ let theme = createMuiTheme({
         padding: theme.spacing(2),
         color: '#737373',
       },
+      footerText: {
+        display: 'inline',
+        verticalAlign: 'middle',
+      },
+      footerIcon: {
+        display: 'inline',
+        verticalAlign: 'top',
+        color: 'red',
+      }
   };
 
 
@@ -241,7 +251,7 @@ class MesheryApp extends App {
                                 </main>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                  <a href="https://layer5.io">Layer5 Community</a>
+                                  <span className={classes.footerText}>Developed with <FavoriteIcon className={classes.footerIcon} /> by the <a href="https://layer5.io">Layer5 Community</a></span>
                                 </Typography>
                               </footer>
                             </div>
