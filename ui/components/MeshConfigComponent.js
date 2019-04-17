@@ -222,19 +222,6 @@ class MeshConfigComponent extends React.Component {
       />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <TextField
-          id="contextName"
-          name="contextName"
-          label="Context Name"
-          fullWidth
-          value={contextName}
-          margin="normal"
-          variant="outlined"
-          disabled={inClusterConfig == true}
-          onChange={this.handleChange('contextName')}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
       <FormGroup row>
         <input
             className={classes.input}
@@ -267,6 +254,19 @@ class MeshConfigComponent extends React.Component {
                 disabled
                 />
         </FormGroup>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          id="contextName"
+          name="contextName"
+          label="Context Name"
+          fullWidth
+          value={contextName}
+          margin="normal"
+          variant="outlined"
+          disabled={inClusterConfig == true}
+          onChange={this.handleChange('contextName')}
+        />
       </Grid>
     </Grid>
     <React.Fragment>
