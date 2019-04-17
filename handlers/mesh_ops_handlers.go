@@ -82,13 +82,21 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.S
 		return nil, err
 	}
 
+	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
-			err := errors.New("Adapter with the given meshLocationURL already exists.")
-			logrus.Error(err)
-			http.Error(w, err.Error(), http.StatusForbidden)
-			return nil, err
+			// err := errors.New("Adapter with the given meshLocationURL already exists.")
+			// logrus.Error(err)
+			// http.Error(w, err.Error(), http.StatusForbidden)
+			// return nil, err
+			alreadyConfigured = true
+			break
 		}
+	}
+
+	if alreadyConfigured {
+		logrus.Debugf("adapter already configured. . . ")
+		return meshAdapters, nil
 	}
 
 	contextName := ""

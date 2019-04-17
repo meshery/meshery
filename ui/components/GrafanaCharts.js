@@ -67,7 +67,8 @@ class GrafanaCharts extends Component {
                     refresh={refresh} updateDateRange={this.updateDateRange} />
                 </div>
                 {boardPanelConfigs.map((config, ind) => (
-                  <ExpansionPanel defaultExpanded={ind === 0?true:false}>
+                  // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
+                  <ExpansionPanel defaultExpanded={false}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                       <div className={classes.column}>
                       <Typography variant="subtitle1" gutterBottom>{config.board.title}</Typography>

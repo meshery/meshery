@@ -27,6 +27,7 @@ const grafanaStyles = theme => ({
     },
     alignRight: {
         textAlign: 'right',
+        marginBottom: theme.spacing(2),
     },
     formControl: {
         marginTop: theme.spacing(2),
