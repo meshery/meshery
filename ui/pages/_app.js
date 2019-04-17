@@ -251,7 +251,7 @@ class MesheryApp extends App {
                                 </main>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                  <span className={classes.footerText}>Developed with <FavoriteIcon className={classes.footerIcon} /> by the <a href="https://layer5.io">Layer5 Community</a></span>
+                                  <span className={classes.footerText}>Built with <FavoriteIcon className={classes.footerIcon} /> by the <a href="https://layer5.io">Layer5 Community</a></span>
                                 </Typography>
                               </footer>
                             </div>
