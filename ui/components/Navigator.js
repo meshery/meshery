@@ -131,11 +131,11 @@ class Navigator extends React.Component {
                 <ListItem 
                   component="a"
                   // onClick={this.handleTitleClick}
-                  className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}>
-                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <a onClick={this.handleTitleClick}>Meshery</a>
+                  className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
+                  <Avatar className={classNames(classes.mainLogo,classes.cursorPointer)} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
+                  <a onClick={this.handleTitleClick} className={classes.cursorPointer}>Meshery</a>
                   <Link href={"/configure"} prefetch>
-                      <SettingsIcon className={classes.settingsIcon} />
+                      <SettingsIcon className={classNames(classes.settingsIcon,classes.cursorPointer)} />
                   </Link>
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show }) => {
