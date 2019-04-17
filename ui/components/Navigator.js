@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import CollectionsIcon from '@material-ui/icons/Collections';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
+import OndemandVideoRoundedIcon from '@material-ui/icons/OndemandVideoRounded';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -25,7 +25,7 @@ import { withRouter } from 'next/router';
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
   { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
-  { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh', show: true },
+  { id: 'Playground', icon: <OndemandVideoRoundedIcon />, href: "/play", title: 'Play with Mesh', show: true },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 
