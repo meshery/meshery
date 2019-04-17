@@ -27,7 +27,6 @@ const categories = [
   { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
   { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
-  { id: 'Grafana', icon: <ShowChartIcon />, href: "/grafana", title: 'Grafana Charts' },
 ]
 
 const styles = theme => ({

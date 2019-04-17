@@ -185,6 +185,7 @@ class MesheryConfigSteps extends React.Component {
               <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
               <div>
                 <Button
+                  size='large'
                   // disabled={activeStep === 0}
                   onClick={this.handleBack}
                   className={classes.button}
@@ -192,6 +193,7 @@ class MesheryConfigSteps extends React.Component {
                   Back
                 </Button>
                 <Button
+                  size='large'
                   variant="contained"
                   color="primary"
                   onClick={this.handleNext}

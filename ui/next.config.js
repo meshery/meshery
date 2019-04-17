@@ -12,7 +12,6 @@ module.exports = compose([
         '/configure': { page: '/configure' },
         '/play': { page: '/play' },
         '/results': { page: '/results' },
-        '/grafana': { page: '/grafana' },
         // '/about': { page: '/about' },
         '/404': { page: '/_error' },
       }
