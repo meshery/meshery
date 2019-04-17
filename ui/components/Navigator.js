@@ -88,6 +88,9 @@ const styles = theme => ({
   },
   settingsIcon: {
     marginLeft: theme.spacing(2),
+  },
+  cursorPointer: {
+    cursor: 'pointer',
   }
 });
 
@@ -128,7 +131,7 @@ class Navigator extends React.Component {
                 <ListItem 
                   component="a"
                   // onClick={this.handleTitleClick}
-                  className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
+                  className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}>
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
                   <a onClick={this.handleTitleClick}>Meshery</a>
                   <Link href={"/configure"} prefetch>
