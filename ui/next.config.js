@@ -10,7 +10,7 @@ module.exports = compose([
         '/index': { page: '/index' },
         '/performance': { page: '/performance' },
         '/configure': { page: '/configure' },
-        '/play': { page: '/play' },
+        '/playground': { page: '/playground' },
         '/results': { page: '/results' },
         // '/about': { page: '/about' },
         '/404': { page: '/_error' },
