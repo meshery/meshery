@@ -23,10 +23,10 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 
 const categories = [
-  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
-  // { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
-  { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
-  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
+  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
+  { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
+  { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh', show: true },
+  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 
 const styles = theme => ({
@@ -135,7 +135,11 @@ class Navigator extends React.Component {
                       <SettingsIcon className={classes.settingsIcon} />
                   </Link>
                 </ListItem>
-                    {categories.map(({ id: childId, icon, href }) => (
+                    {categories.map(({ id: childId, icon, href, show }) => {
+                      if (typeof show !== 'undefined' && !show){
+                        return '';
+                      }
+                      return (
                         <ListItem
                             button
                             dense
@@ -160,7 +164,8 @@ class Navigator extends React.Component {
                                 </div>
                             </Link>
                         </ListItem>
-                    ))}
+                        );
+                      })}
                       <Divider className={classes.divider} />
                       <ListItem
                             component="a"
