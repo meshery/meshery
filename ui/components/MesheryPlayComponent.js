@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Button, Divider } from '@material-ui/core';
+import { withStyles, Typography, Button, Divider, ExpansionPanelDetails } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 // import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
@@ -9,6 +9,44 @@ import { updateK8SConfig } from "../lib/store";
 import { bindActionCreators } from "redux";
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+// import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+
+const ExpansionPanel = withStyles({
+  root: {
+    border: '1px solid rgba(0,0,0,.125)',
+    // boxShadow: 'none',
+    // '&:not(:last-child)': {
+    //   borderBottom: 0,
+    // },
+    // '&:before': {
+    //   display: 'none',
+    // },
+  },
+  expanded: {
+    margin: 'auto',
+  },
+})(MuiExpansionPanel);
+
+const ExpansionPanelSummary = withStyles({
+  root: {
+    // backgroundColor: 'rgba(0,0,0,.03)',
+    borderBottom: '1px solid rgba(0,0,0,.125)',
+    // borderTop: '1px solid rgba(0,0,0,.125)',
+    // marginBottom: -1,
+    // minHeight: 56,
+    // '&$expanded': {
+    //   minHeight: 56,
+    // },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(props => <MuiExpansionPanelSummary {...props} />);
 
 const styles = theme => ({
   root: {
@@ -63,13 +101,16 @@ const styles = theme => ({
     textAlign: 'right',
   },
   column: {
-    flexBasis: '33.33%',
+    // flexBasis: '33.33%',
   },
-  icon: {
+  expTitleIcon: {
     width: theme.spacing(3),
+    display: 'inline',
+    verticalAlign: 'middle',
   },
   expTitle: {
-    marginTop: -theme.spacing(1),
+    display: 'inline',
+    verticalAlign: 'middle',
   }
 });
 
@@ -134,14 +175,19 @@ class MesheryPlayComponent extends React.Component {
                   // default:
                 } 
                 return (
-                <ExpansionPanel defaultExpanded={ind === 0?true:false}>
+                <ExpansionPanel square defaultExpanded={ind === 0?true:false}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <div className={classes.column}>
-                    <Typography variant="subtitle1" gutterBottom><img src={image} className={classes.icon} /> <span className={classes.expTitle}>{adapter.adapter_location}</span></Typography>
+                      <Typography variant="h6" gutterBottom>
+                        <div className={classes.column}>
+                          <img src={image} className={classes.expTitleIcon} />{' '}
+                          <span className={classes.expTitle}>{adapter.adapter_location}</span>
+                        </div>
+                      </Typography>
                     </div>
-                    <Divider light variant="fullWidth" />
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
+                      <Divider variant="fullWidth" />
                       <MesheryAdapterPlayComponent index={ind} adapter={adapter} />
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
