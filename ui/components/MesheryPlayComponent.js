@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails } from '@material-ui/core';
+import { withStyles, ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Button } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 // import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
@@ -78,9 +78,9 @@ class MesheryPlayComponent extends React.Component {
     super(props);
     
     const {k8sconfig, meshAdapters} = props;
-    if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
-      props.router.push('/configure'); // TODO: need to figure out a better way to do this
-    }
+    // if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
+    //   props.router.push('/configure'); // TODO: need to figure out a better way to do this
+    // }
 
     this.state = {
       k8sconfig,
@@ -88,18 +88,35 @@ class MesheryPlayComponent extends React.Component {
     }
   }
 
-  handleReconfigure = () => {
-    const { k8sConfig } = this.props;
-    k8sConfig.reconfigureCluster = true;
-    this.props.updateK8SConfig({k8sConfig});
+  handleConfigure = () => {
+    // const { k8sConfig } = this.props;
+    // k8sConfig.reconfigureCluster = true;
+    // this.props.updateK8SConfig({k8sConfig});
     this.props.router.push('/configure');
   }
 
   render() {
-    const {classes, color, iconButtonClassName, avatarClassName, ...other} = this.props;
-    const {
-      meshAdapters,
-     } = this.state;
+    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters, ...other} = this.props;
+
+    if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
+      // props.router.push('/configure'); // TODO: need to figure out a better way to do this
+      return (
+        <NoSsr>
+        <React.Fragment>
+          <div className={classes.alreadyConfigured}>
+            <Typography variant="subtitle1" gutterBottom>
+              Before we let you play with Service Meshes from Meshery, please complete the needed steps in the "Configure" section.
+              </Typography>
+
+            <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+              Here
+              </Button>
+          </div>
+          </React.Fragment>
+          </NoSsr>
+      );
+    }
+
     var self = this;
     return (
       <NoSsr>
