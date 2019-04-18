@@ -53,9 +53,10 @@ class MesheryNotification extends React.Component {
     dialogShow: false,
     k8sConfig: {
         inClusterConfig: false,
-        k8sfile: '', 
+        clusterConfigured: false,
         contextName: '', 
     },
+    meshAdapters: [],
     createStream: false,
   }
 
@@ -71,21 +72,23 @@ class MesheryNotification extends React.Component {
   };
 
   static getDerivedStateFromProps(props, state){
-    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)) {
+    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig) || 
+        JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
         return {
             createStream: true,
             k8sConfig: props.k8sConfig,
+            meshAdapters: props.meshAdapters,
         };
     }
     return null;
   }
 
   componentDidUpdate(){
-      const {createStream, k8sConfig} = this.state;
-    if (k8sConfig.k8sfile === '' && k8sConfig.meshLocationURL === '') {
+    const {createStream, k8sConfig, meshAdapters} = this.state;
+    if (!k8sConfig.clusterConfigured || meshAdapters.length === 0) {
         this.closeEventStream();
     }
-    if (createStream && k8sConfig.k8sfile !== '' && typeof k8sConfig.meshLocationURL !== 'undefined' && k8sConfig.meshLocationURL !== '') {
+    if (createStream && k8sConfig.clusterConfigured && typeof meshAdapters !== 'undefined' && meshAdapters.length > 0) {
         this.startEventStream();
     }
   }
@@ -207,7 +210,7 @@ class MesheryNotification extends React.Component {
     }
     let badgeColorVariant = 'default';
     events.forEach(eev => {
-      if(eev.event_type === 'error'){
+      if(eventTypes[eev.event_type] && eventTypes[eev.event_type].type === 'error'){
         badgeColorVariant = 'error';
       }
     });
@@ -260,8 +263,9 @@ class MesheryNotification extends React.Component {
 
 
 const mapStateToProps = state => {
-    const k8sConfig = state.get("k8sConfig").toObject();
-    return {k8sConfig};
+    const k8sConfig = state.get("k8sConfig").toJS();
+    const meshAdapters = state.get("meshAdapters").toJS();
+    return {k8sConfig, meshAdapters};
   }
 
 export default withStyles(styles)(connect(
