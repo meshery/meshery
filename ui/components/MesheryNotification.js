@@ -5,6 +5,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import { Badge, Drawer, Tooltip, Divider, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Icon } from '@material-ui/core';
 import MesheryEventViewer from './MesheryEventViewer';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import ClearAllIcon from '@material-ui/icons/ClearAll';
 import { withStyles } from '@material-ui/core/styles';
 import { eventTypes } from '../lib/event-types';
 import classNames from 'classnames';
@@ -42,6 +43,9 @@ const styles = theme => ({
     message: {
         display: 'flex',
         // alignItems: 'center',
+    },
+    clearAllButton: {
+      float: 'right',
     },
 });
 
@@ -149,6 +153,10 @@ class MesheryNotification extends React.Component {
     this.setState({ dialogShow: false });
   };
 
+  handleClearAllNotifications = () => {
+    this.setState({events:[]});
+  }
+
   viewEventDetails = () => {
       const {classes} = this.props;
     const {ev, ind, dialogShow} = this.state;
@@ -243,7 +251,15 @@ class MesheryNotification extends React.Component {
           >
             <div className={classes.sidelist}>
             <div className={classes.notificationTitle}>
-                <Typography variant="subtitle2">Notifications</Typography>
+                <Typography variant="subtitle2">
+                  Notifications
+                  <Tooltip title={'Clear all notifications'}>
+                    <IconButton className={classes.clearAllButton}
+                      color="inherit" onClick={this.handleClearAllNotifications}>
+                      <ClearAllIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
             </div>
             <Divider light />
             {events && events.map((event, ind) => (
