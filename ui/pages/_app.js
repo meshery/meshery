@@ -193,7 +193,9 @@ let theme = createMuiTheme({
       footerIcon: {
         display: 'inline',
         verticalAlign: 'top',
-        color: 'red',
+      },
+      extl5: {
+        cursor: 'pointer',
       }
   };
 
@@ -211,6 +213,13 @@ class MesheryApp extends App {
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   };
+
+  handleL5CommunityClick = () => {
+    if (typeof window !== 'undefined'){
+      const w = window.open('https://layer5.io', '_blank');
+      w.focus();
+    }
+  }
 
   static async getInitialProps({Component, ctx}) {
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
@@ -251,7 +260,7 @@ class MesheryApp extends App {
                                 </main>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                  <span className={classes.footerText}>Built with <FavoriteIcon className={classes.footerIcon} /> by the <a href="https://layer5.io">Layer5 Community</a></span>
+                                  <span className={classes.footerText}>Built with <FavoriteIcon className={classes.footerIcon} /> by the <span onClick={this.handleL5CommunityClick} className={classes.extl5}>Layer5 Community</span></span>
                                 </Typography>
                               </footer>
                             </div>
