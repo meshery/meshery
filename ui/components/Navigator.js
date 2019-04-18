@@ -25,7 +25,7 @@ import { withRouter } from 'next/router';
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
   { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
-  { id: 'Playground', icon: <OndemandVideoRoundedIcon />, href: "/playground", title: 'Play with Mesh', show: true },
+  { id: 'Playground', icon: <OndemandVideoRoundedIcon />, href: "/playground", title: 'Play with Meshery', show: true },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 

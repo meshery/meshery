@@ -98,13 +98,13 @@ class MesheryPlayComponent extends React.Component {
         <NoSsr>
         <React.Fragment>
           <div className={classes.alreadyConfigured}>
-            <Typography variant="subtitle1" gutterBottom>
-            Connect to an existing service mesh adapter to use the playground
-            </Typography>
+            {/* <Typography variant="subtitle1" gutterBottom>
+            Configure service meshes
+            </Typography> */}
 
             <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-              Here
-              </Button>
+              Configure playground
+            </Button>
           </div>
           </React.Fragment>
           </NoSsr>

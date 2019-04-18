@@ -201,11 +201,13 @@ class MeshConfigComponent extends React.Component {
     {showConfigured}
     
     <Grid container spacing={1} alignItems="flex-end">
-      <Grid item xs={12} className={classes.alignCenter}>
+      {/* <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
+            hidden={true} // hiding this component for now
             key="inCluster"
             control={
               <Switch
+                    hidden={true} // hiding this component for now
                     checked={inClusterConfig}
                     onChange={this.handleChange('inClusterConfig')}
                     color="default"
@@ -220,7 +222,7 @@ class MeshConfigComponent extends React.Component {
             labelPlacement="end"
             label="Use in-cluster Kubernetes config"
       />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} sm={6}>
       <FormGroup row>
         <input
