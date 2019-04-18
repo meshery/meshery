@@ -10,7 +10,7 @@ import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import {connect} from "react-redux";
-import { Divider } from '@material-ui/core';
+import { Divider, StepLabel, Icon } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -184,7 +184,10 @@ class MesheryConfigSteps extends React.Component {
           {steps.map((label, index) => (
             <Step key={label}>
               <StepButton onClick={this.handleStep(index)} completed={this.state.completed[index]}>
-                <span className={activeStep == index?classes.titleDecorate:''}>{label}{getRequiredSteps()[index] && (<sup>*</sup>)}</span>
+                <StepLabel className={activeStep == index?classes.titleDecorate:''}
+                  icon={<Icon>k</Icon>}>
+                  {label}{getRequiredSteps()[index] && (<sup>*</sup>)}
+                </StepLabel>
               </StepButton>
             </Step>
           ))}
