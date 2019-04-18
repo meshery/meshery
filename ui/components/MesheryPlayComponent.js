@@ -128,7 +128,7 @@ class MesheryPlayComponent extends React.Component {
                   // default:
                 } 
                 return (
-                <ExpansionPanel square defaultExpanded={ind === 0?true:false}>
+                <ExpansionPanel key={`mplay_exp_${ind}`} square defaultExpanded={ind === 0?true:false}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                     <div className={classes.column}>
                       <Typography variant="h6" gutterBottom>
