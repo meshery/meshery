@@ -22,6 +22,9 @@ const styles = theme => ({
     },
     notificationTitle: {
         textAlign: 'center',
+        paddingTop: theme.spacing(2),
+        paddingLeft: theme.spacing(3),
+        paddingBottom: theme.spacing(2),
     },
     icon: {
         fontSize: 20,
