@@ -66,7 +66,7 @@ class MesheryPerformanceComponent extends React.Component {
       qps,
       c,
       t,
-      result: result.toObject(),
+      result,
 
       timerDialogOpen: false,
       urlError: false,
@@ -214,7 +214,7 @@ class MesheryPerformanceComponent extends React.Component {
             required
             id="testName"
             name="testName"
-            label="Name of this test"
+            label="Test Name"
             autoFocus
             fullWidth
             value={testName}
@@ -230,7 +230,7 @@ class MesheryPerformanceComponent extends React.Component {
               select
               id="meshName"
               name="meshName"
-              label="Name of the service mesh"
+              label="Service Mesh"
               fullWidth
               value={meshName}
               margin="normal"
@@ -248,7 +248,7 @@ class MesheryPerformanceComponent extends React.Component {
             required
             id="url"
             name="url"
-            label="URL of the endpoint to load test"
+            label="URL to test"
             type="url"
             autoFocus
             fullWidth
@@ -370,7 +370,7 @@ const mapDispatchToProps = dispatch => {
 }
 const mapStateToProps = state => {
   
-  const loadTest = state.get("loadTest").toObject();
+  const loadTest = state.get("loadTest").toJS();
   // let newprops = {};
   // if (typeof loadTest !== 'undefined'){
   //   newprops = { 
