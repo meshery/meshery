@@ -8,12 +8,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import CollectionsIcon from '@material-ui/icons/Collections';
 import OndemandVideoRoundedIcon from '@material-ui/icons/OndemandVideoRounded';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SettingsIcon from '@material-ui/icons/Settings';
 import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
@@ -130,13 +128,10 @@ class Navigator extends React.Component {
             <List disablePadding>
                 <ListItem 
                   component="a"
-                  // onClick={this.handleTitleClick}
-                  className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-                  <Avatar className={classNames(classes.mainLogo,classes.cursorPointer)} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <a onClick={this.handleTitleClick} className={classes.cursorPointer}>Meshery</a>
-                  <Link href={"/configure"} prefetch>
-                      <SettingsIcon className={classNames(classes.settingsIcon,classes.cursorPointer)} />
-                  </Link>
+                  onClick={this.handleTitleClick}
+                  className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}>
+                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
+                  Meshery
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show }) => {
                       if (typeof show !== 'undefined' && !show){
