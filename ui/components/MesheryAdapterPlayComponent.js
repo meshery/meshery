@@ -82,7 +82,6 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       namespace: 'default',
       namespaceError: false,
-      deleteOp: false,
     }
   }
 
@@ -95,10 +94,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   };
 
   handleChange = name => event => {
-    if (name === 'deleteOp'){
-      this.setState({ [name]: event.target.checked });
-      return;
-    }
     if (name === 'namespace' && event.target.value !== '') {
       this.setState({ namespaceError: false });  
     }
@@ -116,7 +111,11 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleSubmit = () => {
+  handleDelete = () => {
+    this.handleSubmit(true)();
+  }
+
+  handleSubmit = (deleteOp=false) => () => {
     const { selectedOp, selectionError, namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
     const {adapter} = this.props;
     if (selectedOp === '' || typeof adapter.ops[selectedOp] === 'undefined') {
@@ -131,11 +130,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       this.setState({namespaceError: true});
       return
     }
-    this.submitOp()
+    this.submitOp(deleteOp)
   }
 
-  submitOp = () => {
-    const { namespace, selectedOp, cmEditorVal, deleteOp } = this.state;
+  submitOp = (deleteOp=false) => {
+    const { namespace, selectedOp, cmEditorVal } = this.state;
     const { index } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
 
@@ -180,7 +179,6 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       selectedOp,
       cmEditorVal,
-      deleteOp,
       namespace,
 
       selectionError,
@@ -208,7 +206,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               onChange={this.handleChange('namespace')}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <FormControl required error={selectionError} component="fieldset">
             <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
             <RadioGroup
@@ -226,21 +224,6 @@ class MesheryAdapterPlayComponent extends React.Component {
            </RadioGroup>
            </FormControl>
            </Grid>
-           <Grid item xs={12} sm={6} className={classes.alignRight}>
-            <FormControlLabel
-                  key="delete"
-                  control={
-                    <Switch
-                            checked={deleteOp}
-                            onChange={this.handleChange('deleteOp')}
-                        />
-                    }
-                  label="Delete"
-                  labelPlacement="end"
-              />
-            </Grid>
-           
-           
             <Grid item xs={12} hidden={selectedOp != 'custom'}>
             <FormControl required error={cmEditorValError} component="fieldset" className={classes.editorContainer}>
             <FormLabel component="legend">Custom YAML</FormLabel>
@@ -273,9 +256,19 @@ class MesheryAdapterPlayComponent extends React.Component {
               <Button
                 type="submit"
                 variant="contained"
+                color="secondary"
+                size="large"
+                onClick={this.handleDelete}
+                className={classes.button}
+              >
+              Revert
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
                 color="primary"
                 size="large"
-                onClick={this.handleSubmit}
+                onClick={this.handleSubmit(false)}
                 className={classes.button}
               >
               Submit
