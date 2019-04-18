@@ -206,7 +206,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	userName, _ := userNameI.(string)
 
 	adapterID := req.PostFormValue("index")
-	logrus.Debugf("adapterID of adapter to be removed: %s", adapterID)
+	logrus.Debugf("adapterID to execute ops on: %s", adapterID)
 
 	var meshAdapters []*models.Adapter
 
