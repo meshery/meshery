@@ -92,9 +92,12 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		session.Values["k8sConfig"] = k8sConfigBytes
 
 		result["context"] = ccfg.CurrentContext
-		k8sServer, ok := ccfg.Clusters[ccfg.CurrentContext]
+		k8sContext, ok := ccfg.Contexts[ccfg.CurrentContext]
 		if ok {
-			result["server"] = k8sServer.Server
+			k8sServer, ok := ccfg.Clusters[k8sContext.Cluster]
+			if ok {
+				result["server"] = k8sServer.Server
+			}
 		}
 	}
 	session.Values["k8sInCluster"] = inClusterConfig
