@@ -12,6 +12,8 @@ import {connect} from "react-redux";
 import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
 import MesheryNotification from './MesheryNotification';
+import Link from "next/link";
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -83,6 +85,13 @@ class Header extends React.Component {
                 {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                
+                <IconButton color="inherit">
+                  <Link href={"/configure"} prefetch>
+                      <SettingsIcon />
+                  </Link>    
+                </IconButton>
+
                 <MesheryNotification />
                 <span className={classes.userSpan}>
                 <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
