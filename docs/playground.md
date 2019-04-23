@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Playground - Managing Service Meshes
-permalink: /playground/
+permalink: /playground
 nav_order: 5
 ---
 

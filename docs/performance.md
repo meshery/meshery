@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Performance - Benchmarking Service Meshes
-permalink: /performance/
+permalink: /performance
 nav_order: 4
 ---
 
