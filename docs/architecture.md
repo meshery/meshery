@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Architecture
-permalink: /architecture/
+permalink: /architecture
 nav_order: 3
 ---
 

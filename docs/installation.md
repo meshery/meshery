@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Installation
-permalink: /installation/
+permalink: /installation
 nav_order: 2
 ---
 
