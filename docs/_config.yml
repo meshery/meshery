@@ -18,7 +18,7 @@ email: community@layer5.io
 description: >- # this means to ignore newlines until "baseurl:"
   This is the documentation site for Meshery.
 baseurl: "/docs/" # the subpath of your site, e.g. /blog
-# url: "https://meshery.layer5.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://meshery.layer5.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: layer5
 
 # Build settings
