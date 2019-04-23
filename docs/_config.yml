@@ -51,6 +51,6 @@ aux_links:
 
 # color_scheme: "dark"
 
-# ga_tracking: UA-5555555-55
+ga_tracking: UA-2969471-4
 
 exclude: ['Makefile']
