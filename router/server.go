@@ -25,6 +25,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	mux.Handle("/api/mesh/manage", h.AuthMiddleware(http.HandlerFunc(h.MeshAdapterConfigHandler)))
 	mux.Handle("/api/mesh/ops", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler)))
+	mux.Handle("/api/mesh/adapters", h.AuthMiddleware(http.HandlerFunc(h.GetAllAdaptersHandler)))
 	mux.Handle("/api/events", h.AuthMiddleware(http.HandlerFunc(h.EventStreamHandler)))
 
 	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))

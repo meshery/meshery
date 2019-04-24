@@ -289,7 +289,6 @@ class GrafanaComponent extends Component {
         }
         return (
           <NoSsr>
-          <React.Fragment>
             <GrafanaConfigComponent
               grafanaURL={grafanaURL}
               grafanaAPIKey={grafanaAPIKey}
@@ -298,7 +297,6 @@ class GrafanaComponent extends Component {
               handleGrafanaConfigure={this.handleGrafanaConfigure}
             />
             {this.snackbarTmpl(showSnackbar, snackbarVariant, snackbarMessage)}
-          </React.Fragment>
           </NoSsr>
         );
     }

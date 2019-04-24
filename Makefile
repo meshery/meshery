@@ -26,6 +26,7 @@ run-local-saas:
 	EVENT=istioPlay01 \
 	PORT=9081 \
 	DEBUG=true \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	./meshery; \
 	cd ..
 
