@@ -19,6 +19,22 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
+func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request) {
+	_, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("error getting session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
+	if err != nil {
+		logrus.Errorf("error marshalling data: %v", err)
+		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request) {
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
@@ -149,6 +165,9 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.S
 		Name:     meshNameOps.GetName(),
 		Ops:      respOps.Ops,
 	}
+
+	h.config.AdapterTracker.AddAdapter(req.Context(), meshLocationURL)
+
 	return append(meshAdapters, result), nil
 }
 

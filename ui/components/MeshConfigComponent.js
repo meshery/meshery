@@ -195,7 +195,6 @@ class MeshConfigComponent extends React.Component {
 
       return (
     <NoSsr>
-    <React.Fragment>
     <div className={classes.root}>
     
     {showConfigured}
@@ -286,7 +285,6 @@ class MeshConfigComponent extends React.Component {
       </div>
     </React.Fragment>
     </div>
-  </React.Fragment>
   
   {/* <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}

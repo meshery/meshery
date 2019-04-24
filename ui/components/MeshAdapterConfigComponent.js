@@ -3,19 +3,18 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment, Chip } from '@material-ui/core';
+import { NoSsr,  Chip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
-import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { updateAdaptersInfo } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
+import CreatableSelect from 'react-select/lib/Creatable';
+import ReactSelectWrapper from './ReactSelectWrapper';
 
 
 const styles = theme => ({
@@ -81,11 +80,34 @@ class MeshAdapterConfigComponent extends React.Component {
         snackbarVariant: '',
         snackbarMessage: '',
     
-        
         meshAdapters,
+        availableAdapters: [],
     
         meshLocationURLError: false,
       };
+  }
+
+  componentDidMount = () => {
+    this.fetchAvailableAdapters();
+  }
+
+  fetchAvailableAdapters = () => {
+    let self = this;
+    dataFetch('/api/mesh/adapters', { 
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, result => {
+      if (typeof result !== 'undefined'){
+        const options = result.map(res => {
+          return {
+            value: res,
+            label: res,
+          };
+        });
+        this.setState({availableAdapters: options});
+      }
+    }, self.handleError("Unable to fetch available adapters"));
   }
 
   handleSnackbarClose = (event, reason) => {
@@ -97,37 +119,46 @@ class MeshAdapterConfigComponent extends React.Component {
   };
 
   handleChange = name => event => {
-    if (name === 'inClusterConfig'){
-        this.setState({ [name]: event.target.checked });
-        return;
-    }
-    if (name === 'k8sfile' && event.target.value !== ''){
-        this.setState({ k8sfileError: false });    
-    }
     if (name === 'meshLocationURL' && event.target.value !== '') {
         this.setState({meshLocationURLError: false})
     }
     this.setState({ [name]: event.target.value });
   };
 
-  handleSubmit = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL } = this.state;
-    if (!inClusterConfig && k8sfile === '') {
-        this.setState({k8sfileError: true});
-        return;
+  handleMeshLocURLChange = (newValue, actionMeta) => {
+    // console.log(newValue);
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
+    if (typeof newValue !== 'undefined'){
+      this.setState({meshLocationURL: newValue, meshLocationURLError: false});
     }
-    if (meshLocationURL === ''){
+  };
+  handleInputChange = (inputValue, actionMeta) => {
+    console.log(inputValue);
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
+
+    // TODO: try to submit it and get 
+    // if (typeof inputValue !== 'undefined'){
+    //   this.setState({meshLocationURL: inputValue});
+    // }
+  }
+
+  handleSubmit = () => {
+    const { meshLocationURL } = this.state;
+    
+    if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === ''){
         this.setState({meshLocationURLError: true})
         return;
       }
 
-    this.submitConfig()
+    this.submitConfig();
   }
 
   submitConfig = () => {
     const { meshLocationURL } = this.state;
     
-    const data = {meshLocationURL};
+    const data = {meshLocationURL: meshLocationURL.value};
 
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -146,12 +177,13 @@ class MeshAdapterConfigComponent extends React.Component {
       if (typeof result !== 'undefined'){
         this.setState({meshAdapters: result, meshLocationURL: '', showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Adapter was successfully configured!'});
         this.props.updateAdaptersInfo({meshAdapters: result});
+        this.fetchAvailableAdapters();
       }
     }, self.handleError("Adapter was not configured due to an error"));
   }
 
   handleDelete = (adapterID) => () => {
-    const { meshAdapters } = this.state;
+    // const { meshAdapters } = this.state;
 
     let self = this;
     dataFetch(`/api/mesh/manage?adapterID=${adapterID}`, { 
@@ -172,7 +204,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { meshAdapters, meshLocationURL, meshLocationURLError, showSnackbar, 
+    const { availableAdapters, meshAdapters, meshLocationURL, meshLocationURLError, showSnackbar, 
         snackbarVariant, snackbarMessage, clusterConfigured } = this.state;
     
     let showAdapters = '';
@@ -207,14 +239,31 @@ class MeshAdapterConfigComponent extends React.Component {
 
       return (
     <NoSsr>
-    <React.Fragment>
     <div className={classes.root}>
     
     {showAdapters}
     
-    <Grid container spacing={5} alignItems="flex-end">
+    <Grid container spacing={1} alignItems="flex-end">
       <Grid item xs={12}>
-        <TextField
+
+        {/* <CreatableSelect
+          isClearable
+          onChange={this.handleMeshLocURLChange}
+          onInputChange={this.handleInputChange}
+          options={availableAdapters}
+        /> */}
+
+        <ReactSelectWrapper
+          onChange={this.handleMeshLocURLChange}
+          onInputChange={this.handleInputChange}
+          options={availableAdapters}
+          value={meshLocationURL}
+          // placeholder={'Mesh Adapter URL'}
+          label={'Mesh Adapter URL'}
+          error={meshLocationURLError}
+        />
+
+        {/* <TextField
           required
           id="meshLocationURL"
           name="meshLocationURL"
@@ -226,7 +275,7 @@ class MeshAdapterConfigComponent extends React.Component {
           margin="normal"
           variant="outlined"
           onChange={this.handleChange('meshLocationURL')}
-        />
+        /> */}
       </Grid>
     </Grid>
     <React.Fragment>
@@ -244,7 +293,6 @@ class MeshAdapterConfigComponent extends React.Component {
       </div>
     </React.Fragment>
     </div>
-  </React.Fragment>
   
   {/* <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}
