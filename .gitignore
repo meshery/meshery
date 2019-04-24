@@ -33,3 +33,7 @@ fortio_chart.js
 cmd/meshery
 
 log.txt
+
+**/_site
+**/.sass-cache
+**/.jekyll-metadata
