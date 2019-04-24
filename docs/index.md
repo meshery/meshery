@@ -1,8 +1,9 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
-layout: home
+layout: default
+title: Meshery
+has_children: true
+has_toc: true
 ---
 
-Welcome to the Meshery documentation site
+Welcome to the Meshery Documentation. This site outlines the purpose of Meshery and set of instructions on how to Leverage this powerful tool. 
+
