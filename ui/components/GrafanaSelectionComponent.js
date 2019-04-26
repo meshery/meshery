@@ -6,7 +6,7 @@ import dataFetch from '../lib/data-fetch';
 
 const grafanaStyles = theme => ({
     root: {
-      padding: theme.spacing(10),
+      padding: theme.spacing(5),
     },
     buttons: {
       display: 'flex',
@@ -27,6 +27,7 @@ const grafanaStyles = theme => ({
     },
     alignRight: {
         textAlign: 'right',
+        marginBottom: theme.spacing(2),
     },
     formControl: {
         marginTop: theme.spacing(2),
@@ -187,7 +188,7 @@ class GrafanaSelectionComponent extends Component {
                     icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
                     variant="outlined" />
             </div>
-            <Grid container spacing={5}>
+            <Grid container spacing={1}>
                 <Grid item xs={12} sm={6}>
                   <TextField
                       id="grafanaBoardSearch"
@@ -282,21 +283,19 @@ class GrafanaSelectionComponent extends Component {
                             ))}
                     </TextField>
                 </Grid>
-                <Grid item xs={12}>
-                    <div className={classes.buttons}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        onClick={this.addSelectedBoardPanelConfig}
-                        className={classes.button}
-                    >
-                    Add
-                    </Button>
-                    </div>
                 </Grid>
-            </Grid>
+                <div className={classes.buttons}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={this.addSelectedBoardPanelConfig}
+                    className={classes.button}
+                >
+                Add
+                </Button>
+                </div>
             </div>
         </React.Fragment>
         </NoSsr>

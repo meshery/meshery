@@ -66,7 +66,7 @@ class MesheryPerformanceComponent extends React.Component {
       qps,
       c,
       t,
-      result: result.toObject(),
+      result,
 
       timerDialogOpen: false,
       urlError: false,
@@ -102,16 +102,16 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleSubmit = () => {
 
-    const { url, t, testName } = this.state;
+    const { url, t, testName, meshName } = this.state;
     if (url === ''){
       this.setState({urlError: true})
       return;
     }
 
-    if (testName === ''){
-      this.setState({testNameError: true})
-      return;
-    }
+    // if (testName === ''){
+    //   this.setState({testNameError: true})
+    //   return;
+    // }
 
     let err = false, tNum = 0;
     try {
@@ -125,18 +125,25 @@ class MesheryPerformanceComponent extends React.Component {
       this.setState({tError: true})
       return;
     }
-    this.submitLoadTest()
+
+    this.submitLoadTest();
     this.setState({timerDialogOpen: true});
   }
 
   submitLoadTest = () => {
     const {testName, meshName, url, qps, c, t} = this.state;
 
+    let computedTestName = testName;
+    if (testName.trim() === '') {
+      const mesh = meshName === ''?'No mesh': meshName;
+      computedTestName = `${mesh} - ${(new Date()).getTime()}`;
+    }
+
     const t1 = t.substring(0, t.length - 1);
     const dur = t.substring(t.length - 1, t.length).toLowerCase();
 
     const data = {
-      name: testName, 
+      name: computedTestName, 
       mesh: meshName, 
       url,
       qps,
@@ -159,9 +166,10 @@ class MesheryPerformanceComponent extends React.Component {
       body: params
     }, result => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.setState({result, timerDialogOpen: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
+        this.setState({result, testName: computedTestName, timerDialogOpen: false, showSnackbar: true, 
+            snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
         this.props.updateLoadTestData({loadTest: {
-          testName,
+          testName: computedTestName,
           meshName,
           url,
           qps,
@@ -208,29 +216,30 @@ class MesheryPerformanceComponent extends React.Component {
       <NoSsr>
       <React.Fragment>
       <div className={classes.root}>
-      <Grid container spacing={5}>
+      <Grid container spacing={1}>
         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="testName"
-            name="testName"
-            label="Name of this test"
-            autoFocus
-            fullWidth
-            value={testName}
-            error={testNameError}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('testName')}
-            inputProps={{ maxLength: 300 }}
-          />
+          <Tooltip title={"If a test name is not provided, a random one will be generated for you."}>
+            <TextField
+              id="testName"
+              name="testName"
+              label="Test Name"
+              autoFocus
+              fullWidth
+              value={testName}
+              error={testNameError}
+              margin="normal"
+              variant="outlined"
+              onChange={this.handleChange('testName')}
+              inputProps={{ maxLength: 300 }}
+            />
+          </Tooltip>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
               select
               id="meshName"
               name="meshName"
-              label="Name of the service mesh"
+              label="Service Mesh"
               fullWidth
               value={meshName}
               margin="normal"
@@ -248,7 +257,7 @@ class MesheryPerformanceComponent extends React.Component {
             required
             id="url"
             name="url"
-            label="URL of the endpoint to load test"
+            label="URL to test"
             type="url"
             autoFocus
             fullWidth
@@ -370,7 +379,7 @@ const mapDispatchToProps = dispatch => {
 }
 const mapStateToProps = state => {
   
-  const loadTest = state.get("loadTest").toObject();
+  const loadTest = state.get("loadTest").toJS();
   // let newprops = {};
   // if (typeof loadTest !== 'undefined'){
   //   newprops = { 

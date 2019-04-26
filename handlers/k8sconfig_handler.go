@@ -7,46 +7,10 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/layer5io/meshery/meshes"
 	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
-	// 		if r.Method == http.MethodGet {
-	// 			data := map[string]interface{}{
-	// 				"ByPassAuth": h.config.ByPassAuth,
-	// 			}
-
-	// 			session, err := h.config.SessionStore.Get(r, h.config.SessionName)
-	// 			if err != nil {
-	// 				logrus.Errorf("error getting session: %v", err)
-	// 				http.Error(w, "unable to get session", http.StatusUnauthorized)
-	// 				return
-	// 			}
-
-	// 			if !h.config.ByPassAuth {
-	// 				user, _ := session.Values["user"].(*models.User)
-	// 				data["User"] = user
-	// 			}
-
-	// 			data["Flashes"] = session.Flashes()
-	// 			session.Save(r, w)
-
-	// 			err = getK8SConfigTempl.Execute(w, data)
-	// 			if err != nil {
-	// 				logrus.Errorf("error rendering the template for the page: %v", err)
-	// 				http.Error(w, "unable to serve the requested file", http.StatusInternalServerError)
-	// 				return
-	// 			}
-	// 		} else if r.Method == http.MethodPost {
-	// 			h.DashboardHandler(ctx, w, r)
-	// 		} else {
-	// 			w.WriteHeader(http.StatusNotFound)
-	// 		}
-	// 	}
-	// }
-
-	// func (h *Handler) DashboardHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	req.ParseMultipartForm(1 << 20)
 
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
@@ -56,30 +20,15 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// var user *models.User
-	// if h.config.ByPassAuth {
-	// 	userName := req.FormValue("user_name")
-	// 	if userName == "" {
-	// 		userName = "Test User"
-	// 	}
-	// 	user = h.setupSession(userName, req, w)
-	// 	if user == nil {
-	// 		return
-	// 	}
-	// } else {
-	// 	// session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	// 	// if err != nil {
-	// 	// 	logrus.Errorf("error getting session: %v", err)
-	// 	// 	http.Error(w, "unable to get session", http.StatusUnauthorized)
-	// 	// 	return
-	// 	// }
-	// 	user, _ = session.Values["user"].(*models.User)
-	// }
 	inClusterConfig := req.FormValue("inClusterConfig")
 	logrus.Debugf("inClusterConfig: %s", inClusterConfig)
 
 	var k8sConfigBytes []byte
 	var contextName string
+
+	result := map[string]interface{}{
+		"inClusterConfig": (inClusterConfig != ""),
+	}
 
 	if inClusterConfig == "" {
 		// k8sfile, contextName
@@ -141,12 +90,17 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		// }
 		session.Values["k8sContext"] = contextName
 		session.Values["k8sConfig"] = k8sConfigBytes
+
+		result["context"] = ccfg.CurrentContext
+		k8sContext, ok := ccfg.Contexts[ccfg.CurrentContext]
+		if ok {
+			k8sServer, ok := ccfg.Clusters[k8sContext.Cluster]
+			if ok {
+				result["server"] = k8sServer.Server
+			}
+		}
 	}
 	session.Values["k8sInCluster"] = inClusterConfig
-
-	meshLocationURL := req.FormValue("meshLocationURL")
-	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
-	session.Values["meshLocationURL"] = meshLocationURL
 
 	err = session.Save(req, w)
 	if err != nil {
@@ -155,55 +109,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
-	if err != nil {
-		logrus.Errorf("error creating a mesh client: %v", err)
-		// http.Error(w, "unable to create an istio client", http.StatusInternalServerError)
-		// session.AddFlash("Unable to connect to the mesh using the given kubernetes config file, please try again")
-		// session.Save(req, w)
-		// http.Redirect(w, req, "/play/dashboard", http.StatusFound)
-		http.Error(w, "Unable to connect to the mesh using the given kubernetes config file, please try again", http.StatusInternalServerError)
-		return
-	}
-	defer mClient.Close()
-	respOps, err := mClient.MClient.SupportedOperations(req.Context(), &meshes.SupportedOperationsRequest{})
-
-	// meshClient, err := istio.CreateIstioClientWithK8SConfig(ctx, k8sConfigBytes, contextName)
-	// if err != nil {
-	// 	logrus.Errorf("error creating an istio client: %v", err)
-	// 	// http.Error(w, "unable to create an istio client", http.StatusInternalServerError)
-	// 	session.AddFlash("Unable to connect to Istio using the given kubernetes config file, please try again")
-	// 	session.Save(req, w)
-	// 	http.Redirect(w, req, "/play/dashboard", http.StatusFound)
-	// 	return
-	// }
-
-	// ops, err := meshClient.Operations(ctx)
-	if err != nil {
-		logrus.Errorf("error getting operations for the mesh: %v", err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
-		return
-	}
-
-	meshNameOps, err := mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
-	if err != nil {
-		logrus.Errorf("error getting mesh name: %v", err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
-		return
-	}
-
-	result := map[string]interface{}{
-		"Ops":  respOps.Ops,
-		"Name": meshNameOps.GetName(),
-		// "User": user,
-	}
-
-	// err = dashTempl.Execute(w, result)
-	// if err != nil {
-	// 	logrus.Errorf("error rendering the template for the dashboard: %v", err)
-	// 	http.Error(w, "unable to render the page", http.StatusInternalServerError)
-	// 	return
-	// }
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
 		logrus.Errorf("error marshalling data: %v", err)

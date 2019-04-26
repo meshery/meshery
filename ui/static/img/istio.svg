@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320">
+  <g id="logo" fill="#466BB0">
+    <polygon id="hull" points="80 250 240 250 140 280 80 250"/>
+    <polygon id="mainsail" points="80 240 140 230 140 120 80 240"/>
+    <polygon id="headsail" points="150 230 240 240 150 40 150 230"/>
+  </g>
+</svg>

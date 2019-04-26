@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/layer5io/meshery/meshes"
+	"github.com/layer5io/meshery/models"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -40,31 +42,24 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
 
-	meshLocationURL := ""
-	meshLocationURLI, ok := session.Values["meshLocationURL"]
-	if ok && meshLocationURLI != nil {
-		meshLocationURL, _ = meshLocationURLI.(string)
-	} else {
-		logrus.Error("no valid url for mesh adapter found")
-		http.Error(w, `No valid url for mesh adapter found.`, http.StatusBadRequest)
+	var meshAdapters []*models.Adapter
+
+	meshAdaptersI, ok := session.Values["meshAdapters"]
+	if ok && meshAdaptersI != nil {
+		meshAdapters, _ = meshAdaptersI.([]*models.Adapter)
+	}
+
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	adaptersLen := len(meshAdapters)
+	if adaptersLen == 0 {
+		logrus.Error("no valid mesh adapter(s) found")
+		http.Error(w, `No valid mesh adapter(s) found.`, http.StatusBadRequest)
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
-	if err != nil {
-		logrus.Errorf("error creating a mesh client: %v", err)
-		http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
-		return
-	}
-	defer mClient.Close()
-
-	streamClient, err := mClient.MClient.StreamEvents(req.Context(), &meshes.EventsRequest{})
-	if err != nil {
-		logrus.Error(err)
-		http.Error(w, "There was an error connecting to the backend to get events", http.StatusInternalServerError)
-		return
-	}
-	logrus.Debugf("received a stream client. . .")
 	flusher, ok := w.(http.Flusher)
 
 	if !ok {
@@ -78,36 +73,99 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	// notify := w.(http.CloseNotifier).CloseNotify()
+	notify := w.(http.CloseNotifier).CloseNotify()
 
 	// go func() {
 	// 	<-notify
 	// 	// an attempt to re-establish connection
 	// 	// mClient, _ = meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
 	// }()
-	for {
-		logrus.Debugf("waiting to receive events")
-		event, err := streamClient.Recv()
-		if err != nil {
-			if err == io.EOF {
-				logrus.Errorf("streaming ended: %v", err)
-				break
-			} else {
-				logrus.Errorf("streaming ended with an unknown error: %v", err)
-				// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
+
+	respChan := make(chan []byte, 100)
+	errChan := make(chan error)
+
+	for _, ma := range meshAdapters {
+		go func(ma *models.Adapter) {
+			mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, ma.Location)
+			if err != nil {
+				err = errors.Wrapf(err, "error creating a mesh client")
+				logrus.Error(err)
+				errChan <- err
+				// http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
 				return
 			}
-		}
-		// logrus.Debugf("received an event: %+#v", event)
-		logrus.Debugf("received an event")
-		data, err := json.Marshal(event)
-		if err != nil {
-			logrus.Errorf("error marshalling event to json: %v", err)
-			http.Error(w, "error while sending event to client", http.StatusInternalServerError)
-			return
-		}
-		fmt.Fprintf(w, "data: %s\n\n", data)
-		flusher.Flush()
-		logrus.Debugf("flushed the messages on the wire. . .")
+			defer mClient.Close()
+
+			logrus.Debugf("received a stream client. . .")
+
+			streamClient, err := mClient.MClient.StreamEvents(req.Context(), &meshes.EventsRequest{})
+			if err != nil {
+				err = errors.Wrapf(err, "There was an error connecting to the backend to get events")
+				logrus.Error(err)
+				errChan <- err
+				// http.Error(w, "There was an error connecting to the backend to get events", http.StatusInternalServerError)
+				return
+			}
+
+			for {
+				logrus.Debugf("waiting to receive events")
+				event, err := streamClient.Recv()
+				if err != nil {
+					if err == io.EOF {
+						err = errors.Wrapf(err, "streaming ended")
+						logrus.Error(err)
+						errChan <- nil
+						// break
+						return
+					} else {
+						err = errors.Wrapf(err, "streaming ended with an unknown error")
+						logrus.Error(err)
+						// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
+						// return
+						errChan <- err
+						// break
+						return
+					}
+				}
+				// logrus.Debugf("received an event: %+#v", event)
+				logrus.Debugf("received an event")
+				data, err := json.Marshal(event)
+				if err != nil {
+					err = errors.Wrapf(err, "error marshalling event to json")
+					logrus.Error(err)
+					errChan <- err
+					// logrus.Errorf(
+					// http.Error(w, "error while sending event to client", http.StatusInternalServerError)
+					return
+				}
+				respChan <- data
+			}
+		}(ma)
 	}
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logrus.Errorf("Recovered from panic: %v", r)
+			}
+		}()
+		for {
+			select {
+			case data := <-respChan:
+				fmt.Fprintf(w, "data: %s\n\n", data)
+				if flusher != nil {
+					flusher.Flush()
+					logrus.Debugf("flushed the messages on the wire. . .")
+				}
+			}
+		}
+	}()
+
+	select {
+	case <-notify:
+	case err := <-errChan:
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	close(respChan)
+	// ... close all events and their channels
 }

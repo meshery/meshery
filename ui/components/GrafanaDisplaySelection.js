@@ -6,7 +6,7 @@ import MUIDataTable from "mui-datatables";
 
 const grafanaStyles = theme => ({
     root: {
-      padding: theme.spacing(10),
+      padding: theme.spacing(5),
     },
     panelChips: {
       display: 'flex',

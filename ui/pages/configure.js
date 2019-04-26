@@ -1,9 +1,9 @@
 import { NoSsr } from "@material-ui/core";
-import MeshConfigComponent from "../components/MeshConfigComponent";
+import MesheryConfigSteps from "../components/MesheryConfigSteps";
 
 const Config = () => (
   <NoSsr>
-    <MeshConfigComponent />
+    <MesheryConfigSteps />
   </NoSsr>
 )
 

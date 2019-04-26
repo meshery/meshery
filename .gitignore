@@ -16,6 +16,8 @@
 
 config
 
+*.config
+
 Chart.min.js
 
 fortio_chart.js
@@ -29,6 +31,8 @@ fortio_chart.js
 **/package-lock.json
 
 cmd/meshery
+
+log.txt
 
 **/_site
 **/.sass-cache

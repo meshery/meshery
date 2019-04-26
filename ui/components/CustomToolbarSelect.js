@@ -3,7 +3,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 // import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
 import IndeterminateCheckBoxIcon from "@material-ui/icons/IndeterminateCheckBox";
-import WavesIcon from "@material-ui/icons/Waves";
+import CompareArrowsIcon from "@material-ui/icons/CompareArrows";
 import { withStyles } from "@material-ui/core/styles";
 import { NoSsr } from "@material-ui/core";
 import MesheryChartDialog from "./MesheryChartDialog";
@@ -97,7 +97,7 @@ class CustomToolbarSelect extends React.Component {
         </Tooltip> */}
         <Tooltip title={"Compare selected"}>
           <IconButton className={classes.iconButton} onClick={this.handleCompareSelected}>
-            <WavesIcon className={classes.icon} />
+            <CompareArrowsIcon className={classes.icon} />
           </IconButton>
         </Tooltip>
       </div>

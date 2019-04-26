@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment, Chip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
@@ -13,7 +13,7 @@ import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { updateK8SConfig, updateMeshInfo } from '../lib/store';
+import { updateK8SConfig } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -21,7 +21,7 @@ import { withRouter } from 'next/router';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing(10),
+    padding: theme.spacing(5),
   },
   buttons: {
     display: 'flex',
@@ -62,17 +62,21 @@ const styles = theme => ({
   },
   alignRight: {
     textAlign: 'right',
+    marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
     opacity: '0.01',
-  }
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
 });
 
 class MeshConfigComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, meshLocationURL, reconfigureCluster} = props;
+    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
     this.state = {
         showSnackbar: false,
         snackbarVariant: '',
@@ -80,14 +84,13 @@ class MeshConfigComponent extends React.Component {
     
         
         inClusterConfig, // read from store
-        k8sfile: '', // leaving this one out just to play it safe for now
+        k8sfile, // read from store
+        k8sfileElementVal: '',
         contextName, // read from store
-        meshLocationURL, // read from store
     
-        reconfigureCluster, // read from store
-    
+        clusterConfigured, // read from store
+        configuredServer,
         k8sfileError: false,
-        meshLocationURLError: false,
       };
   }
 
@@ -107,31 +110,24 @@ class MeshConfigComponent extends React.Component {
     if (name === 'k8sfile' && event.target.value !== ''){
         this.setState({ k8sfileError: false });    
     }
-    if (name === 'meshLocationURL' && event.target.value !== '') {
-        this.setState({meshLocationURLError: false})
+    if (name === 'k8sfile') {
+      this.setState({k8sfileElementVal: event.target.value});
     }
     this.setState({ [name]: event.target.value });
   };
 
   handleSubmit = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL } = this.state;
+    const { inClusterConfig, k8sfile } = this.state;
     if (!inClusterConfig && k8sfile === '') {
         this.setState({k8sfileError: true});
         return;
     }
-    if (meshLocationURL === ''){
-        this.setState({meshLocationURLError: true})
-        return;
-      }
-
+    
     this.submitConfig()
   }
 
   submitConfig = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster } = this.state;
-    // const data = {
-    //     inClusterConfig, k8sfile, meshLocationURL, contextName
-    // }
+    const { inClusterConfig, k8sfile, contextName } = this.state;
     const fileInput = document.querySelector('#k8sfile') ;
     const formData = new FormData();
     formData.append('inClusterConfig', inClusterConfig?"on":''); // to simulate form behaviour of a checkbox
@@ -139,8 +135,7 @@ class MeshConfigComponent extends React.Component {
         formData.append('contextName', contextName);
         formData.append('k8sfile', fileInput.files[0]);
     }
-    formData.append('meshLocationURL', meshLocationURL);
-
+    
     let self = this;
     dataFetch('/api/k8sconfig', { 
       credentials: 'same-origin',
@@ -149,9 +144,10 @@ class MeshConfigComponent extends React.Component {
       body: formData
     }, result => {
       if (typeof result !== 'undefined'){
-        this.setState({reconfigureCluster: false, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
-        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: false}});
-        this.props.updateMeshInfo({mesh: result});
+        const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.context + (result.server?' - ' + result.server:'');
+
+        this.setState({clusterConfigured: true, configuredServer, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
+        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }
     }, self.handleError);
   }
@@ -165,93 +161,52 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
-    const { inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster } = this.state;
+    // const { inClusterConfig, k8sfile, contextName } = this.state;
       this.setState({
-        // inClusterConfig: false,
-        // k8sfile: '', 
-        // k8sfileError: false,
-        // contextName: '', 
-        // meshLocationURL: '', 
-        // meshLocationURLError: false,
-        reconfigureCluster: true,
+        inClusterConfig: false,
+        k8sfile: '', 
+        k8sfileElementVal: '',
+        k8sfileError: false,
+        contextName: '', 
+        clusterConfigured: false,
       })
-      this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, meshLocationURL, contextName, reconfigureCluster: true}});
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
   }
-
-  alreadyConfiguredTemplate = () =>{
-    const { classes } = this.props;
-    const {showSnackbar, 
-        snackbarVariant, snackbarMessage } = this.state;
-      return (
-    <NoSsr>
-    <React.Fragment>
-    <div className={classes.root}>
-    <Grid container spacing={5} alignItems="flex-end">
-      <Grid item xs={12} className={classes.alignCenter}>
-          <Typography variant="h5" gutterBottom>
-            Mesh is configured
-            </Typography>
-      </Grid>
-      <Grid item xs={12} sm={6} className={classes.alignRight}>
-          <Button variant="contained" color="secondary" size="large" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-      </Grid>
-      <Grid item xs={12} sm={6}>
-          <Button variant="contained" color="primary" size="large" onClick={() => this.props.router.push('/play')}>
-            Continue to Play
-            </Button>
-      </Grid>
-      </Grid>
-      </div>
-{/*         
-        <div className={classes.alreadyConfigured}>
-            <Typography variant="h4" gutterBottom>
-            Mesh is already configured
-            </Typography>
-            <Button variant="contained" color="secondary" onClick={this.handleReconfigure}>
-            Reconfigure
-            </Button>
-            <Button variant="contained" color="primary" onClick={() => this.props.router.push('/play')}>
-            Continue to Play
-            </Button>
-        </div> */}
-    </React.Fragment>
-
-    <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={showSnackbar}
-        autoHideDuration={6000}
-        onClose={this.handleSnackbarClose}
-      >
-      <MesherySnackbarWrapper 
-        variant={snackbarVariant}
-        message={snackbarMessage}
-        onClose={this.handleSnackbarClose}
-        />
-    </Snackbar>
-    </NoSsr>
-  );
-      }
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileError, contextName, meshLocationURL, meshLocationURLError, showSnackbar, 
-        snackbarVariant, snackbarMessage } = this.state;
+    const { inClusterConfig, k8sfile, k8sfileElementVal, k8sfileError, contextName, showSnackbar, 
+        snackbarVariant, snackbarMessage, clusterConfigured, configuredServer } = this.state;
     
+    let showConfigured = '';
+    const self = this;
+    if (clusterConfigured) {
+      showConfigured = (
+        <div className={classes.alignRight}>
+          <Chip 
+              label={configuredServer}
+              onDelete={self.handleReconfigure} 
+              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
+              variant="outlined" />
+        </div>
+      )
+    }
+
+
       return (
     <NoSsr>
-    <React.Fragment>
     <div className={classes.root}>
-    <Grid container spacing={5} alignItems="flex-end">
-      <Grid item xs={12} className={classes.alignCenter}>
+    
+    {showConfigured}
+    
+    <Grid container spacing={1} alignItems="flex-end">
+      {/* <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
+            hidden={true} // hiding this component for now
             key="inCluster"
             control={
               <Switch
+                    hidden={true} // hiding this component for now
                     checked={inClusterConfig}
                     onChange={this.handleChange('inClusterConfig')}
                     color="default"
@@ -266,27 +221,15 @@ class MeshConfigComponent extends React.Component {
             labelPlacement="end"
             label="Use in-cluster Kubernetes config"
       />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          id="contextName"
-          name="contextName"
-          label="Context Name"
-          fullWidth
-          value={contextName}
-          margin="normal"
-          variant="outlined"
-          disabled={inClusterConfig == true}
-          onChange={this.handleChange('contextName')}
-        />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} sm={6}>
       <FormGroup row>
         <input
             className={classes.input}
             id="k8sfile"
             type="file"
-            value={k8sfile}
+            // value={k8sfile}
+            value={k8sfileElementVal}
             onChange={this.handleChange('k8sfile')}
             disabled={inClusterConfig == true}
             className={classes.fileInputStyle}
@@ -313,19 +256,17 @@ class MeshConfigComponent extends React.Component {
                 />
         </FormGroup>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} sm={6}>
         <TextField
-          required
-          id="meshLocationURL"
-          name="meshLocationURL"
-          label="Mesh Adapter Location"
-          type="url"
+          id="contextName"
+          name="contextName"
+          label="Context Name"
           fullWidth
-          value={meshLocationURL}
-          error={meshLocationURLError}
+          value={contextName}
           margin="normal"
           variant="outlined"
-          onChange={this.handleChange('meshLocationURL')}
+          disabled={inClusterConfig == true}
+          onChange={this.handleChange('contextName')}
         />
       </Grid>
     </Grid>
@@ -344,7 +285,6 @@ class MeshConfigComponent extends React.Component {
       </div>
     </React.Fragment>
     </div>
-  </React.Fragment>
   
   {/* <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}
@@ -377,10 +317,10 @@ class MeshConfigComponent extends React.Component {
 
   render() {
     const { reconfigureCluster } = this.state;
-    if (reconfigureCluster) {
-        return this.configureTemplate();
-    }
-    return this.alreadyConfiguredTemplate();
+    // if (reconfigureCluster) {
+    return this.configureTemplate();
+    // }
+    // return this.alreadyConfiguredTemplate();
   }
 }
 
@@ -391,25 +331,11 @@ MeshConfigComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
     return {
         updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-        updateMeshInfo: bindActionCreators(updateMeshInfo, dispatch),
     }
 }
 const mapStateToProps = state => {
-    // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-    // console.log("state: " + JSON.stringify(state));
-    const k8sconfig = state.get("k8sConfig");
-    let newprops = {};
-    if (typeof k8sconfig !== 'undefined'){
-      newprops = { 
-        inClusterConfig: k8sconfig.get('inClusterConfig'),
-        // k8sfile: '', 
-        contextName: k8sconfig.get('contextName'), 
-        meshLocationURL: k8sconfig.get('meshLocationURL'), 
-
-        reconfigureCluster: k8sconfig.get('reconfigureCluster'),
-      }
-    }
-    return newprops;
+    const k8sconfig = state.get("k8sConfig").toJS();
+    return k8sconfig;
 }
 
 export default withStyles(styles)(connect(
