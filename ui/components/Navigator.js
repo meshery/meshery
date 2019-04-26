@@ -8,12 +8,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import SettingsInputComponentIcon from '@material-ui/icons/SettingsInputComponent';
 import CollectionsIcon from '@material-ui/icons/Collections';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
+import OndemandVideoRoundedIcon from '@material-ui/icons/OndemandVideoRounded';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SettingsIcon from '@material-ui/icons/Settings';
 import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
@@ -23,11 +21,10 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 
 const categories = [
-  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test' },
-  { id: 'Configure', icon: <SettingsIcon />, href: "/configure", title: 'Configure Mesh' },
-  { id: 'Playground', icon: <SettingsInputComponentIcon />, href: "/play", title: 'Play with Mesh' },
-  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results' },
-  { id: 'Grafana', icon: <ShowChartIcon />, href: "/grafana", title: 'Grafana Charts' },
+  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
+  { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
+  { id: 'Playground', icon: <OndemandVideoRoundedIcon />, href: "/playground", title: 'Play with Meshery', show: true },
+  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 
 const styles = theme => ({
@@ -86,6 +83,12 @@ const styles = theme => ({
   },
   community: {
     marginTop: theme.spacing(2),
+  },
+  settingsIcon: {
+    marginLeft: theme.spacing(2),
+  },
+  cursorPointer: {
+    cursor: 'pointer',
   }
 });
 
@@ -95,20 +98,6 @@ class Navigator extends React.Component {
         path: '',
     }
 
-    // static updateTitle = (props) => {
-    //     let path = (typeof window !== 'undefined' ? window.location.pathname : '');
-    //     categories.map(({title, href}) => {
-    //         if (path.lastIndexOf('/') > 0) {
-    //             path = path.substring(0, path.lastIndexOf('/'));
-    //         }
-    //         if (href === path) {
-    //             console.log("updating path: "+path+" and title: "+title);
-    //             props.updatepagepathandtitle({path, title});
-    //             return;
-    //         }
-    //     });
-    //     return path;
-    // }
     static getDerivedStateFromProps(props, state) {
       let path = (typeof window !== 'undefined' ? window.location.pathname : '');
       categories.map(({title, href}) => {
@@ -140,11 +129,15 @@ class Navigator extends React.Component {
                 <ListItem 
                   component="a"
                   onClick={this.handleTitleClick}
-                  className={classNames(classes.firebase, classes.item, classes.itemCategory)}>
-                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} />
+                  className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}>
+                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
                   Meshery
                 </ListItem>
-                    {categories.map(({ id: childId, icon, href }) => (
+                    {categories.map(({ id: childId, icon, href, show }) => {
+                      if (typeof show !== 'undefined' && !show){
+                        return '';
+                      }
+                      return (
                         <ListItem
                             button
                             dense
@@ -169,7 +162,8 @@ class Navigator extends React.Component {
                                 </div>
                             </Link>
                         </ListItem>
-                    ))}
+                        );
+                      })}
                       <Divider className={classes.divider} />
                       <ListItem
                             component="a"

@@ -5,11 +5,11 @@ import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
 
 const grafanaStyles = theme => ({
     root: {
-      padding: theme.spacing(10),
+      padding: theme.spacing(5),
     },
     buttons: {
       display: 'flex',
-    //   justifyContent: 'flex-end',
+      justifyContent: 'flex-end',
     },
     button: {
       marginTop: theme.spacing(3),
@@ -24,8 +24,8 @@ class GrafanaConfigComponent extends Component {
           <NoSsr>
         <React.Fragment>
             <div className={classes.root}>
-            <Grid container spacing={5}>
-                <Grid item xs={12} sm={4}>
+            <Grid container spacing={1}>
+                <Grid item xs={12} sm={6}>
                 <TextField
                     required
                     id="grafanaURL"
@@ -41,7 +41,7 @@ class GrafanaConfigComponent extends Component {
                     onChange={handleChange('grafanaURL')}
                 />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6}>
                 <TextField
                     id="grafanaAPIKey"
                     name="grafanaAPIKey"
@@ -53,21 +53,19 @@ class GrafanaConfigComponent extends Component {
                     onChange={handleChange('grafanaAPIKey')}
                 />
                 </Grid>
-                <Grid item xs={12} sm={4}>
-                    <div className={classes.buttons}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        onClick={handleGrafanaConfigure}
-                        className={classes.button}
-                    >
-                    Submit
-                    </Button>
-                    </div>
                 </Grid>
-            </Grid>
+                <div className={classes.buttons}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleGrafanaConfigure}
+                    className={classes.button}
+                >
+                Submit
+                </Button>
+                </div>
             </div>
         </React.Fragment>
         </NoSsr>

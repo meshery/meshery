@@ -5,6 +5,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import { Badge, Drawer, Tooltip, Divider, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Icon } from '@material-ui/core';
 import MesheryEventViewer from './MesheryEventViewer';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import ClearAllIcon from '@material-ui/icons/ClearAll';
 import { withStyles } from '@material-ui/core/styles';
 import { eventTypes } from '../lib/event-types';
 import classNames from 'classnames';
@@ -21,6 +22,9 @@ const styles = theme => ({
     },
     notificationTitle: {
         textAlign: 'center',
+        paddingTop: theme.spacing(2),
+        paddingLeft: theme.spacing(3),
+        paddingBottom: theme.spacing(2),
     },
     icon: {
         fontSize: 20,
@@ -43,6 +47,9 @@ const styles = theme => ({
         display: 'flex',
         // alignItems: 'center',
     },
+    clearAllButton: {
+      float: 'right',
+    },
 });
 
 class MesheryNotification extends React.Component {
@@ -53,11 +60,10 @@ class MesheryNotification extends React.Component {
     dialogShow: false,
     k8sConfig: {
         inClusterConfig: false,
-        k8sfile: '', 
+        clusterConfigured: false,
         contextName: '', 
-        meshLocationURL: '', 
-        reconfigureCluster: true,
     },
+    meshAdapters: [],
     createStream: false,
   }
 
@@ -73,21 +79,23 @@ class MesheryNotification extends React.Component {
   };
 
   static getDerivedStateFromProps(props, state){
-    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)) {
+    if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig) || 
+        JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
         return {
             createStream: true,
             k8sConfig: props.k8sConfig,
+            meshAdapters: props.meshAdapters,
         };
     }
     return null;
   }
 
   componentDidUpdate(){
-      const {createStream, k8sConfig} = this.state;
-    if (k8sConfig.k8sfile === '' && k8sConfig.meshLocationURL === '') {
+    const {createStream, k8sConfig, meshAdapters} = this.state;
+    if (!k8sConfig.clusterConfigured || meshAdapters.length === 0) {
         this.closeEventStream();
     }
-    if (createStream && k8sConfig.k8sfile !== '' && k8sConfig.meshLocationURL !== '') {
+    if (createStream && k8sConfig.clusterConfigured && typeof meshAdapters !== 'undefined' && meshAdapters.length > 0) {
         this.startEventStream();
     }
   }
@@ -148,6 +156,10 @@ class MesheryNotification extends React.Component {
     this.setState({ dialogShow: false });
   };
 
+  handleClearAllNotifications = () => {
+    this.setState({events:[]});
+  }
+
   viewEventDetails = () => {
       const {classes} = this.props;
     const {ev, ind, dialogShow} = this.state;
@@ -207,6 +219,12 @@ class MesheryNotification extends React.Component {
             toolTipMsg = `There is 1 event`;
             break;
     }
+    let badgeColorVariant = 'default';
+    events.forEach(eev => {
+      if(eventTypes[eev.event_type] && eventTypes[eev.event_type].type === 'error'){
+        badgeColorVariant = 'error';
+      }
+    });
 
     return (
       <div>
@@ -217,7 +235,7 @@ class MesheryNotification extends React.Component {
                 this.anchorEl = node;
               }}
             color="inherit" onClick={this.handleToggle}>
-            <Badge badgeContent={events.length} color="secondary">
+            <Badge badgeContent={events.length} color={badgeColorVariant}>
                 <NotificationsIcon />
             </Badge>
         </IconButton>
@@ -236,7 +254,15 @@ class MesheryNotification extends React.Component {
           >
             <div className={classes.sidelist}>
             <div className={classes.notificationTitle}>
-                <Typography variant="subtitle2">Notifications</Typography>
+                <Typography variant="subtitle2">
+                  Notifications
+                  <Tooltip title={'Clear all notifications'}>
+                    <IconButton className={classes.clearAllButton}
+                      color="inherit" onClick={this.handleClearAllNotifications}>
+                      <ClearAllIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
             </div>
             <Divider light />
             {events && events.map((event, ind) => (
@@ -256,8 +282,9 @@ class MesheryNotification extends React.Component {
 
 
 const mapStateToProps = state => {
-    const k8sConfig = state.get("k8sConfig").toObject();
-    return {k8sConfig};
+    const k8sConfig = state.get("k8sConfig").toJS();
+    const meshAdapters = state.get("meshAdapters").toJS();
+    return {k8sConfig, meshAdapters};
   }
 
 export default withStyles(styles)(connect(
