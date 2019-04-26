@@ -39,7 +39,7 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Kubernetes Configuration', 'Meshery Adapter Configuration', 'Grafana Configuration'];
+  return ['Kubernetes', 'Adapters', 'Grafana'];
 }
 
 function getRequiredSteps(){
