@@ -14,8 +14,14 @@ nav_order: 3
 
 ---
 ### Diagram
+![Meshery Architecture](assets/images/meshery_arch.png)
+
 ### Value provided by meshery cloud
+![Meshery Hosted](assets/images/meshery_hosted.png)
 ### Network Ports (that Meshery uses and needs)
+- Meshery (thru docker-compose) needs port 9081
+- Meshery Istio adapter port 10000
+- Linkerd adapter port 10001
 ### Adapters (what they are, what purpose they serve
 * Istio
 * Linkerd
