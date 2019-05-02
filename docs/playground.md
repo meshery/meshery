@@ -26,4 +26,4 @@ This is the Performance - Benchmarking Service Meshes page.
 ### Node and service mesh metrics
 ##### Using grafana
 * Setting variables
-{: .text-grey-lt-000 }
+

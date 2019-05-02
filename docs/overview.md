@@ -6,7 +6,7 @@ parent: Meshery
 nav_order: 1
 ---
 This section outlines the overview of Meshery and the Challenges that Meshery project solves. 
-{: .fs-6 .text-grey-lt-000 }
+{: .fs-6 }
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -48,7 +48,6 @@ Meshery allows you to pick an efficient set of tools for your ecosystem by provi
 
 ## Who Meshery is for (adopters and operators)
 Targeted audience for Meshery project would be any Technology operators that leverage Service Mesh in their ecosystem; this includes Developers, Devops Engineers, Decision Makers, Architects, and organizations that rely on Microservices platform. 
-{: .text-grey-lt-000 }
 
 ## Meshery approach to provide performance Metrics around Service Meshes
 - Identify permutations of workloads, infrastructure types, and measurements to use for: 
