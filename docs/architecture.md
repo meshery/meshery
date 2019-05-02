@@ -7,7 +7,7 @@ nav_order: 3
 ---
 
 ## Table of contents
-{: .no_toc .text-delta }
+{: .no_toc }
 
 1. TOC
 {:toc}
@@ -31,6 +31,8 @@ nav_order: 3
 - Meshery (thru docker-compose) needs port 9081
 - Meshery Istio adapter port 10000
 - Linkerd adapter port 10001
+
+
 ### Adapters (what they are, what purpose they serve
 * Istio
 * Linkerd

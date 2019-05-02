@@ -103,3 +103,31 @@ a:not([class]) {
 .site-title {
     color: white !important;
 }
+
+code {
+    background-color: transparent !important;
+}
+
+.breadcrumb-nav-list-item a {
+    color: white !important;
+}
+
+p {
+    line-height: 2rem;
+}
+
+h2 {
+    font-size: 32px !important;
+}
+
+h3 {
+    font-size: 28px !important;
+}
+
+h4 {
+    font-size: 24px !important;
+}
+
+h5 {
+    font-size: 20px !important;
+}
