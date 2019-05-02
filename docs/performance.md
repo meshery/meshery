@@ -8,7 +8,7 @@ nav_order: 4
 
 This is the Performance - Benchmarking Service Meshes page.
 ## Table of contents
-{: .no_toc .text-delta }
+{: .no_toc }
 
 1. TOC
 {:toc}
@@ -16,6 +16,12 @@ This is the Performance - Benchmarking Service Meshes page.
 ---
 
 ### Types of Tests
+
+
 ##### What it means to use concurrency, threads, qps, duration of tests, etc.
+
+
 ### Interpreting Test Results
+
+
 ##### Comparing Test Results

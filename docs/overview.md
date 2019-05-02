@@ -6,10 +6,9 @@ parent: Meshery
 nav_order: 1
 ---
 This section outlines the overview of Meshery and the Challenges that Meshery project solves. 
-{: .fs-6 }
 
 ## Table of contents
-{: .no_toc .text-delta }
+{: .no_toc }
 
 1. TOC
 {:toc}
@@ -70,11 +69,13 @@ Meshery currently evaluates following Service Meshes
 ## FAQ 
 ### Why create Meshery and not use regpatrol?
 - regpatrol is not open source or available in binary form to use.
+
 ### What are some differences between regpatrol and Meshery?
--Telemetry - regpatrol sources telemetry from Mixer Prometheus adapter and uses IBM's proprietary node agent.
-    - Meshery sources from Mixer Prometheus adapter and uses Prometheus node-exporter.
-- Traffic type - regpatrol uses jmeter, which can parse responses and perform functional tests.
-- Meshery is using fortio, which is for load-gen and perf-testing only.
+* Telemetry - regpatrol sources telemetry from Mixer Prometheus adapter and uses IBM's proprietary node agent.
+* Meshery sources from Mixer Prometheus adapter and uses Prometheus node-exporter.
+* Traffic type - regpatrol uses jmeter, which can parse responses and perform functional tests.
+* Meshery is using fortio, which is for load-gen and perf-testing only.
+
 ### Why use Meshery?
 * because its an open source, vendor neutral projects that facilitates testing across meshes.
 * because fortio is not packaged into a mesh testing utility, but is only a load-generator unto its own.
