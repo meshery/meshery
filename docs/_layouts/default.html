@@ -5,19 +5,21 @@
 <body>
 
   <div class="page-wrap">
-    <div class="side-bar" style="background-color:transparent;!important">
+    <div class="side-bar" style="background-color:transparent !important">
       <a href="{{ site.url }}{{ site.baseurl }}" class="site-title fs-6 lh-tight" style="background-color:transparent">{{ site.title }}</a>
-      <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
+      <span class="fs-3">
+        <button class="js-main-nav-trigger navigation-list-toggle btn btn-outline waves-dark white-text darken-2 l5-light-blue z-depth-4" type="button" data-text-toggle="Hide">Menu</button>
+      </span>
       <div class="navigation main-nav js-main-nav">
         {% include nav.html %}
       </div>
     </div>
     <div class="main-content-wrap js-main-content" tabindex="0">
-      <div class="page-header" style="background-color:transparent;!important">
+      <div class="page-header" style="background-color:transparent !important">
         <div class="main-content">
           {% if site.search_enabled != nil %}
           <div class="search js-search">
-            <div class="search-input-wrap" style="background-color:transparent;!important">
+            <div class="search-input-wrap" style="background-color:transparent !important">
               <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search {{ site.title }}" aria-label="Search {{ site.title }}" autocomplete="off">
               <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg>
             </div>
@@ -36,7 +38,7 @@
       <div class="main-content">
         {% unless page.url == "/" %}
           {% if page.parent %}
-            <nav class="breadcrumb-nav" style="background-color: transparent">
+            <div class="breadcrumb-nav" style="background-color: transparent">
               <ol class="breadcrumb-nav-list">
                 {% if page.grand_parent %}
                   <li class="breadcrumb-nav-list-item"><a href="{{ first_level_url }}">{{ page.grand_parent }}</a></li>
@@ -46,10 +48,11 @@
                 {% endif %}
                 <li class="breadcrumb-nav-list-item"><span>{{ page.title }}</span></li>
               </ol>
-            </nav>
+            </div>
           {% endif %}
         {% endunless %}
-        <div id="main-content" class="page-content" role="main">
+        <div id="main-content" class="page-content card" role="main">
+          <div class="card-content">
           {{ content }}
 
           {% if page.has_children == true and page.has_toc != false %}
@@ -66,7 +69,9 @@
             {% endfor %}
           </ul>
           {% endif %}
+          </div>
         </div>
+        {% include footer.html %}
       </div>
     </div>
   </div>
@@ -77,14 +82,6 @@
   <script type="text/javascript" src="{{"/assets/js/materialize.min.js" | absolute_url }}"></script>
   <script src="{{"/assets/js/init.js" | absolute_url }}"></script>
 
-
-</body>
-
-<footer class="page-footer" id="footer">
-
-
-</footer>
-
 {% if site.tag_manager_id and jekyll.environment == 'production' %}
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{site.tag_manager_id}}"
@@ -93,4 +90,5 @@
 {% endif %}
 <script  src="{{"/assets/js/particles/particles.js" | absolute_url }}"></script>
 <script  src="{{"/assets/js/particles/app.js" | absolute_url }}"></script>
+</body>
 </html>

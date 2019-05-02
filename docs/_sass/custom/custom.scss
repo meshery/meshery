@@ -1,3 +1,93 @@
-.site-footer {
-    display: none;
+::selection {
+    color: #fff !important;
+    background: #B3D7FF !important;
+}
+
+.card {
+    position: relative;
+    margin: 0.5rem 0 1rem 0;
+    background-color: #fff;
+    -webkit-transition: -webkit-box-shadow .25s;
+    transition: -webkit-box-shadow .25s;
+    transition: box-shadow .25s;
+    transition: box-shadow .25s, -webkit-box-shadow .25s;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.card .card-content {
+    padding: 24px;
+    border-radius: 0 0 2px 2px;
+}
+
+.breadcrumb-nav {
+    color: 'white';
+    padding-top: 1rem;
+    padding-bottom: 0.75rem;
+}
+
+.search {
+    margin-top: -0.7rem;
+}
+
+body, .text-grey-lt-000 {
+    color: #212121 !important;
+}
+
+a:not([class]):hover {
+    background-image: none !important;
+    background-size: 1px 1px; 
+}
+
+.search-input:focus + .search-icon {
+    //  fill: #7253ed; 
+    fill: #212121; 
+}
+
+/*
+input:not([type]):focus:not([readonly]),
+input[type=text]:not(.browser-default):focus:not([readonly]),
+input[type=password]:not(.browser-default):focus:not([readonly]),
+input[type=email]:not(.browser-default):focus:not([readonly]),
+input[type=url]:not(.browser-default):focus:not([readonly]),
+input[type=time]:not(.browser-default):focus:not([readonly]),
+input[type=date]:not(.browser-default):focus:not([readonly]),
+input[type=datetime]:not(.browser-default):focus:not([readonly]),
+input[type=datetime-local]:not(.browser-default):focus:not([readonly]),
+input[type=tel]:not(.browser-default):focus:not([readonly]),
+input[type=number]:not(.browser-default):focus:not([readonly]),
+input[type=search]:not(.browser-default):focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom: 1px solid #26a69a;
+  -webkit-box-shadow: 0 1px 0 0 #26a69a;
+          box-shadow: 0 1px 0 0 #26a69a;
+}
+*/
+
+#particles-js {
+    top: 50% !important;
+}
+
+.page-footer .footer-copyright {
+    background-color: none;
+}
+
+.page-footer {
+    width: 100%;
+}
+
+nav ul li.active {
+    background-color: transparent !important;
+}
+
+.navigation-list-child-list .navigation-list-item::before {
+    content: "";
+}
+
+.navigation-list-link.active {
+    color: white !important;
+}
+
+.navigation-list-child-list .navigation-list-item {
+    width: 100%;
 }
