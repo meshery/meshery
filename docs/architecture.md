@@ -14,10 +14,10 @@ nav_order: 3
 
 ---
 ### Diagram
-![Meshery Architecture](assets/images/arch.png)
+![Meshery Architecture](assets/images/arch.jpg)
 
 ### Value provided by meshery cloud
-![Meshery Hosted](assets/images/hosted.png)
+![Meshery Hosted](assets/images/hosted.jpg)
 ### Network Ports (that Meshery uses and needs)
 - Meshery (thru docker-compose) needs port 9081
 - Meshery Istio adapter port 10000
