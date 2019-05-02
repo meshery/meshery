@@ -9,7 +9,7 @@
  ul ul {
   margin-left:15px;
 }
-li.youtube {	list-style-image: url('/assets/images/youtube.svg'); }
+li.youtube {	list-style-image: url('assets/images/youtube.svg'); }
 .materialize-red {
   background-color: #e51c23 !important;
 }
