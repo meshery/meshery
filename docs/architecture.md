@@ -14,8 +14,10 @@ nav_order: 3
 
 ---
 ### Diagram
+![Meshery Architecture](assets/images/meshery_arch.png)
 
 ### Value provided by meshery cloud
+![Meshery Hosted](assets/images/meshery_hosted.png)
 ### Network Ports (that Meshery uses and needs)
 ### Adapters (what they are, what purpose they serve
 * Istio
