@@ -81,7 +81,7 @@ nav ul li.active {
 }
 
 .navigation-list-child-list .navigation-list-item::before {
-    content: "";
+    content: "" !important;
 }
 
 .navigation-list-link.active {
