@@ -43,10 +43,14 @@ Meshery repository includes a `docker-compose.yaml` file. We can use `docker-com
 ```
 docker-compose up -d
 ```
-Once you have services up please go to [Access Meshery](#running) section.
 
-##### Kubernetes deployments (in-cluster and out of cluster)
-Meshery can also be deployed on an existing Kubernetes cluster. To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
+Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
+You will be redirected to a social login page where you can pick one of the available Social Login methods to login to Meshery.
+
+##### Kubernetes deployment
+Meshery can also be deployed on an existing Kubernetes cluster.
+
+To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
 ```
 kubectl create ns meshery
 ```
@@ -62,17 +66,31 @@ There are several ways a service can be exposed on Kubernetes.
 Here we will describe 3 common ways we can expose a service:
 * Ingress
   * If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to 
+    ```
+    apiVersion: extensions/v1beta1
+    kind: Ingress
+    metadata:
+    name: meshery-ingress
+    annotations:
+        kubernetes.io/ingress.class: "nginx"
+    spec:
+    rules:
+    - host: *
+        http:
+        paths:
+        - path: /
+            backend:
+            serviceName: meshery-service
+            servicePort: 8080
 
+    ```
 * LoadBalancer
     If your Kubernetes cluster has an external load balancer, this might be a logical route.
 
 * NodePort
     If your cluster does not have an Ingress Controller or a load balancer, then NodePort is probably the last resort.
 
-<a name="running"></a>
-### Accessing Meshery
-Once all the services are up, Meshery UI will be exposed on port 9081. Now open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
-You will be redirected to a social login page where you can pick one of the available Social Login methods to login to Meshery.
+
 
 ### Configuration
 This is where you configure your settings on the adaptor(Istio etc) and other things 

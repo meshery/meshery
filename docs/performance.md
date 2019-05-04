@@ -6,7 +6,7 @@ parent: Meshery
 nav_order: 4
 ---
 
-This is the Performance - Benchmarking Service Meshes page.
+This is the Performance - benchmarking service meshes page.
 ## Table of contents
 {: .no_toc }
 
