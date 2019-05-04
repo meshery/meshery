@@ -6,8 +6,8 @@ permalink: /playground
 nav_order: 5
 ---
 
-This is the Playground - Managing Service Meshes page.
-This is the Performance - Benchmarking Service Meshes page.
+This is the Playground - managing service meshes page.
+This is the Performance - benchmarking service meshes page.
 ## Table of contents
 {: .no_toc }
 

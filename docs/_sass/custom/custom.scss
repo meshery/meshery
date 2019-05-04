@@ -28,6 +28,11 @@
 
 .search {
     margin-top: -0.7rem;
+    background-color: #fff !important;
+}
+
+.search-input-wrap, .search-input {
+    height: 100% !important;
 }
 
 body, .text-grey-lt-000 {
@@ -44,7 +49,11 @@ a:not([class]):hover {
     fill: #212121; 
 }
 
-/*
+// .search-input:focus, .search-input-wrap:focus {
+//     border-bottom-color: transparent !important;
+// }
+
+
 input:not([type]):focus:not([readonly]),
 input[type=text]:not(.browser-default):focus:not([readonly]),
 input[type=password]:not(.browser-default):focus:not([readonly]),
@@ -58,11 +67,11 @@ input[type=tel]:not(.browser-default):focus:not([readonly]),
 input[type=number]:not(.browser-default):focus:not([readonly]),
 input[type=search]:not(.browser-default):focus:not([readonly]),
 textarea.materialize-textarea:focus:not([readonly]) {
-  border-bottom: 1px solid #26a69a;
-  -webkit-box-shadow: 0 1px 0 0 #26a69a;
-          box-shadow: 0 1px 0 0 #26a69a;
+  border-bottom: none !important;
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
 }
-*/
+
 
 #particles-js {
     top: 50% !important;
@@ -130,4 +139,34 @@ h4 {
 
 h5 {
     font-size: 20px !important;
+}
+
+.page-footer .container {
+    width: 85%;
+}
+
+.footer-list {
+    margin-left: 0px !important;
+}
+
+.page-footer .footer-copyright {
+    padding: 20px !important;
+}
+
+.footer-copyright .row {
+    width: 100%;
+}
+
+nav {
+    height: 0px !important;
+}
+
+.page-content a {
+    white-space: normal !important;
+}
+
+a:hover {
+    text-decoration: underline;
+    font-weight: normal !important;
+    color: blue !important;
 }

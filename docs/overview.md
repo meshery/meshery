@@ -5,7 +5,7 @@ permalink: /overview
 parent: Meshery
 nav_order: 1
 ---
-This section outlines the overview of Meshery and the Challenges that Meshery project solves. 
+This section outlines the overview of Meshery and the challenges that Meshery project solves. 
 
 ## Table of contents
 {: .no_toc }
@@ -38,7 +38,7 @@ Meshery is intended to be a vendor and project-neutral utility for uniformly ben
 Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. 
 Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics 
 
-1. By leveraging Meshery you could achieve apples-to-apples performance comparision of Service Meshes
+1. By leveraging Meshery you could achieve apples-to-apples performance comparision of service meshes
 1. Track your service mesh performance from release to release.
 1. Understand behavioral differences between service meshes.
 1. Track your application performance from version to version.
@@ -46,7 +46,7 @@ Meshery allows you to pick an efficient set of tools for your ecosystem by provi
 
 
 ## Who Meshery is for (adopters and operators)
-Targeted audience for Meshery project would be any Technology operators that leverage Service Mesh in their ecosystem; this includes Developers, Devops Engineers, Decision Makers, Architects, and organizations that rely on Microservices platform. 
+Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
 ## Meshery approach to provide performance Metrics around Service Meshes
 - Identify permutations of workloads, infrastructure types, and measurements to use for: 
@@ -57,12 +57,16 @@ Targeted audience for Meshery project would be any Technology operators that lev
         1. Infrastructure(s)
 
 ## Supported Service Meshes
-Meshery currently evaluates following Service Meshes
-
+Meshery currently works with the following service meshes through adapter:
 1. Istio
 1. Linkerd2
-1. App Mesh
+
+Other service meshes for whom the adapters are being worked on are:
+1. Octarine
 1. Consul Connect
+
+The next set of service mesh adapters we might work on are for:
+1. App Mesh
 1. SOFAmesh
 
 
