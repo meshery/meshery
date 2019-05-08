@@ -331,22 +331,24 @@ class MesheryPerformanceComponent extends React.Component {
         </div>
       </React.Fragment>
 
+      <LoadTestTimerDialog open={timerDialogOpen} 
+      t={t}
+      onClose={this.handleTimerDialogClose} 
+      countDownComplete={this.handleTimerDialogClose}
+       />
+
       <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
         Test Results
       </Typography>
         <div className={classes.chartContent} style={chartStyle}>
           <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
         </div>
+        
+      
       </div>
     </React.Fragment>
     
     {displayGCharts}
-
-    <LoadTestTimerDialog open={timerDialogOpen} 
-      t={t}
-      onClose={this.handleTimerDialogClose} 
-      countDownComplete={this.handleTimerDialogClose}
-      container={() => document.querySelector('#timerAnchor')} />
     
     <Snackbar
           anchorOrigin={{
