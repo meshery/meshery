@@ -166,7 +166,7 @@ class MesheryPerformanceComponent extends React.Component {
       body: params
     }, result => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.setState({result, testName, timerDialogOpen: false, showSnackbar: true, 
+        this.setState({result, timerDialogOpen: false, showSnackbar: true, 
             snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
         this.props.updateLoadTestData({loadTest: {
           testName,
