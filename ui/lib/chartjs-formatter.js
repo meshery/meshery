@@ -459,8 +459,8 @@ export function makeChart (data) {
 const multiLabel = (res) => {
   var l = formatDate(res.StartTime)
   if (res.Labels !== '') {
-    if (res.Labels.indexOf(' - ') > -1) {
-      const ls = res.Labels.split(' - ');
+    if (res.Labels.indexOf(' -_- ') > -1) {
+      const ls = res.Labels.split(' -_- '); // trying to match this with server side in fortio.go
       if (ls.length > 0){
         l += ' - ' + ls[0];
       } else {
