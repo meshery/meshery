@@ -6,8 +6,8 @@ metadata:
     kompose.version: 1.17.0 ()
   creationTimestamp: null
   labels:
-    io.kompose.service: fortio
-  name: fortio
+    io.kompose.service: meshery-linkerd
+  name: meshery-linkerd
 spec:
   replicas: 1
   strategy: {}
@@ -15,13 +15,14 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        io.kompose.service: fortio
+        io.kompose.service: meshery-linkerd
     spec:
+      serviceAccount: meshery
       containers:
-      - args:
-        - server
-        image: fortio/fortio
-        name: fortio
+      - image: layer5/meshery-linkerd
+        name: meshery-linkerd
+        ports:
+        - containerPort: 10001
         resources: {}
       restartPolicy: Always
 status: {}
