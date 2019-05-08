@@ -136,7 +136,7 @@ class MesheryPerformanceComponent extends React.Component {
     let computedTestName = testName;
     if (testName.trim() === '') {
       const mesh = meshName === ''?'No mesh': meshName;
-      computedTestName = `${mesh} - ${(new Date()).getTime()}`;
+      computedTestName = `${mesh}_${(new Date()).getTime()}`;
     }
 
     const t1 = t.substring(0, t.length - 1);
@@ -166,10 +166,10 @@ class MesheryPerformanceComponent extends React.Component {
       body: params
     }, result => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.setState({result, testName: computedTestName, timerDialogOpen: false, showSnackbar: true, 
+        this.setState({result, testName, timerDialogOpen: false, showSnackbar: true, 
             snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
         this.props.updateLoadTestData({loadTest: {
-          testName: computedTestName,
+          testName,
           meshName,
           url,
           qps,
