@@ -48,6 +48,9 @@ const styles = theme => ({
   },
   userSpan: {
     marginLeft: theme.spacing(1),
+  },
+  pageTitle: {
+    paddingLeft: theme.spacing(2),
   }
 });
 
@@ -74,8 +77,11 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid container xs justify="center">
-                <Grid item>
+              <Grid container xs>
+                <Grid item className={classes.pageTitle}>
+                <Typography color="inherit" variant="h5">
+                  {title}
+                </Typography>
                 </Grid>
               </Grid>
               {/* <Grid item className={classes.notifications}>
@@ -110,9 +116,7 @@ class Header extends React.Component {
           <Toolbar>
             <Grid container alignItems="center" spacing={8}>
               <Grid item xs>
-                <Typography color="inherit" variant="h5">
-                  {title}
-                </Typography>
+                
               </Grid>
               {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
