@@ -82,6 +82,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	loadTestOptions.URL = loadTestURL
+	loadTestOptions.Name = testName
 
 	qps, _ := strconv.ParseFloat(q.Get("qps"), 64)
 	if qps < 0 {
