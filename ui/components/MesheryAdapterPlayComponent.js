@@ -6,6 +6,9 @@ import { blue } from '@material-ui/core/colors';
 import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
+import { updateProgress } from '../lib/store';
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux';
 
 const styles = theme => ({
   root: {
@@ -149,7 +152,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
-    
+    this.props.updateProgress({showProgress: true});
     let self = this;
     dataFetch('/api/mesh/ops', { 
       credentials: 'same-origin',
@@ -160,6 +163,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       },
       body: params
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.setState({showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Operation success!'});
       }
@@ -167,6 +171,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   handleError = error => {
+    this.props.updateProgress({showProgress: false});
     this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Operation failed: ${error}`});
   }
 
@@ -304,4 +309,13 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withRouter(MesheryAdapterPlayComponent));
+const mapDispatchToProps = dispatch => {
+  return {
+      updateProgress: bindActionCreators(updateProgress, dispatch),
+  }
+}
+
+export default withStyles(styles)(connect(
+  null,
+  mapDispatchToProps
+)(withRouter(MesheryAdapterPlayComponent)));
