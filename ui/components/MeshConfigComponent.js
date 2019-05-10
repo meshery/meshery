@@ -13,7 +13,7 @@ import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { updateK8SConfig } from '../lib/store';
+import { updateK8SConfig, updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -122,7 +122,7 @@ class MeshConfigComponent extends React.Component {
         this.setState({k8sfileError: true});
         return;
     }
-    
+    this.props.updateProgress({showProgress: true});
     this.submitConfig()
   }
 
@@ -145,7 +145,7 @@ class MeshConfigComponent extends React.Component {
     }, result => {
       if (typeof result !== 'undefined'){
         const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.context + (result.server?' - ' + result.server:'');
-
+        this.props.updateProgress({showProgress: false});
         this.setState({clusterConfigured: true, configuredServer, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }
@@ -153,6 +153,7 @@ class MeshConfigComponent extends React.Component {
   }
 
   handleError = error => {
+    this.props.updateProgress({showProgress: false});
     this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Kubernetes config could not be validated: ${error}`});
   }
 
@@ -331,6 +332,7 @@ MeshConfigComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
     return {
         updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+        updateProgress: bindActionCreators(updateProgress, dispatch),
     }
 }
 const mapStateToProps = state => {
