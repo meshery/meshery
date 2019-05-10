@@ -143,9 +143,9 @@ class MeshConfigComponent extends React.Component {
       credentials: 'include',
       body: formData
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.context + (result.server?' - ' + result.server:'');
-        this.props.updateProgress({showProgress: false});
         this.setState({clusterConfigured: true, configuredServer, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }

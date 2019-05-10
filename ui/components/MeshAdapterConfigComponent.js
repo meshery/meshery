@@ -9,7 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
 import blue from '@material-ui/core/colors/blue';
-import { updateAdaptersInfo } from '../lib/store';
+import { updateAdaptersInfo, updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -93,11 +93,13 @@ class MeshAdapterConfigComponent extends React.Component {
 
   fetchAvailableAdapters = () => {
     let self = this;
+    this.props.updateProgress({showProgress: true});
     dataFetch('/api/mesh/adapters', { 
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         const options = result.map(res => {
           return {
@@ -164,6 +166,7 @@ class MeshAdapterConfigComponent extends React.Component {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
 
+    this.props.updateProgress({showProgress: true});
     let self = this;
     dataFetch('/api/mesh/manage', { 
       credentials: 'same-origin',
@@ -174,6 +177,7 @@ class MeshAdapterConfigComponent extends React.Component {
       },
       body: params
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.setState({meshAdapters: result, meshLocationURL: '', showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Adapter was successfully configured!'});
         this.props.updateAdaptersInfo({meshAdapters: result});
@@ -184,13 +188,14 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleDelete = (adapterID) => () => {
     // const { meshAdapters } = this.state;
-
+    this.props.updateProgress({showProgress: true});
     let self = this;
     dataFetch(`/api/mesh/manage?adapterID=${adapterID}`, { 
       credentials: 'same-origin',
       method: 'DELETE',
       credentials: 'include',
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.setState({meshAdapters: result, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Adapter was successfully removed!'});
         this.props.updateAdaptersInfo({meshAdapters: result});
@@ -199,6 +204,7 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 
   handleError = (msg) => (error) => {
+    this.props.updateProgress({showProgress: false});
     this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `${msg}: ${error}`});
   }
 
@@ -339,6 +345,7 @@ MeshAdapterConfigComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
     return {
         updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
+        updateProgress: bindActionCreators(updateProgress, dispatch),
     }
 }
 const mapStateToProps = state => {
