@@ -1,23 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment, Chip } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment, Chip, IconButton } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import Snackbar from '@material-ui/core/Snackbar';
-import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
 import dataFetch from '../lib/data-fetch';
-import Switch from '@material-ui/core/Switch';
 import blue from '@material-ui/core/colors/blue';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-
+import { withSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
   root: {
@@ -78,11 +74,6 @@ class MeshConfigComponent extends React.Component {
     super(props);
     const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
     this.state = {
-        showSnackbar: false,
-        snackbarVariant: '',
-        snackbarMessage: '',
-    
-        
         inClusterConfig, // read from store
         k8sfile, // read from store
         k8sfileElementVal: '',
@@ -93,14 +84,6 @@ class MeshConfigComponent extends React.Component {
         k8sfileError: false,
       };
   }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  };
 
   handleChange = name => event => {
     if (name === 'inClusterConfig'){
@@ -146,7 +129,11 @@ class MeshConfigComponent extends React.Component {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.context + (result.server?' - ' + result.server:'');
-        this.setState({clusterConfigured: true, configuredServer, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Kubernetes config was successfully validated!'});
+        this.setState({clusterConfigured: true, configuredServer});
+        this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }
     }, self.handleError);
@@ -154,7 +141,20 @@ class MeshConfigComponent extends React.Component {
 
   handleError = error => {
     this.props.updateProgress({showProgress: false});
-    this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Kubernetes config could not be validated: ${error}`});
+    this.props.enqueueSnackbar(`Kubernetes config could not be validated: ${error}`, {
+      variant: 'error',
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 8000,
+    });
   }
 
 //   handleTimerDialogClose = () => {
@@ -176,8 +176,7 @@ class MeshConfigComponent extends React.Component {
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileElementVal, k8sfileError, contextName, showSnackbar, 
-        snackbarVariant, snackbarMessage, clusterConfigured, configuredServer } = this.state;
+    const { inClusterConfig, k8sfile, k8sfileElementVal, contextName, clusterConfigured, configuredServer } = this.state;
     
     let showConfigured = '';
     const self = this;
@@ -296,22 +295,6 @@ class MeshConfigComponent extends React.Component {
       Results
     </Typography>
   <MesheryChart data={result} />     */}
-  
-  <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={showSnackbar}
-        autoHideDuration={6000}
-        onClose={this.handleSnackbarClose}
-      >
-      <MesherySnackbarWrapper 
-        variant={snackbarVariant}
-        message={snackbarMessage}
-        onClose={this.handleSnackbarClose}
-        />
-    </Snackbar>
     </NoSsr>
   );
     }
@@ -343,4 +326,4 @@ const mapStateToProps = state => {
 export default withStyles(styles)(connect(
     mapStateToProps,
     mapDispatchToProps
-  )(withRouter(MeshConfigComponent)));
+  )(withRouter(withSnackbar(MeshConfigComponent))));

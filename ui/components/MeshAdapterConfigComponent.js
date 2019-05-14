@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  Chip } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Snackbar from '@material-ui/core/Snackbar';
-import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
+import { NoSsr,  Chip, IconButton } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import blue from '@material-ui/core/colors/blue';
 import { updateAdaptersInfo, updateProgress } from '../lib/store';
@@ -15,6 +12,8 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import CreatableSelect from 'react-select/lib/Creatable';
 import ReactSelectWrapper from './ReactSelectWrapper';
+import { withSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = theme => ({
@@ -76,10 +75,6 @@ class MeshAdapterConfigComponent extends React.Component {
     super(props);
     const {meshAdapters} = props;
     this.state = {
-        showSnackbar: false,
-        snackbarVariant: '',
-        snackbarMessage: '',
-    
         meshAdapters,
         availableAdapters: [],
     
@@ -111,14 +106,6 @@ class MeshAdapterConfigComponent extends React.Component {
       }
     }, self.handleError("Unable to fetch available adapters"));
   }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  };
 
   handleChange = name => event => {
     if (name === 'meshLocationURL' && event.target.value !== '') {
@@ -179,7 +166,11 @@ class MeshAdapterConfigComponent extends React.Component {
     }, result => {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        this.setState({meshAdapters: result, meshLocationURL: '', showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Adapter was successfully configured!'});
+        this.setState({meshAdapters: result, meshLocationURL: ''});
+        this.props.enqueueSnackbar('Adapter was successfully configured!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
         this.props.updateAdaptersInfo({meshAdapters: result});
         this.fetchAvailableAdapters();
       }
@@ -197,7 +188,11 @@ class MeshAdapterConfigComponent extends React.Component {
     }, result => {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        this.setState({meshAdapters: result, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Adapter was successfully removed!'});
+        this.setState({meshAdapters: result});
+         this.props.enqueueSnackbar('Adapter was successfully removed!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
         this.props.updateAdaptersInfo({meshAdapters: result});
       }
     }, self.handleError("Adapter was not removed due to an error"));
@@ -205,13 +200,25 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({showProgress: false});
-    this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `${msg}: ${error}`});
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant: 'error',
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 8000,
+    });
   }
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { availableAdapters, meshAdapters, meshLocationURL, meshLocationURLError, showSnackbar, 
-        snackbarVariant, snackbarMessage, clusterConfigured } = this.state;
+    const { availableAdapters, meshAdapters, meshLocationURL, meshLocationURLError } = this.state;
     
     let showAdapters = '';
     const self = this;
@@ -309,22 +316,7 @@ class MeshAdapterConfigComponent extends React.Component {
       Results
     </Typography>
   <MesheryChart data={result} />     */}
-  
-  <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={showSnackbar}
-        autoHideDuration={6000}
-        onClose={this.handleSnackbarClose}
-      >
-      <MesherySnackbarWrapper 
-        variant={snackbarVariant}
-        message={snackbarMessage}
-        onClose={this.handleSnackbarClose}
-        />
-    </Snackbar>
+
     </NoSsr>
   );
     }
@@ -356,4 +348,4 @@ const mapStateToProps = state => {
 export default withStyles(styles)(connect(
     mapStateToProps,
     mapDispatchToProps
-  )(withRouter(MeshAdapterConfigComponent)));
+  )(withRouter(withSnackbar(MeshAdapterConfigComponent))));
