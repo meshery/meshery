@@ -1,14 +1,15 @@
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, Switch, TextField, Button, Snackbar, RadioGroup, Radio, FormLabel, FormControl } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, TextField, Button, RadioGroup, Radio, FormLabel, FormControl, IconButton } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
-import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
+import CloseIcon from '@material-ui/icons/Close';
+import { withSnackbar } from 'notistack';
 
 const styles = theme => ({
   root: {
@@ -74,10 +75,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     // const {Name, Ops} = props;
     
     this.state = {
-      showSnackbar: false,
-      snackbarVariant: '',
-      snackbarMessage: '',
-
       selectedOp: '',
       cmEditorVal: '',
       cmEditorValError: false,
@@ -87,14 +84,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       namespaceError: false,
     }
   }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  };
 
   handleChange = name => event => {
     if (name === 'namespace' && event.target.value !== '') {
@@ -165,23 +154,35 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, result => {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        this.setState({showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Operation success!'});
+        this.props.enqueueSnackbar('Operation submitted successfully!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
       }
     }, self.handleError);
   }
 
   handleError = error => {
     this.props.updateProgress({showProgress: false});
-    this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Operation failed: ${error}`});
+    this.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
+      variant: 'error',
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 8000,
+    });
   }
 
   render() {
     const {classes, color, iconButtonClassName, avatarClassName, adapter, ...other} = this.props;
     const {
-      showSnackbar, 
-      snackbarVariant, 
-      snackbarMessage, 
-
       selectedOp,
       cmEditorVal,
       namespace,
@@ -282,22 +283,6 @@ class MesheryAdapterPlayComponent extends React.Component {
           </React.Fragment>
           </div>
         </React.Fragment>
-
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={showSnackbar}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-          >
-          <MesherySnackbarWrapper 
-            variant={snackbarVariant}
-            message={snackbarMessage}
-            onClose={this.handleSnackbarClose}
-            />
-        </Snackbar>
       </NoSsr>
     )
   }
@@ -318,4 +303,4 @@ const mapDispatchToProps = dispatch => {
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(withRouter(MesheryAdapterPlayComponent)));
+)(withRouter(withSnackbar(MesheryAdapterPlayComponent))));

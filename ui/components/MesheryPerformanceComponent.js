@@ -4,17 +4,17 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Tooltip, MenuItem } from '@material-ui/core';
+import { NoSsr, Tooltip, MenuItem, IconButton } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
-import Snackbar from '@material-ui/core/Snackbar';
-import MesherySnackbarWrapper from '../components/MesherySnackbarWrapper';
+import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateLoadTestData } from '../lib/store';
 import GrafanaCharts from './GrafanaCharts';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const meshes = [
@@ -72,19 +72,8 @@ class MesheryPerformanceComponent extends React.Component {
       urlError: false,
       tError: false,
       testNameError: false,
-      showSnackbar: false,
-      snackbarVariant: '',
-      snackbarMessage: '',
     };
   }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  };
 
   handleChange = name => event => {
     if (name === 'url' && event.target.value !== ''){
@@ -166,8 +155,11 @@ class MesheryPerformanceComponent extends React.Component {
       body: params
     }, result => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.setState({result, timerDialogOpen: false, showSnackbar: true, 
-            snackbarVariant: 'success', snackbarMessage: 'Load test ran successfully!'});
+        this.setState({result, timerDialogOpen: false});
+        this.props.enqueueSnackbar('Successfully fetched the data.', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
         this.props.updateLoadTestData({loadTest: {
           testName,
           meshName,
@@ -183,7 +175,21 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleError = error => {
     this.setState({timerDialogOpen: false });
-    this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Load test did not run successfully with msg: ${error}`});
+    var self = this;
+    this.props.enqueueSnackbar(`Load test did not run successfully with msg: ${error}`, {
+      variant: 'error',
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 8000,
+    });
   }
 
   handleTimerDialogClose = () => {
@@ -192,7 +198,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana } = this.props;
-    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, urlError, tError, showSnackbar, snackbarVariant, snackbarMessage } = this.state;
+    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, urlError, tError } = this.state;
 
     let chartStyle = {}
     if (timerDialogOpen) {
@@ -349,22 +355,7 @@ class MesheryPerformanceComponent extends React.Component {
     </React.Fragment>
     
     {displayGCharts}
-    
-    <Snackbar
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={showSnackbar}
-          autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-        >
-        <MesherySnackbarWrapper 
-          variant={snackbarVariant}
-          message={snackbarMessage}
-          onClose={this.handleSnackbarClose}
-          />
-      </Snackbar>
+
       </NoSsr>
     );
   }
@@ -400,4 +391,4 @@ const mapStateToProps = state => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps
-)(MesheryPerformanceComponent));
+)(withSnackbar(MesheryPerformanceComponent)));

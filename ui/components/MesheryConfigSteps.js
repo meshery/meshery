@@ -185,9 +185,12 @@ class MesheryConfigSteps extends React.Component {
             <Step key={label}>
               <StepButton onClick={this.handleStep(index)} completed={this.state.completed[index]}>
                 <StepLabel className={activeStep == index?classes.titleDecorate:''}
-                  icon={<Icon>k</Icon>}>
-                  <Typography variant="subtitle1">
-                    {label}{getRequiredSteps()[index] && (<sup>*</sup>)}
+                  // icon={<Icon>k</Icon>}
+                  >
+                  <Typography variant="h6">
+                    {label}{getRequiredSteps()[index] && (<Typography variant="h5" style={{
+                      display: 'inline',
+                    }}><sup>*</sup></Typography>)}
                   </Typography>
                 </StepLabel>
               </StepButton>
