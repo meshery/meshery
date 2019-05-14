@@ -57,6 +57,9 @@ const styles = theme => ({
     position: 'fixed',
     top: theme.spacing(12.5),
     right: theme.spacing(3),
+  },
+  appBar: {
+    padding: theme.spacing(1.4),
   }
 });
 
@@ -68,7 +71,7 @@ class Header extends React.Component {
     return (
       <NoSsr>
       <React.Fragment>
-        <AppBar color="primary" position="sticky" elevation={0}>
+        <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
           <Toolbar>
             <Grid container spacing={8} alignItems="center">
               <Hidden smUp>
@@ -83,7 +86,7 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid container xs>
+              <Grid container xs alignItems="center" justify="center">
                 <Grid item className={classes.pageTitle}>
                 <Typography color="inherit" variant="h5">
                   {title}
@@ -112,7 +115,7 @@ class Header extends React.Component {
             </Grid>
           </Toolbar>
         </AppBar>
-        <AppBar
+        {/* <AppBar
           component="div"
           className={classes.secondaryBar}
           color="primary"
@@ -128,17 +131,17 @@ class Header extends React.Component {
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
                   Web setup
                 </Button>
-              </Grid> */}
+              </Grid> * /}
               {/* <Grid item>
                 <Tooltip title="Help">
                   <IconButton color="inherit">
                     <HelpIcon />
                   </IconButton>
                 </Tooltip>
-              </Grid> */}
+              </Grid> * /}
             </Grid>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         {/* <AppBar
           component="div"
           className={classes.secondaryBar}
