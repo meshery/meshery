@@ -260,12 +260,12 @@ class MesheryAdapterPlayComponent extends React.Component {
             </div>
               <Dialog
                 onClose={this.handleModalClose}
-                aria-labelledby="customized-dialog-title"
+                aria-labelledby="adapter-dialog-title"
                 open={this.state.customDialog}
                 fullWidth={true}
                 maxWidth={'md'}
               >
-                <DialogTitle id="customized-dialog-title" onClose={this.handleModalClose}>
+                <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
                   {adapter.name} Adapter - Custom YAML
                 </DialogTitle>
                 <Divider variant="fullWidth" light />
