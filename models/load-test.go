@@ -5,7 +5,8 @@ import (
 )
 
 type LoadTestOptions struct {
-	URL string
+	Name string
+	URL  string
 
 	HTTPQPS float64
 

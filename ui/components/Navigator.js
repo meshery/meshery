@@ -89,6 +89,10 @@ const styles = theme => ({
   },
   cursorPointer: {
     cursor: 'pointer',
+  },
+  listIcon: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
   }
 });
 
@@ -150,7 +154,7 @@ class Navigator extends React.Component {
                         >
                             <Link href={href} prefetch>
                                 <div className={classNames(classes.link)} >
-                                    <ListItemIcon>{icon}</ListItemIcon>
+                                    <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                                     <ListItemText
                                     classes={{
                                         primary: classes.itemPrimary,
@@ -176,7 +180,7 @@ class Navigator extends React.Component {
                             )}
                         >
                           <div className={classNames(classes.link)} >
-                              <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                              <ListItemIcon className={classes.listIcon}><ExitToAppIcon /></ListItemIcon>
                               <ListItemText
                               classes={{
                                   primary: classes.itemPrimary,

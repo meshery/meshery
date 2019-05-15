@@ -38,6 +38,8 @@ const initialState = fromJS({
     grafanaBoards: [],
     selectedBoardsConfigs: [],
   },
+
+  showProgress: false,
 });
 
 export const actionTypes = {
@@ -51,6 +53,7 @@ export const actionTypes = {
     // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
     CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
     UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
+    UPDATE_PROGRESS: 'UPDATE_PROGRESS',
 }
 
 // REDUCERS
@@ -108,6 +111,9 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.CLEAR_RESULTS_SELECTION:
       state = state.deleteIn(['results_selection']);
       return state.mergeDeep({results_selection: fromJS({})});
+
+    case actionTypes.UPDATE_PROGRESS:
+      return state.mergeDeep({showProgress: action.showProgress});
       // return state.mergeDeep({results_selection: {}});
       // console.log(`keys: ${state.get('results_selection').keys()}`);
       // return state.deleteIn(state.get('results_selection').keys());
@@ -133,6 +139,10 @@ export const reducer = (state = initialState, action) => {
 export const updatepagepathandtitle = ({path, title}) => dispatch => {
     // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type: actionTypes.UPDATE_PAGE, path, title });
+}
+
+export const updateProgress = ({showProgress}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
 }
 
 export const updateUser = ({user}) => dispatch => {

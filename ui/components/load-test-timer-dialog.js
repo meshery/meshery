@@ -32,7 +32,8 @@ class LoadTestTimerDialog extends React.Component {
           open={open}
           // onClose={this.handleClose}
         > */}
-        <Popper open={open} anchorEl={container} 
+        <div id="anc1"></div>
+        <Popper open={open} anchorEl={() => document.querySelector('#anc1')}
            placement='bottom' 
             modifiers={{
               flip: {

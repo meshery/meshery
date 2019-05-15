@@ -77,7 +77,7 @@ class MesheryResults extends Component {
     render() {
         const { classes, results_selection } = this.props;
         const { results, page, count, pageSize, search, sortOrder } = this.state;
-
+        const self = this;
         const resultsForDisplay = [];
         results.forEach((record) => {
           const row = {
@@ -243,15 +243,32 @@ class MesheryResults extends Component {
           print: false,
           download: false,
           onRowsSelect: (currentRowsSelected, allRowsSelected) => {
+            // const rs = self.props.results_selection;
+            
             let res = {};
             allRowsSelected.forEach(({dataIndex}) => {
-              if (dataIndex < pageSize) {
+              if (dataIndex < self.state.pageSize) {
                 if (typeof res[dataIndex] !== 'undefined'){
                     delete res[dataIndex];
                   } else {
-                    res[dataIndex] = results[dataIndex];
+                    res[dataIndex] = self.state.results[dataIndex];
                   }  
               }});
+
+              // let rsk = 0;
+              // Object.keys(rs).forEach((k1) => {
+              //     const pg = parseInt(k1);
+              //     if(pg !== page){ // skipping count for this page
+              //       Object.keys(rs[k1]).forEach((k2) => {
+              //         rsk++;
+              //       });
+              //     }
+              // })
+
+              // if (rsk + Object.keys(res).length > 4) { // count from other pages + this page
+              //   return null;
+              // }
+
               this.props.updateResultsSelection({page, results: res});
           },
           onTableChange: (action, tableState) => {
@@ -260,19 +277,18 @@ class MesheryResults extends Component {
           
             switch (action) {
               case 'changePage':
-                this.fetchResults(tableState.page, pageSize, search, sortOrder);
+                this.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
                 break;
               case 'changeRowsPerPage':
-                this.fetchResults(page, tableState.rowsPerPage, search, sortOrder);
+                this.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
                 break;
               case 'search':
-                const self = this;
                 if (self.searchTimeout) {
                   clearTimeout(self.searchTimeout);
                 }
                 self.searchTimeout = setTimeout(function(){
-                  if (search !== tableState.searchText){
-                    self.fetchResults(page, pageSize, tableState.searchText !== null?tableState.searchText:'', sortOrder);
+                  if (self.state.search !== tableState.searchText){
+                    self.fetchResults(self.state.page, self.state.pageSize, tableState.searchText !== null?tableState.searchText:'', self.state.sortOrder);
                   }
                 }, 500);
                 break;
@@ -285,19 +301,19 @@ class MesheryResults extends Component {
                   }
                 }
                 if (order !== sortOrder){
-                  this.fetchResults(page, pageSize, search, columns[tableState.activeColumn].name+ ' ' + order);
+                  this.fetchResults(self.state.page, self.state.pageSize, self.state.search, columns[tableState.activeColumn].name+ ' ' + order);
                 }
                 break;
             }
           }, 
           customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
             return (
-              <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={results} />
+              <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={self.state.results} />
             );
           },
           expandableRows: true,
           renderExpandableRow: (rowData, rowMeta) => {
-            const row = results[rowMeta.dataIndex].runner_results;
+            const row = self.state.results[rowMeta.dataIndex].runner_results;
             const colSpan = rowData.length + 1;
             return (
               <TableRow>

@@ -8,7 +8,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
 import MesheryNotification from './MesheryNotification';
@@ -48,6 +48,12 @@ const styles = theme => ({
   },
   userSpan: {
     marginLeft: theme.spacing(1),
+  },
+  pageTitle: {
+    paddingLeft: theme.spacing(2),
+  },
+  appBar: {
+    padding: theme.spacing(1.4),
   }
 });
 
@@ -59,7 +65,7 @@ class Header extends React.Component {
     return (
       <NoSsr>
       <React.Fragment>
-        <AppBar color="primary" position="sticky" elevation={0}>
+        <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
           <Toolbar>
             <Grid container spacing={8} alignItems="center">
               <Hidden smUp>
@@ -74,8 +80,11 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid container xs justify="center">
-                <Grid item>
+              <Grid container xs alignItems="center" justify="center">
+                <Grid item className={classes.pageTitle}>
+                <Typography color="inherit" variant="h5">
+                  {title}
+                </Typography>
                 </Grid>
               </Grid>
               {/* <Grid item className={classes.notifications}>
@@ -100,7 +109,7 @@ class Header extends React.Component {
             </Grid>
           </Toolbar>
         </AppBar>
-        <AppBar
+        {/* <AppBar
           component="div"
           className={classes.secondaryBar}
           color="primary"
@@ -110,25 +119,23 @@ class Header extends React.Component {
           <Toolbar>
             <Grid container alignItems="center" spacing={8}>
               <Grid item xs>
-                <Typography color="inherit" variant="h5">
-                  {title}
-                </Typography>
+                
               </Grid>
               {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
                   Web setup
                 </Button>
-              </Grid> */}
+              </Grid> * /}
               {/* <Grid item>
                 <Tooltip title="Help">
                   <IconButton color="inherit">
                     <HelpIcon />
                   </IconButton>
                 </Tooltip>
-              </Grid> */}
+              </Grid> * /}
             </Grid>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         {/* <AppBar
           component="div"
           className={classes.secondaryBar}
@@ -143,7 +150,6 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
         </AppBar> */}
-        
       </React.Fragment>
       </NoSsr>
     );
@@ -158,7 +164,7 @@ Header.propTypes = {
 const mapStateToProps = state => {
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  return { title: state.get("page").get("title") }
+  return { title: state.get("page").get("title") };
 }
 
 // const mapDispatchToProps = dispatch => {
