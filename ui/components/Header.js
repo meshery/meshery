@@ -8,13 +8,12 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
 import MesheryNotification from './MesheryNotification';
 import Link from "next/link";
 import SettingsIcon from '@material-ui/icons/Settings';
-import MesheryProgressBar from './MesheryProgressBar';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -53,11 +52,6 @@ const styles = theme => ({
   pageTitle: {
     paddingLeft: theme.spacing(2),
   },
-  progress: {
-    position: 'fixed',
-    top: theme.spacing(12.5),
-    right: theme.spacing(3),
-  },
   appBar: {
     padding: theme.spacing(1.4),
   }
@@ -66,7 +60,7 @@ const styles = theme => ({
 class Header extends React.Component {
 
   render() {
-    const { classes, title, onDrawerToggle, showProgress } = this.props;
+    const { classes, title, onDrawerToggle } = this.props;
 
     return (
       <NoSsr>
@@ -156,7 +150,6 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
         </AppBar> */}
-        <MesheryProgressBar showProgress={showProgress} classes={classes} />
       </React.Fragment>
       </NoSsr>
     );
@@ -171,7 +164,7 @@ Header.propTypes = {
 const mapStateToProps = state => {
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  return { title: state.get("page").get("title"), showProgress: state.get('showProgress') };
+  return { title: state.get("page").get("title") };
 }
 
 // const mapDispatchToProps = dispatch => {

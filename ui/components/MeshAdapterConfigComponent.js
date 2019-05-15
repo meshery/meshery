@@ -200,6 +200,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({showProgress: false});
+    const self = this;
     this.props.enqueueSnackbar(`${msg}: ${error}`, {
       variant: 'error',
       action: (key) => (

@@ -141,6 +141,7 @@ class MeshConfigComponent extends React.Component {
 
   handleError = error => {
     this.props.updateProgress({showProgress: false});
+    const self = this;
     this.props.enqueueSnackbar(`Kubernetes config could not be validated: ${error}`, {
       variant: 'error',
       action: (key) => (
