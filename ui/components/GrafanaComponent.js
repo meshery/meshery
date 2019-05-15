@@ -101,7 +101,7 @@ class GrafanaComponent extends Component {
       handleGrafanaConfigure = () => {
     
         const { grafanaURL } = this.state;
-        if (grafanaURL === ''){
+        if (grafanaURL === '' || !(grafanaURL.toLowerCase().startsWith('http://') || grafanaURL.toLowerCase().startsWith('https://'))) {
           this.setState({urlError: true})
           return;
         }
