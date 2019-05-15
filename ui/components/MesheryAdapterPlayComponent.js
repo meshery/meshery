@@ -1,7 +1,7 @@
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, TextField, Button, RadioGroup, Radio, FormLabel, FormControl, IconButton } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -9,6 +9,8 @@ import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import CheckIcon from '@material-ui/icons/Check';
 import { withSnackbar } from 'notistack';
 
 const styles = theme => ({
@@ -82,6 +84,8 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       namespace: 'default',
       namespaceError: false,
+
+      customDialog: false,
     }
   }
 
@@ -103,12 +107,20 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleDelete = () => {
-    this.handleSubmit(true)();
+  handleModalClose = () => {
+    this.setState({customDialog: false});
   }
 
-  handleSubmit = (deleteOp=false) => () => {
-    const { selectedOp, selectionError, namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
+  handleModalOpen = () => {
+    this.setState({customDialog: true});
+  }
+
+  handleDelete = (selectedOp) => () => {
+    this.handleSubmit(selectedOp, true)();
+  }
+
+  handleSubmit = (selectedOp, deleteOp=false) => () => {
+    const { namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
     const {adapter} = this.props;
     if (selectedOp === '' || typeof adapter.ops[selectedOp] === 'undefined') {
         this.setState({selectionError: true});
@@ -122,11 +134,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       this.setState({namespaceError: true});
       return
     }
-    this.submitOp(deleteOp)
+    this.submitOp(selectedOp, deleteOp);
   }
 
-  submitOp = (deleteOp=false) => {
-    const { namespace, selectedOp, cmEditorVal } = this.state;
+  submitOp = (selectedOp, deleteOp=false) => {
+    const { namespace, cmEditorVal } = this.state;
     const { index } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
 
@@ -216,72 +228,84 @@ class MesheryAdapterPlayComponent extends React.Component {
           <Grid item xs={12}>
             <FormControl required error={selectionError} component="fieldset">
             <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
-            <RadioGroup
-            aria-label={`Play with ${adapter.name}`}
-            name="query"
-            className={classes.group}
-            value={selectedOp}
-            onChange={this.handleChange('selectedOp')}
+            <FormGroup
+            // aria-label={`Play with ${adapter.name}`}
+            // name="query"
+            // className={classes.group}
+            // value={selectedOp}
+            // onChange={this.handleChange('selectedOp')}
             >
-            {Object.keys(adapter.ops).map(key => (
-              
-              <FormControlLabel key={key} value={key} control={<Radio />} label={adapter.ops[key]} />
+            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
+              <div>
+                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
+                  <CheckIcon />
+                </IconButton>
+                
+                <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit(key, true)}>
+                  <DeleteIcon />
+                </IconButton>
+
+                {adapter.ops[key]}
+              </div>
               
             ))}
-           </RadioGroup>
+           </FormGroup>
            </FormControl>
            </Grid>
-            <Grid item xs={12} hidden={selectedOp != 'custom'}>
-            <FormControl required error={cmEditorValError} component="fieldset" className={classes.editorContainer}>
-            <FormLabel component="legend">Custom YAML</FormLabel>
-            <CodeMirror
-                editorDidMount={editor => { this.cmEditor = editor }}
-                value={cmEditorVal}
-                options={{
-                  mode: 'yaml',
-                  theme: 'material',
-                  lineNumbers: true,
-                  lineWrapping: true,
-                  gutters: ["CodeMirror-lint-markers"],
-                  lint: true,
-                  mode: "text/x-yaml"
-                }}
-                onBeforeChange={(editor, data, value) => {
-                  this.setState({cmEditorVal: value});
-                  if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
-                    this.setState({ selectionError: false, cmEditorValError: false });  
-                  }
-                }}
-                onChange={(editor, data, value) => {
-                }}
-              />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <React.Fragment>
+           <React.Fragment>
             <div className={classes.buttons}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                size="large"
-                onClick={this.handleDelete}
-                className={classes.button}
-              >
-              Revert
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleSubmit(false)}
-                className={classes.button}
-              >
-              Submit
+              <Button variant="outlined" color="secondary" onClick={this.handleModalOpen}>
+                Custom YAML
               </Button>
             </div>
+              <Dialog
+                onClose={this.handleModalClose}
+                aria-labelledby="customized-dialog-title"
+                open={this.state.customDialog}
+                fullWidth={true}
+                maxWidth={'md'}
+              >
+                <DialogTitle id="customized-dialog-title" onClose={this.handleModalClose}>
+                  {adapter.name} Adapter - Custom YAML
+                </DialogTitle>
+                <Divider variant="fullWidth" light />
+                <DialogContent>
+                  <CodeMirror
+                      editorDidMount={editor => { this.cmEditor = editor }}
+                      value={cmEditorVal}
+                      options={{
+                        mode: 'yaml',
+                        theme: 'material',
+                        lineNumbers: true,
+                        lineWrapping: true,
+                        gutters: ["CodeMirror-lint-markers"],
+                        lint: true,
+                        mode: "text/x-yaml"
+                      }}
+                      onBeforeChange={(editor, data, value) => {
+                        this.setState({cmEditorVal: value});
+                        if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
+                          this.setState({ selectionError: false, cmEditorValError: false });  
+                        }
+                      }}
+                      onChange={(editor, data, value) => {
+                      }}
+                    />
+                </DialogContent>
+                <Divider variant="fullWidth" light />
+                <DialogActions>
+                  <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
+                    <CheckIcon />
+                  </IconButton>
+                  
+                  <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit('custom', false)}>
+                    <DeleteIcon />
+                  </IconButton>
+
+                </DialogActions>
+              </Dialog>
           </React.Fragment>
+          </Grid>
           </div>
         </React.Fragment>
       </NoSsr>
