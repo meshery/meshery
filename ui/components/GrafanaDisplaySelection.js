@@ -67,13 +67,14 @@ class GrafanaDisplaySelection extends Component {
           onRowsDelete: (rowsDeleted) => {
             const delRows = rowsDeleted.data.map(({dataIndex}) => dataIndex);
             deleteSelectedBoardPanelConfig(delRows);
+            return false;
           },
         }
         return (
               <NoSsr>
-              <React.Fragment>
-                <MUIDataTable title={"Meshery Results"} data={selectedValsForDisplay} columns={columns} options={options} />
-              </React.Fragment>
+              
+                <MUIDataTable key={`gds_${(new Date()).getTime()}`} title={"Meshery Results"} data={selectedValsForDisplay} columns={columns} options={options} />
+              
               </NoSsr>
             );
         }

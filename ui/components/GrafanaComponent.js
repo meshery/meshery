@@ -231,7 +231,7 @@ class GrafanaComponent extends Component {
       const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
       indexes.sort();
       for(let i=indexes.length-1;i>=0;i--){
-        selectedBoardsConfigs.splice(i, 1)
+        selectedBoardsConfigs.splice(indexes[i], 1)
       }
       this.setState({selectedBoardsConfigs});
       this.props.updateGrafanaConfig({
