@@ -1,11 +1,17 @@
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, Switch, TextField, Button, Snackbar, RadioGroup, Radio, FormLabel, FormControl } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
-import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
+import { updateProgress } from '../lib/store';
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import CheckIcon from '@material-ui/icons/Check';
+import { withSnackbar } from 'notistack';
 
 const styles = theme => ({
   root: {
@@ -71,10 +77,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     // const {Name, Ops} = props;
     
     this.state = {
-      showSnackbar: false,
-      snackbarVariant: '',
-      snackbarMessage: '',
-
       selectedOp: '',
       cmEditorVal: '',
       cmEditorValError: false,
@@ -82,16 +84,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       namespace: 'default',
       namespaceError: false,
+
+      customDialog: false,
     }
   }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  };
 
   handleChange = name => event => {
     if (name === 'namespace' && event.target.value !== '') {
@@ -111,12 +107,20 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleDelete = () => {
-    this.handleSubmit(true)();
+  handleModalClose = () => {
+    this.setState({customDialog: false});
   }
 
-  handleSubmit = (deleteOp=false) => () => {
-    const { selectedOp, selectionError, namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
+  handleModalOpen = () => {
+    this.setState({customDialog: true});
+  }
+
+  handleDelete = (selectedOp) => () => {
+    this.handleSubmit(selectedOp, true)();
+  }
+
+  handleSubmit = (selectedOp, deleteOp=false) => () => {
+    const { namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
     const {adapter} = this.props;
     if (selectedOp === '' || typeof adapter.ops[selectedOp] === 'undefined') {
         this.setState({selectionError: true});
@@ -130,11 +134,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       this.setState({namespaceError: true});
       return
     }
-    this.submitOp(deleteOp)
+    this.submitOp(selectedOp, deleteOp);
   }
 
-  submitOp = (deleteOp=false) => {
-    const { namespace, selectedOp, cmEditorVal } = this.state;
+  submitOp = (selectedOp, deleteOp=false) => {
+    const { namespace, cmEditorVal } = this.state;
     const { index } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
 
@@ -149,7 +153,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
-    
+    this.props.updateProgress({showProgress: true});
     let self = this;
     dataFetch('/api/mesh/ops', { 
       credentials: 'same-origin',
@@ -160,23 +164,38 @@ class MesheryAdapterPlayComponent extends React.Component {
       },
       body: params
     }, result => {
+      this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        this.setState({showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Operation success!'});
+        this.props.enqueueSnackbar('Operation submitted successfully!', {
+          variant: 'success',
+          autoHideDuration: 4000,
+        });
       }
     }, self.handleError);
   }
 
   handleError = error => {
-    this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Operation failed: ${error}`});
+    this.props.updateProgress({showProgress: false});
+    const self = this;
+    this.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
+      variant: 'error',
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 8000,
+    });
   }
 
   render() {
     const {classes, color, iconButtonClassName, avatarClassName, adapter, ...other} = this.props;
     const {
-      showSnackbar, 
-      snackbarVariant, 
-      snackbarMessage, 
-
       selectedOp,
       cmEditorVal,
       namespace,
@@ -209,90 +228,86 @@ class MesheryAdapterPlayComponent extends React.Component {
           <Grid item xs={12}>
             <FormControl required error={selectionError} component="fieldset">
             <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
-            <RadioGroup
-            aria-label={`Play with ${adapter.name}`}
-            name="query"
-            className={classes.group}
-            value={selectedOp}
-            onChange={this.handleChange('selectedOp')}
+            <FormGroup
+            // aria-label={`Play with ${adapter.name}`}
+            // name="query"
+            // className={classes.group}
+            // value={selectedOp}
+            // onChange={this.handleChange('selectedOp')}
             >
-            {Object.keys(adapter.ops).map(key => (
-              
-              <FormControlLabel key={key} value={key} control={<Radio />} label={adapter.ops[key]} />
+            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
+              <div>
+                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
+                  <CheckIcon />
+                </IconButton>
+                
+                <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit(key, true)}>
+                  <DeleteIcon />
+                </IconButton>
+
+                {adapter.ops[key]}
+              </div>
               
             ))}
-           </RadioGroup>
+           </FormGroup>
            </FormControl>
            </Grid>
-            <Grid item xs={12} hidden={selectedOp != 'custom'}>
-            <FormControl required error={cmEditorValError} component="fieldset" className={classes.editorContainer}>
-            <FormLabel component="legend">Custom YAML</FormLabel>
-            <CodeMirror
-                editorDidMount={editor => { this.cmEditor = editor }}
-                value={cmEditorVal}
-                options={{
-                  mode: 'yaml',
-                  theme: 'material',
-                  lineNumbers: true,
-                  lineWrapping: true,
-                  gutters: ["CodeMirror-lint-markers"],
-                  lint: true,
-                  mode: "text/x-yaml"
-                }}
-                onBeforeChange={(editor, data, value) => {
-                  this.setState({cmEditorVal: value});
-                  if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
-                    this.setState({ selectionError: false, cmEditorValError: false });  
-                  }
-                }}
-                onChange={(editor, data, value) => {
-                }}
-              />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <React.Fragment>
+           <React.Fragment>
             <div className={classes.buttons}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                size="large"
-                onClick={this.handleDelete}
-                className={classes.button}
-              >
-              Revert
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleSubmit(false)}
-                className={classes.button}
-              >
-              Submit
+              <Button variant="outlined" color="secondary" onClick={this.handleModalOpen}>
+                Custom YAML
               </Button>
             </div>
+              <Dialog
+                onClose={this.handleModalClose}
+                aria-labelledby="adapter-dialog-title"
+                open={this.state.customDialog}
+                fullWidth={true}
+                maxWidth={'md'}
+              >
+                <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
+                  {adapter.name} Adapter - Custom YAML
+                </DialogTitle>
+                <Divider variant="fullWidth" light />
+                <DialogContent>
+                  <CodeMirror
+                      editorDidMount={editor => { this.cmEditor = editor }}
+                      value={cmEditorVal}
+                      options={{
+                        mode: 'yaml',
+                        theme: 'material',
+                        lineNumbers: true,
+                        lineWrapping: true,
+                        gutters: ["CodeMirror-lint-markers"],
+                        lint: true,
+                        mode: "text/x-yaml"
+                      }}
+                      onBeforeChange={(editor, data, value) => {
+                        this.setState({cmEditorVal: value});
+                        if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
+                          this.setState({ selectionError: false, cmEditorValError: false });  
+                        }
+                      }}
+                      onChange={(editor, data, value) => {
+                      }}
+                    />
+                </DialogContent>
+                <Divider variant="fullWidth" light />
+                <DialogActions>
+                  <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
+                    <CheckIcon />
+                  </IconButton>
+                  
+                  <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit('custom', false)}>
+                    <DeleteIcon />
+                  </IconButton>
+
+                </DialogActions>
+              </Dialog>
           </React.Fragment>
+          </Grid>
           </div>
         </React.Fragment>
-
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={showSnackbar}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-          >
-          <MesherySnackbarWrapper 
-            variant={snackbarVariant}
-            message={snackbarMessage}
-            onClose={this.handleSnackbarClose}
-            />
-        </Snackbar>
       </NoSsr>
     )
   }
@@ -304,4 +319,13 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(withRouter(MesheryAdapterPlayComponent));
+const mapDispatchToProps = dispatch => {
+  return {
+      updateProgress: bindActionCreators(updateProgress, dispatch),
+  }
+}
+
+export default withStyles(styles)(connect(
+  null,
+  mapDispatchToProps
+)(withRouter(withSnackbar(MesheryAdapterPlayComponent))));

@@ -68,7 +68,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, error
 	if qps <= 0 {
 		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
 	}
-	labels := url
+	labels := opts.Name + " -_- " + url
 	// if labels == "" {
 	// 	// hname, _ := os.Hostname()
 	// 	shortURL := url

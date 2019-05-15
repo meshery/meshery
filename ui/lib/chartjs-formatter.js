@@ -55,7 +55,8 @@ export function makeTitle (res) {
     if (res.Labels !== '') {
       if (res.URL) { // http results
           // title.push(res.Labels + ' - ' + res.URL + ' - ' + formatDate(res.StartTime))
-          title.push(res.URL + ' - ' + formatDate(res.StartTime))
+          // title.push(res.URL + ' - ' + formatDate(res.StartTime))
+          title.push(res.Labels + ' - ' + formatDate(res.StartTime))
       } else { // grpc results
           title.push(res.Destination + ' - ' + formatDate(res.StartTime))
       }
@@ -458,10 +459,27 @@ export function makeChart (data) {
 const multiLabel = (res) => {
   var l = formatDate(res.StartTime)
   if (res.Labels !== '') {
-    l += ' - ' + res.Labels
+    if (res.Labels.indexOf(' -_- ') > -1) {
+      const ls = res.Labels.split(' -_- '); // trying to match this with server side in fortio.go
+      if (ls.length > 0){
+        l += ' - ' + ls[0];
+      } else {
+        l += ' - ' + res.Labels;
+      }
+    } else {
+      l += ' - ' + res.Labels
+    }
   }
-  return l
+  return label_trunc(l);
 }
+
+const label_trunc = function(str) {
+  if (str.length > length) {
+    return str.match(/.{1,20}/g);;
+  } else {
+    return str;
+  }
+};
   
 const findData = (slot, idx, res, p) => {
     // Not very efficient but there are only a handful of percentiles

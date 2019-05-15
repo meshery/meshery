@@ -15,6 +15,7 @@ import {Provider} from "react-redux";
 import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import { SnackbarProvider } from 'notistack';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
 // link clicks, hence attemtpting to add them here
@@ -22,6 +23,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
 import { blueGrey, grey } from '@material-ui/core/colors';
+import MesheryProgressBar from '../components/MesheryProgressBar';
 
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
@@ -196,7 +198,10 @@ let theme = createMuiTheme({
       },
       extl5: {
         cursor: 'pointer',
-      }
+      }, 
+      icon: {
+        fontSize: 20,
+      },
   };
 
 
@@ -253,11 +258,20 @@ class MesheryApp extends App {
                             </nav>
                             <div className={classes.appContent}>
                                 <Header onDrawerToggle={this.handleDrawerToggle} />
+                                <SnackbarProvider
+                                      anchorOrigin={{
+                                          vertical: 'top',
+                                          horizontal: 'right',
+                                      }}
+                                      maxSnack={5}
+                                  >
+                                <MesheryProgressBar />
                                 <main className={classes.mainContent}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
                                 </main>
+                                </SnackbarProvider>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
                                   <span className={classes.footerText}>Built with <FavoriteIcon className={classes.footerIcon} /> by the <span onClick={this.handleL5CommunityClick} className={classes.extl5}>Layer5 Community</span></span>
