@@ -164,6 +164,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   handleError = error => {
     this.props.updateProgress({showProgress: false});
+    const self = this;
     this.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
       variant: 'error',
       action: (key) => (

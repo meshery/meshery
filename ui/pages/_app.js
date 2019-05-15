@@ -23,6 +23,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
 import { blueGrey, grey } from '@material-ui/core/colors';
+import MesheryProgressBar from '../components/MesheryProgressBar';
 
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
@@ -264,6 +265,7 @@ class MesheryApp extends App {
                                       }}
                                       maxSnack={5}
                                   >
+                                <MesheryProgressBar />
                                 <main className={classes.mainContent}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />

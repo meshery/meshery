@@ -175,7 +175,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleError = error => {
     this.setState({timerDialogOpen: false });
-    var self = this;
+    const self = this;
     this.props.enqueueSnackbar(`Load test did not run successfully with msg: ${error}`, {
       variant: 'error',
       action: (key) => (
