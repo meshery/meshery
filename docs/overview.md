@@ -63,7 +63,8 @@ Meshery currently works with the following service meshes through adapter:
 
 Other service meshes for whom the adapters are being worked on are:
 1. Octarine
-1. Consul Connect
+1. Consul Connectetwork 
+1. Network Service Mesh
 
 The next set of service mesh adapters we might work on are for:
 1. App Mesh
