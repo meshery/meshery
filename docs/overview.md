@@ -5,7 +5,7 @@ permalink: /overview
 parent: Meshery
 nav_order: 1
 ---
-This section outlines the overview of Meshery and the challenges that Meshery project solves. 
+This section outlines these scope and goals of Meshery and the challenges that it solves both for organizations looking to adopt a service mesh as well as those that have already adopted a service mesh.
 
 ## Table of contents
 {: .no_toc }
@@ -57,15 +57,17 @@ Targeted audience for Meshery project would be any technology operators that lev
         1. Infrastructure(s)
 
 ## Supported Service Meshes
-Meshery currently works with the following service meshes through adapter:
+**Available service mesh adapters** - Service mesh adapters that Meshery currently supports:
+
 1. Istio
 1. Linkerd2
 
-Other service meshes for whom the adapters are being worked on are:
+**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
 1. Octarine
 1. Consul Connect
+1. Network Service Mesh
 
-The next set of service mesh adapters we might work on are for:
+**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
 1. App Mesh
 1. SOFAmesh
 
@@ -86,8 +88,5 @@ The next set of service mesh adapters we might work on are for:
 * because regpatrol is closed sourcej, binary is not released, scripted for one mesh, and is produced by a vendor of that mesh.
 
 ## Link to demo video
-[Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs) 
-
-
-
-
+- [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
+- [DockerCon 2019 Open Source Summit](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
