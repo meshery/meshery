@@ -169,7 +169,17 @@ class MeshAdapterConfigComponent extends React.Component {
         this.setState({meshAdapters: result, meshLocationURL: ''});
         this.props.enqueueSnackbar('Adapter was successfully configured!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateAdaptersInfo({meshAdapters: result});
         this.fetchAvailableAdapters();
@@ -191,7 +201,17 @@ class MeshAdapterConfigComponent extends React.Component {
         this.setState({meshAdapters: result});
          this.props.enqueueSnackbar('Adapter was successfully removed!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateAdaptersInfo({meshAdapters: result});
       }

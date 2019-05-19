@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, TableRow, TableCell } from '@material-ui/core';
+import { NoSsr, Grid, TableRow, TableCell, IconButton } from '@material-ui/core';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateMeshResults, updateResultsSelection, clearResultsSelection } from '../lib/store';
+import { updateMeshResults, updateResultsSelection, clearResultsSelection, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
 import CustomToolbarSelect from './CustomToolbarSelect';
 import CustomTableFooter from './CustomTableFooter';
 import Moment from 'react-moment';
 import MesheryChart from './MesheryChart';
+import { withSnackbar } from 'notistack';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = theme => ({
@@ -51,11 +53,13 @@ class MesheryResults extends Component {
             sortOrder = '';
           }
           query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+          this.props.updateProgress({showProgress: true});
           dataFetch(`/api/results${query}`, { 
             credentials: 'same-origin',
             method: 'GET',
             credentials: 'include',
           }, result => {
+            this.props.updateProgress({showProgress: false});
             // console.log(`received results: ${JSON.stringify(result)}`);
             if (typeof result !== 'undefined'){
               this.setState({
@@ -71,7 +75,22 @@ class MesheryResults extends Component {
     }
 
     handleError = error => {
-        console.log(`error fetching results: ${error}`);
+        this.props.updateProgress({showProgress: false});
+        // console.log(`error fetching results: ${error}`);
+        this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
+          variant: 'error',
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+          autoHideDuration: 8000,
+        });
       }
 
     render() {
@@ -343,6 +362,7 @@ const mapDispatchToProps = dispatch => {
         // updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
         updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
         clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
+        updateProgress: bindActionCreators(updateProgress, dispatch),
     }
   }
   const mapStateToProps = state => {
@@ -358,5 +378,5 @@ const mapDispatchToProps = dispatch => {
 export default withStyles(styles)(connect(
     mapStateToProps,
     mapDispatchToProps
-)(MesheryResults));
+)(withSnackbar(MesheryResults)));
   
