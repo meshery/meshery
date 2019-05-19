@@ -80,7 +80,7 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid container xs alignItems="center" justify="center">
+              <Grid container xs alignItems="center">
                 <Grid item className={classes.pageTitle}>
                 <Typography color="inherit" variant="h5">
                   {title}

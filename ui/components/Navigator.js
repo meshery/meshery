@@ -9,7 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import CollectionsIcon from '@material-ui/icons/Collections';
-import OndemandVideoRoundedIcon from '@material-ui/icons/OndemandVideoRounded';
+import LaptopIcon from '@material-ui/icons/Laptop';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Link from "next/link";
@@ -23,7 +23,7 @@ import { withRouter } from 'next/router';
 const categories = [
   { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
   { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
-  { id: 'Playground', icon: <OndemandVideoRoundedIcon />, href: "/playground", title: 'Play with Meshery', show: true },
+  { id: 'Playground', icon: <LaptopIcon />, href: "/playground", title: 'Play with Meshery', show: true },
   { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 

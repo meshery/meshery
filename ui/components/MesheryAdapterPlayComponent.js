@@ -9,9 +9,10 @@ import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CheckIcon from '@material-ui/icons/Check';
+import DeleteIcon from '@material-ui/icons/DeleteOutline';
+import ForwardIcon from '@material-ui/icons/ForwardOutlined';
 import { withSnackbar } from 'notistack';
+import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
 
 const styles = theme => ({
   root: {
@@ -19,8 +20,12 @@ const styles = theme => ({
     width: '100%',
   },
   buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+    // display: 'flex',
+    // justifyContent: 'flex-end',
+    width: '100%',
+  },
+  custom: {
+    float: 'right',
   },
   button: {
     marginTop: theme.spacing(3),
@@ -168,7 +173,17 @@ class MesheryAdapterPlayComponent extends React.Component {
       if (typeof result !== 'undefined'){
         this.props.enqueueSnackbar('Operation submitted successfully!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
       }
     }, self.handleError);
@@ -226,35 +241,11 @@ class MesheryAdapterPlayComponent extends React.Component {
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControl required error={selectionError} component="fieldset">
-            <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
-            <FormGroup
-            // aria-label={`Play with ${adapter.name}`}
-            // name="query"
-            // className={classes.group}
-            // value={selectedOp}
-            // onChange={this.handleChange('selectedOp')}
-            >
-            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
-              <div>
-                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
-                  <CheckIcon />
-                </IconButton>
-                
-                <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit(key, true)}>
-                  <DeleteIcon />
-                </IconButton>
 
-                {adapter.ops[key]}
-              </div>
-              
-            ))}
-           </FormGroup>
-           </FormControl>
-           </Grid>
-           <React.Fragment>
+          <React.Fragment>
             <div className={classes.buttons}>
-              <Button variant="outlined" color="secondary" onClick={this.handleModalOpen}>
+              <Button color="inherit" onClick={this.handleModalOpen} className={classes.custom}>
+                <OpenInNewIcon />
                 Custom YAML
               </Button>
             </div>
@@ -270,6 +261,22 @@ class MesheryAdapterPlayComponent extends React.Component {
                 </DialogTitle>
                 <Divider variant="fullWidth" light />
                 <DialogContent>
+                <Grid container spacing={5}>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    id="namespace"
+                    name="namespace"
+                    label="Namespace"
+                    fullWidth
+                    value={namespace}
+                    error={namespaceError}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('namespace')}
+                  />
+                </Grid>
+                <Grid item xs={12}>
                   <CodeMirror
                       editorDidMount={editor => { this.cmEditor = editor }}
                       value={cmEditorVal}
@@ -291,11 +298,13 @@ class MesheryAdapterPlayComponent extends React.Component {
                       onChange={(editor, data, value) => {
                       }}
                     />
+                  </Grid>
+                  </Grid>
                 </DialogContent>
                 <Divider variant="fullWidth" light />
                 <DialogActions>
                   <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
-                    <CheckIcon />
+                    <ForwardIcon />
                   </IconButton>
                   
                   <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit('custom', false)}>
@@ -304,7 +313,34 @@ class MesheryAdapterPlayComponent extends React.Component {
 
                 </DialogActions>
               </Dialog>
-          </React.Fragment>
+            </React.Fragment>
+
+            <FormControl required error={selectionError} component="fieldset">
+            <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
+            <FormGroup
+            // aria-label={`Play with ${adapter.name}`}
+            // name="query"
+            // className={classes.group}
+            // value={selectedOp}
+            // onChange={this.handleChange('selectedOp')}
+            >
+            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
+              <div>
+                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
+                  <ForwardIcon />
+                </IconButton>
+                
+                <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit(key, true)}>
+                  <DeleteIcon />
+                </IconButton>
+
+                {adapter.ops[key]}
+              </div>
+              
+            ))}
+           </FormGroup>
+           </FormControl>
+           </Grid>
           </Grid>
           </div>
         </React.Fragment>
