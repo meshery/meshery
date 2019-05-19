@@ -219,7 +219,7 @@ class MesheryConfigSteps extends React.Component {
                 </Button>
                 <Button
                   size='large'
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   onClick={this.handleNext}
                   className={classes.button}
