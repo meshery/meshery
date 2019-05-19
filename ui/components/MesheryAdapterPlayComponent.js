@@ -307,7 +307,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                     <ForwardIcon />
                   </IconButton>
                   
-                  <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit('custom', false)}>
+                  <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', false)}>
                     <DeleteIcon />
                   </IconButton>
 
@@ -330,7 +330,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                   <ForwardIcon />
                 </IconButton>
                 
-                <IconButton aria-label="Delete" color="secondary" onClick={this.handleSubmit(key, true)}>
+                <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
                   <DeleteIcon />
                 </IconButton>
 
