@@ -25,7 +25,7 @@ const styles = theme => ({
     width: '100%',
   },
   custom: {
-    float: 'right',
+    // float: 'right',
   },
   button: {
     marginTop: theme.spacing(3),
@@ -241,8 +241,34 @@ class MesheryAdapterPlayComponent extends React.Component {
             />
           </Grid>
           <Grid item xs={12}>
+            <FormControl required error={selectionError} component="fieldset">
+            <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
+            <FormGroup
+            // aria-label={`Play with ${adapter.name}`}
+            // name="query"
+            // className={classes.group}
+            // value={selectedOp}
+            // onChange={this.handleChange('selectedOp')}
+            >
+            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
+              <div>
+                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
+                  <ForwardIcon />
+                </IconButton>
+                
+                <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
+                  <DeleteIcon />
+                </IconButton>
 
-          <React.Fragment>
+                {adapter.ops[key]}
+              </div>
+              
+            ))}
+           </FormGroup>
+           </FormControl>
+           </Grid>
+           <Grid item xs={12}>
+           <React.Fragment>
             <div className={classes.buttons}>
               <Button color="inherit" onClick={this.handleModalOpen} className={classes.custom}>
                 <OpenInNewIcon />
@@ -314,32 +340,6 @@ class MesheryAdapterPlayComponent extends React.Component {
                 </DialogActions>
               </Dialog>
             </React.Fragment>
-
-            <FormControl required error={selectionError} component="fieldset">
-            <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
-            <FormGroup
-            // aria-label={`Play with ${adapter.name}`}
-            // name="query"
-            // className={classes.group}
-            // value={selectedOp}
-            // onChange={this.handleChange('selectedOp')}
-            >
-            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
-              <div>
-                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
-                  <ForwardIcon />
-                </IconButton>
-                
-                <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
-                  <DeleteIcon />
-                </IconButton>
-
-                {adapter.ops[key]}
-              </div>
-              
-            ))}
-           </FormGroup>
-           </FormControl>
            </Grid>
           </Grid>
           </div>
