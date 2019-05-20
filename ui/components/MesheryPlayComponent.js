@@ -68,6 +68,13 @@ const styles = theme => ({
     display: 'inline',
     verticalAlign: 'middle',
   },
+  expIstioTitleIcon: {
+    width: theme.spacing(2),
+    display: 'inline',
+    verticalAlign: 'middle',
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
+  },
   expTitle: {
     display: 'inline',
     verticalAlign: 'middle',
@@ -118,13 +125,20 @@ class MesheryPlayComponent extends React.Component {
           <div className={classes.root}>
             {meshAdapters.map((adapter, ind) => {
                 let image = "/static/img/meshery-logo.png";
+                let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
                 switch (adapter.name.toLowerCase()){
                   case 'istio':
                     image = "/static/img/istio.svg";
+                    imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
                     break;
                   case 'linkerd':
                     image = "/static/img/linkerd.svg";
+                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
                     break;
+                  case 'consul':
+                      image = "/static/img/consul.svg";
+                      imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+                      break;
                   // default:
                 } 
                 return (
@@ -133,7 +147,7 @@ class MesheryPlayComponent extends React.Component {
                     <div className={classes.column}>
                       <Typography variant="h6" gutterBottom>
                         <div className={classes.column}>
-                          <img src={image} className={classes.expTitleIcon} />{' '}
+                          {imageIcon}{' '}
                           <span className={classes.expTitle}>{adapter.adapter_location}</span>
                         </div>
                       </Typography>
