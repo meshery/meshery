@@ -105,7 +105,6 @@ class MeshConfigComponent extends React.Component {
         this.setState({k8sfileError: true});
         return;
     }
-    this.props.updateProgress({showProgress: true});
     this.submitConfig()
   }
 
@@ -118,7 +117,7 @@ class MeshConfigComponent extends React.Component {
         formData.append('contextName', contextName);
         formData.append('k8sfile', fileInput.files[0]);
     }
-    
+    this.props.updateProgress({showProgress: true});
     let self = this;
     dataFetch('/api/k8sconfig', { 
       credentials: 'same-origin',
@@ -132,7 +131,17 @@ class MeshConfigComponent extends React.Component {
         this.setState({clusterConfigured: true, configuredServer});
         this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
       }

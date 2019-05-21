@@ -6,7 +6,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - "SAAS_BASE_URL=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002"
       - "EVENT=mesheryLocal"
     ports:
       - "9081:8080"
@@ -22,6 +22,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10001:10001"
+  meshery-consul:
+    image: layer5/meshery-consul
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10002:10002"
   watchtower:
     image: v2tec/watchtower
     labels:

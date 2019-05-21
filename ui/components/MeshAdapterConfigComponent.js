@@ -67,6 +67,9 @@ const styles = theme => ({
   icon: {
     width: theme.spacing(2.5),
   },
+  istioIcon: {
+    width: theme.spacing(1.5),
+  }
 });
 
 class MeshAdapterConfigComponent extends React.Component {
@@ -169,7 +172,17 @@ class MeshAdapterConfigComponent extends React.Component {
         this.setState({meshAdapters: result, meshLocationURL: ''});
         this.props.enqueueSnackbar('Adapter was successfully configured!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateAdaptersInfo({meshAdapters: result});
         this.fetchAvailableAdapters();
@@ -191,7 +204,17 @@ class MeshAdapterConfigComponent extends React.Component {
         this.setState({meshAdapters: result});
          this.props.enqueueSnackbar('Adapter was successfully removed!', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateAdaptersInfo({meshAdapters: result});
       }
@@ -228,20 +251,27 @@ class MeshAdapterConfigComponent extends React.Component {
         <div className={classes.alignRight}>
           {meshAdapters.map((adapter, ind) => {
             let image = "/static/img/meshery-logo.png";
+            let logoIcon = (<img src={image} className={classes.icon} />);
             switch (adapter.name.toLowerCase()){
               case 'istio':
                 image = "/static/img/istio.svg";
+                logoIcon = (<img src={image} className={classes.istioIcon} />);
                 break;
               case 'linkerd':
                 image = "/static/img/linkerd.svg";
+                logoIcon = (<img src={image} className={classes.icon} />);
                 break;
+              case 'consul':
+                image = "/static/img/consul.svg";
+                logoIcon = (<img src={image} className={classes.icon} />);
               // default:
             } 
+            
             return (
             <Chip 
             label={adapter.adapter_location}
             onDelete={self.handleDelete(ind)} 
-            icon={<img src={image} className={classes.icon} />} 
+            icon={logoIcon} 
             variant="outlined" />
           );
           })}

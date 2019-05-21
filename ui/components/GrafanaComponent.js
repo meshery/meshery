@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Snackbar, Typography } from '@material-ui/core';
-import MesherySnackbarWrapper from './MesherySnackbarWrapper';
+import { NoSsr, Typography, IconButton } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
@@ -10,7 +9,9 @@ import GrafanaDisplaySelection from './GrafanaDisplaySelection';
 import GrafanaCharts from './GrafanaCharts';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateGrafanaConfig } from '../lib/store';
+import { updateGrafanaConfig, updateProgress } from '../lib/store';
+import CloseIcon from '@material-ui/icons/Close';
+import { withSnackbar } from 'notistack';
 
 const grafanaStyles = theme => ({
     root: {
@@ -64,10 +65,6 @@ class GrafanaComponent extends Component {
         this.state = {
             urlError: false,
 
-            showSnackbar: false,
-            snackbarVariant: '',
-            snackbarMessage: '',
-
             grafanaConfigSuccess,
 
             grafanaURL,
@@ -77,14 +74,6 @@ class GrafanaComponent extends Component {
             selectedBoardsConfigs,
           };
     }
-
-    handleSnackbarClose = (event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-    
-        this.setState({ showSnackbar: false });
-      };
     
       handleChange = name => event => {
         if (name === 'grafanaURL' && event.target.value !== ''){
@@ -118,6 +107,7 @@ class GrafanaComponent extends Component {
           return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
         }).join('&');
         // console.log(`data to be submitted for load test: ${params}`);
+        this.props.updateProgress({showProgress: true});
         let self = this;
         dataFetch('/api/grafana/config', { 
           credentials: 'same-origin',
@@ -128,8 +118,23 @@ class GrafanaComponent extends Component {
           },
           body: params
         }, result => {
+          this.props.updateProgress({showProgress: false});
           if (typeof result !== 'undefined'){
-            this.setState({grafanaConfigSuccess: true, showSnackbar: true, snackbarVariant: 'success', snackbarMessage: 'Grafana configured successfully!'});
+            this.props.enqueueSnackbar('Grafana was successfully configured!', {
+              variant: 'success',
+              autoHideDuration: 2000,
+              action: (key) => (
+                <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key) }
+                    >
+                      <CloseIcon />
+                </IconButton>
+              ),
+            });
+            this.setState({grafanaConfigSuccess: true});
             this.props.updateGrafanaConfig({
               grafana: {
                 grafanaURL,
@@ -147,11 +152,13 @@ class GrafanaComponent extends Component {
       getGrafanaBoards = () => {
         const {grafanaURL, grafanaAPIKey, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
         let self = this;
+        this.props.updateProgress({showProgress: true});
         dataFetch(`/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`, { 
           credentials: 'same-origin',
           method: 'GET',
           credentials: 'include',
         }, result => {
+          this.props.updateProgress({showProgress: false});
           if (typeof result !== 'undefined'){
             self.setState({grafanaBoards: result});
             self.props.updateGrafanaConfig({
@@ -169,7 +176,21 @@ class GrafanaComponent extends Component {
     
       handleError = error => {
         // this.setState({timerDialogOpen: false });
-        this.setState({showSnackbar: true, snackbarVariant: 'error', snackbarMessage: `Error communicating with Grafana: ${error}`});
+        this.props.updateProgress({showProgress: false});
+        this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
+          variant: 'error',
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+          autoHideDuration: 8000,
+        });
       }
 
       handleGrafanaChipDelete = () => {
@@ -192,25 +213,6 @@ class GrafanaComponent extends Component {
         });
       }
 
-    snackbarTmpl = (showSnackbar, snackbarVariant, snackbarMessage) => {
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={showSnackbar}
-                autoHideDuration={6000}
-                onClose={this.handleSnackbarClose}
-                >
-                <MesherySnackbarWrapper 
-                  variant={snackbarVariant}
-                  message={snackbarMessage}
-                  onClose={this.handleSnackbarClose}
-                />
-            </Snackbar>
-            );
-    }
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
@@ -248,7 +250,7 @@ class GrafanaComponent extends Component {
 
     render() {
         const {classes} = this.props;
-        const { urlError, showSnackbar, snackbarVariant, snackbarMessage, grafanaURL, grafanaConfigSuccess,
+        const { urlError, grafanaURL, grafanaConfigSuccess,
           grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } = this.state;
         if (grafanaConfigSuccess) {
             let displaySelec = '';
@@ -282,7 +284,6 @@ class GrafanaComponent extends Component {
                   handleError={this.handleError}
                 />
                 {displaySelec}
-                {this.snackbarTmpl(showSnackbar, snackbarVariant, snackbarMessage)}
               </React.Fragment>
               </NoSsr>
             );
@@ -296,7 +297,6 @@ class GrafanaComponent extends Component {
               handleChange={this.handleChange}
               handleGrafanaConfigure={this.handleGrafanaConfigure}
             />
-            {this.snackbarTmpl(showSnackbar, snackbarVariant, snackbarMessage)}
           </NoSsr>
         );
     }
@@ -309,6 +309,7 @@ GrafanaComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
   return {
       updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+      updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = st => {
@@ -319,4 +320,4 @@ const mapStateToProps = st => {
 export default withStyles(grafanaStyles)(connect(
   mapStateToProps,
   mapDispatchToProps
-)(GrafanaComponent));
+)(withSnackbar(GrafanaComponent)));
