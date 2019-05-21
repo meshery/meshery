@@ -158,7 +158,17 @@ class MesheryPerformanceComponent extends React.Component {
         this.setState({result, timerDialogOpen: false});
         this.props.enqueueSnackbar('Successfully fetched the data.', {
           variant: 'success',
-          autoHideDuration: 4000,
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
         });
         this.props.updateLoadTestData({loadTest: {
           testName,

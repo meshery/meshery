@@ -48,7 +48,9 @@ const styles = theme => ({
         // alignItems: 'center',
     },
     clearAllButton: {
-      float: 'right',
+      position: 'fixed',
+      top: theme.spacing(1),
+      right:theme.spacing(1),
     },
 });
 
@@ -256,13 +258,13 @@ class MesheryNotification extends React.Component {
             <div className={classes.notificationTitle}>
                 <Typography variant="subtitle2">
                   Notifications
-                  <Tooltip title={'Clear all notifications'}>
+                </Typography>
+                <Tooltip title={'Clear all notifications'}>
                     <IconButton className={classes.clearAllButton}
                       color="inherit" onClick={this.handleClearAllNotifications}>
                       <ClearAllIcon />
                     </IconButton>
                   </Tooltip>
-                </Typography>
             </div>
             <Divider light />
             {events && events.map((event, ind) => (

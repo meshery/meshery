@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, TextField, Grid, Button, Chip, MenuItem } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
+import { updateProgress } from '../lib/store';
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux';
+
 
 const grafanaStyles = theme => ({
     root: {
@@ -112,12 +116,13 @@ class GrafanaSelectionComponent extends Component {
           for(let i=ind;i>0;i--){
             queryURL += `&${templateVars[i-1].name}=${selectedTemplateVars[i-1]}`;
           }
-          
+          this.props.updateProgress({showProgress: true});
           let self = this;
           dataFetch(queryURL, { 
             credentials: 'same-origin',
             credentials: 'include',
           }, result => {
+            this.props.updateProgress({showProgress: false});
             if (typeof result !== 'undefined'){
               var tmpVarOpts = [];
               // result.data check if it is an array or object
@@ -313,4 +318,16 @@ GrafanaSelectionComponent.propTypes = {
   handleError: PropTypes.func.isRequired,
 };
 
-export default withStyles(grafanaStyles)(GrafanaSelectionComponent);
+const mapDispatchToProps = dispatch => {
+  return {
+      updateProgress: bindActionCreators(updateProgress, dispatch),
+  }
+}
+const mapStateToProps = state => {
+  return null;
+}
+
+export default withStyles(grafanaStyles)(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GrafanaSelectionComponent));
