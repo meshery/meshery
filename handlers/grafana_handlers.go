@@ -105,8 +105,9 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 			UID:          board.UID,
 			Slug:         slug.Make(board.Title),
 			TemplateVars: []*models.GrafanaTemplateVars{},
-			Panels:       []*models.GrafanaPanel{},
-			OrgID:        grafanaOrg,
+			// Panels:       []*models.GrafanaPanel{},
+			Panels: []*sdk.Panel{},
+			OrgID:  grafanaOrg,
 		}
 		if len(board.Templating.List) > 0 {
 			for _, tmpVar := range board.Templating.List {
@@ -128,12 +129,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 		}
 		for _, panel := range board.Panels {
 			if panel.Type != "text" && panel.Type != "table" { // turning off text and table panels for now
-				grafPanel := &models.GrafanaPanel{
-					ID:    panel.ID,
-					PType: panel.Type,
-					Title: panel.Title,
-				}
-				grafBoard.Panels = append(grafBoard.Panels, grafPanel)
+				// grafPanel := &models.GrafanaPanel{
+				// 	ID:    panel.ID,
+				// 	PType: panel.Type,
+				// 	Title: panel.Title,
+				// }
+				// grafBoard.Panels = append(grafBoard.Panels, grafPanel)
+				grafBoard.Panels = append(grafBoard.Panels, panel)
 			}
 		}
 		boards = append(boards, grafBoard)
