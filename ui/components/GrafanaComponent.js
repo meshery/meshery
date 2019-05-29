@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import { updateGrafanaConfig, updateProgress } from '../lib/store';
 import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
+import GrafanaCustomCharts from './GrafanaCustomCharts';
 
 const grafanaStyles = theme => ({
     root: {
@@ -264,7 +265,10 @@ class GrafanaComponent extends Component {
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Grafana charts
                 </Typography>  
-                <GrafanaCharts 
+                {/* <GrafanaCharts 
+                  boardPanelConfigs={selectedBoardsConfigs} 
+                  grafanaURL={grafanaURL} /> */}
+                  <GrafanaCustomCharts
                   boardPanelConfigs={selectedBoardsConfigs} 
                   grafanaURL={grafanaURL} />
                 </React.Fragment>
