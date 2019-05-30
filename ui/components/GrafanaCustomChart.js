@@ -98,8 +98,9 @@ class GrafanaCustomChart extends Component {
               label: target.legendFormat,
               data: [],
               fill: false,
-              yAxisID: target.refId,
-              stepped: true,
+              type: 'line',
+              // yAxisID: target.refId,
+              // stepped: true,
               // backgroundColor: 'rgba(134, 87, 167, 1)',
               // borderColor: 'rgba(134, 87, 167, 1)',
               // cubicInterpolationMode: 'monotone'
@@ -118,19 +119,19 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions(panel) {
-      const yAxes = [];
-      panel.targets.forEach(target => {
-        yAxes.push({
-          id: target.refId,
-          type: 'linear',
-          // ticks: {
-          //   beginAtZero: true,
-          // },
-          // scaleLabel: {
-          //   display: true,
-          // },
-        });
-      });
+      // const yAxes = [];
+      // panel.targets.forEach(target => {
+      //   yAxes.push({
+      //     id: target.refId,
+      //     type: 'linear',
+      //     // ticks: {
+      //     //   beginAtZero: true,
+      //     // },
+      //     // scaleLabel: {
+      //     //   display: true,
+      //     // },
+      //   });
+      // });
       return {
           responsive: true,
           maintainAspectRatio: false,
@@ -143,6 +144,8 @@ class GrafanaCustomChart extends Component {
             xAxes: [
               {
                 type: 'linear',
+                // type: 'time',
+						    // distribution: 'series',
                 scaleLabel: {
                   // display: true,
                   // labelString: 'Response time in ms',
@@ -153,17 +156,17 @@ class GrafanaCustomChart extends Component {
                 }
               }
             ],
-            yAxes,
-            // yAxes: [{
+            // yAxes,
+            yAxes: [{
             //       // id: target.refId,
-            //       type: 'linear',
-            //       ticks: {
-            //         beginAtZero: true,
-            //       },
+                  type: 'linear',
+                  ticks: {
+                    beginAtZero: true,
+                  },
             //       // scaleLabel: {
             //       //   display: true,
             //       // },
-            //   }],
+              }],
           }
         }
     }
