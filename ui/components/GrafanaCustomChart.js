@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
+import 'chartjs-plugin-colorschemes';
 
 const grafanaStyles = theme => ({
     root: {
@@ -97,8 +98,11 @@ class GrafanaCustomChart extends Component {
             const localData = {
               label: target.legendFormat,
               data: [],
+              pointStyle: 'line',
               fill: false,
-              type: 'line',
+              // type: 'line',
+              // stepped: true,
+              // cubicInterpolationMode: 'monotone',
               // yAxisID: target.refId,
               // stepped: true,
               // backgroundColor: 'rgba(134, 87, 167, 1)',
@@ -108,7 +112,7 @@ class GrafanaCustomChart extends Component {
 
             localData.data = data.data.result[0].values.map(arr => {
               return {
-                x: arr[0],
+                x: new Date(arr[0] * 1000),
                 y: arr[1],
               };
             })
@@ -133,11 +137,17 @@ class GrafanaCustomChart extends Component {
       //   });
       // });
       return {
+          plugins: {
+            colorschemes: {
+              // scheme: 'office.Office2007-2010-6'
+              scheme: 'brewer.RdYlGn4'
+            }
+          },
           responsive: true,
           maintainAspectRatio: false,
           title: {
-            display: true,
-            fontStyle: 'normal',
+            // display: true,
+            // fontStyle: 'normal',
             text: panel.title
           },
           scales: {
@@ -145,21 +155,21 @@ class GrafanaCustomChart extends Component {
               {
                 type: 'linear',
                 // type: 'time',
-						    // distribution: 'series',
+						    distribution: 'series',
                 scaleLabel: {
                   // display: true,
                   // labelString: 'Response time in ms',
-                  ticks: {
-                    min: 0,
-                    beginAtZero: true
-                  }
+                  // ticks: {
+                  //   min: 0,
+                  //   beginAtZero: true
+                  // }
                 }
               }
             ],
             // yAxes,
             yAxes: [{
             //       // id: target.refId,
-                  type: 'linear',
+                  // type: 'linear',
                   ticks: {
                     beginAtZero: true,
                   },
