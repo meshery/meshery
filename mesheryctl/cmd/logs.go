@@ -27,7 +27,7 @@ import (
 var logsCmd = &cobra.Command{
 	Use:   "logs",
 	Short: "Print logs",
-	Long:  `Print history of Meshery's container logs and begin tailing them`,
+	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Starting Meshery logging . . .")
 		cmd_log := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")

@@ -25,8 +25,8 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Polls Docker Hub for new Meshery container images and pulls if new version are available",
-	Long:  `A longer description`,
+	Short: "Pull new Meshery images from Docker Hub.",
+	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Updating Meshery now . . .")
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "pull").Run(); err != nil {

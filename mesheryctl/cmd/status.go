@@ -25,8 +25,8 @@ import (
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Check status",
-	Long:  `Check status of the running services`,
+	Short: "Check Meshery status",
+	Long:  `Check status of Meshery and Meshery adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Meshery containers status . . .\n")
 		out, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()

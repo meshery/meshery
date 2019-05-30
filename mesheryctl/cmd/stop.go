@@ -27,7 +27,7 @@ import (
 var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
-	Long:  `Stop all Meshery containers, removes their instances and prunes their connected volumes`,
+	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Stopping Meshery now . . .")
 		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {

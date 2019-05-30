@@ -37,12 +37,12 @@ var startCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Println("Starting Meshery now . . .")
+		fmt.Println("Starting Meshery . . .")
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d").Run(); err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery")
+		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 		exec.Command("open", url).Start()
 	},
 }
