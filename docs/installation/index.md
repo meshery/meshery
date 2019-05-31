@@ -1,18 +1,19 @@
 ---
 layout: page
 title: Installation
-parent: Meshery
+parent: Overview
 permalink: /installation
+has_children: true
 nav_order: 2
 ---
-## Table of contents
+# Installation Guide
 {: .no_toc }
 
 1. TOC
 {:toc}
 
 ---
-# Supported Platforms
+## Supported Platforms
 
 Below is table for how to prepare various Kubernetes platforms before installing Meshery.
 - [Docker](#docker)
@@ -29,7 +30,7 @@ meshery start
 ```
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
-### Docker
+### Platform: Docker
 Following these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. This installation approach outlines quick install leveraging `docker` and `docker-compose` on your local machine. For installing `docker` please follow these instructions [Getting Started with Docker](https://docs.docker.com/get-started/) and for `docker-compose` follow the instructions [here](https://docs.docker.com/compose/install/). 
 
 Meshery repository includes a `docker-compose.yaml` file. We can use `docker-compose` to spin up all the Meshery services by running:
@@ -50,8 +51,8 @@ First clone the Meshery source code:
 git clone https://github.com/layer5io/meshery.git; cd meshery      
 ```
 
-### Kubernetes
-Meshery can also be deployed on an existing Kubernetes cluster.
+### Platform: Kubernetes
+Meshery can also be deployed on an existing Kubernetes cluster running version 1.14.1 and above.
 
 To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
 ```
@@ -93,6 +94,8 @@ Here we will describe 3 common ways we can expose a service:
 * NodePort
     If your cluster does not have an Ingress Controller or a load balancer, then NodePort is probably the last resort.
 
+### Platform: Minikube
+See the Meshery [Minikube installation guide](minikube).
 ## Configuration
 This is where you configure your settings on the adaptor(Istio etc) and other things 
 
