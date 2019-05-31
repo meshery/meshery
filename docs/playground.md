@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Playground
-parent: Meshery
+parent: Overview
 permalink: /playground
 nav_order: 5
 ---
