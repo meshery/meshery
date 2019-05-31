@@ -99,6 +99,7 @@ nav ul li.active {
 
 .navigation-list-child-list .navigation-list-item {
     width: 100%;
+    color: white;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -122,7 +123,8 @@ code {
 }
 
 p {
-    line-height: 2rem;
+    line-height: 1.25em;
+    font-size: 1em;
 }
 
 h2 {
