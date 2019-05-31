@@ -50,8 +50,6 @@ search_enabled: true
 #     "Layer 5":
 #       - "//layer5.io/meshery"
 
-# color_scheme: "dark"
-
 ga_tracking: UA-2969471-4
 
 exclude: ['Makefile']
