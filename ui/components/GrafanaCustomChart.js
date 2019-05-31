@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import 'chartjs-plugin-colorschemes';
 // import Moment from "react-moment";
 import moment from 'moment';
-import 'chartjs-plugin-streaming';
+// import 'chartjs-plugin-streaming';
 
 const grafanaStyles = theme => ({
     root: {
@@ -399,26 +399,34 @@ class GrafanaCustomChart extends Component {
           scales: {
             xAxes: [
               {
-                type: 'realtime',
-                realtime: {
-                  delay: (this.computeRefreshInterval(refresh) + 10) * 1000,
-                  duration: diff * 1000,
-                }
+                // type: 'realtime',
+                // realtime: {
+                //   delay: (this.computeRefreshInterval(refresh) + 10) * 1000,
+                //   duration: diff * 1000,
+                //   // pause: true,
+                // }
                 // type: 'linear',
-                // type: 'time',
-                // time: {
+                type: 'time',
+                time: {
                 //   parser: this.timeFormat,
-                //   // unit: 'minute',
-                //   // round: 'day'
-                //   // tooltipFormat: 'll HH:mm'
-                // },
+                // //   // unit: 'minute',
+                // //   // round: 'day'
+                // //   // tooltipFormat: 'll HH:mm'
+                unit: 'seconds',
+                stepSize: 1,
+                // displayFormats: {
+                //   'minute': 'HH:mm',
+                //   'hour': 'HH:mm'
+                // }
+                },
                 // distribution: 'linear',
-                // distribution: 'series',
+                distribution: 'series',
                 // bounds: 'data',
-                // ticks: {
+                ticks: {
                 //   source: 'data',
-                //   // autoSkip: true
-                // },
+                  source: 'data',
+                  autoSkip: true
+                },
                 // scaleLabel: {
                   // display: true,
                   // labelString: 'Response time in ms',
@@ -432,7 +440,7 @@ class GrafanaCustomChart extends Component {
             // yAxes,
             yAxes: [{
             //       // id: target.refId,
-                  // type: 'linear',
+                  type: 'linear',
                   // ticks: {
                   //   beginAtZero: true,
                   // },
