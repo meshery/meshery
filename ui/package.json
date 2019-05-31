@@ -20,6 +20,7 @@
     "@zeit/next-css": "^1.0.1",
     "chart.js": "^2.7.3",
     "chartjs-plugin-colorschemes": "^0.3.0",
+    "chartjs-plugin-streaming": "^1.8.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.46.0",
     "immutable": "^4.0.0-rc.12",

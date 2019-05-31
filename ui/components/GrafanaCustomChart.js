@@ -10,6 +10,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
 import 'chartjs-plugin-colorschemes';
+// import Moment from "react-moment";
+import moment from 'moment';
+import 'chartjs-plugin-streaming';
 
 const grafanaStyles = theme => ({
     root: {
@@ -260,6 +263,10 @@ class GrafanaCustomChart extends Component {
       },
       options: {},
     };
+    constructor(props){
+      super(props);
+      this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+    }
 
     componentDidMount() {
       this.collectChartData();
@@ -315,7 +322,10 @@ class GrafanaCustomChart extends Component {
             const localData = {
               label: target.legendFormat,
               data: [],
-              pointStyle: 'line',
+              // pointStyle: 'line',
+              pointRadius: 0,
+              // lineTension: 0,
+              // borderWidth: 2,
               fill: false,
               // type: 'line',
               // stepped: true,
@@ -328,9 +338,15 @@ class GrafanaCustomChart extends Component {
             };
 
             localData.data = data.data.result[0].values.map(arr => {
+              const x = new Date(arr[0] * 1000);
+              // const x = new Date(arr[0] * 1000).toString();
+              // const x = <Moment format="LLLL">{new Date(arr[0] * 1000)}</Moment>;
+              // const x = moment(new Date(arr[0] * 1000)).format(this.timeFormat);
+              const y = parseInt(arr[1]);
               return {
-                x: new Date(arr[0] * 1000),
-                y: arr[1],
+                // x: new Date(arr[0] * 1000).toLocaleDateString() +' '+ new Date(arr[0] * 1000).toLocaleTimeString(),
+                x,
+                y,
               };
             })
 
@@ -340,6 +356,11 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions(panel) {
+      const {refresh, from, to} = this.props;
+      const fromDate = grafanaDateRangeToDate(from);
+      const toDate = grafanaDateRangeToDate(to);
+      const diff = Math.floor((toDate - fromDate) / 1000);
+
       // const yAxes = [];
       // panel.targets.forEach(target => {
       //   yAxes.push({
@@ -367,12 +388,37 @@ class GrafanaCustomChart extends Component {
             // fontStyle: 'normal',
             text: panel.title
           },
+          tooltips: {
+            mode: 'nearest',
+            intersect: false
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: false
+          },
           scales: {
             xAxes: [
               {
-                type: 'linear',
+                type: 'realtime',
+                realtime: {
+                  delay: (this.computeRefreshInterval(refresh) + 10) * 1000,
+                  duration: diff * 1000,
+                }
+                // type: 'linear',
                 // type: 'time',
-						    // distribution: 'series',
+                // time: {
+                //   parser: this.timeFormat,
+                //   // unit: 'minute',
+                //   // round: 'day'
+                //   // tooltipFormat: 'll HH:mm'
+                // },
+                // distribution: 'linear',
+                // distribution: 'series',
+                // bounds: 'data',
+                // ticks: {
+                //   source: 'data',
+                //   // autoSkip: true
+                // },
                 // scaleLabel: {
                   // display: true,
                   // labelString: 'Response time in ms',
