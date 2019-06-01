@@ -2,18 +2,30 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, IconButton } from '@material-ui/core';
-import { Line } from 'react-chartjs-2';
+
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
+import dynamic from 'next/dynamic'
+import { Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
 // import Moment from "react-moment";
-import moment from 'moment';
-import 'chartjs-plugin-streaming';
+// import moment from 'moment';
+if (typeof window !== 'undefined') { 
+ require('chartjs-plugin-zoom');
 
+// const zoom = dynamic(() => import('chartjs-plugin-zoom').then(mod => mod.zoom), {
+//   ssr: false
+// })
+// import 'chartjs-plugin-streaming';
+// const streaming = dynamic(() => import('chartjs-plugin-streaming'), {
+//   ssr: false
+// })
+  require('chartjs-plugin-streaming');
+}
 const grafanaStyles = theme => ({
     root: {
       width: '100%',
@@ -383,6 +395,9 @@ class GrafanaCustomChart extends Component {
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
+            },
+            streaming: {            // per-chart option
+                frameRate: 5       // chart is drawn 30 times every second
             }
           },
           responsive: true,
@@ -399,6 +414,26 @@ class GrafanaCustomChart extends Component {
           hover: {
             mode: 'nearest',
             intersect: false
+          },
+          pan: {
+            enabled: true,    // Enable panning
+            mode: 'x',        // Allow panning in the x direction
+            rangeMin: {
+                x: null       // Min value of the delay option
+            },
+            rangeMax: {
+                x: null       // Max value of the delay option
+            }
+          },
+          zoom: {
+              enabled: true,    // Enable zooming
+              mode: 'x',        // Allow zooming in the x direction
+              rangeMin: {
+                  x: null       // Min value of the duration option
+              },
+              rangeMax: {
+                  x: null       // Max value of the duration option
+              }
           },
           scales: {
             xAxes: [
@@ -455,7 +490,7 @@ class GrafanaCustomChart extends Component {
             //       //   display: true,
             //       // },
               }],
-          }
+          },
         }
     }
 
