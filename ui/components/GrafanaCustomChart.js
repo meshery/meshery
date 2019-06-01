@@ -9,11 +9,12 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
-import dynamic from 'next/dynamic'
+// import dynamic from 'next/dynamic'
 import { Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
 // import Moment from "react-moment";
 // import moment from 'moment';
+import 'chartjs-plugin-deferred';
 if (typeof window !== 'undefined') { 
  require('chartjs-plugin-zoom');
 
@@ -266,18 +267,19 @@ const grafanaDateRangeToDate = (dt, startDate) => {
 }
 
 class GrafanaCustomChart extends Component {
-    state = {
-      intervals: [], // to store the different intervals/timeouts instances
-      data: [], // data for each target
-      chartData: {
-        datasets: [],
-        labels: [],
-      },
-      options: {},
-    };
+    
     constructor(props){
       super(props);
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+      this.state = {
+        intervals: [], // to store the different intervals/timeouts instances
+        data: [], // data for each target
+        chartData: {
+          datasets: [],
+          labels: [],
+        },
+        options: {},
+      };
     }
 
     componentDidMount() {
@@ -286,12 +288,31 @@ class GrafanaCustomChart extends Component {
 
     collectChartData = (chartInst) => {
       const { panel } = this.props;
+      const {chartData} = this.state;
       const self = this;
+      let trackInitialChange = false;
+      panel.targets.forEach((target, ind) => {
+        if (typeof chartData.labels[ind] === 'undefined' || typeof chartData.datasets[ind] === 'undefined'){
+          chartData.labels[ind] = target.legendFormat;
+          chartData.datasets[ind] = {
+            label: target.legendFormat,
+            data: [],
+            pointRadius: 0,
+            fill: false,
+          };
+          trackInitialChange = true;
+        }
+      });
+      if(trackInitialChange){
+        self.setState({chartData, options: self.createOptions(panel)});
+      } else {
+        self.setState({options: self.createOptions(panel)});
+      }
       
       panel.targets.forEach((target, ind) => {
         self.getData(ind, target, chartInst);
       });
-      self.setState({options: self.createOptions(panel)});
+      
     }
 
     getData = async (ind, target, chartInst) => {
@@ -392,6 +413,11 @@ class GrafanaCustomChart extends Component {
       // });
       return {
           plugins: {
+            deferred: {
+              xOffset: 150,   // defer until 150px of the canvas width are inside the viewport
+              yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+              delay: 500      // delay of 500 ms after the canvas is considered inside the viewport
+            },
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
@@ -495,12 +521,12 @@ class GrafanaCustomChart extends Component {
     }
 
     componentWillUnmount(){
-      const {intervals} = this.state;
-      intervals.forEach(interval => {
-        if (interval && interval !== null){
-          clearInterval(interval);
-        }
-      })
+      // const {intervals} = this.state;
+      // intervals.forEach(interval => {
+      //   if (interval && interval !== null){
+      //     clearInterval(interval);
+      //   }
+      // })
     }
 
     computeRefreshInterval = (refresh) => {
@@ -545,8 +571,8 @@ class GrafanaCustomChart extends Component {
       const { classes } = this.props;
       const {chartData, options} = this.state;
       if (chartData.datasets.length > 0) { 
-        const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined') 
-        if (filteredData.length === chartData.datasets.length) {
+        // const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined') 
+        // if (filteredData.length === chartData.datasets.length) {
           return (
               <NoSsr>
               {/* <React.Fragment> */}
@@ -556,7 +582,7 @@ class GrafanaCustomChart extends Component {
               {/* </React.Fragment> */}
               </NoSsr>
             );
-        }
+        // }
       }
       return null;
     }
