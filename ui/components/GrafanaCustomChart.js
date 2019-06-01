@@ -272,10 +272,10 @@ class GrafanaCustomChart extends Component {
     }
 
     componentDidMount() {
-      this.collectChartData();
+      this.configChartData();
     }
 
-    collectChartData = (chartInst) => {
+    configChartData = () => {
       const { panel } = this.props;
       const {chartData} = this.state;
       const self = this;
@@ -297,16 +297,20 @@ class GrafanaCustomChart extends Component {
       } else {
         self.setState({options: self.createOptions(panel)});
       }
-      
+      // self.collectChartData();
+    }
+
+    collectChartData = (chartInst) => {
+      const { panel } = this.props;
+      const self = this;
       panel.targets.forEach((target, ind) => {
         self.getData(ind, target, chartInst);
       });
-      
     }
 
     getData = async (ind, target, chartInst) => {
       const {grafanaURL, panel, from, to} = this.props;
-      const {data, chartData} = this.state;
+      // const {data, chartData} = this.state;
       
       if (grafanaURL.endsWith('/')){
         grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
@@ -322,12 +326,28 @@ class GrafanaCustomChart extends Component {
       }, result => {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
-          data[ind] = result;
-          chartData.datasets[ind] = self.transformDataForChart(result, target);
-          chartData.labels[ind] = target.legendFormat;
-          self.setState({data, chartData});
-
-
+          // data[ind] = result;
+          
+          // chartData.datasets[ind] = self.transformDataForChart(result, target);
+          // // chartData.labels[ind] = target.legendFormat;
+          // self.setState({data, chartData});
+          const localData = self.transformDataForChart(result, target);
+          const newData = [];
+          localData.forEach(({x, y}) => {
+            let toadd = true;
+            chartInst.data.datasets[ind].data.forEach(({x: x1, y: y1}) => {
+              if(x === x1) {
+                toadd = false;
+              }
+            });
+            if(toadd){
+              newData.push({x, y});  
+            }
+          });
+          Array.prototype.push.apply(chartInst.data.datasets[ind].data, newData);
+          chartInst.data.datasets[ind].data.sort((a, b) => {
+            return a.x - b.x;
+          })
           chartInst.update({
             preservation: true,
           });
@@ -338,26 +358,27 @@ class GrafanaCustomChart extends Component {
     transformDataForChart(data, target) {
       if (data && data.status === 'success' && data.data && data.data.resultType && data.data.resultType === 'matrix' 
           && data.data.result && data.data.result.length > 0){
-            const localData = {
-              label: target.legendFormat,
-              data: [],
-              // pointStyle: 'line',
-              pointRadius: 0,
-              // lineTension: 0,
-              // borderWidth: 2,
-              fill: false,
-              // type: 'line',
-              // stepped: true,
-              // cubicInterpolationMode: 'monotone',
-              // yAxisID: target.refId,
-              // stepped: true,
-              // backgroundColor: 'rgba(134, 87, 167, 1)',
-              // borderColor: 'rgba(134, 87, 167, 1)',
-              // cubicInterpolationMode: 'monotone'
-            };
+            // const localData = {
+            //   label: target.legendFormat,
+            //   data: [],
+            //   // pointStyle: 'line',
+            //   pointRadius: 0,
+            //   // lineTension: 0,
+            //   // borderWidth: 2,
+            //   fill: false,
+            //   // type: 'line',
+            //   // stepped: true,
+            //   // cubicInterpolationMode: 'monotone',
+            //   // yAxisID: target.refId,
+            //   // stepped: true,
+            //   // backgroundColor: 'rgba(134, 87, 167, 1)',
+            //   // borderColor: 'rgba(134, 87, 167, 1)',
+            //   // cubicInterpolationMode: 'monotone'
+            // };
 
-            localData.data = data.data.result[0].values.map(arr => {
-              const x = moment(arr[0] * 1000);
+            // localData.data = data.data.result[0].values.map(arr => {
+            const localData = data.data.result[0].values.map(arr => {
+              const x = moment(arr[0] * 1000).format(this.timeFormat);
               const y = parseInt(arr[1]);
               return {
                 x,
@@ -367,7 +388,7 @@ class GrafanaCustomChart extends Component {
 
             return localData;
       }
-      return null;
+      return [];
     }
 
     createOptions(panel) {
@@ -414,6 +435,9 @@ class GrafanaCustomChart extends Component {
             },
             rangeMax: {
                 x: null
+            },
+            onPan: function({chart}) { 
+              console.log(`pan chart data`);
             }
           },
           zoom: {
@@ -424,6 +448,9 @@ class GrafanaCustomChart extends Component {
               },
               rangeMax: {
                   x: null
+              },
+              onZoom: function({chart}) { 
+                console.log(`zoom chart data`);
               }
           },
           scales: {
