@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import 'chartjs-plugin-colorschemes';
 // import Moment from "react-moment";
 import moment from 'moment';
-// import 'chartjs-plugin-streaming';
+import 'chartjs-plugin-streaming';
 
 const grafanaStyles = theme => ({
     root: {
@@ -272,17 +272,17 @@ class GrafanaCustomChart extends Component {
       this.collectChartData();
     }
 
-    collectChartData = () => {
+    collectChartData = (chartInst) => {
       const { panel } = this.props;
       const self = this;
       
       panel.targets.forEach((target, ind) => {
-        self.getData(ind, target);
+        self.getData(ind, target, chartInst);
       });
       self.setState({options: self.createOptions(panel)});
     }
 
-    getData = async (ind, target) => {
+    getData = async (ind, target, chartInst) => {
       const {refresh, grafanaURL, panel, from, startDate, to, endDate, liveTail} = this.props;
       const {intervals, data, chartData} = this.state;
       
@@ -290,30 +290,33 @@ class GrafanaCustomChart extends Component {
         grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
       }
       const self = this;
-      if(intervals[ind] && intervals[ind] !== null) {
-        clearInterval(intervals[ind]);
-      }
+      // if(intervals[ind] && intervals[ind] !== null) {
+      //   clearInterval(intervals[ind]);
+      // }
       
-      const fetcher = () => {
-        const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000); //startDate.getTime()/1000);
-        const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000); //endDate.getTime()/1000);
-        const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
-                  +`query=${decodeURIComponent(target.expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
-        dataFetch(`${queryURL}`, { 
-          method: 'GET',
-        }, result => {
-          self.props.updateProgress({showProgress: false});
-          if (typeof result !== 'undefined'){
-            data[ind] = result;
-            chartData.datasets[ind] = self.transformDataForChart(result, target);
-            chartData.labels[ind] = target.legendFormat;
-            self.setState({data, chartData});
-          }
-        }, self.handleError);
-      }
-      fetcher();
-      intervals[ind] = setInterval(fetcher, self.computeRefreshInterval(refresh) * 1000);
-      self.setState({intervals});
+      const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000); //startDate.getTime()/1000);
+      const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000); //endDate.getTime()/1000);
+      const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
+                +`query=${decodeURIComponent(target.expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
+      dataFetch(`${queryURL}`, { 
+        method: 'GET',
+      }, result => {
+        self.props.updateProgress({showProgress: false});
+        if (typeof result !== 'undefined'){
+          data[ind] = result;
+          chartData.datasets[ind] = self.transformDataForChart(result, target);
+          chartData.labels[ind] = target.legendFormat;
+          self.setState({data, chartData});
+
+
+          chartInst.update({
+            preservation: true,
+          });
+        }
+      }, self.handleError);
+      
+      // intervals[ind] = setInterval(fetcher, self.computeRefreshInterval(refresh) * 1000);
+      // self.setState({intervals});
     }
 
     transformDataForChart(data, target) {
@@ -360,7 +363,8 @@ class GrafanaCustomChart extends Component {
       const fromDate = grafanaDateRangeToDate(from);
       const toDate = grafanaDateRangeToDate(to);
       const diff = Math.floor((toDate - fromDate) / 1000);
-
+      const refreshPeriod = this.computeRefreshInterval(refresh);
+      const self = this;
       // const yAxes = [];
       // panel.targets.forEach(target => {
       //   yAxes.push({
@@ -399,42 +403,45 @@ class GrafanaCustomChart extends Component {
           scales: {
             xAxes: [
               {
-                // type: 'realtime',
-                // realtime: {
-                //   delay: (this.computeRefreshInterval(refresh) + 10) * 1000,
-                //   duration: diff * 1000,
-                //   // pause: true,
-                // }
-                // type: 'linear',
-                type: 'time',
-                time: {
-                //   parser: this.timeFormat,
-                // //   // unit: 'minute',
-                // //   // round: 'day'
-                // //   // tooltipFormat: 'll HH:mm'
-                unit: 'seconds',
-                stepSize: 1,
-                // displayFormats: {
-                //   'minute': 'HH:mm',
-                //   'hour': 'HH:mm'
-                // }
-                },
-                // distribution: 'linear',
-                distribution: 'series',
-                // bounds: 'data',
-                ticks: {
+                type: 'realtime',
+                realtime: {
+                  // delay: (refreshPeriod + 10) * 1000,
+                  delay: 5000,
+                  duration: diff * 1000,
+                  refresh: refreshPeriod * 1000,
+                  onRefresh: self.collectChartData,
+                  // pause: true,
+                }
+                // // type: 'linear',
+                // type: 'time',
+                // time: {
+                // //   parser: this.timeFormat,
+                // // //   // unit: 'minute',
+                // // //   // round: 'day'
+                // // //   // tooltipFormat: 'll HH:mm'
+                // unit: 'seconds',
+                // stepSize: 1,
+                // // displayFormats: {
+                // //   'minute': 'HH:mm',
+                // //   'hour': 'HH:mm'
+                // // }
+                // },
+                // // distribution: 'linear',
+                // distribution: 'series',
+                // // bounds: 'data',
+                // ticks: {
+                // //   source: 'data',
                 //   source: 'data',
-                  source: 'data',
-                  autoSkip: true
-                },
-                // scaleLabel: {
-                  // display: true,
-                  // labelString: 'Response time in ms',
-                  // ticks: {
-                  //   min: 0,
-                  //   beginAtZero: true
-                  // }
-                // }
+                //   autoSkip: true
+                // },
+                // // scaleLabel: {
+                //   // display: true,
+                //   // labelString: 'Response time in ms',
+                //   // ticks: {
+                //   //   min: 0,
+                //   //   beginAtZero: true
+                //   // }
+                // // }
               }
             ],
             // yAxes,
@@ -495,7 +502,7 @@ class GrafanaCustomChart extends Component {
                 <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration: 4000,
+        autoHideDuration: 1000,
       });
     }
     
