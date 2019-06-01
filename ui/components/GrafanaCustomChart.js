@@ -9,22 +9,12 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
-// import dynamic from 'next/dynamic'
 import { Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
-// import Moment from "react-moment";
-// import moment from 'moment';
 import 'chartjs-plugin-deferred';
+import moment from 'moment';
 if (typeof window !== 'undefined') { 
- require('chartjs-plugin-zoom');
-
-// const zoom = dynamic(() => import('chartjs-plugin-zoom').then(mod => mod.zoom), {
-//   ssr: false
-// })
-// import 'chartjs-plugin-streaming';
-// const streaming = dynamic(() => import('chartjs-plugin-streaming'), {
-//   ssr: false
-// })
+  require('chartjs-plugin-zoom');
   require('chartjs-plugin-streaming');
 }
 const grafanaStyles = theme => ({
@@ -272,7 +262,6 @@ class GrafanaCustomChart extends Component {
       super(props);
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
       this.state = {
-        intervals: [], // to store the different intervals/timeouts instances
         data: [], // data for each target
         chartData: {
           datasets: [],
@@ -316,19 +305,16 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {refresh, grafanaURL, panel, from, startDate, to, endDate, liveTail} = this.props;
-      const {intervals, data, chartData} = this.state;
+      const {grafanaURL, panel, from, to} = this.props;
+      const {data, chartData} = this.state;
       
       if (grafanaURL.endsWith('/')){
         grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
       }
       const self = this;
-      // if(intervals[ind] && intervals[ind] !== null) {
-      //   clearInterval(intervals[ind]);
-      // }
       
-      const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000); //startDate.getTime()/1000);
-      const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000); //endDate.getTime()/1000);
+      const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
+      const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
       const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
                 +`query=${decodeURIComponent(target.expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
       dataFetch(`${queryURL}`, { 
@@ -347,9 +333,6 @@ class GrafanaCustomChart extends Component {
           });
         }
       }, self.handleError);
-      
-      // intervals[ind] = setInterval(fetcher, self.computeRefreshInterval(refresh) * 1000);
-      // self.setState({intervals});
     }
 
     transformDataForChart(data, target) {
@@ -374,13 +357,9 @@ class GrafanaCustomChart extends Component {
             };
 
             localData.data = data.data.result[0].values.map(arr => {
-              const x = new Date(arr[0] * 1000);
-              // const x = new Date(arr[0] * 1000).toString();
-              // const x = <Moment format="LLLL">{new Date(arr[0] * 1000)}</Moment>;
-              // const x = moment(new Date(arr[0] * 1000)).format(this.timeFormat);
+              const x = moment(arr[0] * 1000);
               const y = parseInt(arr[1]);
               return {
-                // x: new Date(arr[0] * 1000).toLocaleDateString() +' '+ new Date(arr[0] * 1000).toLocaleTimeString(),
                 x,
                 y,
               };
@@ -398,39 +377,25 @@ class GrafanaCustomChart extends Component {
       const diff = Math.floor((toDate - fromDate) / 1000);
       const refreshPeriod = this.computeRefreshInterval(refresh);
       const self = this;
-      // const yAxes = [];
-      // panel.targets.forEach(target => {
-      //   yAxes.push({
-      //     id: target.refId,
-      //     type: 'linear',
-      //     // ticks: {
-      //     //   beginAtZero: true,
-      //     // },
-      //     // scaleLabel: {
-      //     //   display: true,
-      //     // },
-      //   });
-      // });
       return {
           plugins: {
             deferred: {
-              xOffset: 150,   // defer until 150px of the canvas width are inside the viewport
-              yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
-              delay: 500      // delay of 500 ms after the canvas is considered inside the viewport
+              xOffset: 150,
+              yOffset: '50%',
+              delay: 500
             },
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
             },
-            streaming: {            // per-chart option
-                frameRate: 5       // chart is drawn 30 times every second
+            streaming: {
+                frameRate: 5
             }
           },
           responsive: true,
           maintainAspectRatio: false,
           title: {
             display: true,
-            // fontStyle: 'normal',
             text: panel.title
           },
           tooltips: {
@@ -442,23 +407,23 @@ class GrafanaCustomChart extends Component {
             intersect: false
           },
           pan: {
-            enabled: true,    // Enable panning
-            mode: 'x',        // Allow panning in the x direction
+            enabled: true,
+            mode: 'x',
             rangeMin: {
-                x: null       // Min value of the delay option
+                x: null
             },
             rangeMax: {
-                x: null       // Max value of the delay option
+                x: null
             }
           },
           zoom: {
-              enabled: true,    // Enable zooming
-              mode: 'x',        // Allow zooming in the x direction
+              enabled: true,
+              mode: 'x',
               rangeMin: {
-                  x: null       // Min value of the duration option
+                  x: null
               },
               rangeMax: {
-                  x: null       // Max value of the duration option
+                  x: null
               }
           },
           scales: {
@@ -521,12 +486,6 @@ class GrafanaCustomChart extends Component {
     }
 
     componentWillUnmount(){
-      // const {intervals} = this.state;
-      // intervals.forEach(interval => {
-      //   if (interval && interval !== null){
-      //     clearInterval(interval);
-      //   }
-      // })
     }
 
     computeRefreshInterval = (refresh) => {
@@ -571,18 +530,11 @@ class GrafanaCustomChart extends Component {
       const { classes } = this.props;
       const {chartData, options} = this.state;
       if (chartData.datasets.length > 0) { 
-        // const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined') 
-        // if (filteredData.length === chartData.datasets.length) {
-          return (
-              <NoSsr>
-              {/* <React.Fragment> */}
-              {/* <div className={classes.root}> */}
-                <Line data={chartData} options={options} />
-              {/* </div> */}
-              {/* </React.Fragment> */}
-              </NoSsr>
-            );
-        // }
+        return (
+            <NoSsr>
+              <Line data={chartData} options={options} />
+            </NoSsr>
+          );
       }
       return null;
     }
