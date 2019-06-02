@@ -261,6 +261,7 @@ class GrafanaCustomChart extends Component {
     constructor(props){
       super(props);
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+      this.datasetIndex = {};
       this.state = {
         data: [], // data for each target
         chartData: {
@@ -279,25 +280,40 @@ class GrafanaCustomChart extends Component {
       const { panel } = this.props;
       const {chartData} = this.state;
       const self = this;
-      let trackInitialChange = false;
+      // let trackInitialChange = false;
       panel.targets.forEach((target, ind) => {
-        if (typeof chartData.labels[ind] === 'undefined' || typeof chartData.datasets[ind] === 'undefined'){
-          chartData.labels[ind] = target.legendFormat;
-          chartData.datasets[ind] = {
-            label: target.legendFormat,
-            data: [],
-            pointRadius: 0,
-            fill: false,
-          };
-          trackInitialChange = true;
+      //   if (typeof chartData.labels[ind] === 'undefined' || typeof chartData.datasets[ind] === 'undefined'){
+      //     chartData.labels[ind] = target.legendFormat;
+      //     chartData.datasets[ind] = {
+      //       label: target.legendFormat,
+      //       data: [],
+      //       pointRadius: 0,
+      //       fill: false,
+      //     };
+      //     trackInitialChange = true;
+      //   }
+        self.datasetIndex[`${ind}_0`] = ind;
+      });
+      // if(trackInitialChange){
+      //   self.setState({chartData, options: self.createOptions(panel)});
+      // } else {
+        self.setState({options: self.createOptions(panel)});
+      // }
+      // self.collectChartData();
+    }
+
+    getOrCreateIndex(datasetInd) {
+      if(typeof this.datasetIndex[datasetInd] !== 'undefined'){
+        return this.datasetIndex[datasetInd];
+      }
+      let max = 0;
+      Object.keys(this.datasetIndex).forEach(i => {
+        if(this.datasetIndex[i] > max){
+          max = this.datasetIndex[i];
         }
       });
-      if(trackInitialChange){
-        self.setState({chartData, options: self.createOptions(panel)});
-      } else {
-        self.setState({options: self.createOptions(panel)});
-      }
-      // self.collectChartData();
+      this.datasetIndex[datasetInd] = max+1;
+      return max+1;
     }
 
     collectChartData = (chartInst) => {
@@ -309,18 +325,25 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {grafanaURL, panel, from, to} = this.props;
+      const {grafanaURL, panel, from, to, templateVars} = this.props;
       // const {data, chartData} = this.state;
       
       if (grafanaURL.endsWith('/')){
         grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
       }
       const self = this;
+      let expr = target.expr;
+      templateVars.forEach(tv => {
+        const tvrs = tv.split('=');
+        if (tvrs.length == 2){
+          expr = expr.replace(`$${tvrs[0]}`,tvrs[1]);
+        }
+      });
       
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
       const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
-                +`query=${decodeURIComponent(target.expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
+                +`query=${decodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
       dataFetch(`${queryURL}`, { 
         method: 'GET',
       }, result => {
@@ -331,23 +354,49 @@ class GrafanaCustomChart extends Component {
           // chartData.datasets[ind] = self.transformDataForChart(result, target);
           // // chartData.labels[ind] = target.legendFormat;
           // self.setState({data, chartData});
-          const localData = self.transformDataForChart(result, target);
-          const newData = [];
-          localData.forEach(({x, y}) => {
-            let toadd = true;
-            chartInst.data.datasets[ind].data.forEach(({x: x1, y: y1}) => {
-              if(x === x1) {
-                toadd = false;
+          const fullData = self.transformDataForChart(result, target);
+          fullData.forEach(({metric, data}, di) => {
+            const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
+            const newData = [];
+
+            if (typeof chartInst.data.labels[datasetInd] === 'undefined' || typeof chartInst.data.datasets[datasetInd] === 'undefined'){
+              let legend = target.legendFormat;
+              Object.keys(metric).forEach(metricKey => {
+                legend = legend.replace(`{{${metricKey}}}`, metric[metricKey]).replace(`{{ ${metricKey} }}`, metric[metricKey]);
+              });
+
+              chartInst.data.labels[datasetInd] = legend;
+              chartInst.data.datasets[datasetInd] = {
+                label: legend,
+                data: [],
+                pointRadius: 0,
+                fill: false,
+              };
+            }
+
+
+
+            data.forEach(({x, y}) => {
+              let toadd = true;
+              chartInst.data.datasets[datasetInd].data.forEach(({x: x1, y: y1}) => {
+                if(x === x1) {
+                  toadd = false;
+                }
+              });
+              if(toadd){
+                newData.push({x, y});  
               }
             });
-            if(toadd){
-              newData.push({x, y});  
-            }
+            Array.prototype.push.apply(chartInst.data.datasets[datasetInd].data, newData);
+            chartInst.data.datasets[datasetInd].data.sort((a, b) => {
+              return new Date(a.x).getTime() - new Date(b.x).getTime();
+            })
           });
-          Array.prototype.push.apply(chartInst.data.datasets[ind].data, newData);
-          chartInst.data.datasets[ind].data.sort((a, b) => {
-            return a.x - b.x;
-          })
+          // for(let cddi=0;cddi < chartInst.data.datasets.length; cddi++){
+          //   if(typeof cdd === 'undefined'){
+          //     chartInst.data.datasets[cddi] = {data:[]};
+          //   }
+          // }
           chartInst.update({
             preservation: true,
           });
@@ -375,18 +424,25 @@ class GrafanaCustomChart extends Component {
             //   // borderColor: 'rgba(134, 87, 167, 1)',
             //   // cubicInterpolationMode: 'monotone'
             // };
-
-            // localData.data = data.data.result[0].values.map(arr => {
-            const localData = data.data.result[0].values.map(arr => {
-              const x = moment(arr[0] * 1000).format(this.timeFormat);
-              const y = parseInt(arr[1]);
-              return {
-                x,
-                y,
-              };
+            let fullData = [];
+            data.data.result.forEach(r => {
+              const localData = r.values.map(arr => {
+                const x = moment(arr[0] * 1000).format(this.timeFormat);
+                const y = parseInt(arr[1]);
+                return {
+                  x,
+                  y,
+                };
+              })
+              fullData.push({
+                data: localData,
+                metric: r.metric,
+              })
             })
+            // localData.data = data.data.result[0].values.map(arr => {
+            
 
-            return localData;
+            return fullData;
       }
       return [];
     }
@@ -556,13 +612,13 @@ class GrafanaCustomChart extends Component {
     render() {
       const { classes } = this.props;
       const {chartData, options} = this.state;
-      if (chartData.datasets.length > 0) { 
+      // if (chartData.datasets.length > 0) { 
         return (
             <NoSsr>
               <Line data={chartData} options={options} />
             </NoSsr>
           );
-      }
+      // }
       return null;
     }
 }
@@ -572,6 +628,7 @@ GrafanaCustomChart.propTypes = {
   grafanaURL: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
+  templateVars: PropTypes.array.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
