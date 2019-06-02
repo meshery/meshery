@@ -86,17 +86,22 @@ class GrafanaCustomCharts extends Component {
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <Grid container spacing={5}>
-                          {config.panels.map(panel => (
-                            <Grid item xs={12} sm={6} className={classes.iframe}>
-                              <GrafanaCustomChart
-                                key={this.genRandomNumberForKey()}
-                                board={config}
-                                panel={panel}
-                                grafanaURL={grafanaURL}
-                                from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
-                              />
+                          {config.panels.map(panel => {
+                            if(panel.type === 'graph'){
+                            return (
+                              <Grid item xs={12} sm={6} className={classes.iframe}>
+                                <GrafanaCustomChart
+                                  key={this.genRandomNumberForKey()}
+                                  board={config}
+                                  panel={panel}
+                                  grafanaURL={grafanaURL}
+                                  from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
+                                  templateVars={config.templateVars}
+                                /> 
                             </Grid>
-                          ))}
+                            );
+                            } else return '';
+                          })}
                         </Grid>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
