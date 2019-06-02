@@ -299,7 +299,7 @@ class GrafanaCustomChart extends Component {
       // } else {
         self.setState({options: self.createOptions(panel)});
       // }
-      // self.collectChartData();
+      self.collectChartData();
     }
 
     getOrCreateIndex(datasetInd) {
@@ -326,7 +326,9 @@ class GrafanaCustomChart extends Component {
 
     getData = async (ind, target, chartInst) => {
       const {grafanaURL, panel, from, to, templateVars} = this.props;
-      // const {data, chartData} = this.state;
+      const {data, chartData} = this.state;
+
+      const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
       
       if (grafanaURL.endsWith('/')){
         grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
@@ -359,14 +361,17 @@ class GrafanaCustomChart extends Component {
             const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
             const newData = [];
 
-            if (typeof chartInst.data.labels[datasetInd] === 'undefined' || typeof chartInst.data.datasets[datasetInd] === 'undefined'){
+            if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
               let legend = target.legendFormat;
               Object.keys(metric).forEach(metricKey => {
-                legend = legend.replace(`{{${metricKey}}}`, metric[metricKey]).replace(`{{ ${metricKey} }}`, metric[metricKey]);
+                legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
+                            .replace(`{{ ${metricKey} }}`, metric[metricKey]);
               });
+              legend = legend.replace(`{{ `, '')
+                          .replace(` }}`, '');
 
-              chartInst.data.labels[datasetInd] = legend;
-              chartInst.data.datasets[datasetInd] = {
+              cd.labels[datasetInd] = legend;
+              cd.datasets[datasetInd] = {
                 label: legend,
                 data: [],
                 pointRadius: 0,
@@ -378,7 +383,7 @@ class GrafanaCustomChart extends Component {
 
             data.forEach(({x, y}) => {
               let toadd = true;
-              chartInst.data.datasets[datasetInd].data.forEach(({x: x1, y: y1}) => {
+              cd.datasets[datasetInd].data.forEach(({x: x1, y: y1}) => {
                 if(x === x1) {
                   toadd = false;
                 }
@@ -387,19 +392,24 @@ class GrafanaCustomChart extends Component {
                 newData.push({x, y});  
               }
             });
-            Array.prototype.push.apply(chartInst.data.datasets[datasetInd].data, newData);
-            chartInst.data.datasets[datasetInd].data.sort((a, b) => {
+            Array.prototype.push.apply(cd.datasets[datasetInd].data, newData);
+            cd.datasets[datasetInd].data.sort((a, b) => {
               return new Date(a.x).getTime() - new Date(b.x).getTime();
             })
           });
-          // for(let cddi=0;cddi < chartInst.data.datasets.length; cddi++){
-          //   if(typeof cdd === 'undefined'){
-          //     chartInst.data.datasets[cddi] = {data:[]};
-          //   }
-          // }
-          chartInst.update({
-            preservation: true,
-          });
+          
+          if(typeof chartInst === 'undefined'){
+            for(let cddi=0;cddi < cd.datasets.length; cddi++){
+              if(typeof cd.datasets[cddi] === 'undefined'){
+                cd.datasets[cddi] = {data:[], label: ''};
+              }
+            }
+            self.setState({chartData});
+          } else {
+            chartInst.update({
+              preservation: true,
+            });
+          }
         }
       }, self.handleError);
     }
