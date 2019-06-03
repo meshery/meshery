@@ -42,7 +42,7 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.1.3
 	github.com/gosimple/slug v1.4.2
-	github.com/grafana-tools/sdk v0.0.0-20190105141347-81363f3bb393
+	github.com/grafana-tools/sdk v0.0.0-20190517164642-25ac5ac88695
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
