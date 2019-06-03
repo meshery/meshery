@@ -97,6 +97,7 @@ class GrafanaCustomCharts extends Component {
                                   grafanaURL={grafanaURL}
                                   from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
                                   templateVars={config.templateVars}
+                                  updateDateRange={this.updateDateRange}
                                 /> 
                             </Grid>
                             );

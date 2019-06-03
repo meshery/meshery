@@ -11,7 +11,7 @@ import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
-import 'chartjs-plugin-deferred';
+// import 'chartjs-plugin-deferred';
 import moment from 'moment';
 if (typeof window !== 'undefined') { 
   require('chartjs-plugin-zoom');
@@ -251,7 +251,8 @@ const grafanaDateRangeToDate = (dt, startDate) => {
         dto.setHours(dto.getHours() - 24);
         break;
     default:
-      return new Date(parseInt(dt.getTime().toString()));
+      // return new Date(parseInt(dt.getTime().toString()));
+      return new Date(parseFloat(dt));
   }
   return dto;
 }
@@ -273,12 +274,13 @@ class GrafanaCustomChart extends Component {
     }
 
     componentDidMount() {
+      console.log(`chart did mount`);
       this.configChartData();
     }
 
     configChartData = () => {
       const { panel } = this.props;
-      const {chartData} = this.state;
+      // const {chartData} = this.state;
       const self = this;
       // let trackInitialChange = false;
       panel.targets.forEach((target, ind) => {
@@ -297,7 +299,7 @@ class GrafanaCustomChart extends Component {
       // if(trackInitialChange){
       //   self.setState({chartData, options: self.createOptions(panel)});
       // } else {
-        self.setState({options: self.createOptions(panel)});
+      self.setState({options: self.createOptions()});
       // }
       self.collectChartData();
     }
@@ -325,7 +327,7 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {grafanaURL, panel, from, to, templateVars} = this.props;
+      const {grafanaURL, panel, from, to, templateVars, liveTail} = this.props;
       const {data, chartData} = this.state;
 
       const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
@@ -397,7 +399,7 @@ class GrafanaCustomChart extends Component {
               return new Date(a.x).getTime() - new Date(b.x).getTime();
             })
           });
-          
+          console.log(`current from: ${from} to: ${to} chart labels: ${JSON.stringify(cd.labels)}`);
           if(typeof chartInst === 'undefined'){
             for(let cddi=0;cddi < cd.datasets.length; cddi++){
               if(typeof cd.datasets[cddi] === 'undefined'){
@@ -409,6 +411,16 @@ class GrafanaCustomChart extends Component {
             chartInst.update({
               preservation: true,
             });
+            if(!liveTail) {
+              chartInst.options.scales.xAxes[0].realtime.pause = true
+            }
+            // const min = chartInst.scales["x-axis-0"].min;
+            // const max = chartInst.scales["x-axis-0"].max;
+            // if(isNaN(min) || isNaN(max)){
+            //   // chartInst.scales["x-axis-0"].min = grafanaDateRangeToDate(from).getTime();
+            //   // chartInst.scales["x-axis-0"].max = grafanaDateRangeToDate(to).getTime();
+            //   chartInst.reset();
+            // }
           }
         }
       }, self.handleError);
@@ -457,27 +469,106 @@ class GrafanaCustomChart extends Component {
       return [];
     }
 
-    createOptions(panel) {
-      const {refresh, from, to} = this.props;
+    updateDateRange(){
+      const self = this;
+      let tm;
+      return  function({chart}){
+        // from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail}  refresh={refresh}
+        // this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);  
+        // also we should pause the chart. . . probably NOT
+        if (typeof tm !== 'undefined'){
+          clearTimeout(tm);
+        }
+        if(typeof chart !== 'undefined'){
+          const min = chart.scales["x-axis-0"].min;
+          const max = chart.scales["x-axis-0"].max;
+          tm = setTimeout(function(){
+            if(!isNaN(min) && !isNaN(max)){
+              console.log(`zoom/pan - processing min: ${min} and max: ${max}`);
+              self.props.updateDateRange(`${min}`, new Date(min), `${max}`, new Date(max), false, self.props.refresh);
+            } else {
+              // self.props.updateDateRange(self.props., new Date(min), `${max}`, new Date(max), false, self.props.refresh);
+              self.props.updateDateRange(self.props.from, self.props.startDate, self.props.to, self.props.endDate, self.props.liveTail, self.props.refresh);  
+            }
+          }, 1000);
+        }
+        return false;
+      }
+    }
+
+    createOptions() {
+      const {panel, refresh, from, to, liveTail} = this.props;
       const fromDate = grafanaDateRangeToDate(from);
       const toDate = grafanaDateRangeToDate(to);
       const diff = Math.floor((toDate - fromDate) / 1000);
       const refreshPeriod = this.computeRefreshInterval(refresh);
       const self = this;
+
+      let xAx;
+      // if (liveTail){
+        xAx = {
+          type: 'realtime',
+          realtime: {
+            // delay: (refreshPeriod + 10) * 1000,
+            delay: 5000,
+            duration: diff * 1000,
+            refresh: refreshPeriod * 1000,
+            onRefresh: self.collectChartData,
+            pause: false,
+          }
+          // // type: 'linear',
+          // type: 'time',
+          // time: {
+          // //   parser: this.timeFormat,
+          // // //   // unit: 'minute',
+          // // //   // round: 'day'
+          // // //   // tooltipFormat: 'll HH:mm'
+          // unit: 'seconds',
+          // stepSize: 1,
+          // // displayFormats: {
+          // //   'minute': 'HH:mm',
+          // //   'hour': 'HH:mm'
+          // // }
+          // },
+          // // distribution: 'linear',
+          // distribution: 'series',
+          // // bounds: 'data',
+          // ticks: {
+          // //   source: 'data',
+          //   source: 'data',
+          //   autoSkip: true
+          // },
+          // // scaleLabel: {
+          //   // display: true,
+          //   // labelString: 'Response time in ms',
+          //   // ticks: {
+          //   //   min: 0,
+          //   //   beginAtZero: true
+          //   // }
+          // // }
+        };
+      // } 
+      let streaming = {
+          frameRate: 5,
+      }
+      if (!liveTail){
+        streaming = false;
+      }
+
+      
+
       return {
           plugins: {
-            deferred: {
-              xOffset: 150,
-              yOffset: '50%',
-              delay: 500
-            },
+            // deferred: {
+            //   xOffset: 150,
+            //   yOffset: '50%',
+            //   delay: 500
+            // },
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
             },
-            streaming: {
-                frameRate: 5
-            }
+            streaming: streaming,
           },
           responsive: true,
           maintainAspectRatio: false,
@@ -502,66 +593,24 @@ class GrafanaCustomChart extends Component {
             rangeMax: {
                 x: null
             },
-            onPan: function({chart}) { 
-              console.log(`pan chart data`);
-            }
+            onPan: self.updateDateRange(),
           },
           zoom: {
               enabled: true,
+              // drag: true, // if set to true will turn off pinch
               mode: 'x',
+              speed: 0.05,
               rangeMin: {
                   x: null
               },
               rangeMax: {
                   x: null
               },
-              onZoom: function({chart}) { 
-                console.log(`zoom chart data`);
-              }
+              onZoom: self.updateDateRange(),
           },
           scales: {
             xAxes: [
-              {
-                type: 'realtime',
-                realtime: {
-                  // delay: (refreshPeriod + 10) * 1000,
-                  delay: 5000,
-                  duration: diff * 1000,
-                  refresh: refreshPeriod * 1000,
-                  onRefresh: self.collectChartData,
-                  // pause: true,
-                }
-                // // type: 'linear',
-                // type: 'time',
-                // time: {
-                // //   parser: this.timeFormat,
-                // // //   // unit: 'minute',
-                // // //   // round: 'day'
-                // // //   // tooltipFormat: 'll HH:mm'
-                // unit: 'seconds',
-                // stepSize: 1,
-                // // displayFormats: {
-                // //   'minute': 'HH:mm',
-                // //   'hour': 'HH:mm'
-                // // }
-                // },
-                // // distribution: 'linear',
-                // distribution: 'series',
-                // // bounds: 'data',
-                // ticks: {
-                // //   source: 'data',
-                //   source: 'data',
-                //   autoSkip: true
-                // },
-                // // scaleLabel: {
-                //   // display: true,
-                //   // labelString: 'Response time in ms',
-                //   // ticks: {
-                //   //   min: 0,
-                //   //   beginAtZero: true
-                //   // }
-                // // }
-              }
+              xAx,
             ],
             // yAxes,
             yAxes: [{
@@ -579,6 +628,7 @@ class GrafanaCustomChart extends Component {
     }
 
     componentWillUnmount(){
+      console.log(`chart will unmount`);
     }
 
     computeRefreshInterval = (refresh) => {
@@ -603,33 +653,39 @@ class GrafanaCustomChart extends Component {
     handleError = error => {
       const self = this;
       this.props.updateProgress({showProgress: false});
-      this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
-        variant: 'error',
-        action: (key) => (
-          <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
-              >
-                <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration: 1000,
-      });
+      // this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
+      //   variant: 'error',
+      //   action: (key) => (
+      //     <IconButton
+      //           key="close"
+      //           aria-label="Close"
+      //           color="inherit"
+      //           onClick={() => self.props.closeSnackbar(key) }
+      //         >
+      //           <CloseIcon />
+      //     </IconButton>
+      //   ),
+      //   autoHideDuration: 1000,
+      // });
     }
     
     render() {
       const { classes } = this.props;
       const {chartData, options} = this.state;
-      // if (chartData.datasets.length > 0) { 
-        return (
-            <NoSsr>
-              <Line data={chartData} options={options} />
-            </NoSsr>
-          );
-      // }
-      return null;
+      let finalChartData = {
+        datasets: [],
+        labels: [],
+      }
+      const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined')
+      if(chartData.datasets.length === filteredData.length){
+        finalChartData = chartData;
+      }
+      return (
+        <NoSsr>
+          <Line data={finalChartData} options={options} />
+        </NoSsr>
+      );
+      // return null;
     }
 }
 
@@ -639,6 +695,7 @@ GrafanaCustomChart.propTypes = {
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
   templateVars: PropTypes.array.isRequired,
+  updateDateRange: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
