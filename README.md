@@ -31,7 +31,7 @@ A service mesh playground to faciliate learning about functionality of different
 
 ## <a name="running">Running Meshery</a>
 
-Please checkout [https://layer5.io/meshery](https://layer5.io/meshery) for detailed instructions to run Meshery.
+Please checkout [https://layer5.io/meshery](https://layer5.io/meshery) for quick start instructions and [https://meshery.layer5.io/docs](https://meshery.layer5.io/docs) for a complete set of Meshery documentation.
 
 ## License
 
