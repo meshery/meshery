@@ -502,7 +502,7 @@ class GrafanaCustomChart extends Component {
       //     };
       //   }
       // });
-      
+      const shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10?true:false;
         
       return {
           plugins: {
@@ -557,6 +557,7 @@ class GrafanaCustomChart extends Component {
           },
           legend: {
             position: 'bottom',
+            display: shouldDisplayLegend,
             // fullWidth: false,
             labels: {
               // fontStyle: 'normal',
