@@ -271,7 +271,6 @@ class GrafanaCustomChart extends Component {
     }
 
     componentDidMount() {
-      console.log(`chart did mount`);
       this.configChartData();
     }
 
@@ -432,7 +431,6 @@ class GrafanaCustomChart extends Component {
             if(!isNaN(min) && !isNaN(max)){
               min = Math.floor(min);
               max = Math.floor(max);
-              console.log(`zoom/pan - processing min: ${min} and max: ${max}`);
               self.props.updateDateRange(`${min}`, new Date(min), `${max}`, new Date(max), false, self.props.refresh);
             } else {
               self.props.updateDateRange(self.props.from, self.props.startDate, self.props.to, self.props.endDate, self.props.liveTail, self.props.refresh);  
@@ -489,7 +487,7 @@ class GrafanaCustomChart extends Component {
           },
           zoom: {
               enabled: true,
-              // drag: true, // if set to true will turn off pinch
+              drag: true, // if set to true will turn off pinch
               mode: 'x',
               speed: 0.05,
               rangeMin: {
@@ -528,7 +526,6 @@ class GrafanaCustomChart extends Component {
     }
 
     componentWillUnmount(){
-      console.log(`chart will unmount`);
       if(typeof this.interval !== 'undefined'){
         clearInterval(this.interval);
       }
