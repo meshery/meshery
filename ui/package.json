@@ -21,7 +21,6 @@
     "chart.js": "^2.7.3",
     "chartjs-plugin-colorschemes": "^0.3.0",
     "chartjs-plugin-deferred": "^1.0.1",
-    "chartjs-plugin-streaming": "^1.8.0",
     "chartjs-plugin-zoom": "^0.7.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.46.0",
