@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, IconButton } from '@material-ui/core';
@@ -6,16 +6,15 @@ import { NoSsr, IconButton } from '@material-ui/core';
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import CloseIcon from '@material-ui/icons/Close';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
-// import 'chartjs-plugin-deferred';
+import 'chartjs-plugin-deferred';
 import moment from 'moment';
 if (typeof window !== 'undefined') { 
   require('chartjs-plugin-zoom');
-  require('chartjs-plugin-streaming');
+  // require('chartjs-plugin-streaming');
 }
 const grafanaStyles = theme => ({
     root: {
@@ -251,7 +250,6 @@ const grafanaDateRangeToDate = (dt, startDate) => {
         dto.setHours(dto.getHours() - 24);
         break;
     default:
-      // return new Date(parseInt(dt.getTime().toString()));
       return new Date(parseFloat(dt));
   }
   return dto;
@@ -264,7 +262,6 @@ class GrafanaCustomChart extends Component {
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
       this.datasetIndex = {};
       this.state = {
-        data: [], // data for each target
         chartData: {
           datasets: [],
           labels: [],
@@ -279,28 +276,19 @@ class GrafanaCustomChart extends Component {
     }
 
     configChartData = () => {
-      const { panel } = this.props;
-      // const {chartData} = this.state;
+      const { panel, refresh } = this.props;
       const self = this;
-      // let trackInitialChange = false;
       panel.targets.forEach((target, ind) => {
-      //   if (typeof chartData.labels[ind] === 'undefined' || typeof chartData.datasets[ind] === 'undefined'){
-      //     chartData.labels[ind] = target.legendFormat;
-      //     chartData.datasets[ind] = {
-      //       label: target.legendFormat,
-      //       data: [],
-      //       pointRadius: 0,
-      //       fill: false,
-      //     };
-      //     trackInitialChange = true;
-      //   }
         self.datasetIndex[`${ind}_0`] = ind;
       });
-      // if(trackInitialChange){
-      //   self.setState({chartData, options: self.createOptions(panel)});
-      // } else {
-      self.setState({options: self.createOptions()});
-      // }
+      
+      if(typeof self.interval !== 'undefined'){
+        clearInterval(self.interval);
+      }
+      self.interval = setInterval(function(){
+        self.collectChartData();
+      }, self.computeRefreshInterval(refresh)*1000);
+
       self.collectChartData();
     }
 
@@ -353,11 +341,6 @@ class GrafanaCustomChart extends Component {
       }, result => {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
-          // data[ind] = result;
-          
-          // chartData.datasets[ind] = self.transformDataForChart(result, target);
-          // // chartData.labels[ind] = target.legendFormat;
-          // self.setState({data, chartData});
           const fullData = self.transformDataForChart(result, target);
           fullData.forEach(({metric, data}, di) => {
             const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
@@ -380,9 +363,6 @@ class GrafanaCustomChart extends Component {
                 fill: false,
               };
             }
-
-
-
             data.forEach(({x, y}) => {
               let toadd = true;
               cd.datasets[datasetInd].data.forEach(({x: x1, y: y1}) => {
@@ -399,28 +379,17 @@ class GrafanaCustomChart extends Component {
               return new Date(a.x).getTime() - new Date(b.x).getTime();
             })
           });
-          console.log(`current from: ${from} to: ${to} chart labels: ${JSON.stringify(cd.labels)}`);
           if(typeof chartInst === 'undefined'){
             for(let cddi=0;cddi < cd.datasets.length; cddi++){
               if(typeof cd.datasets[cddi] === 'undefined'){
                 cd.datasets[cddi] = {data:[], label: ''};
               }
             }
-            self.setState({chartData});
+            self.setState({chartData, options: self.createOptions()});
           } else {
             chartInst.update({
               preservation: true,
             });
-            if(!liveTail) {
-              chartInst.options.scales.xAxes[0].realtime.pause = true
-            }
-            // const min = chartInst.scales["x-axis-0"].min;
-            // const max = chartInst.scales["x-axis-0"].max;
-            // if(isNaN(min) || isNaN(max)){
-            //   // chartInst.scales["x-axis-0"].min = grafanaDateRangeToDate(from).getTime();
-            //   // chartInst.scales["x-axis-0"].max = grafanaDateRangeToDate(to).getTime();
-            //   chartInst.reset();
-            // }
           }
         }
       }, self.handleError);
@@ -429,23 +398,6 @@ class GrafanaCustomChart extends Component {
     transformDataForChart(data, target) {
       if (data && data.status === 'success' && data.data && data.data.resultType && data.data.resultType === 'matrix' 
           && data.data.result && data.data.result.length > 0){
-            // const localData = {
-            //   label: target.legendFormat,
-            //   data: [],
-            //   // pointStyle: 'line',
-            //   pointRadius: 0,
-            //   // lineTension: 0,
-            //   // borderWidth: 2,
-            //   fill: false,
-            //   // type: 'line',
-            //   // stepped: true,
-            //   // cubicInterpolationMode: 'monotone',
-            //   // yAxisID: target.refId,
-            //   // stepped: true,
-            //   // backgroundColor: 'rgba(134, 87, 167, 1)',
-            //   // borderColor: 'rgba(134, 87, 167, 1)',
-            //   // cubicInterpolationMode: 'monotone'
-            // };
             let fullData = [];
             data.data.result.forEach(r => {
               const localData = r.values.map(arr => {
@@ -461,9 +413,6 @@ class GrafanaCustomChart extends Component {
                 metric: r.metric,
               })
             })
-            // localData.data = data.data.result[0].values.map(arr => {
-            
-
             return fullData;
       }
       return [];
@@ -473,21 +422,19 @@ class GrafanaCustomChart extends Component {
       const self = this;
       let tm;
       return  function({chart}){
-        // from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail}  refresh={refresh}
-        // this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);  
-        // also we should pause the chart. . . probably NOT
         if (typeof tm !== 'undefined'){
           clearTimeout(tm);
         }
         if(typeof chart !== 'undefined'){
-          const min = chart.scales["x-axis-0"].min;
-          const max = chart.scales["x-axis-0"].max;
+          let min = chart.scales["x-axis-0"].min;
+          let max = chart.scales["x-axis-0"].max;
           tm = setTimeout(function(){
             if(!isNaN(min) && !isNaN(max)){
+              min = Math.floor(min);
+              max = Math.floor(max);
               console.log(`zoom/pan - processing min: ${min} and max: ${max}`);
               self.props.updateDateRange(`${min}`, new Date(min), `${max}`, new Date(max), false, self.props.refresh);
             } else {
-              // self.props.updateDateRange(self.props., new Date(min), `${max}`, new Date(max), false, self.props.refresh);
               self.props.updateDateRange(self.props.from, self.props.startDate, self.props.to, self.props.endDate, self.props.liveTail, self.props.refresh);  
             }
           }, 1000);
@@ -497,78 +444,23 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions() {
-      const {panel, refresh, from, to, liveTail} = this.props;
+      const {panel, from, to} = this.props;
       const fromDate = grafanaDateRangeToDate(from);
       const toDate = grafanaDateRangeToDate(to);
-      const diff = Math.floor((toDate - fromDate) / 1000);
-      const refreshPeriod = this.computeRefreshInterval(refresh);
       const self = this;
-
-      let xAx;
-      // if (liveTail){
-        xAx = {
-          type: 'realtime',
-          realtime: {
-            // delay: (refreshPeriod + 10) * 1000,
-            delay: 5000,
-            duration: diff * 1000,
-            refresh: refreshPeriod * 1000,
-            onRefresh: self.collectChartData,
-            pause: false,
-          }
-          // // type: 'linear',
-          // type: 'time',
-          // time: {
-          // //   parser: this.timeFormat,
-          // // //   // unit: 'minute',
-          // // //   // round: 'day'
-          // // //   // tooltipFormat: 'll HH:mm'
-          // unit: 'seconds',
-          // stepSize: 1,
-          // // displayFormats: {
-          // //   'minute': 'HH:mm',
-          // //   'hour': 'HH:mm'
-          // // }
-          // },
-          // // distribution: 'linear',
-          // distribution: 'series',
-          // // bounds: 'data',
-          // ticks: {
-          // //   source: 'data',
-          //   source: 'data',
-          //   autoSkip: true
-          // },
-          // // scaleLabel: {
-          //   // display: true,
-          //   // labelString: 'Response time in ms',
-          //   // ticks: {
-          //   //   min: 0,
-          //   //   beginAtZero: true
-          //   // }
-          // // }
-        };
-      // } 
-      let streaming = {
-          frameRate: 5,
-      }
-      if (!liveTail){
-        streaming = false;
-      }
-
-      
-
+        
       return {
           plugins: {
-            // deferred: {
-            //   xOffset: 150,
-            //   yOffset: '50%',
-            //   delay: 500
-            // },
+            deferred: {
+              xOffset: 150,
+              yOffset: '50%',
+              delay: 500
+            },
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
             },
-            streaming: streaming,
+            streaming: false,
           },
           responsive: true,
           maintainAspectRatio: false,
@@ -608,20 +500,28 @@ class GrafanaCustomChart extends Component {
               },
               onZoom: self.updateDateRange(),
           },
+          legend: {
+            position: 'bottom',
+            // fullWidth: false,
+            labels: {
+              // fontStyle: 'normal',
+              fontSize: 10,
+              // padding: 5,
+              usePointStyle: true,
+            },
+          },
           scales: {
             xAxes: [
-              xAx,
+              {
+                type: 'time',
+                time: {
+                  min: fromDate.getTime(),
+                  max: toDate.getTime(),
+                },
+              },
             ],
-            // yAxes,
             yAxes: [{
-            //       // id: target.refId,
                   type: 'linear',
-                  // ticks: {
-                  //   beginAtZero: true,
-                  // },
-            //       // scaleLabel: {
-            //       //   display: true,
-            //       // },
               }],
           },
         }
@@ -629,6 +529,9 @@ class GrafanaCustomChart extends Component {
 
     componentWillUnmount(){
       console.log(`chart will unmount`);
+      if(typeof this.interval !== 'undefined'){
+        clearInterval(this.interval);
+      }
     }
 
     computeRefreshInterval = (refresh) => {
@@ -670,7 +573,7 @@ class GrafanaCustomChart extends Component {
     }
     
     render() {
-      const { classes } = this.props;
+      // const { classes } = this.props;
       const {chartData, options} = this.state;
       let finalChartData = {
         datasets: [],
@@ -682,10 +585,9 @@ class GrafanaCustomChart extends Component {
       }
       return (
         <NoSsr>
-          <Line data={finalChartData} options={options} />
+          <Line data={finalChartData} options={options} ref={(reference) => this.chartRef = reference } />
         </NoSsr>
       );
-      // return null;
     }
 }
 
@@ -703,9 +605,6 @@ const mapDispatchToProps = dispatch => {
       updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
-// const mapStateToProps = st => {
-//   return null;
-// }
 
 export default withStyles(grafanaStyles)(connect(
   null,
