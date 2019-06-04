@@ -267,6 +267,7 @@ class GrafanaCustomChart extends Component {
           labels: [],
         },
         options: {},
+        error: '',
       };
     }
 
@@ -347,14 +348,17 @@ class GrafanaCustomChart extends Component {
             const newData = [];
 
             if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-              let legend = target.legendFormat;
-              Object.keys(metric).forEach(metricKey => {
-                legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
-                            .replace(`{{ ${metricKey} }}`, metric[metricKey]);
-              });
-              legend = legend.replace(`{{ `, '')
-                          .replace(` }}`, '');
-
+              let legend = typeof target.legendFormat !== 'undefined'?target.legendFormat:'';
+              if(legend === '') {
+                legend = Object.keys(metric).length > 0?JSON.stringify(metric):'';
+              } else{
+                Object.keys(metric).forEach(metricKey => {
+                  legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
+                              .replace(`{{ ${metricKey} }}`, metric[metricKey]);
+                });
+                legend = legend.replace(`{{ `, '')
+                            .replace(` }}`, '');
+              }
               cd.labels[datasetInd] = legend;
               cd.datasets[datasetInd] = {
                 label: legend,
@@ -385,7 +389,7 @@ class GrafanaCustomChart extends Component {
                 cd.datasets[cddi] = {data:[], label: ''};
               }
             }
-            self.setState({chartData, options: self.createOptions()});
+            self.setState({chartData, options: self.createOptions(), error:''});
           } else {
             chartInst.update({
               preservation: true,
@@ -418,6 +422,30 @@ class GrafanaCustomChart extends Component {
       return [];
     }
 
+    showErrorInChart(){
+      var self = this;
+      return function(chart) {
+        // const {error} = this.state;
+        // if (chart.data.datasets.length === 0) {
+        if(self.state.error !== ''){
+          // No data is present
+          var ctx = chart.chart.ctx;
+          var width = chart.chart.width;
+          var height = 5 //chart.chart.height;
+          // chart.clear();
+          
+          // ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = "16px bold 'Helvetica Nueue'";
+          // ctx.fillText(chart.options.title.text, width / 2, 18);
+          ctx.fillStyle = '#D32F2F';
+          ctx.fillText(`There was an error communicating with the server`, width/2, 40);
+          ctx.restore();
+        }
+      }
+    }
+
     updateDateRange(){
       const self = this;
       let tm;
@@ -447,6 +475,34 @@ class GrafanaCustomChart extends Component {
       const fromDate = grafanaDateRangeToDate(from);
       const toDate = grafanaDateRangeToDate(to);
       const self = this;
+
+      const yAxes = {
+        type: 'linear',
+      };
+      panel.yaxes.forEach(ya => {
+        if(typeof ya.label !== 'undefined' && ya.label !== null){
+          yAxes.scaleLabel = {
+            display: true,
+            labelString: ya.label,
+          };
+        }
+      });
+      const xAxes = {
+        type: 'time',
+        time: {
+          min: fromDate.getTime(),
+          max: toDate.getTime(),
+        },
+      };
+      // panel.xaxes.forEach(ya => {
+      //   if(ya.label !== null){
+      //     yAxes.scaleLabel = {
+      //       display: true,
+      //       labelString: ya.label,
+      //     };
+      //   }
+      // });
+      
         
       return {
           plugins: {
@@ -459,7 +515,7 @@ class GrafanaCustomChart extends Component {
               // scheme: 'office.Office2007-2010-6'
               scheme: 'brewer.RdYlGn4'
             },
-            streaming: false,
+            // streaming: false,
           },
           responsive: true,
           maintainAspectRatio: false,
@@ -510,18 +566,8 @@ class GrafanaCustomChart extends Component {
             },
           },
           scales: {
-            xAxes: [
-              {
-                type: 'time',
-                time: {
-                  min: fromDate.getTime(),
-                  max: toDate.getTime(),
-                },
-              },
-            ],
-            yAxes: [{
-                  type: 'linear',
-              }],
+            xAxes: [xAxes],
+            yAxes: [yAxes],
           },
         }
     }
@@ -554,6 +600,7 @@ class GrafanaCustomChart extends Component {
     handleError = error => {
       const self = this;
       this.props.updateProgress({showProgress: false});
+      this.setState({error: error.message !== ''?error.message:''});
       // this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
       //   variant: 'error',
       //   action: (key) => (
@@ -583,7 +630,11 @@ class GrafanaCustomChart extends Component {
       }
       return (
         <NoSsr>
-          <Line data={finalChartData} options={options} ref={(reference) => this.chartRef = reference } />
+          <Line data={finalChartData} options={options} plugins={[
+            {
+              afterDraw: this.showErrorInChart(),
+            }
+          ]} />
         </NoSsr>
       );
     }
