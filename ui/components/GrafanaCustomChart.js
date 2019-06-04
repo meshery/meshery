@@ -275,7 +275,7 @@ class GrafanaCustomChart extends Component {
     }
 
     configChartData = () => {
-      const { panel, refresh } = this.props;
+      const { panel, refresh, liveTail } = this.props;
       const self = this;
       panel.targets.forEach((target, ind) => {
         self.datasetIndex[`${ind}_0`] = ind;
@@ -284,10 +284,11 @@ class GrafanaCustomChart extends Component {
       if(typeof self.interval !== 'undefined'){
         clearInterval(self.interval);
       }
-      self.interval = setInterval(function(){
-        self.collectChartData();
-      }, self.computeRefreshInterval(refresh)*1000);
-
+      if(liveTail){
+        self.interval = setInterval(function(){
+          self.collectChartData();
+        }, self.computeRefreshInterval(refresh)*1000);
+      }
       self.collectChartData();
     }
 
