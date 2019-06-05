@@ -13,8 +13,9 @@ import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateLoadTestData } from '../lib/store';
-import GrafanaCharts from './GrafanaCharts';
+// import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
+import GrafanaCustomCharts from './GrafanaCustomCharts';
 
 
 const meshes = [
@@ -222,7 +223,7 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
             Grafana charts
           </Typography>
-        <GrafanaCharts 
+        <GrafanaCustomCharts
           boardPanelConfigs={grafana.selectedBoardsConfigs} 
           grafanaURL={grafana.grafanaURL} />
         </React.Fragment>

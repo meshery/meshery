@@ -6,7 +6,7 @@ import dataFetch from '../lib/data-fetch';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-import GrafanaCharts from './GrafanaCharts';
+// import GrafanaCharts from './GrafanaCharts';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateGrafanaConfig, updateProgress } from '../lib/store';
