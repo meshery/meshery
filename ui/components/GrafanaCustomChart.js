@@ -2,13 +2,12 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, IconButton } from '@material-ui/core';
-
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
-import { Line } from 'react-chartjs-2';
+import { Chart, Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-deferred';
 import moment from 'moment';
@@ -39,7 +38,22 @@ const grafanaStyles = theme => ({
     iframe: {
       minHeight: theme.spacing(55),
       minWidth: theme.spacing(55),
-    }
+    },
+    chartjsTooltip: {
+      position: 'absolute',
+      background: 'rgba(0, 0, 0, .7)',
+      color: 'white',
+      borderRadius: '3px',
+      transition: 'all .1s ease',
+      pointerEvents: 'none',
+      transform: 'translate(-50%, 0)',
+    },
+    chartjsTooltipKey: {
+			display: 'inline-block',
+			width: '10px',
+			height: '10px',
+			marginRight: '10px',
+		}
   });
 
 const grafanaDateRangeToDate = (dt, startDate) => {
@@ -273,6 +287,60 @@ class GrafanaCustomChart extends Component {
 
     componentDidMount() {
       this.configChartData();
+    }
+
+    configureChartJSTooltip(){
+      const {classes} = this.props;
+      const self = this;
+      return function(tooltip) {
+        // Tooltip Element
+        var tooltipEl = self.tooltip;
+        // Hide if no tooltip
+        if (tooltip.opacity === 0) {
+          tooltipEl.style.opacity = 0;
+          return;
+        }
+        // Set caret Position
+        // tooltipEl.classList.remove('above', 'below', 'no-transform');
+        if (tooltip.yAlign) {
+          tooltipEl.classList.add(tooltip.yAlign);
+        } else {
+          tooltipEl.classList.add('no-transform');
+        }
+        // Set Text
+        if (tooltip.body) {
+          var titleLines = tooltip.title || [];
+          var bodyLines = tooltip.body.map(bodyItem => {
+            return bodyItem.lines;
+          });
+          var innerHtml = '<thead>';
+          titleLines.forEach(title => {
+            innerHtml += '<tr><th>' + title + '</th></tr>';
+          });
+          innerHtml += '</thead><tbody>';
+          bodyLines.forEach((body, i) => {
+            var colors = tooltip.labelColors[i];
+            var style = 'background:' + colors.backgroundColor;
+            style += '; border-color:' + colors.borderColor;
+            style += '; border-width: 2px';
+            var span = '<span class="'+ classes.chartjsTooltipKey +'" style="' + style + '"></span>';
+            innerHtml += '<tr><td>' + span + body + '</td></tr>';
+          });
+          innerHtml += '</tbody>';
+          var tableRoot = tooltipEl.querySelector('table');
+          tableRoot.innerHTML = innerHtml;
+        }
+        var positionY = this._chart.canvas.offsetTop;
+        var positionX = this._chart.canvas.offsetLeft;
+        // Display, position, and set styles for font
+        tooltipEl.style.opacity = 1;
+        tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+        tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
+        tooltipEl.style.fontSize = `${tooltip.bodyFontSize}px`;
+        tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
+        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+      };
     }
 
     configChartData = () => {
@@ -524,12 +592,26 @@ class GrafanaCustomChart extends Component {
             text: panel.title
           },
           tooltips: {
-            mode: 'nearest',
-            intersect: false
+            mode: 'index',
+            // mode: 'nearest',
+            intersect: false,
+            // enabled: false,
+            // custom: self.configureChartJSTooltip(),
           },
           hover: {
             mode: 'nearest',
-            intersect: false
+            intersect: false,
+          },
+          legend: {
+            position: 'bottom',
+            display: shouldDisplayLegend,
+            // fullWidth: false,
+            labels: {
+              // fontStyle: 'normal',
+              fontSize: 10,
+              // padding: 5,
+              usePointStyle: true,
+            },
           },
           pan: {
             enabled: true,
@@ -544,7 +626,7 @@ class GrafanaCustomChart extends Component {
           },
           zoom: {
               enabled: true,
-              drag: true, // if set to true will turn off pinch
+              // drag: true, // if set to true will turn off pinch
               mode: 'x',
               speed: 0.05,
               rangeMin: {
@@ -554,17 +636,6 @@ class GrafanaCustomChart extends Component {
                   x: null
               },
               onZoom: self.updateDateRange(),
-          },
-          legend: {
-            position: 'bottom',
-            display: shouldDisplayLegend,
-            // fullWidth: false,
-            labels: {
-              // fontStyle: 'normal',
-              fontSize: 10,
-              // padding: 5,
-              usePointStyle: true,
-            },
           },
           scales: {
             xAxes: [xAxes],
@@ -619,7 +690,7 @@ class GrafanaCustomChart extends Component {
     }
     
     render() {
-      // const { classes } = this.props;
+      const { classes } = this.props;
       const {chartData, options} = this.state;
       let finalChartData = {
         datasets: [],
@@ -636,6 +707,9 @@ class GrafanaCustomChart extends Component {
               afterDraw: this.showErrorInChart(),
             }
           ]} />
+          <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
+            <table></table>
+          </div>
         </NoSsr>
       );
     }
