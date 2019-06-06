@@ -9,10 +9,9 @@ import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/DeleteOutline';
-import ForwardIcon from '@material-ui/icons/ForwardOutlined';
 import { withSnackbar } from 'notistack';
-import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faTrashAlt, faTerminal, faExternalLinkSquareAlt } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
   root: {
@@ -70,6 +69,12 @@ const styles = theme => ({
   },
   alignRight: {
     textAlign: 'right',
+  },
+  padLeft: {
+    paddingLeft: theme.spacing(0.25),
+  },
+  padRight: {
+    paddingRight: theme.spacing(0.25),
   }
 });
 
@@ -253,11 +258,11 @@ class MesheryAdapterPlayComponent extends React.Component {
             {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
               <div>
                 <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
-                  <ForwardIcon />
+                <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
                 </IconButton>
                 
                 <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
-                  <DeleteIcon />
+                <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
                 </IconButton>
 
                 {adapter.ops[key]}
@@ -271,8 +276,9 @@ class MesheryAdapterPlayComponent extends React.Component {
            <React.Fragment>
             <div className={classes.buttons}>
               <Button color="inherit" onClick={this.handleModalOpen} className={classes.custom}>
-                <OpenInNewIcon />
+                <FontAwesomeIcon icon={faTerminal} fixedWidth className={classes.padRight} />
                 Custom YAML
+                <FontAwesomeIcon icon={faExternalLinkSquareAlt} fixedWidth className={classes.padLeft} />
               </Button>
             </div>
               <Dialog
@@ -330,11 +336,11 @@ class MesheryAdapterPlayComponent extends React.Component {
                 <Divider variant="fullWidth" light />
                 <DialogActions>
                   <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
-                    <ForwardIcon />
+                    <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
                   </IconButton>
                   
                   <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', false)}>
-                    <DeleteIcon />
+                    <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
                   </IconButton>
 
                 </DialogActions>
