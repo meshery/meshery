@@ -346,10 +346,11 @@ class GrafanaCustomChart extends Component {
     configChartData = () => {
       const { panel, refresh, liveTail } = this.props;
       const self = this;
-      panel.targets.forEach((target, ind) => {
-        self.datasetIndex[`${ind}_0`] = ind;
-      });
-      
+      if(panel.targets){
+        panel.targets.forEach((target, ind) => {
+          self.datasetIndex[`${ind}_0`] = ind;
+        }); 
+      }
       if(typeof self.interval !== 'undefined'){
         clearInterval(self.interval);
       }
@@ -378,9 +379,11 @@ class GrafanaCustomChart extends Component {
     collectChartData = (chartInst) => {
       const { panel } = this.props;
       const self = this;
-      panel.targets.forEach((target, ind) => {
-        self.getData(ind, target, chartInst);
-      });
+      if(panel.targets){
+        panel.targets.forEach((target, ind) => {
+          self.getData(ind, target, chartInst);
+        });
+      }
     }
 
     getData = async (ind, target, chartInst) => {
@@ -432,7 +435,8 @@ class GrafanaCustomChart extends Component {
                 label: legend,
                 data: [],
                 pointRadius: 0,
-                fill: false,
+                // fill: false,
+                fill: true,
               };
             }
             data.forEach(({x, y}) => {
@@ -545,6 +549,7 @@ class GrafanaCustomChart extends Component {
       const self = this;
 
       const yAxes = {
+        stacked: (typeof panel.stack !== 'undefined' && panel.stack?true:false),
         type: 'linear',
       };
       panel.yaxes.forEach(ya => {
@@ -581,7 +586,8 @@ class GrafanaCustomChart extends Component {
             },
             colorschemes: {
               // scheme: 'office.Office2007-2010-6'
-              scheme: 'brewer.RdYlGn4'
+              scheme: 'brewer.RdYlGn4',
+              fillAlpha: 0.15,
             },
             // streaming: false,
           },
