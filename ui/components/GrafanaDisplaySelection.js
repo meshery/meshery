@@ -31,7 +31,7 @@ class GrafanaDisplaySelection extends Component {
             template_variables: cf.templateVars.map((tv, ind) => {
               if (tv && tv !== '') {
                 return (
-                  <Chip key={tv + '-_-' + ind} label={tv} className={tv} />
+                  <Chip key={tv + '-_-' + ind} label={tv} className={classes.panelChip} />
                 )
               } else {
                 return null;
