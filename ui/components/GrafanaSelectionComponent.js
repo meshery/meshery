@@ -75,7 +75,8 @@ class GrafanaSelectionComponent extends Component {
 
       getSelectedTemplateVar = (ind) => {
         const {selectedTemplateVars} = this.state;
-        return selectedTemplateVars[ind]?selectedTemplateVars[ind]:'';
+        const retVal = typeof selectedTemplateVars[ind] !== 'undefined'?selectedTemplateVars[ind]:undefined;
+        return retVal;
       }
 
       setSelectedTemplateVar = (ind, val) => {
@@ -116,6 +117,15 @@ class GrafanaSelectionComponent extends Component {
           for(let i=ind;i>0;i--){
             queryURL += `&${templateVars[i-1].name}=${selectedTemplateVars[i-1]}`;
           }
+          if(templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1) { 
+            // series query needs a start and end time or else it will take way longer to return. . . 
+            // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
+            // hence for now just limiting the time period to the last 24hrs
+            const ed = new Date();
+            const sd = new Date();
+            sd.setDate(sd.getDate()-1);
+            queryURL += `&start=${Math.floor(sd.getTime()/1000)}&end=${Math.floor(ed.getTime()/1000)}`; // accounts for the last 24hrs
+          }
           this.props.updateProgress({showProgress: true});
           let self = this;
           dataFetch(queryURL, { 
@@ -127,7 +137,23 @@ class GrafanaSelectionComponent extends Component {
               var tmpVarOpts = [];
               // result.data check if it is an array or object
               if (Array.isArray(result.data)){
-                tmpVarOpts = result.data;
+                if(result.data.length > 0){
+                  if(templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1 
+                    && typeof result.data[0] === 'object'){
+                      let q = templateVars[ind].query.replace('label_values(','')
+                      q = q.substr(0,q.length-1); // to remove ')'
+                      let qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
+                      result.data.forEach(d => {
+                        const v = d[qInd];
+                        if(typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1){
+                          tmpVarOpts.push(v);
+                        }
+                      });
+                  }
+                  else {
+                    tmpVarOpts = result.data;
+                  }
+                } 
               } else {
                 tmpVarOpts = result.data.result.map(({metric}) => {
                   const tmpArr = Object.keys(metric);
@@ -139,7 +165,11 @@ class GrafanaSelectionComponent extends Component {
               templateVarOptions[ind] = tmpVarOpts;
               this.setState({templateVarOptions});
             }
-          }, self.props.handleError);
+          }, error => {
+            templateVarOptions[ind] = [templateVars[ind].Value];
+            this.setState({templateVarOptions});
+            self.props.handleError(error);
+          });
       }
     }
 
@@ -166,7 +196,7 @@ class GrafanaSelectionComponent extends Component {
       
       boardConfig.panels = panels.filter(({id}) => selectedPanels.indexOf(id) > -1);
 
-      boardConfig.templateVars = templateVars.map(({name}, index) => (selectedTemplateVars[index] && selectedTemplateVars[index] !== '' ?
+      boardConfig.templateVars = templateVars.map(({name}, index) => (typeof selectedTemplateVars[index] !== 'undefined' ?
                                                                                 `${name}=${selectedTemplateVars[index]}`:''));
 
       this.props.addSelectedBoardPanelConfig(boardConfig);
@@ -225,7 +255,8 @@ class GrafanaSelectionComponent extends Component {
                 </Grid>
                 {templateVars.length > 0 && 
                   templateVars.map(({name}, ind) => {
-                    if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
+                    // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
+                      if (ind === 0 || typeof this.getSelectedTemplateVar(ind-1) !== 'undefined'){
                     return (
                     <Grid item xs={12} sm={4}>
                         <TextField

@@ -270,7 +270,8 @@ class GrafanaComponent extends Component {
                   grafanaURL={grafanaURL} /> */}
                   <GrafanaCustomCharts
                   boardPanelConfigs={selectedBoardsConfigs} 
-                  grafanaURL={grafanaURL} />
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey} />
                 </React.Fragment>
               );
             }

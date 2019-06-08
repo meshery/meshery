@@ -61,7 +61,7 @@ class GrafanaCustomCharts extends Component {
     render() {
         const {from, startDate, to, endDate, liveTail, refresh} = this.state;
         const { classes, boardPanelConfigs } = this.props;
-        let {grafanaURL} = this.props;
+        let {grafanaURL, grafanaAPIKey} = this.props;
         if (grafanaURL.endsWith('/')){
           grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
         }
@@ -95,6 +95,7 @@ class GrafanaCustomCharts extends Component {
                                   board={config}
                                   panel={panel}
                                   grafanaURL={grafanaURL}
+                                  grafanaAPIKey={grafanaAPIKey}
                                   from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
                                   templateVars={config.templateVars}
                                   updateDateRange={this.updateDateRange}
@@ -117,6 +118,7 @@ class GrafanaCustomCharts extends Component {
 GrafanaCustomCharts.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
+  grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
 };
 

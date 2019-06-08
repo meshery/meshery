@@ -31,6 +31,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(http.HandlerFunc(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryHandler)))
+	mux.Handle("/api/grafana/query_range", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryRangeHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
 	mux.HandleFunc("/login", h.LoginHandler)
