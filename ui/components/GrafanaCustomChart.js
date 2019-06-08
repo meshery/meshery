@@ -387,7 +387,7 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {grafanaURL, panel, from, to, templateVars, liveTail} = this.props;
+      const {grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail} = this.props;
       const {data, chartData} = this.state;
 
       const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
@@ -403,13 +403,21 @@ class GrafanaCustomChart extends Component {
           expr = expr.replace(`$${tvrs[0]}`,tvrs[1]);
         }
       });
+      let headers = {}
+      if(grafanaAPIKey !== ''){
+        headers = {
+          'Authorization': `Bearer ${grafanaAPIKey}`,
+        };
+      }
       
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
       const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
                 +`query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
-      dataFetch(`${queryURL}`, { 
+      dataFetch(`/api/grafana/query_range?query=${encodeURIComponent(queryURL)}`, { 
         method: 'GET',
+        credentials: 'include',
+        headers: headers,
       }, result => {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
@@ -427,8 +435,8 @@ class GrafanaCustomChart extends Component {
                   legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
                               .replace(`{{ ${metricKey} }}`, metric[metricKey]);
                 });
-                legend = legend.replace(`{{ `, '')
-                            .replace(` }}`, '');
+                legend = legend.replace(`{{ `, '').replace(`{{`, '')
+                            .replace(` }}`, '').replace(`}}`, '');
               }
               cd.labels[datasetInd] = legend;
               cd.datasets[datasetInd] = {
@@ -478,7 +486,7 @@ class GrafanaCustomChart extends Component {
             data.data.result.forEach(r => {
               const localData = r.values.map(arr => {
                 const x = moment(arr[0] * 1000).format(this.timeFormat);
-                const y = parseInt(arr[1]);
+                const y = parseFloat(parseFloat(arr[1]).toFixed(3));
                 return {
                   x,
                   y,
@@ -558,6 +566,14 @@ class GrafanaCustomChart extends Component {
             display: true,
             labelString: ya.label,
           };
+        }
+        if(ya.format.toLowerCase().startsWith('percent')){
+          const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
+          yAxes.ticks = {
+            callback: function(tick) {
+              return tick * mulFactor + '%';
+            }
+          }
         }
       });
       const xAxes = {
@@ -724,6 +740,7 @@ class GrafanaCustomChart extends Component {
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
+  grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
   templateVars: PropTypes.array.isRequired,

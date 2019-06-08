@@ -225,7 +225,8 @@ class MesheryPerformanceComponent extends React.Component {
           </Typography>
         <GrafanaCustomCharts
           boardPanelConfigs={grafana.selectedBoardsConfigs} 
-          grafanaURL={grafana.grafanaURL} />
+          grafanaURL={grafana.grafanaURL}
+          grafanaAPIKey={grafana.grafanaAPIKey} />
         </React.Fragment>
       );
     }

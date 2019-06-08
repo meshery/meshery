@@ -25,6 +25,7 @@ type HandlerInterface interface {
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {
