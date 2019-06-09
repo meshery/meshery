@@ -346,6 +346,16 @@ class GrafanaCustomChart extends Component {
     configChartData = () => {
       const { panel, refresh, liveTail } = this.props;
       const self = this;
+
+      self.panelType = '';
+      switch(panel.type){
+        case 'graph':
+          self.panelType = panel.type;
+          break;
+        case 'singlestat':
+          self.panelType = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?'sparkline':'gauge';
+      }
+
       if(panel.targets){
         panel.targets.forEach((target, ind) => {
           self.datasetIndex[`${ind}_0`] = ind;
@@ -502,15 +512,14 @@ class GrafanaCustomChart extends Component {
       return [];
     }
 
-    showErrorInChart(){
+    showMessageInChart(){
       var self = this;
       return function(chart) {
         // const {error} = this.state;
         // if (chart.data.datasets.length === 0) {
+        var ctx = chart.chart.ctx;
+        var width = chart.chart.width;
         if(self.state.error !== ''){
-          // No data is present
-          var ctx = chart.chart.ctx;
-          var width = chart.chart.width;
           var height = 5 //chart.chart.height;
           // chart.clear();
           
@@ -522,6 +531,19 @@ class GrafanaCustomChart extends Component {
           ctx.fillStyle = '#D32F2F';
           ctx.fillText(`There was an error communicating with the server`, width/2, 40);
           ctx.restore();
+        } 
+        if (self.panelType && self.panelType === 'sparkline'){
+          if(chart.data.datasets.length > 0 && chart.data.datasets[0].data.length > 0){
+            var height = chart.chart.height;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = "50px bold 'Helvetica Nueue'";
+
+            const dind = chart.data.datasets[0].data.length - 1;
+            // ctx.fillStyle = '#D32F2F';
+            ctx.fillText(`${chart.data.datasets[0].data[dind].y} ${chart.options.scales.yAxes[0].scaleLabel.labelString}`, width/2, height/2);
+            ctx.restore();
+          }
         }
       }
     }
@@ -556,33 +578,58 @@ class GrafanaCustomChart extends Component {
       const toDate = grafanaDateRangeToDate(to);
       const self = this;
 
+      const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
+
       const yAxes = {
         stacked: (typeof panel.stack !== 'undefined' && panel.stack?true:false),
         type: 'linear',
+        display: showAxis,
+        gridLines: {
+          display: showAxis,
+        },
       };
-      panel.yaxes.forEach(ya => {
-        if(typeof ya.label !== 'undefined' && ya.label !== null){
-          yAxes.scaleLabel = {
-            display: true,
-            labelString: ya.label,
-          };
-        }
-        if(ya.format.toLowerCase().startsWith('percent')){
-          const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
-          yAxes.ticks = {
-            callback: function(tick) {
-              return tick * mulFactor + '%';
+      if(panel.yaxes){
+        panel.yaxes.forEach(ya => {
+          if(typeof ya.label !== 'undefined' && ya.label !== null){
+            yAxes.scaleLabel = {
+              display: true,
+              labelString: ya.label,
+            };
+          }
+          if(ya.format.toLowerCase().startsWith('percent')){
+            const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
+            yAxes.ticks = {
+              callback: function(tick) {
+                return tick * mulFactor + '%';
+              }
             }
           }
-        }
-      });
+        });
+      }
+      if(self.panelType === 'sparkline'){
+        yAxes.scaleLabel = {
+          display: false,
+          labelString: panel.format,
+        };
+      }
       const xAxes = {
         type: 'time',
+        display: showAxis,
         time: {
           min: fromDate.getTime(),
           max: toDate.getTime(),
         },
       };
+
+      if (!showAxis) {
+        xAxes.gridLines = {
+            display: showAxis,
+        };
+        yAxes.gridLines = {
+          display: showAxis,
+        };
+      }
+
       // panel.xaxes.forEach(ya => {
       //   if(ya.label !== null){
       //     yAxes.scaleLabel = {
@@ -591,7 +638,10 @@ class GrafanaCustomChart extends Component {
       //     };
       //   }
       // });
-      const shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10?true:false;
+      let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10?true:false;
+      if(panel.type !== 'graph'){
+        shouldDisplayLegend = false;
+      }
         
       return {
           plugins: {
@@ -614,6 +664,7 @@ class GrafanaCustomChart extends Component {
             text: panel.title
           },
           tooltips: {
+            enabled: showAxis,
             mode: 'index',
             // mode: 'nearest',
             intersect: false,
@@ -636,7 +687,7 @@ class GrafanaCustomChart extends Component {
             },
           },
           pan: {
-            enabled: true,
+            enabled: panel.type === 'graph'?true:false,
             mode: 'x',
             rangeMin: {
                 x: null
@@ -647,7 +698,7 @@ class GrafanaCustomChart extends Component {
             onPan: self.updateDateRange(),
           },
           zoom: {
-              enabled: true,
+              enabled: panel.type === 'graph'?true:false,
               // drag: true, // if set to true will turn off pinch
               mode: 'x',
               speed: 0.05,
@@ -726,7 +777,7 @@ class GrafanaCustomChart extends Component {
         <NoSsr>
           <Line data={finalChartData} options={options} plugins={[
             {
-              afterDraw: this.showErrorInChart(),
+              afterDraw: this.showMessageInChart(),
             }
           ]} />
           <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
