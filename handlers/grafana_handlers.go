@@ -156,7 +156,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 		}
 		if len(board.Panels) > 0 {
 			for _, p1 := range board.Panels {
-				if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType { // turning off text and table panels for now
+				if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type != "row" { // turning off text and table panels for now
 					if p1.Datasource != nil {
 						if strings.HasPrefix(*p1.Datasource, "$") {
 							*p1.Datasource = tmpDsName[strings.Replace(*p1.Datasource, "$", "", 1)]
@@ -176,7 +176,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 		} else if len(board.Rows) > 0 {
 			for _, r1 := range board.Rows {
 				for _, p2 := range r1.Panels {
-					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType { // turning off text and table panels for now
+					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text and table panels for now
 						if strings.HasPrefix(*p2.Datasource, "$") {
 							*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
 							// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
