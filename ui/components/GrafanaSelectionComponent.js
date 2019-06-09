@@ -97,8 +97,8 @@ class GrafanaSelectionComponent extends Component {
           if (board.uri === newVal) {
               this.setState({
                 grafanaBoard: newVal,
-                panels: board.panels.filter(panel=>panel.type === 'graph'), 
-                selectedPanels: board.panels.filter(panel=>panel.type === 'graph').map(panel=>panel.id), // selecting all panels by default
+                panels: board.panels, 
+                selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
                 templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
                 templateVarOptions: [],
                 selectedTemplateVars: [],

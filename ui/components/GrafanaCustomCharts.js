@@ -87,7 +87,7 @@ class GrafanaCustomCharts extends Component {
                     <ExpansionPanelDetails>
                         <Grid container spacing={5}>
                           {config.panels.map(panel => {
-                            if(panel.type === 'graph'){
+                            // if(panel.type === 'graph'){
                             return (
                               <Grid item xs={12} sm={6} className={classes.iframe}>
                                 <GrafanaCustomChart
@@ -102,7 +102,7 @@ class GrafanaCustomCharts extends Component {
                                 /> 
                             </Grid>
                             );
-                            } else return '';
+                            // } else return '';
                           })}
                         </Grid>
                     </ExpansionPanelDetails>
