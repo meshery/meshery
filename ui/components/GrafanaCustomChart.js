@@ -11,6 +11,7 @@ import { Chart, Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-deferred';
 import moment from 'moment';
+import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 if (typeof window !== 'undefined') { 
   require('chartjs-plugin-zoom');
   // require('chartjs-plugin-streaming');
@@ -274,6 +275,16 @@ class GrafanaCustomChart extends Component {
     constructor(props){
       super(props);
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+      this.panelType = '';
+      switch(props.panel.type){
+        case 'graph':
+          this.panelType = props.panel.type;
+          break;
+        case 'singlestat':
+          this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline && props.panel.sparkline.show === true?'sparkline':'gauge';
+          break;
+      }
+      
       this.datasetIndex = {};
       this.state = {
         chartData: {
@@ -346,15 +357,6 @@ class GrafanaCustomChart extends Component {
     configChartData = () => {
       const { panel, refresh, liveTail } = this.props;
       const self = this;
-
-      self.panelType = '';
-      switch(panel.type){
-        case 'graph':
-          self.panelType = panel.type;
-          break;
-        case 'singlestat':
-          self.panelType = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?'sparkline':'gauge';
-      }
 
       if(panel.targets){
         panel.targets.forEach((target, ind) => {
@@ -745,7 +747,7 @@ class GrafanaCustomChart extends Component {
     handleError = error => {
       const self = this;
       this.props.updateProgress({showProgress: false});
-      this.setState({error: error.message !== ''?error.message:''});
+      this.setState({error: error.message && error.message !== ''?error.message:(error !== ''?error:'')});
       // this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
       //   variant: 'error',
       //   action: (key) => (
@@ -763,8 +765,8 @@ class GrafanaCustomChart extends Component {
     }
     
     render() {
-      const { classes } = this.props;
-      const {chartData, options} = this.state;
+      const { classes, panel } = this.props;
+      const {chartData, options, error} = this.state;
       let finalChartData = {
         datasets: [],
         labels: [],
@@ -773,18 +775,30 @@ class GrafanaCustomChart extends Component {
       if(chartData.datasets.length === filteredData.length){
         finalChartData = chartData;
       }
-      return (
-        <NoSsr>
-          <Line data={finalChartData} options={options} plugins={[
-            {
-              afterDraw: this.showMessageInChart(),
-            }
-          ]} />
-          <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
-            <table></table>
-          </div>
-        </NoSsr>
-      );
+      if(this.panelType === 'gauge'){
+        return (
+          <NoSsr>
+            <GrafanaCustomGaugeChart
+              data={finalChartData}
+              panel={panel}
+              error={error}
+            />
+          </NoSsr>
+        );
+      } else {
+        return (
+          <NoSsr>
+            <Line data={finalChartData} options={options} plugins={[
+              {
+                afterDraw: this.showMessageInChart(),
+              }
+            ]} />
+            <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
+              <table></table>
+            </div>
+          </NoSsr>
+        );
+      }
     }
 }
 
