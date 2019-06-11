@@ -452,6 +452,10 @@ class GrafanaCustomChart extends Component {
                 // fill: false,
                 fill: true,
               };
+              if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
+                cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
+                cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
+              }
             }
             data.forEach(({x, y}) => {
               let toadd = true;
