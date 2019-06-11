@@ -526,7 +526,7 @@ class GrafanaCustomChart extends Component {
           // ctx.save();
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.font = "16px bold 'Helvetica Nueue'";
+          ctx.font = "bold 16px 'Helvetica Nueue'";
           // ctx.fillText(chart.options.title.text, width / 2, 18);
           ctx.fillStyle = '#D32F2F';
           ctx.fillText(`There was an error communicating with the server`, width/2, 40);
@@ -534,14 +534,26 @@ class GrafanaCustomChart extends Component {
         } 
         if (self.panelType && self.panelType === 'sparkline'){
           if(chart.data.datasets.length > 0 && chart.data.datasets[0].data.length > 0){
+            const dind = chart.data.datasets[0].data.length - 1;
+            // ctx.fillStyle = '#D32F2F';
+            const val = chart.data.datasets[0].data[dind].y;
+            const unit = chart.options.scales.yAxes[0].scaleLabel.labelString;
+            let msg = '';
+            if (!isNaN(val)){
+              if(unit.startsWith('percent')){
+                const mulFactor = unit.toLowerCase() === 'percentunit'?100:1;
+                msg = `${(val*mulFactor).toFixed(2)}%`;
+              } else {
+                msg = `${val} ${unit}`;
+              }
+            }
+
             var height = chart.chart.height;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.font = "50px bold 'Helvetica Nueue'";
-
-            const dind = chart.data.datasets[0].data.length - 1;
-            // ctx.fillStyle = '#D32F2F';
-            ctx.fillText(`${chart.data.datasets[0].data[dind].y} ${chart.options.scales.yAxes[0].scaleLabel.labelString}`, width/2, height/2);
+            ctx.font = "bold 36px 'Helvetica Nueue'";
+            ctx.fillStyle = '#000000';
+            ctx.fillText(msg, width/2, height/2);
             ctx.restore();
           }
         }
@@ -601,7 +613,6 @@ class GrafanaCustomChart extends Component {
             yAxes.ticks = {
               callback: function(tick) {
                 const tk = (tick * mulFactor).toFixed(2);
-                console.log(`tick: ${tk}`);
                 return `${tk}%`;
               }
             }
