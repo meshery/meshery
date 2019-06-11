@@ -412,15 +412,9 @@ class GrafanaCustomChart extends Component {
       templateVars.forEach(tv => {
         const tvrs = tv.split('=');
         if (tvrs.length == 2){
-          expr = expr.replace(`$${tvrs[0]}`,tvrs[1]);
+          expr = expr.replace(new RegExp(`$${tvrs[0]}`.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),tvrs[1]);
         }
       });
-      let headers = {}
-      if(grafanaAPIKey !== ''){
-        headers = {
-          'Authorization': `Bearer ${grafanaAPIKey}`,
-        };
-      }
       
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
@@ -429,7 +423,7 @@ class GrafanaCustomChart extends Component {
       dataFetch(`/api/grafana/query_range?query=${encodeURIComponent(queryURL)}`, { 
         method: 'GET',
         credentials: 'include',
-        headers: headers,
+        // headers: headers,
       }, result => {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
@@ -498,7 +492,7 @@ class GrafanaCustomChart extends Component {
             data.data.result.forEach(r => {
               const localData = r.values.map(arr => {
                 const x = moment(arr[0] * 1000).format(this.timeFormat);
-                const y = parseFloat(parseFloat(arr[1]).toFixed(3));
+                const y = parseFloat(parseFloat(arr[1]).toFixed(2));
                 return {
                   x,
                   y,
@@ -602,7 +596,9 @@ class GrafanaCustomChart extends Component {
             const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
             yAxes.ticks = {
               callback: function(tick) {
-                return tick * mulFactor + '%';
+                const tk = (tick * mulFactor).toFixed(2);
+                console.log(`tick: ${tk}`);
+                return `${tk}%`;
               }
             }
           }
