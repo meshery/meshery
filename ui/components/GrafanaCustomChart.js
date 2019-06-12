@@ -418,9 +418,10 @@ class GrafanaCustomChart extends Component {
       
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
-      const queryURL = `${grafanaURL}/api/datasources/proxy/${panel.datasource}/api/v1/query_range?` // TODO: need to check if it is ok to use datasource name instead of ID
-                +`query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
-      dataFetch(`/api/grafana/query_range?query=${encodeURIComponent(queryURL)}`, { 
+      const queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
+      // TODO: need to check if it is ok to use datasource name instead of ID
+                
+      dataFetch(`/api/grafana/query_range?${queryParams}`, { 
         method: 'GET',
         credentials: 'include',
         // headers: headers,
