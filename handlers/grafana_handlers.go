@@ -15,6 +15,10 @@ func init() {
 }
 
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -45,6 +49,10 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 }
 
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -78,6 +86,10 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 }
 
 func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -106,6 +118,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 }
 
 func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)

@@ -11,6 +11,11 @@ import (
 )
 
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	req.ParseMultipartForm(1 << 20)
 
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)

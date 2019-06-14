@@ -17,7 +17,7 @@ type PrometheusClient struct {
 	grafanaClient *GrafanaClient
 }
 
-func NewPrometheusClient(promURL string) *PrometheusClient {
+func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*PrometheusClient, error) {
 	// client, err := promAPI.NewClient(promAPI.Config{Address: promURL})
 	// if err != nil {
 	// 	msg := errors.New("unable to connect to prometheus")
@@ -29,9 +29,16 @@ func NewPrometheusClient(promURL string) *PrometheusClient {
 	// 	client:      client,
 	// 	queryClient: queryAPI,
 	// }, nil
-	return &PrometheusClient{
+	p := &PrometheusClient{
 		grafanaClient: NewGrafanaClientForPrometheus(promURL),
 	}
+	if validate {
+		_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config")
+		if err != nil {
+			return nil, err
+		}
+	}
+	return p, nil
 }
 
 func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*models.GrafanaBoard, error) {

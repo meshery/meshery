@@ -38,7 +38,10 @@ const initialState = fromJS({
     grafanaBoards: [],
     selectedBoardsConfigs: [],
   },
-
+  prometheus: {
+    prometheusURL: '',
+    selectedPrometheusBoardsConfigs: [],
+  },
   showProgress: false,
 });
 
@@ -53,6 +56,7 @@ export const actionTypes = {
     // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
     CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
     UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
+    UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
     UPDATE_PROGRESS: 'UPDATE_PROGRESS',
 }
 
@@ -100,6 +104,9 @@ export const reducer = (state = initialState, action) => {
       }
     case actionTypes.UPDATE_GRAFANA_CONFIG:
       return state.updateIn(['grafana'], val => fromJS(action.grafana));
+
+    case actionTypes.UPDATE_PROMETHEUS_CONFIG:
+      return state.updateIn(['prometheus'], val => fromJS(action.prometheus));
       
     // case actionTypes.DELETE_RESULTS_SELECTION:
     //   const rs = state.get('results_selection').toObject();
@@ -174,6 +181,10 @@ export const clearResultsSelection = () => dispatch => {
 }
 export const updateGrafanaConfig = ({grafana}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana });
+}
+
+export const updatePrometheusConfig = ({prometheus}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus });
 }
 
 

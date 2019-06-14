@@ -17,6 +17,10 @@ func init() {
 }
 
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -24,10 +28,13 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	promURL := req.FormValue("promURL")
-	promClient := helpers.NewPrometheusClient(promURL)
+	promURL := req.FormValue("prometheusURL")
+	if _, err = helpers.NewPrometheusClient(req.Context(), promURL, true); err != nil {
+		logrus.Errorf("unable to connect to prometheus: %v", err)
+		http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
+		return
+	}
 	session.Values["promURL"] = promURL
-	session.Values["prometheusClient"] = promClient
 	err = session.Save(req, w)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
@@ -40,6 +47,10 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 }
 
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -47,10 +58,11 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		return
 	}
 	promURL, _ := session.Values["promURL"].(string)
-	prometheusClient, _ := session.Values["prometheusClient"].(*helpers.PrometheusClient)
 
-	if prometheusClient == nil {
-		prometheusClient = helpers.NewPrometheusClient(promURL)
+	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), promURL, false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	defer req.Body.Close()
 	boardData, err := ioutil.ReadAll(req.Body)
@@ -74,6 +86,10 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 }
 
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -82,10 +98,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	}
 	reqQuery := req.URL.Query()
 	promURL, _ := session.Values["promURL"].(string)
-	prometheusClient, _ := session.Values["prometheusClient"].(*helpers.PrometheusClient)
 
-	if prometheusClient == nil {
-		prometheusClient = helpers.NewPrometheusClient(promURL)
+	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), promURL, false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	data, err := prometheusClient.Query(req.Context(), &reqQuery)
 	if err != nil {
@@ -96,6 +113,10 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 }
 
 func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -104,12 +125,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	}
 	reqQuery := req.URL.Query()
 	promURL, _ := session.Values["promURL"].(string)
-	prometheusClient, _ := session.Values["prometheusClient"].(*helpers.PrometheusClient)
-
-	if prometheusClient == nil {
-		prometheusClient = helpers.NewPrometheusClient(promURL)
+	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), promURL, false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	data, err := prometheusClient.Query(req.Context(), &reqQuery)
+
+	data, err := prometheusClient.QueryRange(req.Context(), &reqQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
