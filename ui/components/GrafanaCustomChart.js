@@ -399,13 +399,16 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail} = this.props;
+      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail} = this.props;
       const {data, chartData} = this.state;
 
       const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
-      
-      if (grafanaURL.endsWith('/')){
-        grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
+      let queryRangeURL = '';
+      if (prometheusURL && prometheusURL !== ''){
+        queryRangeURL = `/api/prometheus/query_range`;
+      } else if (grafanaURL && grafanaURL !== ''){
+        // grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
+        queryRangeURL = `/api/grafana/query_range`;
       }
       const self = this;
       let expr = target.expr;
@@ -421,7 +424,7 @@ class GrafanaCustomChart extends Component {
       const queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
       // TODO: need to check if it is ok to use datasource name instead of ID
                 
-      dataFetch(`/api/grafana/query_range?${queryParams}`, { 
+      dataFetch(`${queryRangeURL}?${queryParams}`, { 
         method: 'GET',
         credentials: 'include',
         // headers: headers,

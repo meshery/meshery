@@ -324,6 +324,7 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Va
 	q.Set("step", queryData.Get("step"))
 	newURL.RawQuery = q.Encode()
 	queryURL := newURL.String()
+	// logrus.Debugf("Query range url: %s", queryURL)
 	data, err := g.makeRequest(ctx, queryURL)
 	if err != nil {
 		msg := errors.New("error getting data from grafana")

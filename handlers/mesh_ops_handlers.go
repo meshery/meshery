@@ -20,6 +20,10 @@ func init() {
 }
 
 func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	_, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)
@@ -210,6 +214,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, session *session
 }
 
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Error("unable to get session data")

@@ -18,6 +18,10 @@ import (
 )
 
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost && req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	// ensuring session is intact before running load test
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {

@@ -50,6 +50,10 @@ const styles = theme => ({
   chartTitle: {
     textAlign: 'center',
   },
+  chartTitleGraf: {
+    textAlign: 'center',
+    marginTop: theme.spacing(5),
+  },
   chartContent: {
     minHeight: window.innerHeight * 0.7,
   },
@@ -208,7 +212,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   render() {
-    const { classes, grafana } = this.props;
+    const { classes, grafana, prometheus } = this.props;
     const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, urlError, tError } = this.state;
 
     let chartStyle = {}
@@ -217,10 +221,23 @@ class MesheryPerformanceComponent extends React.Component {
     }
 
     let displayGCharts = '';
+    let displayPromCharts = '';
+    if (prometheus.selectedPrometheusBoardsConfigs.length > 0) {
+      displayPromCharts = (
+        <React.Fragment>
+          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            Prometheus charts
+          </Typography>
+        <GrafanaCustomCharts
+          boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
+          prometheusURL={prometheus.prometheusURL} />
+        </React.Fragment>
+      );
+    }
     if (grafana.selectedBoardsConfigs.length > 0) {
       displayGCharts = (
         <React.Fragment>
-          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+          <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
             Grafana charts
           </Typography>
         <GrafanaCustomCharts
@@ -365,7 +382,9 @@ class MesheryPerformanceComponent extends React.Component {
       
       </div>
     </React.Fragment>
-    
+
+    {displayPromCharts}
+
     {displayGCharts}
 
       </NoSsr>
@@ -396,7 +415,8 @@ const mapStateToProps = state => {
   //   }
   // }
   const grafana = state.get("grafana").toJS();
-  return {...loadTest, grafana};
+  const prometheus = state.get("prometheus").toJS();
+  return {...loadTest, grafana, prometheus};
 }
 
 
