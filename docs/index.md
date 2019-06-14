@@ -57,10 +57,10 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 
 1. [Istio](https://github.com/layer5io/meshery-istio)
 1. [Linkerd2](https://github.com/layer5io/meshery-linkerd)
+1. [Consul Connect](https://github.com/layer5io/meshery-consul)
 
 **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
 1. [Octarine](https://github.com/layer5io/meshery-octarine)
-1. [Consul Connect](https://github.com/layer5io/meshery-consul)
 1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
 
 **Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
@@ -87,4 +87,7 @@ Meshery is purpose built for factilitating benchmarking of service meshes and th
 **Meshery Presentations**
 - [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
 - [DockerCon 2019 Open Source Summit](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
-- [KubeCon EU 2019](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLj6h78yzYM2PpmMAnvpvsnR4c27wJePh3&index=135&t=0s)
+- KubeCon EU 2019 ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
+- [KubeCon EU 2019 Istio Founders Meetup](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
+- [Cloud Native Rejekts EU 2019](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
+- [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
