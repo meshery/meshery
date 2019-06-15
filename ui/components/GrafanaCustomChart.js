@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, IconButton } from '@material-ui/core';
+import { NoSsr, IconButton, Card, CardContent, Typography, CardHeader } from '@material-ui/core';
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
@@ -36,10 +36,10 @@ const grafanaStyles = theme => ({
       marginRight: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
-    iframe: {
-      minHeight: theme.spacing(55),
-      minWidth: theme.spacing(55),
-    },
+    // iframe: {
+    //   minHeight: theme.spacing(55),
+    //   minWidth: theme.spacing(55),
+    // },
     chartjsTooltip: {
       position: 'absolute',
       background: 'rgba(0, 0, 0, .7)',
@@ -677,7 +677,7 @@ class GrafanaCustomChart extends Component {
           responsive: true,
           maintainAspectRatio: false,
           title: {
-            display: true,
+            display: false,
             text: panel.title
           },
           tooltips: {
@@ -793,16 +793,28 @@ class GrafanaCustomChart extends Component {
       if(this.panelType === 'gauge'){
         return (
           <NoSsr>
+            <Card>
+            <CardHeader
+              title={panel.title}
+            />
+              <CardContent>
             <GrafanaCustomGaugeChart
               data={finalChartData}
               panel={panel}
               error={error}
             />
+            </CardContent>
+            </Card>
           </NoSsr>
         );
       } else {
         return (
           <NoSsr>
+            <Card>
+            <CardHeader
+              title={panel.title}
+            />
+            <CardContent>
             <Line data={finalChartData} options={options} plugins={[
               {
                 afterDraw: this.showMessageInChart(),
@@ -811,6 +823,8 @@ class GrafanaCustomChart extends Component {
             <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
               <table></table>
             </div>
+            </CardContent>
+            </Card>
           </NoSsr>
         );
       }
