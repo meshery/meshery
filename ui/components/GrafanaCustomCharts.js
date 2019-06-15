@@ -28,10 +28,10 @@ const grafanaStyles = theme => ({
       marginRight: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
-    iframe: {
-      minHeight: theme.spacing(55),
-      minWidth: theme.spacing(55),
-    }
+    // iframe: {
+    //   minHeight: theme.spacing(55),
+    //   minWidth: theme.spacing(55),
+    // }
   });
 
 class GrafanaCustomCharts extends Component {
@@ -90,7 +90,7 @@ class GrafanaCustomCharts extends Component {
                           {config.panels.map(panel => {
                             // if(panel.type === 'graph'){
                             return (
-                              <Grid item xs={12} sm={6} className={classes.iframe}>
+                              <Grid item xs={12} sm={6}>
                                 <GrafanaCustomChart
                                   key={this.genRandomNumberForKey()}
                                   board={config}
