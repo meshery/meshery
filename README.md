@@ -6,6 +6,8 @@ A multi-mesh management plane with initial functionality as a playground to faci
 
 - [Functionality](#functionality)
 - [Running Meshery](#running)
+  - [Quick start](https://layer5.io/meshery/#getting-started)
+  - [Docs](https://meshery.layer5.io/docs)
 - [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
   - [Design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
 - [Contributing](CONTRIBUTING.md/#contributing)
