@@ -27,12 +27,12 @@ Meshery Provides these features below as part of it's playground.
 ## What challenges does Meshery solve? 
 <p style="text-align:center;"><b>Service mesh management - one or multiple service meshes.</b><br /></p>
 
-<p>Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be 1) involved and 2) misinterpreted.<br /></p>
+<p style="margin-bottom:1em; margin-top:1em;">Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be 1) involved and 2) misinterpreted.</p>
 
 
-Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between service meshes and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.<br />
+<p style="margin-bottom:1em; margin-top:1em;">Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between service meshes and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.<br /></p>
 
-Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.<br />
+<p style="margin-bottom:1em; margin-top:1em;">Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.<br /></p>
 
 1. By leveraging Meshery you could achieve apples-to-apples performance comparision of service meshes
 1. Track your service mesh performance from release to release.
@@ -76,7 +76,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 * because regpatrol is closed sourcej, binary is not released, scripted for one mesh, and is produced by a vendor of that mesh.
 
 ### Why create Meshery and not use another benchmark tool?
-Meshery is purpose built for factilitating benchmarking of service meshes and their workloads. Other benchmark tools are not. There are some other tools used for service mesh benchmarking, like regpatrol. Regpatrol is used by IBM is not open source or available in binary form to use and has the following differences from Meshery:
+<p style="margin-bottom:1em; margin-top:1em;">Meshery is purpose built for factilitating benchmarking of service meshes and their workloads. Other benchmark tools are not. There are some other tools used for service mesh benchmarking, like regpatrol. Regpatrol is used by IBM is not open source or available in binary form to use and has the following differences from Meshery:</p>
 - Telemetry - regpatrol sources telemetry from Mixer Prometheus adapter and uses IBM's proprietary node agent.
 - Meshery sources from Mixer Prometheus adapter and uses Prometheus node-exporter.
 - Traffic type - regpatrol uses jmeter, which can parse responses and perform functional tests.
