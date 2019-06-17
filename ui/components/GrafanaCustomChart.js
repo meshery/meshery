@@ -398,6 +398,51 @@ class GrafanaCustomChart extends Component {
       }
     }
 
+    computeStep = (start, end) => {
+      let step = 10;
+      const diff = end-start;
+      const min = 60;
+      const hrs = 60*min;
+      const days = 24*hrs;
+      const month = 30*days; // approx.
+      const year = 12*month; // approx.
+
+      if (diff <= 30*min){ // 30 mins
+        step = 10;
+      } else if (diff > 30*min && diff <= 1*hrs ){ // 60 mins/1hr
+        step = 20;
+      } else if (diff > 1*hrs && diff <= 3*hrs) { // 3 hrs
+        step = 1*min;
+      } else if (diff > 3*hrs && diff <= 6*hrs) { // 6 hrs
+        step = 2*min;
+      } else if (diff > 6*hrs && diff <= 1*days) { // 24 hrs/1 day
+        step = 8*min;
+      } else if (diff > 1*days && diff <= 2*days) { // 2 days
+        step = 16*min;
+      } else if (diff > 2*days && diff <= 4*days) { // 4 days
+        step = 32*min;
+      } else if (diff > 4*days && diff <= 7*days) { // 7 days
+        step = 56*min;
+      } else if (diff > 7*days && diff <= 15*days) { // 15 days
+        step = 2*hrs;
+      } else if (diff > 15*days && diff <= 1*month) { // 30 days/1 month
+        step = 4*hrs;
+      } else if (diff > 1*month && diff <= 3*month) { // 3 months
+        step = 12*hrs;
+      } else if (diff > 3*month && diff <= 6*month) { // 6 months
+        step = 1*days;
+      } else if (diff > 6*month && diff <= 1*year) { // 1 year/12 months
+        step = 2*days;
+      } else if (diff > 1*year && diff <= 2*year) { // 2 years
+        step = 4*days;
+      } else if (diff > 2*year && diff <= 5*year) { // 5 years
+        step = 10*days;
+      } else {
+        step = 30*days;
+      }
+      return step;
+    }
+
     getData = async (ind, target, chartInst) => {
       const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail} = this.props;
       const {data, chartData} = this.state;
@@ -421,7 +466,7 @@ class GrafanaCustomChart extends Component {
       
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
-      const queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=10`; // step 5 or 10
+      const queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
       // TODO: need to check if it is ok to use datasource name instead of ID
                 
       dataFetch(`${queryRangeURL}?${queryParams}`, { 
@@ -533,7 +578,7 @@ class GrafanaCustomChart extends Component {
           ctx.font = "bold 16px 'Helvetica Nueue'";
           // ctx.fillText(chart.options.title.text, width / 2, 18);
           ctx.fillStyle = '#D32F2F';
-          ctx.fillText(`There was an error communicating with the server`, width/2, 40);
+          ctx.fillText(`There was an error communicating with the server`, width/2, 20);
           ctx.restore();
         } 
         if (self.panelType && self.panelType === 'sparkline'){
