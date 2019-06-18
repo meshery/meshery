@@ -127,7 +127,7 @@ export default function GrafanaCustomGaugeChart(props) {
     // const {chartData, options} = this.state;
     return (
       <NoSsr>
-        <div className={classes.title}>{panel.title}</div>
+        {/* <div className={classes.title}>{panel.title}</div> */}
         <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
         <div ref={ch => chartRef = ch} className={classes.root}>
         </div>
