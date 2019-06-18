@@ -6,18 +6,8 @@
 # [Meshery](https://layer5.io/meshery)
 
 A multi-mesh management plane with initial functionality as a playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) also serves as a service mesh performance benchmark.
-
-- [Functionality](#functionality)
-- [Running Meshery](#running)
-  - [Quick start](https://layer5.io/meshery/#getting-started)
-  - [Docs](https://meshery.layer5.io/docs)
-- [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
-  - [Design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
-- [Contributing](CONTRIBUTING.md/#contributing)
-  - [Write an adapter](CONTRIBUTING.md/#adapter)
-  - [Build the project](CONTRIBUTING.md/#building)
   
-In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. 
+In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. As a Service Mesh Interface (SMI) partner, Meshery participates in advancing service mesh adoption through standardization of APIs.
 
 ## <a name="functionality">Functionality</a>
 <img align="right" src="./ui/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
@@ -62,6 +52,18 @@ This project is community-built and welcomes collaboration!
 </p>
 </div>
 
+## More about Meshery
+
+- [Functionality](#functionality)
+- [Running Meshery](#running)
+  - [Quick start](https://layer5.io/meshery/#getting-started)
+  - [Docs](https://meshery.layer5.io/docs)
+- [Architecture](https://docs.google.com/presentation/d/1UbuYMpn-e-mWVYwEASy4dzyZlrSgZX6MUfNtokraT9o/edit?usp=sharing)
+  - [Design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing)
+- [Contributing](CONTRIBUTING.md/#contributing)
+  - [Write an adapter](CONTRIBUTING.md/#adapter)
+  - [Build the project](CONTRIBUTING.md/#building)
+  
 ## License
 
 This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
