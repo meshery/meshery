@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, ExpansionPanelDetails, Typography } from '@material-ui/core';
+import { NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
@@ -47,6 +47,10 @@ class GrafanaCustomCharts extends Component {
       to: 'now',
       liveTail: true,
       refresh: '10s',
+
+      chartDialogOpen: false,
+      chartDialogPanel: {},
+      chartDialogBoard: {},
     }
 
   }
@@ -57,9 +61,20 @@ class GrafanaCustomCharts extends Component {
     genRandomNumberForKey = () => {
       return Math.floor((Math.random() * 1000) + 1);
     }
+
+    chartDialogClose() {
+      var self = this;
+      return () => {
+        self.setState({chartDialogOpen: false});
+      }
+    }
+
+    handleChartDialogOpen = (board, panel) => {
+      this.setState({chartDialogOpen: true, chartDialogBoard: board, chartDialogPanel: panel });
+    }
     
     render() {
-        const {from, startDate, to, endDate, liveTail, refresh} = this.state;
+        const {from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard} = this.state;
         const { classes, boardPanelConfigs } = this.props;
         let {grafanaURL, grafanaAPIKey, prometheusURL} = this.props;
         // we are now proxying. . .
@@ -74,6 +89,41 @@ class GrafanaCustomCharts extends Component {
                   <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
                     refresh={refresh} updateDateRange={this.updateDateRange} />
                 </div>
+                <Dialog
+                  fullWidth={true}
+                  maxWidth="md"
+                  open={chartDialogOpen}
+                  onClose={this.chartDialogClose()}
+                  aria-labelledby="max-width-dialog-title"
+                >
+                  <DialogTitle id="max-width-dialog-title">{chartDialogPanel.title}</DialogTitle>
+                  <DialogContent>
+                    <div className={classes.dateRangePicker}>
+                      <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
+                        refresh={refresh} updateDateRange={this.updateDateRange} />
+                    </div>
+                    <GrafanaCustomChart
+                        key={this.genRandomNumberForKey()}
+                        board={chartDialogBoard}
+                        panel={chartDialogPanel}
+                        handleChartDialogOpen={this.handleChartDialogOpen}
+                        grafanaURL={grafanaURL}
+                        grafanaAPIKey={grafanaAPIKey}
+                        prometheusURL={prometheusURL}
+                        from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
+                        templateVars={chartDialogBoard.templateVars}
+                        updateDateRange={this.updateDateRange}
+                        inDialog={true}
+                      /> 
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.chartDialogClose()} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+
+
                 {boardPanelConfigs.map((config, ind) => (
                   // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
                   <ExpansionPanel square defaultExpanded={false}>
@@ -95,12 +145,14 @@ class GrafanaCustomCharts extends Component {
                                   key={this.genRandomNumberForKey()}
                                   board={config}
                                   panel={panel}
+                                  handleChartDialogOpen={this.handleChartDialogOpen}
                                   grafanaURL={grafanaURL}
                                   grafanaAPIKey={grafanaAPIKey}
                                   prometheusURL={prometheusURL}
                                   from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} refresh={refresh}
                                   templateVars={config.templateVars}
                                   updateDateRange={this.updateDateRange}
+                                  inDialog={false}
                                 /> 
                             </Grid>
                             );

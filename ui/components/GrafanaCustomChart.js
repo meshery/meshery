@@ -11,6 +11,7 @@ import { Chart, Line } from 'react-chartjs-2';
 import 'chartjs-plugin-colorschemes';
 import 'chartjs-plugin-deferred';
 import moment from 'moment';
+import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 if (typeof window !== 'undefined') { 
   require('chartjs-plugin-zoom');
@@ -54,7 +55,10 @@ const grafanaStyles = theme => ({
 			width: '10px',
 			height: '10px',
 			marginRight: '10px',
-		}
+    },
+    cardHeader: {
+      fontSize: theme.spacing(2),
+    }
   });
 
 const grafanaDateRangeToDate = (dt, startDate) => {
@@ -825,7 +829,7 @@ class GrafanaCustomChart extends Component {
     }
     
     render() {
-      const { classes, panel } = this.props;
+      const { classes, board, panel, inDialog, handleChartDialogOpen } = this.props;
       const {chartData, options, error} = this.state;
       let finalChartData = {
         datasets: [],
@@ -835,31 +839,28 @@ class GrafanaCustomChart extends Component {
       if(chartData.datasets.length === filteredData.length){
         finalChartData = chartData;
       }
+      let self = this;
+      let iconComponent = (<IconButton
+          key="chartDialog"
+          aria-label="Open chart in a dialog"
+          color="inherit"
+          onClick={() => handleChartDialogOpen(board, panel) }
+        >
+          <OpenInNewIcon className={classes.cardHeader} />
+        </IconButton>);
+      
+      let mainChart;
       if(this.panelType === 'gauge'){
-        return (
-          <NoSsr>
-            <Card>
-            <CardHeader
-              title={panel.title}
-            />
-              <CardContent>
-            <GrafanaCustomGaugeChart
+        mainChart = (
+          <GrafanaCustomGaugeChart
               data={finalChartData}
               panel={panel}
               error={error}
             />
-            </CardContent>
-            </Card>
-          </NoSsr>
         );
       } else {
-        return (
-          <NoSsr>
-            <Card>
-            <CardHeader
-              title={panel.title}
-            />
-            <CardContent>
+        mainChart = (
+          <React.Fragment>
             <Line data={finalChartData} options={options} plugins={[
               {
                 afterDraw: this.showMessageInChart(),
@@ -868,11 +869,24 @@ class GrafanaCustomChart extends Component {
             <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
               <table></table>
             </div>
-            </CardContent>
-            </Card>
-          </NoSsr>
+          </React.Fragment>
         );
       }
+      return (
+        <NoSsr>
+          <Card>
+          {!inDialog && <CardHeader
+            disableTypography={true}
+            title={panel.title}
+            action={iconComponent}
+            className={classes.cardHeader}
+          />}
+          <CardContent>
+            {mainChart}
+          </CardContent>
+          </Card>
+        </NoSsr>
+      );
     }
 }
 
@@ -884,6 +898,8 @@ GrafanaCustomChart.propTypes = {
   panel: PropTypes.object.isRequired,
   templateVars: PropTypes.array.isRequired,
   updateDateRange: PropTypes.func.isRequired,
+  handleChartDialogOpen: PropTypes.func.isRequired,
+  inDialog: PropTypes.bool.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
