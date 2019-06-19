@@ -42,6 +42,7 @@ const initialState = fromJS({
     prometheusURL: '',
     selectedPrometheusBoardsConfigs: [],
   },
+  staticPrometheusBoardConfig: {},
   showProgress: false,
 });
 
@@ -57,6 +58,7 @@ export const actionTypes = {
     CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
     UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
     UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
+    UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
     UPDATE_PROGRESS: 'UPDATE_PROGRESS',
 }
 
@@ -107,6 +109,9 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROMETHEUS_CONFIG:
       return state.updateIn(['prometheus'], val => fromJS(action.prometheus));
+
+    case actionTypes.UPDATE_STATIC_BOARD_CONFIG:
+        return state.updateIn(['staticPrometheusBoardConfig'], val => fromJS(action.staticPrometheusBoardConfig));
       
     // case actionTypes.DELETE_RESULTS_SELECTION:
     //   const rs = state.get('results_selection').toObject();
@@ -185,6 +190,10 @@ export const updateGrafanaConfig = ({grafana}) => dispatch => {
 
 export const updatePrometheusConfig = ({prometheus}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus });
+}
+
+export const updateStaticPrometheusBoardConfig = ({staticPrometheusBoardConfig}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_STATIC_BOARD_CONFIG, staticPrometheusBoardConfig });
 }
 
 

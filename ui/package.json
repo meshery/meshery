@@ -51,7 +51,8 @@
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
-    "styled-jsx": "latest"
+    "styled-jsx": "latest",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "http-proxy": "^1.17.0"
