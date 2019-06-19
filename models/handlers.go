@@ -31,6 +31,7 @@ type HandlerInterface interface {
 	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request)
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request)
 	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {

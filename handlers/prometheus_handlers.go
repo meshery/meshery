@@ -138,3 +138,38 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	}
 	w.Write(data)
 }
+
+func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("error getting session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+	promURL, _ := session.Values["promURL"].(string)
+	if promURL == "" {
+		w.Write([]byte("{}"))
+		return
+	}
+	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), promURL, true)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	board, err := prometheusClient.GetStaticBoard(req.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(board)
+	if err != nil {
+		logrus.Errorf("error marshalling board: %v", err)
+		http.Error(w, fmt.Sprintf("unable to marshal board: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
