@@ -9,14 +9,14 @@ import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
 import makeStyles from '@material-ui/styles/makeStyles';
 
-let c3;
+let bb;
 if (typeof window !== 'undefined') { 
-  c3 = require('c3');
+  bb = require('billboard.js');
 }
 
 const useStyles = makeStyles({
   '@global': {
-    '.c3-chart-arcs-background': {
+    '.bb-chart-arcs-background': {
       fill:'#e0e0e0',
       stroke: 'none',
     },
@@ -78,44 +78,52 @@ export default function GrafanaCustomGaugeChart(props) {
             glabel = data.datasets[0].label;
           }
 
-      const c3Chart = c3.generate({
-        oninit: function(args){
-          console.log(JSON.stringify(args));
-        },
-        bindto: chartRef,
-        data: {
-          columns: [
-            [glabel, gdata],
-          ],
-          type: 'gauge',
-        },
-        gauge: {
-             min,
-             max,
-             units,
-             label: {
-              show: glabel && glabel !== '',
-             },
-          //    width: 39 // for adjusting arc thickness
-        },
-        color: {
-            pattern: colors, // the three color levels for the percentage values.
-            threshold: {
-    //            unit: 'value', // percentage is default
-    //            max: 200, // 100 is default
-                values: thresholds,
-            }
-        },
-        legend: {
-          show: false,
-        },
-        tooltip: {
-          show: false
-        },
-        // size: {
-        //   height: '100%',
-        // }
-      });
+        let bbChart;
+        if (chartRef && chartRef !== null){
+          bbChart = bb.bb.generate({
+          // oninit: function(args){
+          //   console.log(JSON.stringify(args));
+          // },
+          bindto: chartRef,
+          data: {
+            columns: [
+              [glabel, gdata],
+            ],
+            type: 'gauge',
+          },
+          gauge: {
+              min,
+              max,
+              // units,
+              label: {
+                // show: glabel && glabel !== '',
+                format: function (value, ratio) { return value + units; },
+                extents: function (value, isMax) { 
+                  // return (isMax ? "Max:" : "Min:") + value; 
+                  return ''; 
+                }
+              },
+            //    width: 39 // for adjusting arc thickness
+          },
+          color: {
+              pattern: colors, // the three color levels for the percentage values.
+              threshold: {
+      //            unit: 'value', // percentage is default
+      //            max: 200, // 100 is default
+                  values: thresholds,
+              }
+          },
+          legend: {
+            show: false,
+          },
+          tooltip: {
+            show: false
+          },
+          // size: {
+          //   height: '100%',
+          // }
+        });
+      }
     }
 
     useEffect(() => {
