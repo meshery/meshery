@@ -448,7 +448,7 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail} = this.props;
+      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail, testUUID} = this.props;
       const {data, chartData} = this.state;
 
       const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
@@ -461,18 +461,21 @@ class GrafanaCustomChart extends Component {
       }
       const self = this;
       let expr = target.expr;
-      templateVars.forEach(tv => {
-        const tvrs = tv.split('=');
-        if (tvrs.length == 2){
-          expr = expr.replace(new RegExp(`$${tvrs[0]}`.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),tvrs[1]);
-        }
-      });
-      
+      if(templateVars && templateVars !== null && templateVars.length > 0){
+        templateVars.forEach(tv => {
+          const tvrs = tv.split('=');
+          if (tvrs.length == 2){
+            expr = expr.replace(new RegExp(`$${tvrs[0]}`.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),tvrs[1]);
+          }
+        });
+      }
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
-      const queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
+      let queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
       // TODO: need to check if it is ok to use datasource name instead of ID
-                
+      if (testUUID && testUUID.trim() !== ''){
+        queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
+      }
       dataFetch(`${queryRangeURL}?${queryParams}`, { 
         method: 'GET',
         credentials: 'include',
@@ -892,8 +895,8 @@ class GrafanaCustomChart extends Component {
 
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.string.isRequired,
-  grafanaAPIKey: PropTypes.string.isRequired,
+  // grafanaURL: PropTypes.string.isRequired,
+  // grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
   templateVars: PropTypes.array.isRequired,
