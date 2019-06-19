@@ -134,6 +134,8 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 		Panels: []*sdk.Panel{},
 		OrgID:  g.OrgID,
 	}
+	var err error
+
 	tmpDsName := map[string]string{}
 	if len(board.Templating.List) > 0 {
 		for _, tmpVar := range board.Templating.List {
@@ -154,11 +156,15 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 				logrus.Error(err)
 				return nil, err
 			}
-			ds, err := g.c.GetDatasourceByName(dsName)
-			if err != nil {
-				msg := fmt.Errorf("error getting board datasource with name - %s", dsName)
-				logrus.Error(errors.Wrapf(err, msg.Error()))
-				return nil, msg
+			if g.c != nil {
+				ds, err = g.c.GetDatasourceByName(dsName)
+				if err != nil {
+					msg := fmt.Errorf("error getting board datasource with name - %s", dsName)
+					logrus.Error(errors.Wrapf(err, msg.Error()))
+					return nil, msg
+				}
+			} else {
+				ds.Name = dsName
 			}
 
 			tvVal := tmpVar.Current.Text

@@ -43,8 +43,7 @@ func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*P
 
 func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*models.GrafanaBoard, error) {
 	board := &sdk.Board{}
-	err := json.Unmarshal(boardData, board)
-	if err != nil {
+	if err := json.Unmarshal(boardData, board); err != nil {
 		msg := errors.New("unable to parse grafana board data")
 		logrus.Error(errors.Wrap(err, msg.Error()))
 		return nil, msg
