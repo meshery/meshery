@@ -411,7 +411,9 @@ class GrafanaCustomChart extends Component {
       const month = 30*days; // approx.
       const year = 12*month; // approx.
 
-      if (diff <= 30*min){ // 30 mins
+      if (diff <= 10*min){ // 10 mins
+        step = 5;
+      } else if (diff <= 30*min){ // 30 mins
         step = 10;
       } else if (diff > 30*min && diff <= 1*hrs ){ // 60 mins/1hr
         step = 20;

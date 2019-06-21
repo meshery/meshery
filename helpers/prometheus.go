@@ -6,16 +6,18 @@ import (
 	"net/url"
 	"time"
 
-	// promAPI "github.com/prometheus/client_golang/api"
-	// promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/grafana-tools/sdk"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
+	promAPI "github.com/prometheus/client_golang/api"
+	promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
+	promModel "github.com/prometheus/common/model"
 	"github.com/sirupsen/logrus"
 )
 
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
+	promURL       string
 }
 
 func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*PrometheusClient, error) {
@@ -32,6 +34,7 @@ func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*P
 	// }, nil
 	p := &PrometheusClient{
 		grafanaClient: NewGrafanaClientForPrometheus(promURL),
+		promURL:       promURL,
 	}
 	if validate {
 		_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config")
@@ -67,11 +70,31 @@ func (p *PrometheusClient) GetStaticBoard(ctx context.Context) (*models.GrafanaB
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoard))
 }
 
-func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time) uint32 {
-	step := 10 * time.Second
+func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, query string, startTime, endTime time.Time, step time.Duration) (promModel.Value, error) {
+	c, _ := promAPI.NewClient(promAPI.Config{
+		Address: p.promURL,
+	})
+	qc := promQAPI.NewAPI(c)
+	result, _, err := qc.QueryRange(ctx, query, promQAPI.Range{
+		Start: startTime,
+		End:   endTime,
+		Step:  step,
+	})
+	if err != nil {
+		err := errors.Wrapf(err, "error fetching data for query: %s, with start: %v, end: %v, step: %v", query, startTime, endTime, step)
+		logrus.Error(err)
+		return nil, err
+	}
+	return result, nil
+}
+
+func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time) time.Duration {
+	step := 5 * time.Second
 	diff := end.Sub(start)
 	// all calc. here are approx.
-	if diff <= 30*time.Minute { // 30 mins
+	if diff <= 10*time.Minute { // 10 mins
+		step = 5 * time.Second
+	} else if diff <= 30*time.Minute { // 30 mins
 		step = 10 * time.Second
 	} else if diff > 30*time.Minute && diff <= time.Hour { // 60 mins/1hr
 		step = 20 * time.Second
@@ -104,7 +127,7 @@ func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time
 	} else {
 		step = 30 * 24 * time.Hour
 	}
-	return uint32(step.Seconds())
+	return step
 }
 
 const staticBoard = `
