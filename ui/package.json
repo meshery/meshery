@@ -32,7 +32,7 @@
     "jss": "latest",
     "material-ui-pickers": "^2.2.4",
     "moment": "^2.24.0",
-    "mui-datatables": "^2.1.0",
+    "mui-datatables": "^2.5.1",
     "next": "^8.1.0",
     "next-compose": "0.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.1",
