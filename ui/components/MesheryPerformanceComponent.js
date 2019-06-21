@@ -133,7 +133,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   submitLoadTest = () => {
-    const {testName, meshName, url, qps, c, t} = this.state;
+    const {testName, meshName, url, qps, c, t, testUUID} = this.state;
 
     let computedTestName = testName;
     if (testName.trim() === '') {
@@ -152,6 +152,7 @@ class MesheryPerformanceComponent extends React.Component {
       c,
       t: t1, 
       dur,
+      uuid: testUUID,
     };
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);

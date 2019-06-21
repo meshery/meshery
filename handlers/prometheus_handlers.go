@@ -131,6 +131,12 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
+	testUUID := reqQuery.Get("uuid")
+	if testUUID != "" {
+		q := reqQuery.Get("query")
+		h.config.QueryTracker.AddOrFlagQuery(req.Context(), testUUID, q, false)
+	}
+
 	data, err := prometheusClient.QueryRange(req.Context(), &reqQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

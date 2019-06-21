@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,9 +12,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
-
 	"github.com/layer5io/meshery/models"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,7 +32,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
-
+	promURL, _ := session.Values["promURL"].(string)
 	err = req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
@@ -46,6 +48,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	meshName := q.Get("mesh")
+	testUUID := q.Get("uuid")
 
 	loadTestOptions := &models.LoadTestOptions{}
 
@@ -107,7 +110,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
-	resultsMap, err := helpers.FortioLoadTest(loadTestOptions)
+	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
 		logrus.Errorf("error: unable to perform load test: %v", err)
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
@@ -134,16 +137,127 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
 		return
 	}
-	err = h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
+
+	resultID, err := h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 	if err != nil {
 		// logrus.Errorf("Error: unable to parse response from fortio: %v", err)
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
+
+	if promURL != "" && testUUID != "" && resultID != "" {
+		h.task.Call(&models.SubmitMetricsConfig{
+			TestUUID:  testUUID,
+			ResultID:  resultID,
+			PromURL:   promURL,
+			StartTime: resultInst.StartTime,
+			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
+			TokenKey:  h.config.SaaSTokenName,
+			TokenVal:  tokenVal,
+		})
+	}
+
 	w.Write(bd)
 }
 
-func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) error {
+func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
+	ctx := context.Background()
+	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
+	promClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false) // probably don't need to validate here
+	if err != nil {
+		return err
+	}
+	queryResults := map[string]map[string]interface{}{}
+	step := promClient.ComputeStep(ctx, config.StartTime, config.EndTime)
+	for query, flag := range queries {
+		if !flag {
+			seriesData, err := promClient.QueryRangeUsingClient(ctx, query, config.StartTime, config.EndTime, step)
+			if err != nil {
+				return err
+			}
+			queryResults[query] = map[string]interface{}{
+				"status": "success",
+				"data": map[string]interface{}{
+					"resultType": seriesData.Type(),
+					"result":     seriesData,
+				},
+			}
+			// sd, _ := json.Marshal(seriesData)
+			// sd, _ := json.Marshal(queryResponse)
+			// logrus.Debugf("Retrieved series data: %s", sd)
+			h.config.QueryTracker.AddOrFlagQuery(ctx, config.TestUUID, query, true)
+		}
+	}
+
+	prometheusClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false)
+	if err != nil {
+		return err
+	}
+
+	board, err := prometheusClient.GetStaticBoard(ctx)
+	if err != nil {
+		return err
+	}
+
+	resultUUID, err := uuid.FromString(config.ResultID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error parsing result uuid"))
+		return err
+	}
+	result := &models.MesheryResult{
+		ID:                resultUUID,
+		ServerMetrics:     queryResults,
+		ServerBoardConfig: board,
+	}
+	sd, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", sd, len(sd))
+
+	if err = h.publishMetricsToSaaS(config.TokenKey, config.TokenVal, sd); err != nil {
+		return err
+	}
+	// now to remove all the queries for the uuid
+	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
+	return nil
+}
+
+func (h *Handler) publishMetricsToSaaS(tokenKey, tokenVal string, bd []byte) error {
+	logrus.Infof("attempting to publish metrics to SaaS")
+	bf := bytes.NewBuffer(bd)
+	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result/metrics")
+	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	req.AddCookie(&http.Cookie{
+		Name:     tokenKey,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to send metrics: %v", err)
+		return err
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("metrics successfully published to SaaS")
+		return nil
+	}
+	defer resp.Body.Close()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return err
+	}
+	logrus.Errorf("error while sending metrics: %s", bdr)
+	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) (string, error) {
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(bd)
 	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result")
@@ -159,18 +273,27 @@ func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) err
 	resp, err := c.Do(req)
 	if err != nil {
 		logrus.Errorf("unable to send results: %v", err)
-		return err
-	}
-	if resp.StatusCode == http.StatusCreated {
-		logrus.Infof("results successfully pushlished to SaaS")
-		return nil
+		return "", err
 	}
 	defer resp.Body.Close()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return err
+		return "", err
+	}
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("results successfully published to SaaS")
+		idMap := map[string]string{}
+		if err = json.Unmarshal(bdr, &idMap); err != nil {
+			logrus.Errorf("unable to unmarshal body: %v", err)
+			return "", err
+		}
+		resultID, ok := idMap["id"]
+		if ok {
+			return resultID, nil
+		}
+		return "", nil
 	}
 	logrus.Errorf("error while sending results: %s", bdr)
-	return fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
