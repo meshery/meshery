@@ -435,11 +435,16 @@ class GrafanaCustomChart extends Component {
                 legend = legend.replace(`{{ `, '').replace(`{{`, '')
                             .replace(` }}`, '').replace(`}}`, '');
               }
-              newData.push(legend);
-              if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
-                cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
-                cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
+
+              // bb does NOT like labels which start with a number
+              if(!isNaN(legend.charAt(0))){
+                legend = ` ${legend}`;
               }
+              // if(legend.trim() === ''){
+              //   legend = 'NO VALUE';
+              // }
+              newData.push(legend);
+              
             // }
             data.forEach(({x, y}) => {
               newData.push(y);
@@ -517,9 +522,7 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions(xAxis, chartData, groups) {
-      const {panel, from, to} = this.props;
-      const fromDate = grafanaDateRangeToDate(from);
-      const toDate = grafanaDateRangeToDate(to);
+      const {panel} = this.props;
       const self = this;
 
       const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
@@ -534,7 +537,11 @@ class GrafanaCustomChart extends Component {
             fit: false,
             count: 5,
             // centered: true
-        }
+        },
+        // label: {
+        //   text: "X Label",
+        //   position: "outer-center"
+        // }
       }; 
 
       const yAxes = {
@@ -543,7 +550,10 @@ class GrafanaCustomChart extends Component {
       if(panel.yaxes){
         panel.yaxes.forEach(ya => {
           if(typeof ya.label !== 'undefined' && ya.label !== null){
-            yAxes.label = ya.label;
+            yAxes.label = {
+              text: ya.label,
+              position: "outer-middle",
+            };
           }
           if(ya.format.toLowerCase().startsWith('percent')){
             const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
@@ -571,7 +581,7 @@ class GrafanaCustomChart extends Component {
         shouldDisplayLegend = false;
       }
       if (self.chartRef && self.chartRef !== null){
-        self.chart = bb.bb.generate({
+        const chartConfig = {
           // oninit: function(args){
           //   console.log(JSON.stringify(args));
           // },
@@ -608,6 +618,8 @@ class GrafanaCustomChart extends Component {
             }
           },
           tooltip: {
+            show: showAxis,
+            linked: true,
             format: {
               title: function(x) {
                 // return d3.timeFormat(self.bbTimeFormat)(x);
@@ -615,7 +627,48 @@ class GrafanaCustomChart extends Component {
               }
             }
           },
-        });
+          area: {
+            linearGradient: true
+          },
+        };
+
+        if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
+          // cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
+          // cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
+          
+          const dataLength = chartConfig.data.columns && chartConfig.data.columns.length > 1? chartConfig.data.columns[1].length:0; // 0 is for x axis
+          if(dataLength > 0){
+            if(typeof chartConfig.data.colors === 'undefined'){
+              chartConfig.data.colors = {};
+            }
+            chartConfig.data.colors[chartConfig.data.columns[1][0]] = panel.sparkline.lineColor;
+
+            if(dataLength > 1){
+              let content = '';
+              if(panel.format.toLowerCase().startsWith('percent')){
+                const mulFactor = panel.format.toLowerCase() === 'percentunit'?100:1;
+                if(!isNaN(chartConfig.data.columns[1][dataLength-1])){
+                  const tk = (chartConfig.data.columns[1][dataLength-1] * mulFactor).toFixed(2);
+                  content = `${tk}%`;
+                }
+              } else {
+                content = `${chartConfig.data.columns[1][dataLength-1]} ${panel.format}`;
+              }
+              chartConfig.title = {
+                text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + content, // for sparkline, we want to print the value as title
+              };
+            }
+          }
+          
+          chartConfig.color = {
+            pattern: [
+              panel.sparkline.fillColor,
+            ]
+          };
+
+        }
+
+        self.chart = bb.bb.generate(chartConfig);
       }
     }
 
