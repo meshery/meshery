@@ -22,6 +22,8 @@ import { SnackbarProvider } from 'notistack';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
+
+import 'billboard.js/dist/billboard.min.css';
 import { blueGrey, grey } from '@material-ui/core/colors';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 
