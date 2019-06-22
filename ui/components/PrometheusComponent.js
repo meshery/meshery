@@ -181,14 +181,16 @@ class PrometheusComponent extends Component {
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
-      selectedPrometheusBoardsConfigs.push(boardsSelection);
-      this.setState({selectedPrometheusBoardsConfigs});
-      this.props.updatePrometheusConfig({
-        prometheus: {
-          prometheusURL,
-          selectedPrometheusBoardsConfigs,
-        },
-      })
+      if(boardsSelection && boardsSelection.panels && boardsSelection.panels.length){
+        selectedPrometheusBoardsConfigs.push(boardsSelection);
+        this.setState({selectedPrometheusBoardsConfigs});
+        this.props.updatePrometheusConfig({
+          prometheus: {
+            prometheusURL,
+            selectedPrometheusBoardsConfigs,
+          },
+        });
+      }
     }
 
     deleteSelectedBoardPanelConfig = (indexes) => {
