@@ -269,7 +269,7 @@ class GrafanaCustomChart extends Component {
       this.chartRef = null;
       this.chart = null;
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
-      this.bbTimeFormat = '%Y-%m-%d %H:%M:%S';
+      this.bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
       this.panelType = '';
       switch(props.panel.type){
         case 'graph':
@@ -499,30 +499,17 @@ class GrafanaCustomChart extends Component {
 
     updateDateRange(){
       const self = this;
-      let tm;
-      return  function({chart}){
-        if (typeof tm !== 'undefined'){
-          clearTimeout(tm);
+      return function(domain){
+        if(domain.length === 2){
+          let min = domain[0];
+          let max = domain[1];
+          self.props.updateDateRange(`${min.getTime().toString()}`, min, `${max.getTime().toString()}`, max, false, self.props.refresh);
         }
-        if(typeof chart !== 'undefined'){
-          let min = chart.scales["x-axis-0"].min;
-          let max = chart.scales["x-axis-0"].max;
-          tm = setTimeout(function(){
-            if(!isNaN(min) && !isNaN(max)){
-              min = Math.floor(min);
-              max = Math.floor(max);
-              self.props.updateDateRange(`${min}`, new Date(min), `${max}`, new Date(max), false, self.props.refresh);
-            } else {
-              self.props.updateDateRange(self.props.from, self.props.startDate, self.props.to, self.props.endDate, self.props.liveTail, self.props.refresh);  
-            }
-          }, 1000);
-        }
-        return false;
       }
     }
 
     createOptions(xAxis, chartData, groups) {
-      const {panel} = this.props;
+      const {panel, inDialog} = this.props;
       const self = this;
 
       const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
@@ -600,7 +587,8 @@ class GrafanaCustomChart extends Component {
           zoom: {
             enabled: {
               type: "drag"
-            }
+            },
+            onzoomend: self.updateDateRange(),
           },
           grid: grid,
           legend: {
@@ -619,7 +607,7 @@ class GrafanaCustomChart extends Component {
           },
           tooltip: {
             show: showAxis,
-            linked: true,
+            linked: !inDialog,
             format: {
               title: function(x) {
                 // return d3.timeFormat(self.bbTimeFormat)(x);
