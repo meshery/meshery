@@ -693,15 +693,7 @@ class GrafanaCustomChart extends Component {
     
     render() {
       const { classes, board, panel, inDialog, handleChartDialogOpen } = this.props;
-      const {error} = this.state;
-      let finalChartData = {
-        datasets: [],
-        labels: [],
-      }
-      // const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined')
-      // if(chartData.datasets.length === filteredData.length){
-      //   finalChartData = chartData;
-      // }
+      const {error, chartData} = this.state;
       let self = this;
       let iconComponent = (<IconButton
           key="chartDialog"
@@ -716,7 +708,7 @@ class GrafanaCustomChart extends Component {
       if(this.panelType === 'gauge'){
         mainChart = (
           <GrafanaCustomGaugeChart
-              data={finalChartData}
+              data={chartData}
               panel={panel}
               error={error}
             />
