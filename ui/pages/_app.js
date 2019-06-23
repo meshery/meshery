@@ -16,6 +16,8 @@ import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
 // link clicks, hence attemtpting to add them here
@@ -275,9 +277,11 @@ class MesheryApp extends App {
                                   >
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>
+                                    <MuiPickersUtilsProvider utils={MomentUtils}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
+                                    </MuiPickersUtilsProvider>
                                 </main>
                                 </SnackbarProvider>
                               <footer className={classes.footer}>
