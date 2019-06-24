@@ -18,7 +18,7 @@ const defaultToolbarSelectStyles = {
     top: "50%",
     display: "inline-block",
     position: "relative",
-    transform: "translateY(-50%)",
+    // transform: "translateY(-50%)",
   },
   icon: {
     color: "#000",
