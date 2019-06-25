@@ -1,5 +1,5 @@
 
-<nav role="navigation" aria-label="Main navigation" style="background-color: transparent; color: black">
+<nav role="navigation" aria-label="Main navigation" style="background-color: transparent;">
   <ul class="navigation-list" >
     {% assign pages_list = site.html_pages | sort:"nav_order" %}
     {% for node in pages_list %}
@@ -9,7 +9,7 @@
             {% if page.parent == node.title or page.grand_parent == node.title %}
               {% assign first_level_url = node.url | absolute_url %}
             {% endif %}
-            <a href="{{ node.url | absolute_url }}" class="navigation-list-link{% if page.url == node.url %} active{% endif %}" style="padding-top: unset; padding-bottom: unset; color: black"; >{{ node.title }}</a>
+            <a href="{{ node.url | absolute_url }}" class="navigation-list-link{% if page.url == node.url %} active{% endif %}" style="padding-top: unset; padding-bottom: unset;"; >{{ node.title }}</a>
             {% if node.has_children %}
               {% assign children_list = site.html_pages | sort:"nav_order" %}
               <ul class="navigation-list-child-list ">
@@ -19,7 +19,7 @@
                       {% if page.url == child.url or page.parent == child.title %}
                         {% assign second_level_url = child.url | absolute_url %}
                       {% endif %}
-                      <a href="{{ child.url | absolute_url }}" class="navigation-list-link{% if page.url == child.url %} active{% endif %}" style="color: black">{{ child.title }}</a>
+                      <a href="{{ child.url | absolute_url }}" class="navigation-list-link{% if page.url == child.url %} active{% endif %}">{{ child.title }}</a>
                       {% if child.has_children %}
                         {% assign grand_children_list = site.html_pages | sort:"nav_order" %}
                         <ul class="navigation-list-child-list">

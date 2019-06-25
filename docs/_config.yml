@@ -15,9 +15,10 @@
 # in the templates via {{ site.myvariable }}.
 title: Meshery Docs
 email: community@layer5.io
-description: >- # this means to ignore newlines until "baseurl:"
-  This is the documentation site for Meshery.
-baseurl: "/docs/" # the subpath of your site, e.g. /blog
+description: 
+  Documentation for Meshery, the multi-service mesh management plane for
+  Istio, Linkerd, Consul, Network Service Mesh, Octarine, App Mesh and other service meshes.
+baseurl: "/docs" # the subpath of your site, e.g. /blog
 url: "https://meshery.layer5.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: layer5
 
@@ -49,8 +50,6 @@ search_enabled: true
 # aux_links:
 #     "Layer 5":
 #       - "//layer5.io/meshery"
-
-# color_scheme: "dark"
 
 ga_tracking: UA-2969471-4
 
