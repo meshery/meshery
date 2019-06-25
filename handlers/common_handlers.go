@@ -18,6 +18,10 @@ import (
 // }
 
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	tu := "http://" + r.Host + r.RequestURI
 	token := r.URL.Query().Get(h.config.SaaSTokenName)
 
@@ -123,6 +127,10 @@ func (h *Handler) getUserDetails(tokenVal string) (*models.User, error) {
 
 // logoutHandler destroys the session on POSTs and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	client := http.Client{}
 	cReq, err := http.NewRequest(http.MethodGet, h.config.SaaSBaseURL+"/logout", req.Body)
 	if err != nil {

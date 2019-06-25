@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 type LoadTestOptions struct {
@@ -29,7 +31,11 @@ type LoadTestOptions struct {
 
 // MesheryResult - represents the results from Meshery test run to be shipped
 type MesheryResult struct {
+	ID     uuid.UUID              `json:"meshery_id,omitempty"`
 	Name   string                 `json:"name,omitempty"`
 	Mesh   string                 `json:"mesh,omitempty"`
 	Result map[string]interface{} `json:"runner_results,omitempty"`
+
+	ServerMetrics     interface{} `json:"server_metrics,omitempty"`
+	ServerBoardConfig interface{} `json:"server_board_config,omitempty"`
 }

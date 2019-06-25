@@ -38,7 +38,7 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 }
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
-func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, error) {
+func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	defaults := &periodic.DefaultRunnerOptions
 	// httpOpts := bincommon.SharedHTTPOptions()
 	httpOpts := sharedHTTPOptions(opts)
@@ -119,29 +119,34 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, error
 	if err != nil {
 		err = errors.Wrap(err, "error while running tests")
 		logrus.Error(err)
-		return nil, err
+		return nil, nil, err
 	}
 	logrus.Debugf("original version of the test: %+#v", res)
-	resultsMap := map[string]interface{}{}
+
+	var result *periodic.RunnerResults
 	var bd []byte
 	if opts.IsGRPC {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
 		bd, err = json.Marshal(gres)
+		result = gres.Result()
 	} else {
 		hres, _ := res.(*fhttp.HTTPRunnerResults)
 		bd, err = json.Marshal(hres)
+		result = hres.Result()
 	}
 	if err != nil {
-		err = errors.Wrap(err, "error while marshalling results")
+		err = errors.Wrap(err, "error while converting results to map")
 		logrus.Error(err)
-		return nil, err
+		return nil, nil, err
 	}
+
+	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
 		err = errors.Wrap(err, "error while unmarshaling data to map")
 		logrus.Error(err)
-		return nil, err
+		return nil, nil, err
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
-	return resultsMap, nil
+	return resultsMap, result, nil
 }

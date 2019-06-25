@@ -3,7 +3,10 @@ package models
 import (
 	"net/http"
 
+	"time"
+
 	"github.com/gorilla/sessions"
+	"github.com/vmihailenco/taskq"
 )
 
 type HandlerInterface interface {
@@ -15,6 +18,7 @@ type HandlerInterface interface {
 
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request)
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
+	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
 
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request)
@@ -25,6 +29,13 @@ type HandlerInterface interface {
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request)
+
+	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {
@@ -37,4 +48,13 @@ type HandlerConfig struct {
 	SaaSBaseURL   string
 
 	AdapterTracker AdaptersTrackerInterface
+	QueryTracker   QueryTrackerInterface
+
+	Queue taskq.Queue
+}
+
+type SubmitMetricsConfig struct {
+	TestUUID, ResultID, PromURL string
+	StartTime, EndTime          time.Time
+	TokenKey, TokenVal          string
 }

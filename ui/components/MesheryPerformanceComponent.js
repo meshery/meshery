@@ -12,9 +12,15 @@ import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData } from '../lib/store';
-import GrafanaCharts from './GrafanaCharts';
+import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
+// import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
+import GrafanaCustomCharts from './GrafanaCustomCharts';
+
+let uuid;
+if (typeof window !== 'undefined') { 
+  uuid = require('uuid/v4');
+}
 
 
 const meshes = [
@@ -49,6 +55,10 @@ const styles = theme => ({
   chartTitle: {
     textAlign: 'center',
   },
+  chartTitleGraf: {
+    textAlign: 'center',
+    marginTop: theme.spacing(5),
+  },
   chartContent: {
     minHeight: window.innerHeight * 0.7,
   },
@@ -57,7 +67,7 @@ const styles = theme => ({
 class MesheryPerformanceComponent extends React.Component {
   constructor(props){
     super(props);
-    const {testName, meshName, url, qps, c, t, result} = props;
+    const {testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig} = props;
 
     this.state = {
       testName, 
@@ -72,6 +82,9 @@ class MesheryPerformanceComponent extends React.Component {
       urlError: false,
       tError: false,
       testNameError: false,
+
+      testUUID: this.generateUUID(),
+      staticPrometheusBoardConfig,
     };
   }
 
@@ -120,7 +133,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   submitLoadTest = () => {
-    const {testName, meshName, url, qps, c, t} = this.state;
+    const {testName, meshName, url, qps, c, t, testUUID} = this.state;
 
     let computedTestName = testName;
     if (testName.trim() === '') {
@@ -139,6 +152,7 @@ class MesheryPerformanceComponent extends React.Component {
       c,
       t: t1, 
       dur,
+      uuid: testUUID,
     };
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -155,7 +169,6 @@ class MesheryPerformanceComponent extends React.Component {
       body: params
     }, result => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.setState({result, timerDialogOpen: false});
         this.props.enqueueSnackbar('Successfully fetched the data.', {
           variant: 'success',
           autoHideDuration: 2000,
@@ -179,14 +192,42 @@ class MesheryPerformanceComponent extends React.Component {
           t, 
           result,
         }});
+        this.setState({result, timerDialogOpen: false, testUUID: self.generateUUID()});
       }
-    }, self.handleError);
+    }, self.handleError("Load test did not run successfully with msg"));
   }
 
-  handleError = error => {
+  componentDidMount() {
+    this.getStaticPrometheusBoardConfig();
+  }
+
+  getStaticPrometheusBoardConfig = () => {
+    let self = this;
+    if ((self.props.staticPrometheusBoardConfig && self.props.staticPrometheusBoardConfig !== null && Object.keys(self.props.staticPrometheusBoardConfig).length > 0) || 
+      (self.state.staticPrometheusBoardConfig && self.state.staticPrometheusBoardConfig !==null && Object.keys(self.state.staticPrometheusBoardConfig).length > 0)) {
+      return;
+    }
+    dataFetch('/api/prometheus/static_board', { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      if (typeof result !== 'undefined' && typeof result.panels !== 'undefined' && result.panels.length > 0){
+        self.props.updateStaticPrometheusBoardConfig({
+          staticPrometheusBoardConfig: result,
+        });
+        self.setState({staticPrometheusBoardConfig: result});
+      }
+    }, self.handleError("unable to fetch pre-configured boards"));
+  }
+
+  generateUUID(){
+    return uuid();
+  }
+
+  handleError = (msg) => error => {
     this.setState({timerDialogOpen: false });
     const self = this;
-    this.props.enqueueSnackbar(`Load test did not run successfully with msg: ${error}`, {
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
       variant: 'error',
       action: (key) => (
         <IconButton
@@ -207,24 +248,57 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   render() {
-    const { classes, grafana } = this.props;
-    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, urlError, tError } = this.state;
-
+    const { classes, grafana, prometheus } = this.props;
+    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, 
+        urlError, tError, testUUID } = this.state;
+    let staticPrometheusBoardConfig;
+    if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
+      staticPrometheusBoardConfig = this.props.staticPrometheusBoardConfig;
+    } else {
+      staticPrometheusBoardConfig = this.state.staticPrometheusBoardConfig;
+    }
     let chartStyle = {}
     if (timerDialogOpen) {
       chartStyle = {opacity: .3};
     }
-
+    let displayStaticCharts = '';
     let displayGCharts = '';
+    let displayPromCharts = '';
+    if (staticPrometheusBoardConfig && staticPrometheusBoardConfig !== null && Object.keys(staticPrometheusBoardConfig).length > 0 && prometheus.prometheusURL !== '') {
+      displayStaticCharts = (
+        <React.Fragment>
+          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            Server Metrics
+          </Typography>
+        <GrafanaCustomCharts
+          boardPanelConfigs={[staticPrometheusBoardConfig]} 
+          prometheusURL={prometheus.prometheusURL} 
+          testUUID={testUUID} />
+        </React.Fragment>
+      );
+    }
+    if (prometheus.selectedPrometheusBoardsConfigs.length > 0) {
+      displayPromCharts = (
+        <React.Fragment>
+          <Typography variant="h6" gutterBottom cclassName={classes.chartTitleGraf}>
+            Prometheus charts
+          </Typography>
+        <GrafanaCustomCharts
+          boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
+          prometheusURL={prometheus.prometheusURL} />
+        </React.Fragment>
+      );
+    }
     if (grafana.selectedBoardsConfigs.length > 0) {
       displayGCharts = (
         <React.Fragment>
-          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+          <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
             Grafana charts
           </Typography>
-        <GrafanaCharts 
+        <GrafanaCustomCharts
           boardPanelConfigs={grafana.selectedBoardsConfigs} 
-          grafanaURL={grafana.grafanaURL} />
+          grafanaURL={grafana.grafanaURL}
+          grafanaAPIKey={grafana.grafanaAPIKey} />
         </React.Fragment>
       );
     }
@@ -363,7 +437,11 @@ class MesheryPerformanceComponent extends React.Component {
       
       </div>
     </React.Fragment>
-    
+
+    {displayStaticCharts}
+
+    {displayPromCharts}
+
     {displayGCharts}
 
       </NoSsr>
@@ -377,7 +455,8 @@ MesheryPerformanceComponent.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch)
+    updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
+    updateStaticPrometheusBoardConfig: bindActionCreators(updateStaticPrometheusBoardConfig, dispatch),
   }
 }
 const mapStateToProps = state => {
@@ -394,7 +473,9 @@ const mapStateToProps = state => {
   //   }
   // }
   const grafana = state.get("grafana").toJS();
-  return {...loadTest, grafana};
+  const prometheus = state.get("prometheus").toJS();
+  const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
+  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig};
 }
 
 

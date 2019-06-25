@@ -12,6 +12,9 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/vmihailenco/taskq"
+	"github.com/vmihailenco/taskq/memqueue"
 )
 
 func main() {
@@ -35,10 +38,16 @@ func main() {
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
+	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes())) // this is making us re-initiate login after every restart
 	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery2019"))
 	fileSessionStore.MaxLength(0)
+
+	queueFactory := memqueue.NewFactory()
+	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
+		Name: "loadTestReporterQueue",
+	})
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		SaaSBaseURL: saasBaseURL,
@@ -51,10 +60,20 @@ func main() {
 		SaaSTokenName: "meshery_saas",
 
 		AdapterTracker: adapterTracker,
+		QueryTracker:   queryTracker,
+
+		Queue: mainQueue,
 	})
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)
+
+	// go func() {
+	// 	err := mainQueue.Consumer().Start()
+	// 	if err != nil {
+	// 		logrus.Fatal(err)
+	// 	}
+	// }()
 
 	logrus.Infof("Starting Server listening on :%d", port)
 	if err := r.Run(); err != nil {
