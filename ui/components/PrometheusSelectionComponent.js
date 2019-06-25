@@ -6,9 +6,10 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
+import {Controlled as CodeMirror} from 'react-codemirror2'
 
 
-const grafanaStyles = theme => ({
+const promStyles = theme => ({
     root: {
       padding: theme.spacing(5),
     },
@@ -46,13 +47,13 @@ const grafanaStyles = theme => ({
     }
   });
 
-class GrafanaSelectionComponent extends Component {
+class PrometheusSelectionComponent extends Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            grafanaBoards: [],
             grafanaBoard: '',
+            grafanaBoardError: false,
             grafanaBoardObject: {},
             templateVars: [],
             templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
@@ -65,7 +66,17 @@ class GrafanaSelectionComponent extends Component {
     
       handleChange = name => event => {
         if (name === 'grafanaBoard'){
-            this.boardChange(event.target.value);
+            // if (this.cmEditor.state.lint.marked.length > 0) {
+            //   this.setState({grafanaBoardError: true});
+            //   return
+            // }
+            // if(this.boardTimeout) {
+            //   clearnTimeout(this.boardTimeout);
+            // }
+            // const self = this;
+            // this.boardTimeout = setTimeout(function(){
+            //   self.boardChange(event.target.value);
+            // }, 500);
         } else if (name.startsWith('template_var_')) {
           this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
@@ -93,27 +104,54 @@ class GrafanaSelectionComponent extends Component {
 
 
       boardChange = (newVal) => {
-        this.props.grafanaBoards.forEach((board) => {
-          if (board.uri === newVal) {
+        this.props.updateProgress({showProgress: true});
+          let self = this;
+          dataFetch('/api/prometheus/board_import', { 
+            credentials: 'same-origin',
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: newVal,
+          }, result => {
+            this.props.updateProgress({showProgress: false});
+            if (typeof result !== 'undefined'){
               this.setState({
-                grafanaBoard: newVal,
-                panels: board.panels, 
-                selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
-                templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
+                grafanaBoardObject: result,
+                panels: result.panels, 
+                selectedPanels: result.panels.map(panel=>panel.id), // selecting all panels by default
+                templateVars: result.template_vars && result.template_vars.length > 0?result.template_vars:[],
                 templateVarOptions: [],
                 selectedTemplateVars: [],
               });
-              if(board.template_vars && board.template_vars.length > 0){
-                this.queryTemplateVars(0, board.template_vars, [], []);
+              if(result.template_vars && result.template_vars.length > 0){
+                this.queryTemplateVars(0, result.template_vars, [], []);
               }
-          }
-        });
+            }
+          }, self.props.handleError);
+
+        // this.props.grafanaBoards.forEach((board) => {
+        //   if (board.uri === newVal) {
+        //       this.setState({
+        //         grafanaBoard: newVal,
+        //         panels: board.panels, 
+        //         selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
+        //         templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
+        //         templateVarOptions: [],
+        //         selectedTemplateVars: [],
+        //       });
+        //       if(board.template_vars && board.template_vars.length > 0){
+        //         this.queryTemplateVars(0, board.template_vars, [], []);
+        //       }
+        //   }
+        // });
       }
     
       
       queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
         if (templateVars.length > 0) {
-          let queryURL = `/api/grafana/query?query=${encodeURIComponent(templateVars[ind].query)}&dsid=${templateVars[ind].datasource.id}`;
+          let queryURL = `/api/prometheus/query?query=${encodeURIComponent(templateVars[ind].query)}`;
           for(let i=ind;i>0;i--){
             queryURL += `&${templateVars[i-1].name}=${selectedTemplateVars[i-1]}`;
           }
@@ -173,32 +211,24 @@ class GrafanaSelectionComponent extends Component {
       }
     }
 
-    static getDerivedStateFromProps(props, state){
-      if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
-        return {
-          grafanaBoards: props.grafanaBoards,
-          grafanaBoard: '',
-          selectedPanels: [],
-        };
-      }
-      return null;
-    }
+    // static getDerivedStateFromProps(props, state){
+    //   if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
+    //     return {
+    //       grafanaBoards: props.grafanaBoards,
+    //       grafanaBoard: '',
+    //       selectedPanels: [],
+    //     };
+    //   }
+    //   return null;
+    // }
 
     addSelectedBoardPanelConfig = () => {
-      const {grafanaBoard, grafanaBoards, templateVars, selectedTemplateVars, selectedPanels, panels} = this.state;
+      const {grafanaBoardObject, templateVars, selectedTemplateVars, selectedPanels, panels} = this.state;
       const boardConfig = {};
-      grafanaBoards.forEach((board) => {
-        if (grafanaBoard === board.uri){
-          boardConfig.board = board;
-          return;
-        }
-      })
-      
+      boardConfig.board = grafanaBoardObject;
       boardConfig.panels = panels.filter(({id}) => selectedPanels.indexOf(id) > -1);
-
       boardConfig.templateVars = templateVars.map(({name}, index) => (typeof selectedTemplateVars[index] !== 'undefined' ?
                                                                                 `${name}=${selectedTemplateVars[index]}`:''));
-
       this.props.addSelectedBoardPanelConfig(boardConfig);
     }
 
@@ -208,9 +238,9 @@ class GrafanaSelectionComponent extends Component {
     
     render = () => {
         var self = this;
-        const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
-          handleGrafanaChipDelete } = this.props;
-        const { panels, grafanaBoards, selectedPanels,
+        const { classes, prometheusURL, 
+          handlePrometheusChipDelete } = this.props;
+        const { panels, selectedPanels,
           grafanaBoard, templateVars, templateVarOptions } = this.state;
         return (
           <NoSsr>
@@ -218,40 +248,52 @@ class GrafanaSelectionComponent extends Component {
             <div className={classes.root}>
             <div className={classes.alignRight}>
                 <Chip 
-                    label={grafanaURL}
-                    onDelete={handleGrafanaChipDelete} 
-                    icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
+                    label={prometheusURL}
+                    onDelete={handlePrometheusChipDelete} 
+                    icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
                     variant="outlined" />
             </div>
             <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                      id="grafanaBoardSearch"
-                      name="grafanaBoardSearch"
-                      label="Board Search"
-                      fullWidth
-                      value={grafanaBoardSearch}
-                      margin="normal"
-                      variant="outlined"
-                      onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')} // this event will be sent to the parent
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                        select
-                        id="grafanaBoard"
-                        name="grafanaBoard"
-                        label="Board"
-                        fullWidth
-                        value={grafanaBoard}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('grafanaBoard')}
-                    >
-                        {grafanaBoards && grafanaBoards.map((board) => (
-                            <MenuItem key={'bd_---_'+board.uri} value={board.uri}>{board.title}</MenuItem>
-                        ))}
-                  </TextField>
+                <Grid item xs={12}>
+                  <CodeMirror
+                      editorDidMount={editor => { this.cmEditor = editor }}
+                      value={grafanaBoard}
+                      options={{
+                        theme: 'material',
+                        lineNumbers: true,
+                        lineWrapping: true,
+                        gutters: ["CodeMirror-lint-markers"],
+                        lint: true,
+                        mode: "application/json"
+                      }}
+                      onBeforeChange={(editor, data, value) => {
+                        self.setState({
+                          grafanaBoard: value, 
+                          grafanaBoardObject: {},
+                          panels: [], 
+                          selectedPanels: [],
+                          templateVars: [],
+                          templateVarOptions: [],
+                          selectedTemplateVars: [],
+                        });
+                        if(typeof self.boardTimeout !== 'undefined') {
+                          clearTimeout(self.boardTimeout);
+                        }
+                        self.boardTimeout = setTimeout(function(){
+                          console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
+                          if(value !== '' && self.cmEditor.state.lint.marked.length === 0) {
+                            self.setState({ grafanaBoardError: false});
+                          } else {
+                            self.setState({grafanaBoardError: true});
+                            return
+                          }  
+                          self.boardChange(value);
+                        }, 1000);
+                      }}
+                      onChange={(editor, data, value) => {
+                        
+                      }}
+                    />
                 </Grid>
                 {templateVars.length > 0 && 
                   templateVars.map(({name}, ind) => {
@@ -339,12 +381,10 @@ class GrafanaSelectionComponent extends Component {
     }
 }
 
-GrafanaSelectionComponent.propTypes = {
+PrometheusSelectionComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.string.isRequired,
-  // grafanaBoards: PropTypes.array.isRequired,
-  handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
-  handleGrafanaChipDelete: PropTypes.func.isRequired,
+  prometheusURL: PropTypes.string.isRequired,
+  handlePrometheusChipDelete: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
 };
@@ -358,7 +398,7 @@ const mapStateToProps = state => {
   return {};
 }
 
-export default withStyles(grafanaStyles)(connect(
+export default withStyles(promStyles)(connect(
   mapStateToProps,
   mapDispatchToProps
-)(GrafanaSelectionComponent));
+)(PrometheusSelectionComponent));

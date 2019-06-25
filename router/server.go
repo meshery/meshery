@@ -31,6 +31,13 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(http.HandlerFunc(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryHandler)))
+	mux.Handle("/api/grafana/query_range", h.AuthMiddleware(http.HandlerFunc(h.GrafanaQueryRangeHandler)))
+
+	mux.Handle("/api/prometheus/config", h.AuthMiddleware(http.HandlerFunc(h.PrometheusConfigHandler)))
+	mux.Handle("/api/prometheus/board_import", h.AuthMiddleware(http.HandlerFunc(h.GrafanaBoardImportForPrometheusHandler)))
+	mux.Handle("/api/prometheus/query", h.AuthMiddleware(http.HandlerFunc(h.PrometheusQueryHandler)))
+	mux.Handle("/api/prometheus/query_range", h.AuthMiddleware(http.HandlerFunc(h.PrometheusQueryRangeHandler)))
+	mux.Handle("/api/prometheus/static_board", h.AuthMiddleware(http.HandlerFunc(h.PrometheusStaticBoardHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
 	mux.HandleFunc("/login", h.LoginHandler)

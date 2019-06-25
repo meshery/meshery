@@ -11,6 +11,7 @@ import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import {connect} from "react-redux";
 import { Divider, StepLabel, Icon } from '@material-ui/core';
+import PrometheusComponent from './PrometheusComponent';
 
 const styles = theme => ({
   root: {
@@ -39,11 +40,11 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Kubernetes', 'Adapters', 'Grafana'];
+  return ['Kubernetes', 'Adapters', 'Grafana', 'Prometheus'];
 }
 
 function getRequiredSteps(){
-  return [true, true, false];
+  return [true, true, false, false];
 }
 
 function getStepContent(step) {
@@ -60,24 +61,29 @@ function getStepContent(step) {
       return (
         <GrafanaComponent />
       );
+    case 3:
+      return (
+        <PrometheusComponent />
+      );
   }
 }
 
 class MesheryConfigSteps extends React.Component {
   constructor(props){
     super(props);
-    const {k8sconfig, meshAdapters, grafana} = props;
+    const {k8sconfig, meshAdapters, grafana, prometheus} = props;
     this.state = {
       activeStep: 0,
       completed: {},
       k8sconfig, 
       meshAdapters, 
       grafana,
+      prometheus,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {k8sconfig, meshAdapters, grafana} = props;
+    const {k8sconfig, meshAdapters, grafana, prometheus} = props;
     const { completed } = state;
 
     if(k8sconfig.clusterConfigured) {
@@ -90,13 +96,18 @@ class MesheryConfigSteps extends React.Component {
     } else {
       completed[1] = false;
     }
-    if (grafana.grafanaURL !== '' && grafana.grafanaBoards.length > 0) {
+    if (grafana.grafanaURL !== '' && grafana.selectedBoardsConfigs.length > 0) {
       completed[2] = true;
     } else {
       completed[2] = false;
     }
+    if (prometheus.prometheusURL !== '' && prometheus.selectedPrometheusBoardsConfigs.length > 0) {
+      completed[3] = true;
+    } else {
+      completed[3] = false;
+    }
 
-    return {k8sconfig, meshAdapters, grafana, completed};
+    return {k8sconfig, meshAdapters, grafana, prometheus, completed};
   }
 
   totalSteps = () => getSteps().length;
@@ -238,7 +249,8 @@ const mapStateToProps = state => {
   const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get("meshAdapters").toJS();
   const grafana = state.get("grafana").toJS();
-  return {k8sconfig, meshAdapters, grafana};
+  const prometheus = state.get("prometheus").toJS();
+  return {k8sconfig, meshAdapters, grafana, prometheus};
 }
 
 MesheryConfigSteps.propTypes = {

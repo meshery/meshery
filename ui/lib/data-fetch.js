@@ -1,6 +1,10 @@
 import fetch from 'isomorphic-unfetch'
 
 const dataFetch = (url, options = {}, successFn, errorFn) => {
+  // const controller = new AbortController();
+  // const signal = controller.signal;
+  // options.signal = signal;
+  // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
   fetch(url, options)
     .then(res => {
       if (res.status === 401 || res.redirected){

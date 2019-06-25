@@ -10,6 +10,10 @@ import (
 )
 
 func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
 		logrus.Errorf("error getting session: %v", err)

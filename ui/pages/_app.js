@@ -27,10 +27,16 @@ import MesheryProgressBar from '../components/MesheryProgressBar';
 
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
+  require('codemirror/mode/javascript/javascript'); 
   require('codemirror/addon/lint/lint');
   require('codemirror/addon/lint/yaml-lint');
+  require('codemirror/addon/lint/json-lint');
   if (typeof window.jsyaml === 'undefined'){
     window.jsyaml = require('js-yaml');
+  }
+  if (typeof window.jsonlint === 'undefined'){
+    // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
+    window.jsonlint = require('jsonlint-mod'); 
   }
 }
 
