@@ -2,7 +2,7 @@
 layout: page
 title: Architecture
 permalink: /architecture
-parent: Meshery
+parent: Overview
 nav_order: 3
 ---
 
