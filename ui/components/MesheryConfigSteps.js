@@ -124,9 +124,10 @@ class MesheryConfigSteps extends React.Component {
       switch(this.state.activeStep){
         case 0:
         case 1:
+        case 2:
           activeStep = this.state.activeStep + 1;
           break;
-        case 2:
+        case 3:
           activeStep = 0;
           break;
       }
@@ -140,10 +141,11 @@ class MesheryConfigSteps extends React.Component {
     let activeStep;
     switch(this.state.activeStep){
       case 0:
-      activeStep = 2;
+      activeStep = 3;
         break;
       case 1:
       case 2:
+      case 3:
         activeStep = this.state.activeStep - 1;
         break;
     }
