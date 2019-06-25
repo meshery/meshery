@@ -90,15 +90,21 @@ nav ul li.active {
 }
 
 .navigation-list-child-list .navigation-list-item::before {
-    content: "" !important;
+    content: "" !important; 
 }
 
 .navigation-list-link.active {
-    color: white !important;
+    color: black !important;
+}
+.navigation-list-link {
+    color: black !important;
 }
 
 .navigation-list-child-list .navigation-list-item {
     width: 100%;
+    color: white;
+    margin-left:1em;
+    padding-left:1em;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -122,7 +128,8 @@ code {
 }
 
 p {
-    line-height: 2rem;
+    line-height: 1.25em;
+    font-size: 1em;
 }
 
 h2 {
