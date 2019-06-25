@@ -19,12 +19,14 @@ import { updatepagepathandtitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } from '@fortawesome/free-solid-svg-icons';
 
 const categories = [
-  { id: 'Performance', icon: <TimerIcon />, href: "/performance", title: 'Performance Test', show: true },
+  { id: 'Performance', icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, href: "/performance", title: 'Performance Test', show: true },
   { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
-  { id: 'Playground', icon: <LaptopIcon />, href: "/playground", title: 'Play with Meshery', show: true },
-  { id: 'Results', icon: <CollectionsIcon />, href: "/results", title: 'View & Compare Results', show: true },
+  { id: 'Playground', icon:  <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />, href: "/playground", title: 'Play with Meshery', show: true },
+  { id: 'Results', icon: <FontAwesomeIcon icon={faPollH} fixedWidth />, href: "/results", title: 'View & Compare Results', show: true },
 ]
 
 const styles = theme => ({
@@ -180,7 +182,7 @@ class Navigator extends React.Component {
                             )}
                         >
                           <div className={classNames(classes.link)} >
-                              <ListItemIcon className={classes.listIcon}><ExitToAppIcon /></ListItemIcon>
+                              <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
                               <ListItemText
                               classes={{
                                   primary: classes.itemPrimary,
