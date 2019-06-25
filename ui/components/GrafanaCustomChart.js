@@ -509,7 +509,7 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions(xAxis, chartData, groups) {
-      const {panel, inDialog} = this.props;
+      const {panel, board, inDialog} = this.props;
       const self = this;
 
       const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
@@ -562,6 +562,10 @@ class GrafanaCustomChart extends Component {
         //     show: showAxis,
         // }
       };
+
+      const linked = !inDialog?{
+        name: board && board.title?board.title:'',
+      }:false;
       
       let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10?true:false;
       if(panel.type !== 'graph'){
@@ -607,7 +611,7 @@ class GrafanaCustomChart extends Component {
           },
           tooltip: {
             show: showAxis,
-            linked: !inDialog,
+            linked,
             format: {
               title: function(x) {
                 // return d3.timeFormat(self.bbTimeFormat)(x);
