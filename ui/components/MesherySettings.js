@@ -13,7 +13,7 @@ import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
 import ThumbDown from '@material-ui/icons/ThumbDown';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 import Typography from '@material-ui/core/Typography';
-import { Paper } from '@material-ui/core';
+import { Paper, Tooltip } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPoll, faCloudMeatball } from '@fortawesome/free-solid-svg-icons';
 // import {  } from '@fortawesome/free-regular-svg-icons';
@@ -89,15 +89,21 @@ class MesherySettings extends React.Component {
           indicatorColor="secondary"
           textColor="secondary"
         >
-          <Tab icon={
-            <FontAwesomeIcon icon={faCloudMeatball} transform={mainIconScale} fixedWidth />
-          } label="Environment" />
-          <Tab icon={
-            <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} fixedWidth />
-          } label="Service Meshes" />
-          <Tab icon={
-            <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
-          } label="Metrics" />
+          <Tooltip title="Identify your cluster" placement="top">
+            <Tab icon={
+              <FontAwesomeIcon icon={faCloudMeatball} transform={mainIconScale} fixedWidth />
+            } label="Environment"  />
+          </Tooltip>
+          <Tooltip title="Connect Meshery Adapters" placement="top">
+            <Tab icon={
+              <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} fixedWidth />
+            } label="Service Meshes" />
+          </Tooltip>
+          <Tooltip title="Configure Metrics backends" placement="top">
+            <Tab icon={
+              <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
+            } label="Metrics" />
+          </Tooltip>
         </Tabs>
       </Paper>
       {tabVal === 0 && <TabContainer>
