@@ -251,6 +251,7 @@ class MesheryApp extends App {
                 <title>Meshery</title>
                 </Head>
                 <MuiThemeProvider theme={theme}>
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
                         <div className={classes.root}>
                             <CssBaseline />
                             <nav className={classes.drawer}>
@@ -291,6 +292,7 @@ class MesheryApp extends App {
                               </footer>
                             </div>
                         </div>
+                    </MuiPickersUtilsProvider>
                 </MuiThemeProvider>
             </Provider>
       </Container>
