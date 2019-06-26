@@ -33,6 +33,9 @@ const styles = theme => ({
   },
   backToPlay: {
     margin: theme.spacing(2),
+  },
+  link: {
+    cursor: 'pointer',
   }
 });
 
@@ -102,7 +105,9 @@ class MesherySettings extends React.Component {
       backToPlay = (
         <div className={classes.backToPlay}>
           <Link href={"/playground"}>
+            <div className={classes.link}>
             <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth /> You are all set to play with service meshes
+            </div>
           </Link>    
         </div>
       );
