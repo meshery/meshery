@@ -2,27 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from "react-redux";
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
-import HelpIcon from '@material-ui/icons/Help';
-import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
-import ThumbDown from '@material-ui/icons/ThumbDown';
-import ThumbUp from '@material-ui/icons/ThumbUp';
 import Typography from '@material-ui/core/Typography';
-import { Paper, Tooltip } from '@material-ui/core';
+import { Paper, Tooltip, AppBar } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPoll, faCloudMeatball } from '@fortawesome/free-solid-svg-icons';
-// import {  } from '@fortawesome/free-regular-svg-icons';
+import { faPoll, faCloud, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
-// import { faArrowRight, faTrashAlt, faTerminal, faExternalLinkSquareAlt, faPoll } from '@fortawesome/free-regular-svg-icons';
+import Link from "next/link";
 
 const styles = theme => ({
   root: {
@@ -31,13 +22,28 @@ const styles = theme => ({
     // backgroundColor: theme.palette.background.paper,
   },
   icon: {
-    width: theme.spacing(2.5),
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
+  iconText: {
+    display: 'inline',
+    verticalAlign: 'middle',
+  },
+  backToPlay: {
+    margin: theme.spacing(2),
+  }
 });
 
 function TabContainer(props) {
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div" style={{ 
+      // paddingLeft: 8*3,
+      // paddingRight: 8*3,
+      // paddingBottom: 8*3,
+      paddingTop: 2,
+     }}>
       {props.children}
     </Typography>
   );
@@ -62,6 +68,19 @@ class MesherySettings extends React.Component {
     };
   }
 
+  static getDerivedStateFromProps(props, state){
+    if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig) || 
+        JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
+        return {
+            k8sconfig: props.k8sconfig,
+            meshAdapters: props.meshAdapters,
+            grafana: props.grafana,
+            prometheus: props.prometheus,
+        };
+    }
+    return null;
+  }
+
   handleChange(val) {
     const self = this;
     return (event, newVal) => {
@@ -75,10 +94,19 @@ class MesherySettings extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const {tabVal, subTabVal} = this.state;
+    const {tabVal, subTabVal, k8sconfig, meshAdapters} = this.state;
 
     const mainIconScale = "grow-10"
-    
+    let backToPlay = '';
+    if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
+      backToPlay = (
+        <div className={classes.backToPlay}>
+          <Link href={"/playground"}>
+            <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth /> You are all set to play with service meshes
+          </Link>    
+        </div>
+      );
+    }
     return (
       <div className={classes.root}>
       <Paper square className={classes.root}>
@@ -86,12 +114,12 @@ class MesherySettings extends React.Component {
           value={tabVal}
           onChange={this.handleChange("tabVal")}
           variant="fullWidth"
-          indicatorColor="secondary"
-          textColor="secondary"
+          indicatorColor="primary"
+          textColor="primary"
         >
           <Tooltip title="Identify your cluster" placement="top">
             <Tab icon={
-              <FontAwesomeIcon icon={faCloudMeatball} transform={mainIconScale} fixedWidth />
+              <FontAwesomeIcon icon={faCloud} transform={mainIconScale} fixedWidth />
             } label="Environment"  />
           </Tooltip>
           <Tooltip title="Connect Meshery Adapters" placement="top">
@@ -114,22 +142,26 @@ class MesherySettings extends React.Component {
       </TabContainer>}
       {tabVal === 2 && 
         <TabContainer>
-          <Paper square className={classes.root}>
+          <AppBar position="static" color="default">
             <Tabs
               value={subTabVal}
               onChange={this.handleChange("subTabVal")}
-              indicatorColor="secondary"
-              textColor="secondary"
+              indicatorColor="primary"
+              textColor="primary"
               variant="fullWidth"
             >
-              <Tab icon={
-                <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-              } label="Grafana" />
-              <Tab icon={
-                <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
-              } label="Prometheus" />
+              <Tab label={
+                 <div className={classes.iconText}>Grafana
+                  <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                 </div>
+               } />
+              <Tab label={
+                <div className={classes.iconText}>Prometheus
+                 <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                </div>
+              } />
             </Tabs>
-          </Paper>
+          </AppBar>
           {subTabVal === 0 && <TabContainer>
             <GrafanaComponent />
           </TabContainer>}
@@ -137,6 +169,8 @@ class MesherySettings extends React.Component {
             <PrometheusComponent />
           </TabContainer>}
         </TabContainer>}
+
+        {backToPlay}
     </div>
     );
   }
