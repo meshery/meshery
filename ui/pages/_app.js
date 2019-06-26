@@ -94,7 +94,6 @@ let theme = createMuiTheme({
           height: 3,
           borderTopLeftRadius: 3,
           borderTopRightRadius: 3,
-          backgroundColor: theme.palette.common.white,
         },
       },
       MuiTab: {
@@ -102,15 +101,15 @@ let theme = createMuiTheme({
           textTransform: 'initial',
           margin: '0 16px',
           minWidth: 0,
-          [theme.breakpoints.up('md')]: {
-            minWidth: 0,
-          },
+          // [theme.breakpoints.up('md')]: {
+          //   minWidth: 0,
+          // },
         },
         labelContainer: {
           padding: 0,
-          [theme.breakpoints.up('md')]: {
-            padding: 0,
-          },
+          // [theme.breakpoints.up('md')]: {
+          //   padding: 0,
+          // },
         },
       },
       MuiIconButton: {
