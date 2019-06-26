@@ -94,7 +94,7 @@ class MesheryPlayComponent extends React.Component {
   }
 
   handleConfigure = () => {
-    this.props.router.push('/configure');
+    this.props.router.push('/settings');
   }
 
   render() {
