@@ -38,17 +38,19 @@ class GrafanaCustomCharts extends Component {
   constructor(props) {
     super(props);
 
-    const startDate = new Date();
-    startDate.setMinutes(startDate.getMinutes() - 5);
+    const newStartDate = new Date();
+    newStartDate.setMinutes(newStartDate.getMinutes() - 5);
+    const {startDate, from, endDate, to, liveTail} = props;
     this.state = {
-      startDate,
-      from: 'now-5m',
-      endDate: new Date(),
-      to: 'now',
-      liveTail: true,
+      startDate: startDate && startDate !== null?startDate:newStartDate,
+      from: from && from !== null?from:'now-5m',
+      endDate: endDate && endDate !== null?endDate:new Date(),
+      to: to && to !== null?to:'now',
+      liveTail: liveTail && liveTail !== null?liveTail:true,
       refresh: '10s',
 
       chartDialogOpen: false,
+      chartDialogPanelData: {},
       chartDialogPanel: {},
       chartDialogBoard: {},
     }
@@ -69,13 +71,15 @@ class GrafanaCustomCharts extends Component {
       }
     }
 
-    handleChartDialogOpen = (board, panel) => {
-      this.setState({chartDialogOpen: true, chartDialogBoard: board, chartDialogPanel: panel });
+    handleChartDialogOpen = (board, panel, data) => {
+      this.setState({chartDialogOpen: true, chartDialogBoard: board, chartDialogPanel: panel, 
+        chartDialogPanelData: data });
     }
     
     render() {
-        const {from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard} = this.state;
-        const { classes, boardPanelConfigs, testUUID } = this.props;
+        const {from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard, 
+          chartDialogPanelData} = this.state;
+        const { classes, boardPanelConfigs, boardPanelData, testUUID } = this.props;
         let {grafanaURL, grafanaAPIKey, prometheusURL} = this.props;
         // we are now proxying. . .
         // if (grafanaURL && grafanaURL.endsWith('/')){
@@ -98,10 +102,12 @@ class GrafanaCustomCharts extends Component {
                 >
                   <DialogTitle id="max-width-dialog-title">{chartDialogPanel.title}</DialogTitle>
                   <DialogContent>
-                    <div className={classes.dateRangePicker}>
-                      <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
-                        refresh={refresh} updateDateRange={this.updateDateRange} />
-                    </div>
+                    {!(chartDialogPanelData && chartDialogPanelData !== null && Object.keys(chartDialogPanelData).length > 0) && 
+                      <div className={classes.dateRangePicker}>
+                        <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
+                          refresh={refresh} updateDateRange={this.updateDateRange} />
+                      </div>
+                    }
                     <GrafanaCustomChart
                         key={this.genRandomNumberForKey()}
                         board={chartDialogBoard}
@@ -115,6 +121,7 @@ class GrafanaCustomCharts extends Component {
                         updateDateRange={this.updateDateRange}
                         inDialog={true}
                         testUUID={testUUID}
+                        panelData={chartDialogPanelData && chartDialogPanelData !== null?chartDialogPanelData:{}}
                       /> 
                   </DialogContent>
                   <DialogActions>
@@ -155,6 +162,8 @@ class GrafanaCustomCharts extends Component {
                                   updateDateRange={this.updateDateRange}
                                   inDialog={false}
                                   testUUID={testUUID}
+                                  panelData={boardPanelData && boardPanelData !== null && boardPanelData[ind] && boardPanelData[ind] !== null?
+                                      boardPanelData[ind]:{}}
                                 /> 
                             </Grid>
                             );
@@ -176,6 +185,7 @@ GrafanaCustomCharts.propTypes = {
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
+  // boardPanelData: 
 };
 
 export default withStyles(grafanaStyles)(GrafanaCustomCharts);

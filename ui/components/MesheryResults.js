@@ -13,6 +13,7 @@ import Moment from 'react-moment';
 import MesheryChart from './MesheryChart';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
+import GrafanaCustomCharts from './GrafanaCustomCharts';
 
 
 const styles = theme => ({
@@ -333,6 +334,10 @@ class MesheryResults extends Component {
           expandableRows: true,
           renderExpandableRow: (rowData, rowMeta) => {
             const row = self.state.results[rowMeta.dataIndex].runner_results;
+            const boardConfig = self.state.results[rowMeta.dataIndex].server_board_config;
+            const serverMetrics = self.state.results[rowMeta.dataIndex].server_metrics;
+            const startTime = new Date(row.StartTime);
+            const endTime = new Date(startTime.getTime() + row.ActualDuration/1000000);
             const colSpan = rowData.length + 1;
             return (
               <TableRow>
@@ -340,6 +345,17 @@ class MesheryResults extends Component {
                   <div className={classes.chartContent}>
                     <MesheryChart data={[row]} />
                   </div>
+                  {boardConfig && boardConfig !==null && Object.keys(boardConfig).length > 0 && <div>
+                    <GrafanaCustomCharts
+                    boardPanelConfigs={[boardConfig]} 
+                    boardPanelData={[serverMetrics]}
+                    startDate={startTime}
+                    from={startTime.getTime().toString()} 
+                    endDate={endTime}
+                    to={endTime.getTime().toString()} 
+                    liveTail={false}
+                     />
+                  </div>}
                 </TableCell>
               </TableRow>
             );

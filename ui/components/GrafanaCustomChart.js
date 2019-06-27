@@ -450,7 +450,7 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail, testUUID} = this.props;
+      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail, testUUID, panelData} = this.props;
       const {data, chartData} = this.state;
 
       const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
@@ -478,11 +478,8 @@ class GrafanaCustomChart extends Component {
       if (testUUID && testUUID.trim() !== ''){
         queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
       }
-      dataFetch(`${queryRangeURL}?${queryParams}`, { 
-        method: 'GET',
-        credentials: 'include',
-        // headers: headers,
-      }, result => {
+
+      const processReceivedData = result => {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
           const fullData = self.transformDataForChart(result, target);
@@ -544,7 +541,16 @@ class GrafanaCustomChart extends Component {
             });
           }
         }
-      }, self.handleError);
+      };
+      if(panelData && panelData[expr]){
+        processReceivedData(panelData[expr]);
+      } else {
+        dataFetch(`${queryRangeURL}?${queryParams}`, { 
+          method: 'GET',
+          credentials: 'include',
+          // headers: headers,
+        }, processReceivedData, self.handleError);
+      }
     }
 
     transformDataForChart(data, target) {
@@ -643,7 +649,7 @@ class GrafanaCustomChart extends Component {
     }
 
     createOptions() {
-      const {panel, from, to} = this.props;
+      const {panel, from, to, panelData} = this.props;
       const fromDate = grafanaDateRangeToDate(from);
       const toDate = grafanaDateRangeToDate(to);
       const self = this;
@@ -758,7 +764,7 @@ class GrafanaCustomChart extends Component {
             },
           },
           pan: {
-            enabled: panel.type === 'graph'?true:false,
+            enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
             mode: 'x',
             rangeMin: {
                 x: null
@@ -769,7 +775,7 @@ class GrafanaCustomChart extends Component {
             onPan: self.updateDateRange(),
           },
           zoom: {
-              enabled: panel.type === 'graph'?true:false,
+              enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
               // drag: true, // if set to true will turn off pinch
               mode: 'x',
               speed: 0.05,
