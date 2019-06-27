@@ -24,7 +24,7 @@ import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } fro
 
 const categories = [
   { id: 'Performance', icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, href: "/performance", title: 'Performance Test', show: true },
-  { id: 'Configure', href: "/configure", title: 'Configure Meshery', show: false},
+  { id: 'Settings', href: "/settings", title: 'Settings', show: false}, // title is used for comparison in the Header.js file as well
   { id: 'Playground', icon:  <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />, href: "/playground", title: 'Play with Meshery', show: true },
   { id: 'Results', icon: <FontAwesomeIcon icon={faPollH} fixedWidth />, href: "/results", title: 'View & Compare Results', show: true },
 ]
