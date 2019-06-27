@@ -16,6 +16,8 @@ import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import MomentUtils from '@date-io/moment';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
 // link clicks, hence attemtpting to add them here
@@ -92,7 +94,6 @@ let theme = createMuiTheme({
           height: 3,
           borderTopLeftRadius: 3,
           borderTopRightRadius: 3,
-          backgroundColor: theme.palette.common.white,
         },
       },
       MuiTab: {
@@ -100,15 +101,15 @@ let theme = createMuiTheme({
           textTransform: 'initial',
           margin: '0 16px',
           minWidth: 0,
-          [theme.breakpoints.up('md')]: {
-            minWidth: 0,
-          },
+          // [theme.breakpoints.up('md')]: {
+          //   minWidth: 0,
+          // },
         },
         labelContainer: {
           padding: 0,
-          [theme.breakpoints.up('md')]: {
-            padding: 0,
-          },
+          // [theme.breakpoints.up('md')]: {
+          //   padding: 0,
+          // },
         },
       },
       MuiIconButton: {
@@ -247,6 +248,7 @@ class MesheryApp extends App {
                 <title>Meshery</title>
                 </Head>
                 <MuiThemeProvider theme={theme}>
+                  <MuiPickersUtilsProvider utils={MomentUtils}>
                         <div className={classes.root}>
                             <CssBaseline />
                             <nav className={classes.drawer}>
@@ -285,6 +287,7 @@ class MesheryApp extends App {
                               </footer>
                             </div>
                         </div>
+                    </MuiPickersUtilsProvider>
                 </MuiThemeProvider>
             </Provider>
       </Container>
