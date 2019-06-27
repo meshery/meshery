@@ -167,10 +167,10 @@ class MeshAdapterConfigComponent extends React.Component {
       },
       body: params
     }, result => {
-      this.props.updateProgress({showProgress: false});
+      self.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        this.setState({meshAdapters: result, meshLocationURL: ''});
-        this.props.enqueueSnackbar('Adapter was successfully configured!', {
+        self.setState({meshAdapters: result, meshLocationURL: ''});
+        self.props.enqueueSnackbar('Adapter was successfully configured!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -184,8 +184,8 @@ class MeshAdapterConfigComponent extends React.Component {
             </IconButton>
           ),
         });
-        this.props.updateAdaptersInfo({meshAdapters: result});
-        this.fetchAvailableAdapters();
+        self.props.updateAdaptersInfo({meshAdapters: result});
+        self.fetchAvailableAdapters();
       }
     }, self.handleError("Adapter was not configured due to an error"));
   }
