@@ -54,14 +54,16 @@ const styles = theme => ({
   },
   appBar: {
     padding: theme.spacing(1.4),
-  }
+  },
+  itemActiveItem: {
+    color: '#4fc3f7',
+  },
 });
 
 class Header extends React.Component {
 
   render() {
     const { classes, title, onDrawerToggle } = this.props;
-
     return (
       <NoSsr>
       <React.Fragment>
@@ -96,8 +98,8 @@ class Header extends React.Component {
                 </IconButton> */}
                 
                 <IconButton color="inherit">
-                  <Link href={"/configure"} prefetch>
-                      <SettingsIcon />
+                  <Link href={"/settings"} prefetch>
+                      <SettingsIcon className={title === 'Settings' && classes.itemActiveItem} />
                   </Link>    
                 </IconButton>
 

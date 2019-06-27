@@ -12,6 +12,7 @@ RUN cd ui; npm i; npm run build && npm run export; mv out /
 # RUN apk --update add ca-certificates
 # RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 FROM ubuntu
+RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
 COPY --from=bd0 /meshery /app/cmd/
 COPY --from=bd0 /etc/passwd /etc/passwd
 COPY --from=bd1 /out /app/ui/out
