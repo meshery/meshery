@@ -89,10 +89,12 @@ class GrafanaCustomCharts extends Component {
               <NoSsr>
               <React.Fragment>
               <div className={classes.root}>
+                {!(boardPanelData && boardPanelData !== null) && 
                 <div className={classes.dateRangePicker}>
                   <GrafanaDateRangePicker from={from} startDate={startDate} to={to} endDate={endDate} liveTail={liveTail} 
                     refresh={refresh} updateDateRange={this.updateDateRange} />
                 </div>
+                }
                 <Dialog
                   fullWidth={true}
                   maxWidth="md"

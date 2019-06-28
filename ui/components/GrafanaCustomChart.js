@@ -840,7 +840,7 @@ class GrafanaCustomChart extends Component {
     }
     
     render() {
-      const { classes, board, panel, inDialog, handleChartDialogOpen } = this.props;
+      const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
       const {chartData, options, error} = this.state;
       let finalChartData = {
         datasets: [],
@@ -855,7 +855,7 @@ class GrafanaCustomChart extends Component {
           key="chartDialog"
           aria-label="Open chart in a dialog"
           color="inherit"
-          onClick={() => handleChartDialogOpen(board, panel) }
+          onClick={() => handleChartDialogOpen(board, panel, panelData) }
         >
           <OpenInNewIcon className={classes.cardHeader} />
         </IconButton>);
