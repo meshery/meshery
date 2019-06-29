@@ -95,6 +95,7 @@ nav ul li.active {
 
 .navigation-list-link.active {
     color: black !important;
+    color: #FFFFFF;
 }
 .navigation-list-link {
     color: black !important;
@@ -130,6 +131,7 @@ code {
 p {
     line-height: 1.25em;
     font-size: 1em;
+    padding-bottom: 1em; 
 }
 
 h2 {
@@ -175,4 +177,7 @@ nav {
 .main-content a:hover {
     font-weight: normal !important;
     color: blue !important;
-}
+} 
+ul.navigation-list {
+    background-color: aliceblue;
+  }

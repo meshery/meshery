@@ -2607,6 +2607,7 @@ table {
 td,
 th {
   padding: 0;
+  background-color: transparent;
 }
 
 html {
@@ -3104,6 +3105,9 @@ td, th {
   text-align: left;
   vertical-align: middle;
   border-radius: 2px;
+}
+td.centered, th.centered {
+  text-align: center;
 }
 
 @media only screen and (max-width: 992px) {
