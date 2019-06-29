@@ -16,15 +16,19 @@ package cmd
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
 )
 
 const (
-	url                = "http://localhost:9081"
-	fileUrl            = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-	mesheryLocalFolder = ".meshery"
-	dockerComposeFile  = mesheryLocalFolder + "/meshery.yaml"
+	url                    = "http://localhost:9081"
+	fileUrl                = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	mesheryLocalFolder     = ".meshery"
+	dockerComposeFile      = mesheryLocalFolder + "/meshery.yaml"
+	dockerComposeBinaryUrl = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
+	dockerComposeBinary    = "/usr/local/bin/docker-compose"
 )
 
 func DownloadFile(filepath string, url string) error {
@@ -43,4 +47,19 @@ func DownloadFile(filepath string, url string) error {
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	return err
+}
+
+func Prereq() ([]byte, []byte) {
+	ostype, err := exec.Command("uname", "-s").Output()
+	if err != nil {
+		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+	}
+	//fmt.Printf("%s\n", ostype)
+
+	osarch, err := exec.Command("uname", "-m").Output()
+	if err != nil {
+		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+	}
+	//	fmt.Printf("%s\n", arch)
+	return ostype, osarch
 }
