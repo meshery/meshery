@@ -39,7 +39,7 @@ var initCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
-		print("[Info] Docker-compose is installed")
+		print("[Info] Prerequisite Docker Compose is installed.")
 	},
 }
 
