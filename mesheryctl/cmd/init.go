@@ -28,7 +28,7 @@ var initCmd = &cobra.Command{
 	Long:  `Check and installs docker and docker-compose if not exists`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-			print("[Warning] Docker-compose is not installed. Installing now...")
+			print("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
 			ostype, osarch := Prereq()
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 			dockerComposeBinaryUrl := dockerComposeBinaryUrl + "-" + osdetails
@@ -39,7 +39,7 @@ var initCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
-		print("[Warning] Docker-compose is not installed. Installing now...")
+		print("[Info] Docker-compose is installed")
 	},
 }
 
