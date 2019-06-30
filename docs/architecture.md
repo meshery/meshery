@@ -2,7 +2,6 @@
 layout: page
 title: Architecture
 permalink: /architecture
-parent: Overview
 nav_order: 3
 ---
 

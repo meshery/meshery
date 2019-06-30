@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Playground
-parent: Overview
 permalink: /playground
 nav_order: 5
 ---
