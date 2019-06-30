@@ -23,27 +23,27 @@ nav_order: 1
   </tr>
   <tr>
     <td class="centered">0.1.0</td>
-    <td>Initial version of Meshery. Connects to Kubernetes and run preconfigured commands on Kubernetes with Istio</td>
+    <td>Initial version of Meshery. Connect to Kubernetes and run preconfigured commands on Kubernetes with Istio.</td>
     <td></td>
   </tr>
   <tr>
     <td class="centered">0.2.0</td>
-    <td>Ability to support running custom yaml on kubernetes with istio</td>
+    <td>Ability to support running custom yaml on Kubernetes with Istio.</td>
     <td></td>
   </tr>
   <tr>
     <td class="centered">0.3.0</td>
-    <td>Initial version with support of Meshery adapters and release of a pre-alpha version of Istio adapter</td>
+    <td>Initial version with support of Meshery adapters and release of a pre-alpha version of Istio adapter.</td>
     <td></td>
   </tr>
   <tr>
     <td class="centered">0.4.0</td>
-    <td>Meshery's User interface completely re-written using Reactjs and the backend updated as needed.</td>
+    <td>Meshery's user interface completely re-written using Reactjs and the backend updated as needed.</td>
     <td></td>
   </tr>
   <tr>
     <td class="centered">0.5.0</td>
-    <td>Ability to view persisted results. Integration and support for Grafana charts and embedding panels in iframe</td>
+    <td>Ability to view persisted results. Integration and support for Grafana charts and embedding panels in iframe.</td>
     <td></td>
   </tr>
   <tr>
@@ -63,7 +63,7 @@ nav_order: 1
   </tr>
   <tr>
     <td class="centered">0.9.0</td>
-    <td>Ability to import Grafana board json but integrating with Prometheus directly for metrics</td>
+    <td>Ability to import Grafana board json but integrating with Prometheus directly for metrics.</td>
     <td></td>
   </tr>
   <tr>
@@ -83,12 +83,12 @@ nav_order: 1
   </tr>
   <tr>
     <td class="centered">0.12.0</td>
-    <td>Displace chartjs with billboardjs</td>
+    <td>Displace Chartjs with Billboardjs.</td>
     <td></td>
   </tr>
   <tr>
     <td class="centered">0.13.0</td>
-    <td>Migrate from browser local storage to volume / filesystem storage</td>
+    <td>Migrate from browser local storage to volume / filesystem storage.</td>
     <td></td>
   </tr>
   <tr>
