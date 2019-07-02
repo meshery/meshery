@@ -11,6 +11,7 @@ import MesheryChart from "./MesheryChart";
 import {connect} from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateResultsSelection, clearResultsSelection } from "../lib/store";
+import GrafanaMetricsCompare from "./GrafanaMetricsCompare";
 
 const defaultToolbarSelectStyles = {
   iconButton: {
@@ -43,6 +44,7 @@ class CustomToolbarSelect extends React.Component {
     state = {
         dialogOpen: false,
         data: [],
+        chartCompare: [], // will persist start, end times, chart config and metrics for each result to be compared
     }
 
     handleDialogClose = () => {
@@ -61,7 +63,8 @@ class CustomToolbarSelect extends React.Component {
   handleCompareSelected = () => {
     //   console.log(`selected rows: ${JSON.stringify(this.props.selectedRows.data)}`);
     //   const self = this;
-      let data = [];
+      const data = [];
+      const chartCompare = [];
     //   this.props.selectedRows.data.map(({dataIndex}) => {
     //     // console.log(`data for selected rows: ${JSON.stringify(self.props.results[dataIndex])}`);
     //     data.push(self.props.results[dataIndex]);
@@ -72,10 +75,24 @@ class CustomToolbarSelect extends React.Component {
         Object.keys(rs[k1]).map((k2) => {
           if (typeof rs[k1][k2] !== 'undefined'){
             data.push(rs[k1][k2].runner_results);
+
+            const row = rs[k1][k2].runner_results;
+            const startTime = new Date(row.StartTime);
+            const endTime = new Date(startTime.getTime() + row.ActualDuration/1000000);
+            const boardConfig = rs[k1][k2].server_board_config;
+            const serverMetrics = rs[k1][k2].server_metrics;
+            
+            chartCompare.push({
+              label: row.Labels,
+              startTime,
+              endTime,
+              boardConfig,
+              serverMetrics,
+            });
           }
         });
-    })
-    this.setState({data, dialogOpen: true});
+    });
+    this.setState({data, chartCompare, dialogOpen: true});
     // console.log(`block users with dataIndexes: ${this.props.selectedRows.data.map(row => row.dataIndex)}`);
   };
 
@@ -103,7 +120,10 @@ class CustomToolbarSelect extends React.Component {
       </div>
 
       <MesheryChartDialog handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
+          <div>
           <MesheryChart data={this.state.data} />
+          <GrafanaMetricsCompare chartCompare={this.state.chartCompare} />
+          </div>
       } />
       </NoSsr>
     );
