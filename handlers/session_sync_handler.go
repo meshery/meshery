@@ -23,11 +23,18 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
-	err = json.NewEncoder(w).Encode(user)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
-		logrus.Errorf("error getting user data: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		logrus.Errorf("error retrieving user config data: %v", err)
+		http.Error(w, "unable to get user config data", http.StatusInternalServerError)
 		return
 	}
-	// json.Marshal(user)
+
+	err = json.NewEncoder(w).Encode(sessObj)
+	if err != nil {
+		logrus.Errorf("error marshalling user config data: %v", err)
+		http.Error(w, "unable to process the request", http.StatusInternalServerError)
+		return
+	}
 }

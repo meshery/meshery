@@ -36,6 +36,8 @@ type HandlerInterface interface {
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request)
 	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request)
 	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request)
+
+	SessionSyncHandler(w http.ResponseWriter, req *http.Request)
 }
 
 type HandlerConfig struct {

@@ -26,8 +26,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request) {
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
 		logrus.Errorf("error getting user data: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		http.Error(w, "unable to get session", http.StatusInternalServerError)
 		return
 	}
-	// json.Marshal(user)
 }
