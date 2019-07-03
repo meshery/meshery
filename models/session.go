@@ -13,10 +13,10 @@ type K8SConfig struct {
 }
 
 type Grafana struct {
-	GrafanaURL         string          `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey      string          `json:"grafanaAPIKey,omitempty"`
-	GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
-	GrafanaBoards      []*GrafanaBoard `json:"grafanaBoards,omitempty"`
+	GrafanaURL    string `json:"grafanaURL,omitempty"`
+	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
+	// GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
+	GrafanaBoards []*GrafanaBoard `json:"grafanaBoards,omitempty"`
 }
 
 type Prometheus struct {
