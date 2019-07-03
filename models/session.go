@@ -1,0 +1,46 @@
+package models
+
+import "encoding/gob"
+
+type K8SConfig struct {
+	InClusterConfig   bool   `json:"inClusterConfig,omitempty"`
+	K8Sfile           string `json:"k8sfile,omitempty"`
+	Config            []byte `json:"-"`
+	Server            string `json:"server,omitempty"`
+	ContextName       string `json:"contextName,omitempty"`
+	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
+	ConfiguredServer  string `json:"configuredServer,omitempty"`
+}
+
+type Grafana struct {
+	GrafanaURL         string          `json:"grafanaURL,omitempty"`
+	GrafanaAPIKey      string          `json:"grafanaAPIKey,omitempty"`
+	GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
+	GrafanaBoards      []*GrafanaBoard `json:"grafanaBoards,omitempty"`
+}
+
+type Prometheus struct {
+	PrometheusURL                   string          `json:"prometheusURL,omitempty"`
+	SelectedPrometheusBoardsConfigs []*GrafanaBoard `json:"selectedPrometheusBoardsConfigs,omitempty"`
+}
+
+type Session struct {
+	// User         *User       `json:"user,omitempty"`
+	K8SConfig    *K8SConfig  `json:"k8sConfig,omitempty"`
+	MeshAdapters []*Adapter  `json:"meshAdapters,omitempty"`
+	Grafana      *Grafana    `json:"grafana,omitempty"`
+	Prometheus   *Prometheus `json:"prometheus,omitempty"`
+}
+
+func init() {
+	gob.Register(&Session{})
+}
+
+type SessionPersister interface {
+	Read(userId string) (*Session, error)
+	Write(userId string, data *Session) error
+	Delete(userId string) error
+
+	Lock(userId string)
+	Unlock(userId string)
+}

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"os"
+	"path"
 
 	"github.com/layer5io/meshery/helpers"
 
@@ -24,6 +26,15 @@ func main() {
 
 	viper.SetDefault("PORT", 8080)
 	viper.SetDefault("ADAPTER_URLS", "")
+
+	if viper.GetString("USER_DATA_FOLDER") == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+		}
+		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
+	}
+	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
@@ -49,6 +60,8 @@ func main() {
 		Name: "loadTestReporterQueue",
 	})
 
+	sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		SaaSBaseURL: saasBaseURL,
 
@@ -63,6 +76,8 @@ func main() {
 		QueryTracker:   queryTracker,
 
 		Queue: mainQueue,
+
+		SessionPersister: sessionPersister,
 	})
 
 	port := viper.GetInt("PORT")
