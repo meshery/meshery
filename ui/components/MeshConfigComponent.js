@@ -172,8 +172,15 @@ class MeshConfigComponent extends React.Component {
 //   }
 
   handleReconfigure = () => {
-    // const { inClusterConfig, k8sfile, contextName } = this.state;
-      this.setState({
+	let self = this;
+    dataFetch('/api/k8sconfig', { 
+      credentials: 'same-origin',
+      method: 'DELETE',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.setState({
         inClusterConfig: false,
         k8sfile: '', 
         k8sfileElementVal: '',
@@ -182,6 +189,23 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured: false,
       })
       this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
+        
+      this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
+        variant: 'success',
+        autoHideDuration: 2000,
+        action: (key) => (
+          <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+          </IconButton>
+        ),
+      });
+     }
+    }, self.handleError);
   }
 
   configureTemplate = () => {
