@@ -7,6 +7,7 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 
+	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,14 +26,28 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	h.config.SessionPersister.Lock(user.UserId)
+	defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
 	inClusterConfig := req.FormValue("inClusterConfig")
 	logrus.Debugf("inClusterConfig: %s", inClusterConfig)
 
 	var k8sConfigBytes []byte
 	var contextName string
-
-	result := map[string]interface{}{
-		"inClusterConfig": (inClusterConfig != ""),
+	kc := &models.K8SConfig{
+		InClusterConfig: (inClusterConfig != ""),
 	}
 
 	if inClusterConfig == "" {
@@ -93,28 +108,28 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 		// 	http.Error(w, "unable to get session", http.StatusUnauthorized)
 		// 	return
 		// }
-		session.Values["k8sContext"] = contextName
-		session.Values["k8sConfig"] = k8sConfigBytes
+		// kc.ContextName = contextName
+		kc.Config = k8sConfigBytes
+		kc.ContextName = ccfg.CurrentContext
 
-		result["context"] = ccfg.CurrentContext
 		k8sContext, ok := ccfg.Contexts[ccfg.CurrentContext]
 		if ok {
 			k8sServer, ok := ccfg.Clusters[k8sContext.Cluster]
 			if ok {
-				result["server"] = k8sServer.Server
+				kc.Server = k8sServer.Server
 			}
 		}
 	}
-	session.Values["k8sInCluster"] = inClusterConfig
 
-	err = session.Save(req, w)
+	sessObj.K8SConfig = kc
+	err = h.config.SessionPersister.Write(user.UserId, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(result)
+	err = json.NewEncoder(w).Encode(kc)
 	if err != nil {
 		logrus.Errorf("error marshalling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)

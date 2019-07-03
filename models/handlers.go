@@ -51,6 +51,8 @@ type HandlerConfig struct {
 	QueryTracker   QueryTrackerInterface
 
 	Queue taskq.Queue
+
+	SessionPersister SessionPersister
 }
 
 type SubmitMetricsConfig struct {
