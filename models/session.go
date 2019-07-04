@@ -1,6 +1,10 @@
 package models
 
-import "encoding/gob"
+import (
+	"encoding/gob"
+
+	"github.com/grafana-tools/sdk"
+)
 
 type K8SConfig struct {
 	InClusterConfig   bool   `json:"inClusterConfig,omitempty"`
@@ -16,12 +20,18 @@ type Grafana struct {
 	GrafanaURL    string `json:"grafanaURL,omitempty"`
 	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
 	// GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
-	GrafanaBoards []*GrafanaBoard `json:"grafanaBoards,omitempty"`
+	GrafanaBoards []*SelectedGrafanaConfig `json:"selectedBoardsConfigs,omitempty"`
+}
+
+type SelectedGrafanaConfig struct {
+	GrafanaBoard         *GrafanaBoard `json:"board,omitempty"`
+	GrafanaPanels        []*sdk.Panel  `json:"panels,omitempty"`
+	SelectedTemplateVars []string      `json:"templateVars,omitempty"`
 }
 
 type Prometheus struct {
-	PrometheusURL                   string          `json:"prometheusURL,omitempty"`
-	SelectedPrometheusBoardsConfigs []*GrafanaBoard `json:"selectedPrometheusBoardsConfigs,omitempty"`
+	PrometheusURL                   string                   `json:"prometheusURL,omitempty"`
+	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
 type Session struct {
@@ -34,6 +44,7 @@ type Session struct {
 
 func init() {
 	gob.Register(&Session{})
+	gob.Register(map[string]interface{}{})
 }
 
 type SessionPersister interface {

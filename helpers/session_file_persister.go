@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"encoding/gob"
+	"encoding/json"
 	"os"
 	"path"
 	"sync"
@@ -89,7 +89,7 @@ func (s *FileSessionPersister) Read(userId string) (*models.Session, error) {
 	defer fp.Close()
 	data := &models.Session{}
 	if fs.Size() > 0 {
-		err = gob.NewDecoder(fp).Decode(data)
+		err = json.NewDecoder(fp).Decode(data)
 		if err != nil {
 			logrus.Errorf("error decoding contents from file: %v", err)
 			return nil, err
@@ -104,7 +104,7 @@ func (s *FileSessionPersister) Write(userId string, data *models.Session) error 
 		return err
 	}
 	defer fp.Close()
-	err = gob.NewEncoder(fp).Encode(data)
+	err = json.NewEncoder(fp).Encode(data)
 	if err != nil {
 		logrus.Errorf("error encoding contents to file: %v", err)
 		return err

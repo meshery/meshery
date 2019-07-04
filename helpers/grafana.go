@@ -93,7 +93,7 @@ func (g *GrafanaClient) GrafanaConfigValidator() (uint, error) {
 		logrus.Error(err)
 		return 0, errors.New("connection to grafana failed")
 	}
-	logrus.Infof("connection to grafana succeeded @ %s", g.BaseURL)
+	// logrus.Infof("connection to grafana succeeded @ %s", g.BaseURL)
 	return org.ID, nil
 }
 

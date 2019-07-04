@@ -254,9 +254,9 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		return
 	}
 
-	if sessObj.Grafana.GrafanaBoards == nil {
-		sessObj.Grafana.GrafanaBoards = []*models.GrafanaBoard{}
-	}
+	// if sessObj.Grafana.GrafanaBoards == nil {
+	// 	sessObj.Grafana.GrafanaBoards = []*models.SelectedGrafanaConfig{}
+	// }
 
 	defer req.Body.Close()
 	body, err := ioutil.ReadAll(req.Body)
@@ -267,8 +267,8 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	boards := []*models.GrafanaBoard{}
-	err = json.Unmarshal(body, boards)
+	boards := []*models.SelectedGrafanaConfig{}
+	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		msg := "unable to parse the request body"
 		err = errors.Wrapf(err, msg)

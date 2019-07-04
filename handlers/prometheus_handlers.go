@@ -311,9 +311,9 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 		return
 	}
 
-	if sessObj.Prometheus.SelectedPrometheusBoardsConfigs == nil {
-		sessObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
-	}
+	// if sessObj.Prometheus.SelectedPrometheusBoardsConfigs == nil {
+	// 	sessObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
+	// }
 
 	defer req.Body.Close()
 	body, err := ioutil.ReadAll(req.Body)
@@ -324,8 +324,8 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	boards := []*models.GrafanaBoard{}
-	err = json.Unmarshal(body, boards)
+	boards := []*models.SelectedGrafanaConfig{}
+	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		msg := "unable to parse the request body"
 		err = errors.Wrapf(err, msg)

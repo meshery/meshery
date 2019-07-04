@@ -3,12 +3,11 @@ package models
 import "github.com/grafana-tools/sdk"
 
 type GrafanaBoard struct {
-	URI   string `json:"uri,omitempty"`
-	Title string `json:"title,omitempty"`
-	Slug  string `json:"slug,omitempty"`
-	UID   string `json:"uid,omitempty"`
-	OrgID uint   `json:"org_id,omitempty"`
-	// Panels       []*GrafanaPanel        `json:"panels,omitempty"`
+	URI          string                 `json:"uri,omitempty"`
+	Title        string                 `json:"title,omitempty"`
+	Slug         string                 `json:"slug,omitempty"`
+	UID          string                 `json:"uid,omitempty"`
+	OrgID        uint                   `json:"org_id,omitempty"`
 	Panels       []*sdk.Panel           `json:"panels,omitempty"`
 	TemplateVars []*GrafanaTemplateVars `json:"template_vars,omitempty"`
 }
