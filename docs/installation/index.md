@@ -16,14 +16,14 @@ nav_order: 2
 ## Supported Platforms
 
 Meshery's compatibility has been confirmed with the following platforms:
-|| Platform || Version ||
+| Platform      | Version       |
+| ------------- |:-------------:|   
 | [Docker Engine](#docker) | 19.x and above |
 | [Docker Desktop](#docker) | 2.0.x and above |
-| [Kubernetes](#kubernetes) | 1.12.x and above |
-| [Minikube](#minikube) | 1.2.x and above |
 | [EKS](#eks) | 1.12.x and above |
 | [GKE](#gke) | 1.14.x and above |
-
+| [Kubernetes](#kubernetes) | 1.12.x and above |
+| [Minikube](#minikube) | 1.2.x and above |
 
 ### Quick Start 
 Download `mesheryctl`. Install Meshery on your local machine by running the following:
