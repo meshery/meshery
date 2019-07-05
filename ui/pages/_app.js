@@ -217,11 +217,13 @@ class MesheryApp extends App {
   constructor() {
     super();
     this.pageContext = getPageContext();
-  }
 
-  state = {
-    mobileOpen: true,
-  };
+    this.state = {
+      mobileOpen: false,
+      dummy: false,
+    };
+    // this.dataTracker = false;
+  }
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
@@ -292,6 +294,7 @@ class MesheryApp extends App {
           store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
         }
       }
+      self.setState({dummy: !self.state.dummy});
       }, error => {
         console.log(`there was an error fetching user config data: ${error}`);
       });
@@ -303,11 +306,15 @@ class MesheryApp extends App {
     }
 
   componentDidMount(){
-    this.loadConfigFromServer();
+    this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
   }
 
   render() {
     const { Component, store, pageProps, classes } = this.props;
+    // if(typeof this.dataTracker === 'undefined' || !this.dataTracker) {
+    //   this.loadConfigFromServer();
+    //   this.dataTracker = true;
+    // }
     return (
       <NoSsr>
       <Container>
@@ -344,6 +351,7 @@ class MesheryApp extends App {
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>
                                       <Paper className={classes.paper}>
+                                          <div style={{display: 'none'}}>{this.state.dummy}</div>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
                                 </main>

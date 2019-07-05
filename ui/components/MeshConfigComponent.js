@@ -85,19 +85,38 @@ class MeshConfigComponent extends React.Component {
       };
   }
 
-  handleChange = name => event => {
-    if (name === 'inClusterConfig'){
-        this.setState({ [name]: event.target.checked });
+  // static getDerivedStateFromProps(props, state){
+  //   const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
+  //   if(inClusterConfig !== state.inClusterConfig || clusterConfigured !== state.clusterConfigured || k8sfile !== state.k8sfile 
+  //       || configuredServer !== state.configuredServer){
+  //     return {
+  //       inClusterConfig,
+  //         k8sfile,
+  //         k8sfileElementVal: '',
+  //         contextName, 
+  //         clusterConfigured,
+  //         configuredServer,
+  //     };
+  //   }
+  //   return {};
+  // }
+
+  handleChange = name => {
+    const self = this;
+    return event => {
+      if (name === 'inClusterConfig'){
+        self.setState({ [name]: event.target.checked });
         return;
-    }
-    if (name === 'k8sfile' && event.target.value !== ''){
-        this.setState({ k8sfileError: false });    
-    }
-    if (name === 'k8sfile') {
-      this.setState({k8sfileElementVal: event.target.value});
-    }
-    this.setState({ [name]: event.target.value });
-  };
+      }
+      if (name === 'k8sfile' && event.target.value !== ''){
+        self.setState({ k8sfileError: false });
+      }
+      if (name === 'k8sfile') {
+        self.setState({k8sfileElementVal: event.target.value});
+      }
+      self.setState({ [name]: event.target.value });
+    };
+  }
 
   handleSubmit = () => {
     const { inClusterConfig, k8sfile } = this.state;
@@ -127,8 +146,7 @@ class MeshConfigComponent extends React.Component {
     }, result => {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
-        const configuredServer = result.inClusterConfig?'Using In Cluster Config': result.contextName + (result.server?' - ' + result.server:'');
-        this.setState({clusterConfigured: true, configuredServer});
+        this.setState({clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName});
         this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
           variant: 'success',
           autoHideDuration: 2000,
@@ -143,7 +161,7 @@ class MeshConfigComponent extends React.Component {
             </IconButton>
           ),
         });
-        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName, clusterConfigured: true, configuredServer}});
+        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer}});
       }
     }, self.handleError);
   }
@@ -218,7 +236,7 @@ class MeshConfigComponent extends React.Component {
       showConfigured = (
         <div className={classes.alignRight}>
           <Chip 
-              label={configuredServer}
+              label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
               onDelete={self.handleReconfigure} 
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               variant="outlined" />

@@ -85,6 +85,16 @@ class MeshAdapterConfigComponent extends React.Component {
       };
   }
 
+  // static getDerivedStateFromProps(props, state){
+  //   const { meshAdapters } = props;
+  //   if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
+  //     return {
+  //       meshAdapters,
+  //     };
+  //   }
+  //   return {};
+  // }
+
   componentDidMount = () => {
     this.fetchAvailableAdapters();
   }

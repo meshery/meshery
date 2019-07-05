@@ -10,10 +10,10 @@ type K8SConfig struct {
 	InClusterConfig   bool   `json:"inClusterConfig,omitempty"`
 	K8Sfile           string `json:"k8sfile,omitempty"`
 	Config            []byte `json:"config,omitempty"`
-	Server            string `json:"server,omitempty"`
+	Server            string `json:"configuredServer,omitempty"`
 	ContextName       string `json:"contextName,omitempty"`
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
-	ConfiguredServer  string `json:"configuredServer,omitempty"`
+	// ConfiguredServer  string `json:"configuredServer,omitempty"`
 }
 
 type Grafana struct {
