@@ -71,18 +71,20 @@ class PrometheusComponent extends Component {
             prometheusConfigSuccess,
             selectedPrometheusBoardsConfigs,
             prometheusURL,
+            ts: new Date(),
           };
     }
 
-    // static getDerivedStateFromProps(props, state){
-    //   const {prometheusURL, selectedPrometheusBoardsConfigs} = props.grafana;
-    //   if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
-    //     return {
-    //       prometheusURL, selectedPrometheusBoardsConfigs, prometheusConfigSuccess: (prometheusURL !== ''),
-    //     };
-    //   }
-    //   return {};
-    // }
+    static getDerivedStateFromProps(props, state){
+      // const {prometheusURL, selectedPrometheusBoardsConfigs} = props.grafana;
+      // if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
+     if(props.ts > state.ts) {
+      return {
+          prometheusURL, selectedPrometheusBoardsConfigs, prometheusConfigSuccess: (prometheusURL !== ''), ts: props.ts,
+        };
+      }
+      return {};
+    }
     
       handleChange = name => event => {
         if (name === 'prometheusURL' && event.target.value !== ''){

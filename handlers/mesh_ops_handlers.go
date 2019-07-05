@@ -126,7 +126,7 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 		return meshAdapters, nil
 	}
 
-	if !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		err := errors.New("no valid kubernetes config found")
 		logrus.Error(err)
 		http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
@@ -263,7 +263,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		namespace = "default"
 	}
 
-	if !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		logrus.Error("no valid kubernetes config found")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return

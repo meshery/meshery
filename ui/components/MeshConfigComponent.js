@@ -82,39 +82,42 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured, // read from store
         configuredServer,
         k8sfileError: false,
+        ts: new Date(),
       };
   }
 
-  // static getDerivedStateFromProps(props, state){
-  //   const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
-  //   if(inClusterConfig !== state.inClusterConfig || clusterConfigured !== state.clusterConfigured || k8sfile !== state.k8sfile 
-  //       || configuredServer !== state.configuredServer){
-  //     return {
-  //       inClusterConfig,
-  //         k8sfile,
-  //         k8sfileElementVal: '',
-  //         contextName, 
-  //         clusterConfigured,
-  //         configuredServer,
-  //     };
-  //   }
-  //   return {};
-  // }
+  static getDerivedStateFromProps(props, state){
+    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
+    // if(inClusterConfig !== state.inClusterConfig || clusterConfigured !== state.clusterConfigured || k8sfile !== state.k8sfile 
+        // || configuredServer !== state.configuredServer){
+    if(props.ts > state.ts){
+      return {
+        inClusterConfig,
+          k8sfile,
+          k8sfileElementVal: '',
+          contextName, 
+          clusterConfigured,
+          configuredServer,
+          ts: props.ts,
+      };
+    }
+    return {};
+  }
 
   handleChange = name => {
     const self = this;
     return event => {
       if (name === 'inClusterConfig'){
-        self.setState({ [name]: event.target.checked });
+        self.setState({ [name]: event.target.checked, ts: new Date() });
         return;
       }
       if (name === 'k8sfile' && event.target.value !== ''){
-        self.setState({ k8sfileError: false });
+        self.setState({ k8sfileError: false, ts: new Date() });
       }
       if (name === 'k8sfile') {
-        self.setState({k8sfileElementVal: event.target.value});
+        self.setState({k8sfileElementVal: event.target.value, ts: new Date()});
       }
-      self.setState({ [name]: event.target.value });
+      self.setState({ [name]: event.target.value, ts: new Date() });
     };
   }
 
