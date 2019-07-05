@@ -15,13 +15,18 @@ nav_order: 2
 ---
 ## Supported Platforms
 
-Below is table for how to prepare various Kubernetes platforms before installing Meshery.
-- [Docker](#docker)
-- [Minikube](minikube)
+Meshery's compatibility has been confirmed with the following platforms:
+|| Platform || Version ||
+| [Docker Engine](#docker) | 19.x and above |
+| [Docker Desktop](#docker) | 2.0.x and above |
+| [Kubernetes](#kubernetes) | 1.12.x and above |
+| [Minikube](#minikube) | 1.2.x and above |
+| [EKS](#eks) | 1.12.x and above |
+| [GKE](#gke) | 1.14.x and above |
 
 
-### Download `mesheryctl`
-Install Meshery on your local machine by running the following:
+### Quick Start 
+Download `mesheryctl`. Install Meshery on your local machine by running the following:
 
 ```
 sudo curl -L https://git.io/meshery -o /usr/local/bin/meshery
@@ -30,8 +35,8 @@ meshery start
 ```
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
-### Platform: Docker
-Following these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. This installation approach outlines quick install leveraging `docker` and `docker-compose` on your local machine. For installing `docker` please follow these instructions [Getting Started with Docker](https://docs.docker.com/get-started/) and for `docker-compose` follow the instructions [here](https://docs.docker.com/compose/install/). 
+### Platform: Docker <a name="docker"></a>
+Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install `docker`, see [Getting Started with Docker](https://docs.docker.com/get-started/) and if you need to install `docker-compose`, see [Installing Docker Compose](https://docs.docker.com/compose/install/). 
 
 Meshery repository includes a `docker-compose.yaml` file. We can use `docker-compose` to spin up all the Meshery services by running:
 ```
@@ -45,13 +50,7 @@ You will be redirected to a social login page where you can pick one of the avai
 
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
-### Custom Installation
-First clone the Meshery source code:
-```
-git clone https://github.com/layer5io/meshery.git; cd meshery      
-```
-
-### Platform: Kubernetes
+### Platform: Kubernetes <a name="kubernetes"></a>
 Meshery can also be deployed on an existing Kubernetes cluster running version 1.14.1 and above.
 
 To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
@@ -94,10 +93,27 @@ Here we will describe 3 common ways we can expose a service:
 * NodePort
     If your cluster does not have an Ingress Controller or a load balancer, then NodePort is probably the last resort.
 
-### Platform: Minikube
+### Platform: Minikube <a name="minikube"></a>
 See the Meshery [Minikube installation guide](minikube).
 ## Configuration
 This is where you configure your settings on the adaptor(Istio etc) and other things 
+
+## Managed Kubernetes <a name="managedk8s"></a>
+In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
+
+1. Create cluster-admin role service account
+1. Get secret name from service account
+1. Extract CA Certificate and User token from secret
+1. Generate new kubeconfig yaml file to input to Meshery
+
+### Platform: GKE <a name="gke"></a>
+You may perform the steps outlined under [Managed Kubernetes](#managedk8s)following by hand or run the generate_kubeconfig_gke.txt shell script using the desired ServiceAccount name and Namespace arguments, like so:
+
+`./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
+
+Having run this script, supply the generated file `config-cluster-admin-sa-gke-default.yaml` in your Meshery settings page.
+
+### Platform: Kubernetes <a name="eks"></a>
 
 ### Connecting Grafana and Prometheus
 
