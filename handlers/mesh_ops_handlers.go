@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -74,7 +73,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
-		meshAdapters, err = h.deleteAdapter(meshAdapters, session, w, req)
+		meshAdapters, err = h.deleteAdapter(meshAdapters, w, req)
 		if err != nil {
 			return // error is handled appropriately in the relevant method
 		}
@@ -168,7 +167,7 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 	return append(meshAdapters, result), nil
 }
 
-func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, session *sessions.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
+func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 
 	adapterID := req.URL.Query().Get("adapterID")
 	logrus.Debugf("adapterID of adapter to be removed: %s", adapterID)
