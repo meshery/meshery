@@ -220,9 +220,7 @@ class MesheryApp extends App {
 
     this.state = {
       mobileOpen: false,
-      dummy: false,
     };
-    // this.dataTracker = false;
   }
 
   handleDrawerToggle = () => {
@@ -294,7 +292,6 @@ class MesheryApp extends App {
           store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
         }
       }
-      self.setState({dummy: !self.state.dummy});
       }, error => {
         console.log(`there was an error fetching user config data: ${error}`);
       });
@@ -311,10 +308,6 @@ class MesheryApp extends App {
 
   render() {
     const { Component, store, pageProps, classes } = this.props;
-    // if(typeof this.dataTracker === 'undefined' || !this.dataTracker) {
-    //   this.loadConfigFromServer();
-    //   this.dataTracker = true;
-    // }
     return (
       <NoSsr>
       <Container>
@@ -351,7 +344,6 @@ class MesheryApp extends App {
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>
                                       <Paper className={classes.paper}>
-                                          <div style={{display: 'none'}}>{this.state.dummy}</div>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
                                 </main>
