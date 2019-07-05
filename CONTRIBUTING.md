@@ -35,6 +35,9 @@ __Please note__: All `make` commands should be run in a terminal from within the
 1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`), preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH`, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 
+## Building and packaging
+
+### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
 ```
 make run-local
@@ -43,11 +46,13 @@ make run-local
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the Meshery UI until the UI code is built as well.
 
+### Install UI dependencies
 To install/update the UI dependencies:
 ```
 make setup-ui-libs
 ```
 
+### Build and export UI
 To build and export the UI code:
 ```
 make build-ui
@@ -56,6 +61,7 @@ make build-ui
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
 Any time changes are made to the UI code, the above code will have to run to rebuild the UI.
 
+### UI Development Server
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
 ```
 make run-ui-dev
@@ -64,7 +70,7 @@ make run-ui-dev
 Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
-Building Docker image:
+### Building Docker image
 To build a Docker image of Meshery please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 ```
 make docker
