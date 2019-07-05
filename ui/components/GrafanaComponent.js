@@ -75,6 +75,17 @@ class GrafanaComponent extends Component {
             selectedBoardsConfigs,
           };
     }
+
+    // static getDerivedStateFromProps(props, state){
+    //   const {grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs} = props.grafana;
+    //   if(grafanaURL !== state.grafanaURL || grafanaAPIKey !== state.grafanaAPIKey || JSON.stringify(grafanaBoards) !== JSON.stringify(state.grafanaBoards)
+    //       || JSON.stringify(selectedBoardsConfigs) !== JSON.stringify(state.selectedBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
+    //     return {
+    //       grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''),
+    //     };
+    //   }
+    //   return {};
+    // }
     
       handleChange = name => event => {
         if (name === 'grafanaURL' && event.target.value !== ''){
