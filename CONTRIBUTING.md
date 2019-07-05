@@ -24,11 +24,48 @@ Meshery uses adapters to provision and interact with different service meshes. F
 _Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 # <a name="building">Building Meshery</a>
-Meshery is written in `Go` (Golang) and leverages Go Modules. The `deployment_yaml` folder contains the configuration yaml to deploy Meshery on Kubernetes, which includes a Deployment, Service, Service Entries and Virtual Services configurations.
+Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
 
-A sample Makefile is included to build and package the app as a Docker image.
-1. `Docker` to build the image.
-1. `Go` version 1.11+ installed if you want to make changes to the existing code.
-1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`).
-1. Build the Meshery Docker image (`docker build -t layer5/meshery .`).
-    1. _pre-built images available: https://hub.docker.com/u/layer5/_
+__Please note__: All `make` commands should be run in a terminal from within the Meshery's main folder.
+
+## Prerequisites for building Meshery on your local:
+1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
+1. `GOPATH` environment variable should be configured appropriately
+1. `npm` and `node` should be installed your machine, preferrably the latest versions.
+1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`), preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH`, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+
+
+To build & run the Meshery server code, run the following command:
+```
+make run-local
+```
+
+Any time changes are made to the GO code, you will have to stop the server and run the above command again.
+Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the Meshery UI until the UI code is built as well.
+
+To install/update the UI dependencies:
+```
+make setup-ui-libs
+```
+
+To build and export the UI code:
+```
+make build-ui
+```
+
+Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
+Any time changes are made to the UI code, the above code will have to run to rebuild the UI.
+
+If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
+```
+make run-ui-dev
+```
+
+Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
+Any UI changes made now will automatically be recompiled and served in the browser.
+
+Building Docker image:
+To build a Docker image of Meshery please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
+```
+make docker
+```
