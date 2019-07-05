@@ -107,7 +107,7 @@ In order to run Meshery in a managed Kubernetes environment, you will need to as
 1. Generate new kubeconfig yaml file to use as input to Meshery.
 
 ### Platform: GKE <a name="gke"></a>
-You may perform the steps outlined under [Managed Kubernetes](#managedk8s)following by hand or run the [generate_kubeconfig_gke.txt](https://github.com/layer5io/meshery/files/3166324/generate_kubeconfig_gke.txt) shell script using the desired ServiceAccount name and Namespace arguments, like so:
+You may perform the steps outlined under [Managed Kubernetes](#managedk8s)following by hand or run the [generate_kubeconfig_gke.sh](./generate_kubeconfig_gke.sh) shell script using the desired ServiceAccount name and Namespace arguments, like so:
 
 `./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
 
