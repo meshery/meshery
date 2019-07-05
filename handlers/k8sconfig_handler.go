@@ -106,7 +106,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 			}
 		}
 	}
-
+	kc.ClusterConfigured = true
 	sessObj.K8SConfig = kc
 	err := h.config.SessionPersister.Write(user.UserId, sessObj)
 	if err != nil {
@@ -114,6 +114,8 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
 	}
+
+	kc.Config = nil
 
 	err = json.NewEncoder(w).Encode(kc)
 	if err != nil {

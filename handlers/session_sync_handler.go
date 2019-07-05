@@ -24,11 +24,18 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
+	h.config.SessionPersister.Lock(user.UserId)
+	defer h.config.SessionPersister.Unlock(user.UserId)
+
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
 		logrus.Errorf("error retrieving user config data: %v", err)
 		http.Error(w, "unable to get user config data", http.StatusInternalServerError)
 		return
+	}
+
+	if sessObj.K8SConfig != nil && sessObj.K8SConfig.Config != nil && len(sessObj.K8SConfig.Config) > 0 {
+		sessObj.K8SConfig.Config = nil
 	}
 
 	err = json.NewEncoder(w).Encode(sessObj)
