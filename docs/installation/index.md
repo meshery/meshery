@@ -101,13 +101,13 @@ This is where you configure your settings on the adaptor(Istio etc) and other th
 ## Managed Kubernetes <a name="managedk8s"></a>
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
-1. Create cluster-admin role service account
-1. Get secret name from service account
-1. Extract CA Certificate and User token from secret
-1. Generate new kubeconfig yaml file to input to Meshery
+1. Create a `ServiceAccount` with `cluster-admin` role.
+1. Get secret name from `ServiceAccount`.
+1. Extract CA certificate and user token from the secret.
+1. Generate new kubeconfig yaml file to use as input to Meshery.
 
 ### Platform: GKE <a name="gke"></a>
-You may perform the steps outlined under [Managed Kubernetes](#managedk8s)following by hand or run the generate_kubeconfig_gke.txt shell script using the desired ServiceAccount name and Namespace arguments, like so:
+You may perform the steps outlined under [Managed Kubernetes](#managedk8s)following by hand or run the [generate_kubeconfig_gke.txt](https://github.com/layer5io/meshery/files/3166324/generate_kubeconfig_gke.txt) shell script using the desired ServiceAccount name and Namespace arguments, like so:
 
 `./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
 
