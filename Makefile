@@ -30,7 +30,7 @@ run-local-saas:
 	./meshery; \
 	cd ..
 
-run-saas:
+run-local:
 	cd cmd; go clean; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	EVENT=istioPlay01 \
