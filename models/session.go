@@ -52,6 +52,7 @@ type SessionPersister interface {
 	Write(userId string, data *Session) error
 	Delete(userId string) error
 
-	Lock(userId string)
-	Unlock(userId string)
+	// Lock(userId string)
+	// Unlock(userId string)
+	Close()
 }

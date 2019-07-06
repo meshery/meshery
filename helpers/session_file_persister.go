@@ -12,13 +12,13 @@ import (
 
 type FileSessionPersister struct {
 	folder string
-	lock   map[string]*sync.Mutex
+	mutex  map[string]*sync.Mutex
 }
 
 func NewFileSessionPersister(folder string) *FileSessionPersister {
 	return &FileSessionPersister{
 		folder: folder,
-		lock:   map[string]*sync.Mutex{},
+		mutex:  map[string]*sync.Mutex{},
 	}
 }
 
@@ -63,25 +63,28 @@ func (s *FileSessionPersister) openFile(userId string) (*os.File, os.FileInfo, e
 	return fp, fs, nil
 }
 
-func (s *FileSessionPersister) Lock(userId string) {
-	userLock, ok := s.lock[userId]
+func (s *FileSessionPersister) lock(userId string) {
+	userLock, ok := s.mutex[userId]
 	if !ok {
 		userLock = &sync.Mutex{}
-		s.lock[userId] = userLock
+		s.mutex[userId] = userLock
 	}
 	userLock.Lock()
 }
 
-func (s *FileSessionPersister) Unlock(userId string) {
-	userLock, ok := s.lock[userId]
+func (s *FileSessionPersister) unlock(userId string) {
+	userLock, ok := s.mutex[userId]
 	if !ok {
 		userLock = &sync.Mutex{}
-		s.lock[userId] = userLock
+		s.mutex[userId] = userLock
 	}
 	userLock.Unlock()
 }
 
 func (s *FileSessionPersister) Read(userId string) (*models.Session, error) {
+	s.lock(userId)
+	defer s.unlock(userId)
+
 	fp, fs, err := s.openFile(userId)
 	if err != nil {
 		return nil, err
@@ -99,6 +102,9 @@ func (s *FileSessionPersister) Read(userId string) (*models.Session, error) {
 }
 
 func (s *FileSessionPersister) Write(userId string, data *models.Session) error {
+	s.lock(userId)
+	defer s.unlock(userId)
+
 	fp, _, err := s.openFile(userId)
 	if err != nil {
 		return err
@@ -113,6 +119,9 @@ func (s *FileSessionPersister) Write(userId string, data *models.Session) error 
 }
 
 func (s *FileSessionPersister) Delete(userId string) error {
+	s.lock(userId)
+	defer s.unlock(userId)
+
 	fp, _, err := s.openFile(userId)
 	if err != nil {
 		return err
@@ -124,4 +133,7 @@ func (s *FileSessionPersister) Delete(userId string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *FileSessionPersister) Close() {
 }

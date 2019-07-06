@@ -60,7 +60,12 @@ func main() {
 		Name: "loadTestReporterQueue",
 	})
 
-	sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	// sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer sessionPersister.Close()
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		SaaSBaseURL: saasBaseURL,

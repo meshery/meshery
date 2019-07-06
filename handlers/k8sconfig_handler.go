@@ -27,8 +27,8 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {

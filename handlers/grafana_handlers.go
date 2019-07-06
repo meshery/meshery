@@ -33,8 +33,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -92,8 +92,8 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -145,8 +145,8 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -191,8 +191,8 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -237,8 +237,8 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
