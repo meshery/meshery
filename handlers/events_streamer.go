@@ -28,8 +28,8 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -45,7 +45,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 		meshAdapters = []*models.Adapter{}
 	}
 
-	if !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		logrus.Error("no valid kubernetes config found")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return

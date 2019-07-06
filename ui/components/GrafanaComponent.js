@@ -78,15 +78,22 @@ class GrafanaComponent extends Component {
     }
 
     static getDerivedStateFromProps(props, state){
-      // const {grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs} = props.grafana;
+      const {grafanaURL, grafanaAPIKey, selectedBoardsConfigs} = props.grafana;
       // if(grafanaURL !== state.grafanaURL || grafanaAPIKey !== state.grafanaAPIKey || JSON.stringify(grafanaBoards) !== JSON.stringify(state.grafanaBoards)
       //     || JSON.stringify(selectedBoardsConfigs) !== JSON.stringify(state.selectedBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
       if(props.ts > state.ts) {
         return {
-          grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
+          grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
         };
       }
       return {};
+    }
+
+    componentDidMount() {
+      this.getGrafanaBoards();
+    }
+
+    componentDidUpdate() {
     }
     
       handleChange = name => event => {
@@ -158,7 +165,6 @@ class GrafanaComponent extends Component {
                 selectedBoardsConfigs,
               },
             })
-            this.getGrafanaBoards();
           }
         }, self.handleError(`There was an error communicating with Grafana`));
       }
@@ -166,6 +172,9 @@ class GrafanaComponent extends Component {
       getGrafanaBoards = () => {
         const {grafanaURL, grafanaAPIKey, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
         let self = this;
+        if(typeof grafanaURL === 'undefined' || grafanaURL === ''){
+          return
+        }
         this.props.updateProgress({showProgress: true});
         dataFetch(`/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`, { 
           credentials: 'same-origin',

@@ -33,8 +33,8 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -85,8 +85,8 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -143,8 +143,8 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -190,8 +190,8 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -244,8 +244,8 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
@@ -294,8 +294,8 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	h.config.SessionPersister.Lock(user.UserId)
-	defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
