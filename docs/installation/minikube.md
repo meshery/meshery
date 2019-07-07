@@ -30,8 +30,10 @@ Below versions were successfully tested:
 minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
+<i>Note: minimum memory required is --memory=4096</i>
 <div style="font-size:1.25em;">2. Generate config file</div>
 This configuration file will be used by Meshery.
+
 ```
 kubectl config view --minify --flatten > config_minikube.yaml
 ```
@@ -56,7 +58,8 @@ users:
     client-certificate-data: <cert shortcutted >
     client-key-data: < key shortcutted >
 ```
-Note: Make sure `current-context` is set to minikube.
+Note: Make sure `current-context` is set to "minikube".
 
 <div style="font-size:1.25em;">3. Finish up</div>
+
 Follow the rest of Meshery [installation](../installation.md) steps.
