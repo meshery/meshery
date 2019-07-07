@@ -15,23 +15,23 @@ nav_order: 1
 # Quick Start with Minikube
 Below are instructions to generate config file for Minikube cluster which will be used in Meshery configuration.
 
-## Prerequisites
-Below versions were successfully tested:
-<table style="color:#FFF;text-align:center;">
-<th>Version</th><th>Name</th>
+## Compatibility
+The following minimum component versions are required:
+<table style="color:#FFF;">
+<th style="text-align:center;">Version</th><th>Name</th>
 <tr><td>1.0.0</td><td><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a></td></tr>
 <tr><td>1.14.1</td><td><a href="https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/">Kubernetes cluster</a></td></tr>
 <tr><td>1.14.1</td><td><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">Kubectl</a></td></tr>
 </table>
 
 ## Steps
-<div style="font-size:1.25em;">1. Start minikube:</div>
+<h2>1. Start minikube:</h2>
 ```
 minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
 <i>Note: minimum memory required is --memory=4096</i>
-<div style="font-size:1.25em;">2. Generate config file</div>
+<h2>2. Generate config file</h2>
 This configuration file will be used by Meshery.
 
 ```
