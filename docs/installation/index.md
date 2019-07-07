@@ -13,11 +13,12 @@ nav_order: 2
 {:toc}
 
 ---
-## Supported Platforms
+## Platform Compatibility <a name="compatibility-matrix"></a>
 
 Meshery's compatibility has been confirmed with the following platforms:
+
 | Platform      | Version       |
-| ------------- |:-------------:|   
+| -------------:|:-------------|   
 | [Docker Engine](#docker) | 19.x and above |
 | [Docker Desktop](#docker) | 2.0.x and above |
 | [EKS](#eks) | 1.12.x and above |
@@ -36,6 +37,8 @@ meshery start
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
 ### Platform: Docker <a name="docker"></a>
+<i>Note: a minimum of 4GB RAM is needed for Istio (and BookInfo sample app) deployments.</i>
+
 Follow these installation steps to use Docker and Docker Compose to run Meshery. Users often choose this installation approach in order to run Meshery on their local machine. If you need to install `docker`, see [Getting Started with Docker](https://docs.docker.com/get-started/) and if you need to install `docker-compose`, see [Installing Docker Compose](https://docs.docker.com/compose/install/). 
 
 Meshery repository includes a `docker-compose.yaml` file. We can use `docker-compose` to spin up all the Meshery services by running:
@@ -51,9 +54,7 @@ You will be redirected to a social login page where you can pick one of the avai
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
 ### Platform: Kubernetes <a name="kubernetes"></a>
-Meshery can also be deployed on an existing Kubernetes cluster running version 1.14.1 and above.
-
-To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
+Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
 ```
 kubectl create ns meshery
 ```
