@@ -39,11 +39,11 @@ var startCmd = &cobra.Command{
 
 		fmt.Println("Starting Meshery . . .")
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d").Run(); err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal("[ERROR] Prerequisite Docker Compose not available. Error message: \n", err)
 		}
 
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d").Run(); err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal("[ERROR] Prerequisite Docker Compose not available. Error message: \n", err)
 		}
 
 		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
