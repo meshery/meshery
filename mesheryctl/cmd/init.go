@@ -15,11 +15,30 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+func Init() {
+	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
+		log.Fatal(dockerComposeWarningMessage, err)
+		ostype, osarch := Prereq()
+		osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
+		dockerComposeBinaryUrl := dockerComposeBinaryUrl + "-" + osdetails
+		if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryUrl); err != nil {
+			log.Fatal(err)
+		}
+		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+}
+
+var cleanup bool
 
 // startCmd represents the start command
 var initCmd = &cobra.Command{
@@ -27,22 +46,19 @@ var initCmd = &cobra.Command{
 	Short: "Initialize Meshery",
 	Long:  `Check and installs docker and docker-compose if not exists`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-			print("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
-			ostype, osarch := Prereq()
-			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
-			dockerComposeBinaryUrl := dockerComposeBinaryUrl + "-" + osdetails
-			if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryUrl); err != nil {
-				log.Fatal(err)
-			}
-			if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-				log.Fatal(err)
-			}
+		Init()
+
+		if cleanup {
+
+			Cleanup()
+			os.Exit(0)
 		}
-		print("[Info] Docker-compose is installed")
+		log.Printf(mesheryPostInitMessage)
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+	initCmd.Flags().BoolVar(&cleanup, "cleanup", false, "Delete Mesheryctl")
 }

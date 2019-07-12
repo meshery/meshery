@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 
@@ -28,11 +27,12 @@ var updateCmd = &cobra.Command{
 	Short: "Pull new Meshery images from Docker Hub.",
 	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Updating Meshery now . . .")
+		Init()
+		log.Println(mesheryPreUpdateMessage)
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "pull").Run(); err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal(dockerComposeWarningMessage, err)
 		}
-		fmt.Println("Meshery is now up-to-date")
+		log.Println(mesheryPostUpdateMessage)
 
 	},
 }

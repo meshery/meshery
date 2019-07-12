@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 
@@ -28,12 +27,13 @@ var statusCmd = &cobra.Command{
 	Short: "Check Meshery status",
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Meshery containers status . . .\n")
+		Init()
+		log.Println(mesheryStatusMessage)
 		out, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()
 		if err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal(dockerComposeWarningMessage, err)
 		}
-		fmt.Printf("%s\n", out)
+		log.Printf("%s\n", out)
 	},
 }
 

@@ -23,12 +23,26 @@ import (
 )
 
 const (
-	url                    = "http://localhost:9081"
-	fileUrl                = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-	mesheryLocalFolder     = ".meshery"
-	dockerComposeFile      = mesheryLocalFolder + "/meshery.yaml"
-	dockerComposeBinaryUrl = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
-	dockerComposeBinary    = "/usr/local/bin/docker-compose"
+	url                         = "http://localhost:9081"
+	fileUrl                     = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	mesheryLocalFolder          = ".meshery"
+	dockerComposeFile           = mesheryLocalFolder + "/meshery.yaml"
+	dockerComposeBinaryUrl      = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
+	dockerComposeBinary         = "/usr/local/bin/docker-compose"
+	dockerComposeWarningMessage = "Prerequisite Docker Compose not available. Attempting Docker Compose installation… \n"
+	ostypeWarningMessage        = "[Warning] Cannot detect Operating System type \n"
+	osarchWarningMessage        = "[Warning] Cannot detect Operating System architecture \n"
+	mesheryPostStartMessage     = "Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery."
+	mesheryPreStartMessage      = "Starting Meshery . . ."
+	mesheryPreStopMessage       = "Stopping Meshery now . . ."
+	mesheryPostStoptMessage     = "Meshery is stopped"
+	mesheryPreUpdateMessage     = "Updating Meshery now . . ."
+	mesheryPostUpdateMessage    = "Meshery is now up-to-date"
+	mesheryStatusMessage        = "Meshery containers status . . .\n"
+	mesheryPreLogMessage        = "Starting Meshery logging . . ."
+	mesheryPreCleanupMessage    = "Cleaning old Meshery config . . ."
+	mesheryPostCleanupMessage   = "Meshery config is now cleaned up. \n"
+	mesheryPostInitMessage      = "Prerequisite Docker Compose is installed. \n"
 )
 
 func DownloadFile(filepath string, url string) error {
@@ -52,13 +66,13 @@ func DownloadFile(filepath string, url string) error {
 func Prereq() ([]byte, []byte) {
 	ostype, err := exec.Command("uname", "-s").Output()
 	if err != nil {
-		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+		log.Fatal(ostypeWarningMessage, err)
 	}
 	//fmt.Printf("%s\n", ostype)
 
 	osarch, err := exec.Command("uname", "-m").Output()
 	if err != nil {
-		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+		log.Fatal(osarchWarningMessage, err)
 	}
 	//	fmt.Printf("%s\n", arch)
 	return ostype, osarch
