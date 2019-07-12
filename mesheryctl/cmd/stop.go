@@ -38,15 +38,15 @@ var stopCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "stop").Run(); err != nil {
-			log.Fatal(err)
+			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 		}
 
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "rm", "-f").Run(); err != nil {
-			log.Fatal("Warning", err)
+			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 		}
 
 		if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-			log.Fatal("Warning", err)
+			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 		}
 
 		fmt.Println("Meshery is stopped")
