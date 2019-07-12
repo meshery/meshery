@@ -22,9 +22,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cleanup bool
+
 func Init() {
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-		log.Fatal(dockerComposeWarningMessage, err)
+		log.Printf(dockerComposeWarningMessage)
 		ostype, osarch := Prereq()
 		osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 		dockerComposeBinaryUrl := dockerComposeBinaryUrl + "-" + osdetails
@@ -38,8 +40,6 @@ func Init() {
 
 }
 
-var cleanup bool
-
 // startCmd represents the start command
 var initCmd = &cobra.Command{
 	Use:   "init",
@@ -47,13 +47,11 @@ var initCmd = &cobra.Command{
 	Long:  `Check and installs docker and docker-compose if not exists`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Init()
-
 		if cleanup {
-
 			Cleanup()
 			os.Exit(0)
 		}
-		log.Printf(mesheryPostInitMessage)
+		log.Println(mesheryPostInitMessage)
 
 	},
 }
