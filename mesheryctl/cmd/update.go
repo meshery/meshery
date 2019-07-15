@@ -30,7 +30,7 @@ var updateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Updating Meshery now . . .")
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "pull").Run(); err != nil {
-			log.Fatal(err)
+			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 		}
 		fmt.Println("Meshery is now up-to-date")
 
