@@ -1,9 +1,10 @@
 ---
 layout: page
 title: Minikube
-parent: Installation
+nav_exclude: true
 permalink: /installation/minikube
 nav_order: 1
+
 ---
 ## Table of contents
 {: .no_toc }
