@@ -1,3 +1,6 @@
+make:
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
+
 docker:
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
 
