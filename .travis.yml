@@ -6,3 +6,6 @@ go:
 
 env:
   - GO111MODULE=on
+
+services:
+  - docker
