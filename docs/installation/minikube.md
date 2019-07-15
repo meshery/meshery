@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Minikube
-parent: Installation
+nav_exclude: true
 permalink: /installation/minikube
 nav_order: 1
 ---
