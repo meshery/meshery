@@ -28,7 +28,7 @@ Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on Rea
 
 __Please note__: All `make` commands should be run in a terminal from within the Meshery's main folder.
 
-## Prerequisites for building Meshery on your local:
+## Prerequisites for building Meshery in your development environment:
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed your machine, preferrably the latest versions.
