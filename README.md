@@ -2,6 +2,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
+[![Build Status](https://travis-ci.com/layer5io/meshery.svg?branch=master)](https://travis-ci.com/layer5io/meshery)
 
 # [Meshery](https://layer5.io/meshery)
 
