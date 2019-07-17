@@ -95,7 +95,7 @@ Here we will describe 3 common ways we can expose a service:
     If your cluster does not have an Ingress Controller or a load balancer, then NodePort is probably the last resort.
 
 ### Platform: Minikube <a name="minikube"></a>
-See the Meshery [Minikube installation guide](./minikube).
+See the Meshery [Minikube installation guide](/installation/minikube).
 ## Configuration
 This is where you configure your settings on the adaptor(Istio etc) and other things 
 
