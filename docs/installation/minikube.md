@@ -4,6 +4,7 @@ title: Minikube
 nav_exclude: true
 permalink: /installation/minikube
 nav_order: 1
+
 ---
 ## Table of contents
 {: .no_toc }
