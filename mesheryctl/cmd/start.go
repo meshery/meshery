@@ -14,6 +14,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -28,6 +29,8 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		var out bytes.Buffer
+		var stderr bytes.Buffer
 
 		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {
 			os.Mkdir(mesheryLocalFolder, 0777)
@@ -37,13 +40,14 @@ var startCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Println("Starting Meshery . . .")
-		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d").Run(); err != nil {
-			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-		}
+		fmt.Println("Starting Meshery...")
+		start := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d")
+		start.Stdout = &out
+		start.Stderr = &stderr
 
-		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d").Run(); err != nil {
-			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+		if err := start.Run(); err != nil {
+			fmt.Println(stderr.String())
+			return
 		}
 
 		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
