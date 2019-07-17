@@ -96,6 +96,7 @@ Here we will describe 3 common ways we can expose a service:
 
 ### Platform: Minikube <a name="minikube"></a>
 See the Meshery [Minikube installation guide](/docs/installation/minikube).
+
 ## Configuration
 This is where you configure your settings on the adaptor(Istio etc) and other things 
 
