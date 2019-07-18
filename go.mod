@@ -1,7 +1,7 @@
 module github.com/layer5io/meshery
 
 require (
-	cloud.google.com/go v0.36.0 // indirect
+	cloud.google.com/go v0.41.0 // indirect
 	dmitri.shuralyov.com/app/changes v0.0.0-20181114035150-5af16e21babb // indirect
 	dmitri.shuralyov.com/service/change v0.0.0-20190203163610-217368fe4577 // indirect
 	fortio.org/fortio v1.3.1
@@ -33,10 +33,9 @@ require (
 	github.com/gogo/protobuf v1.2.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	github.com/golang/protobuf v1.3.1
-	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c
+	github.com/golang/protobuf v1.3.2
+	github.com/google/btree v1.0.0
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf
-	github.com/google/pprof v0.0.0-20190109223431-e84dfd68c163 // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
 	github.com/googleapis/gnostic v0.2.0
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
@@ -59,6 +58,7 @@ require (
 	github.com/kataras/golog v0.0.0-20180321173939-03be10146386 // indirect
 	github.com/kataras/iris v11.1.1+incompatible // indirect
 	github.com/kataras/pio v0.0.0-20190103105442-ea782b38602d // indirect
+	github.com/kisielk/gotool v1.0.0 // indirect
 	github.com/klauspost/compress v1.4.1 // indirect
 	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2
@@ -107,22 +107,22 @@ require (
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0 // indirect
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
-	go.opencensus.io v0.19.0 // indirect
 	go4.org v0.0.0-20181109185143-00e24f1b2599 // indirect
 	golang.org/x/build v0.0.0-20190207163136-67eca6f0176f // indirect
-	golang.org/x/crypto v0.0.0-20190618222545-ea8f1a30c443
-	golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2 // indirect
-	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
-	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
+	golang.org/x/exp v0.0.0-20190627132806-fd42eb6b336f // indirect
+	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
+	golang.org/x/mobile v0.0.0-20190711165009-e47acb2ca7f9 // indirect
+	golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
-	golang.org/x/sys v0.0.0-20190621134130-06bbe82148b1
+	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7
 	golang.org/x/text v0.3.2
-	golang.org/x/tools v0.0.0-20190620191750-1fa568393b23 // indirect
-	google.golang.org/appengine v1.6.1 // indirect
-	google.golang.org/grpc v1.18.0
+	golang.org/x/tools v0.0.0-20190715172921-9e48ab1d90cd // indirect
+	google.golang.org/genproto v0.0.0-20190708153700-3bdd9d9f5532 // indirect
+	google.golang.org/grpc v1.22.0
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/inf.v0 v0.9.1
 	gopkg.in/yaml.v2 v2.2.2
-	honnef.co/go/tools v0.0.0-20190128043916-71123fcbb8fe // indirect
 	k8s.io/api v0.0.0-20181027024800-9fcf73cc980b
 	k8s.io/apimachinery v0.0.0-20180510142256-21efb2924c7c
 	k8s.io/client-go v6.0.0+incompatible
