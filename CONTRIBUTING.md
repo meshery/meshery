@@ -1,11 +1,24 @@
 # <a name="contributing">Contributing</a>
-Please do! Contributions, updates, [discrepancy reports](/../../issues) and [pull requests](/../../pulls) are welcome. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Please do! Contributions, updates, [issues](/../../issues) and [pull requests](/../../pulls) are welcome. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 Not sure where to start? See the [newcomers welcome guide](https://docs.google.com/document/d/14Fofs9BysojB5igihXBI_SsFWoSUu-QRsGnnFqUvR0M/edit) for how, where and why to contribute. Or grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in.
 
-### License
+# <a name="contributing">General Contribution Flow</a>
+Please contribute! The Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing to documentation follows this flow:
 
-This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+1. Get a local copy of the documentation.
+`git clone https://github.com/layer5io/meshery`
+1. Navigate to the docs folder.
+`cd docs`
+1. Create and checkout a new branch to make changes within
+`git checkout -b <my-changes>`
+1. Edit/add documentation.
+`vi <specific page>.md`
+1. Run site locally to preview changes.
+`make site`
+1. Commit and push changes to your remote branch.
+`git push origin <my-changes>`
+1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 
 # <a name="adapter">Writing an Adapter</a>
 Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
@@ -75,3 +88,6 @@ To build a Docker image of Meshery please ensure you have `Docker` installed to 
 ```
 make docker
 ```
+### License
+
+This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
