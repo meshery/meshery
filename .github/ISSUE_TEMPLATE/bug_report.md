@@ -1,12 +1,10 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug/issue report
+about: Report an issue to help us improve
 title: ''
 labels: 'bug'
 assignees: ''
-
 ---
-
 **Describe the issue**
 A brief description of the issue.
 
@@ -24,7 +22,6 @@ Add screenshots, if applicable, to help explain your problem.
 
 ---
 [Optional] **To Reproduce**
-
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -32,5 +29,4 @@ Steps to reproduce the behavior:
 4. See error
 
 [Optional] **Additional context**
-
 Add any other context about the problem here.
