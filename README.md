@@ -58,6 +58,8 @@ This project is community-built and welcomes collaboration!
 </p>
 </div>
 
+*Not sure where to start?* Grab an open issue with the [help-wanted label](../../labels/help%20wanted).
+
 ## More about Meshery
 
 - [Functionality](#functionality)
