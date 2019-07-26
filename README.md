@@ -2,21 +2,12 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
-[![Build Status](https://travis-ci.com/layer5io/meshery.svg?branch=master)](https://travis-ci.com/layer5io/meshery)
-![GitHub](https://img.shields.io/github/license/layer5io/meshery.svg)
-![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg)
-![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)
-![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)
-[![Slack](https://img.shields.io/badge/slack-311-lightgrey)](http://slack.layer5.io)
 
 # [Meshery](https://layer5.io/meshery)
 
 A multi-mesh management plane with initial functionality as a playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) also serves as a service mesh performance benchmark.
   
 In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. As a Service Mesh Interface (SMI) partner, Meshery participates in advancing service mesh adoption through standardization of APIs.
-
-> _If you’re using Meshery or if you like the project, please ★ star this repository to show your support 💖_
-
 
 ## <a name="functionality">Functionality</a>
 <img align="right" src="./ui/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
@@ -49,19 +40,17 @@ See the [project site](https://layer5.io/meshery) for quick start instructions a
 This project is community-built and welcomes collaboration! 
 <p>
   <ul>
-    <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://docs.google.com/document/d/1i6aa5OWTS7Ul1V2vJKVnJswlbBJi_CN5LhWs4xd85vw/edit#">weekly community meeting</a> on <a href="/assets/projects/meshery/Meshery-Community-Meeting.ics">Fridays from 2pm to 3pm Central</a>.</li>
+    <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://docs.google.com/document/d/1i6aa5OWTS7Ul1V2vJKVnJswlbBJi_CN5LhWs4xd85vw/edit#">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.</li>
     <ul>
         <li><em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.</li>
     </ul>
     <li style="list-style-type: circle;"><em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/folders/1cSSCn4428TFhyg5mCMZq-oDi-Gwrcqqt">community folder</a>.</li>
       <ul>
-        <li><em><strong>Comment</strong></em> on the <a href="https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing">design document.</a></li>
+        <li><em><strong>Comment</strong></em> on the <a href="https://drive.google.com/open?id=15Gv1kTP8QHaMrDadfmgVmmS3hQn6YKFVag38Cr_JBEI">design document.</a></li>
       </ul>
     </ul>
 </p>
 </div>
-
-*Not sure where to start?* Grab an open issue with the [help-wanted label](../../labels/help%20wanted).
 
 ## More about Meshery
 
