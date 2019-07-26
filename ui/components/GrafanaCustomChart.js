@@ -7,16 +7,15 @@ import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { withSnackbar } from 'notistack';
-import { Chart, Line } from 'react-chartjs-2';
-import 'chartjs-plugin-colorschemes';
-import 'chartjs-plugin-deferred';
 import moment from 'moment';
 import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
+
+let bb;
 if (typeof window !== 'undefined') { 
-  require('chartjs-plugin-zoom');
-  // require('chartjs-plugin-streaming');
+  bb = require('billboard.js');
 }
+
 const grafanaStyles = theme => ({
     root: {
       width: '100%',
@@ -37,28 +36,17 @@ const grafanaStyles = theme => ({
       marginRight: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
-    // iframe: {
-    //   minHeight: theme.spacing(55),
-    //   minWidth: theme.spacing(55),
-    // },
-    chartjsTooltip: {
-      position: 'absolute',
-      background: 'rgba(0, 0, 0, .7)',
-      color: 'white',
-      borderRadius: '3px',
-      transition: 'all .1s ease',
-      pointerEvents: 'none',
-      transform: 'translate(-50%, 0)',
-    },
-    chartjsTooltipKey: {
-			display: 'inline-block',
-			width: '10px',
-			height: '10px',
-			marginRight: '10px',
-    },
     cardHeader: {
       fontSize: theme.spacing(2),
-    }
+    },
+    error: {
+      color: '#D32F2F',
+      width: '100%',
+      textAlign: 'center',
+      fontSize: '12px',
+      // fontFamily: 'Helvetica Nueue',
+      fontWeight: 'bold',
+    },
   });
 
 const grafanaDateRangeToDate = (dt, startDate) => {
@@ -278,7 +266,10 @@ class GrafanaCustomChart extends Component {
     
     constructor(props){
       super(props);
+      this.chartRef = null;
+      this.chart = null;
       this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+      this.bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
       this.panelType = '';
       switch(props.panel.type){
         case 'graph':
@@ -291,71 +282,14 @@ class GrafanaCustomChart extends Component {
       
       this.datasetIndex = {};
       this.state = {
-        chartData: {
-          datasets: [],
-          labels: [],
-        },
-        options: {},
+        xAxis: [],
+        chartData: [],
         error: '',
       };
     }
 
     componentDidMount() {
       this.configChartData();
-    }
-
-    configureChartJSTooltip(){
-      const {classes} = this.props;
-      const self = this;
-      return function(tooltip) {
-        // Tooltip Element
-        var tooltipEl = self.tooltip;
-        // Hide if no tooltip
-        if (tooltip.opacity === 0) {
-          tooltipEl.style.opacity = 0;
-          return;
-        }
-        // Set caret Position
-        // tooltipEl.classList.remove('above', 'below', 'no-transform');
-        if (tooltip.yAlign) {
-          tooltipEl.classList.add(tooltip.yAlign);
-        } else {
-          tooltipEl.classList.add('no-transform');
-        }
-        // Set Text
-        if (tooltip.body) {
-          var titleLines = tooltip.title || [];
-          var bodyLines = tooltip.body.map(bodyItem => {
-            return bodyItem.lines;
-          });
-          var innerHtml = '<thead>';
-          titleLines.forEach(title => {
-            innerHtml += '<tr><th>' + title + '</th></tr>';
-          });
-          innerHtml += '</thead><tbody>';
-          bodyLines.forEach((body, i) => {
-            var colors = tooltip.labelColors[i];
-            var style = 'background:' + colors.backgroundColor;
-            style += '; border-color:' + colors.borderColor;
-            style += '; border-width: 2px';
-            var span = '<span class="'+ classes.chartjsTooltipKey +'" style="' + style + '"></span>';
-            innerHtml += '<tr><td>' + span + body + '</td></tr>';
-          });
-          innerHtml += '</tbody>';
-          var tableRoot = tooltipEl.querySelector('table');
-          tableRoot.innerHTML = innerHtml;
-        }
-        var positionY = this._chart.canvas.offsetTop;
-        var positionX = this._chart.canvas.offsetLeft;
-        // Display, position, and set styles for font
-        tooltipEl.style.opacity = 1;
-        tooltipEl.style.left = positionX + tooltip.caretX + 'px';
-        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
-        tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
-        tooltipEl.style.fontSize = `${tooltip.bodyFontSize}px`;
-        tooltipEl.style.fontStyle = tooltip._bodyFontStyle;
-        tooltipEl.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
-      };
     }
 
     configChartData = () => {
@@ -450,15 +384,14 @@ class GrafanaCustomChart extends Component {
     }
 
     getData = async (ind, target, chartInst) => {
-      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, liveTail, testUUID, panelData} = this.props;
+      const {prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, testUUID, liveTail, panelData} = this.props;
       const {data, chartData} = this.state;
+      let {xAxis} = this.state;
 
-      const cd = (typeof chartInst === 'undefined'?chartData:chartInst.data);
       let queryRangeURL = '';
       if (prometheusURL && prometheusURL !== ''){
         queryRangeURL = `/api/prometheus/query_range`;
       } else if (grafanaURL && grafanaURL !== ''){
-        // grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
         queryRangeURL = `/api/grafana/query_range`;
       }
       const self = this;
@@ -474,7 +407,6 @@ class GrafanaCustomChart extends Component {
       const start = Math.round(grafanaDateRangeToDate(from).getTime()/1000);
       const end = Math.round(grafanaDateRangeToDate(to).getTime()/1000);
       let queryParams = `ds=${panel.datasource}&query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
-      // TODO: need to check if it is ok to use datasource name instead of ID
       if (testUUID && testUUID.trim() !== ''){
         queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
       }
@@ -483,11 +415,12 @@ class GrafanaCustomChart extends Component {
         self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
           const fullData = self.transformDataForChart(result, target);
+          xAxis = ['x'];
           fullData.forEach(({metric, data}, di) => {
             const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
             const newData = [];
 
-            if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
+            // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
               let legend = typeof target.legendFormat !== 'undefined'?target.legendFormat:'';
               if(legend === '') {
                 legend = Object.keys(metric).length > 0?JSON.stringify(metric):'';
@@ -499,47 +432,41 @@ class GrafanaCustomChart extends Component {
                 legend = legend.replace(`{{ `, '').replace(`{{`, '')
                             .replace(` }}`, '').replace(`}}`, '');
               }
-              cd.labels[datasetInd] = legend;
-              cd.datasets[datasetInd] = {
-                label: legend,
-                data: [],
-                pointRadius: 0,
-                // fill: false,
-                fill: true,
-              };
-              if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
-                cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
-                cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
+
+              // bb does NOT like labels which start with a number
+              if(!isNaN(legend.charAt(0))){
+                legend = ` ${legend}`;
               }
-            }
+              // if(legend.trim() === ''){
+              //   legend = 'NO VALUE';
+              // }
+              newData.push(legend);
+              
+            // }
             data.forEach(({x, y}) => {
-              let toadd = true;
-              cd.datasets[datasetInd].data.forEach(({x: x1, y: y1}) => {
-                if(x === x1) {
-                  toadd = false;
-                }
-              });
-              if(toadd){
-                newData.push({x, y});  
-              }
+              newData.push(y);
+              xAxis.push(new Date(x));
             });
-            Array.prototype.push.apply(cd.datasets[datasetInd].data, newData);
-            cd.datasets[datasetInd].data.sort((a, b) => {
-              return new Date(a.x).getTime() - new Date(b.x).getTime();
-            })
+            chartData[datasetInd] = newData;
           });
-          if(typeof chartInst === 'undefined'){
-            for(let cddi=0;cddi < cd.datasets.length; cddi++){
-              if(typeof cd.datasets[cddi] === 'undefined'){
-                cd.datasets[cddi] = {data:[], label: ''};
+          let groups = [];
+          if (typeof panel.stack !== 'undefined' && panel.stack){
+            const panelGroups = [];
+            chartData.forEach(y => {
+              if(y.length > 0){
+                panelGroups.push(y[0]); // just the label
               }
-            }
-            self.setState({chartData, options: self.createOptions(), error:''});
-          } else {
-            chartInst.update({
-              preservation: true,
             });
+            groups = [panelGroups];
           }
+          if(self.chart && self.chart !== null){
+            self.chart.load({
+              columns: [xAxis, ...chartData],
+            })
+          } else {
+            self.createOptions(xAxis, chartData, groups);
+          }
+          self.setState({xAxis, chartData, error:''});
         }
       };
       if(panelData && panelData[expr]){
@@ -576,222 +503,202 @@ class GrafanaCustomChart extends Component {
       return [];
     }
 
-    showMessageInChart(){
-      var self = this;
-      return function(chart) {
-        // const {error} = this.state;
-        // if (chart.data.datasets.length === 0) {
-        var ctx = chart.chart.ctx;
-        var width = chart.chart.width;
-        if(self.state.error !== ''){
-          var height = 5 //chart.chart.height;
-          // chart.clear();
-          
-          // ctx.save();
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.font = "bold 16px 'Helvetica Nueue'";
-          // ctx.fillText(chart.options.title.text, width / 2, 18);
-          ctx.fillStyle = '#D32F2F';
-          ctx.fillText(`There was an error communicating with the server`, width/2, 20);
-          ctx.restore();
-        } 
-        if (self.panelType && self.panelType === 'sparkline'){
-          if(chart.data.datasets.length > 0 && chart.data.datasets[0].data.length > 0){
-            const dind = chart.data.datasets[0].data.length - 1;
-            // ctx.fillStyle = '#D32F2F';
-            const val = chart.data.datasets[0].data[dind].y;
-            const unit = chart.options.scales.yAxes[0].scaleLabel.labelString;
-            let msg = '';
-            if (!isNaN(val)){
-              if(unit.startsWith('percent')){
-                const mulFactor = unit.toLowerCase() === 'percentunit'?100:1;
-                msg = `${(val*mulFactor).toFixed(2)}%`;
-              } else {
-                msg = `${val} ${unit}`;
-              }
-            }
-
-            var height = chart.chart.height;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = "bold 36px 'Helvetica Nueue'";
-            ctx.fillStyle = '#000000';
-            ctx.fillText(msg, width/2, height/2);
-            ctx.restore();
-          }
-        }
-      }
-    }
-
     updateDateRange(){
       const self = this;
-      let tm;
-      return  function({chart}){
-        if (typeof tm !== 'undefined'){
-          clearTimeout(tm);
+      return function(domain){
+        if(domain.length === 2){
+          let min = domain[0];
+          let max = domain[1];
+          self.props.updateDateRange(`${min.getTime().toString()}`, min, `${max.getTime().toString()}`, max, false, self.props.refresh);
         }
-        if(typeof chart !== 'undefined'){
-          let min = chart.scales["x-axis-0"].min;
-          let max = chart.scales["x-axis-0"].max;
-          tm = setTimeout(function(){
-            if(!isNaN(min) && !isNaN(max)){
-              min = Math.floor(min);
-              max = Math.floor(max);
-              self.props.updateDateRange(`${min}`, new Date(min), `${max}`, new Date(max), false, self.props.refresh);
-            } else {
-              self.props.updateDateRange(self.props.from, self.props.startDate, self.props.to, self.props.endDate, self.props.liveTail, self.props.refresh);  
-            }
-          }, 1000);
-        }
-        return false;
       }
     }
 
-    createOptions() {
-      const {panel, from, to, panelData} = this.props;
-      const fromDate = grafanaDateRangeToDate(from);
-      const toDate = grafanaDateRangeToDate(to);
+    // createOptions() {
+    //   const {panel, from, to, panelData} = this.props;
+    //   const fromDate = grafanaDateRangeToDate(from);
+    //   const toDate = grafanaDateRangeToDate(to);
+    createOptions(xAxis, chartData, groups) {
+      const {panel, board, inDialog} = this.props;
       const self = this;
 
       const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
 
-      const yAxes = {
-        stacked: (typeof panel.stack !== 'undefined' && panel.stack?true:false),
-        type: 'linear',
-        display: showAxis,
-        gridLines: {
-          display: showAxis,
+      const xAxes = {
+        type: 'timeseries',
+        // type : 'category',
+        show: showAxis,
+        tick: {
+            // format: self.c3TimeFormat,
+            // fit: true,
+            fit: false,
+            count: 5,
+            // centered: true
         },
+        // label: {
+        //   text: "X Label",
+        //   position: "outer-center"
+        // }
+      }; 
+
+      const yAxes = {
+        show: showAxis,
       };
       if(panel.yaxes){
         panel.yaxes.forEach(ya => {
           if(typeof ya.label !== 'undefined' && ya.label !== null){
-            yAxes.scaleLabel = {
-              display: true,
-              labelString: ya.label,
+            yAxes.label = {
+              text: ya.label,
+              position: "outer-middle",
             };
           }
           if(ya.format.toLowerCase().startsWith('percent')){
             const mulFactor = ya.format.toLowerCase() === 'percentunit'?100:1;
-            yAxes.ticks = {
-              callback: function(tick) {
-                const tk = (tick * mulFactor).toFixed(2);
+            yAxes.tick = {
+              format: function(d) {
+                const tk = (d * mulFactor).toFixed(2);
                 return `${tk}%`;
               }
             }
           }
         });
       }
-      if(self.panelType === 'sparkline'){
-        yAxes.scaleLabel = {
-          display: false,
-          labelString: panel.format,
-        };
-      }
-      const xAxes = {
-        type: 'time',
-        display: showAxis,
-        time: {
-          min: fromDate.getTime(),
-          max: toDate.getTime(),
-        },
+
+      let grid = {
+        // x: {
+        //     show: showAxis,
+        // },
+        // y: {
+        //     show: showAxis,
+        // }
       };
 
-      if (!showAxis) {
-        xAxes.gridLines = {
-            display: showAxis,
-        };
-        yAxes.gridLines = {
-          display: showAxis,
-        };
-      }
-
-      // panel.xaxes.forEach(ya => {
-      //   if(ya.label !== null){
-      //     yAxes.scaleLabel = {
-      //       display: true,
-      //       labelString: ya.label,
-      //     };
-      //   }
-      // });
+      const linked = !inDialog?{
+        name: board && board.title?board.title:'',
+      }:false;
+      
       let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10?true:false;
       if(panel.type !== 'graph'){
         shouldDisplayLegend = false;
       }
-        
-      return {
-          plugins: {
-            deferred: {
-              xOffset: 150,
-              yOffset: '50%',
-              delay: 500
-            },
-            colorschemes: {
-              // scheme: 'office.Office2007-2010-6'
-              scheme: 'brewer.RdYlGn4',
-              fillAlpha: 0.15,
-            },
-            // streaming: false,
+      if (self.chartRef && self.chartRef !== null){
+        const chartConfig = {
+          // oninit: function(args){
+          //   console.log(JSON.stringify(args));
+          // },
+          bindto: self.chartRef,
+          data: {
+            x: 'x',
+            xFormat: self.bbTimeFormat,
+            columns: [xAxis, ...chartData],
+            groups,
+            type: 'area',
           },
-          responsive: true,
-          maintainAspectRatio: false,
-          title: {
-            display: false,
-            text: panel.title
-          },
-          tooltips: {
-            enabled: showAxis,
-            mode: 'index',
-            // mode: 'nearest',
-            intersect: false,
-            // enabled: false,
-            // custom: self.configureChartJSTooltip(),
-          },
-          hover: {
-            mode: 'nearest',
-            intersect: false,
-          },
-          legend: {
-            position: 'bottom',
-            display: shouldDisplayLegend,
-            // fullWidth: false,
-            labels: {
-              // fontStyle: 'normal',
-              fontSize: 10,
-              // padding: 5,
-              usePointStyle: true,
-            },
-          },
-          pan: {
-            enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
-            mode: 'x',
-            rangeMin: {
-                x: null
-            },
-            rangeMax: {
-                x: null
-            },
-            onPan: self.updateDateRange(),
+          axis: {
+            x: xAxes,
+            y: yAxes,
           },
           zoom: {
-              enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
-              // drag: true, // if set to true will turn off pinch
-              mode: 'x',
-              speed: 0.05,
-              rangeMin: {
-                  x: null
-              },
-              rangeMax: {
-                  x: null
-              },
-              onZoom: self.updateDateRange(),
+            enabled: {
+              type: "drag"
+            },
+            onzoomend: self.updateDateRange(),
           },
-          scales: {
-            xAxes: [xAxes],
-            yAxes: [yAxes],
+          grid: grid,
+          legend: {
+            show: shouldDisplayLegend,
           },
+
+
+          // pan: {
+          //   enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
+          //   mode: 'x',
+          //   rangeMin: {
+          //       x: null
+          //   },
+          //   rangeMax: {
+          //       x: null
+          //   },
+          //   onPan: self.updateDateRange(),
+          // },
+          // zoom: {
+          //     enabled: panel.type === 'graph' && !(panelData && panelData != null && Object.keys(panelData).length > 0)?true:false,
+          //     // drag: true, // if set to true will turn off pinch
+          //     mode: 'x',
+          //     speed: 0.05,
+          //     rangeMin: {
+          //         x: null
+          //     },
+          //     rangeMax: {
+          //         x: null
+          //     },
+          //     onZoom: self.updateDateRange(),
+
+
+          // point: {
+          //   show: false
+          // },
+          point: {
+            r: 0,
+            focus: {
+              expand: {
+                r: 5
+              }
+            }
+          },
+          tooltip: {
+            show: showAxis,
+            linked,
+            format: {
+              title: function(x) {
+                // return d3.timeFormat(self.bbTimeFormat)(x);
+                return moment(x).format(self.timeFormat);
+              }
+            }
+          },
+          area: {
+            linearGradient: true
+          },
+        };
+
+        if(self.panelType === 'sparkline' && panel.sparkline && panel.sparkline.lineColor && panel.sparkline.fillColor){
+          // cd.datasets[datasetInd].borderColor = panel.sparkline.lineColor;
+          // cd.datasets[datasetInd].backgroundColor = panel.sparkline.fillColor;
+          
+          const dataLength = chartConfig.data.columns && chartConfig.data.columns.length > 1? chartConfig.data.columns[1].length:0; // 0 is for x axis
+          if(dataLength > 0){
+            if(typeof chartConfig.data.colors === 'undefined'){
+              chartConfig.data.colors = {};
+            }
+            chartConfig.data.colors[chartConfig.data.columns[1][0]] = panel.sparkline.lineColor;
+
+            if(dataLength > 1){
+              let content = '';
+              if(panel.format.toLowerCase().startsWith('percent')){
+                const mulFactor = panel.format.toLowerCase() === 'percentunit'?100:1;
+                if(!isNaN(chartConfig.data.columns[1][dataLength-1])){
+                  const tk = (chartConfig.data.columns[1][dataLength-1] * mulFactor).toFixed(2);
+                  content = `${tk}%`;
+                }
+              } else {
+                content = `${chartConfig.data.columns[1][dataLength-1]} ${panel.format}`;
+              }
+              chartConfig.title = {
+                text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + content, // for sparkline, we want to print the value as title
+              };
+            }
+          }
+          
+          chartConfig.color = {
+            pattern: [
+              panel.sparkline.fillColor,
+            ]
+          };
+
         }
+
+        self.chart = bb.bb.generate(chartConfig);
+      }
     }
 
     componentWillUnmount(){
@@ -823,33 +730,21 @@ class GrafanaCustomChart extends Component {
       const self = this;
       this.props.updateProgress({showProgress: false});
       this.setState({error: error.message && error.message !== ''?error.message:(error !== ''?error:'')});
-      // this.props.enqueueSnackbar(`There was an error communicating with Grafana`, {
-      //   variant: 'error',
-      //   action: (key) => (
-      //     <IconButton
-      //           key="close"
-      //           aria-label="Close"
-      //           color="inherit"
-      //           onClick={() => self.props.closeSnackbar(key) }
-      //         >
-      //           <CloseIcon />
-      //     </IconButton>
-      //   ),
-      //   autoHideDuration: 1000,
-      // });
     }
     
     render() {
+      // const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
+      // const {chartData, options, error} = this.state;
+      // let finalChartData = {
+      //   datasets: [],
+      //   labels: [],
+      // }
+      // const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined')
+      // if(chartData.datasets.length === filteredData.length){
+      //   finalChartData = chartData;
+      // }
       const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
-      const {chartData, options, error} = this.state;
-      let finalChartData = {
-        datasets: [],
-        labels: [],
-      }
-      const filteredData = chartData.datasets.filter(x => typeof x !== 'undefined')
-      if(chartData.datasets.length === filteredData.length){
-        finalChartData = chartData;
-      }
+      const {error, chartData, options} = this.state;
       let self = this;
       let iconComponent = (<IconButton
           key="chartDialog"
@@ -864,23 +759,17 @@ class GrafanaCustomChart extends Component {
       if(this.panelType === 'gauge'){
         mainChart = (
           <GrafanaCustomGaugeChart
-              data={finalChartData}
+              data={chartData}
               panel={panel}
               error={error}
             />
         );
       } else {
         mainChart = (
-          <React.Fragment>
-            <Line data={finalChartData} options={options} plugins={[
-              {
-                afterDraw: this.showMessageInChart(),
-              }
-            ]} />
-            <div className={classes.chartjsTooltip} ref={tp => this.tooltip = tp}>
-              <table></table>
-            </div>
-          </React.Fragment>
+          <div>
+            <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
+            <div ref={ch => self.chartRef = ch} className={classes.root}></div>
+          </div>
         );
       }
       return (

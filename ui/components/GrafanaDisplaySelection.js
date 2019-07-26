@@ -24,7 +24,7 @@ class GrafanaDisplaySelection extends Component {
         const selectedValsForDisplay = [];
         boardPanelConfigs.forEach(cf => {
           selectedValsForDisplay.push({
-            board: cf.board.title,
+            board: (cf.board && cf.board.title?cf.board.title:''),
             panels: cf.panels.map((panel, ind) => (
               <Chip key={panel.id + '_-_' + ind} label={panel.title} className={classes.panelChip} />
             )),
