@@ -239,8 +239,24 @@ class GrafanaComponent extends Component {
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
-      selectedBoardsConfigs.push(boardsSelection);
-      this.persistBoardSelection(selectedBoardsConfigs);
+      // selectedBoardsConfigs.push(boardsSelection);
+      // this.persistBoardSelection(selectedBoardsConfigs);
+
+      if(boardsSelection && boardsSelection.panels && boardsSelection.panels.length){
+        selectedBoardsConfigs.push(boardsSelection);
+        this.persistBoardSelection(selectedBoardsConfigs);
+
+        // this.setState({selectedBoardsConfigs});
+        // this.props.updateGrafanaConfig({
+        //   grafana: {
+        //     grafanaURL,
+        //     grafanaAPIKey,
+        //     grafanaBoardSearch,
+        //     grafanaBoards,
+        //     selectedBoardsConfigs,
+        //   },
+        // });
+      }
     }
 
     deleteSelectedBoardPanelConfig = (indexes) => {

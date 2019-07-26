@@ -16,7 +16,7 @@ import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
-import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
@@ -24,6 +24,8 @@ import MomentUtils from '@date-io/moment';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
+
+import 'billboard.js/dist/theme/insight.min.css';
 import { blueGrey, grey } from '@material-ui/core/colors';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import dataFetch from '../lib/data-fetch';
@@ -343,9 +345,11 @@ class MesheryApp extends App {
                                   >
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>
+                                    <MuiPickersUtilsProvider utils={MomentUtils}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
+                                    </MuiPickersUtilsProvider>
                                 </main>
                                 </SnackbarProvider>
                               <footer className={classes.footer}>
