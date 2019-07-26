@@ -1,4 +1,5 @@
 make:
+	cd mesheryctl; go build -o mesheryctl
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
 
 docker:
