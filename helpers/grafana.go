@@ -66,7 +66,8 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL string) ([]byt
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "autograf")
-	resp, err := (&http.Client{}).Do(req)
+	c := &http.Client{}
+	resp, err := c.Do(req)
 	if err != nil {
 		return nil, err
 	}

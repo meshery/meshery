@@ -1,6 +1,6 @@
 import React from 'react';
 import { NoSsr } from '@material-ui/core';
-import { Line } from 'react-chartjs-2';
+// import { Line } from 'react-chartjs-2';
 import { fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart } from '../lib/chartjs-formatter';
 import { withStyles } from '@material-ui/core/styles';
 

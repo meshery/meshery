@@ -217,23 +217,34 @@ class GrafanaComponent extends Component {
       }
 
       handleGrafanaChipDelete = () => {
-        this.setState({
-          grafanaConfigSuccess: false,
-          grafanaURL: '',
-          grafanaAPIKey: '',
-          grafanaBoardSearch: '',
-          grafanaBoards: [],
-          selectedBoardsConfigs: [],
-        });
-        this.props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL: '',
-            grafanaAPIKey: '',
-            grafanaBoardSearch: '',
-            grafanaBoards: [],
-            selectedBoardsConfigs: [],
-          },
-        });
+        this.props.updateProgress({showProgress: true});
+        const self = this;
+        dataFetch(`/api/grafana/config`, { 
+          credentials: 'same-origin',
+          method: 'DELETE',
+          credentials: 'include',
+        }, result => {
+          this.props.updateProgress({showProgress: false});
+          if (typeof result !== 'undefined'){
+            self.setState({
+              grafanaConfigSuccess: false,
+              grafanaURL: '',
+              grafanaAPIKey: '',
+              grafanaBoardSearch: '',
+              grafanaBoards: [],
+              selectedBoardsConfigs: [],
+            });
+            self.props.updateGrafanaConfig({
+              grafana: {
+                grafanaURL: '',
+                grafanaAPIKey: '',
+                grafanaBoardSearch: '',
+                grafanaBoards: [],
+                selectedBoardsConfigs: [],
+              },
+            })
+          }
+        }, self.handleError(`There was an error communicating with Grafana`));
       }
 
 

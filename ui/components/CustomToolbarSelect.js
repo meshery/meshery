@@ -122,7 +122,7 @@ class CustomToolbarSelect extends React.Component {
       <MesheryChartDialog handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
           <div>
           <MesheryChart data={this.state.data} />
-          <GrafanaMetricsCompare chartCompare={this.state.chartCompare} />
+          {/* <GrafanaMetricsCompare chartCompare={this.state.chartCompare} /> */}
           </div>
       } />
       </NoSsr>

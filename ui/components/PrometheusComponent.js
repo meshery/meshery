@@ -177,18 +177,28 @@ class PrometheusComponent extends Component {
       }
 
       handlePrometheusChipDelete = () => {
-        this.setState({
-          prometheusConfigSuccess: false,
-          prometheusURL: '',
-          selectedPrometheusBoardsConfigs: [],
-        });
-        this.props.updatePrometheusConfig({
-          prometheus: {
-            prometheusURL: '',
-            selectedPrometheusBoardsConfigs: [],
+        const self = this;
+        dataFetch(`/api/prometheus/config`, { 
+          credentials: 'same-origin',
+          method: 'DELETE',
+          credentials: 'include',
+        }, result => {
+          this.props.updateProgress({showProgress: false});
+          if (typeof result !== 'undefined'){
+            self.setState({
+              prometheusConfigSuccess: false,
+              prometheusURL: '',
+              selectedPrometheusBoardsConfigs: [],
+            });
+            self.props.updatePrometheusConfig({
+              prometheus: {
+                prometheusURL: '',
+                selectedPrometheusBoardsConfigs: [],
+              }
+            })
           }
-        });
-      }
+        }, self.handleError(`There was an error communicating with Prometheus`));
+    }
 
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
