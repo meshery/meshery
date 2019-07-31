@@ -105,7 +105,8 @@ export function fortioResultToJsChartData (res) {
         // Extra point, 1/N at min itself
         dataP.push({
           x: x,
-          y: myRound(100.0 / res.DurationHistogram.Count, 3)
+          // y: myRound(100.0 / res.DurationHistogram.Count, 3)
+          y: myRound(100.0 / res.DurationHistogram.Count, 2)
         })
       } else {
         if (prevX !== x) {
@@ -116,7 +117,8 @@ export function fortioResultToJsChartData (res) {
         }
       }
       x = myRound(1000.0 * it.End)
-      var y = myRound(it.Percent, 3)
+      // var y = myRound(it.Percent, 3)
+      var y = myRound(it.Percent, 2)
       dataP.push({
         x: x,
         y: y
@@ -155,7 +157,8 @@ export function fortioResultToJsChartData (res) {
     }
   }
   
-export function myRound (v, digits = 6) {
+// export function myRound (v, digits = 6) {
+export function myRound (v, digits = 2) {
     var p = Math.pow(10, digits)
     return Math.round(v * p) / p
   }
