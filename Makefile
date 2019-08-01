@@ -8,6 +8,7 @@ docker-run-local-saas:
 	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	-e EVENT=istioPlay01 \
 	-e DEBUG=true \
+	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -17,6 +18,7 @@ docker-run-saas:
 	-e SAAS_BASE_URL="https://meshery.layer5.io" \
 	-e EVENT=istioPlay01 \
 	-e DEBUG=true \
+	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
