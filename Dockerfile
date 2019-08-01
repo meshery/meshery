@@ -1,4 +1,4 @@
-FROM golang:1.12.6 as bd0
+FROM golang:1.12.7 as bd0
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery
 ADD . .
@@ -16,6 +16,7 @@ RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
 COPY --from=bd0 /meshery /app/cmd/
 COPY --from=bd0 /etc/passwd /etc/passwd
 COPY --from=bd1 /out /app/ui/out
+RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
 CMD ./meshery
