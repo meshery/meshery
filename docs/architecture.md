@@ -26,10 +26,12 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 </div> 
 
 ### Network Ports (that Meshery uses and needs)
-- Meshery (thru docker-compose) needs port 9081
-- Meshery Istio adapter port 10000
-- Linkerd adapter port 10001
-- Consul 10002
+- Meshery web-based UI: 9081/tcp
+- Meshery Istio Adapter: 10000/tcp
+- Meshery Linkerd Adapter: 10001/tcp
+- Meshery Consul Adapter: 10002/tcp
+- Meshery Octarine Adapter: 10003/tcp
+- Meshery NSM Adapter: 10004/tcp
 
 ### Adapters (what they are, what purpose they serve)
 * Istio
