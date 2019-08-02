@@ -153,7 +153,8 @@ export function fortioResultToJsChartData (res) {
     return {
       title: makeTitle(res),
       dataP: dataP,
-      dataH: dataH
+      dataH: dataH,
+      percentiles: res.DurationHistogram.Percentiles,
     }
   }
   
@@ -175,6 +176,7 @@ export function myRound (v, digits = 2) {
   
 export function makeChart (data) {
     return {
+        percentiles: data.percentiles,
         data: {
           datasets: [{
             label: 'Cumulative %',
