@@ -1,0 +1,49 @@
+version: '3'
+services:
+  meshery:
+    image: layer5/meshery
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - "SAAS_BASE_URL=https://meshery.layer5.io"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004"
+      - "EVENT=mesheryLocal"
+    ports:
+      - "9081:8080"
+  meshery-istio:
+    image: layer5/meshery-istio
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10000:10000"
+  meshery-linkerd:
+    image: layer5/meshery-linkerd
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10001:10001"
+  meshery-consul:
+    image: layer5/meshery-consul
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10002:10002"
+  meshery-octarine:
+    image: layer5/meshery-octarine
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10003:10003"      
+  meshery-nsm:
+    image: layer5/meshery-nsm
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10004:10004"
+  watchtower:
+    image: v2tec/watchtower
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --label-enable

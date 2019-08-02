@@ -179,3 +179,21 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		return
 	}
 }
+
+// Wrecker Function
+func (h *Handler) WreckerQueryHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("error getting session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+	reqQuery := req.URL.Query()
+	wreckerURL, _ := session.Values["wreckerURL"].(string)
+
+	w.Write(data)
+}

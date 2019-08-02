@@ -1,0 +1,64 @@
+syntax="proto3";
+
+package meshes;
+
+// option go_package = "github.com/layer5io/meshery/meshes;meshes";
+
+service MeshService {
+    rpc CreateMeshInstance(CreateMeshInstanceRequest) returns (CreateMeshInstanceResponse) {}
+    rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
+    rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
+    rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
+    rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
+}
+
+message CreateMeshInstanceRequest {
+    bytes k8sConfig = 1;
+    string contextName = 2;
+}
+
+message CreateMeshInstanceResponse {}
+
+message MeshNameRequest{}
+
+message MeshNameResponse {
+    string name = 1;
+}
+
+message ApplyRuleRequest {
+    string opName = 1;
+    string namespace = 2;
+    string username = 3;
+    string custom_body = 4;
+    bool delete_op = 5;
+}
+
+message ApplyRuleResponse {
+    string error = 1;
+}
+
+message SupportedOperationsRequest {}
+
+message SupportedOperationsResponse {
+    map<string, string> ops = 1;
+    string error = 2;
+}
+
+message SupportedOperation {
+    string key = 1;
+    string value = 2;
+}
+
+enum EventType {
+    INFO = 0;
+    WARN = 1;
+    ERROR = 2;
+}
+
+message EventsRequest {}
+
+message EventsResponse {
+    EventType event_type = 1;
+    string summary = 2;
+    string details = 3;
+}
