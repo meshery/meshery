@@ -117,6 +117,40 @@ class MesheryChart extends React.Component {
           //     ]
           //   };
 
+          const grid = {};
+
+          if (chartData.percentiles && chartData.percentiles.length > 0){
+
+            // position: "middle"
+            // position: "start"
+            let reTrack = 0;
+            const percentiles = chartData.percentiles.map(({Percentile, Value}) => {
+              const re = {
+                value: (Value * 1000).toFixed(2) ,
+                text: `p${Percentile}`,
+              };
+              switch(reTrack%3){
+                case 0:
+                  // re.position
+                  break;
+                case 1:
+                  re.position = 'middle';
+                  break;
+                case 2:
+                  re.position = 'start';
+                  break;
+              }
+
+              reTrack++;
+              
+              return re;
+            });
+
+            grid.x = {
+              lines: percentiles,
+            };
+          }
+
           const chartConfig = {
             // oninit: function(args){
             //   console.log(JSON.stringify(args));
@@ -137,6 +171,8 @@ class MesheryChart extends React.Component {
               // type: 'area',
             },
             axis,
+
+            grid,
             // zoom: {
             //   enabled: {
             //     type: "drag"
