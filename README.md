@@ -49,13 +49,13 @@ See the [project site](https://layer5.io/meshery) for quick start instructions a
 This project is community-built and welcomes collaboration! 
 <p>
   <ul>
-    <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://docs.google.com/document/d/1i6aa5OWTS7Ul1V2vJKVnJswlbBJi_CN5LhWs4xd85vw/edit#">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.</li>
+    <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://drive.google.com/open?id=1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.</li>
     <ul>
         <li><em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.</li>
     </ul>
     <li style="list-style-type: circle;"><em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/folders/1cSSCn4428TFhyg5mCMZq-oDi-Gwrcqqt">community folder</a>.</li>
       <ul>
-        <li><em><strong>Comment</strong></em> on the <a href="https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing">design document.</a></li>
+        <li><em><strong>Comment</strong></em> on the <a href="https://drive.google.com/open?id=15Gv1kTP8QHaMrDadfmgVmmS3hQn6YKFVag38Cr_JBEI">design document.</a></li>
       </ul>
     </ul>
 </p>
