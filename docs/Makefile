@@ -1,6 +1,7 @@
 jekyll=bundle exec jekyll
 
 site:
+	bundle exec just-the-docs rake search:init
 	$(jekyll) serve --drafts --livereload
 
 build-search:

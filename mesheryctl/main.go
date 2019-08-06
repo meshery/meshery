@@ -14,7 +14,9 @@
 
 package main
 
-import "github.com/layer5io/meshery/mesheryctl/cmd"
+import (
+	"github.com/layer5io/meshery/mesheryctl/cmd"
+)
 
 func main() {
 	cmd.Execute()
