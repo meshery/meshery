@@ -39,6 +39,12 @@ const grafanaStyles = theme => ({
     cardHeader: {
       fontSize: theme.spacing(2),
     },
+    card: {
+      height: '100%',
+    },
+    cardContent: {
+      height: '100%',
+    },
     error: {
       color: '#D32F2F',
       width: '100%',
@@ -774,14 +780,14 @@ class GrafanaCustomChart extends Component {
       }
       return (
         <NoSsr>
-          <Card>
+          <Card className={classes.card}>
           {!inDialog && <CardHeader
             disableTypography={true}
             title={panel.title}
             action={iconComponent}
             className={classes.cardHeader}
           />}
-          <CardContent>
+          <CardContent className={classes.cardContent}>
             {mainChart}
           </CardContent>
           </Card>

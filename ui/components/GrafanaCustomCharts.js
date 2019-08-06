@@ -28,10 +28,6 @@ const grafanaStyles = theme => ({
       marginRight: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
-    // iframe: {
-    //   minHeight: theme.spacing(55),
-    //   minWidth: theme.spacing(55),
-    // }
   });
 
 class GrafanaCustomCharts extends Component {

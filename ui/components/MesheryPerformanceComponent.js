@@ -57,10 +57,10 @@ const styles = theme => ({
   },
   chartTitleGraf: {
     textAlign: 'center',
-    marginTop: theme.spacing(5),
+    // marginTop: theme.spacing(5),
   },
   chartContent: {
-    minHeight: window.innerHeight * 0.7,
+    // minHeight: window.innerHeight * 0.7,
   },
 });
 
