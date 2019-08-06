@@ -21,7 +21,7 @@ const styles = theme => ({
     padding: theme.spacing(2),
   },
   chartContent: {
-    minHeight: window.innerHeight * 0.7,
+    // minHeight: window.innerHeight * 0.7,
   },
 });
 
@@ -78,6 +78,7 @@ class MesheryResults extends Component {
     handleError = error => {
         this.props.updateProgress({showProgress: false});
         // console.log(`error fetching results: ${error}`);
+        const self = this;
         this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
           variant: 'error',
           action: (key) => (
