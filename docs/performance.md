@@ -2,7 +2,6 @@
 layout: page
 title: Performance
 permalink: /performance
-parent: Overview
 nav_order: 4
 ---
 

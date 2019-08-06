@@ -1,9 +1,10 @@
 ---
 layout: page
 title: Minikube
-parent: Installation
+nav_exclude: true
 permalink: /installation/minikube
 nav_order: 1
+
 ---
 ## Table of contents
 {: .no_toc }
@@ -15,23 +16,26 @@ nav_order: 1
 # Quick Start with Minikube
 Below are instructions to generate config file for Minikube cluster which will be used in Meshery configuration.
 
-## Prerequisites
-Below versions were successfully tested:
-<table style="color:#FFF;text-align:center;">
-<th>Version</th><th>Name</th>
-<tr><td>1.0.0</td><td><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a></td></tr>
-<tr><td>1.14.1</td><td><a href="https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/">Kubernetes cluster</a></td></tr>
-<tr><td>1.14.1</td><td><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">Kubectl</a></td></tr>
-</table>
+## Compatibility
+The following minimum component versions are required:
+
+| Name   | Version |
+|:------ |:-------:|
+| [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) | 1.0.0 |
+| [Kubernetes](https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/) | 1.14.1 |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) | 1.14.1 |
 
 ## Steps
-<div style="font-size:1.25em;">1. Start minikube:</div>
+Perform the following steps in order.
+### 1. Start minikube
 ```
 minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
-<div style="font-size:1.25em;">2. Generate config file</div>
+<i>Note: minimum memory required is --memory=4096 (for Istio deployments only)</i>
+### 2. Generate config file
 This configuration file will be used by Meshery.
+
 ```
 kubectl config view --minify --flatten > config_minikube.yaml
 ```
@@ -56,7 +60,8 @@ users:
     client-certificate-data: <cert shortcutted >
     client-key-data: < key shortcutted >
 ```
-Note: Make sure `current-context` is set to minikube.
+Note: Make sure "current-context" is set to "minikube".
 
-<div style="font-size:1.25em;">3. Finish up</div>
+### 3. Finish up
+
 Follow the rest of Meshery [installation](../installation.md) steps.

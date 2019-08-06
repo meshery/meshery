@@ -48,7 +48,7 @@ plugins:
 search_enabled: true
 
 # aux_links:
-#     "Layer 5":
+#     "Layer5":
 #       - "//layer5.io/meshery"
 
 ga_tracking: UA-2969471-4

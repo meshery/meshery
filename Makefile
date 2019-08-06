@@ -1,3 +1,7 @@
+make:
+	cd mesheryctl; go build -o mesheryctl
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
+
 docker:
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
 
@@ -6,7 +10,6 @@ docker-run-local-saas:
 	docker run --name meshery -d \
 	--link meshery-saas:meshery-saas \
 	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
-	-e EVENT=istioPlay01 \
 	-e DEBUG=true \
 	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	-p 9081:8080 \
@@ -16,7 +19,6 @@ docker-run-saas:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	-e SAAS_BASE_URL="https://meshery.layer5.io" \
-	-e EVENT=istioPlay01 \
 	-e DEBUG=true \
 	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	-p 9081:8080 \
@@ -25,17 +27,15 @@ docker-run-saas:
 run-local-saas:
 	cd cmd; go clean; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
-	EVENT=istioPlay01 \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	./meshery; \
 	cd ..
 
-run-saas:
+run-local:
 	cd cmd; go clean; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="https://meshery.layer5.io" \
-	EVENT=istioPlay01 \
 	PORT=9081 \
 	DEBUG=true \
 	./meshery; \
