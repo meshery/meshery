@@ -81,6 +81,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 
 	respChan := make(chan []byte, 100)
 	errChan := make(chan error)
+	defer close(respChan)
 
 	for _, ma := range meshAdapters {
 		go func(ma *models.Adapter) {
@@ -164,6 +165,6 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	close(respChan)
+	// close(respChan)
 	// ... close all events and their channels
 }
