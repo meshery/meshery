@@ -4,9 +4,13 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/layer5io/meshery/models"
+
 	"github.com/layer5io/meshery/helpers"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +19,7 @@ func init() {
 }
 
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodPost {
+	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -26,51 +30,91 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	grafanaURL := req.FormValue("grafanaURL")
-	grafanaAPIKey := req.FormValue("grafanaAPIKey")
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
 
-	grafanaClient, err := helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
-	if err != nil {
-		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
-		return
-	}
-	session.Values["grafanaURL"] = grafanaURL
-	session.Values["grafanaAPIKey"] = grafanaAPIKey
-	session.Values["grafanaClient"] = grafanaClient
-	err = session.Save(req, w)
-	if err != nil {
-		logrus.Errorf("unable to save session: %v", err)
-		http.Error(w, "unable to save session", http.StatusInternalServerError)
-		return
-	}
-	logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
-	// TODO: save the grafana configs with user data
-	w.Write([]byte("{}"))
-}
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
-func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
 	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
-	grafanaURL, _ := session.Values["grafanaURL"].(string)
-	grafanaAPIKey, _ := session.Values["grafanaAPIKey"].(string)
-	// grafanaOrg, _ := session.Values["grafanaOrgID"].(uint)
-	grafanaClient, _ := session.Values["grafanaClient"].(*helpers.GrafanaClient)
 
-	if grafanaClient == nil {
-		grafanaClient, err = helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	if req.Method == http.MethodPost {
+		grafanaURL := req.FormValue("grafanaURL")
+		grafanaAPIKey := req.FormValue("grafanaAPIKey")
+
+		sessObj.Grafana = &models.Grafana{
+			GrafanaURL:    grafanaURL,
+			GrafanaAPIKey: grafanaAPIKey,
+		}
+
+		_, err = helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
 		if err != nil {
 			http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 			return
 		}
+		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
+	} else if req.Method == http.MethodDelete {
+		sessObj.Grafana = nil
 	}
+	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	if err != nil {
+		logrus.Errorf("unable to save user config data: %v", err)
+		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte("{}"))
+}
+
+func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet && req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if req.Method == http.MethodPost {
+		h.SaveSelectedGrafanaBoardsHandler(w, req)
+		return
+	}
+
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("error getting session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
+		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
+		return
+	}
+
+	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
+	if err != nil {
+		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
+		return
+	}
+
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
 	boards, err := grafanaClient.GetGrafanaBoards(dashboardSearch)
 	if err != nil {
@@ -97,18 +141,32 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 		return
 	}
 	reqQuery := req.URL.Query()
-	grafanaURL, _ := session.Values["grafanaURL"].(string)
-	grafanaAPIKey, _ := session.Values["grafanaAPIKey"].(string)
 
-	grafanaClient, _ := session.Values["grafanaClient"].(*helpers.GrafanaClient)
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
 
-	if grafanaClient == nil {
-		grafanaClient, err = helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
-		if err != nil {
-			http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
-			return
-		}
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
+		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
+		return
+	}
+	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
+	if err != nil {
+		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
+		return
+	}
+
 	data, err := grafanaClient.GrafanaQuery(req.Context(), &reqQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -129,21 +187,105 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	reqQuery := req.URL.Query()
-	grafanaURL, _ := session.Values["grafanaURL"].(string)
-	grafanaAPIKey, _ := session.Values["grafanaAPIKey"].(string)
-	grafanaClient, _ := session.Values["grafanaClient"].(*helpers.GrafanaClient)
 
-	if grafanaClient == nil {
-		grafanaClient, err = helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
-		if err != nil {
-			http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
-			return
-		}
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
+		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
+		return
+	}
+
+	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
+	if err != nil {
+		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
+		return
+	}
+
 	data, err := grafanaClient.GrafanaQueryRange(req.Context(), &reqQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Write(data)
+}
+
+func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Errorf("error getting session: %v", err)
+		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		return
+	}
+
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
+		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
+		return
+	}
+
+	// if sessObj.Grafana.GrafanaBoards == nil {
+	// 	sessObj.Grafana.GrafanaBoards = []*models.SelectedGrafanaConfig{}
+	// }
+
+	defer req.Body.Close()
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read the request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	boards := []*models.SelectedGrafanaConfig{}
+	err = json.Unmarshal(body, &boards)
+	if err != nil {
+		msg := "unable to parse the request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	if len(boards) > 0 {
+		sessObj.Grafana.GrafanaBoards = boards
+	} else {
+		sessObj.Grafana.GrafanaBoards = nil
+	}
+	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	if err != nil {
+		logrus.Errorf("unable to save user config data: %v", err)
+		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte("{}"))
 }

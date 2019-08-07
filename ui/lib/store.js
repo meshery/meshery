@@ -15,6 +15,7 @@ const initialState = fromJS({
     contextName: '', 
     clusterConfigured: false,
     configuredServer: '',
+    ts: new Date(),
   },
   loadTest: {
     testName: '',
@@ -26,6 +27,7 @@ const initialState = fromJS({
     result: {},
   },
   meshAdapters: [],
+  meshAdaptersts: new Date(),
   results: {
     startKey: '',
     results: [],
@@ -37,10 +39,12 @@ const initialState = fromJS({
     grafanaBoardSearch: '',
     grafanaBoards: [],
     selectedBoardsConfigs: [],
+    ts: new Date(),
   },
   prometheus: {
     prometheusURL: '',
     selectedPrometheusBoardsConfigs: [],
+    ts: new Date(),
   },
   staticPrometheusBoardConfig: {},
   showProgress: false,
@@ -77,6 +81,7 @@ export const reducer = (state = initialState, action) => {
       // console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
       return state.mergeDeep({ user: action.user });
     case actionTypes.UPDATE_CLUSTER_CONFIG:
+      action.k8sConfig.ts = new Date();
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.k8sConfig }))}`);
       return state.mergeDeep({ k8sConfig: action.k8sConfig });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
@@ -85,6 +90,7 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_ADAPTERS_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       state = state.updateIn(['meshAdapters'], val => fromJS([]));
+      state = state.updateIn(['meshAdaptersts'], val => fromJS(new Date()));
       return state.mergeDeep({ meshAdapters: action.meshAdapters });
     // case actionTypes.UPDATE_MESH_RESULTS:
     //   // console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
@@ -105,9 +111,11 @@ export const reducer = (state = initialState, action) => {
         return state.deleteIn(['results_selection', action.page]);
       }
     case actionTypes.UPDATE_GRAFANA_CONFIG:
+      action.grafana.ts = new Date();
       return state.updateIn(['grafana'], val => fromJS(action.grafana));
 
     case actionTypes.UPDATE_PROMETHEUS_CONFIG:
+      action.prometheus.ts = new Date();
       return state.updateIn(['prometheus'], val => fromJS(action.prometheus));
 
     case actionTypes.UPDATE_STATIC_BOARD_CONFIG:
