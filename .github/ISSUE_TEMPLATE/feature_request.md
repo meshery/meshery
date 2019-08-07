@@ -7,14 +7,14 @@ assignees: ''
 
 ---
 
-**Describe the solution you'd like**
-A brief description of what you want to happen.
+**Description**
+A brief description of the enhancement.
 
-**Is your feature request related to a problem? Please describe.**
+**Related Challenges**
 A brief description of what the problem is. (e.g. I'm frustrated when...)
 
 ---
-[Optional] **Describe alternatives you've considered**
+[Optional] **Alternatives**
 A brief description of any alternative solutions or features you've considered.
 
 [Optional] **Additional context**
