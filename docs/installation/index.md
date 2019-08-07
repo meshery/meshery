@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Installation
-parent: Overview
+# parent: Overview
 permalink: /installation
 has_children: true
 nav_order: 2
