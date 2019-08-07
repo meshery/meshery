@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Installation
+title: Adapters
 # parent: Overview
-permalink: /installation
+permalink: /adapters
 has_children: true
-nav_order: 2
+nav_order: 6
 ---
 # Installation Guide
 {: .no_toc }
