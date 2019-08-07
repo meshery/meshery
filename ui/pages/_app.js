@@ -10,13 +10,13 @@ import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
 import Paper from '@material-ui/core/Paper';
 import withRedux from "next-redux-wrapper";
-import { makeStore } from '../lib/store';
+import { makeStore, actionTypes } from '../lib/store';
 import {Provider} from "react-redux";
 import { fromJS } from 'immutable'
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
-import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
@@ -24,8 +24,14 @@ import MomentUtils from '@date-io/moment';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
+
+// import 'billboard.js/dist/theme/insight.min.css';
+// import 'billboard.js/dist/theme/graph.min.css';
+import 'billboard.js/dist/billboard.min.css';
+
 import { blueGrey, grey } from '@material-ui/core/colors';
 import MesheryProgressBar from '../components/MesheryProgressBar';
+import dataFetch from '../lib/data-fetch';
 
 if (typeof window !== 'undefined') { 
   require('codemirror/mode/yaml/yaml'); 
@@ -216,11 +222,11 @@ class MesheryApp extends App {
   constructor() {
     super();
     this.pageContext = getPageContext();
-  }
 
-  state = {
-    mobileOpen: false,
-  };
+    this.state = {
+      mobileOpen: false,
+    };
+  }
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
@@ -233,10 +239,77 @@ class MesheryApp extends App {
     }
   }
 
+  loadConfigFromServer() {
+    const { store } = this.props;
+    const self = this;
+      dataFetch('/api/config/sync', { 
+	      credentials: 'same-origin',
+	      method: 'GET',
+	      credentials: 'include',
+	    }, result => {
+      if (typeof result !== 'undefined'){
+        if(result.k8sConfig){
+          if(typeof result.k8sConfig.inClusterConfig === 'undefined'){
+            result.k8sConfig.inClusterConfig = false;
+          }
+          if(typeof result.k8sConfig.k8sfile === 'undefined'){
+            result.k8sConfig.k8sfile = '';
+          }
+          if(typeof result.k8sConfig.contextName === 'undefined'){
+            result.k8sConfig.contextName = '';
+          }
+          if(typeof result.k8sConfig.clusterConfigured === 'undefined'){
+            result.k8sConfig.clusterConfigured = false;
+          }
+          if(typeof result.k8sConfig.configuredServer === 'undefined'){
+            result.k8sConfig.configuredServer = '';
+          }
+          store.dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig: result.k8sConfig });
+        }
+        if(result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
+          store.dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters: result.meshAdapters });
+        }
+        if(result.grafana){
+          if(typeof result.grafana.grafanaURL === 'undefined'){
+            result.grafana.grafanaURL = '';
+          }
+          if(typeof result.grafana.grafanaAPIKey === 'undefined'){
+            result.grafana.grafanaAPIKey = '';
+          }
+          if(typeof result.grafana.grafanaBoardSearch === 'undefined'){
+            result.grafana.grafanaBoardSearch = '';
+          }
+          if(typeof result.grafana.grafanaBoards === 'undefined'){
+            result.grafana.grafanaBoards = [];
+          }
+          if(typeof result.grafana.selectedBoardsConfigs === 'undefined'){
+            result.grafana.selectedBoardsConfigs = [];
+          }
+          store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: result.grafana });
+        }
+        if(result.prometheus){
+          if(typeof result.prometheus.prometheusURL === 'undefined'){
+            result.prometheus.prometheusURL = '';
+          }
+          if(typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined'){
+            result.prometheus.selectedPrometheusBoardsConfigs = [];
+          }
+          store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
+        }
+      }
+      }, error => {
+        console.log(`there was an error fetching user config data: ${error}`);
+      });
+  }
+
   static async getInitialProps({Component, ctx}) {
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
         return {pageProps};
     }
+
+  componentDidMount(){
+    this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
+  }
 
   render() {
     const { Component, store, pageProps, classes } = this.props;
@@ -275,9 +348,11 @@ class MesheryApp extends App {
                                   >
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>
+                                    <MuiPickersUtilsProvider utils={MomentUtils}>
                                       <Paper className={classes.paper}>
                                           <Component pageContext={this.pageContext} {...pageProps} />
                                       </Paper>
+                                    </MuiPickersUtilsProvider>
                                 </main>
                                 </SnackbarProvider>
                               <footer className={classes.footer}>

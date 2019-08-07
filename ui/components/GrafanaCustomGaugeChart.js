@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
   root: {
     width: '100%',
-    height: '75%',
+    height: '80%',
   },
   error: {
     color: '#D32F2F',
@@ -51,7 +51,7 @@ export default function GrafanaCustomGaugeChart(props) {
       let units = '';
       if(panel.format){
         if(panel.format.startsWith('percent')){
-          units = ' %';
+          units = '%';
         } else {
           units = ` ${panel.format}`;
         }
@@ -71,11 +71,10 @@ export default function GrafanaCustomGaugeChart(props) {
       }
 
       let gdata = 0, glabel = '';
-      if(data.datasets && data.datasets.length > 0 && 
-          data.datasets[0].data && data.datasets[0].data.length > 0){
-            const dlind = data.datasets[0].data.length - 1;
-            gdata = data.datasets[0].data[dlind] && data.datasets[0].data[dlind].y?data.datasets[0].data[dlind].y:0;
-            glabel = data.datasets[0].label;
+      if(data && data.length > 0){
+            const dlind = data[0].length - 1;
+            gdata = data[0][dlind]?data[0][dlind]:0;
+            glabel = data[0][0];
           }
 
         let bbChart;

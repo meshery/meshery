@@ -71,7 +71,19 @@ class PrometheusComponent extends Component {
             prometheusConfigSuccess,
             selectedPrometheusBoardsConfigs,
             prometheusURL,
+            ts: new Date(),
           };
+    }
+
+    static getDerivedStateFromProps(props, state){
+      // const {prometheusURL, selectedPrometheusBoardsConfigs} = props.grafana;
+      // if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
+     if(props.ts > state.ts) {
+      return {
+          prometheusURL, selectedPrometheusBoardsConfigs, prometheusConfigSuccess: (prometheusURL !== ''), ts: props.ts,
+        };
+      }
+      return {};
     }
     
       handleChange = name => event => {
@@ -165,30 +177,42 @@ class PrometheusComponent extends Component {
       }
 
       handlePrometheusChipDelete = () => {
-        this.setState({
-          prometheusConfigSuccess: false,
-          prometheusURL: '',
-          selectedPrometheusBoardsConfigs: [],
-        });
-        this.props.updatePrometheusConfig({
-          prometheus: {
-            prometheusURL: '',
-            selectedPrometheusBoardsConfigs: [],
+        const self = this;
+        dataFetch(`/api/prometheus/config`, { 
+          credentials: 'same-origin',
+          method: 'DELETE',
+          credentials: 'include',
+        }, result => {
+          this.props.updateProgress({showProgress: false});
+          if (typeof result !== 'undefined'){
+            self.setState({
+              prometheusConfigSuccess: false,
+              prometheusURL: '',
+              selectedPrometheusBoardsConfigs: [],
+            });
+            self.props.updatePrometheusConfig({
+              prometheus: {
+                prometheusURL: '',
+                selectedPrometheusBoardsConfigs: [],
+              }
+            })
           }
-        });
-      }
+        }, self.handleError(`There was an error communicating with Prometheus`));
+    }
 
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
-      selectedPrometheusBoardsConfigs.push(boardsSelection);
-      this.setState({selectedPrometheusBoardsConfigs});
-      this.props.updatePrometheusConfig({
-        prometheus: {
-          prometheusURL,
-          selectedPrometheusBoardsConfigs,
-        },
-      })
+      if(boardsSelection && boardsSelection.panels && boardsSelection.panels.length){
+        selectedPrometheusBoardsConfigs.push(boardsSelection);
+        this.setState({selectedPrometheusBoardsConfigs});
+        this.props.updatePrometheusConfig({
+          prometheus: {
+            prometheusURL,
+            selectedPrometheusBoardsConfigs,
+          },
+        });
+      }
     }
 
     deleteSelectedBoardPanelConfig = (indexes) => {

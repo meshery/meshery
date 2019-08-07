@@ -80,9 +80,20 @@ class MeshAdapterConfigComponent extends React.Component {
     this.state = {
         meshAdapters,
         availableAdapters: [],
-    
+        ts: new Date(),
         meshLocationURLError: false,
       };
+  }
+
+  static getDerivedStateFromProps(props, state){
+    const { meshAdapters, meshAdaptersts } = props;
+    // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
+    if(meshAdaptersts > state.ts) {
+      return {
+        meshAdapters, ts: meshAdaptersts
+      };
+    }
+    return {};
   }
 
   componentDidMount = () => {
@@ -264,11 +275,11 @@ class MeshAdapterConfigComponent extends React.Component {
               case 'consul':
                 image = "/static/img/consul.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-		break;
+		            break;
               case 'nsm':
                 image = "/static/img/nsm.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-		break;
+		            break;
               // default:
             } 
             
@@ -378,7 +389,8 @@ const mapDispatchToProps = dispatch => {
 }
 const mapStateToProps = state => {
     const meshAdapters = state.get("meshAdapters").toJS();
-    return {meshAdapters};
+    const meshAdaptersts = state.get("meshAdaptersts");
+    return {meshAdapters, meshAdaptersts};
 }
 
 export default withStyles(styles)(connect(

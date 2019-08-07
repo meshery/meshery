@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -47,25 +46,34 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	var meshAdapters []*models.Adapter
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
 
-	meshAdaptersI, ok := session.Values["meshAdapters"]
-	if ok && meshAdaptersI != nil {
-		meshAdapters, _ = meshAdaptersI.([]*models.Adapter)
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
 
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	meshAdapters := sessObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
 
 	switch req.Method {
 	case http.MethodPost:
-		meshAdapters, err = h.addAdapter(meshAdapters, session, w, req)
+		meshAdapters, err = h.addAdapter(meshAdapters, sessObj, w, req)
 		if err != nil {
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
-		meshAdapters, err = h.deleteAdapter(meshAdapters, session, w, req)
+		meshAdapters, err = h.deleteAdapter(meshAdapters, w, req)
 		if err != nil {
 			return // error is handled appropriately in the relevant method
 		}
@@ -74,9 +82,8 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	session.Values["meshAdapters"] = meshAdapters
-
-	err = session.Save(req, w)
+	sessObj.MeshAdapters = meshAdapters
+	err = h.config.SessionPersister.Write(user.UserId, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -91,7 +98,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 
 	meshLocationURL := req.FormValue("meshLocationURL")
 	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
@@ -119,29 +126,14 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.S
 		return meshAdapters, nil
 	}
 
-	contextName := ""
-	contextNameI, ok := session.Values["k8sContext"]
-	if ok && contextNameI != nil {
-		contextName, _ = contextNameI.(string)
-	}
-
-	inClusterConfig := ""
-	inClusterConfigI, ok := session.Values["k8sInCluster"]
-	if ok && contextNameI != nil {
-		inClusterConfig, _ = inClusterConfigI.(string)
-	}
-
-	// logrus.Debugf("session values: %v", session.Values)
-	k8sConfigBytesI, ok := session.Values["k8sConfig"]
-	if inClusterConfig == "" && (!ok || k8sConfigBytesI == nil) {
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		err := errors.New("no valid kubernetes config found")
 		logrus.Error(err)
 		http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
 		return nil, err
 	}
-	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
 
-	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
+	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil {
 		err = errors.Wrapf(err, "error creating a mesh client")
 		logrus.Error(err)
@@ -175,7 +167,7 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, session *sessions.S
 	return append(meshAdapters, result), nil
 }
 
-func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, session *sessions.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
+func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 
 	adapterID := req.URL.Query().Get("adapterID")
 	logrus.Debugf("adapterID of adapter to be removed: %s", adapterID)
@@ -224,27 +216,29 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "unable to get user data", http.StatusUnauthorized)
 		return
 	}
-	userNameI, ok := session.Values["user"]
-	if !ok && userNameI == nil {
-		logrus.Error("unable to get session data")
-		http.Error(w, "unable to get user data", http.StatusUnauthorized)
-		return
-	}
-	userName, _ := userNameI.(string)
 
-	adapterID := req.PostFormValue("index")
-	logrus.Debugf("adapterID to execute ops on: %s", adapterID)
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
 
-	var meshAdapters []*models.Adapter
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
 
-	meshAdaptersI, ok := session.Values["meshAdapters"]
-	if ok && meshAdaptersI != nil {
-		meshAdapters, _ = meshAdaptersI.([]*models.Adapter)
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
 
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	meshAdapters := sessObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
+
+	adapterID := req.PostFormValue("index")
+	logrus.Debugf("adapterID to execute ops on: %s", adapterID)
 
 	adaptersLen := len(meshAdapters)
 
@@ -269,38 +263,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		namespace = "default"
 	}
 
-	contextName := ""
-	contextNameI, ok := session.Values["k8sContext"]
-	if ok && contextNameI != nil {
-		contextName, _ = contextNameI.(string)
-	}
-
-	inClusterConfig := ""
-	inClusterConfigI, ok := session.Values["k8sInCluster"]
-	if ok && contextNameI != nil {
-		inClusterConfig, _ = inClusterConfigI.(string)
-	}
-
-	// logrus.Debugf("session values: %v", session.Values)
-	k8sConfigBytesI, ok := session.Values["k8sConfig"]
-	if inClusterConfig == "" && (!ok || k8sConfigBytesI == nil) {
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		logrus.Error("no valid kubernetes config found")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
-	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
 
-	// meshLocationURL := ""
-	// meshLocationURLI, ok := session.Values["meshLocationURL"]
-	// if ok && meshLocationURLI != nil {
-	// 	meshLocationURL, _ = meshLocationURLI.(string)
-	// } else {
-	// 	logrus.Error("no valid url for mesh adapter found")
-	// 	http.Error(w, `No valid url for mesh adapter found.`, http.StatusBadRequest)
-	// 	return
-	// }
-
-	mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshAdapters[aId].Location)
+	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aId].Location)
 	if err != nil {
 		logrus.Errorf("error creating a mesh client: %v", err)
 		http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
@@ -310,7 +279,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OpName:     opName,
-		Username:   userName,
+		Username:   user.UserId,
 		Namespace:  namespace,
 		CustomBody: customBody,
 		DeleteOp:   (delete != ""),

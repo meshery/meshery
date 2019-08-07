@@ -17,6 +17,7 @@ require (
 	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/coreos/go-systemd v0.0.0-20190204112023-081494f7ee4f // indirect
 	github.com/dghubble/sessions v0.0.0-20181016072817-1a1dc0d676d4
+	github.com/dgraph-io/badger v1.6.0
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/emicklei/go-restful v2.8.0+incompatible
 	github.com/fatih/structs v1.1.0

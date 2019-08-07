@@ -25,36 +25,30 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	contextName := ""
-	contextNameI, ok := session.Values["k8sContext"]
-	if ok && contextNameI != nil {
-		contextName, _ = contextNameI.(string)
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	// h.config.SessionPersister.Lock(user.UserId)
+	// defer h.config.SessionPersister.Unlock(user.UserId)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
 
-	inClusterConfig := ""
-	inClusterConfigI, ok := session.Values["k8sInCluster"]
-	if ok && contextNameI != nil {
-		inClusterConfig, _ = inClusterConfigI.(string)
+	if sessObj == nil {
+		sessObj = &models.Session{}
 	}
 
-	// logrus.Debugf("session values: %v", session.Values)
-	k8sConfigBytesI, ok := session.Values["k8sConfig"]
-	if inClusterConfig == "" && (!ok || k8sConfigBytesI == nil) {
+	meshAdapters := sessObj.MeshAdapters
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
 		logrus.Error("no valid kubernetes config found")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
-	}
-	k8sConfigBytes, _ := k8sConfigBytesI.([]byte)
-
-	var meshAdapters []*models.Adapter
-
-	meshAdaptersI, ok := session.Values["meshAdapters"]
-	if ok && meshAdaptersI != nil {
-		meshAdapters, _ = meshAdaptersI.([]*models.Adapter)
-	}
-
-	if meshAdapters == nil {
-		meshAdapters = []*models.Adapter{}
 	}
 
 	adaptersLen := len(meshAdapters)
@@ -87,10 +81,11 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 
 	respChan := make(chan []byte, 100)
 	errChan := make(chan error)
+	defer close(respChan)
 
 	for _, ma := range meshAdapters {
 		go func(ma *models.Adapter) {
-			mClient, err := meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, ma.Location)
+			mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, ma.Location)
 			if err != nil {
 				err = errors.Wrapf(err, "error creating a mesh client")
 				logrus.Error(err)
@@ -170,6 +165,6 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	close(respChan)
+	// close(respChan)
 	// ... close all events and their channels
 }
