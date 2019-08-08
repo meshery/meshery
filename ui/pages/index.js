@@ -1,7 +1,17 @@
-import { withRouter } from 'next/router'
+import DashboardComponent from "../components/DashboardComponent";
+import { NoSsr } from "@material-ui/core";
 
-const Index = ({router}) => {
-  router.push('/performance');
-  return('');
+// import { withRouter } from 'next/router'
+
+// const Index = ({router}) => {
+  const Index = () => {
+  // router.push('/performance');
+  return (
+  <NoSsr>
+    <DashboardComponent />
+  </NoSsr>
+  );
 }
-export default withRouter(Index);
+// export default withRouter(Index);
+
+export default Index;
