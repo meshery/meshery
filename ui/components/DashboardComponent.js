@@ -77,7 +77,7 @@ class DashboardComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        const {meshAdapters, k8sconfig} = props;
+        const {meshAdapters, k8sconfig, grafana, prometheus} = props;
         this.state = {
             meshAdapters,
             availableAdapters: [],
@@ -92,11 +92,14 @@ class DashboardComponent extends React.Component {
             configuredServer: k8sconfig.configuredServer,
             k8sfileError: false,
             kts: new Date(),
+
+            grafana,
+            prometheus,
           };
       }
     
       static getDerivedStateFromProps(props, state){
-        const { meshAdapters, meshAdaptersts, k8sconfig } = props;
+        const { meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus } = props;
         const st = {};
         if(meshAdaptersts > state.mts) {
           st.meshAdapters = meshAdapters;
@@ -110,6 +113,10 @@ class DashboardComponent extends React.Component {
             st.configuredServer = k8sconfig.configuredServer;
             st.kts = props.ts;
         }
+
+        st.grafana = props.grafana;
+        st.prometheus = props.prometheus;
+
         return st;
       }
 
@@ -297,12 +304,14 @@ class DashboardComponent extends React.Component {
 //     }, self.handleError);
 //   }
 
-  
+  handleDelete() {
+    return false;
+  }
 
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, availableAdapters } = this.state;
+    const { inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, availableAdapters, grafana, prometheus } = this.state;
     
     let showConfigured = '';
     if (clusterConfigured) {
@@ -358,6 +367,7 @@ class DashboardComponent extends React.Component {
                 <Chip 
                 label={aa.label}
                 // onDelete={self.handleDelete(ind)} 
+                onDelete={!isDisabled?self.handleDelete:null}
                 deleteIcon={!isDisabled?<DoneIcon />:''}
                 icon={logoIcon}
                 className={classes.chip}
@@ -367,6 +377,28 @@ class DashboardComponent extends React.Component {
         </div>
       )
 
+    }
+
+    let showGrafana = '';
+    if(grafana && grafana.grafanaURL&& grafana.grafanaURL !== ''){
+      showGrafana = (
+        <Chip 
+        label={grafana.grafanaURL}
+        // onDelete={handleGrafanaChipDelete} 
+        icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
+        variant="outlined" />
+      );
+    }
+
+    let showPrometheus = '';
+    if(prometheus && prometheus.prometheusURL&& prometheus.prometheusURL !== ''){
+      showPrometheus = (
+        <Chip 
+          label={prometheus.prometheusURL}
+          // onDelete={handlePrometheusChipDelete} 
+          icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
+          variant="outlined" />
+      );
     }
 
 
@@ -386,6 +418,18 @@ class DashboardComponent extends React.Component {
         </Grid>
         <Grid item xs={12} sm={10}>
         {showAdapters}
+        </Grid>
+        <Grid item xs={12} sm={2}>
+        Grafana
+        </Grid>
+        <Grid item xs={12} sm={10}>
+        {showGrafana}
+        </Grid>
+        <Grid item xs={12} sm={2}>
+        Prometheus
+        </Grid>
+        <Grid item xs={12} sm={10}>
+        {showPrometheus}
         </Grid>
         </Grid>
     </div>
@@ -417,7 +461,9 @@ const mapStateToProps = state => {
     const k8sconfig = state.get("k8sConfig").toJS();
     const meshAdapters = state.get("meshAdapters").toJS();
     const meshAdaptersts = state.get("meshAdaptersts");
-    return {meshAdapters, meshAdaptersts, k8sconfig, };
+    const grafana = state.get("grafana").toJS();
+    const prometheus = state.get("prometheus").toJS();
+    return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
 }
 
 export default withStyles(styles)(connect(
