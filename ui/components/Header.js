@@ -15,6 +15,8 @@ import MesheryNotification from './MesheryNotification';
 import Link from "next/link";
 import SettingsIcon from '@material-ui/icons/Settings';
 import HomeIcon from '@material-ui/icons/Home';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -101,6 +103,7 @@ class Header extends React.Component {
                 <IconButton color="inherit">
                   <Link href={"/"} prefetch>
                       <HomeIcon className={title === 'Dashboard' && classes.itemActiveItem} />
+                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                   </Link>    
                 </IconButton>
                 
