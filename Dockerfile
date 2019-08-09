@@ -5,7 +5,7 @@ ADD . .
 RUN cd cmd; go build -ldflags="-w -s" -tags draft -a -o /meshery .
 
 FROM node as bd1
-ADD ui ui
+ADD ui uiasdf
 RUN cd ui; npm i; npm run build && npm run export; mv out /
 
 # FROM alpine
