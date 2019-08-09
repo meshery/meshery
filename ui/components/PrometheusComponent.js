@@ -159,6 +159,7 @@ class PrometheusComponent extends Component {
     
       handleError = error => {
         // this.setState({timerDialogOpen: false });
+        const self = this;
         this.props.updateProgress({showProgress: false});
         this.props.enqueueSnackbar(`There was an error communicating with Prometheus`, {
           variant: 'error',

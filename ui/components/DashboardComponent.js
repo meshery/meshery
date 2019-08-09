@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Chip, IconButton } from '@material-ui/core';
+import { NoSsr, Chip, IconButton, Card, CardContent, Typography, CardHeader, Tooltip } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import blue from '@material-ui/core/colors/blue';
 import { updateProgress } from '../lib/store';
@@ -20,6 +20,7 @@ const styles = theme => ({
   },
   chip: {
     marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   buttons: {
     display: 'flex',
@@ -70,7 +71,16 @@ const styles = theme => ({
   },
   istioIcon: {
     width: theme.spacing(1.5),
-  }
+  },
+  cardHeader: {
+    fontSize: theme.spacing(2),
+  },
+  card: {
+    height: '100%',
+  },
+  cardContent: {
+    height: '100%',
+  },
 });
 
 class DashboardComponent extends React.Component {
@@ -308,12 +318,29 @@ class DashboardComponent extends React.Component {
     return false;
   }
 
+  showCard(title, content) {
+    const { classes } = this.props;
+    return (
+      <Card className={classes.card}>
+      <CardHeader
+        disableTypography={true}
+        title={title}
+        // action={iconComponent}
+        className={classes.cardHeader}
+      />
+      <CardContent className={classes.cardContent}>
+        {content}
+      </CardContent>
+      </Card>
+    )
+  }
+
 
   configureTemplate = () => {
     const { classes } = this.props;
     const { inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, availableAdapters, grafana, prometheus } = this.state;
     
-    let showConfigured = '';
+    let showConfigured = 'Kubernetes is not connected at the moment.';
     if (clusterConfigured) {
       showConfigured = (
         <div className={classes.alignRight}>
@@ -321,25 +348,27 @@ class DashboardComponent extends React.Component {
               label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
             //   onDelete={self.handleReconfigure} 
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
+              className={classes.chip}
               variant="outlined" />
         </div>
       )
     }
 
-    let showAdapters = '';
+    let showAdapters = 'No adapters are configured at the moment.';
     const self = this;
     if (availableAdapters.length > 0) {
       showAdapters = (
-        <div className={classes.alignRight}>
+        <div>
            {
             availableAdapters.map(aa => {
                 let isDisabled = true;
                 let image = "/static/img/meshery-logo.png";
                 let logoIcon = (<img src={image} className={classes.icon} />);       
-                
+                let adapterType = '';
                 meshAdapters.forEach((adapter, ind) => {
                     if(aa.value === adapter.adapter_location){
                         isDisabled = false;
+                        adapterType = adapter.name;
                         switch (adapter.name.toLowerCase()){
                         case 'istio':
                             image = "/static/img/istio.svg";
@@ -364,14 +393,16 @@ class DashboardComponent extends React.Component {
 
                 
                 return (
-                <Chip 
-                label={aa.label}
-                // onDelete={self.handleDelete(ind)} 
-                onDelete={!isDisabled?self.handleDelete:null}
-                deleteIcon={!isDisabled?<DoneIcon />:''}
-                icon={logoIcon}
-                className={classes.chip}
-                variant={isDisabled?"default":"outlined"} />
+                <Tooltip title={isDisabled?"This adapter is inactive":`This is a ${adapterType.toUpperCase()} adapter.`}>
+                  <Chip 
+                  label={aa.label}
+                  // onDelete={self.handleDelete(ind)} 
+                  onDelete={!isDisabled?self.handleDelete:null}
+                  deleteIcon={!isDisabled?<DoneIcon />:null}
+                  icon={logoIcon}
+                  className={classes.chip}
+                  variant={isDisabled?"default":"outlined"} />
+                </Tooltip>
                 );
           })}
         </div>
@@ -379,24 +410,26 @@ class DashboardComponent extends React.Component {
 
     }
 
-    let showGrafana = '';
+    let showGrafana = 'Grafana is not connected at the moment.';
     if(grafana && grafana.grafanaURL&& grafana.grafanaURL !== ''){
       showGrafana = (
         <Chip 
         label={grafana.grafanaURL}
         // onDelete={handleGrafanaChipDelete} 
         icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
+        className={classes.chip}
         variant="outlined" />
       );
     }
 
-    let showPrometheus = '';
+    let showPrometheus = 'Prometheus is not connected at the moment.';
     if(prometheus && prometheus.prometheusURL&& prometheus.prometheusURL !== ''){
       showPrometheus = (
         <Chip 
           label={prometheus.prometheusURL}
           // onDelete={handlePrometheusChipDelete} 
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
+          className={classes.chip}
           variant="outlined" />
       );
     }
@@ -406,8 +439,12 @@ class DashboardComponent extends React.Component {
       return (
     <NoSsr>
     <div className={classes.root}>
-        <Grid container spacing={1} alignItems="flex-end">
-        <Grid item xs={12} sm={2}>
+        <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+          Connection Status
+        </Typography>  
+                
+        <Grid container spacing={1}>
+        {/* <Grid item xs={12} sm={2}>
         Kubernetes
         </Grid>
         <Grid item xs={12} sm={10}>
@@ -430,7 +467,21 @@ class DashboardComponent extends React.Component {
         </Grid>
         <Grid item xs={12} sm={10}>
         {showPrometheus}
+        </Grid> */}
+
+        <Grid item xs={12} sm={6}>
+          {self.showCard('Kubernetes', showConfigured)}
         </Grid>
+        <Grid item xs={12} sm={6}>
+          {self.showCard('Adapters', showAdapters)}
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          {self.showCard('Grafana', showGrafana)}
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          {self.showCard('Prometheus', showPrometheus)}
+        </Grid>
+
         </Grid>
     </div>
     </NoSsr>

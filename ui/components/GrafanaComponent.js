@@ -198,6 +198,7 @@ class GrafanaComponent extends Component {
       }
     
       handleError = msg => error => {
+        const self = this;
         // this.setState({timerDialogOpen: false });
         this.props.updateProgress({showProgress: false});
         this.props.enqueueSnackbar(msg, {
