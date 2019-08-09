@@ -199,14 +199,15 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const { inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, availableAdapters, grafana, prometheus } = this.state;
-    
+    const self = this;
     let showConfigured = 'Kubernetes is not connected at the moment.';
     if (clusterConfigured) {
       showConfigured = (
         <div className={classes.alignRight}>
           <Chip 
               label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-            //   onDelete={self.handleReconfigure} 
+              onDelete={self.handleDelete}
+              deleteIcon={<DoneIcon />}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               className={classes.chip}
               variant="outlined" />
@@ -215,7 +216,6 @@ class DashboardComponent extends React.Component {
     }
 
     let showAdapters = 'No adapters are configured at the moment.';
-    const self = this;
     if (availableAdapters.length > 0) {
       showAdapters = (
         <div>
@@ -275,7 +275,8 @@ class DashboardComponent extends React.Component {
       showGrafana = (
         <Chip 
         label={grafana.grafanaURL}
-        // onDelete={handleGrafanaChipDelete} 
+        onDelete={self.handleDelete}
+        deleteIcon={<DoneIcon />}
         icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
         className={classes.chip}
         variant="outlined" />
@@ -287,7 +288,8 @@ class DashboardComponent extends React.Component {
       showPrometheus = (
         <Chip 
           label={prometheus.prometheusURL}
-          // onDelete={handlePrometheusChipDelete} 
+          onDelete={self.handleDelete}
+          deleteIcon={<DoneIcon />}
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
           className={classes.chip}
           variant="outlined" />
