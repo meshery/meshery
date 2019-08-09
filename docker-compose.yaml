@@ -39,7 +39,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10004:10004"
+      - "10008:10008"
   watchtower:
     image: v2tec/watchtower
     labels:
