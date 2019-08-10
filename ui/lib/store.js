@@ -32,7 +32,7 @@ const initialState = fromJS({
     startKey: '',
     results: [],
   },
-  results_selection: {}, // { page: {index: content}}
+  results_selection: {}, // format - { page: {index: content}}
   grafana: {
     grafanaURL: '',
     grafanaAPIKey: '',
@@ -99,7 +99,12 @@ export const reducer = (state = initialState, action) => {
     //   const results = resultsMerge(state.get('results').get('results').toArray(), action.results);
     //   return state.mergeDeep({ results: { results }}); 
     case actionTypes.UPDATE_RESULTS_SELECTION:
-      // console.log(`current results_selection: ${JSON.stringify(rs)}`);
+      // let lg = `current page: ${action.page}, results_selection: ${JSON.stringify(Object.keys(action.results))}`;
+      // Object.keys(action.results).forEach(pg =>{
+      //   lg += `- indices: ${JSON.stringify(Object.keys(action.results[pg]))}`;
+      // });
+      // alert(lg);
+      
       // if (typeof rs[action.page] === 'undefined'){
       //   rs[action.page] = {};
       // }
