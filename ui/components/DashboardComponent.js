@@ -210,6 +210,7 @@ class DashboardComponent extends React.Component {
               deleteIcon={<DoneIcon />}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               className={classes.chip}
+              key='k8s-key'
               variant="outlined" />
         </div>
       )
@@ -220,7 +221,7 @@ class DashboardComponent extends React.Component {
       showAdapters = (
         <div>
            {
-            availableAdapters.map(aa => {
+            availableAdapters.map((aa, ia) => {
                 let isDisabled = true;
                 let image = "/static/img/meshery-logo.png";
                 let logoIcon = (<img src={image} className={classes.icon} />);       
@@ -261,6 +262,7 @@ class DashboardComponent extends React.Component {
                   deleteIcon={!isDisabled?<DoneIcon />:null}
                   icon={logoIcon}
                   className={classes.chip}
+                  key={`adapters-${ai}`}
                   variant={isDisabled?"default":"outlined"} />
                 </Tooltip>
                 );
@@ -279,6 +281,7 @@ class DashboardComponent extends React.Component {
         deleteIcon={<DoneIcon />}
         icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
         className={classes.chip}
+        key='graf-key'
         variant="outlined" />
       );
     }
@@ -292,6 +295,7 @@ class DashboardComponent extends React.Component {
           deleteIcon={<DoneIcon />}
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
           className={classes.chip}
+          key='prom-key'
           variant="outlined" />
       );
     }

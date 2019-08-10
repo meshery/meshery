@@ -134,7 +134,7 @@ class CustomToolbarSelect extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
+        // updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
         clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
     }
 }
