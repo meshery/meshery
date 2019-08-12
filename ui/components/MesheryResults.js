@@ -26,18 +26,30 @@ const styles = theme => ({
 });
 
 class MesheryResults extends Component {
-    state = {
-        page: 0,
-        search: '',
-        sortOrder: '',
-        // pageMap: {
-        //   0: '',
-        // },
-        count: 0,
-        pageSize: 10,
-        results: [],
-        // startKey: '',
+
+  constructor(props){
+      super(props);
+      // const {results_selection} = props;
+      this.state = {
+          page: 0,
+          search: '',
+          sortOrder: '',
+          // pageMap: {
+          //   0: '',
+          // },
+          count: 0,
+          pageSize: 10,
+          results: [],
+          // startKey: '',
+
+          // results_selection,
+      }
     }
+
+    // static getDerivedStateFromProps(props, state){
+    //   const { results_selection } = props;
+    //   return { results_selection };
+    // }
 
     componentDidMount = () => {
       const {page, pageSize, search, sortOrder} = this.state;
@@ -54,13 +66,13 @@ class MesheryResults extends Component {
             sortOrder = '';
           }
           query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-          this.props.updateProgress({showProgress: true});
+          self.props.updateProgress({showProgress: true});
           dataFetch(`/api/results${query}`, { 
             credentials: 'same-origin',
             method: 'GET',
             credentials: 'include',
           }, result => {
-            this.props.updateProgress({showProgress: false});
+            self.props.updateProgress({showProgress: false});
             // console.log(`received results: ${JSON.stringify(result)}`);
             if (typeof result !== 'undefined'){
               this.setState({
@@ -290,7 +302,7 @@ class MesheryResults extends Component {
               //   return null;
               // }
 
-              this.props.updateResultsSelection({page, results: res});
+              self.props.updateResultsSelection({page, results: res});
           },
           onTableChange: (action, tableState) => {
 
@@ -298,10 +310,10 @@ class MesheryResults extends Component {
           
             switch (action) {
               case 'changePage':
-                this.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
+                self.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
                 break;
               case 'changeRowsPerPage':
-                this.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
+                self.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
                 break;
               case 'search':
                 if (self.searchTimeout) {
@@ -322,7 +334,7 @@ class MesheryResults extends Component {
                   }
                 }
                 if (order !== sortOrder){
-                  this.fetchResults(self.state.page, self.state.pageSize, self.state.search, columns[tableState.activeColumn].name+ ' ' + order);
+                  self.fetchResults(self.state.page, self.state.pageSize, self.state.search, columns[tableState.activeColumn].name+ ' ' + order);
                 }
                 break;
             }

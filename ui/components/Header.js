@@ -14,6 +14,9 @@ import NoSsr from '@material-ui/core/NoSsr';
 import MesheryNotification from './MesheryNotification';
 import Link from "next/link";
 import SettingsIcon from '@material-ui/icons/Settings';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -96,6 +99,13 @@ class Header extends React.Component {
                 {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                
+                <IconButton color="inherit">
+                  <Link href={"/"} prefetch>
+                      <DashboardIcon className={title === 'Dashboard' && classes.itemActiveItem} />
+                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
+                  </Link>    
+                </IconButton>
                 
                 <IconButton color="inherit">
                   <Link href={"/settings"} prefetch>
