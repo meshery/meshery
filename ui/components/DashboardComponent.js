@@ -262,7 +262,7 @@ class DashboardComponent extends React.Component {
                   deleteIcon={!isDisabled?<DoneIcon />:null}
                   icon={logoIcon}
                   className={classes.chip}
-                  key={`adapters-${ai}`}
+                  key={`adapters-${ia}`}
                   variant={isDisabled?"default":"outlined"} />
                 </Tooltip>
                 );
