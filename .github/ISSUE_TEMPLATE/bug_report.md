@@ -5,10 +5,10 @@ title: ''
 labels: 'bug'
 assignees: ''
 ---
-**Describe the issue**
+**Issue Description**
 A brief description of the issue.
 
-**Expected behavior**
+**Expected Behavior**
 A brief description of what you expected to happen.
 
 **Screenshots**
@@ -28,5 +28,5 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-[Optional] **Additional context**
+[Optional] **Additional Context**
 Add any other context about the problem here.
