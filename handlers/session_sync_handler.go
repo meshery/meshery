@@ -34,6 +34,12 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	err = h.checkIfK8SConfigExistsOrElseLoadFromDisk(user, sessObj)
+	// if err != nil {
+	// // We can ignore the errors here. They are logged in the other method
+	// }
+
+	// clearing out the config just for displaying purposes
 	if sessObj.K8SConfig != nil && sessObj.K8SConfig.Config != nil && len(sessObj.K8SConfig.Config) > 0 {
 		sessObj.K8SConfig.Config = nil
 	}
