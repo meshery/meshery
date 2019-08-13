@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/gob"
 	"encoding/json"
 	"net/http"
@@ -68,8 +69,26 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 	switch req.Method {
 	case http.MethodPost:
-		meshAdapters, err = h.addAdapter(meshAdapters, sessObj, w, req)
+		meshLocationURL := req.FormValue("meshLocationURL")
+
+		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
+		if strings.TrimSpace(meshLocationURL) == "" {
+			err := errors.New("meshLocationURL cannot be empty to add an adapter")
+			logrus.Error(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+			err := errors.New("no valid kubernetes config found")
+			logrus.Error(err)
+			http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
+			return
+		}
+
+		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, sessObj, meshLocationURL)
 		if err != nil {
+			http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
@@ -98,17 +117,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
-
-	meshLocationURL := req.FormValue("meshLocationURL")
-	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
-	if strings.TrimSpace(meshLocationURL) == "" {
-		err := errors.New("meshLocationURL cannot be empty to add an adapter")
-		logrus.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return nil, err
-	}
-
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, sessObj *models.Session, meshLocationURL string) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -126,33 +135,26 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 		return meshAdapters, nil
 	}
 
-	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
-		err := errors.New("no valid kubernetes config found")
-		logrus.Error(err)
-		http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
-		return nil, err
-	}
-
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
+	mClient, err := meshes.CreateClient(ctx, sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil {
 		err = errors.Wrapf(err, "error creating a mesh client")
 		logrus.Error(err)
-		http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
+		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
 		return nil, err
 	}
 	defer mClient.Close()
-	respOps, err := mClient.MClient.SupportedOperations(req.Context(), &meshes.SupportedOperationsRequest{})
+	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
 		logrus.Errorf("error getting operations for the mesh: %v", err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return nil, err
 	}
 
-	meshNameOps, err := mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	meshNameOps, err := mClient.MClient.MeshName(ctx, &meshes.MeshNameRequest{})
 	if err != nil {
 		err = errors.Wrapf(err, "error getting mesh name")
 		logrus.Error(err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return nil, err
 	}
 
@@ -162,7 +164,7 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 		Ops:      respOps.Ops,
 	}
 
-	h.config.AdapterTracker.AddAdapter(req.Context(), meshLocationURL)
+	h.config.AdapterTracker.AddAdapter(ctx, meshLocationURL)
 
 	return append(meshAdapters, result), nil
 }
