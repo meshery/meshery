@@ -39,6 +39,22 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 	// // We can ignore the errors here. They are logged in the other method
 	// }
 
+	meshAdapters := sessObj.MeshAdapters
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	for _, adapterURL := range h.config.AdapterTracker.GetAdapters(req.Context()) {
+		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
+	}
+	sessObj.MeshAdapters = meshAdapters
+	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	if err != nil { // ignoring errors in this context
+		logrus.Errorf("unable to save session: %v", err)
+		// http.Error(w, "unable to save session", http.StatusInternalServerError)
+		// return
+	}
+
 	// clearing out the config just for displaying purposes
 	if sessObj.K8SConfig != nil && sessObj.K8SConfig.Config != nil && len(sessObj.K8SConfig.Config) > 0 {
 		sessObj.K8SConfig.Config = nil
