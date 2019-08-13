@@ -17,6 +17,8 @@ type HandlerInterface interface {
 	UserHandler(w http.ResponseWriter, r *http.Request)
 
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request)
+	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
+
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
@@ -57,6 +59,8 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	SessionPersister SessionPersister
+
+	KubeConfigFolder string
 }
 
 type SubmitMetricsConfig struct {
