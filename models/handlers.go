@@ -27,6 +27,7 @@ type HandlerInterface interface {
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request)
 	GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request)
+	AdapterPingHandler(w http.ResponseWriter, req *http.Request)
 
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
