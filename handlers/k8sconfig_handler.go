@@ -141,6 +141,10 @@ func (h *Handler) deleteK8SConfig(user *models.User, sessObj *models.Session, w 
 }
 
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 

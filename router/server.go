@@ -21,6 +21,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/config/sync", h.AuthMiddleware(http.HandlerFunc(h.SessionSyncHandler)))
 
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler)))
+	mux.Handle("/api/k8sconfig/contexts", h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig)))
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))
 

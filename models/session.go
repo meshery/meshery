@@ -18,10 +18,10 @@ type K8SConfig struct {
 
 // just used to send contexts to the UI
 type K8SContext struct {
-	ContextName string `json:"context-name"`
-	ClusterName string `json:"cluster-name"`
+	ContextName string `json:"contextName"`
+	ClusterName string `json:"clusterName"`
 	// ContextDisplayName string `json:"context-display-name"`
-	IsCurrentContext bool `json:"current-context"`
+	IsCurrentContext bool `json:"currentContext"`
 }
 
 type Grafana struct {
