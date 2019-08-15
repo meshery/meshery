@@ -178,6 +178,34 @@ class DashboardComponent extends React.Component {
     return false;
   }
 
+  handleClick = (adapterLoc) => () => {
+    // const { meshAdapters } = this.state;
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.props.enqueueSnackbar('Adapter was successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError("error"));
+  }
+
   showCard(title, content) {
     const { classes } = this.props;
     return (
@@ -218,6 +246,9 @@ class DashboardComponent extends React.Component {
 
     let showAdapters = 'No adapters are configured at the moment.';
     if (availableAdapters.length > 0) {
+
+      availableAdapters.sort((a1, a2) => (a1.value < a2.value?-1:(a1.value > a2.value?1:0)));
+
       showAdapters = (
         <div>
            {
@@ -254,12 +285,13 @@ class DashboardComponent extends React.Component {
 
                 
                 return (
-                <Tooltip title={isDisabled?"This adapter is inactive":`This is a ${adapterType.toUpperCase()} adapter.`}>
+                <Tooltip title={isDisabled?"This adapter is inactive":`${adapterType.toUpperCase()} adapter`}>
                   <Chip 
                   label={aa.label}
                   // onDelete={self.handleDelete(ind)} 
                   onDelete={!isDisabled?self.handleDelete:null}
                   deleteIcon={!isDisabled?<DoneIcon />:null}
+                  onClick={self.handleClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}
                   key={`adapters-${ia}`}

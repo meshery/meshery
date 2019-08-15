@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment, Chip, IconButton } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment, Chip, IconButton, MenuItem, FormControlLabel, Switch } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import dataFetch from '../lib/data-fetch';
 import blue from '@material-ui/core/colors/blue';
@@ -75,9 +75,12 @@ class MeshConfigComponent extends React.Component {
     const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
     this.state = {
         inClusterConfig, // read from store
+        inClusterConfigForm: inClusterConfig,
         k8sfile, // read from store
         k8sfileElementVal: '',
         contextName, // read from store
+        contextNameForForm: null,
+        contextsFromFile: [],
     
         clusterConfigured, // read from store
         configuredServer,
@@ -107,36 +110,71 @@ class MeshConfigComponent extends React.Component {
   handleChange = name => {
     const self = this;
     return event => {
-      if (name === 'inClusterConfig'){
+      if (name === 'inClusterConfigForm'){
         self.setState({ [name]: event.target.checked, ts: new Date() });
         return;
       }
-      if (name === 'k8sfile' && event.target.value !== ''){
-        self.setState({ k8sfileError: false, ts: new Date() });
-      }
-      if (name === 'k8sfile') {
-        self.setState({k8sfileElementVal: event.target.value, ts: new Date()});
+      if (name === 'k8sfile'){
+        if (event.target.value !== ''){
+          self.setState({ k8sfileError: false });
+        }
+        self.setState({k8sfileElementVal: event.target.value});
+        self.fetchContexts();
       }
       self.setState({ [name]: event.target.value, ts: new Date() });
     };
   }
 
   handleSubmit = () => {
-    const { inClusterConfig, k8sfile } = this.state;
-    if (!inClusterConfig && k8sfile === '') {
+    const { inClusterConfigForm, k8sfile } = this.state;
+    if (!inClusterConfigForm && k8sfile === '') {
         this.setState({k8sfileError: true});
         return;
     }
     this.submitConfig()
   }
 
-  submitConfig = () => {
-    const { inClusterConfig, k8sfile, contextName } = this.state;
+  fetchContexts = () => {
+    const { inClusterConfigForm, k8sfile } = this.state;
     const fileInput = document.querySelector('#k8sfile') ;
     const formData = new FormData();
-    formData.append('inClusterConfig', inClusterConfig?"on":''); // to simulate form behaviour of a checkbox
-    if (!inClusterConfig) {
-        formData.append('contextName', contextName);
+    if (inClusterConfigForm) {
+      return;
+    }
+    if(fileInput.files.length == 0){
+      this.setState({contextsFromFile: [], contextNameForForm: null});
+      return;
+    }
+    // formData.append('contextName', contextName);
+    formData.append('k8sfile', fileInput.files[0]);
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch('/api/k8sconfig/contexts', { 
+      credentials: 'same-origin',
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+          let ctName = '';
+          result.forEach(({contextName, currentContext}) => {
+            if(currentContext){
+              ctName = contextName
+            }
+          });
+          self.setState({contextsFromFile: result, contextNameForForm: ctName});
+      }
+    }, self.handleError);
+  }
+
+  submitConfig = () => {
+    const { inClusterConfigForm, k8sfile, contextNameForForm } = this.state;
+    const fileInput = document.querySelector('#k8sfile') ;
+    const formData = new FormData();
+    formData.append('inClusterConfig', inClusterConfigForm?"on":''); // to simulate form behaviour of a checkbox
+    if (!inClusterConfigForm) {
+        formData.append('contextName', contextNameForForm);
         formData.append('k8sfile', fileInput.files[0]);
     }
     this.props.updateProgress({showProgress: true});
@@ -164,7 +202,7 @@ class MeshConfigComponent extends React.Component {
             </IconButton>
           ),
         });
-        this.props.updateK8SConfig({k8sConfig: {inClusterConfig, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer}});
+        this.props.updateK8SConfig({k8sConfig: {inClusterConfig: inClusterConfigForm, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer}});
       }
     }, self.handleError);
   }
@@ -202,11 +240,13 @@ class MeshConfigComponent extends React.Component {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.setState({
+        inClusterConfigForm: false,
         inClusterConfig: false,
         k8sfile: '', 
         k8sfileElementVal: '',
         k8sfileError: false,
         contextName: '', 
+        contextNameForForm: null,
         clusterConfigured: false,
       })
       this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
@@ -231,7 +271,7 @@ class MeshConfigComponent extends React.Component {
 
   configureTemplate = () => {
     const { classes } = this.props;
-    const { inClusterConfig, k8sfile, k8sfileElementVal, contextName, clusterConfigured, configuredServer } = this.state;
+    const { inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer } = this.state;
     
     let showConfigured = '';
     const self = this;
@@ -255,15 +295,15 @@ class MeshConfigComponent extends React.Component {
     {showConfigured}
     
     <Grid container spacing={1} alignItems="flex-end">
-      {/* <Grid item xs={12} className={classes.alignCenter}>
+      <Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
             hidden={true} // hiding this component for now
             key="inCluster"
             control={
               <Switch
                     hidden={true} // hiding this component for now
-                    checked={inClusterConfig}
-                    onChange={this.handleChange('inClusterConfig')}
+                    checked={inClusterConfigForm}
+                    onChange={this.handleChange('inClusterConfigForm')}
                     color="default"
                     //   value="checkedA"
                     // classes={{
@@ -276,7 +316,7 @@ class MeshConfigComponent extends React.Component {
             labelPlacement="end"
             label="Use in-cluster Kubernetes config"
       />
-      </Grid> */}
+      </Grid>
       <Grid item xs={12} sm={6}>
       <FormGroup row>
         <input
@@ -286,7 +326,7 @@ class MeshConfigComponent extends React.Component {
             // value={k8sfile}
             value={k8sfileElementVal}
             onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfig == true}
+            disabled={inClusterConfigForm == true}
             className={classes.fileInputStyle}
         />
             <TextField
@@ -313,16 +353,21 @@ class MeshConfigComponent extends React.Component {
       </Grid>
       <Grid item xs={12} sm={6}>
         <TextField
+          select
           id="contextName"
           name="contextName"
           label="Context Name"
           fullWidth
-          value={contextName}
+          value={contextNameForForm}
           margin="normal"
           variant="outlined"
-          disabled={inClusterConfig == true}
+          disabled={inClusterConfigForm == true}
           onChange={this.handleChange('contextName')}
-        />
+        >
+          {contextsFromFile && contextsFromFile.map((ct) => (
+              <MenuItem key={'ct_---_'+ct.contextName} value={ct.contextName}>{ct.contextName}{ct.currentContext?' (default)':''}</MenuItem>
+          ))}
+        </TextField>
       </Grid>
     </Grid>
     <React.Fragment>
@@ -361,7 +406,7 @@ class MeshConfigComponent extends React.Component {
     // }
     // return this.alreadyConfiguredTemplate();
   }
-}
+}   
 
 MeshConfigComponent.propTypes = {
   classes: PropTypes.object.isRequired,

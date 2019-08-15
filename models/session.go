@@ -16,6 +16,14 @@ type K8SConfig struct {
 	// ConfiguredServer  string `json:"configuredServer,omitempty"`
 }
 
+// just used to send contexts to the UI
+type K8SContext struct {
+	ContextName string `json:"contextName"`
+	ClusterName string `json:"clusterName"`
+	// ContextDisplayName string `json:"context-display-name"`
+	IsCurrentContext bool `json:"currentContext"`
+}
+
 type Grafana struct {
 	GrafanaURL    string `json:"grafanaURL,omitempty"`
 	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`

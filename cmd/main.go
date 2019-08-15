@@ -27,14 +27,22 @@ func main() {
 	viper.SetDefault("PORT", 8080)
 	viper.SetDefault("ADAPTER_URLS", "")
 
+	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
-		home, err := os.UserHomeDir()
 		if err != nil {
 			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
 		}
 		viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 	}
 	logrus.Infof("Using '%s' to store user data", viper.GetString("USER_DATA_FOLDER"))
+
+	if viper.GetString("KUBECONFIG_FOLDER") == "" {
+		if err != nil {
+			logrus.Fatalf("unable to retrieve the user's home directory: %v", err)
+		}
+		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
+	}
+	logrus.Infof("Using '%s' as the folder to look for kubeconfig file", viper.GetString("KUBECONFIG_FOLDER"))
 
 	if viper.GetBool("DEBUG") {
 		logrus.SetLevel(logrus.DebugLevel)
@@ -83,6 +91,8 @@ func main() {
 		Queue: mainQueue,
 
 		SessionPersister: sessionPersister,
+
+		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 	})
 
 	port := viper.GetInt("PORT")
