@@ -11,6 +11,7 @@ services:
       - "EVENT=mesheryLocal"
     volumes:
       - $HOME/.meshery/config:/home/appuser/.meshery/config
+      - $HOME/.kube:/home/appuser/.kube:ro
     ports:
       - "9081:8080"
   meshery-istio:

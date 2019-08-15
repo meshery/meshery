@@ -201,11 +201,11 @@ class MeshAdapterConfigComponent extends React.Component {
     }, self.handleError("Adapter was not configured due to an error"));
   }
 
-  handleDelete = (adapterID) => () => {
+  handleDelete = (adapterLoc) => () => {
     // const { meshAdapters } = this.state;
     this.props.updateProgress({showProgress: true});
     let self = this;
-    dataFetch(`/api/mesh/manage?adapterID=${adapterID}`, { 
+    dataFetch(`/api/mesh/manage?adapter=${encodeURIComponent(adapterLoc)}`, { 
       credentials: 'same-origin',
       method: 'DELETE',
       credentials: 'include',
@@ -230,6 +230,34 @@ class MeshAdapterConfigComponent extends React.Component {
         this.props.updateAdaptersInfo({meshAdapters: result});
       }
     }, self.handleError("Adapter was not removed due to an error"));
+  }
+
+  handleClick = (adapterLoc) => () => {
+    // const { meshAdapters } = this.state;
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.props.enqueueSnackbar('Adapter was successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError("error"));
   }
 
   handleError = (msg) => (error) => {
@@ -286,7 +314,8 @@ class MeshAdapterConfigComponent extends React.Component {
             return (
             <Chip 
             label={adapter.adapter_location}
-            onDelete={self.handleDelete(ind)} 
+            onDelete={self.handleDelete(adapter.adapter_location)} 
+            onClick={self.handleClick(adapter.adapter_location)} 
             icon={logoIcon} 
             variant="outlined" />
           );

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/gob"
 	"encoding/json"
 	"net/http"
@@ -68,8 +69,26 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 	switch req.Method {
 	case http.MethodPost:
-		meshAdapters, err = h.addAdapter(meshAdapters, sessObj, w, req)
+		meshLocationURL := req.FormValue("meshLocationURL")
+
+		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
+		if strings.TrimSpace(meshLocationURL) == "" {
+			err := errors.New("meshLocationURL cannot be empty to add an adapter")
+			logrus.Error(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+			err := errors.New("no valid kubernetes config found")
+			logrus.Error(err)
+			http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
+			return
+		}
+
+		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, sessObj, meshLocationURL)
 		if err != nil {
+			http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
@@ -98,17 +117,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Session, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
-
-	meshLocationURL := req.FormValue("meshLocationURL")
-	logrus.Debugf("meshLocationURL: %s", meshLocationURL)
-	if strings.TrimSpace(meshLocationURL) == "" {
-		err := errors.New("meshLocationURL cannot be empty to add an adapter")
-		logrus.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return nil, err
-	}
-
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, sessObj *models.Session, meshLocationURL string) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -126,33 +135,26 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 		return meshAdapters, nil
 	}
 
-	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
-		err := errors.New("no valid kubernetes config found")
-		logrus.Error(err)
-		http.Error(w, "No valid kubernetes config found.", http.StatusBadRequest)
-		return nil, err
-	}
-
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
+	mClient, err := meshes.CreateClient(ctx, sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil {
 		err = errors.Wrapf(err, "error creating a mesh client")
 		logrus.Error(err)
-		http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
+		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
 		return nil, err
 	}
 	defer mClient.Close()
-	respOps, err := mClient.MClient.SupportedOperations(req.Context(), &meshes.SupportedOperationsRequest{})
+	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
 		logrus.Errorf("error getting operations for the mesh: %v", err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return nil, err
 	}
 
-	meshNameOps, err := mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	meshNameOps, err := mClient.MClient.MeshName(ctx, &meshes.MeshNameRequest{})
 	if err != nil {
 		err = errors.Wrapf(err, "error getting mesh name")
 		logrus.Error(err)
-		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return nil, err
 	}
 
@@ -162,31 +164,31 @@ func (h *Handler) addAdapter(meshAdapters []*models.Adapter, sessObj *models.Ses
 		Ops:      respOps.Ops,
 	}
 
-	h.config.AdapterTracker.AddAdapter(req.Context(), meshLocationURL)
+	h.config.AdapterTracker.AddAdapter(ctx, meshLocationURL)
 
 	return append(meshAdapters, result), nil
 }
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 
-	adapterID := req.URL.Query().Get("adapterID")
-	logrus.Debugf("adapterID of adapter to be removed: %s", adapterID)
+	adapterLoc := req.URL.Query().Get("adapter")
+	logrus.Debugf("url of adapter to be removed: %s", adapterLoc)
 
 	adaptersLen := len(meshAdapters)
 
-	aId, err := strconv.Atoi(adapterID)
-	if err != nil {
-		err = errors.Wrapf(err, "unable to parse the given id")
+	aId := -1
+	for i, ad := range meshAdapters {
+		if adapterLoc == ad.Location {
+			aId = i
+		}
+	}
+	if aId < 0 {
+		err := errors.New("unable to find a valid adapter for the given adapter url")
 		logrus.Error(err)
-		http.Error(w, "given id is not valid", http.StatusBadRequest)
+		http.Error(w, "given adapter url is not valid", http.StatusBadRequest)
 		return nil, err
 	}
-	if aId < 0 || aId >= adaptersLen {
-		err := errors.New("given id is outside the valid range")
-		logrus.Error(err)
-		http.Error(w, "given id is not valid", http.StatusBadRequest)
-		return nil, err
-	}
+
 	newMeshAdapters := []*models.Adapter{}
 	if aId == 0 {
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[1:]...)
@@ -287,6 +289,76 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		http.Error(w, "There was an error applying the change", http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte("{}"))
+}
+
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Error("unable to get session data")
+		http.Error(w, "unable to get user data", http.StatusUnauthorized)
+		return
+	}
+
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	if err != nil {
+		logrus.Warn("unable to read session from the session persister, starting with a new one")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	meshAdapters := sessObj.MeshAdapters
+	if meshAdapters == nil {
+		meshAdapters = []*models.Adapter{}
+	}
+
+	// adapterLoc := req.PostFormValue("adapter")
+	adapterLoc := req.URL.Query().Get("adapter")
+	logrus.Debugf("adapter url to ping: %s", adapterLoc)
+
+	aId := -1
+	for i, ad := range meshAdapters {
+		if adapterLoc == ad.Location {
+			aId = i
+		}
+	}
+	if aId < 0 {
+		err := errors.New("unable to find a valid adapter for the given adapter url")
+		logrus.Error(err)
+		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)
+		return
+	}
+
+	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+		logrus.Error("no valid kubernetes config found")
+		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		return
+	}
+
+	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aId].Location)
+	if err != nil {
+		logrus.Errorf("error creating a mesh client: %v", err)
+		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)
+		return
+	}
+	defer mClient.Close()
+
+	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+	if err != nil {
+		err = errors.Wrapf(err, "error pinging mesh adapter")
+		logrus.Error(err)
+		http.Error(w, "adapter could not be pinged", http.StatusInternalServerError)
 		return
 	}
 	w.Write([]byte("{}"))

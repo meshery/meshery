@@ -21,12 +21,14 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/config/sync", h.AuthMiddleware(http.HandlerFunc(h.SessionSyncHandler)))
 
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler)))
+	mux.Handle("/api/k8sconfig/contexts", h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig)))
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))
 
 	mux.Handle("/api/mesh/manage", h.AuthMiddleware(http.HandlerFunc(h.MeshAdapterConfigHandler)))
 	mux.Handle("/api/mesh/ops", h.AuthMiddleware(http.HandlerFunc(h.MeshOpsHandler)))
 	mux.Handle("/api/mesh/adapters", h.AuthMiddleware(http.HandlerFunc(h.GetAllAdaptersHandler)))
+	mux.Handle("/api/mesh/adapter/ping", h.AuthMiddleware(http.HandlerFunc(h.AdapterPingHandler)))
 	mux.Handle("/api/events", h.AuthMiddleware(http.HandlerFunc(h.EventStreamHandler)))
 
 	mux.Handle("/api/grafana/config", h.AuthMiddleware(http.HandlerFunc(h.GrafanaConfigHandler)))
