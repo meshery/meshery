@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path"
 
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"os"
@@ -187,53 +188,66 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
+func (h *Handler) loadInClusterK8SConfig() (*models.K8SConfig, error) {
+	// try to load k8s config from incluster config
+	_, err := rest.InClusterConfig()
+	if err == nil {
+		err = errors.Wrap(err, "error parsing incluster k8s config")
+		logrus.Error(err)
+		return nil, err
+	}
+	return &models.K8SConfig{
+		InClusterConfig: true,
+		// ContextName:       ccfg.CurrentContext,
+		ClusterConfigured: true,
+	}, nil
+}
+
+func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
+	// // try to load k8s config from local disk
+	configFile := path.Join(h.config.KubeConfigFolder, "config") // is it ok to hardcode the name 'config'?
+	if _, err := os.Stat(configFile); err != nil {
+		// if os.IsNotExist(err) {
+		// 	logrus.Warnf("%s location does not exist", configFile)
+		// 	return nil
+		// } else {
+		err = errors.Wrapf(err, "unable to open file: %s", configFile)
+		logrus.Error(err)
+		return nil, err
+		// }
+	}
+	k8sConfigBytes, err := ioutil.ReadFile(configFile)
+	if err != nil {
+		err = errors.Wrapf(err, "error reading file: %s", configFile)
+		logrus.Error(err)
+		return nil, err
+	}
+	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing k8s config")
+		logrus.Error(err)
+		return nil, err
+	}
+	return &models.K8SConfig{
+		InClusterConfig:   false,
+		Config:            k8sConfigBytes,
+		ContextName:       ccfg.CurrentContext,
+		ClusterConfigured: true,
+	}, nil
+}
+
 // ATM used only in the SessionSyncHandler
-func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDisk(user *models.User, sessObj *models.Session) error {
+func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.User, sessObj *models.Session) error {
 	if sessObj == nil {
 		sessObj = &models.Session{}
 	}
 	if sessObj.K8SConfig == nil {
-		// try to load k8s config from local disk
-		_, err := os.Stat(h.config.KubeConfigFolder)
+		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
-			if os.IsNotExist(err) {
-				logrus.Warnf("%s location does not exist", h.config.KubeConfigFolder)
-				return nil
-			} else {
-				err = errors.Wrapf(err, "unable to open folder: %s", h.config.KubeConfigFolder)
-				logrus.Error(err)
+			kc, err = h.loadInClusterK8SConfig()
+			if err != nil {
 				return err
 			}
-		}
-		configFile := path.Join(h.config.KubeConfigFolder, "config")
-		_, err = os.Stat(configFile)
-		if err != nil {
-			if os.IsNotExist(err) {
-				logrus.Warnf("%s location does not exist", configFile)
-				return nil
-			} else {
-				err = errors.Wrapf(err, "unable to open file: %s", configFile)
-				logrus.Error(err)
-				return err
-			}
-		}
-		k8sConfigBytes, err := ioutil.ReadFile(configFile) // is it ok to hardcode the name 'config'?
-		if err != nil {
-			err = errors.Wrapf(err, "error reading file: %s", configFile)
-			logrus.Error(err)
-			return err
-		}
-		ccfg, err := clientcmd.Load(k8sConfigBytes)
-		if err != nil {
-			err = errors.Wrap(err, "error parsing k8s config")
-			logrus.Error(err)
-			return err
-		}
-		kc := &models.K8SConfig{
-			InClusterConfig:   false,
-			Config:            k8sConfigBytes,
-			ContextName:       ccfg.CurrentContext,
-			ClusterConfigured: true,
 		}
 		sessObj.K8SConfig = kc
 		err = h.config.SessionPersister.Write(user.UserId, sessObj)

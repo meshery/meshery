@@ -34,7 +34,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = h.checkIfK8SConfigExistsOrElseLoadFromDisk(user, sessObj)
+	err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user, sessObj)
 	// if err != nil {
 	// // We can ignore the errors here. They are logged in the other method
 	// }

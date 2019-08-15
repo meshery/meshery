@@ -246,6 +246,9 @@ class DashboardComponent extends React.Component {
 
     let showAdapters = 'No adapters are configured at the moment.';
     if (availableAdapters.length > 0) {
+
+      availableAdapters.sort((a1, a2) => (a1.value < a2.value?-1:(a1.value > a2.value?1:0)));
+
       showAdapters = (
         <div>
            {
