@@ -7,7 +7,7 @@
 ![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg)
 ![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)
-[![Slack](https://img.shields.io/badge/slack-311-lightgrey)](http://slack.layer5.io)
+[![Slack](https://img.shields.io/badge/slack-380-lightgrey)](http://slack.layer5.io)
 
 # [Meshery](https://layer5.io/meshery)
 
