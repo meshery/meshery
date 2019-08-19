@@ -239,7 +239,7 @@ class MesheryApp extends App {
     }
   }
 
-  loadConfigFromServer() {
+  async loadConfigFromServer() {
     const { store } = this.props;
     const self = this;
       dataFetch('/api/config/sync', { 

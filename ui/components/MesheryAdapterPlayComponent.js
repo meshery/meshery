@@ -149,11 +149,11 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   submitOp = (selectedOp, deleteOp=false) => {
     const { namespace, cmEditorVal } = this.state;
-    const { index } = this.props;
+    const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
 
     const data = {
-      'index': index,
+      'adapter': adapter.adapter_location,
       'query': selectedOp,
       'namespace': namespace,
       'customBody': cmEditorVal,
@@ -357,7 +357,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
 MesheryAdapterPlayComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
+  // index: PropTypes.number.isRequired,
   adapter: PropTypes.object.isRequired,
 };
 

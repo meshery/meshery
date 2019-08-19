@@ -11,8 +11,6 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-
-	"strconv"
 )
 
 func init() {
@@ -239,24 +237,22 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		meshAdapters = []*models.Adapter{}
 	}
 
-	adapterID := req.PostFormValue("index")
-	logrus.Debugf("adapterID to execute ops on: %s", adapterID)
+	adapterLoc := req.PostFormValue("adapter")
+	logrus.Debugf("adapter url to execute ops on: %s", adapterLoc)
 
-	adaptersLen := len(meshAdapters)
-
-	aId, err := strconv.Atoi(adapterID)
-	if err != nil {
-		err = errors.Wrapf(err, "unable to parse the given adapter id")
+	aId := -1
+	for i, ad := range meshAdapters {
+		if adapterLoc == ad.Location {
+			aId = i
+		}
+	}
+	if aId < 0 {
+		err := errors.New("unable to find a valid adapter for the given adapter url")
 		logrus.Error(err)
-		http.Error(w, "given adapter id is not valid", http.StatusBadRequest)
+		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)
 		return
 	}
-	if aId < 0 || aId >= adaptersLen {
-		err := errors.New("given adapter id is outside the valid range")
-		logrus.Error(err)
-		http.Error(w, "given adapter id is not valid", http.StatusBadRequest)
-		return
-	}
+
 	opName := req.PostFormValue("query")
 	customBody := req.PostFormValue("customBody")
 	namespace := req.PostFormValue("namespace")
