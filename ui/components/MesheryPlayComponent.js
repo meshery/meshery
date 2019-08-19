@@ -97,8 +97,24 @@ class MesheryPlayComponent extends React.Component {
     this.props.router.push('/settings');
   }
 
+  renderIndividualAdapter() {
+    const { meshAdapters } = this.props;
+    let adapter;
+    meshAdapters.forEach(adap => {
+      if (adap.adapter_location === this.props.adapter){
+        adapter = adap;
+      }
+    });
+    if(adapter){
+      return (
+        <MesheryAdapterPlayComponent adapter={adapter} />
+      )
+    }
+    return '';
+  }
+
   render() {
-    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters, ...other} = this.props;
+    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters} = this.props;
 
     if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
       return (
@@ -116,6 +132,12 @@ class MesheryPlayComponent extends React.Component {
           </React.Fragment>
           </NoSsr>
       );
+    }
+    if(this.props.adapter && this.props.adapter !== '') {
+      const indContent = this.renderIndividualAdapter();
+      if(indContent !== ''){
+        return indContent;
+      } // else it will render all the available adapters
     }
 
     var self = this;
@@ -159,7 +181,7 @@ class MesheryPlayComponent extends React.Component {
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                       <Divider variant="fullWidth" />
-                      <MesheryAdapterPlayComponent index={ind} adapter={adapter} />
+                      <MesheryAdapterPlayComponent adapter={adapter} />
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               );
