@@ -54,14 +54,16 @@ var startCmd = &cobra.Command{
 		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 		ostype, err := exec.Command("uname", "-s").Output()
 		if err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal("[WARNING] Unable to detect OS type. Warning message: \n", err)
 		}
 		os := strings.TrimSpace(string(ostype))
 		url := "http://localhost:9081"
 		if os == "Linux" {
 			exec.Command("xdg-open", url).Start()
 
-		} else {
+		} 
+		// Asssume MacOS
+		else {
 			exec.Command("open", url).Start()
 
 		}
