@@ -19,6 +19,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -51,7 +52,22 @@ var startCmd = &cobra.Command{
 		}
 
 		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
-		exec.Command("open", url).Start()
+		ostype, err := exec.Command("uname", "-s").Output()
+		if err != nil {
+			log.Fatal("[WARNING] Unable to detect OS type. Warning message: \n", err)
+		}
+		os := strings.TrimSpace(string(ostype))
+		url := "http://localhost:9081"
+		if os == "Linux" {
+			exec.Command("xdg-open", url).Start()
+
+		} 
+		// Asssume MacOS
+		else {
+			exec.Command("open", url).Start()
+
+		}
+
 	},
 }
 
