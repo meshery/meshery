@@ -3,7 +3,7 @@ import { NoSsr } from '@material-ui/core';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
 
 
-const Play = () => (
+const Manage = () => (
     <NoSsr>
     <React.Fragment>
         <MesheryPlayComponent />
@@ -11,4 +11,4 @@ const Play = () => (
     </NoSsr>
 )
 
-export default Play;
+export default Manage;

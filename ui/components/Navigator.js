@@ -22,14 +22,6 @@ import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } from '@fortawesome/free-solid-svg-icons';
 
-const categories = [
-  { id: 'Dashboard', href: "/", title: 'Dashboard', show: false},
-  { id: 'Performance', icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, href: "/performance", title: 'Performance Test', show: true },
-  { id: 'Settings', href: "/settings", title: 'Settings', show: false}, // title is used for comparison in the Header.js file as well
-  { id: 'Playground', icon:  <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />, href: "/playground", title: 'Play with Meshery', show: true },
-  { id: 'Results', icon: <FontAwesomeIcon icon={faPollH} fixedWidth />, href: "/results", title: 'View & Compare Results', show: true },
-]
-
 const styles = theme => ({
   categoryHeader: {
     paddingTop: 16,
@@ -96,17 +88,117 @@ const styles = theme => ({
   listIcon: {
     minWidth: theme.spacing(3.5),
     paddingTop: theme.spacing(0.5),
-  }
+  },
+  nested1: {
+    paddingLeft: theme.spacing(4),
+  },
+  nested2: {
+    paddingLeft: theme.spacing(6),
+  },
 });
 
-class Navigator extends React.Component {
+const categories = [
+  { 
+    id: 'Dashboard', 
+    href: "/", 
+    title: 'Dashboard', 
+    show: false,
+    link: true,
+  },
+  { 
+    id: 'Performance', 
+    icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+    href: "/performance", 
+    title: 'Performance Test', 
+    show: true,
+    link: true,
+    children: [
+      { 
+        id: 'Results', 
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />, 
+        href: "/results", 
+        title: 'View & Compare Results', 
+        show: true,
+        link: true,
+      },
+    ]
+  },
+  { 
+    id: 'Settings', 
+    href: "/settings", 
+    title: 'Settings', 
+    show: false,
+    link: true,
+  }, // title is used for comparison in the Header.js file as well
+  { 
+    id: 'Management', 
+    icon:  <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />, 
+    href: "/management", 
+    title: 'Management', 
+    show: true,
+    link: true,
+    children: [
+      {
+        id: 'Istio', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/istio", 
+        title: 'Istio',
+        link: false, 
+        show: true,
+      },
+      {
+        id: 'Linkerd', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/linkerd", 
+        title: 'Linkerd',
+        link: false, 
+        show: true,
+      },
+      {
+        id: 'Consul', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/consul", 
+        title: 'Consul',
+        link: false, 
+        show: true,
+      },
+    ],
+  },
+]
 
-  state = {
+class Navigator extends React.Component {
+    constructor(props){
+      super(props);
+      const {meshAdapters, meshAdaptersts} = props;
+      this.state = {
         path: '',
+        meshAdapters,
+        mts: new Date(),
+      };
+      
+    }
+
+    updateCategoriesMenus() {
+      const self = this;
+      categories.forEach((cat, ind) => {
+        if(cat.id === 'Management'){
+          cat.children.forEach((catc, ind1) => {
+            const cr = self.fetchChildren(catc.id);
+            categories[ind].children[ind1]['children'] = cr;
+          });
+        }
+      });
     }
 
     static getDerivedStateFromProps(props, state) {
+      const { meshAdapters, meshAdaptersts } = props;
       let path = (typeof window !== 'undefined' ? window.location.pathname : '');
+
+      const st = {};
+      if(meshAdaptersts > state.mts) {
+        st.meshAdapters = meshAdapters;
+        st.mts = meshAdaptersts;
+      }
       categories.map(({title, href}) => {
           if (path.lastIndexOf('/') > 0) {
               path = path.substring(0, path.lastIndexOf('/'));
@@ -117,16 +209,122 @@ class Navigator extends React.Component {
               return;
           }
       });
-      return {path};
+      st.path = path;
+      return st;
+    }
+
+    fetchChildren(category) {
+      const { meshAdapters } = this.state;
+      const children = [];
+      category = category.toLowerCase();
+      meshAdapters.forEach(adapter => {
+        const aName = adapter.name.toLowerCase();
+
+        if (category !== aName) {
+          return;
+        }
+        children.push(
+          {
+            id: adapter.adapter_location, 
+            // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+            href: `/management?adapter=${adapter.adapter_location}`, 
+            title: adapter.adapter_location,
+            link: true, 
+            show: true,
+          }
+        );
+
+        // let image = "/static/img/meshery-logo.png";
+        // let logoIcon = (<img src={image} className={classes.icon} />);
+        // switch (aName){
+        //   case 'istio':
+        //     image = "/static/img/istio.svg";
+        //     logoIcon = (<img src={image} className={classes.istioIcon} />);
+        //     break;
+        //   case 'linkerd':
+        //     image = "/static/img/linkerd.svg";
+        //     logoIcon = (<img src={image} className={classes.icon} />);
+        //     break;
+        //   case 'consul':
+        //     image = "/static/img/consul.svg";
+        //     logoIcon = (<img src={image} className={classes.icon} />);
+        //     break;
+        //   case 'nsm':
+        //     image = "/static/img/nsm.svg";
+        //     logoIcon = (<img src={image} className={classes.icon} />);
+        //     break;
+        //   // default:
+        // }
+      });
+      return children;
     }
 
     handleTitleClick = (event) => {
       this.props.router.push('/');
     }
 
+    renderChildren(children, depth) {
+      const { classes } = this.props;
+      const { path } = this.state;
+      
+      if (children && children.length > 0){
+      return (
+        <List disablePadding>
+          {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+            if (typeof showc !== 'undefined' && !showc){
+              return '';
+            }
+            return (
+              <React.Fragment>
+              <ListItem button
+                className={classNames(
+                  (depth === 1?classes.nested1:classes.nested2),
+                  classes.item,
+                  classes.itemActionable,
+                  path === hrefc && classes.itemActiveItem,
+                  )}>
+                {this.linkContent(iconc, idc, hrefc, linkc)}
+              </ListItem>
+              {this.renderChildren(childrenc, depth + 1)}
+              </React.Fragment>
+              );
+              })}
+            </List>
+        );
+      }
+      return '';
+    }
+
+    linkContent(iconc, idc, hrefc, linkc){
+      const { classes } = this.props;
+      let linkContent = (
+        <div className={classNames(classes.link)} >
+          <ListItemIcon className={classes.listIcon}>
+            {iconc}
+          </ListItemIcon>
+          <ListItemText
+            classes={{
+              primary: classes.itemPrimary,
+              textDense: classes.textDense,
+            }}>
+            {idc}
+          </ListItemText>
+        </div>
+      );
+      if(linkc){
+        linkContent= (
+        <Link href={hrefc} prefetch>
+        {linkContent}
+        </Link>
+        );
+      }
+      return linkContent;
+    }
+
     render() {
         const { classes, updatepagepathandtitle, ...other } = this.props;
         const { path } = this.state;
+        this.updateCategoriesMenus();
         // const path = this.updateTitle();
         // console.log("current page:" + path);
         return (
@@ -140,11 +338,12 @@ class Navigator extends React.Component {
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
                   Meshery
                 </ListItem>
-                    {categories.map(({ id: childId, icon, href, show }) => {
+                    {categories.map(({ id: childId, icon, href, show, link, children }) => {
                       if (typeof show !== 'undefined' && !show){
                         return '';
                       }
                       return (
+                        <React.Fragment>
                         <ListItem
                             button
                             dense
@@ -155,7 +354,7 @@ class Navigator extends React.Component {
                             path === href && classes.itemActiveItem,
                             )}
                         >
-                            <Link href={href} prefetch>
+                            <Link href={link?href:''} prefetch>
                                 <div className={classNames(classes.link)} >
                                     <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                                     <ListItemText
@@ -169,6 +368,8 @@ class Navigator extends React.Component {
                                 </div>
                             </Link>
                         </ListItem>
+                        {this.renderChildren(children, 1)}
+                        </React.Fragment>
                         );
                       })}
                       <Divider className={classes.divider} />
@@ -212,7 +413,17 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
+const mapStateToProps = state => {
+  // const k8sconfig = state.get("k8sConfig").toJS();
+  const meshAdapters = state.get("meshAdapters").toJS();
+  const meshAdaptersts = state.get("meshAdaptersts");
+  // const grafana = state.get("grafana").toJS();
+  // const prometheus = state.get("prometheus").toJS();
+  // return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
+  return {meshAdapters, meshAdaptersts};
+}
+
 export default withStyles(styles)(connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   )(withRouter(Navigator)));
