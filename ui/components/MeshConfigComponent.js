@@ -279,7 +279,8 @@ class MeshConfigComponent extends React.Component {
       showConfigured = (
         <div className={classes.alignRight}>
           <Chip 
-              label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+              // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+              label={inClusterConfig?'Using In Cluster Config': contextName }
               onDelete={self.handleReconfigure} 
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               variant="outlined" />
