@@ -192,7 +192,7 @@ class Navigator extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
       const { meshAdapters, meshAdaptersts } = props;
-      let path = (typeof window !== 'undefined' ? window.location.pathname : '');
+      let path = (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '');
 
       const st = {};
       if(meshAdaptersts > state.mts) {
