@@ -40,13 +40,22 @@ message ApplyRuleResponse {
 message SupportedOperationsRequest {}
 
 message SupportedOperationsResponse {
-    map<string, string> ops = 1;
+    repeated SupportedOperation ops = 1;
     string error = 2;
 }
 
 message SupportedOperation {
     string key = 1;
     string value = 2;
+    OpCategory category = 3; 
+}
+
+enum OpCategory {
+    INSTALL = 0;
+    SAMPLE_APPLICATION = 1;
+    CONFIGURE = 2;
+    VALIDATE = 3;
+    CUSTOM = 4;
 }
 
 enum EventType {

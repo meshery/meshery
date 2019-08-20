@@ -159,7 +159,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	result := &models.Adapter{
 		Location: meshLocationURL,
 		Name:     meshNameOps.GetName(),
-		Ops:      respOps.Ops,
+		Ops:      respOps.GetOps(),
 	}
 
 	h.config.AdapterTracker.AddAdapter(ctx, meshLocationURL)
