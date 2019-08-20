@@ -255,7 +255,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             // value={selectedOp}
             // onChange={this.handleChange('selectedOp')}
             >
-            {Object.keys(adapter.ops).filter(word => word !== 'custom').map(key => (
+            {Object.keys(adapter.ops).filter(({key}) => key !== 'custom').map(({key}, ind) => (
               <div>
                 <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
                 <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
@@ -265,7 +265,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
                 </IconButton>
 
-                {adapter.ops[key]}
+                {adapter.ops[ind].value}
               </div>
               
             ))}

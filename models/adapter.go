@@ -1,11 +1,15 @@
 package models
 
-import "context"
+import (
+	"context"
+
+	"github.com/layer5io/meshery/meshes"
+)
 
 type Adapter struct {
-	Location string            `json:"adapter_location"`
-	Name     string            `json:"name"`
-	Ops      map[string]string `json:"ops"`
+	Location string                       `json:"adapter_location"`
+	Name     string                       `json:"name"`
+	Ops      []*meshes.SupportedOperation `json:"ops"`
 }
 
 type AdaptersTrackerInterface interface {
