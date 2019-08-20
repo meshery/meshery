@@ -97,8 +97,36 @@ class MesheryPlayComponent extends React.Component {
     this.props.router.push('/settings');
   }
 
+  pickImage(adapter) {
+    const { classes } = this.props;
+
+    let image = "/static/img/meshery-logo.png";
+    let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+    
+    switch (adapter.name.toLowerCase()){
+      case 'istio':
+        image = "/static/img/istio.svg";
+        imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
+        break;
+      case 'linkerd':
+        image = "/static/img/linkerd.svg";
+        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+        break;
+      case 'consul':
+        image = "/static/img/consul.svg";
+        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+        break;
+      case 'nsm':
+        image = "/static/img/nsm.svg";
+        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+        break;
+      // default:
+    } 
+    return imageIcon;
+  }
+
   renderIndividualAdapter() {
-    const { meshAdapters } = this.props;
+    const { meshAdapters, classes } = this.props;
     let adapter;
     meshAdapters.forEach(adap => {
       if (adap.adapter_location === this.props.adapter){
@@ -106,8 +134,20 @@ class MesheryPlayComponent extends React.Component {
       }
     });
     if(adapter){
+      const imageIcon = this.pickImage(adapter);
       return (
-        <MesheryAdapterPlayComponent adapter={adapter} />
+        <React.Fragment>
+          <div className={classes.column}>
+            <Typography variant="h6" gutterBottom>
+              <div className={classes.column}>
+                {imageIcon}{' '}
+                <span className={classes.expTitle}>{adapter.adapter_location}</span>
+              </div>
+            </Typography>
+          </div>
+          <Divider variant="fullWidth" />
+          <MesheryAdapterPlayComponent adapter={adapter} />
+        </React.Fragment>
       )
     }
     return '';
@@ -146,27 +186,7 @@ class MesheryPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             {meshAdapters.map((adapter, ind) => {
-                let image = "/static/img/meshery-logo.png";
-                let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                switch (adapter.name.toLowerCase()){
-                  case 'istio':
-                    image = "/static/img/istio.svg";
-                    imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
-                    break;
-                  case 'linkerd':
-                    image = "/static/img/linkerd.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  case 'consul':
-                    image = "/static/img/consul.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  case 'nsm':
-                    image = "/static/img/nsm.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  // default:
-                } 
+                const imageIcon = self.pickImage(adapter);
                 return (
                 <ExpansionPanel key={`mplay_exp_${ind}`} square defaultExpanded={ind === 0?true:false}>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
