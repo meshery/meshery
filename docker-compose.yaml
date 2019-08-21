@@ -10,7 +10,7 @@ services:
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002"
       - "EVENT=mesheryLocal"
     volumes:
-      - $HOME/.meshery/config:/home/appuser/.meshery/config
+      - meshery-config:/home/appuser/.meshery/config
       - $HOME/.kube:/home/appuser/.kube:ro
     ports:
       - "9081:8080"
@@ -51,3 +51,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --label-enable
+
+volumes:
+  meshery-config:
