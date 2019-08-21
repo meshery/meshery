@@ -1,7 +1,7 @@
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, Avatar, CardMedia, CardContent, Typography, CardActions, Collapse, Menu, MenuItem } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -12,6 +12,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faTrashAlt, faTerminal, faExternalLinkSquareAlt } from '@fortawesome/free-solid-svg-icons';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+// import MoreVertIcon from '@material-ui/icons/MoreVert';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import PlayIcon from '@material-ui/icons/PlayArrow';
 
 const styles = theme => ({
   root: {
@@ -75,8 +82,12 @@ const styles = theme => ({
   },
   padRight: {
     paddingRight: theme.spacing(0.25),
+  },
+  deleteRight: {
+    float: 'right',
   }
 });
+
 
 class MesheryAdapterPlayComponent extends React.Component {
   constructor(props){
@@ -84,8 +95,25 @@ class MesheryAdapterPlayComponent extends React.Component {
     
     this.cmEditor = null;
 
-    // const {Name, Ops} = props;
+    const {adapter} = props;
     
+    const menuState = {};
+
+    this.addIconEles = {};
+    this.delIconEles = {};
+    // initializing menuState;
+    if(adapter && adapter.ops){
+      adapter.ops.forEach(({category}) => {
+        if(typeof category === 'undefined'){
+          category = 0;
+        }
+        menuState[category] = {
+          add: false,
+          delete: false,
+        }
+      })
+    }
+
     this.state = {
       selectedOp: '',
       cmEditorVal: '',
@@ -96,6 +124,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       namespaceError: false,
 
       customDialog: false,
+
+      menuState, // category: {add: 1, delete: 0}
     }
   }
 
@@ -213,6 +243,128 @@ class MesheryAdapterPlayComponent extends React.Component {
     });
   }
 
+  handleExpandClick() {
+    // setExpanded(!expanded);
+  }
+
+  generateMenu(cat, isDelete, selectedAdapterOps) {
+    const {menuState} = this.state;
+    const ele = !isDelete?this.addIconEles[cat]:this.delIconEles[cat];
+    return (
+      <Menu
+        id="long-menu"
+        anchorEl={ele}
+        // keepMounted
+        open={menuState[cat][isDelete?'delete':'add']}
+        onClose={this.addDelHandleClick(cat, isDelete)}
+        // PaperProps={{
+        //   style: {
+        //     maxHeight: ITEM_HEIGHT * 4.5,
+        //     width: 200,
+        //   },
+        // }}
+      >
+        {selectedAdapterOps.map(({key, value}) => (
+          <MenuItem key={key}> {/* selected={option === 'Pyxis'} onClick={handleClose}> */}
+            {value}
+          </MenuItem>
+        ))}
+      </Menu>
+    );
+  }
+
+  addDelHandleClick = (cat, isDelete) => {
+    const self = this;
+    return () => {
+      const {menuState} = self.state;
+      menuState[cat][isDelete?'delete':'add'] = !menuState[cat][isDelete?'delete':'add'];
+      self.setState({menuState});
+    }
+  }
+
+  generateCardForCategory(cat) {
+    if (typeof cat === 'undefined'){
+      cat = 0;
+    }
+    const {classes, adapter} = this.props;
+    const {menuState} = this.state;
+    // const expanded = false;
+
+    const selectedAdapterOps = adapter && adapter.ops? adapter.ops.filter(({category}) => typeof category === 'undefined' && cat === 0 || category === cat):[];
+    let content;
+    switch(cat){
+      case 0:
+        content = 'Install';
+        break;
+
+      case 1:
+        content = 'Sample Application';
+        break;
+
+      case 2:
+        content = 'Configure';
+        break;
+
+      case 3:
+        content = 'Validate';
+        break;
+    }
+    return (
+      <Card className={classes.card}>
+        <CardHeader
+          // avatar={
+          //   <Avatar aria-label="recipe" className={classes.avatar}>
+          //     R
+          //   </Avatar>
+          // }
+          // action={
+          //   <IconButton aria-label="settings">
+          //     <MoreVertIcon />
+          //   </IconButton>
+          // }
+          // title="Shrimp and Chorizo Paella"
+          // subheader="September 14, 2016"
+          title={content}
+        />
+        {/* <CardMedia
+          className={classes.media}
+          image="/static/images/cards/paella.jpg"
+          title="Paella dish"
+        /> */}
+        {/* <CardContent>
+          <Typography variant="body2" color="textSecondary" component="p">
+            This impressive paella is a perfect party dish and a fun meal to cook together with your
+            guests. Add 1 cup of frozen peas along with the mussels, if you like.
+          </Typography>
+        </CardContent> */}
+        <CardActions disableSpacing>
+          <IconButton aria-label="install" ref={ch => this.addIconEles[cat] = ch} onClick={this.addDelHandleClick(cat, false)}>
+            {cat !== 3?<AddIcon />:<PlayIcon />}
+          </IconButton>
+          {this.generateMenu(cat, false, selectedAdapterOps)}
+          {cat !== 3 && <div className={classes.fileLabel}>
+          <IconButton aria-label="delete" ref={ch => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
+          {/*<IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>*/}
+            {/* <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth /> */}
+            <DeleteIcon />
+          </IconButton>
+          {this.generateMenu(cat, true, selectedAdapterOps)}
+          </div>}
+          {/* <IconButton
+            // className={clsx(classes.expand, {
+            //   [classes.expandOpen]: expanded,
+            // })}
+            onClick={this.handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </IconButton> */}
+        </CardActions>
+      </Card>
+    );
+  }
+
   render() {
     const {classes, color, iconButtonClassName, avatarClassName, adapter, ...other} = this.props;
     const {
@@ -226,127 +378,150 @@ class MesheryAdapterPlayComponent extends React.Component {
      } = this.state;
 
     var self = this;
+    // return (
+    //   <NoSsr>
+    //     <React.Fragment>
+    //       <div className={classes.root}>
+    //       <Grid container spacing={5}>
+    //       <Grid item xs={12}>
+    //         <TextField
+    //           required
+    //           id="namespace"
+    //           name="namespace"
+    //           label="Namespace"
+    //           fullWidth
+    //           value={namespace}
+    //           error={namespaceError}
+    //           margin="normal"
+    //           variant="outlined"
+    //           onChange={this.handleChange('namespace')}
+    //         />
+    //       </Grid>
+    //       <Grid item xs={12}>
+    //         <FormControl required error={selectionError} component="fieldset">
+    //         <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
+    //         <FormGroup
+    //         // aria-label={`Play with ${adapter.name}`}
+    //         // name="query"
+    //         // className={classes.group}
+    //         // value={selectedOp}
+    //         // onChange={this.handleChange('selectedOp')}
+    //         >
+    //         {Object.keys(adapter.ops).filter(({key}) => key !== 'custom').map(({key}, ind) => (
+    //           <div>
+    //             <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
+    //             <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
+    //             </IconButton>
+                
+    //             <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
+    //             <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
+    //             </IconButton>
+
+    //             {adapter.ops[ind].value}
+    //           </div>
+              
+    //         ))}
+    //        </FormGroup>
+    //        </FormControl>
+    //        </Grid>
+    //        <Grid item xs={12}>
+    //        <React.Fragment>
+    //         <div className={classes.buttons}>
+    //           <Button color="inherit" onClick={this.handleModalOpen} className={classes.custom}>
+    //             <FontAwesomeIcon icon={faTerminal} fixedWidth className={classes.padRight} />
+    //             Custom YAML
+    //             <FontAwesomeIcon icon={faExternalLinkSquareAlt} fixedWidth className={classes.padLeft} />
+    //           </Button>
+    //         </div>
+    //           <Dialog
+    //             onClose={this.handleModalClose}
+    //             aria-labelledby="adapter-dialog-title"
+    //             open={this.state.customDialog}
+    //             fullWidth={true}
+    //             maxWidth={'md'}
+    //           >
+    //             <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
+    //               {adapter.name} Adapter - Custom YAML
+    //             </DialogTitle>
+    //             <Divider variant="fullWidth" light />
+    //             <DialogContent>
+    //             <Grid container spacing={5}>
+    //             <Grid item xs={12}>
+    //               <TextField
+    //                 required
+    //                 id="namespace"
+    //                 name="namespace"
+    //                 label="Namespace"
+    //                 fullWidth
+    //                 value={namespace}
+    //                 error={namespaceError}
+    //                 margin="normal"
+    //                 variant="outlined"
+    //                 onChange={this.handleChange('namespace')}
+    //               />
+    //             </Grid>
+    //             <Grid item xs={12}>
+    //               <CodeMirror
+    //                   editorDidMount={editor => { this.cmEditor = editor }}
+    //                   value={cmEditorVal}
+    //                   options={{
+    //                     mode: 'yaml',
+    //                     theme: 'material',
+    //                     lineNumbers: true,
+    //                     lineWrapping: true,
+    //                     gutters: ["CodeMirror-lint-markers"],
+    //                     lint: true,
+    //                     mode: "text/x-yaml"
+    //                   }}
+    //                   onBeforeChange={(editor, data, value) => {
+    //                     this.setState({cmEditorVal: value});
+    //                     if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
+    //                       this.setState({ selectionError: false, cmEditorValError: false });  
+    //                     }
+    //                   }}
+    //                   onChange={(editor, data, value) => {
+    //                   }}
+    //                 />
+    //               </Grid>
+    //               </Grid>
+    //             </DialogContent>
+    //             <Divider variant="fullWidth" light />
+    //             <DialogActions>
+    //               <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
+    //                 <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
+    //               </IconButton>
+                  
+    //               <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', false)}>
+    //                 <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
+    //               </IconButton>
+
+    //             </DialogActions>
+    //           </Dialog>
+    //         </React.Fragment>
+    //        </Grid>
+    //       </Grid>
+    //       </div>
+    //     </React.Fragment>
+    //   </NoSsr>
+    // )
+
     return (
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
-          <Grid item xs={12}>
-            <TextField
-              required
-              id="namespace"
-              name="namespace"
-              label="Namespace"
-              fullWidth
-              value={namespace}
-              error={namespaceError}
-              margin="normal"
-              variant="outlined"
-              onChange={this.handleChange('namespace')}
-            />
+          <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory()}
           </Grid>
-          <Grid item xs={12}>
-            <FormControl required error={selectionError} component="fieldset">
-            <FormLabel component="legend">{`Play with ${adapter.name}`}</FormLabel>
-            <FormGroup
-            // aria-label={`Play with ${adapter.name}`}
-            // name="query"
-            // className={classes.group}
-            // value={selectedOp}
-            // onChange={this.handleChange('selectedOp')}
-            >
-            {Object.keys(adapter.ops).filter(({key}) => key !== 'custom').map(({key}, ind) => (
-              <div>
-                <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(key, false)}>
-                <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
-                </IconButton>
-                
-                <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>
-                <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
-                </IconButton>
-
-                {adapter.ops[ind].value}
-              </div>
-              
-            ))}
-           </FormGroup>
-           </FormControl>
-           </Grid>
-           <Grid item xs={12}>
-           <React.Fragment>
-            <div className={classes.buttons}>
-              <Button color="inherit" onClick={this.handleModalOpen} className={classes.custom}>
-                <FontAwesomeIcon icon={faTerminal} fixedWidth className={classes.padRight} />
-                Custom YAML
-                <FontAwesomeIcon icon={faExternalLinkSquareAlt} fixedWidth className={classes.padLeft} />
-              </Button>
-            </div>
-              <Dialog
-                onClose={this.handleModalClose}
-                aria-labelledby="adapter-dialog-title"
-                open={this.state.customDialog}
-                fullWidth={true}
-                maxWidth={'md'}
-              >
-                <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
-                  {adapter.name} Adapter - Custom YAML
-                </DialogTitle>
-                <Divider variant="fullWidth" light />
-                <DialogContent>
-                <Grid container spacing={5}>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="namespace"
-                    name="namespace"
-                    label="Namespace"
-                    fullWidth
-                    value={namespace}
-                    error={namespaceError}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('namespace')}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <CodeMirror
-                      editorDidMount={editor => { this.cmEditor = editor }}
-                      value={cmEditorVal}
-                      options={{
-                        mode: 'yaml',
-                        theme: 'material',
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        gutters: ["CodeMirror-lint-markers"],
-                        lint: true,
-                        mode: "text/x-yaml"
-                      }}
-                      onBeforeChange={(editor, data, value) => {
-                        this.setState({cmEditorVal: value});
-                        if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
-                          this.setState({ selectionError: false, cmEditorValError: false });  
-                        }
-                      }}
-                      onChange={(editor, data, value) => {
-                      }}
-                    />
-                  </Grid>
-                  </Grid>
-                </DialogContent>
-                <Divider variant="fullWidth" light />
-                <DialogActions>
-                  <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', false)}>
-                    <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth />
-                  </IconButton>
-                  
-                  <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', false)}>
-                    <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
-                  </IconButton>
-
-                </DialogActions>
-              </Dialog>
-            </React.Fragment>
-           </Grid>
+          <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory(1)}
+          </Grid>
+          <Grid item xs={12} sm={3}>
+          {this.generateCardForCategory(2)}
+          </Grid>
+          <Grid item xs={12} sm={3}>
+          {this.generateCardForCategory(3)}
+          </Grid>
           </Grid>
           </div>
         </React.Fragment>

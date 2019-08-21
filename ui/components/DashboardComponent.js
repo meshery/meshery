@@ -11,7 +11,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+// import DoneIcon from '@material-ui/icons/Done';
 
 
 const styles = theme => ({
@@ -235,8 +235,8 @@ class DashboardComponent extends React.Component {
           <Chip 
               // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
               label={inClusterConfig?'Using In Cluster Config': contextName}
-              onDelete={self.handleDelete}
-              deleteIcon={<DoneIcon />}
+              // onDelete={self.handleDelete}
+              // deleteIcon={<DoneIcon />}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               className={classes.chip}
               key='k8s-key'
@@ -290,8 +290,8 @@ class DashboardComponent extends React.Component {
                   <Chip 
                   label={aa.label}
                   // onDelete={self.handleDelete(ind)} 
-                  onDelete={!isDisabled?self.handleDelete:null}
-                  deleteIcon={!isDisabled?<DoneIcon />:null}
+                  // onDelete={!isDisabled?self.handleDelete:null}
+                  // deleteIcon={!isDisabled?<DoneIcon />:null}
                   onClick={self.handleClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}
@@ -310,8 +310,8 @@ class DashboardComponent extends React.Component {
       showGrafana = (
         <Chip 
         label={grafana.grafanaURL}
-        onDelete={self.handleDelete}
-        deleteIcon={<DoneIcon />}
+        // onDelete={self.handleDelete}
+        // deleteIcon={<DoneIcon />}
         icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
         className={classes.chip}
         key='graf-key'
@@ -324,8 +324,8 @@ class DashboardComponent extends React.Component {
       showPrometheus = (
         <Chip 
           label={prometheus.prometheusURL}
-          onDelete={self.handleDelete}
-          deleteIcon={<DoneIcon />}
+          // onDelete={self.handleDelete}
+          // deleteIcon={<DoneIcon />}
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
           className={classes.chip}
           key='prom-key'

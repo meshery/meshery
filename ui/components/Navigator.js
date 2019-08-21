@@ -90,10 +90,10 @@ const styles = theme => ({
     paddingTop: theme.spacing(0.5),
   },
   nested1: {
-    paddingLeft: theme.spacing(2),
+    paddingLeft: theme.spacing(4),
   },
   nested2: {
-    paddingLeft: theme.spacing(4),
+    paddingLeft: theme.spacing(8),
   },
 });
 

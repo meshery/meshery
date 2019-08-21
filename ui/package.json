@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node ui_dev_server.js",
+    "dev": "nodemon ui_dev_server.js",
     "next": "next",
     "build": "next build",
     "start": "next start",
@@ -55,6 +55,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "http-proxy": "^1.17.0"
+    "http-proxy": "^1.17.0",
+    "nodemon": "^1.19.1"
   }
 }
