@@ -363,7 +363,7 @@ class MeshConfigComponent extends React.Component {
           margin="normal"
           variant="outlined"
           disabled={inClusterConfigForm == true}
-          onChange={this.handleChange('contextName')}
+          onChange={this.handleChange('contextNameForForm')}
         >
           {contextsFromFile && contextsFromFile.map((ct) => (
               <MenuItem key={'ct_---_'+ct.contextName} value={ct.contextName}>{ct.contextName}{ct.currentContext?' (default)':''}</MenuItem>
