@@ -57,15 +57,17 @@ var startCmd = &cobra.Command{
 			log.Fatal("[WARNING] Unable to detect OS type. Warning message: \n", err)
 		}
 		os := strings.TrimSpace(string(ostype))
+
+		// Link to Meshery User Interface
 		url := "http://localhost:9081"
+
 		if os == "Linux" {
+			// Meshery running on Linux host
 			exec.Command("xdg-open", url).Start()
+		} else {
 
-		} 
-		// Asssume MacOS
-		else {
+			// Asssume Meshery running on MacOS host
 			exec.Command("open", url).Start()
-
 		}
 
 	},
