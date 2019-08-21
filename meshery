@@ -103,7 +103,7 @@ case $1 in
             echo "Stopping Meshery. . ."
             docker-compose -f $dockerComposeFile stop
             (docker-compose -f $dockerComposeFile rm -f) || true
-            (docker volume prune -f) || true
+            # (docker volume prune -f) || true
             echo "Meshery is now stopped"
         fi
     ;;
