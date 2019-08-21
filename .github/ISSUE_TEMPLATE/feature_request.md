@@ -4,14 +4,13 @@ about: Suggest an enhancement to this project
 title: ''
 labels: 'enhancement'
 assignees: ''
-
 ---
 
-**Description**
+**Enhancement Description**
 A brief description of the enhancement.
 
 **Related Challenges**
-A brief description of what the problem is. (e.g. I'm frustrated when...)
+A brief description of what the problem is. (e.g. I need to be able to...)
 
 ---
 [Optional] **Alternatives**
