@@ -199,15 +199,24 @@ class Navigator extends React.Component {
         st.meshAdapters = meshAdapters;
         st.mts = meshAdaptersts;
       }
-      categories.map(({title, href}) => {
-          if (path.lastIndexOf('/') > 0) {
-              path = path.substring(0, path.lastIndexOf('/'));
-          }
-          if (href === path) {
-              // console.log("updating path: "+path+" and title: "+title);
-              props.updatepagepathandtitle({path, title});
-              return;
-          }
+
+      const fetchNestedPathAndTitle = (path, title, href, children) => {
+        if (href === path) {
+            // console.log("updating path: "+path+" and title: "+title);
+            props.updatepagepathandtitle({path, title});
+            return;
+        }
+        if(children && children.length > 0){
+          children.forEach(({title, href, children}) => {
+              fetchNestedPathAndTitle(path, title, href, children);
+          });
+        }
+      }
+      if (path.lastIndexOf('/') > 0) {
+          path = path.substring(0, path.lastIndexOf('/'));
+      }
+      categories.forEach(({title, href, children}) => {    
+          fetchNestedPathAndTitle(path, title, href, children); 
       });
       st.path = path;
       return st;
@@ -228,7 +237,7 @@ class Navigator extends React.Component {
             id: adapter.adapter_location, 
             // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
             href: `/management?adapter=${adapter.adapter_location}`, 
-            title: adapter.adapter_location,
+            title: `Management - ${adapter.adapter_location}`,
             link: true, 
             show: true,
           }
