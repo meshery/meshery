@@ -175,6 +175,7 @@ class Navigator extends React.Component {
                       <ListItem
                             component="a"
                             href="https://layer5.io/meshery"
+                            target="_blank"
                             key={'about'}
                             className={classNames(
                             classes.item,
