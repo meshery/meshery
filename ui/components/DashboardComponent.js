@@ -230,9 +230,9 @@ class DashboardComponent extends React.Component {
     const self = this;
     let showConfigured = 'Kubernetes is not connected at the moment.';
     if (clusterConfigured) {
-      showConfigured = (
-        <div className={classes.alignRight}>
-          <Chip 
+
+      let chp = (
+        <Chip 
               // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
               label={inClusterConfig?'Using In Cluster Config': contextName}
               // onDelete={self.handleDelete}
@@ -241,6 +241,19 @@ class DashboardComponent extends React.Component {
               className={classes.chip}
               key='k8s-key'
               variant="outlined" />
+      );
+
+      if(configuredServer){
+        chp = (
+          <Tooltip title={`Server: ${configuredServer}`}>
+          {chp}
+          </Tooltip>
+        );
+      }
+
+      showConfigured = (
+        <div className={classes.alignRight}>
+        {chp}  
         </div>
       )
     }
