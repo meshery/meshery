@@ -1,7 +1,7 @@
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import {Controlled as CodeMirror} from 'react-codemirror2'
-import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, Avatar, CardMedia, CardContent, Typography, CardActions, Collapse, Menu, MenuItem } from '@material-ui/core';
+import { withStyles, Grid, FormControlLabel, TextField, Button, FormLabel, FormControl, IconButton, FormGroup, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, Avatar, CardMedia, CardContent, Typography, CardActions, Collapse, Menu, MenuItem, InputAdornment } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -85,6 +85,22 @@ const styles = theme => ({
   },
   deleteRight: {
     float: 'right',
+  },
+  expTitleIcon: {
+    width: theme.spacing(3),
+    display: 'inline',
+    verticalAlign: 'middle',
+  },
+  expIstioTitleIcon: {
+    width: theme.spacing(2),
+    display: 'inline',
+    verticalAlign: 'middle',
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5),
+  },
+  expTitle: {
+    display: 'inline',
+    verticalAlign: 'middle',
   }
 });
 
@@ -155,26 +171,30 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.setState({customDialog: true});
   }
 
-  handleDelete = (selectedOp) => () => {
-    this.handleSubmit(selectedOp, true)();
-  }
+  // handleDelete = (selectedOp) => () => {
+  //   this.handleSubmit(selectedOp, true)();
+  // }
 
-  handleSubmit = (selectedOp, deleteOp=false) => () => {
-    const { namespace, namespaceError, cmEditorVal, cmEditorValError } = this.state;
-    const {adapter} = this.props;
-    if (selectedOp === '' || typeof adapter.ops[selectedOp] === 'undefined') {
-        this.setState({selectionError: true});
-        return;
+  handleSubmit = (selectedOp, deleteOp=false) => {
+    const self = this;
+    return () => {
+      const { namespace, namespaceError, cmEditorVal, cmEditorValError } = self.state;
+      const {adapter} = self.props;
+      const filteredOp = adapter.ops.filter(({key}) => key === selectedOp);
+      if (selectedOp === '' || typeof filteredOp === 'undefined' || filteredOp.length === 0) {
+          self.setState({selectionError: true});
+          return;
+      }
+      if (selectedOp === 'custom' && (cmEditorVal === '' || this.cmEditor.state.lint.marked.length > 0)) {
+        self.setState({cmEditorValError: true, selectionError: true});
+        return
+      }
+      if (namespace === '') {
+        self.setState({namespaceError: true});
+        return
+      }
+      self.submitOp(selectedOp, deleteOp);
     }
-    if (selectedOp === 'custom' && (cmEditorVal === '' || this.cmEditor.state.lint.marked.length > 0)) {
-      this.setState({cmEditorValError: true, selectionError: true});
-      return
-    }
-    if (namespace === '') {
-      this.setState({namespaceError: true});
-      return
-    }
-    this.submitOp(selectedOp, deleteOp);
   }
 
   submitOp = (selectedOp, deleteOp=false) => {
@@ -254,7 +274,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       <Menu
         id="long-menu"
         anchorEl={ele}
-        // keepMounted
+        keepMounted
         open={menuState[cat][isDelete?'delete':'add']}
         onClose={this.addDelHandleClick(cat, isDelete)}
         // PaperProps={{
@@ -265,7 +285,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         // }}
       >
         {selectedAdapterOps.map(({key, value}) => (
-          <MenuItem key={key}> {/* selected={option === 'Pyxis'} onClick={handleClose}> */}
+          <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(key, isDelete)}> {/* selected={option === 'Pyxis'} onClick={handleClose}> */}
             {value}
           </MenuItem>
         ))}
@@ -273,12 +293,87 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
+  generateYAMLEditor(isDelete) {
+    const {adapter} = this.props;
+    const {customDialog, namespace, namespaceError, cmEditorVal, cmEditorValError} = this.state;
+    return (
+      <Dialog
+        onClose={this.handleModalClose}
+        aria-labelledby="adapter-dialog-title"
+        open={customDialog}
+        fullWidth={true}
+        maxWidth={'md'}
+      >
+        <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
+          {adapter.name} Adapter - Custom YAML
+        </DialogTitle>
+        <Divider variant="fullWidth" light />
+        <DialogContent>
+        <Grid container spacing={5}>
+        <Grid item xs={12}>
+          <TextField
+            required
+            id="namespace"
+            name="namespace"
+            label="Namespace"
+            fullWidth
+            value={namespace}
+            error={namespaceError}
+            margin="normal"
+            variant="outlined"
+            onChange={this.handleChange('namespace')}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <CodeMirror
+              editorDidMount={editor => { this.cmEditor = editor }}
+              value={cmEditorVal}
+              options={{
+                mode: 'yaml',
+                theme: 'material',
+                lineNumbers: true,
+                lineWrapping: true,
+                gutters: ["CodeMirror-lint-markers"],
+                lint: true,
+                mode: "text/x-yaml"
+              }}
+              onBeforeChange={(editor, data, value) => {
+                this.setState({cmEditorVal: value});
+                if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
+                  this.setState({ selectionError: false, cmEditorValError: false });  
+                }
+              }}
+              onChange={(editor, data, value) => {
+              }}
+            />
+          </Grid>
+          </Grid>
+        </DialogContent>
+        <Divider variant="fullWidth" light />
+        <DialogActions>
+          <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', isDelete)}>
+            {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
+            <PlayIcon />
+          </IconButton>
+          
+          {/* <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', isDelete)}>
+            <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
+          </IconButton> */}
+
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
   addDelHandleClick = (cat, isDelete) => {
     const self = this;
     return () => {
-      const {menuState} = self.state;
+      let  {menuState, customDialog} = self.state;
       menuState[cat][isDelete?'delete':'add'] = !menuState[cat][isDelete?'delete':'add'];
-      self.setState({menuState});
+      if (cat === 4){
+        customDialog = !customDialog;
+      }
+      self.setState({menuState, customDialog});
     }
   }
 
@@ -291,22 +386,31 @@ class MesheryAdapterPlayComponent extends React.Component {
     // const expanded = false;
 
     const selectedAdapterOps = adapter && adapter.ops? adapter.ops.filter(({category}) => typeof category === 'undefined' && cat === 0 || category === cat):[];
-    let content;
+    let content, description;
     switch(cat){
       case 0:
         content = 'Install';
+        description = 'Install a servicemesh or SMI adapter on your cluster';
         break;
 
       case 1:
         content = 'Sample Application';
+        description = 'Install some sample applications on/off the servicemesh';
         break;
 
       case 2:
         content = 'Configure';
+        description = 'Configure your cluster using some pre-configured configuration options';
         break;
 
       case 3:
         content = 'Validate';
+        description = 'Validate your cluster configuration using provided tools';
+        break;
+
+      case 4:
+        content = 'Custom Config';
+        description = 'For the brave of hearts who want to speak YAML to your cluster directly';
         break;
     }
     return (
@@ -325,6 +429,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           // title="Shrimp and Chorizo Paella"
           // subheader="September 14, 2016"
           title={content}
+          subheader={description}
         />
         {/* <CardMedia
           className={classes.media}
@@ -341,14 +446,16 @@ class MesheryAdapterPlayComponent extends React.Component {
           <IconButton aria-label="install" ref={ch => this.addIconEles[cat] = ch} onClick={this.addDelHandleClick(cat, false)}>
             {cat !== 3?<AddIcon />:<PlayIcon />}
           </IconButton>
-          {this.generateMenu(cat, false, selectedAdapterOps)}
+          {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
+          {cat ===4 && this.generateYAMLEditor(false)}
           {cat !== 3 && <div className={classes.fileLabel}>
           <IconButton aria-label="delete" ref={ch => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
           {/*<IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>*/}
             {/* <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth /> */}
             <DeleteIcon />
           </IconButton>
-          {this.generateMenu(cat, true, selectedAdapterOps)}
+          {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
+          {cat ===4 && this.generateYAMLEditor(true)}
           </div>}
           {/* <IconButton
             // className={clsx(classes.expand, {
@@ -366,7 +473,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   render() {
-    const {classes, color, iconButtonClassName, avatarClassName, adapter, ...other} = this.props;
+    const {classes, color, iconButtonClassName, avatarClassName, adapter, adapter_icon} = this.props;
     const {
       selectedOp,
       cmEditorVal,
@@ -510,10 +617,46 @@ class MesheryAdapterPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
-          <Grid item xs={12} sm={3}>
-            {this.generateCardForCategory()}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              disabled
+              id="ap"
+              name="ap"
+              label="Adapter URL"
+              fullWidth
+              value={adapter.adapter_location}
+              margin="normal"
+              variant="outlined"
+              // onChange={this.handleChange('namespace')}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    {adapter_icon}
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="namespace"
+              name="namespace"
+              label="Namespace"
+              fullWidth
+              value={namespace}
+              error={namespaceError}
+              margin="normal"
+              variant="outlined"
+              onChange={this.handleChange('namespace')}
+            />
+          </Grid>
+          {[0, 1, 2, 3, 4].map(val => (
+            <Grid item xs={12} sm={4}>
+              {this.generateCardForCategory(val)}
+            </Grid>
+          ))}
+          {/* <Grid item xs={12} sm={3}>
             {this.generateCardForCategory(1)}
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -521,7 +664,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           </Grid>
           <Grid item xs={12} sm={3}>
           {this.generateCardForCategory(3)}
-          </Grid>
+          </Grid> */}
           </Grid>
           </div>
         </React.Fragment>
@@ -534,6 +677,7 @@ MesheryAdapterPlayComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   // index: PropTypes.number.isRequired,
   adapter: PropTypes.object.isRequired,
+  // adapter_icon: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
