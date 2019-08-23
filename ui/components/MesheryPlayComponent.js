@@ -78,6 +78,7 @@ const styles = theme => ({
   expTitle: {
     display: 'inline',
     verticalAlign: 'middle',
+    marginLeft: theme.spacing(1),
   }
 });
 
@@ -210,10 +211,12 @@ class MesheryPlayComponent extends React.Component {
                     >
                       {meshAdapters.map(({adapter_location}, ind) => (
                           <MenuItem key={`${adapter_location}_${new Date().getTime()}`} value={adapter_location} >
-                            <ListItemIcon>
+                            {/* <ListItemIcon> */}
                               {imageIcon}
-                            </ListItemIcon>
-                            {adapter_location}
+                            {/* </ListItemIcon> */}
+                            <span className={classes.expTitle}>
+                              {adapter_location}
+                            </span>
                           </MenuItem>
                       ))}
                 </TextField>
