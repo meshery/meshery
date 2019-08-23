@@ -328,7 +328,7 @@ class MeshConfigComponent extends React.Component {
             label="Use in-cluster Kubernetes config"
       />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} hidden={inClusterConfigForm === true}>
       <FormGroup row>
         <input
             className={classes.input}
@@ -337,7 +337,7 @@ class MeshConfigComponent extends React.Component {
             // value={k8sfile}
             value={k8sfileElementVal}
             onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfigForm == true}
+            disabled={inClusterConfigForm === true}
             className={classes.fileInputStyle}
         />
             <TextField
@@ -362,7 +362,7 @@ class MeshConfigComponent extends React.Component {
                 />
         </FormGroup>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} hidden={inClusterConfigForm === true}>
         <TextField
           select
           id="contextName"
@@ -372,7 +372,7 @@ class MeshConfigComponent extends React.Component {
           value={contextNameForForm}
           margin="normal"
           variant="outlined"
-          disabled={inClusterConfigForm == true}
+          disabled={inClusterConfigForm === true}
           onChange={this.handleChange('contextNameForForm')}
         >
           {contextsFromFile && contextsFromFile.map((ct) => (
