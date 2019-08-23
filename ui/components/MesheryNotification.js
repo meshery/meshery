@@ -73,12 +73,15 @@ class MesheryNotification extends React.Component {
     this.setState(state => ({ open: !state.open }));
   };
 
-  handleClose = event => {
-    if (this.anchorEl.contains(event.target)) {
-      return;
+  handleClose(){
+    const self = this;
+    return event => {
+      if (self.anchorEl.contains(event.target)) {
+        return;
+      }
+      self.setState({ open: false });
     }
-    this.setState({ open: false });
-  };
+  }
 
   static getDerivedStateFromProps(props, state){
     if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig) || 
@@ -158,8 +161,11 @@ class MesheryNotification extends React.Component {
     this.setState({ dialogShow: false });
   };
 
-  handleClearAllNotifications = () => {
-    this.setState({events:[]});
+  handleClearAllNotifications(){
+    const self = this;
+    return () => {
+    self.setState({events:[], open: true});
+    };
   }
 
   viewEventDetails = () => {
@@ -243,7 +249,7 @@ class MesheryNotification extends React.Component {
         </IconButton>
         </Tooltip>
 
-        <Drawer anchor="right" open={open} onClose={this.handleClose} 
+        <Drawer anchor="right" open={open} onClose={this.handleClose()} 
         classes={{
             paper: classes.notficiationDrawer,
         }}
@@ -251,8 +257,8 @@ class MesheryNotification extends React.Component {
           <div
             tabIndex={0}
             role="button"
-            onClick={this.handleClose}
-            onKeyDown={this.handleClose}
+            // onClick={this.handleClose()}
+            // onKeyDown={this.handleClose()}
           >
             <div className={classes.sidelist}>
             <div className={classes.notificationTitle}>
@@ -261,7 +267,7 @@ class MesheryNotification extends React.Component {
                 </Typography>
                 <Tooltip title={'Clear all notifications'}>
                     <IconButton className={classes.clearAllButton}
-                      color="inherit" onClick={this.handleClearAllNotifications}>
+                      color="inherit" onClick={this.handleClearAllNotifications()}>
                       <ClearAllIcon />
                     </IconButton>
                   </Tooltip>
