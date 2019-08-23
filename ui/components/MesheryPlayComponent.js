@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid } from '@material-ui/core';
+import { withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid, ListItemIcon } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -108,7 +108,7 @@ class MesheryPlayComponent extends React.Component {
     if(adapter && adapter.name){
       switch (adapter.name.toLowerCase()){
         case 'istio':
-          image = "/static/img/istio.svg";
+          image = "/static/img/istio-blue.svg";
           imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
           break;
         case 'linkerd':
@@ -154,15 +154,6 @@ class MesheryPlayComponent extends React.Component {
       const imageIcon = this.pickImage(adapter);
       return (
         <React.Fragment>
-          {/* <div className={classes.column}>
-            <Typography variant="h6" gutterBottom>
-              <div className={classes.column}>
-                {imageIcon}{' '}
-                <span className={classes.expTitle}>{adapter.adapter_location}</span>
-              </div>
-            </Typography>
-          </div>
-          <Divider variant="fullWidth" /> */}
           <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
         </React.Fragment>
       )
@@ -217,9 +208,14 @@ class MesheryPlayComponent extends React.Component {
                     variant="outlined"
                     onChange={this.handleAdapterChange()}
                     >
-                        {meshAdapters.map(({adapter_location}, ind) => (
-                            <MenuItem key={`${adapter_location}_${new Date().getTime()}`} value={adapter_location}>{adapter_location}</MenuItem>
-                        ))}
+                      {meshAdapters.map(({adapter_location}, ind) => (
+                          <MenuItem key={`${adapter_location}_${new Date().getTime()}`} value={adapter_location} >
+                            <ListItemIcon>
+                              {imageIcon}
+                            </ListItemIcon>
+                            {adapter_location}
+                          </MenuItem>
+                      ))}
                 </TextField>
                 </Grid>
               </Grid>
