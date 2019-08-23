@@ -18,6 +18,7 @@ const grafanaStyles = theme => ({
   });
 
 class GrafanaConfigComponent extends Component {
+	
     render = () => {
         const { classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure } = this.props;
         return (
@@ -38,6 +39,12 @@ class GrafanaConfigComponent extends Component {
                     error={urlError}
                     margin="normal"
                     variant="outlined"
+                    onKeyDown={(e)=>{
+								      if(e.keyCode == 13){
+								         handleGrafanaConfigure()
+								      }
+								    }
+							}
                     onChange={handleChange('grafanaURL')}
                 />
                 </Grid>
@@ -50,6 +57,12 @@ class GrafanaConfigComponent extends Component {
                     value={grafanaAPIKey}
                     margin="normal"
                     variant="outlined"
+                    onKeyDown={(e)=>{
+								      if(e.keyCode == 13){
+								         handleGrafanaConfigure()
+								      }
+								    }
+							}
                     onChange={handleChange('grafanaAPIKey')}
                 />
                 </Grid>
