@@ -139,7 +139,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       namespace: 'default',
       namespaceError: false,
 
-      customDialog: false,
+      customDialogAdd: false,
+      customDialogDel: false,
 
       menuState, // category: {add: 1, delete: 0}
     }
@@ -163,19 +164,27 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleModalClose = () => {
-    this.setState({customDialog: false});
+  handleModalClose(isDelete){
+    const self = this;
+    return () => {
+      const item = isDelete?'customDialogDel':'customDialogAdd';
+      self.setState({[item]: false});
+    }
   }
 
-  handleModalOpen = () => {
-    this.setState({customDialog: true});
+  handleModalOpen(isDelete) {
+    const self = this;
+    return () => {
+      const item = isDelete?'customDialogDel':'customDialogAdd';
+      self.setState({[item]: true});
+    }
   }
 
   // handleDelete = (selectedOp) => () => {
   //   this.handleSubmit(selectedOp, true)();
   // }
 
-  handleSubmit = (selectedOp, deleteOp=false) => {
+  handleSubmit = (cat, selectedOp, deleteOp=false) => {
     const self = this;
     return () => {
       const { namespace, namespaceError, cmEditorVal, cmEditorValError } = self.state;
@@ -193,12 +202,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({namespaceError: true});
         return
       }
-      self.submitOp(selectedOp, deleteOp);
+      self.submitOp(cat, selectedOp, deleteOp);
     }
   }
 
-  submitOp = (selectedOp, deleteOp=false) => {
-    const { namespace, cmEditorVal } = this.state;
+  submitOp = (cat, selectedOp, deleteOp=false) => {
+    const { namespace, cmEditorVal, menuState} = this.state;
     const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
 
@@ -224,9 +233,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       },
       body: params
     }, result => {
-      this.props.updateProgress({showProgress: false});
+      self.props.updateProgress({showProgress: false});
+      menuState[cat][deleteOp?'delete':'add'] = false;
+      const dlg = deleteOp?'customDialogDel':'customDialogAdd';
+      self.setState({menuState, [dlg]: false});
+
       if (typeof result !== 'undefined'){
-        this.props.enqueueSnackbar('Operation submitted successfully!', {
+        self.props.enqueueSnackbar('Operation submitted successfully!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -241,26 +254,33 @@ class MesheryAdapterPlayComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError);
+    }, self.handleError(cat, deleteOp));
   }
 
-  handleError = error => {
-    this.props.updateProgress({showProgress: false});
+  handleError = (cat, deleteOp) => {
     const self = this;
-    this.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
-      variant: 'error',
-      action: (key) => (
-        <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration: 8000,
-    });
+    return error => {
+      const {menuState} = self.state;
+      menuState[cat][deleteOp?'delete':'add'] = false;
+      const dlg = deleteOp?'customDialogDel':'customDialogAdd';
+      self.setState({menuState, [dlg]: false});
+
+      self.props.updateProgress({showProgress: false});
+      self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
+        variant: 'error',
+        action: (key) => (
+          <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration: 8000,
+      });
+    };
   }
 
   handleExpandClick() {
@@ -285,7 +305,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         // }}
       >
         {selectedAdapterOps.map(({key, value}) => (
-          <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(key, isDelete)}> {/* selected={option === 'Pyxis'} onClick={handleClose}> */}
+          <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(cat, key, isDelete)}> {/* selected={option === 'Pyxis'} onClick={handleClose}> */}
             {value}
           </MenuItem>
         ))}
@@ -295,17 +315,17 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   generateYAMLEditor(isDelete) {
     const {adapter} = this.props;
-    const {customDialog, namespace, namespaceError, cmEditorVal, cmEditorValError} = this.state;
+    const {customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorVal, cmEditorValError} = this.state;
     return (
       <Dialog
-        onClose={this.handleModalClose}
+        onClose={this.handleModalClose(isDelete)}
         aria-labelledby="adapter-dialog-title"
-        open={customDialog}
+        open={isDelete?customDialogDel:customDialogAdd}
         fullWidth={true}
         maxWidth={'md'}
       >
-        <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose}>
-          {adapter.name} Adapter - Custom YAML
+        <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose(isDelete)}>
+          {adapter.name} Adapter - Custom YAML {isDelete?'(delete)':''}
         </DialogTitle>
         <Divider variant="fullWidth" light />
         <DialogContent>
@@ -325,27 +345,27 @@ class MesheryAdapterPlayComponent extends React.Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <CodeMirror
+            <CodeMirror
               editorDidMount={editor => { this.cmEditor = editor }}
               value={cmEditorVal}
-              options={{
-                mode: 'yaml',
-                theme: 'material',
-                lineNumbers: true,
-                lineWrapping: true,
-                gutters: ["CodeMirror-lint-markers"],
-                lint: true,
-                mode: "text/x-yaml"
-              }}
-              onBeforeChange={(editor, data, value) => {
-                this.setState({cmEditorVal: value});
-                if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
-                  this.setState({ selectionError: false, cmEditorValError: false });  
-                }
-              }}
-              onChange={(editor, data, value) => {
-              }}
-            />
+                options={{
+                  mode: 'yaml',
+                  theme: 'material',
+                  lineNumbers: true,
+                  lineWrapping: true,
+                  gutters: ["CodeMirror-lint-markers"],
+                  lint: true,
+                  mode: "text/x-yaml"
+                }}
+                onBeforeChange={(editor, data, value) => {
+                  this.setState({cmEditorVal: value});
+                  if(value !== '' && this.cmEditor.state.lint.marked.length === 0) {
+                    this.setState({ selectionError: false, cmEditorValError: false });  
+                  }
+                }}
+                onChange={(editor, data, value) => {
+                }}
+              />
           </Grid>
           </Grid>
         </DialogContent>
@@ -353,7 +373,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogActions>
           <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit('custom', isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
-            <PlayIcon />
+            {!isDelete && <PlayIcon />}
+            {isDelete && <DeleteIcon />}
           </IconButton>
           
           {/* <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', isDelete)}>
@@ -368,12 +389,15 @@ class MesheryAdapterPlayComponent extends React.Component {
   addDelHandleClick = (cat, isDelete) => {
     const self = this;
     return () => {
-      let  {menuState, customDialog} = self.state;
+      let  {menuState, customDialogAdd, customDialogDel} = self.state;
       menuState[cat][isDelete?'delete':'add'] = !menuState[cat][isDelete?'delete':'add'];
+
+      const dlg = isDelete?'customDialogDel':'customDialogAdd';
+      let dlgv = isDelete?customDialogDel:customDialogAdd;
       if (cat === 4){
-        customDialog = !customDialog;
+        dlgv = !dlgv;
       }
-      self.setState({menuState, customDialog});
+      self.setState({menuState, [dlg]: dlgv});
     }
   }
 
@@ -447,7 +471,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             {cat !== 3?<AddIcon />:<PlayIcon />}
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
-          {cat ===4 && this.generateYAMLEditor(false)}
+          {cat === 4 && this.generateYAMLEditor(false)}
           {cat !== 3 && <div className={classes.fileLabel}>
           <IconButton aria-label="delete" ref={ch => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
           {/*<IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>*/}
@@ -455,7 +479,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             <DeleteIcon />
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
-          {cat ===4 && this.generateYAMLEditor(true)}
+          {cat === 4 && this.generateYAMLEditor(true)}
           </div>}
           {/* <IconButton
             // className={clsx(classes.expand, {
