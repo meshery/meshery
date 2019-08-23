@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, Typography, Button, Divider, ExpansionPanelDetails } from '@material-ui/core';
+import { withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -86,10 +86,14 @@ class MesheryPlayComponent extends React.Component {
     super(props);
     
     const {k8sconfig, meshAdapters} = props;
-
+    let adapter = {};
+    if(meshAdapters && meshAdapters.length > 0){
+      adapter = meshAdapters[0];
+    }
     this.state = {
       k8sconfig,
       meshAdapters,
+      adapter,
     }
   }
 
@@ -99,30 +103,43 @@ class MesheryPlayComponent extends React.Component {
 
   pickImage(adapter) {
     const { classes } = this.props;
-
     let image = "/static/img/meshery-logo.png";
     let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-    
-    switch (adapter.name.toLowerCase()){
-      case 'istio':
-        image = "/static/img/istio.svg";
-        imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
-        break;
-      case 'linkerd':
-        image = "/static/img/linkerd.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'consul':
-        image = "/static/img/consul.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'nsm':
-        image = "/static/img/nsm.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      // default:
-    } 
+    if(adapter && adapter.name){
+      switch (adapter.name.toLowerCase()){
+        case 'istio':
+          image = "/static/img/istio.svg";
+          imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
+          break;
+        case 'linkerd':
+          image = "/static/img/linkerd.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'consul':
+          image = "/static/img/consul.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'nsm':
+          image = "/static/img/nsm.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        // default:
+      } 
+    }
     return imageIcon;
+  }
+
+  handleAdapterChange = () => {
+    const self = this;
+    return (event) => {
+      const {meshAdapters} = self.state;
+      if (event.target.value !== '') {
+        const selectedAdapter = meshAdapters.filter(({adapter_location}) => adapter_location === event.target.value);
+        if (typeof selectedAdapter !== 'undefined' && selectedAdapter.length === 1) {
+          self.setState({ adapter:  selectedAdapter[0]});
+        }
+      }
+    };
   }
 
   renderIndividualAdapter() {
@@ -137,7 +154,7 @@ class MesheryPlayComponent extends React.Component {
       const imageIcon = this.pickImage(adapter);
       return (
         <React.Fragment>
-          <div className={classes.column}>
+          {/* <div className={classes.column}>
             <Typography variant="h6" gutterBottom>
               <div className={classes.column}>
                 {imageIcon}{' '}
@@ -145,8 +162,8 @@ class MesheryPlayComponent extends React.Component {
               </div>
             </Typography>
           </div>
-          <Divider variant="fullWidth" />
-          <MesheryAdapterPlayComponent adapter={adapter} />
+          <Divider variant="fullWidth" /> */}
+          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
         </React.Fragment>
       )
     }
@@ -155,6 +172,7 @@ class MesheryPlayComponent extends React.Component {
 
   render() {
     const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters} = this.props;
+    const {adapter} = this.state;
 
     if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
       return (
@@ -181,31 +199,37 @@ class MesheryPlayComponent extends React.Component {
     }
 
     var self = this;
+    const imageIcon = self.pickImage(adapter);
     return (
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
-            {meshAdapters.map((adapter, ind) => {
-                const imageIcon = self.pickImage(adapter);
-                return (
-                <ExpansionPanel key={`mplay_exp_${ind}`} square defaultExpanded={ind === 0?true:false}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <div className={classes.column}>
-                      <Typography variant="h6" gutterBottom>
-                        <div className={classes.column}>
-                          {imageIcon}{' '}
-                          <span className={classes.expTitle}>{adapter.adapter_location}</span>
-                        </div>
-                      </Typography>
-                    </div>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                      <Divider variant="fullWidth" />
-                      <MesheryAdapterPlayComponent adapter={adapter} />
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              );
-              })}
+              <Grid container spacing={5}>
+                <Grid item xs={12}>
+                <TextField
+                    select
+                    id="adapter_id"
+                    name="adapter_name"
+                    label="Select the Adapter"
+                    fullWidth
+                    value={adapter && adapter.adapter_location?adapter.adapter_location:''}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleAdapterChange()}
+                    >
+                        {meshAdapters.map(({adapter_location}, ind) => (
+                            <MenuItem key={`${adapter_location}_${new Date().getTime()}`} value={adapter_location}>{adapter_location}</MenuItem>
+                        ))}
+                </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />}
+                </Grid>
+              </Grid>
+
+
+
+                          
           </div>
         </React.Fragment>
       </NoSsr>
