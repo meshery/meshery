@@ -12,6 +12,7 @@ import CollectionsIcon from '@material-ui/icons/Collections';
 import LaptopIcon from '@material-ui/icons/Laptop';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import RemoveIcon from '@material-ui/icons/Remove';
 import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
@@ -88,12 +89,21 @@ const styles = theme => ({
   listIcon: {
     minWidth: theme.spacing(3.5),
     paddingTop: theme.spacing(0.5),
+    textAlign: 'center',
+    display: 'inline-table',
+    paddingRight: theme.spacing(0.5),
   },
   nested1: {
     paddingLeft: theme.spacing(3),
   },
   nested2: {
-    paddingLeft: theme.spacing(6),
+    paddingLeft: theme.spacing(5),
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
+  istioIcon: {
+    width: theme.spacing(1.8),
   },
 });
 
@@ -184,6 +194,8 @@ class Navigator extends React.Component {
         if(cat.id === 'Management'){
           cat.children.forEach((catc, ind1) => {
             const cr = self.fetchChildren(catc.id);
+            const icon = self.pickIcon(catc.id);
+            categories[ind].children[ind1]['icon'] = icon;
             categories[ind].children[ind1]['children'] = cr;
           });
         }
@@ -228,7 +240,7 @@ class Navigator extends React.Component {
       category = category.toLowerCase();
       meshAdapters.forEach(adapter => {
         const aName = adapter.name.toLowerCase();
-
+        // const imageIcon = this.pickIcon(aName);
         if (category !== aName) {
           return;
         }
@@ -236,36 +248,42 @@ class Navigator extends React.Component {
           {
             id: adapter.adapter_location, 
             // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+            icon: <RemoveIcon />,
             href: `/management?adapter=${adapter.adapter_location}`, 
             title: `Management - ${adapter.adapter_location}`,
             link: true, 
             show: true,
           }
         );
-
-        // let image = "/static/img/meshery-logo.png";
-        // let logoIcon = (<img src={image} className={classes.icon} />);
-        // switch (aName){
-        //   case 'istio':
-        //     image = "/static/img/istio.svg";
-        //     logoIcon = (<img src={image} className={classes.istioIcon} />);
-        //     break;
-        //   case 'linkerd':
-        //     image = "/static/img/linkerd.svg";
-        //     logoIcon = (<img src={image} className={classes.icon} />);
-        //     break;
-        //   case 'consul':
-        //     image = "/static/img/consul.svg";
-        //     logoIcon = (<img src={image} className={classes.icon} />);
-        //     break;
-        //   case 'nsm':
-        //     image = "/static/img/nsm.svg";
-        //     logoIcon = (<img src={image} className={classes.icon} />);
-        //     break;
-        //   // default:
-        // }
       });
       return children;
+    }
+
+    pickIcon(aName) {
+      aName = aName.toLowerCase();
+      const {classes} = this.props;
+      let image = "/static/img/meshery-logo.png";
+      let logoIcon = (<img src={image} className={classes.icon} />);
+      switch (aName){
+        case 'istio':
+          image = "/static/img/istio-white.svg";
+          logoIcon = (<img src={image} className={classes.istioIcon} />);
+          break;
+        case 'linkerd':
+          image = "/static/img/linkerd.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'consul':
+          image = "/static/img/consul.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'nsm':
+          image = "/static/img/nsm.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        // default:
+      }
+      return logoIcon;
     }
 
     handleTitleClick = (event) => {
