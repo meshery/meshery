@@ -222,15 +222,11 @@ class MesheryPlayComponent extends React.Component {
                         ))}
                 </TextField>
                 </Grid>
-                <Grid item xs={12}>
-                  {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />}
-                </Grid>
               </Grid>
-
-
-
                           
           </div>
+          <Divider variant="fullWidth" light />
+          {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />}
         </React.Fragment>
       </NoSsr>
     )
