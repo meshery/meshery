@@ -1,4 +1,4 @@
-<img align="right" src="https://layer5.io/assets/images/cube-sh-small.png" />
+# [Meshery](https://layer5.io/meshery)<img align="right" src="https://layer5.io/assets/images/cube-sh-small.png" />
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
@@ -8,8 +8,6 @@
 ![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)
 [![Slack](https://img.shields.io/badge/slack-380-lightgrey)](http://slack.layer5.io)
-
-# [Meshery](https://layer5.io/meshery)
 
 A multi-mesh management plane with initial functionality as a playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) also serves as a service mesh performance benchmark.
   
