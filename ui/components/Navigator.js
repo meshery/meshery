@@ -304,6 +304,7 @@ class Navigator extends React.Component {
             return (
               <React.Fragment>
               <ListItem button
+                key={idc}
                 className={classNames(
                   (depth === 1?classes.nested1:classes.nested2),
                   classes.item,
