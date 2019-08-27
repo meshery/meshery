@@ -377,13 +377,12 @@ class MesheryAdapterPlayComponent extends React.Component {
                 }}}
               value={isDelete?cmEditorValDel:cmEditorValAdd}
                 options={{
-                  mode: 'yaml',
                   theme: 'material',
                   lineNumbers: true,
                   lineWrapping: true,
                   gutters: ["CodeMirror-lint-markers"],
                   lint: true,
-                  mode: "text/x-yaml"
+                  mode: 'text/x-yaml'
                 }}
                 onBeforeChange={(editor, data, value) => {
                   if(isDelete){
