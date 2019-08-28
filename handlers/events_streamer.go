@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// EventStreamer endpoint is used for streaming events to the frontend
+// EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)

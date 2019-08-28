@@ -19,6 +19,7 @@ import (
 	"github.com/grafana-tools/sdk"
 )
 
+// GrafanaClient represents a client to Grafana in Meshery
 type GrafanaClient struct {
 	BaseURL string
 	APIKey  string
@@ -29,6 +30,7 @@ type GrafanaClient struct {
 	promURL  string
 }
 
+// NewGrafanaClient returns a new GrafanaClient
 func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClient, error) {
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
@@ -47,6 +49,7 @@ func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClie
 	return g, nil
 }
 
+// NewGrafanaClientForPrometheus returns a limited GrafanaClient for use with Prometheus
 func NewGrafanaClientForPrometheus(promURL string) *GrafanaClient {
 	if strings.HasSuffix(promURL, "/") {
 		promURL = strings.Trim(promURL, "/")
@@ -84,6 +87,7 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL string) ([]byt
 	return data, nil
 }
 
+// GrafanaConfigValidator validates connection to Grafana
 func (g *GrafanaClient) GrafanaConfigValidator() (uint, error) {
 	if g.c == nil {
 		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{})
@@ -98,6 +102,7 @@ func (g *GrafanaClient) GrafanaConfigValidator() (uint, error) {
 	return org.ID, nil
 }
 
+// GetGrafanaBoards retrieves all the Grafana boards matching a search
 func (g *GrafanaClient) GetGrafanaBoards(dashboardSearch string) ([]*models.GrafanaBoard, error) {
 	if g.c == nil {
 		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{})
@@ -124,6 +129,7 @@ func (g *GrafanaClient) GetGrafanaBoards(dashboardSearch string) ([]*models.Graf
 	return boards, nil
 }
 
+// ProcessBoard accepts raw Grafana board and returns a processed GrafanaBoard to be used in Meshery
 func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*models.GrafanaBoard, error) {
 	grafBoard := &models.GrafanaBoard{
 		URI:          link.URI,
@@ -223,6 +229,7 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 	return grafBoard, nil
 }
 
+// GrafanaQuery parses the provided query data and queries Grafana and streams response
 func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
 		err := errors.New("query data is empty")
@@ -309,6 +316,7 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 	return data, nil
 }
 
+// GrafanaQueryRange parses the given params and performs Grafana range queries
 func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
 		err := errors.New("query data is empty")
