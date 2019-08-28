@@ -4,6 +4,7 @@ import (
 	"context"
 )
 
+// QueryTrackerInterface defines the methods for working with query UUIDs
 type QueryTrackerInterface interface {
 	AddOrFlagQuery(ctx context.Context, uuid, query string, flag bool)
 	RemoveUUID(ctx context.Context, uuid string)

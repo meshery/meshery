@@ -9,6 +9,7 @@ import (
 	"github.com/vmihailenco/taskq"
 )
 
+// HandlerInterface defines the methods a Handler should define
 type HandlerInterface interface {
 	AuthMiddleware(next http.Handler) http.Handler
 
@@ -45,6 +46,7 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request)
 }
 
+// HandlerConfig holds all the config pieces needed by handler methods
 type HandlerConfig struct {
 	SessionName   string
 	RefCookieName string
@@ -64,6 +66,7 @@ type HandlerConfig struct {
 	KubeConfigFolder string
 }
 
+// SubmitMetricsConfig is used to store config used for submitting metrics
 type SubmitMetricsConfig struct {
 	TestUUID, ResultID, PromURL string
 	StartTime, EndTime          time.Time

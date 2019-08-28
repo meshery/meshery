@@ -10,11 +10,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// FileSessionPersister assists with persisting session in a file store
 type FileSessionPersister struct {
 	folder string
 	mutex  map[string]*sync.Mutex
 }
 
+// NewFileSessionPersister returns a new instance of FileSessionPersister
 func NewFileSessionPersister(folder string) *FileSessionPersister {
 	return &FileSessionPersister{
 		folder: folder,
@@ -22,7 +24,7 @@ func NewFileSessionPersister(folder string) *FileSessionPersister {
 	}
 }
 
-func (s *FileSessionPersister) openFile(userId string) (*os.File, os.FileInfo, error) {
+func (s *FileSessionPersister) openFile(userID string) (*os.File, os.FileInfo, error) {
 	var fp *os.File
 	_, err := os.Stat(s.folder)
 	if err != nil {
@@ -38,7 +40,7 @@ func (s *FileSessionPersister) openFile(userId string) (*os.File, os.FileInfo, e
 		}
 	}
 
-	fileName := path.Join(s.folder, userId)
+	fileName := path.Join(s.folder, userID)
 	_, err = os.Stat(fileName)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -63,29 +65,30 @@ func (s *FileSessionPersister) openFile(userId string) (*os.File, os.FileInfo, e
 	return fp, fs, nil
 }
 
-func (s *FileSessionPersister) lock(userId string) {
-	userLock, ok := s.mutex[userId]
+func (s *FileSessionPersister) lock(userID string) {
+	userLock, ok := s.mutex[userID]
 	if !ok {
 		userLock = &sync.Mutex{}
-		s.mutex[userId] = userLock
+		s.mutex[userID] = userLock
 	}
 	userLock.Lock()
 }
 
-func (s *FileSessionPersister) unlock(userId string) {
-	userLock, ok := s.mutex[userId]
+func (s *FileSessionPersister) unlock(userID string) {
+	userLock, ok := s.mutex[userID]
 	if !ok {
 		userLock = &sync.Mutex{}
-		s.mutex[userId] = userLock
+		s.mutex[userID] = userLock
 	}
 	userLock.Unlock()
 }
 
-func (s *FileSessionPersister) Read(userId string) (*models.Session, error) {
-	s.lock(userId)
-	defer s.unlock(userId)
+// Read reads the session data for the given userID
+func (s *FileSessionPersister) Read(userID string) (*models.Session, error) {
+	s.lock(userID)
+	defer s.unlock(userID)
 
-	fp, fs, err := s.openFile(userId)
+	fp, fs, err := s.openFile(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,11 +104,12 @@ func (s *FileSessionPersister) Read(userId string) (*models.Session, error) {
 	return data, nil
 }
 
-func (s *FileSessionPersister) Write(userId string, data *models.Session) error {
-	s.lock(userId)
-	defer s.unlock(userId)
+// Write persists session for the user
+func (s *FileSessionPersister) Write(userID string, data *models.Session) error {
+	s.lock(userID)
+	defer s.unlock(userID)
 
-	fp, _, err := s.openFile(userId)
+	fp, _, err := s.openFile(userID)
 	if err != nil {
 		return err
 	}
@@ -118,16 +122,17 @@ func (s *FileSessionPersister) Write(userId string, data *models.Session) error 
 	return nil
 }
 
-func (s *FileSessionPersister) Delete(userId string) error {
-	s.lock(userId)
-	defer s.unlock(userId)
+// Delete removes the session for the user
+func (s *FileSessionPersister) Delete(userID string) error {
+	s.lock(userID)
+	defer s.unlock(userID)
 
-	fp, _, err := s.openFile(userId)
+	fp, _, err := s.openFile(userID)
 	if err != nil {
 		return err
 	}
 	fp.Close()
-	err = os.Remove(path.Join(s.folder, userId))
+	err = os.Remove(path.Join(s.folder, userID))
 	if err != nil {
 		logrus.Errorf("unable to delete the file: %v", err)
 		return err
@@ -135,5 +140,6 @@ func (s *FileSessionPersister) Delete(userId string) error {
 	return nil
 }
 
+// Close closes the persister
 func (s *FileSessionPersister) Close() {
 }
