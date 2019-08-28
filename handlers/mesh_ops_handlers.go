@@ -17,6 +17,7 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
+// GetAllAdaptersHandler is used to fetch all the adapters
 func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -37,6 +38,7 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
+// MeshAdapterConfigHandler is used to persist adapter config
 func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request) {
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
@@ -174,13 +176,13 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 
 	adaptersLen := len(meshAdapters)
 
-	aId := -1
+	aID := -1
 	for i, ad := range meshAdapters {
 		if adapterLoc == ad.Location {
-			aId = i
+			aID = i
 		}
 	}
-	if aId < 0 {
+	if aID < 0 {
 		err := errors.New("unable to find a valid adapter for the given adapter url")
 		logrus.Error(err)
 		http.Error(w, "given adapter url is not valid", http.StatusBadRequest)
@@ -188,13 +190,13 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	}
 
 	newMeshAdapters := []*models.Adapter{}
-	if aId == 0 {
+	if aID == 0 {
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[1:]...)
-	} else if aId == adaptersLen-1 {
+	} else if aID == adaptersLen-1 {
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[:adaptersLen-1]...)
 	} else {
-		newMeshAdapters = append(newMeshAdapters, meshAdapters[0:aId]...)
-		newMeshAdapters = append(newMeshAdapters, meshAdapters[aId+1:]...)
+		newMeshAdapters = append(newMeshAdapters, meshAdapters[0:aID]...)
+		newMeshAdapters = append(newMeshAdapters, meshAdapters[aID+1:]...)
 	}
 	if logrus.GetLevel() == logrus.DebugLevel {
 		b, _ := json.Marshal(meshAdapters)
@@ -205,6 +207,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 	return newMeshAdapters, nil
 }
 
+// MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
@@ -240,13 +243,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	adapterLoc := req.PostFormValue("adapter")
 	logrus.Debugf("adapter url to execute ops on: %s", adapterLoc)
 
-	aId := -1
+	aID := -1
 	for i, ad := range meshAdapters {
 		if adapterLoc == ad.Location {
-			aId = i
+			aID = i
 		}
 	}
-	if aId < 0 {
+	if aID < 0 {
 		err := errors.New("unable to find a valid adapter for the given adapter url")
 		logrus.Error(err)
 		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)
@@ -267,7 +270,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aId].Location)
+	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
 		logrus.Errorf("error creating a mesh client: %v", err)
 		http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
@@ -290,6 +293,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte("{}"))
 }
 
+// AdapterPingHandler is used to ping a given adapter
 func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -323,13 +327,13 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
 	adapterLoc := req.URL.Query().Get("adapter")
 	logrus.Debugf("adapter url to ping: %s", adapterLoc)
 
-	aId := -1
+	aID := -1
 	for i, ad := range meshAdapters {
 		if adapterLoc == ad.Location {
-			aId = i
+			aID = i
 		}
 	}
-	if aId < 0 {
+	if aID < 0 {
 		err := errors.New("unable to find a valid adapter for the given adapter url")
 		logrus.Error(err)
 		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)
@@ -342,7 +346,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aId].Location)
+	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
 		logrus.Errorf("error creating a mesh client: %v", err)
 		http.Error(w, "adapter could not be pinged", http.StatusBadRequest)

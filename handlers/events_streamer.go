@@ -13,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// EventStreamer endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -116,15 +117,14 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 						errChan <- nil
 						// break
 						return
-					} else {
-						err = errors.Wrapf(err, "streaming ended with an unknown error")
-						logrus.Error(err)
-						// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
-						// return
-						errChan <- err
-						// break
-						return
 					}
+					err = errors.Wrapf(err, "streaming ended with an unknown error")
+					logrus.Error(err)
+					// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
+					// return
+					errChan <- err
+					// break
+					return
 				}
 				// logrus.Debugf("received an event: %+#v", event)
 				logrus.Debugf("received an event")

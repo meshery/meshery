@@ -18,6 +18,7 @@ func init() {
 	gob.Register(&helpers.GrafanaClient{})
 }
 
+// GrafanaConfigHandler is used for persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
@@ -72,6 +73,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	w.Write([]byte("{}"))
 }
 
+// GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet && req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
@@ -129,6 +131,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 	}
 }
 
+// GrafanaQueryHandler is used for handling Grafana queries
 func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -175,6 +178,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 	w.Write(data)
 }
 
+// GrafanaQueryRangeHandler is used for handling Grafana Range queries
 func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -222,6 +226,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	w.Write(data)
 }
 
+// SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
 func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)

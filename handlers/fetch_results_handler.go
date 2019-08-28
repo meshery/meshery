@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
