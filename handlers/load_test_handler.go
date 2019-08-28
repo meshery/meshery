@@ -19,6 +19,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -160,6 +161,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write(bd)
 }
 
+// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
