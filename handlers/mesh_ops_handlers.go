@@ -50,10 +50,10 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -102,7 +102,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	sessObj.MeshAdapters = meshAdapters
-	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	err = h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -223,10 +223,10 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -280,7 +280,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OpName:     opName,
-		Username:   user.UserId,
+		Username:   user.UserID,
 		Namespace:  namespace,
 		CustomBody: customBody,
 		DeleteOp:   (delete != ""),
@@ -309,7 +309,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}

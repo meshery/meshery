@@ -34,10 +34,10 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -64,7 +64,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 	} else if req.Method == http.MethodDelete {
 		sessObj.Grafana = nil
 	}
-	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	err = h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -94,10 +94,10 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -148,10 +148,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -195,10 +195,10 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -242,10 +242,10 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -286,7 +286,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	} else {
 		sessObj.Grafana.GrafanaBoards = nil
 	}
-	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	err = h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)

@@ -33,10 +33,10 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}
@@ -114,7 +114,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 	}
 	kc.ClusterConfigured = true
 	sessObj.K8SConfig = kc
-	err := h.config.SessionPersister.Write(user.UserId, sessObj)
+	err := h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -133,7 +133,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 
 func (h *Handler) deleteK8SConfig(user *models.User, sessObj *models.Session, w http.ResponseWriter, req *http.Request) {
 	sessObj.K8SConfig = nil
-	err := h.config.SessionPersister.Write(user.UserId, sessObj)
+	err := h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -252,7 +252,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 			}
 		}
 		sessObj.K8SConfig = kc
-		err = h.config.SessionPersister.Write(user.UserId, sessObj)
+		err = h.config.SessionPersister.Write(user.UserID, sessObj)
 		if err != nil {
 			err = errors.Wrapf(err, "unable to persist k8s config")
 			logrus.Error(err)
