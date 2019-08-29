@@ -25,10 +25,10 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Errorf("error retrieving user config data: %v", err)
 		http.Error(w, "unable to get user config data", http.StatusInternalServerError)
@@ -49,7 +49,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
 	}
 	sessObj.MeshAdapters = meshAdapters
-	err = h.config.SessionPersister.Write(user.UserId, sessObj)
+	err = h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil { // ignoring errors in this context
 		logrus.Errorf("unable to save session: %v", err)
 		// http.Error(w, "unable to save session", http.StatusInternalServerError)

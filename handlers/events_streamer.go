@@ -29,10 +29,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	var user *models.User
 	user, _ = session.Values["user"].(*models.User)
 
-	// h.config.SessionPersister.Lock(user.UserId)
-	// defer h.config.SessionPersister.Unlock(user.UserId)
+	// h.config.SessionPersister.Lock(user.UserID)
+	// defer h.config.SessionPersister.Unlock(user.UserID)
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserId)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("unable to read session from the session persister, starting with a new one")
 	}

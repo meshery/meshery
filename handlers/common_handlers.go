@@ -161,7 +161,7 @@ func (h *Handler) setupSession(userName string, req *http.Request, w http.Respon
 	}
 
 	user := &models.User{
-		UserId: userName,
+		UserID: userName,
 	}
 	session.Values["user"] = user
 	err = session.Save(req, w)
