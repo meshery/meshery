@@ -64,11 +64,10 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 		if err != nil {
 			if err == badger.ErrKeyNotFound {
 				return nil
-			} else {
-				err = errors.Wrapf(err, "unable to retrieve data for user: %s", userID)
-				logrus.Error(err)
-				return err
 			}
+			err = errors.Wrapf(err, "unable to retrieve data for user: %s", userID)
+			logrus.Error(err)
+			return err
 		}
 		dataCopyB, err = item.ValueCopy(nil)
 		if err != nil {
