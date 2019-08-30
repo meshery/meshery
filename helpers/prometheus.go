@@ -15,11 +15,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// PrometheusClient represents a prometheus client in Meshery
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
 	promURL       string
 }
 
+// NewPrometheusClient returns a PrometheusClient
 func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*PrometheusClient, error) {
 	// client, err := promAPI.NewClient(promAPI.Config{Address: promURL})
 	// if err != nil {
@@ -45,6 +47,7 @@ func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*P
 	return p, nil
 }
 
+// ImportGrafanaBoard takes raw Grafana board json and returns GrafanaBoard pointer for use in Meshery
 func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*models.GrafanaBoard, error) {
 	board := &sdk.Board{}
 	if err := json.Unmarshal(boardData, board); err != nil {
@@ -58,18 +61,22 @@ func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []b
 	})
 }
 
+// Query queries prometheus using the GrafanaClient
 func (p *PrometheusClient) Query(ctx context.Context, queryData *url.Values) ([]byte, error) {
 	return p.grafanaClient.GrafanaQuery(ctx, queryData)
 }
 
+// QueryRange queries prometheus using the GrafanaClient
 func (p *PrometheusClient) QueryRange(ctx context.Context, queryData *url.Values) ([]byte, error) {
 	return p.grafanaClient.GrafanaQueryRange(ctx, queryData)
 }
 
+// GetStaticBoard retrieves the static board config
 func (p *PrometheusClient) GetStaticBoard(ctx context.Context) (*models.GrafanaBoard, error) {
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoard))
 }
 
+// QueryRangeUsingClient performs a range query within a window
 func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, query string, startTime, endTime time.Time, step time.Duration) (promModel.Value, error) {
 	c, _ := promAPI.NewClient(promAPI.Config{
 		Address: p.promURL,
@@ -88,6 +95,7 @@ func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, query stri
 	return result, nil
 }
 
+// ComputeStep computes the step size for a window
 func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time) time.Duration {
 	step := 5 * time.Second
 	diff := end.Sub(start)

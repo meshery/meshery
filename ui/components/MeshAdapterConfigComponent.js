@@ -293,7 +293,7 @@ class MeshAdapterConfigComponent extends React.Component {
             let logoIcon = (<img src={image} className={classes.icon} />);
             switch (adapter.name.toLowerCase()){
               case 'istio':
-                image = "/static/img/istio.svg";
+                image = "/static/img/istio-blue.svg";
                 logoIcon = (<img src={image} className={classes.istioIcon} />);
                 break;
               case 'linkerd':

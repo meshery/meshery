@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr,  FormGroup, InputAdornment, Chip, IconButton, MenuItem, FormControlLabel, Switch } from '@material-ui/core';
+import { NoSsr,  FormGroup, InputAdornment, Chip, IconButton, MenuItem, FormControlLabel, Switch, Tooltip } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import dataFetch from '../lib/data-fetch';
 import blue from '@material-ui/core/colors/blue';
@@ -276,13 +276,24 @@ class MeshConfigComponent extends React.Component {
     let showConfigured = '';
     const self = this;
     if (clusterConfigured) {
-      showConfigured = (
-        <div className={classes.alignRight}>
-          <Chip 
-              label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+      let chp = (
+        <Chip 
+              // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+              label={inClusterConfig?'Using In Cluster Config': contextName }
               onDelete={self.handleReconfigure} 
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               variant="outlined" />
+      );
+      if(configuredServer){
+        chp = (
+          <Tooltip title={`Server: ${configuredServer}`}>
+          {chp}
+          </Tooltip>
+        );
+      }
+      showConfigured = (
+        <div className={classes.alignRight}>
+          {chp}
         </div>
       )
     }
@@ -317,7 +328,7 @@ class MeshConfigComponent extends React.Component {
             label="Use in-cluster Kubernetes config"
       />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} hidden={inClusterConfigForm === true}>
       <FormGroup row>
         <input
             className={classes.input}
@@ -326,7 +337,7 @@ class MeshConfigComponent extends React.Component {
             // value={k8sfile}
             value={k8sfileElementVal}
             onChange={this.handleChange('k8sfile')}
-            disabled={inClusterConfigForm == true}
+            disabled={inClusterConfigForm === true}
             className={classes.fileInputStyle}
         />
             <TextField
@@ -351,7 +362,7 @@ class MeshConfigComponent extends React.Component {
                 />
         </FormGroup>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} hidden={inClusterConfigForm === true}>
         <TextField
           select
           id="contextName"
@@ -361,7 +372,7 @@ class MeshConfigComponent extends React.Component {
           value={contextNameForForm}
           margin="normal"
           variant="outlined"
-          disabled={inClusterConfigForm == true}
+          disabled={inClusterConfigForm === true}
           onChange={this.handleChange('contextNameForForm')}
         >
           {contextsFromFile && contextsFromFile.map((ct) => (
