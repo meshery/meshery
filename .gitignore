@@ -40,3 +40,5 @@ log.txt
 **/_site
 **/.sass-cache
 **/.jekyll-metadata
+
+mesheryctl/.meshery/
