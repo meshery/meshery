@@ -5,11 +5,13 @@ import (
 	"sync"
 )
 
+// UUIDQueryTracker tracks queries for a load test UUID
 type UUIDQueryTracker struct {
 	queries map[string]map[string]bool
 	qLock   *sync.Mutex
 }
 
+// NewUUIDQueryTracker creates a new instance of UUIDQueryTracker
 func NewUUIDQueryTracker() *UUIDQueryTracker {
 	return &UUIDQueryTracker{
 		queries: map[string]map[string]bool{},
@@ -17,6 +19,7 @@ func NewUUIDQueryTracker() *UUIDQueryTracker {
 	}
 }
 
+// AddOrFlagQuery either adds a new query or flags an existing one
 func (a *UUIDQueryTracker) AddOrFlagQuery(ctx context.Context, uuid, query string, flag bool) {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
@@ -28,12 +31,14 @@ func (a *UUIDQueryTracker) AddOrFlagQuery(ctx context.Context, uuid, query strin
 	a.queries[uuid] = queries
 }
 
+// RemoveUUID removes an existing UUID from the collection
 func (a *UUIDQueryTracker) RemoveUUID(ctx context.Context, uuid string) {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()
 	delete(a.queries, uuid)
 }
 
+// GetQueriesForUUID retrieves queries for UUID
 func (a *UUIDQueryTracker) GetQueriesForUUID(ctx context.Context, uuid string) map[string]bool {
 	a.qLock.Lock()
 	defer a.qLock.Unlock()

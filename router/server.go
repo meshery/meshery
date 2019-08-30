@@ -8,12 +8,13 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
+// Router represents Meshery router
 type Router struct {
 	s    *http.ServeMux
 	port int
 }
 
-// New returns a new ServeMux with app routes.
+// NewRouter returns a new ServeMux with app routes.
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	mux := http.NewServeMux()
 
@@ -60,6 +61,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	}
 }
 
+// Run starts the http server
 func (r *Router) Run() error {
 	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.s)
 }

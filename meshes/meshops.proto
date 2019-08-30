@@ -31,22 +31,33 @@ message ApplyRuleRequest {
     string username = 3;
     string custom_body = 4;
     bool delete_op = 5;
+    string operation_id = 6;
 }
 
 message ApplyRuleResponse {
     string error = 1;
+    string operation_id = 2;
 }
 
 message SupportedOperationsRequest {}
 
 message SupportedOperationsResponse {
-    map<string, string> ops = 1;
+    repeated SupportedOperation ops = 1;
     string error = 2;
 }
 
 message SupportedOperation {
     string key = 1;
     string value = 2;
+    OpCategory category = 3; 
+}
+
+enum OpCategory {
+    INSTALL = 0;
+    SAMPLE_APPLICATION = 1;
+    CONFIGURE = 2;
+    VALIDATE = 3;
+    CUSTOM = 4;
 }
 
 enum EventType {
@@ -61,4 +72,5 @@ message EventsResponse {
     EventType event_type = 1;
     string summary = 2;
     string details = 3;
+    string operation_id = 4;
 }

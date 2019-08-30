@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		isValid := h.validateAuth(req)
