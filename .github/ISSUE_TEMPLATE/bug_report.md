@@ -5,7 +5,7 @@ title: ''
 labels: 'bug'
 assignees: ''
 ---
-**Issue Description**
+**Description**
 A brief description of the issue.
 
 **Expected Behavior**
@@ -15,8 +15,8 @@ A brief description of what you expected to happen.
 Add screenshots, if applicable, to help explain your problem.
 
 **Enviroment:**
- - OS: [e.g. iOS]
- - Browser: [e.g. chrome, safari]
+ - OS: [e.g. Ubuntu]
+ - Browser: [e.g. Chrome, Safari]
  - Version: [e.g. 22]
  - Device: [e.g. laptop, iPhone 8]
 
