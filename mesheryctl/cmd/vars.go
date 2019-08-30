@@ -24,14 +24,14 @@ import (
 
 const (
 	url                    = "http://localhost:9081"
-	fileUrl                = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	fileURL                = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	mesheryLocalFolder     = ".meshery"
 	dockerComposeFile      = mesheryLocalFolder + "/meshery.yaml"
-	dockerComposeBinaryUrl = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
+	dockerComposeBinaryURL = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
 	dockerComposeBinary    = "/usr/local/bin/docker-compose"
 )
 
-func DownloadFile(filepath string, url string) error {
+func downloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
@@ -49,7 +49,7 @@ func DownloadFile(filepath string, url string) error {
 	return err
 }
 
-func Prereq() ([]byte, []byte) {
+func prereq() ([]byte, []byte) {
 	ostype, err := exec.Command("uname", "-s").Output()
 	if err != nil {
 		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
