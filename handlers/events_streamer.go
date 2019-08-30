@@ -21,8 +21,8 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
+		logrus.Errorf("Error getting session: %v.", err)
+		http.Error(w, "Unable to get session.", http.StatusUnauthorized)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
+		logrus.Warn("Unable to read session from the session persister. Starting with a new session.")
 	}
 
 	if sessObj == nil {
@@ -47,14 +47,14 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
-		logrus.Error("no valid kubernetes config found")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		logrus.Error("No valid Kubernetes config found.")
+		http.Error(w, `No valid Kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
 
 	adaptersLen := len(meshAdapters)
 	if adaptersLen == 0 {
-		logrus.Error("no valid mesh adapter(s) found")
+		logrus.Error("No valid mesh adapter(s) found.")
 		http.Error(w, `No valid mesh adapter(s) found.`, http.StatusBadRequest)
 		return
 	}
@@ -62,8 +62,8 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	flusher, ok := w.(http.Flusher)
 
 	if !ok {
-		logrus.Errorf("streaming not supported: %v", err)
-		http.Error(w, "streaming events is not supported at the moment", http.StatusInternalServerError)
+		logrus.Errorf("Event streaming not supported: %v.", err)
+		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 		go func(ma *models.Adapter) {
 			mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, ma.Location)
 			if err != nil {
-				err = errors.Wrapf(err, "error creating a mesh client")
+				err = errors.Wrapf(err, "Error creating a mesh client.")
 				logrus.Error(err)
 				errChan <- err
 				// http.Error(w, "Unable to create a mesh client", http.StatusBadRequest)
@@ -96,11 +96,11 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 			}
 			defer mClient.Close()
 
-			logrus.Debugf("received a stream client. . .")
+			logrus.Debugf("Received a stream client...")
 
 			streamClient, err := mClient.MClient.StreamEvents(req.Context(), &meshes.EventsRequest{})
 			if err != nil {
-				err = errors.Wrapf(err, "There was an error connecting to the backend to get events")
+				err = errors.Wrapf(err, "There was an error connecting to the backend to get events.")
 				logrus.Error(err)
 				errChan <- err
 				// http.Error(w, "There was an error connecting to the backend to get events", http.StatusInternalServerError)
@@ -108,17 +108,17 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 			}
 
 			for {
-				logrus.Debugf("waiting to receive events")
+				logrus.Debugf("Waiting to receive events.")
 				event, err := streamClient.Recv()
 				if err != nil {
 					if err == io.EOF {
-						err = errors.Wrapf(err, "streaming ended")
+						err = errors.Wrapf(err, "Event streaming ended.")
 						logrus.Error(err)
 						errChan <- nil
 						// break
 						return
 					}
-					err = errors.Wrapf(err, "streaming ended with an unknown error")
+					err = errors.Wrapf(err, "Event streaming ended with an unknown error.")
 					logrus.Error(err)
 					// http.Error(w, "streaming events was interrupted", http.StatusInternalServerError)
 					// return
@@ -127,10 +127,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 					return
 				}
 				// logrus.Debugf("received an event: %+#v", event)
-				logrus.Debugf("received an event")
+				logrus.Debugf("Received an event.")
 				data, err := json.Marshal(event)
 				if err != nil {
-					err = errors.Wrapf(err, "error marshalling event to json")
+					err = errors.Wrapf(err, "Error marshalling event to json.")
 					logrus.Error(err)
 					errChan <- err
 					// logrus.Errorf(
@@ -144,7 +144,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				logrus.Errorf("Recovered from panic: %v", r)
+				logrus.Errorf("Recovered from panic: %v.", r)
 			}
 		}()
 		for {
@@ -153,7 +153,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 				fmt.Fprintf(w, "data: %s\n\n", data)
 				if flusher != nil {
 					flusher.Flush()
-					logrus.Debugf("flushed the messages on the wire. . .")
+					logrus.Debugf("Flushed the messages on the wire...")
 				}
 			}
 		}
