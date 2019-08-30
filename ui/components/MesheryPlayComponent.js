@@ -93,9 +93,35 @@ class MesheryPlayComponent extends React.Component {
     }
     this.state = {
       k8sconfig,
+      kts: new Date(),
+
       meshAdapters,
+      mts: new Date(),
+      
       adapter,
     }
+  }
+
+  static getDerivedStateFromProps(props, state){
+    const { meshAdapters, meshAdaptersts, k8sconfig } = props;
+    const st = {};
+    if(meshAdaptersts > state.mts) {
+      st.meshAdapters = meshAdapters;
+      st.mts = meshAdaptersts;
+      if(meshAdapters && meshAdapters.length > 0){
+        st.adapter = meshAdapters[0];
+      }
+    }
+    if(k8sconfig.ts > state.kts){
+        st.inClusterConfig = k8sconfig.inClusterConfig;
+        st.k8sfile = k8sconfig.k8sfile;
+        st.contextName = k8sconfig.contextName;
+        st.clusterConfigured = k8sconfig.clusterConfigured;
+        st.configuredServer = k8sconfig.configuredServer;
+        st.kts = props.ts;
+    }
+
+    return st;
   }
 
   handleConfigure = () => {
@@ -209,13 +235,13 @@ class MesheryPlayComponent extends React.Component {
                     variant="outlined"
                     onChange={this.handleAdapterChange()}
                     >
-                      {meshAdapters.map(({adapter_location}, ind) => (
-                          <MenuItem key={`${adapter_location}_${new Date().getTime()}`} value={adapter_location} >
+                      {meshAdapters.map((ada, ind) => (
+                          <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location} >
                             {/* <ListItemIcon> */}
-                              {imageIcon}
+                              {self.pickImage(ada)}
                             {/* </ListItemIcon> */}
                             <span className={classes.expTitle}>
-                              {adapter_location}
+                              {ada.adapter_location}
                             </span>
                           </MenuItem>
                       ))}
@@ -245,7 +271,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     const k8sconfig = state.get("k8sConfig").toJS();
     const meshAdapters = state.get("meshAdapters").toJS();
-    return {k8sconfig, meshAdapters};
+    const meshAdaptersts = state.get("meshAdaptersts");
+    return {k8sconfig, meshAdapters, meshAdaptersts};
 }
 
 export default withStyles(styles)(connect(

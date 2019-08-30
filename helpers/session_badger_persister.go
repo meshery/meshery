@@ -28,7 +28,7 @@ func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, erro
 				return nil, err
 			}
 		} else {
-			logrus.Errorf("unable to find/stat the folder '%s': %v", err)
+			logrus.Errorf("unable to find/stat the folder '%s': %v", folderName, err)
 			return nil, err
 		}
 	}

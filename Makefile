@@ -47,6 +47,7 @@ proto:
 	# go get -u google.golang.org/grpc
 	# go get -u github.com/golang/protobuf/protoc-gen-go
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
+	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
 	protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/
 
 setup-ui-libs:

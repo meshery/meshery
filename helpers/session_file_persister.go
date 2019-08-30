@@ -35,7 +35,7 @@ func (s *FileSessionPersister) openFile(userID string) (*os.File, os.FileInfo, e
 				return nil, nil, err
 			}
 		} else {
-			logrus.Errorf("unable to find/stat the folder '%s': %v", err)
+			logrus.Errorf("unable to find/stat the folder '%s': %v", s.folder, err)
 			return nil, nil, err
 		}
 	}
