@@ -7,8 +7,13 @@ import { withRouter } from 'next/router';
 import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { ExpansionPanel, ExpansionPanelSummary } from "./ExpansionPanels";
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const styles = theme => ({
+  icon: {
+    margin: theme.spacing(1),
+    fontSize: 20,
+  },
   root: {
     padding: theme.spacing(10),
   },
@@ -202,7 +207,8 @@ class MesheryPlayComponent extends React.Component {
             </Typography> */}
 
             <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-              Configure playground
+              <SettingsIcon className={classes.icon}/>
+              Configure Settings
             </Button>
           </div>
           </React.Fragment>
