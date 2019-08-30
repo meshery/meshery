@@ -120,15 +120,22 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.delIconEles = {};
     // initializing menuState;
     if(adapter && adapter.ops){
-      adapter.ops.forEach(({category}) => {
-        if(typeof category === 'undefined'){
-          category = 0;
-        }
-        menuState[category] = {
+      // adapter.ops.forEach(({category}) => {
+      //   if(typeof category === 'undefined'){
+      //     category = 0;
+      //   }
+      //   // menuState[category] = {
+      //   //   add: false,
+      //   //   delete: false,
+      //   // }
+      // })
+      // NOTE: this will have to updated to match the categories
+      [0,1,2,3,4].forEach(i => {
+        menuState[i] = {
           add: false,
           delete: false,
         }
-      })
+      });
     }
 
     this.state = {
@@ -548,6 +555,19 @@ class MesheryAdapterPlayComponent extends React.Component {
       cmEditorValDelError,
      } = this.state;
 
+    const filteredOps = [];
+    if (adapter && adapter.ops && adapter.ops.length > 0){
+      adapter.ops.forEach(({category}) => {
+        if(typeof category === 'undefined'){
+          category = 0;
+        }
+        if(filteredOps.indexOf(category) === -1){
+          filteredOps.push(category);
+        }
+      });
+      filteredOps.sort();
+    }
+
     var self = this;
     // return (
     //   <NoSsr>
@@ -715,7 +735,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               onChange={this.handleChange('namespace')}
             />
           </Grid>
-          {[0, 1, 2, 3, 4].map(val => (
+          {filteredOps.map(val => (
             <Grid item xs={12} sm={4}>
               {this.generateCardForCategory(val)}
             </Grid>

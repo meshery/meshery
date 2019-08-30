@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -278,12 +279,20 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer mClient.Close()
 
+	operationId, err := uuid.NewV4()
+	if err != nil {
+		logrus.Errorf("error generating an operation id: %v", err)
+		http.Error(w, "error generating an operation id", http.StatusInternalServerError)
+		return
+	}
+
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
-		OpName:     opName,
-		Username:   user.UserID,
-		Namespace:  namespace,
-		CustomBody: customBody,
-		DeleteOp:   (delete != ""),
+		OperationId: operationId.String(),
+		OpName:      opName,
+		Username:    user.UserID,
+		Namespace:   namespace,
+		CustomBody:  customBody,
+		DeleteOp:    (delete != ""),
 	})
 	if err != nil {
 		logrus.Error(err)

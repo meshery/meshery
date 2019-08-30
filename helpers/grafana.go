@@ -289,7 +289,8 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 		}
 		var reqURL string
 		if g.promMode {
-			reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL, dsID)
+			// reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL, dsID)
+			reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL)
 		} else {
 			reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query", g.BaseURL, dsID)
 		}
