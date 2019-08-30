@@ -17,6 +17,7 @@ import (
 // 	http.Redirect(w, r, "/play/dashboard", http.StatusPermanentRedirect)
 // }
 
+// LoginHandler redirects user for auth or issues session
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -125,7 +126,7 @@ func (h *Handler) getUserDetails(tokenVal string) (*models.User, error) {
 	return u, nil
 }
 
-// logoutHandler destroys the session on POSTs and redirects to home.
+// LogoutHandler destroys the session on POSTs and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -160,7 +161,7 @@ func (h *Handler) setupSession(userName string, req *http.Request, w http.Respon
 	}
 
 	user := &models.User{
-		UserId: userName,
+		UserID: userName,
 	}
 	session.Values["user"] = user
 	err = session.Save(req, w)

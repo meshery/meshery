@@ -6,6 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// LoadTestOptions represents the load test options
 type LoadTestOptions struct {
 	Name string
 	URL  string

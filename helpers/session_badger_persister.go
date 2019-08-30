@@ -11,22 +11,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// BadgerSessionPersister assists with persisting session in a badger store
 type BadgerSessionPersister struct {
 	fileName string
 	db       *badger.DB
 }
 
+// NewBadgerSessionPersister creates a new BadgerSessionPersister instance
 func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, error) {
 	_, err := os.Stat(folderName)
 	if err != nil {
 		if os.IsNotExist(err) {
 			err = os.MkdirAll(folderName, os.ModePerm)
 			if err != nil {
-				logrus.Errorf("unable to create the directory '%s' due to error: %v ", folderName, err)
+				logrus.Errorf("Unable to create the directory '%s' due to error: %v.", folderName, err)
 				return nil, err
 			}
 		} else {
-			logrus.Errorf("unable to find/stat the folder '%s': %v", err)
+			logrus.Errorf("Unable to find/stat the folder '%s': %v,", folderName, err)
 			return nil, err
 		}
 	}
@@ -34,7 +36,7 @@ func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, erro
 	fileName := path.Join(folderName, "db")
 	db, err := badger.Open(badger.DefaultOptions(fileName))
 	if err != nil {
-		logrus.Errorf("unable to open database: %v", err)
+		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err
 	}
 
@@ -44,32 +46,32 @@ func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, erro
 	}, nil
 }
 
-func (s *BadgerSessionPersister) Read(userId string) (*models.Session, error) {
+// Read reads the session data for the given userID
+func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 	data := &models.Session{}
 	dataCopyB := []byte{}
 
 	if s.db == nil {
-		return nil, errors.New("connection to DB does not exist")
+		return nil, errors.New("Connection to DB does not exist.")
 	}
 
-	if userId == "" {
-		return nil, errors.New("user id is empty")
+	if userID == "" {
+		return nil, errors.New("User ID is empty.")
 	}
 
 	if err := s.db.View(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(userId))
+		item, err := txn.Get([]byte(userID))
 		if err != nil {
 			if err == badger.ErrKeyNotFound {
 				return nil
-			} else {
-				err = errors.Wrapf(err, "unable to retrieve data for user: %s", userId)
-				logrus.Error(err)
-				return err
 			}
+			err = errors.Wrapf(err, "Unable to retrieve data for user: %s.", userID)
+			logrus.Error(err)
+			return err
 		}
 		dataCopyB, err = item.ValueCopy(nil)
 		if err != nil {
-			err = errors.Wrapf(err, "unable to copy data")
+			err = errors.Wrapf(err, "Unable to copy data.")
 			logrus.Error(err)
 			return err
 		}
@@ -79,7 +81,7 @@ func (s *BadgerSessionPersister) Read(userId string) (*models.Session, error) {
 	}
 	if len(dataCopyB) > 0 {
 		if err := json.Unmarshal(dataCopyB, data); err != nil {
-			err = errors.Wrapf(err, "unable to unmarshal data")
+			err = errors.Wrapf(err, "Unable to unmarshal data.")
 			logrus.Error(err)
 			return nil, err
 		}
@@ -87,52 +89,55 @@ func (s *BadgerSessionPersister) Read(userId string) (*models.Session, error) {
 	return data, nil
 }
 
-func (s *BadgerSessionPersister) Write(userId string, data *models.Session) error {
+// Write persists session for the user
+func (s *BadgerSessionPersister) Write(userID string, data *models.Session) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
 
-	if userId == "" {
-		return errors.New("user id is empty")
+	if userID == "" {
+		return errors.New("User ID is empty.")
 	}
 
 	if data == nil {
-		return errors.New("given config data is nil")
+		return errors.New("Given config data is nil.")
 	}
 
 	dataB, err := json.Marshal(data)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to marshal the user config data")
+		err = errors.Wrapf(err, "Unable to marshal the user config data.")
 		logrus.Error(err)
 		return err
 	}
 	return s.db.Update(func(txn *badger.Txn) error {
-		if err := txn.Set([]byte(userId), dataB); err != nil {
-			err = errors.Wrapf(err, "unable to persist config data")
+		if err := txn.Set([]byte(userID), dataB); err != nil {
+			err = errors.Wrapf(err, "Unable to persist config data.")
 			return err
 		}
 		return nil
 	})
 }
 
-func (s *BadgerSessionPersister) Delete(userId string) error {
+// Delete removes the session for the user
+func (s *BadgerSessionPersister) Delete(userID string) error {
 	if s.db == nil {
-		return errors.New("connection to DB does not exist")
+		return errors.New("Connection to DB does not exist.")
 	}
 
-	if userId == "" {
-		return errors.New("user id is empty")
+	if userID == "" {
+		return errors.New("User ID is empty.")
 	}
 
 	return s.db.Update(func(txn *badger.Txn) error {
-		if err := txn.Delete([]byte(userId)); err != nil {
-			err = errors.Wrapf(err, "unable to delete config data for the user: %s", userId)
+		if err := txn.Delete([]byte(userID)); err != nil {
+			err = errors.Wrapf(err, "Unable to delete config data for the user: %s.", userID)
 			return err
 		}
 		return nil
 	})
 }
 
+// Close closes the badger store
 func (s *BadgerSessionPersister) Close() {
 	if s.db == nil {
 		return

@@ -38,6 +38,7 @@ run-local:
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
 	./meshery; \
 	cd ..
 
@@ -46,6 +47,7 @@ proto:
 	# go get -u google.golang.org/grpc
 	# go get -u github.com/golang/protobuf/protoc-gen-go
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
+	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
 	protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/
 
 setup-ui-libs:
