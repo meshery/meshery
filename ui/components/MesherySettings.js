@@ -104,7 +104,7 @@ class MesherySettings extends React.Component {
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
       backToPlay = (
         <div className={classes.backToPlay}>
-          <Link href={"/playground"}>
+          <Link href={"/management"}>
             <div className={classes.link}>
             <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth /> You are all set to play with service meshes
             </div>
