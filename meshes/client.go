@@ -7,11 +7,13 @@ import (
 	"google.golang.org/grpc"
 )
 
+// MeshClient represents a gRPC adapter client
 type MeshClient struct {
 	MClient MeshServiceClient
 	conn    *grpc.ClientConn
 }
 
+// CreateClient creates a MeshClient for the given params
 func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshLocationURL string) (*MeshClient, error) {
 	var opts []grpc.DialOption
 	// creds, err := credentials.NewClientTLSFromFile(*caFile, *serverHostOverride)
@@ -42,6 +44,7 @@ func CreateClient(ctx context.Context, k8sConfigBytes []byte, contextName, meshL
 	}, nil
 }
 
+// Close closes the MeshClient
 func (m *MeshClient) Close() error {
 	if m.conn != nil {
 		return m.conn.Close()

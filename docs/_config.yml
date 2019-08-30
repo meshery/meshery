@@ -25,7 +25,6 @@ twitter_username: layer5
 # Build settings
 markdown: kramdown
 theme: just-the-docs
-remote_theme: pmarsceill/just-the-docs
 color_scheme: "dark"
 plugins:
   - jekyll-feed

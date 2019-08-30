@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, Typography, Button, Divider, ExpansionPanelDetails } from '@material-ui/core';
+import { withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid, ListItemIcon } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -83,6 +83,7 @@ const styles = theme => ({
   expTitle: {
     display: 'inline',
     verticalAlign: 'middle',
+    marginLeft: theme.spacing(1),
   }
 });
 
@@ -91,19 +92,110 @@ class MesheryPlayComponent extends React.Component {
     super(props);
     
     const {k8sconfig, meshAdapters} = props;
-
+    let adapter = {};
+    if(meshAdapters && meshAdapters.length > 0){
+      adapter = meshAdapters[0];
+    }
     this.state = {
       k8sconfig,
+      kts: new Date(),
+
       meshAdapters,
+      mts: new Date(),
+      
+      adapter,
     }
+  }
+
+  static getDerivedStateFromProps(props, state){
+    const { meshAdapters, meshAdaptersts, k8sconfig } = props;
+    const st = {};
+    if(meshAdaptersts > state.mts) {
+      st.meshAdapters = meshAdapters;
+      st.mts = meshAdaptersts;
+      if(meshAdapters && meshAdapters.length > 0){
+        st.adapter = meshAdapters[0];
+      }
+    }
+    if(k8sconfig.ts > state.kts){
+        st.inClusterConfig = k8sconfig.inClusterConfig;
+        st.k8sfile = k8sconfig.k8sfile;
+        st.contextName = k8sconfig.contextName;
+        st.clusterConfigured = k8sconfig.clusterConfigured;
+        st.configuredServer = k8sconfig.configuredServer;
+        st.kts = props.ts;
+    }
+
+    return st;
   }
 
   handleConfigure = () => {
     this.props.router.push('/settings');
   }
 
+  pickImage(adapter) {
+    const { classes } = this.props;
+    let image = "/static/img/meshery-logo.png";
+    let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+    if(adapter && adapter.name){
+      switch (adapter.name.toLowerCase()){
+        case 'istio':
+          image = "/static/img/istio-blue.svg";
+          imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
+          break;
+        case 'linkerd':
+          image = "/static/img/linkerd.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'consul':
+          image = "/static/img/consul.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'nsm':
+          image = "/static/img/nsm.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        // default:
+      } 
+    }
+    return imageIcon;
+  }
+
+  handleAdapterChange = () => {
+    const self = this;
+    return (event) => {
+      const {meshAdapters} = self.state;
+      if (event.target.value !== '') {
+        const selectedAdapter = meshAdapters.filter(({adapter_location}) => adapter_location === event.target.value);
+        if (typeof selectedAdapter !== 'undefined' && selectedAdapter.length === 1) {
+          self.setState({ adapter:  selectedAdapter[0]});
+        }
+      }
+    };
+  }
+
+  renderIndividualAdapter() {
+    const { meshAdapters, classes } = this.props;
+    let adapter;
+    meshAdapters.forEach(adap => {
+      if (adap.adapter_location === this.props.adapter){
+        adapter = adap;
+      }
+    });
+    if(adapter){
+      const imageIcon = this.pickImage(adapter);
+      return (
+        <React.Fragment>
+          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+        </React.Fragment>
+      )
+    }
+    return '';
+  }
+
   render() {
-    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters, ...other} = this.props;
+    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters} = this.props;
+    const {adapter} = this.state;
 
     if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
       return (
@@ -123,54 +215,49 @@ class MesheryPlayComponent extends React.Component {
           </NoSsr>
       );
     }
+    if(this.props.adapter && this.props.adapter !== '') {
+      const indContent = this.renderIndividualAdapter();
+      if(indContent !== ''){
+        return indContent;
+      } // else it will render all the available adapters
+    }
 
     var self = this;
+    const imageIcon = self.pickImage(adapter);
     return (
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
-            {meshAdapters.map((adapter, ind) => {
-                let image = "/static/img/meshery-logo.png";
-                let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                switch (adapter.name.toLowerCase()){
-                  case 'istio':
-                    image = "/static/img/istio.svg";
-                    imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
-                    break;
-                  case 'linkerd':
-                    image = "/static/img/linkerd.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  case 'consul':
-                    image = "/static/img/consul.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  case 'nsm':
-                    image = "/static/img/nsm.svg";
-                    imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-                    break;
-                  // default:
-                } 
-                return (
-                <ExpansionPanel key={`mplay_exp_${ind}`} square defaultExpanded={ind === 0?true:false}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <div className={classes.column}>
-                      <Typography variant="h6" gutterBottom>
-                        <div className={classes.column}>
-                          {imageIcon}{' '}
-                          <span className={classes.expTitle}>{adapter.adapter_location}</span>
-                        </div>
-                      </Typography>
-                    </div>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                      <Divider variant="fullWidth" />
-                      <MesheryAdapterPlayComponent index={ind} adapter={adapter} />
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              );
-              })}
+              <Grid container spacing={5}>
+                <Grid item xs={12}>
+                <TextField
+                    select
+                    id="adapter_id"
+                    name="adapter_name"
+                    label="Select the Adapter"
+                    fullWidth
+                    value={adapter && adapter.adapter_location?adapter.adapter_location:''}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleAdapterChange()}
+                    >
+                      {meshAdapters.map((ada, ind) => (
+                          <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location} >
+                            {/* <ListItemIcon> */}
+                              {self.pickImage(ada)}
+                            {/* </ListItemIcon> */}
+                            <span className={classes.expTitle}>
+                              {ada.adapter_location}
+                            </span>
+                          </MenuItem>
+                      ))}
+                </TextField>
+                </Grid>
+              </Grid>
+                          
           </div>
+          <Divider variant="fullWidth" light />
+          {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />}
         </React.Fragment>
       </NoSsr>
     )
@@ -190,7 +277,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     const k8sconfig = state.get("k8sConfig").toJS();
     const meshAdapters = state.get("meshAdapters").toJS();
-    return {k8sconfig, meshAdapters};
+    const meshAdaptersts = state.get("meshAdaptersts");
+    return {k8sconfig, meshAdapters, meshAdaptersts};
 }
 
 export default withStyles(styles)(connect(
