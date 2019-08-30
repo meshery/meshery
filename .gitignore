@@ -1,5 +1,6 @@
 # Meshery
 mesheryctl/mesheryctl
+mesheryctl/.meshery/
 
 # Binaries for programs and plugins
 *.exe
@@ -40,5 +41,3 @@ log.txt
 **/_site
 **/.sass-cache
 **/.jekyll-metadata
-
-mesheryctl/.meshery/
