@@ -59,7 +59,7 @@ var startCmd = &cobra.Command{
 		cmda := exec.Command("docker", "ps", "--format", "{{.Names}}")
 		outa, err := cmda.Output()
 		s := strings.Split(string(outa), "\n")
-		fmt.Println(s)
+		//fmt.Println(s)
 		if err != nil {
 			log.Fatalf("cmd.Run() failed with %s\n", err)
 		}
