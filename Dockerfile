@@ -1,8 +1,8 @@
-FROM golang:1.12.9 as bd0
+FROM golang:1.13 as bd0
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery
 ADD . .
-RUN cd cmd; go build -ldflags="-w -s" -tags draft -a -o /meshery .
+RUN cd cmd; GOPROXY=direct GOSUMDB=off go build -ldflags="-w -s" -tags draft -a -o /meshery .
 
 FROM node as bd1
 ADD ui ui
