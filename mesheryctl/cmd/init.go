@@ -30,10 +30,10 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
 			print("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
-			ostype, osarch := Prereq()
+			ostype, osarch := prereq()
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 			dockerComposeBinaryURL := dockerComposeBinaryURL + "-" + osdetails
-			if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+			if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 				log.Fatal(err)
 			}
 			if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {

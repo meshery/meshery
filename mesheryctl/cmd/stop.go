@@ -34,7 +34,7 @@ var stopCmd = &cobra.Command{
 			os.Mkdir(mesheryLocalFolder, 0777)
 		}
 
-		if err := DownloadFile(dockerComposeFile, fileUrl); err != nil {
+		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
 			log.Fatal(err)
 		}
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "stop").Run(); err != nil {
