@@ -49,7 +49,7 @@ google-analytics: UA-2969471-4
 # If commented, will use material hat theme
 # logo: "assets/img/logo/SRCC-square-red.png"
 logo_pixels: 34
-color: "#647881" # "#30638e"
+color: "#3C494F" #"#647881" # "#30638e"
 # color: "#8c1515" # primary color for header, buttons
 
 # Build settings
