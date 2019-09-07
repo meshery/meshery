@@ -44,7 +44,7 @@ See the [project site](https://layer5.io/meshery) for quick start instructions a
 <a name="contributing"></a><a name="community"></a>
 ## Community
 <div>
-This project is community-built and welcomes collaboration! 
+This project is community-built and welcomes collaboration! See the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a>. 
 <p>
   <ul>
     <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://drive.google.com/open?id=1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.</li>
