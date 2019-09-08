@@ -37,12 +37,6 @@ address (sorry, no pseudonyms or anonymous contributions). An example of signing
 ```
 $ commit -s -m “my commit message w/signoff”
 ```
-Another example:
-```
-git add *
-git commit -s -m “my commit message”
---signed-off by jane.doe@gmail.com
-```
 
 To ensure all your commits are signed, you may choose to add this alias to your global ```.gitconfig```:
 
