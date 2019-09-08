@@ -32,8 +32,27 @@ Signed-off-by: Jane Smith <jane.smith@example.com>
 ```
 
 In most cases, you can add this signoff to your commit automatically with the
-`-s` flag to `git commit`. You must use your real name and a reachable email
-address (sorry, no pseudonyms or anonymous contributions).
+`-s` or `--signoff` flag to `git commit`. You must use your real name and a reachable email
+address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
+```
+$ commit -s -m “my commit message w/signoff”
+```
+Another example:
+```
+git add *
+git commit -s -m “my commit message”
+--signed-off by jane.doe@gmail.com
+```
+
+To ensure all your commits are signed, you may choose to add this alias to your global ```.gitconfig```:
+
+*~/.gitconfig*
+```
+[alias]
+  amend = commit -s --amend
+  cm = commit -s -m
+  commit = commit -s
+```
 
 # <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
