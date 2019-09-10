@@ -30,8 +30,8 @@ var logsCmd = &cobra.Command{
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Starting Meshery logging . . .")
-		cmd_log := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")
-		cmdReader, err := cmd_log.StdoutPipe()
+		cmdlog := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")
+		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -41,10 +41,10 @@ var logsCmd = &cobra.Command{
 				fmt.Println(scanner.Text())
 			}
 		}()
-		if err := cmd_log.Start(); err != nil {
+		if err := cmdlog.Start(); err != nil {
 			log.Fatal(err)
 		}
-		if err := cmd_log.Wait(); err != nil {
+		if err := cmdlog.Wait(); err != nil {
 			log.Fatal(err)
 		}
 	},

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package cmd
 
 import (
@@ -29,10 +30,10 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
 			print("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
-			ostype, osarch := Prereq()
+			ostype, osarch := prereq()
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
-			dockerComposeBinaryUrl := dockerComposeBinaryUrl + "-" + osdetails
-			if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryUrl); err != nil {
+			dockerComposeBinaryURL := dockerComposeBinaryURL + "-" + osdetails
+			if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 				log.Fatal(err)
 			}
 			if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
