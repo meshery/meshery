@@ -254,10 +254,10 @@ DEPENDENCIES
   github-pages
   jekyll (~> 3.8.5)
   jekyll-feed (= 0.11.0)
-  just-the-docs
+  just-the-docs (~> 0.2.5)
   materialize-sass
   minima (~> 2.0)
   tzinfo-data
 
 BUNDLED WITH
-   2.0.1
+   2.0.2
