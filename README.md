@@ -17,7 +17,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses a [common pe
 
 
 ## <a name="functionality">Functionality</a>
-<img align="right" src="./ui/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
+<img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/meshery.png" alt="Service Mesh Playground" width="50%" />
 
 ### Multi-mesh Performance Benchmark
 
