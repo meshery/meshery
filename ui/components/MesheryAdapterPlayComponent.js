@@ -268,7 +268,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       if (typeof result !== 'undefined'){
         self.props.enqueueSnackbar('Operation submitted successfully!', {
-          variant: 'success',
+          variant: 'info',
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
