@@ -267,7 +267,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       self.setState({menuState, [dlg]: false});
 
       if (typeof result !== 'undefined'){
-        self.props.enqueueSnackbar('Operation submitted successfully!', {
+        self.props.enqueueSnackbar('Operation executing...', {
           variant: 'info',
           autoHideDuration: 2000,
           action: (key) => (
