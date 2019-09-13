@@ -49,3 +49,5 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+extra_files:
+- /mesheryctl/scripts/setup.sh
