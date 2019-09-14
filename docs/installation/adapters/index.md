@@ -16,9 +16,10 @@ Meshery has adapters for managing the following service meshes.
 
 | Platform      | Version       |
 | -------------:|:-------------|   
+| [App Mesh](app mesh.md) | |
 | [Consul](consul.md) |  |
 | [Istio](istio.md) | |
 | [Linkerd](linkerd.md) |  |
+| [Maesh](maesh.md) | |
 | [Network Service Mesh](nsm.md) |  |
 | [Octarine](octarine.md) | |
-| [App Mesh](app mesh.md) | |
