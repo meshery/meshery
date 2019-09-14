@@ -21,3 +21,4 @@ Meshery has adapters for managing the following service meshes.
 | [Linkerd](linkerd.md) |  |
 | [Network Service Mesh](nsm.md) |  |
 | [Octarine](octarine.md) | |
+| [App Mesh](app mesh.md) | |
