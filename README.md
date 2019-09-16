@@ -17,7 +17,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses a [common pe
 
 
 ## <a name="functionality">Functionality</a>
-<img align="right" src="./ui/static/img/meshery.png?raw=true" alt="Service Mesh Playground" width="50%" />
+<img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/meshery.png" alt="Service Mesh Playground" width="50%" />
 
 ### Multi-mesh Performance Benchmark
 
@@ -80,3 +80,4 @@ This repository and site are available as open source under the terms of the [Ap
 **About Layer5**
 
 [Layer5.io](https://layer5.io) is a service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
+
