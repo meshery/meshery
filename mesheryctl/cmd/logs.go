@@ -17,9 +17,9 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os/exec"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var logsCmd = &cobra.Command{
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Starting Meshery logging . . .")
+		log.Info("Starting Meshery logging . . .")
 		cmdlog := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
