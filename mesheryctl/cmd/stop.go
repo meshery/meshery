@@ -15,11 +15,10 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os"
 	"os/exec"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +28,7 @@ var stopCmd = &cobra.Command{
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Stopping Meshery...")
+		logs.Info("Stopping Meshery...")
 		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {
 			os.Mkdir(mesheryLocalFolder, 0777)
 		}
@@ -49,7 +48,7 @@ var stopCmd = &cobra.Command{
 			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
 		}
 
-		fmt.Println("Meshery is stopped.")
+		logs.Info("Meshery is stopped.")
 	},
 }
 
