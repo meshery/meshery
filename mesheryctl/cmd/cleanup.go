@@ -31,7 +31,7 @@ var cleanupCmd = &cobra.Command{
 		if err := exec.Command("rm", "-f", dockerComposeFile).Run(); err != nil {
 			log.Fatal(err)
 		}
-		log.Info("Meshery config is now cleaned up.")
+		log.Info("Meshery config is now cleaned up.") 
 
 	},
 }
