@@ -28,7 +28,7 @@ var stopCmd = &cobra.Command{
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logs.Info("Stopping Meshery...")
+		log.Info("Stopping Meshery...")
 		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {
 			os.Mkdir(mesheryLocalFolder, 0777)
 		}
@@ -48,7 +48,7 @@ var stopCmd = &cobra.Command{
 			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
 		}
 
-		logs.Info("Meshery is stopped.")
+		log.Info("Meshery is stopped.")
 	},
 }
 
