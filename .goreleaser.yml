@@ -39,6 +39,8 @@ archives:
   format_overrides:
     - goos: windows
       format: zip
+  files:
+    - mesheryctl/scripts/setup.sh
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -49,5 +51,3 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-extra_files:
-- /mesheryctl/scripts/setup.sh
