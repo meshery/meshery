@@ -16,12 +16,15 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 )
 
@@ -51,7 +54,29 @@ var startCmd = &cobra.Command{
 			fmt.Println(stderr.String())
 			return
 		}
+		////
 
+		var cont []string
+
+		cli, err := client.NewEnvClient()
+		if err != nil {
+			panic(err)
+		}
+		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
+		if err != nil {
+			panic(err)
+		}
+		b := "/meshery_meshery_1"
+		for _, container := range containers {
+			if b == container.Names[0] {
+				fmt.Println(container.Names)
+			}
+			cont = append(cont, container.Names[0])
+		}
+
+		fmt.Println(cont)
+
+		/////
 		fmt.Println("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 		ostype, err := exec.Command("uname", "-s").Output()
 		if err != nil {
