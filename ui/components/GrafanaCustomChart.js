@@ -282,7 +282,8 @@ class GrafanaCustomChart extends Component {
           this.panelType = props.panel.type;
           break;
         case 'singlestat':
-          this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline && props.panel.sparkline.show === true?'sparkline':'gauge';
+          // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline && props.panel.sparkline.show === true?'sparkline':'gauge';
+          this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
           break;
       }
       
@@ -528,7 +529,8 @@ class GrafanaCustomChart extends Component {
       const {panel, board, inDialog} = this.props;
       const self = this;
 
-      const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
+      // const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
+      const showAxis = panel.type ==='singlestat' && panel.sparkline ?false:true;
 
       const xAxes = {
         type: 'timeseries',
