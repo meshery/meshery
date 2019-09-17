@@ -58,7 +58,7 @@ var startCmd = &cobra.Command{
 
 		var cont []string
 
-		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		cli, err := client.NewEnvClient()
 		if err != nil {
 			panic(err)
 		}
