@@ -30,9 +30,9 @@ var statusCmd = &cobra.Command{
 		log.Info("Meshery containers status . . .\n")
 		out, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()
 		if err != nil {
-			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+			log.Fatal("Please, install docker-compose. The error message: \n", err)
 		}
-		log.Printf("%s\n", out)
+		log.Infof("%s", out)
 	},
 }
 

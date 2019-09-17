@@ -51,7 +51,7 @@ var startCmd = &cobra.Command{
 		start.Stderr = &stderr
 
 		if err := start.Run(); err != nil {
-			log.Println(stderr.String())
+			log.Error(stderr.String())
 			return
 		}
 
@@ -60,12 +60,12 @@ var startCmd = &cobra.Command{
 		//connection to docker-client
 		cli, err := client.NewEnvClient()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		//check for container meshery_meshery_1 running status
@@ -74,7 +74,7 @@ var startCmd = &cobra.Command{
 				log.Info("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 				ostype, err := exec.Command("uname", "-s").Output()
 				if err != nil {
-					log.Fatal("[WARNING] Unable to detect OS type. Warning message: \n", err)
+					log.Fatal("Unable to detect OS type. Warning message: \n", err)
 				}
 				os := strings.TrimSpace(string(ostype))
 				// Link to Meshery User Interface
