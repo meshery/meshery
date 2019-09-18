@@ -62,6 +62,9 @@ const styles = theme => ({
   chartContent: {
     // minHeight: window.innerHeight * 0.7,
   },
+  centerTimer: {
+    width: '100%',
+  }
 });
 
 class MesheryPerformanceComponent extends React.Component {
@@ -129,7 +132,7 @@ class MesheryPerformanceComponent extends React.Component {
     }
 
     this.submitLoadTest();
-    this.setState({timerDialogOpen: true});
+    this.setState({timerDialogOpen: true, result: {}});
   }
 
   submitLoadTest = () => {
@@ -421,18 +424,24 @@ class MesheryPerformanceComponent extends React.Component {
         </div>
       </React.Fragment>
 
-      <LoadTestTimerDialog open={timerDialogOpen} 
-      t={t}
-      onClose={this.handleTimerDialogClose} 
-      countDownComplete={this.handleTimerDialogClose}
-       />
+      <div className={classes.centerTimer}>
+        <LoadTestTimerDialog open={timerDialogOpen} 
+        t={t}
+        onClose={this.handleTimerDialogClose} 
+        countDownComplete={this.handleTimerDialogClose}
+        />
+       </div>
 
-      <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
-        Test Results
-      </Typography>
-        <div className={classes.chartContent} style={chartStyle}>
-          <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
-        </div>
+      {result && result.runner_results && 
+        (<div>
+          <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
+            Test Results
+          </Typography>
+          <div className={classes.chartContent} style={chartStyle}>
+            <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
+          </div>
+        </div>)
+      }
         
       
       </div>
