@@ -270,6 +270,10 @@ class MesheryPerformanceComponent extends React.Component {
     let displayGCharts = '';
     let displayPromCharts = '';
     if (staticPrometheusBoardConfig && staticPrometheusBoardConfig !== null && Object.keys(staticPrometheusBoardConfig).length > 0 && prometheus.prometheusURL !== '') {
+      // only add testUUID to the board that should be persisted
+      if (staticPrometheusBoardConfig.cluster) {
+        staticPrometheusBoardConfig.cluster.testUUID = testUUID
+      }
       displayStaticCharts = (
         <React.Fragment>
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
@@ -277,8 +281,7 @@ class MesheryPerformanceComponent extends React.Component {
           </Typography>
         <GrafanaCustomCharts
           boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
-          prometheusURL={prometheus.prometheusURL} 
-          testUUID={testUUID} />
+          prometheusURL={prometheus.prometheusURL} />
         </React.Fragment>
       );
     }
