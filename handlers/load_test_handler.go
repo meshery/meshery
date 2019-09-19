@@ -196,10 +196,11 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 		return err
 	}
 
-	board, err := prometheusClient.GetStaticBoard(ctx)
+	board, err := prometheusClient.GetClusterStaticBoard(ctx)
 	if err != nil {
 		return err
 	}
+	// TODO: we are NOT persisting the Node metrics for now
 
 	resultUUID, err := uuid.FromString(config.ResultID)
 	if err != nil {
