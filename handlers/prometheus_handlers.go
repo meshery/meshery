@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"context"
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 
 	"github.com/layer5io/meshery/models"
 
@@ -270,13 +272,33 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	result := map[string]*models.GrafanaBoard{}
+	resultLock := &sync.Mutex{}
+	resultWG := &sync.WaitGroup{}
 
-	board, err := prometheusClient.GetStaticBoard(req.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	boardFunc := map[string]func(context.Context) (*models.GrafanaBoard, error){
+		"cluster": prometheusClient.GetClusterStaticBoard,
+		"node":    prometheusClient.GetNodesStaticBoard,
 	}
-	err = json.NewEncoder(w).Encode(board)
+
+	for key, bfunc := range boardFunc {
+		resultWG.Add(1)
+		go func(k string, bfun func(context.Context) (*models.GrafanaBoard, error)) {
+			defer resultWG.Done()
+
+			board, err := bfun(req.Context())
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			resultLock.Lock()
+			defer resultLock.Unlock()
+			result[k] = board
+		}(key, bfunc)
+	}
+	resultWG.Wait()
+
+	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
 		logrus.Errorf("error marshalling board: %v", err)
 		http.Error(w, fmt.Sprintf("unable to marshal board: %v", err), http.StatusInternalServerError)

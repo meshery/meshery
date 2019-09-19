@@ -214,9 +214,11 @@ class MesheryPerformanceComponent extends React.Component {
       credentials: 'same-origin',
       credentials: 'include',
     }, result => {
-      if (typeof result !== 'undefined' && typeof result.panels !== 'undefined' && result.panels.length > 0){
+      if (typeof result !== 'undefined' && typeof result.cluster !== 'undefined' && typeof result.node !== 'undefined' && 
+        typeof result.cluster.panels !== 'undefined' && result.cluster.panels.length > 0 && 
+        typeof result.node.panels !== 'undefined' && result.node.panels.length > 0){
         self.props.updateStaticPrometheusBoardConfig({
-          staticPrometheusBoardConfig: result,
+          staticPrometheusBoardConfig: result, // will contain both the cluster and node keys for the respective boards
         });
         self.setState({staticPrometheusBoardConfig: result});
       }
@@ -274,7 +276,7 @@ class MesheryPerformanceComponent extends React.Component {
             Server Metrics
           </Typography>
         <GrafanaCustomCharts
-          boardPanelConfigs={[staticPrometheusBoardConfig]} 
+          boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
           prometheusURL={prometheus.prometheusURL} 
           testUUID={testUUID} />
         </React.Fragment>
