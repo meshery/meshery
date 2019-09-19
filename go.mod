@@ -5,6 +5,10 @@ go 1.13
 require (
 	fortio.org/fortio v1.3.1
 	github.com/dgraph-io/badger v1.6.0
+	github.com/docker/distribution v2.7.1+incompatible // indirect
+	github.com/docker/docker v1.13.1
+	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/go-units v0.4.0 // indirect
 	github.com/emicklei/go-restful v2.9.6+incompatible // indirect
 	github.com/go-msgqueue/msgqueue v1.8.3-0.20190601142402-c892a8044035 // indirect
 	github.com/go-openapi/spec v0.19.2 // indirect
@@ -21,6 +25,7 @@ require (
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/juju/ratelimit v1.0.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v1.1.0

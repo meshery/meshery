@@ -15,10 +15,9 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os/exec"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -28,11 +27,11 @@ var cleanupCmd = &cobra.Command{
 	Short: "Clean up Meshery",
 	Long:  `Clean up Meshery configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Cleaning old Meshery config . . .")
+		log.Info("Cleaning Meshery config...")
 		if err := exec.Command("rm", "-f", dockerComposeFile).Run(); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Meshery config is now cleaned up.")
+		log.Info("Meshery config is now cleaned up.")
 
 	},
 }

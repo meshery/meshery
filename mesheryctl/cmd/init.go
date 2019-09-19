@@ -15,10 +15,10 @@
 package cmd
 
 import (
-	"log"
 	"os/exec"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var initCmd = &cobra.Command{
 	Long:  `Check and installs docker and docker-compose if not exists`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-			print("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
+			log.Info("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
 			ostype, osarch := prereq()
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 			dockerComposeBinaryURL := dockerComposeBinaryURL + "-" + osdetails
@@ -40,7 +40,7 @@ var initCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		}
-		print("[Info] Prerequisite Docker Compose is installed.")
+		log.Info("Prerequisite Docker Compose is installed.")
 	},
 }
 
