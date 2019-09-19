@@ -83,7 +83,7 @@ var startCmd = &cobra.Command{
 					exec.Command("xdg-open", url).Start()
 				} else {
 					// Asssume Meshery running on MacOS host
-					//	exec.Command("open", url).Start()
+					exec.Command("open", url).Start()
 				}
 				checkFlag = 0
 				break
