@@ -27,11 +27,11 @@ var cleanupCmd = &cobra.Command{
 	Short: "Clean up Meshery",
 	Long:  `Clean up Meshery configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Cleaning old Meshery config . . .")
+		log.Info("Cleaning Meshery config...")
 		if err := exec.Command("rm", "-f", dockerComposeFile).Run(); err != nil {
 			log.Fatal(err)
 		}
-		log.Info("Meshery config is now cleaned up.") 
+		log.Info("Meshery config is now cleaned up.")
 
 	},
 }

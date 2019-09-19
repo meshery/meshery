@@ -29,24 +29,37 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Stopping Meshery...")
-		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {
-			os.Mkdir(mesheryLocalFolder, 0777)
+		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
+			os.Mkdir(mesheryFolder, 0777)
 		}
 
 		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
 			log.Fatal(err)
 		}
-		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "stop").Run(); err != nil {
-			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+
+		// Stop all Docker containers
+		stop := exec.Command("docker-compose", "-f", dockerComposeFile, "stop")
+		stop.Stdout = os.Stdout
+		stop.Stderr = os.Stderr
+
+		if err := stop.Run(); err != nil {
+			log.Fatal("[ERROR] Could not completely stop all containers. The error message: \n", err)
 		}
 
-		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "rm", "-f").Run(); err != nil {
-			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+		// Remove all Docker containers
+		stop = exec.Command("docker-compose", "-f", dockerComposeFile, "rm", "-f")
+		stop.Stdout = os.Stdout
+		stop.Stderr = os.Stderr
+
+		if err := stop.Run(); err != nil {
+			log.Fatal("[ERROR] Could not completely remove all containers. The error message: \n", err)
 		}
 
-		if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-			log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-		}
+		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
+		// to start from scratch with a fresh install.
+		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
+		// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+		// }
 
 		log.Info("Meshery is stopped.")
 	},

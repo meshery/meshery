@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"os"
 	"os/exec"
@@ -34,27 +33,27 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var out bytes.Buffer
-		var stderr bytes.Buffer
+		// var out bytes.Buffer
+		// var stderr bytes.Buffer
 
-		if _, err := os.Stat(mesheryLocalFolder); os.IsNotExist(err) {
-			os.Mkdir(mesheryLocalFolder, 0777)
+		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
+			os.Mkdir(mesheryFolder, 0777)
 		}
 
 		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
-			log.Fatal(err)
+
+			log.Fatal("start cmd: ", err)
 		}
 
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d")
-		start.Stdout = &out
-		start.Stderr = &stderr
+		start.Stdout = os.Stdout
+		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			log.Error(stderr.String())
+			// log.Error(stderr.String())
 			return
 		}
-
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
@@ -84,7 +83,7 @@ var startCmd = &cobra.Command{
 					exec.Command("xdg-open", url).Start()
 				} else {
 					// Asssume Meshery running on MacOS host
-					exec.Command("open", url).Start()
+					//	exec.Command("open", url).Start()
 				}
 				checkFlag = 0
 				break
