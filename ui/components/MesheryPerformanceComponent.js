@@ -24,13 +24,14 @@ if (typeof window !== 'undefined') {
 
 
 const meshes = [
-  'AspenMesh',
+  'App Mesh',
+  'Aspen Mesh',
   'Consul Connect',
   'Grey Matter',
   'Istio',
   'Kong',
-  'Linkerd 1.x',
-  'Linkerd 2.x',
+  'Linkerd1',
+  'Linkerd2',
   'Mesher',
   'Rotor',
   'SOFAMesh',
@@ -277,7 +278,7 @@ class MesheryPerformanceComponent extends React.Component {
       displayStaticCharts = (
         <React.Fragment>
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-            Server Metrics
+            Node Metrics
           </Typography>
         <GrafanaCustomCharts
           boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
