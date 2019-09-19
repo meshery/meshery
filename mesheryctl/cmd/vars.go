@@ -20,15 +20,20 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path"
 )
 
 const (
 	url                    = "http://localhost:9081"
 	fileURL                = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-	mesheryLocalFolder     = ".meshery"
-	dockerComposeFile      = mesheryLocalFolder + "/meshery.yaml"
 	dockerComposeBinaryURL = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
 	dockerComposeBinary    = "/usr/local/bin/docker-compose"
+)
+
+// See setFileLocation function below.
+var (
+	mesheryFolder     = ".meshery"
+	dockerComposeFile = "/meshery.yaml"
 )
 
 func downloadFile(filepath string, url string) error {
@@ -62,4 +67,14 @@ func prereq() ([]byte, []byte) {
 	}
 	//	fmt.Printf("%s\n", arch)
 	return ostype, osarch
+}
+
+func setFileLocation() {
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("[ERROR] Cannot determine location of $HOME")
+	}
+	mesheryFolder = path.Join(home, mesheryFolder)
+	dockerComposeFile = path.Join(mesheryFolder, dockerComposeFile)
 }

@@ -59,8 +59,9 @@ func main() {
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
 
-	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes())) // this is making us re-initiate login after every restart
-	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery2019"))
+	// Uncomment line below to generate a new UID and force the user to login every time Meshery is started.
+	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
+	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	fileSessionStore.MaxLength(0)
 
 	queueFactory := memqueue.NewFactory()
