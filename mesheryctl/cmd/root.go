@@ -18,7 +18,8 @@ import (
 	"fmt"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -47,12 +48,16 @@ func Execute() {
 }
 
 func init() {
+	setFileLocation() //from vars.go
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.meshery-cli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: $HOME/.meshery/config.yaml)")
+
+	// Preparing for an "edge" channel
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -65,16 +70,10 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".meshery-cli" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".meshery-cli")
+		// Use default ".meshery" folder location.
+		viper.AddConfigPath(mesheryFolder)
+		log.Debug("initConfig: ", mesheryFolder)
+		viper.SetConfigName("config.yaml")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
