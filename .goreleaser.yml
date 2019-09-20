@@ -36,12 +36,12 @@ archives:
     windows: Windows
     386: i386
     amd64: x86_64
-  format: zip
+  format: binary
 #   format_overrides:
 #     - goos: windows
 #       format: zip
-  files:
-    - mesheryctl/scripts/setup.sh
+  # files:
+  #   - setup_scripts/*
 checksum:
   name_template: 'checksums.txt'
 snapshot:
