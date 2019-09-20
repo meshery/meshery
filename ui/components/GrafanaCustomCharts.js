@@ -75,7 +75,7 @@ class GrafanaCustomCharts extends Component {
     render() {
         const {from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard, 
           chartDialogPanelData} = this.state;
-        const { classes, boardPanelConfigs, boardPanelData, testUUID } = this.props;
+        const { classes, boardPanelConfigs, boardPanelData } = this.props;
         let {grafanaURL, grafanaAPIKey, prometheusURL} = this.props;
         // we are now proxying. . .
         // if (grafanaURL && grafanaURL.endsWith('/')){
@@ -118,7 +118,7 @@ class GrafanaCustomCharts extends Component {
                         templateVars={chartDialogBoard.templateVars}
                         updateDateRange={this.updateDateRange}
                         inDialog={true}
-                        testUUID={testUUID}
+                        // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
                         panelData={chartDialogPanelData && chartDialogPanelData !== null?chartDialogPanelData:{}}
                       /> 
                   </DialogContent>
@@ -135,7 +135,7 @@ class GrafanaCustomCharts extends Component {
                   <ExpansionPanel square defaultExpanded={ind === 0?true:false}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                       <div className={classes.column}>
-                      <Typography variant="subtitle1" gutterBottom>{config.board && config.board.title?config.board.title:''}</Typography>
+                      <Typography variant="subtitle1" gutterBottom>{config.board && config.board.title?config.board.title:(config.title?config.title:'')}</Typography>
                       </div>
                       <div className={classes.column}>
                         <Typography variant="subtitle2">{config.templateVars && config.templateVars.length > 0?'Template variables: '+config.templateVars.join(' '):''}</Typography>
@@ -159,7 +159,7 @@ class GrafanaCustomCharts extends Component {
                                   templateVars={config.templateVars}
                                   updateDateRange={this.updateDateRange}
                                   inDialog={false}
-                                  testUUID={testUUID}
+                                  testUUID={config.testUUID?config.testUUID:''}
                                   panelData={boardPanelData && boardPanelData !== null && boardPanelData[ind] && boardPanelData[ind] !== null?
                                       boardPanelData[ind]:{}}
                                 /> 
