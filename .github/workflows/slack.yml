@@ -10,4 +10,4 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: pullreminders/slack-action@master
       with:
-        args: '{\"channel\":\"CDM0ACDM5\",\"text\":\"Your repository now has a new star\"}'
+        args: '{\"channel\":\"CDM0ACDM5\",\"text\":\"Someone has starred Meshery!\"}'
