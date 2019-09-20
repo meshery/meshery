@@ -1,0 +1,13 @@
+name: Notify slack
+on: watch
+jobs:
+  star-notify:
+    name: Notify slack on star
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify slack
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      uses: pullreminders/slack-action@master
+      with:
+        args: '{\"channel\":\"CDM0ACDM5\",\"text\":\"Your repository now has a new star\"}'
