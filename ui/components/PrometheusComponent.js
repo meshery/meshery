@@ -179,12 +179,13 @@ class PrometheusComponent extends Component {
 
       handlePrometheusChipDelete = () => {
         const self = this;
+        self.props.updateProgress({showProgress: true});
         dataFetch(`/api/prometheus/config`, { 
           credentials: 'same-origin',
           method: 'DELETE',
           credentials: 'include',
         }, result => {
-          this.props.updateProgress({showProgress: false});
+          self.props.updateProgress({showProgress: false});
           if (typeof result !== 'undefined'){
             self.setState({
               prometheusConfigSuccess: false,
@@ -198,7 +199,7 @@ class PrometheusComponent extends Component {
               }
             })
           }
-        }, self.handleError(`There was an error communicating with Prometheus`));
+        }, self.handleError);
     }
 
 

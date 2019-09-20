@@ -11,7 +11,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 
 const styles = theme => ({
   icon: {
-    margin: theme.spacing(1),
+    // margin: theme.spacing(1),
     fontSize: 20,
   },
   root: {

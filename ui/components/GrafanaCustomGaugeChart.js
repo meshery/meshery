@@ -23,7 +23,8 @@ const useStyles = makeStyles({
   },
   root: {
     width: '100%',
-    height: '80%',
+    height: '75%',
+    minHeight: '18rem',
   },
   error: {
     color: '#D32F2F',
