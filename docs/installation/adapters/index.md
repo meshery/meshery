@@ -16,10 +16,11 @@ Meshery has adapters for managing the following service meshes.
 
 | Platform      | Version       |
 | -------------:|:-------------|   
-| [App Mesh](app mesh.md) | |
-| [Consul](consul.md) |  |
-| [Istio](istio.md) | |
-| [Linkerd](linkerd.md) |  |
-| [Maesh](maesh.md) | |
-| [Network Service Mesh](nsm.md) |  |
-| [Octarine](octarine.md) | |
+| [App Mesh](app mesh.md) | alpha |
+| [Consul](consul.md) | v1.5 |
+| [Istio](istio.md) | v1.3 |
+| [Linkerd](linkerd.md) | v2.5.0 |
+| [Maesh](maesh.md) | alpha |
+| [Network Service Mesh](nsm.md) | beta |
+| [Octarine](octarine.md) | v1.0 |
+| [Kuma](kuma.md) | alpha |
