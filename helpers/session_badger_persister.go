@@ -52,11 +52,11 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 	dataCopyB := []byte{}
 
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist.")
+		return nil, errors.New("Connection to DB does not exist")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	if userID == "" {
-		return nil, errors.New("User ID is empty.")
+		return nil, errors.New("User ID is empty")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	if err := s.db.View(func(txn *badger.Txn) error {
@@ -96,11 +96,11 @@ func (s *BadgerSessionPersister) Write(userID string, data *models.Session) erro
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("User ID is empty")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	if data == nil {
-		return errors.New("Given config data is nil.")
+		return errors.New("Given config data is nil")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	dataB, err := json.Marshal(data)
@@ -121,11 +121,11 @@ func (s *BadgerSessionPersister) Write(userID string, data *models.Session) erro
 // Delete removes the session for the user
 func (s *BadgerSessionPersister) Delete(userID string) error {
 	if s.db == nil {
-		return errors.New("Connection to DB does not exist.")
+		return errors.New("Connection to DB does not exist")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("User ID is empty")  //strings should not be capitalized or end with punctuation or a newline
 	}
 
 	return s.db.Update(func(txn *badger.Txn) error {
