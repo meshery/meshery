@@ -204,8 +204,13 @@ class Navigator extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
       const { meshAdapters, meshAdaptersts } = props;
-      let path = (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '');
+      let path = (typeof window !== 'undefined' ? window.location.pathname : '');
+      if (path.lastIndexOf('/') > 0) {
+        path = path.substring(0, path.lastIndexOf('/'));
+      }
+      path += window.location.search;
 
+      // console.log(`path: ${path}`);
       const st = {};
       if(meshAdaptersts > state.mts) {
         st.meshAdapters = meshAdapters;
@@ -214,7 +219,7 @@ class Navigator extends React.Component {
 
       const fetchNestedPathAndTitle = (path, title, href, children) => {
         if (href === path) {
-            // console.log("updating path: "+path+" and title: "+title);
+            // console.log(`updating path: ${path} and title: ${title}`);
             props.updatepagepathandtitle({path, title});
             return;
         }
@@ -224,9 +229,7 @@ class Navigator extends React.Component {
           });
         }
       }
-      if (path.lastIndexOf('/') > 0) {
-          path = path.substring(0, path.lastIndexOf('/'));
-      }
+
       categories.forEach(({title, href, children}) => {    
           fetchNestedPathAndTitle(path, title, href, children); 
       });
