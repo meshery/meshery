@@ -52,11 +52,11 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 	dataCopyB := []byte{}
 
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist.")
+		return nil, errors.New("connection to db does not exist")
 	}
 
 	if userID == "" {
-		return nil, errors.New("User ID is empty.")
+		return nil, errors.New("user id is empty")
 	}
 
 	if err := s.db.View(func(txn *badger.Txn) error {
@@ -96,11 +96,11 @@ func (s *BadgerSessionPersister) Write(userID string, data *models.Session) erro
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("user id is empty")
 	}
 
 	if data == nil {
-		return errors.New("Given config data is nil.")
+		return errors.New("given config data is nil")
 	}
 
 	dataB, err := json.Marshal(data)
@@ -121,11 +121,11 @@ func (s *BadgerSessionPersister) Write(userID string, data *models.Session) erro
 // Delete removes the session for the user
 func (s *BadgerSessionPersister) Delete(userID string) error {
 	if s.db == nil {
-		return errors.New("Connection to DB does not exist.")
+		return errors.New("connection to db does not exist")
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("user id is empty")
 	}
 
 	return s.db.Update(func(txn *badger.Txn) error {
