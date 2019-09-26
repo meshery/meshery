@@ -103,10 +103,13 @@ jobs:
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
-    # - name: build ctl
-    #   uses: "cedrickring/golang-action@1.3.0"
-    #   with:
-    #     args: GO111MODULE=on go build ./mesheryctl/main.go
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - run: |
+        cd ui
+        npm i
+        npm run build && npm run export
   build_release:
     name: MesheryCTL Build & Release
     runs-on: ubuntu-latest
