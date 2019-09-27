@@ -7,7 +7,7 @@
 ![GitHub issues by-label](https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg)
 ![Website](https://img.shields.io/website/https/layer5.io/meshery.svg)
 ![Twitter Follow](https://img.shields.io/twitter/follow/layer5.svg?label=Follow&style=social)
-[![Slack](https://img.shields.io/badge/slack-380-lightgrey)](http://slack.layer5.io)
+[![Slack](http://slack.layer5.io/badge.svg)](http://slack.layer5.io)
 
 A multi-mesh management plane with initial functionality as a playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) also serves as a service mesh performance benchmark.
   
