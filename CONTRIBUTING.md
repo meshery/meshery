@@ -47,8 +47,9 @@ To ensure all your commits are signed, you may choose to add this alias to your 
   cm = commit -s -m
   commit = commit -s
 ```
-Configuring Visual Studio Code for automatic sign-off on commits
-<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="thumbnail.png"><a>
+Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:
+
+<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
 # <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
