@@ -2,7 +2,7 @@ ignoreGeneratedHeader = false
 severity = "warning"
 confidence = 0.8
 errorCode = 1
-warningCode = 0
+warningCode = 1
 
 [rule.blank-imports]
 [rule.context-as-argument]
