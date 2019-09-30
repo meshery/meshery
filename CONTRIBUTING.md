@@ -1,3 +1,7 @@
+# <a name="contributing">Contributing to meshery</a>
+You want to contribute to the project? Yay! We want you to! Visit our centralized instructions for [contributing](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#contributing).
+
+
 # <a name="contributing">Contributing</a>
 Please do! Thanks for your help improving the project! :balloon:
 
@@ -15,6 +19,9 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 1. Commit and push changes to your remote branch. Be sure to sign your commits ([see DCO requirement](#dco)).
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+
+# <a name="contributing">How to review a pull request</a>
+see how to review a [pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
 ## <a name="dco">Developer Certificate of Origin</a>
 

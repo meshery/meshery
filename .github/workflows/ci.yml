@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
-    - run: GOPROXY=direct GOSUMDB=off go get -u golang.org/x/lint/golint; go list ./... | grep -v /vendor/ | xargs -L1 /home/runner/go/bin/golint -set_exit_status
+    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config revive-lint.toml -formatter friendly ./...
 #   error_check:
 #     name: Error check
 #     runs-on: ubuntu-latest
