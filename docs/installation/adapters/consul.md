@@ -3,7 +3,7 @@ layout: page
 title: Consul Adapter
 parent: Adapters
 permalink: /installation/adapters/consul
-nav_order: 1
+nav_order: 2
 has_children: false
 ---
 # {{ page.title }}
