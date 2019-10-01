@@ -21,7 +21,7 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 
 # <a name="contributing">How to review a pull request</a>
-see how to review a [pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
+See [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
 ## <a name="dco">Developer Certificate of Origin</a>
 
