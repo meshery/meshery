@@ -3,7 +3,7 @@ layout: page
 title: NSM Adapter
 parent: Adapters
 permalink: /installation/adapters/nsm
-nav_order: 4
+nav_order: 7
 has_children: false
 ---
 # {{ page.title }}
