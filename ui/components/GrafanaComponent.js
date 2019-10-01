@@ -6,7 +6,7 @@ import dataFetch from '../lib/data-fetch';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-// import GrafanaCharts from './GrafanaCharts';
+//import GrafanaCharts from './GrafanaCharts';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateGrafanaConfig, updateProgress } from '../lib/store';
@@ -102,7 +102,7 @@ class GrafanaComponent extends Component {
         }
         if (name === 'grafanaBoardSearch') {
             if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
-            this.boardSearchTimeout = setTimeout(this.getGrafanaBoards, 500); // to delay the search by a few.
+            this.boardSearchTimeout = setTimeout(this.getGrafanaBoards, 1000); // to delay the search by a few.
         }
 
         this.setState({ [name]: event.target.value });
