@@ -3,7 +3,7 @@ layout: page
 title: App Mesh Adapter
 parent: Adapters
 permalink: /installation/adapters/app mesh
-nav_order: 6
+nav_order: 1
 has_children: false
 ---
 # {{ page.title }}
