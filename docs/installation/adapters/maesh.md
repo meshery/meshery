@@ -3,7 +3,7 @@ layout: page
 title: Maesh Adapter
 parent: Adapters
 permalink: /installation/adapters/mesh
-nav_order: 5
+nav_order: 6
 has_children: false
 ---
 # {{ page.title }}
