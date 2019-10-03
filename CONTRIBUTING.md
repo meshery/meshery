@@ -16,6 +16,23 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 
+# <a name="contributing-docs">Documentation Contribution Flow</a>
+Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
+
+1. Get a local copy of the documentation.
+`git clone https://github.com/layer5io/meshery`
+1. Navigate to the docs folder.
+`cd docs`
+1. Create and checkout a new branch to make changes within
+`git checkout -b <my-changes>`
+1. Edit/add documentation.
+`vi <specific page>.md`
+1. Run site locally to preview changes.
+`make site`
+1. Commit and push changes to your remote branch.
+`git push origin <my-changes>`
+1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+
 ## <a name="dco">Developer Certificate of Origin</a>
 
 To contribute to this project, you must agree to the Developer Certificate of
@@ -47,23 +64,9 @@ To ensure all your commits are signed, you may choose to add this alias to your 
   cm = commit -s -m
   commit = commit -s
 ```
+Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:
 
-# <a name="contributing-docs">Documentation Contribution Flow</a>
-Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
-
-1. Get a local copy of the documentation.
-`git clone https://github.com/layer5io/meshery`
-1. Navigate to the docs folder.
-`cd docs`
-1. Create and checkout a new branch to make changes within
-`git checkout -b <my-changes>`
-1. Edit/add documentation.
-`vi <specific page>.md`
-1. Run site locally to preview changes.
-`make site`
-1. Commit and push changes to your remote branch.
-`git push origin <my-changes>`
-1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
 # <a name="contributing-meshery">Meshery Contribution Flow</a>
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
@@ -132,6 +135,9 @@ make run-ui-dev
 
 Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
 Any UI changes made now will automatically be recompiled and served in the browser.
+
+# <a name="maintaining"> Maintaining</a>
+All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
 # License
 

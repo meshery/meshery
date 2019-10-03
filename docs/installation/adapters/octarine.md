@@ -3,7 +3,7 @@ layout: page
 title: Octarine Adapter
 parent: Adapters
 permalink: /installation/adapters/octarine
-nav_order: 5
+nav_order: 8
 has_children: false
 ---
 # {{ page.title }}

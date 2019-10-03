@@ -38,22 +38,22 @@ var initCmd = &cobra.Command{
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 
 			//checks for the latest docker-compose
-			resp, err := http.Get("https://api.github.com/repos/docker/compose/releases/latest")
+			resp, err := http.Get(dockerComposeWebURL)
 			dockerComposeBinaryURL := dockerComposeBinaryURL
 			if err != nil {
-				// download the default version as 1.24.1 if unable to fetch newest page data
-				dockerComposeBinaryURL = dockerComposeBinaryURL + "1.24.1/docker-compose"
-				//fmt.Print(dockerComposeBinaryURL)
+				// download the default version as 1.24.1 if unable to fetch latest page data
+				dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 			} else {
 				var dat map[string]interface{}
-				body, _ := ioutil.ReadAll(resp.Body)
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Fatal(err)
+				}
 				if err := json.Unmarshal(body, &dat); err != nil {
-					panic(err)
+					log.Fatal(err)
 				}
 				num := dat["tag_name"]
-
-				dockerComposeBinaryURL = dockerComposeBinaryURL + fmt.Sprintf("%v", num) + "/docker-compose"
-				//fmt.Print(dockerComposeBinaryURL)
+				dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 			}
 			dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
 			if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
@@ -61,9 +61,7 @@ var initCmd = &cobra.Command{
 			}
 			if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
 				log.Fatal(err)
-
 			}
-
 		}
 		log.Info("Prerequisite Docker Compose is installed.")
 	},
