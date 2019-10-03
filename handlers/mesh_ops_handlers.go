@@ -287,7 +287,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
-		OperationId: operationID.String(),
+		OperationId: operationId.String(),
 		OpName:      opName,
 		Username:    user.UserID,
 		Namespace:   namespace,
