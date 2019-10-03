@@ -11,6 +11,18 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 `git clone https://github.com/layer5io/meshery`
 1. Create and checkout a new branch to make changes within.
 `git checkout -b <my-changes>`
+1. Switches to the specified branch and updates the working directory.
+`git checkout [branch-name]`
+1. check the present branch
+`git branch`
+1. to change the branch to master
+`git checkout master`
+1. to fetch and download content from a remote repository and immediately update the local repository to match that content.
+`git pull`
+1. to checkout specific local branch
+`git checkout <YOUR LOCAL BRANCH>`
+1. to merge master branch into local branch
+`git merge master`
 1. Make, save, build, and test changes.
 1. Commit and push changes to your remote branch. Be sure to sign your commits ([see DCO requirement](#dco)).
 `git push origin <my-changes>`
