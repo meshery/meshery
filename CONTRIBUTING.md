@@ -16,7 +16,7 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 
-# <a name="contributing">Keep local branch up to HEAD on master</a>
+## <a name="General Contribution Flow">Keep local branch up to HEAD on master</a>
 Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with other commits and the following commands will help, that can be done by excecuting:
 1. to checkout a remote tracking branch directly.
 `git checkout master`
