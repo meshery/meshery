@@ -11,22 +11,21 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 `git clone https://github.com/layer5io/meshery`
 1. Create and checkout a new branch to make changes within.
 `git checkout -b <my-changes>`
-1. Switches to the specified branch and updates the working directory.
-`git checkout [branch-name]`
-1. check the present branch
-`git branch`
-1. to change the branch to master
-`git checkout master`
-1. to fetch and download content from a remote repository and immediately update the local repository to match that content.
-`git pull`
-1. to checkout specific local branch
-`git checkout <YOUR LOCAL BRANCH>`
-1. to merge master branch into local branch
-`git merge master`
 1. Make, save, build, and test changes.
 1. Commit and push changes to your remote branch. Be sure to sign your commits ([see DCO requirement](#dco)).
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+
+# <a name="contributing">Keep local branch up to HEAD on master</a>
+Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with other commits and the following commands will help, that can be done by excecuting:
+1. to checkout a remote tracking branch directly.
+`git checkout master`
+1. to to fetch and download content from a remote repository and immediately update the local repository to match that content.
+`git pull`
+1. to checkout the branch you want to use.
+`git checkout <YOUR LOCAL BRANCH>`
+1.  to integrate changes from local branch to master branch
+`git merge master`
 
 # <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
