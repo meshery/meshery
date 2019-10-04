@@ -1,4 +1,4 @@
-# [Meshery](https://layer5.io/meshery)<img align="right" src="https://layer5.io/assets/images/meshery-logo-light-name.png"  width="50%" />
+# [Meshery](https://layer5.io/meshery)<img align="right" src="https://layer5.io/assets/images/meshery-logo-light-name.png"  width="20%" />
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
