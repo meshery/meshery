@@ -1,4 +1,4 @@
-# [Meshery](https://layer5.io/meshery)<img align="right" src="https://layer5.io/assets/images/cube-sh-small.png" />
+# [Meshery](https://layer5.io/meshery)<img align="right" src="https://layer5.io/assets/images/meshery-logo-light-name.png"  width="90px" />
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
@@ -17,7 +17,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses a [common pe
 
 
 ## <a name="functionality">Functionality</a>
-<img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/meshery-logo-light-name.png" alt="Service Mesh Playground" width="50%" />
+<img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/meshery.png" alt="Service Mesh Playground" width="50%" />
 
 ### Multi-mesh Performance Benchmark
 
