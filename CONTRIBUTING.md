@@ -17,16 +17,13 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 
 ## <a name="sync-to-master">Keep local branch up to HEAD on master</a>
-Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with other commits and the following commands will help, that can be done by excecuting:
-1. to checkout a remote tracking branch directly.
-`git checkout master`
-1. to to fetch and download content from a remote repository and immediately update the local repository to match that content.
-`git pull`
-1. to checkout the branch you want to use.
-`git checkout <YOUR LOCAL BRANCH>`
-1.  to integrate changes from local branch to master branch
-`git merge master`
-
+Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with new changes. The following commands will pull new changes from the master branch into your local branch, effectiving syncing your local branch with the latest changes in master:
+```
+`git checkout master`  // switch to master branch; checkout master locally.
+`git pull` // fetch latest changes remote master branch.
+`git checkout <YOUR LOCAL BRANCH>` // switch to your local dev branch, where you are tracking your own changes.
+`git merge master` // integrate changes from master into your local dev branch.
+```
 # <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
