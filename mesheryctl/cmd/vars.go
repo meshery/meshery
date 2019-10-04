@@ -28,9 +28,8 @@ const (
 	fileURL                     = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	dockerComposeWebURL         = "https://api.github.com/repos/docker/compose/releases/latest"
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
-	// dockerComposeBinaryURL = "https://github.com/docker/compose/releases/download/1.24.1/docker-compose"
-	dockerComposeBinaryURL = "https://github.com/docker/compose/releases/download/"
-	dockerComposeBinary    = "/usr/local/bin/docker-compose"
+	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
+	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 )
 
 // See setFileLocation function below.
