@@ -87,6 +87,28 @@ export function makeTitle (res) {
           res.RequestedDuration + ' (actual time ' + myRound(res.ActualDuration / 1e9, 1) + 's), ' +
           errStr)
     title.push(percStr)
+
+    if(res.nodes && res.nodes.length > 0){
+      title.push("\nNodes:");
+      res.nodes.forEach((node, ind) => {
+        title.push(`\nNode ${ind+1} - Hostname: ${node.hostname}, CPU: ${node.allocatable_cpu}, Memory: ${node.allocatable_memory}, ` +
+                    `Arch: ${node.architecture} OS: ${node.os_image}, \n` +
+                    `Kubernetes version: ${node.kubelet_version}, Container runtime: ${node.container_runtime_version}`);
+    //     InternalIP              string `json:"internal_ip,omitempty"`
+    // HostName                string `json:"hostname,omitempty"`
+    // AllocatableCPU          string `json:"allocatable_cpu,omitempty"`
+    // AllocatableMemory       string `json:"allocatable_memory,omitempty"`
+    // CapacityCPU             string `json:"capacity_cpu,omitempty"`
+    // CapacityMemory          string `json:"capacity_memory,omitempty"`
+    // OSImage                 string `json:"os_image,omitempty"`
+    // OperatingSystem         string `json:"operating_system,omitempty"`
+    // KubeletVersion          string `json:"kubelet_version,omitempty"`
+    // KubeProxyVersion        string `json:"kubeproxy_version,omitempty"`
+    // ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
+    // Architecture            string `json:"architecture,omitempty"`
+      });
+    }
+
     return title
   }
   

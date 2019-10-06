@@ -111,6 +111,35 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
+	user, _ := session.Values["user"].(*models.User)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
+	if err != nil {
+		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
+	nodesChan := make(chan []*models.K8SNode)
+	defer close(nodesChan)
+	go func() {
+		var nodes []*models.K8SNode
+		if sessObj.K8SConfig != nil {
+			var config []byte
+			if sessObj.K8SConfig.Config != nil {
+				config = sessObj.K8SConfig.Config
+			}
+			nodes, err = helpers.FetchKubernetesNodes(config)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				logrus.Error(err)
+				// return
+			}
+		}
+		nodesChan <- nodes
+	}()
+
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
 		logrus.Errorf("error: unable to perform load test: %v", err)
@@ -118,6 +147,10 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	nodes := <-nodesChan
+	if nodes != nil {
+		resultsMap["nodes"] = nodes
+	}
 	// // defer fortioResp.Body.Close()
 	// // bd, err := ioutil.ReadAll(fortioResp.Body)
 	// bd, err := json.Marshal(resp)

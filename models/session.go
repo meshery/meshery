@@ -15,6 +15,23 @@ type K8SConfig struct {
 	ContextName       string `json:"contextName,omitempty"`
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
 	// ConfiguredServer  string `json:"configuredServer,omitempty"`
+
+	Nodes []*K8SNode `json:"nodes,omitempty"`
+}
+
+type K8SNode struct {
+	InternalIP              string `json:"internal_ip,omitempty"`
+	HostName                string `json:"hostname,omitempty"`
+	AllocatableCPU          string `json:"allocatable_cpu,omitempty"`
+	AllocatableMemory       string `json:"allocatable_memory,omitempty"`
+	CapacityCPU             string `json:"capacity_cpu,omitempty"`
+	CapacityMemory          string `json:"capacity_memory,omitempty"`
+	OSImage                 string `json:"os_image,omitempty"`
+	OperatingSystem         string `json:"operating_system,omitempty"`
+	KubeletVersion          string `json:"kubelet_version,omitempty"`
+	KubeProxyVersion        string `json:"kubeproxy_version,omitempty"`
+	ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
+	Architecture            string `json:"architecture,omitempty"`
 }
 
 // K8SContext is just used to send contexts to the UI
