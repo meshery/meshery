@@ -121,10 +121,11 @@ class MesheryNotification extends React.Component {
   }
 
   handleError = e => {
+    const self = this;
     // check if server is available
     dataFetch('/api/user', { credentials: 'same-origin' }, user => {
       // attempting to reestablish connection
-      this.startEventStream();
+      setTimeout(() => self.startEventStream(), 2000);
     }, error => {
       // do nothing here
     });
