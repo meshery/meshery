@@ -48,6 +48,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
 	for _, adapterURL := range h.config.AdapterTracker.GetAdapters(req.Context()) {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
 	}
+
 	sessObj.MeshAdapters = meshAdapters
 	err = h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil { // ignoring errors in this context
