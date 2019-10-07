@@ -112,7 +112,7 @@ jobs:
         npm run build && npm run export
   build_release:
     name: MesheryCTL Build & Release
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     # needs: [lint, error_check, static_check, vet, sec_check, tests]
     steps:
     - name: Check out code
