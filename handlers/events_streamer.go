@@ -69,7 +69,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
 	go func() {
 		for mClient := range newAdaptersChan {
 			log.Debug("received a new mesh client, listening for events")
-			go listenForAdapterEvents(req.Context(), mClient, respChan, log)
+			go func() {
+				listenForAdapterEvents(req.Context(), mClient, respChan, log)
+				_ = mClient.Close()
+			}()
 		}
 		log.Debug("new adapters channel closed")
 	}()
