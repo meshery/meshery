@@ -16,7 +16,8 @@ type K8SConfig struct {
 	ClusterConfigured bool   `json:"clusterConfigured,omitempty"`
 	// ConfiguredServer  string `json:"configuredServer,omitempty"`
 
-	Nodes []*K8SNode `json:"nodes,omitempty"`
+	ServerVersion string     `json:"server_version,omitempty"`
+	Nodes         []*K8SNode `json:"nodes,omitempty"`
 }
 
 type K8SNode struct {
