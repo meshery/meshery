@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
+func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
 	var clientConfig *rest.Config
 	var err error
 	if len(kubeconfig) == 0 {
@@ -40,7 +40,14 @@ func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
 		logrus.Error(err)
 		return nil, err
 	}
+	return clientset, nil
+}
 
+func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
+	clientset, err := getK8SClientSet(kubeconfig)
+	if err != nil {
+		return nil, err
+	}
 	var nodes []*models.K8SNode
 
 	// nodes
@@ -92,4 +99,20 @@ func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
 
 	}
 	return nodes, nil
+}
+
+func FetchKubernetesVersion(kubeconfig []byte) (string, error) {
+	clientset, err := getK8SClientSet(kubeconfig)
+	if err != nil {
+		return "", err
+	}
+
+	serverVersion, err := clientset.ServerVersion()
+	if err != nil {
+		err = errors.Wrap(err, "unable to get server version")
+		logrus.Error(err)
+		return "", err
+	}
+
+	return serverVersion.String(), nil
 }
