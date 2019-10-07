@@ -121,25 +121,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		sessObj = &models.Session{}
 	}
 
-	nodesChan := make(chan []*models.K8SNode)
-	defer close(nodesChan)
-	go func() {
-		var nodes []*models.K8SNode
-		if sessObj.K8SConfig != nil {
-			var config []byte
-			if sessObj.K8SConfig.Config != nil {
-				config = sessObj.K8SConfig.Config
-			}
-			nodes, err = helpers.FetchKubernetesNodes(config)
-			if err != nil {
-				err = errors.Wrap(err, "unable to ping kubernetes")
-				logrus.Error(err)
-				// return
-			}
-		}
-		nodesChan <- nodes
-	}()
-
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
 		logrus.Errorf("error: unable to perform load test: %v", err)
@@ -147,10 +128,35 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	nodes := <-nodesChan
-	if nodes != nil {
-		resultsMap["nodes"] = nodes
+	if sessObj.K8SConfig != nil {
+		if len(sessObj.K8SConfig.Nodes) == 0 {
+			sessObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				// logrus.Error(err)
+				logrus.Warn(err)
+				// return
+			}
+		}
+
+		if sessObj.K8SConfig.ServerVersion == "" {
+			sessObj.K8SConfig.ServerVersion, _ = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				// logrus.Error(err)
+				logrus.Warn(err)
+				// return
+			}
+		}
+
+		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
+			resultsMap["kubernetes"] = map[string]interface{}{
+				"server_version": sessObj.K8SConfig.ServerVersion,
+				"nodes":          sessObj.K8SConfig.Nodes,
+			}
+		}
 	}
+
 	// // defer fortioResp.Body.Close()
 	// // bd, err := ioutil.ReadAll(fortioResp.Body)
 	// bd, err := json.Marshal(resp)
