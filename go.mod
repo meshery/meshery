@@ -15,6 +15,7 @@ require (
 	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/golang/protobuf v1.3.2
+	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gorilla/sessions v1.2.0
 	github.com/gosimple/slug v1.7.0
 	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
@@ -38,7 +39,7 @@ require (
 	google.golang.org/grpc v1.23.0
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	k8s.io/api v0.0.0-20181027024800-9fcf73cc980b // indirect
-	k8s.io/apimachinery v0.0.0-20180510142256-21efb2924c7c // indirect
+	k8s.io/apimachinery v0.0.0-20180510142256-21efb2924c7c
 	k8s.io/client-go v6.0.0+incompatible
 	k8s.io/kube-openapi v0.0.0-20181026222903-0d1aeffe1c68 // indirect
 )
