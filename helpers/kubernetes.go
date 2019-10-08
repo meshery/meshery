@@ -43,6 +43,7 @@ func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
+// FetchKubernetesNodes - function used to fetch nodes metadata
 func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
 	clientset, err := getK8SClientSet(kubeconfig)
 	if err != nil {
@@ -101,6 +102,7 @@ func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
 	return nodes, nil
 }
 
+// FetchKubernetesVersion - function used to fetch kubernetes server version
 func FetchKubernetesVersion(kubeconfig []byte) (string, error) {
 	clientset, err := getK8SClientSet(kubeconfig)
 	if err != nil {
