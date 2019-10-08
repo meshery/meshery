@@ -17,6 +17,9 @@ const styles = theme => ({
     sidelist: {
         width: 350,
     },
+    notficiationButton: {
+        height: '100%',
+    },
     notficiationDrawer: {
         backgroundColor: '#FFFFFF',
     },
@@ -242,7 +245,8 @@ class MesheryNotification extends React.Component {
       <div>
         <NoSsr>
         <Tooltip title={toolTipMsg}>
-        <IconButton 
+        <IconButton
+            className={classes.notficiationButton}
             buttonRef={node => {
                 this.anchorEl = node;
               }}
