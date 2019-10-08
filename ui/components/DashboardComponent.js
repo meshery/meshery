@@ -178,7 +178,7 @@ class DashboardComponent extends React.Component {
     return false;
   }
 
-  handleClick = (adapterLoc) => () => {
+  handleAdapterClick = (adapterLoc) => () => {
     // const { meshAdapters } = this.state;
     this.props.updateProgress({showProgress: true});
     let self = this;
@@ -189,6 +189,33 @@ class DashboardComponent extends React.Component {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.props.enqueueSnackbar('Adapter was successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError("error"));
+  }
+
+  handleKubernetesClick = () => {
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch(`/api/k8sconfig/ping`, { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -237,6 +264,7 @@ class DashboardComponent extends React.Component {
               label={inClusterConfig?'Using In Cluster Config': contextName}
               // onDelete={self.handleDelete}
               // deleteIcon={<DoneIcon />}
+              onClick={self.handleKubernetesClick}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               className={classes.chip}
               key='k8s-key'
@@ -305,7 +333,7 @@ class DashboardComponent extends React.Component {
                   // onDelete={self.handleDelete(ind)} 
                   // onDelete={!isDisabled?self.handleDelete:null}
                   // deleteIcon={!isDisabled?<DoneIcon />:null}
-                  onClick={self.handleClick(aa.value)}
+                  onClick={self.handleAdapterClick(aa.value)}
                   icon={logoIcon}
                   className={classes.chip}
                   key={`adapters-${ia}`}
