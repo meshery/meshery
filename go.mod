@@ -4,18 +4,17 @@ go 1.13
 
 require (
 	fortio.org/fortio v1.3.1
+	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/dgraph-io/badger v1.6.0
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/emicklei/go-restful v2.9.6+incompatible // indirect
-	github.com/go-msgqueue/msgqueue v1.8.3-0.20190601142402-c892a8044035 // indirect
 	github.com/go-openapi/spec v0.19.2 // indirect
 	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/golang/protobuf v1.3.2
-	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/sessions v1.2.0
 	github.com/gosimple/slug v1.7.0
 	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
@@ -24,7 +23,6 @@ require (
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/juju/ratelimit v1.0.1 // indirect
-	github.com/mitchellh/go-homedir v1.1.0
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.8.1
@@ -39,8 +37,8 @@ require (
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/grpc v1.23.0
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	k8s.io/api v0.0.0-20181027024800-9fcf73cc980b
-	k8s.io/apimachinery v0.0.0-20180510142256-21efb2924c7c
+	k8s.io/api v0.0.0-20181027024800-9fcf73cc980b // indirect
+	k8s.io/apimachinery v0.0.0-20180510142256-21efb2924c7c // indirect
 	k8s.io/client-go v6.0.0+incompatible
-	k8s.io/kube-openapi v0.0.0-20181026222903-0d1aeffe1c68
+	k8s.io/kube-openapi v0.0.0-20181026222903-0d1aeffe1c68 // indirect
 )
