@@ -129,9 +129,12 @@ const styles = theme => ({
     }),
   },
   fixedSidebarFooter: {
-    display: 'flex',
-    'margin-top': 'auto',
-    'margin-bottom': '0.5rem'
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
+      'margin-top': 'auto',
+      'margin-bottom': '0.5rem'
+    },
   },
   collapseButtonWrapper: {
     width: 'auto',
@@ -147,6 +150,10 @@ const styles = theme => ({
       background: 'transparent'
     }
   },
+  noPadding: {
+    paddingLeft: '16px',
+    paddingRight: '16px'
+  }
 });
 
 const categories = [
@@ -361,6 +368,7 @@ class Navigator extends React.Component {
                   classes.item,
                   classes.itemActionable,
                   path === hrefc && classes.itemActiveItem,
+                  isDrawerCollapsed && classes.noPadding
                   )}>
                 {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
               </ListItem>
