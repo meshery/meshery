@@ -69,7 +69,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 
 ## Contributing
 ### Community
-This project is community-built and welcomes collaboration!  ![(Fork here on Github)](https://github.com/layer5io/meshery)
+This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
 
 * Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics)
     Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community callender](https://bit.ly/2SbrRhe).
