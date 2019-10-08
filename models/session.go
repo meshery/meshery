@@ -20,6 +20,7 @@ type K8SConfig struct {
 	Nodes         []*K8SNode `json:"nodes,omitempty"`
 }
 
+// K8SNode - represents a kubernetes node
 type K8SNode struct {
 	InternalIP              string `json:"internal_ip,omitempty"`
 	HostName                string `json:"hostname,omitempty"`
