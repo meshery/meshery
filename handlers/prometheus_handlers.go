@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/layer5io/meshery/models"
 
@@ -58,7 +59,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		sessObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}
-		logrus.Debugf("Prometheus URL %s succeefully saved", promURL)
+		logrus.Debugf("Prometheus URL %s successfully saved", promURL)
 	} else if req.Method == http.MethodDelete {
 		sessObj.Prometheus = nil
 	}
@@ -167,7 +168,9 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 	reqQuery := req.URL.Query()
 
-	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), sessObj.Prometheus.PrometheusURL, false)
+	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
+		Timeout: time.Second,
+	}, false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -215,7 +218,9 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 	reqQuery := req.URL.Query()
 
-	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), sessObj.Prometheus.PrometheusURL, false)
+	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
+		Timeout: time.Second,
+	}, false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -267,7 +272,9 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		w.Write([]byte("{}"))
 		return
 	}
-	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), sessObj.Prometheus.PrometheusURL, true)
+	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
+		Timeout: time.Second,
+	}, true)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
