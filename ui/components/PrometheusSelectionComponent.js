@@ -47,12 +47,44 @@ const promStyles = theme => ({
     }
   });
 
+const dummyBoard = `
+{
+  "id": null,
+  "uid": "cdsafedwewgew",
+  "title": "Dashboard",
+  "tags": [],
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "graphTooltip": 1,
+  "panels": [],
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "time_options": [],
+    "refresh_intervals": []
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "10s",
+  "schemaVersion": 17,
+  "version": 0,
+  "links": []
+}
+`
+
 class PrometheusSelectionComponent extends Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            grafanaBoard: '',
+            grafanaBoard: dummyBoard,
             grafanaBoardError: false,
             grafanaBoardObject: {},
             templateVars: [],
@@ -255,6 +287,7 @@ class PrometheusSelectionComponent extends Component {
             </div>
             <Grid container spacing={1}>
                 <Grid item xs={12}>
+                  Please paste your Grafana board json below
                   <CodeMirror
                       editorDidMount={editor => { this.cmEditor = editor }}
                       value={grafanaBoard}
@@ -324,7 +357,11 @@ class PrometheusSelectionComponent extends Component {
                     }
                   })}
 
-                <Grid item xs={12}>
+                {panels.length === 0 && <Grid item xs={12} style={{textAlign: 'center'}}>
+                  Please load a valid Grafana board json to be able to view the panels.
+                </Grid>}
+
+                {panels.length > 0 && <Grid item xs={12}>
                     <TextField
                             select
                             id="panels"
@@ -360,9 +397,9 @@ class PrometheusSelectionComponent extends Component {
                                 <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
                             ))}
                     </TextField>
+                </Grid>}
                 </Grid>
-                </Grid>
-                <div className={classes.buttons}>
+                {selectedPanels.length > 0 && <div className={classes.buttons}>
                 <Button
                     type="submit"
                     variant="contained"
@@ -373,7 +410,7 @@ class PrometheusSelectionComponent extends Component {
                 >
                 Add
                 </Button>
-                </div>
+                </div>}
             </div>
         </React.Fragment>
         </NoSsr>

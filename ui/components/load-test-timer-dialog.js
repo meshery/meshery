@@ -1,9 +1,10 @@
 import React from 'react';
 import { NoSsr, Popper, Paper } from '@material-ui/core';
-import dynamic from 'next/dynamic'
-const ReactCountdownClock = dynamic(() => import('react-countdown-clock'), {
-  ssr: false
-})
+
+let ReactCountdownClock;
+if (typeof window !== 'undefined') { 
+  ReactCountdownClock = require('react-countdown-clock');
+}
 
 class LoadTestTimerDialog extends React.Component {
 
