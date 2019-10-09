@@ -5,7 +5,7 @@ import InfoIcon from '@material-ui/icons/Info';
 export const eventTypes = {
     0: {
         icon: InfoIcon,
-        type: 'info',
+        type: 'success',
     },
     1: {
         icon: WarningIcon,
