@@ -111,11 +111,50 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
+	user, _ := session.Values["user"].(*models.User)
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
+	if err != nil {
+		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
 		logrus.Errorf("error: unable to perform load test: %v", err)
 		http.Error(w, "error while running load test", http.StatusInternalServerError)
 		return
+	}
+
+	if sessObj.K8SConfig != nil {
+		if len(sessObj.K8SConfig.Nodes) == 0 {
+			sessObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				// logrus.Error(err)
+				logrus.Warn(err)
+				// return
+			}
+		}
+
+		if sessObj.K8SConfig.ServerVersion == "" {
+			sessObj.K8SConfig.ServerVersion, _ = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config)
+			if err != nil {
+				err = errors.Wrap(err, "unable to ping kubernetes")
+				// logrus.Error(err)
+				logrus.Warn(err)
+				// return
+			}
+		}
+
+		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
+			resultsMap["kubernetes"] = map[string]interface{}{
+				"server_version": sessObj.K8SConfig.ServerVersion,
+				"nodes":          sessObj.K8SConfig.Nodes,
+			}
+		}
 	}
 
 	// // defer fortioResp.Body.Close()
