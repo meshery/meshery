@@ -17,6 +17,9 @@ const styles = theme => ({
     sidelist: {
         width: 350,
     },
+    notficiationButton: {
+        height: '100%',
+    },
     notficiationDrawer: {
         backgroundColor: '#FFFFFF',
     },
@@ -121,10 +124,14 @@ class MesheryNotification extends React.Component {
   }
 
   handleError = e => {
+    const self = this;
     // check if server is available
     dataFetch('/api/user', { credentials: 'same-origin' }, user => {
       // attempting to reestablish connection
-      this.startEventStream();
+      setTimeout(() => function() {
+        self.closeEventStream();
+        self.startEventStream()
+      }, 2000);
     }, error => {
       // do nothing here
     });
@@ -238,7 +245,8 @@ class MesheryNotification extends React.Component {
       <div>
         <NoSsr>
         <Tooltip title={toolTipMsg}>
-        <IconButton 
+        <IconButton
+            className={classes.notficiationButton}
             buttonRef={node => {
                 this.anchorEl = node;
               }}

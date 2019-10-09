@@ -64,4 +64,4 @@ Note: Make sure "current-context" is set to "minikube".
 
 ### 3. Finish up
 
-Follow the rest of Meshery [installation](../installation.md) steps.
+Follow the rest of Meshery [installation](../installation) steps.
