@@ -72,7 +72,7 @@ var startCmd = &cobra.Command{
 			if "/meshery_meshery_1" == container.Names[0] {
 				log.Info("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 
-				//check for os of host machine
+        //check for os of host machine
 				if runtime.GOOS == "windows" {
 					// Meshery running on Windows host
 					exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
@@ -80,11 +80,13 @@ var startCmd = &cobra.Command{
 					// Meshery running on Linux host
 					exec.Command("xdg-open", url).Start()
 				} else {
-					// Asssume Meshery running on MacOS host
+          // Assume Meshery running on MacOS host
 					exec.Command("open", url).Start()
 				}
 
 				//check flag to check successful deployment
+				checkFlag = 0
+
 				checkFlag = 0
 				break
 			} else {
