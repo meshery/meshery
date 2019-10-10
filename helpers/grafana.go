@@ -254,8 +254,8 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 			}
 			for key := range *queryData {
 				if key != "query" && key != "dsid" && key != "start" && key != "end" {
-					kVal := queryData.Get(key)
-					val = strings.Replace(val, "$"+key, kVal, -1)
+					val1 := queryData.Get(key)
+					val = strings.Replace(val, "$"+key, val1, -1)
 				}
 			}
 			var reqURL string
@@ -285,8 +285,8 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 		val = strings.TrimSpace(strings.TrimSuffix(val, ")"))
 		for key := range *queryData {
 			if key != "query" && key != "dsid" {
-				kVal := queryData.Get(key)
-				val = strings.Replace(val, "$"+key, kVal, -1)
+				val1 := queryData.Get(key)
+				val = strings.Replace(val, "$"+key, val1, -1)
 			}
 		}
 		var reqURL string

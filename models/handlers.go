@@ -19,6 +19,7 @@ type HandlerInterface interface {
 
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
+	KubernetesPingHandler(w http.ResponseWriter, req *http.Request)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
