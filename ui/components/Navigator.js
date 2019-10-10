@@ -123,6 +123,7 @@ const styles = theme => ({
   },
   sidebarExpanded: {
     width: '256px',
+    overflowX: 'hidden',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
