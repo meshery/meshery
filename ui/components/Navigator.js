@@ -105,6 +105,56 @@ const styles = theme => ({
   istioIcon: {
     width: theme.spacing(1.8),
   },
+  isHidden: {
+    opacity: 0,
+    transition: 'opacity 200ms ease-in-out'
+  },
+  isDisplayed: {
+    opacity: 1,
+    transition: 'opacity 200ms ease-in-out'
+  },
+  sidebarCollapsed: {
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: theme.spacing(7) + 1,
+  },
+  sidebarExpanded: {
+    width: '256px',
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  fixedSidebarFooter: {
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
+      'margin-top': 'auto',
+      'margin-bottom': '0.5rem'
+    },
+  },
+  collapseButtonWrapper: {
+    width: 'auto',
+    'margin-left': 'auto',
+    opacity: '0.7',
+    transition: 'opacity 200ms linear',
+    '&:hover': {
+      opacity: 1,
+      background: 'transparent'
+    },
+    '&:focus': {
+      opacity: 1,
+      background: 'transparent'
+    }
+  },
+  noPadding: {
+    paddingLeft: '16px',
+    paddingRight: '16px'
+  }
 });
 
 const categories = [
@@ -183,7 +233,7 @@ class Navigator extends React.Component {
       this.state = {
         path: '',
         meshAdapters,
-        mts: new Date(),
+        mts: new Date()
       };
       
     }
@@ -293,10 +343,16 @@ class Navigator extends React.Component {
       this.props.router.push('/');
     }
 
+    toggleMiniDrawer = () => {
+      const { onCollapseDrawer } = this.props;
+      onCollapseDrawer();
+      // this.setState({ isDrawerCollapsed: !isDrawerCollapsed })
+    }
+
     renderChildren(children, depth) {
-      const { classes } = this.props;
+      const { classes, isDrawerCollapsed } = this.props;
       const { path } = this.state;
-      
+
       if (children && children.length > 0){
       return (
         <List disablePadding>
@@ -313,8 +369,9 @@ class Navigator extends React.Component {
                   classes.item,
                   classes.itemActionable,
                   path === hrefc && classes.itemActiveItem,
+                  isDrawerCollapsed && classes.noPadding
                   )}>
-                {this.linkContent(iconc, idc, hrefc, linkc)}
+                {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
               </ListItem>
               {this.renderChildren(childrenc, depth + 1)}
               </React.Fragment>
@@ -326,20 +383,23 @@ class Navigator extends React.Component {
       return '';
     }
 
-    linkContent(iconc, idc, hrefc, linkc){
+    linkContent(iconc, idc, hrefc, linkc, drawerCollapsed){
       const { classes } = this.props;
+
       let linkContent = (
         <div className={classNames(classes.link)} >
           <ListItemIcon className={classes.listIcon}>
             {iconc}
           </ListItemIcon>
           <ListItemText
-            classes={{
-              primary: classes.itemPrimary,
-              textDense: classes.textDense,
-            }}>
+              className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
+              classes={{
+                primary: classes.itemPrimary,
+                textDense: classes.textDense
+              }}>
             {idc}
           </ListItemText>
+
         </div>
       );
       if(linkc){
@@ -353,21 +413,30 @@ class Navigator extends React.Component {
     }
 
     render() {
-        const { classes, updatepagepathandtitle, ...other } = this.props;
+        const { classes, updatepagepathandtitle, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
         // const path = this.updateTitle();
         // console.log("current page:" + path);
         return (
             <NoSsr>
-            <Drawer variant="permanent" {...other}>
+            <Drawer
+              variant="permanent" {...other}
+              className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
+              classes={{
+              paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded
+              }}
+              style={{ width: "inherit" }}
+            >
             <List disablePadding>
                 <ListItem 
                   component="a"
                   onClick={this.handleTitleClick}
-                  className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}>
+                  className={
+                    classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
+                  }>
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  Meshery
+                  <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span>
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show, link, children }) => {
                       if (typeof show !== 'undefined' && !show){
@@ -389,13 +458,14 @@ class Navigator extends React.Component {
                                 <div className={classNames(classes.link)} >
                                     <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                                     <ListItemText
-                                    classes={{
+                                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                                      classes={{
                                         primary: classes.itemPrimary,
-                                        textDense: classes.textDense,
-                                    }}
+                                        textDense: classes.textDense
+                                      }}
                                     >
                                     {childId}
-                                    </ListItemText>
+                                  </ListItemText>
                                 </div>
                             </Link>
                         </ListItem>
@@ -418,17 +488,25 @@ class Navigator extends React.Component {
                           <div className={classNames(classes.link)} >
                               <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
                               <ListItemText
-                              classes={{
+                                className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                                classes={{
                                   primary: classes.itemPrimary,
-                                  textDense: classes.textDense,
-                              }}
+                                  textDense: classes.textDense
+                                }}
                               >
                               {'Community'}
-                              </ListItemText>
+                            </ListItemText>
+
                           </div>
                         </ListItem>
-                    <Divider className={classes.divider} />
-            </List>
+              </List>
+              <div className={classes.fixedSidebarFooter}>
+                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
+                  <img
+                    src='../static/img/sidebar-collapse-toggle-icon.svg'
+                    alt='Sidebar collapse toggle icon' />
+                </ListItem>
+              </div>
             </Drawer>
             </NoSsr>
         );
@@ -437,6 +515,7 @@ class Navigator extends React.Component {
 
 Navigator.propTypes = {
   classes: PropTypes.object.isRequired,
+  onCollapseDrawer: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => {
