@@ -74,7 +74,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
-			err := errors.New("meshLocationURL cannot be empty to add an adapter") //error strings should not be capitalized or end with punctuation or a newline
+			err := errors.New("meshLocationURL cannot be empty to add an adapter")
 			logrus.Error(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -184,7 +184,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL") //error strings should not be capitalized or end with punctuation or a newline
+		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
 		logrus.Error(err)
 		http.Error(w, "Given adapter URL is not valid.", http.StatusBadRequest)
 		return nil, err
@@ -251,7 +251,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL")//error strings should not be capitalized or end with punctuation or a newline
+		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return
@@ -279,7 +279,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer mClient.Close()
 
-	operationID, err := uuid.NewV4()  //operationId should be operationID
+	operationID, err := uuid.NewV4() 
+
 	if err != nil {
 		logrus.Errorf("Error generating an operation id: %v.", err)
 		http.Error(w, "Error generating an operation id.", http.StatusInternalServerError)
@@ -287,7 +288,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
-		OperationId: operationId.String(),
+		OperationId: operationID.String(),
 		OpName:      opName,
 		Username:    user.UserID,
 		Namespace:   namespace,
@@ -343,7 +344,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL")//error strings should not be capitalized or end with punctuation or a newline
+		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return
