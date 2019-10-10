@@ -279,7 +279,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer mClient.Close()
 
-	operationID, err := uuid.NewV4() 
+	operationId, err := uuid.NewV4() 
 	if err != nil {
 		logrus.Errorf("Error generating an operation id: %v.", err)
 		http.Error(w, "Error generating an operation id.", http.StatusInternalServerError)
@@ -288,9 +288,9 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 
-		OperationID: operationID.String(),
+		OperationID: operationId.String(),
 
-		OperationId: operationID.String(),
+		OperationId: operationId.String(),
 
 		OpName:      opName,
 		Username:    user.UserID,
