@@ -11,6 +11,7 @@ import (
 
 	"os"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -114,8 +115,21 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 	}
 	kc.ClusterConfigured = true
 	sessObj.K8SConfig = kc
-	err := h.config.SessionPersister.Write(user.UserID, sessObj)
+
+	var err error
+	sessObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(k8sConfigBytes)
 	if err != nil {
+		http.Error(w, "unable to ping the kubernetes server", http.StatusInternalServerError)
+		return
+	}
+
+	sessObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(k8sConfigBytes)
+	if err != nil {
+		http.Error(w, "unable to fetch nodes metadata from the kubernetes server", http.StatusInternalServerError)
+		return
+	}
+
+	if err = h.config.SessionPersister.Write(user.UserID, sessObj); err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
@@ -123,8 +137,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 
 	kc.Config = nil
 
-	err = json.NewEncoder(w).Encode(kc)
-	if err != nil {
+	if err = json.NewEncoder(w).Encode(kc); err != nil {
 		logrus.Errorf("error marshalling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return
@@ -193,7 +206,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 func (h *Handler) loadInClusterK8SConfig() (*models.K8SConfig, error) {
 	// try to load k8s config from incluster config
 	_, err := rest.InClusterConfig()
-	if err == nil {
+	if err != nil {
 		err = errors.Wrap(err, "error parsing incluster k8s config")
 		logrus.Error(err)
 		return nil, err
@@ -260,4 +273,47 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 		}
 	}
 	return nil
+}
+
+// KubernetesPingHandler - fetches server version to simulate ping
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request) {
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Error("Unable to get session data.")
+		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
+		return
+	}
+
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
+	if err != nil {
+		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+	if sessObj.K8SConfig == nil {
+		w.Write([]byte("[]"))
+		return
+	}
+
+	config := sessObj.K8SConfig.Config
+	version, err := helpers.FetchKubernetesVersion(config)
+	if err != nil {
+		err = errors.Wrap(err, "unable to ping kubernetes")
+		logrus.Error(err)
+		http.Error(w, "unable to ping kubernetes", http.StatusInternalServerError)
+		return
+	}
+	if err = json.NewEncoder(w).Encode(map[string]string{
+		"server_version": version,
+	}); err != nil {
+		err = errors.Wrap(err, "unable to marshal the payload")
+		logrus.Error(err)
+		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		return
+	}
 }
