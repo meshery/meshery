@@ -19,7 +19,7 @@ import (
 	"context"
 	"os"
 	"os/exec"
-	"strings"
+	"runtime"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -71,20 +71,22 @@ var startCmd = &cobra.Command{
 		for _, container := range containers {
 			if "/meshery_meshery_1" == container.Names[0] {
 				log.Info("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
-				ostype, err := exec.Command("uname", "-s").Output()
-				if err != nil {
-					log.Fatal("Unable to detect OS type. Warning message: \n", err)
-				}
-				os := strings.TrimSpace(string(ostype))
-				// Link to Meshery User Interface
-				url := "http://localhost:9081"
-				if os == "Linux" {
+
+        //check for os of host machine
+				if runtime.GOOS == "windows" {
+					// Meshery running on Windows host
+					exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+				} else if runtime.GOOS == "linux" {
 					// Meshery running on Linux host
 					exec.Command("xdg-open", url).Start()
 				} else {
-					// Asssume Meshery running on MacOS host
+          // Assume Meshery running on MacOS host
 					exec.Command("open", url).Start()
 				}
+
+				//check flag to check successful deployment
+				checkFlag = 0
+
 				checkFlag = 0
 				break
 			} else {

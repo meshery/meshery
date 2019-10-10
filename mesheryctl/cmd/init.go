@@ -15,6 +15,10 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
 	"strings"
 
@@ -32,7 +36,26 @@ var initCmd = &cobra.Command{
 			log.Info("Prerequisite Docker Compose not available. Attempting Docker Compose installation...")
 			ostype, osarch := prereq()
 			osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
-			dockerComposeBinaryURL := dockerComposeBinaryURL + "-" + osdetails
+
+			//checks for the latest docker-compose
+			resp, err := http.Get(dockerComposeWebURL)
+			dockerComposeBinaryURL := dockerComposeBinaryURL
+			if err != nil {
+				// download the default version as 1.24.1 if unable to fetch latest page data
+				dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
+			} else {
+				var dat map[string]interface{}
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if err := json.Unmarshal(body, &dat); err != nil {
+					log.Fatal(err)
+				}
+				num := dat["tag_name"]
+				dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
+			}
+			dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
 			if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 				log.Fatal(err)
 			}
