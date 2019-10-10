@@ -111,7 +111,7 @@ class GrafanaSelectionComponent extends Component {
         });
       }
 
-	class ButtonLoader extends Component{
+	export default class ButtonLoader extends Component{
 	  state= {
 		loading : false
        }
