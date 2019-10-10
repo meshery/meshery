@@ -87,6 +87,17 @@ export function makeTitle (res) {
           res.RequestedDuration + ' (actual time ' + myRound(res.ActualDuration / 1e9, 1) + 's), ' +
           errStr)
     title.push(percStr)
+
+    if(res.kubernetes){
+      title.push(`\nKubernets server version: ${res.kubernetes.server_version}`);
+      title.push("\nNodes:");
+      res.kubernetes.nodes.forEach((node, ind) => {
+        title.push(`\nNode ${ind+1} - Hostname: ${node.hostname}, CPU: ${node.allocatable_cpu}, Memory: ${node.allocatable_memory}, ` +
+                    `Arch: ${node.architecture} OS: ${node.os_image}, \n` +
+                    `Kubelet version: ${node.kubelet_version}, Container runtime: ${node.container_runtime_version}`);
+      });
+    }
+
     return title
   }
   
