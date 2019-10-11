@@ -42,8 +42,7 @@ func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClie
 	}
 	if validateConfig {
 		var err error
-		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{
-Timeout: 25 * time.Second,})
+		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{Timeout: 25 * time.Second})
 		if g.OrgID, err = g.GrafanaConfigValidator(); err != nil {
 			return nil, err
 		}
