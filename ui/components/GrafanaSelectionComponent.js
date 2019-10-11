@@ -6,8 +6,6 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import ButtonLoader from "./ButtonLoader/index";
-
 
 const grafanaStyles = theme => ({
     root: {
@@ -110,32 +108,6 @@ class GrafanaSelectionComponent extends Component {
           }
         });
       }
-
-	export default class ButtonLoader extends Component{
-	  state= {
-		loading : false
-       }
-	 fetchData =() =>{
-	     this.setState({ loading : true });
-	      setTimeout(() => {
-	    this.setState({ loading: false });
-	  },2000);
-	
-	};
-	   render() {
-	      const {loading} = this.state;
-		return (
-		  <div style={{marginTop:'60px'}}>
-			<button className="button" onClick={this.fetchData} disabled={loading}>
-		{ loading && <i className="fa fa-refresh fa-spin"></i>}
-                 {loading && <span>Loading</span>}
-		{loading && <span>Fetch it!</span>
-</button>
-	</div>
-	);
-      }
-    }
-    
       
       queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
         if (templateVars.length > 0) {
