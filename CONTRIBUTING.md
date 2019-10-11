@@ -6,6 +6,7 @@ Contributions, updates, [issues](/../../issues) and [pull requests](/../../pulls
 Not sure where to start? See the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. Or grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in.
 
 # <a name="contributing">General Contribution Flow</a>
+<!--
 Whether contributing to Meshery's backend, frontend or documentation, the process of contributing follows this flow:
 1. Get a local copy of the documentation.
 `git clone https://github.com/layer5io/meshery`
@@ -15,7 +16,11 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 1. Commit and push changes to your remote branch. Be sure to sign your commits ([see DCO requirement](#dco)).
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+-->
 
+In order to contribute updates to Meshery, please follow the fork and pull request workflow described [here](./git-workflow.md).
+
+<!--
 ## <a name="sync-to-master">Keep local branch up to HEAD on master</a>
 Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with new changes. The following commands will pull new changes from the master branch into your local branch, effectiving syncing your local branch with the latest changes in master:
 ```
@@ -24,12 +29,14 @@ git pull // fetch latest changes remote master branch.
 git checkout <YOUR LOCAL BRANCH>` // switch to your local dev branch.
 git merge master // integrate changes from master into your local dev branch.
 ```
+-->
+
 # <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Get a local copy of the documentation.
-`git clone https://github.com/layer5io/meshery`
-1. Navigate to the docs folder.
+1. Create a fork, if you have not already, by following the steps described [here](./git-workflow.md)
+<!--`git clone https://github.com/layer5io/meshery`-->
+1. In the local copy of your fork, navigate to the docs folder.
 `cd docs`
 1. Create and checkout a new branch to make changes within
 `git checkout -b <my-changes>`
@@ -39,7 +46,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 `make site`
 1. Commit and push changes to your remote branch.
 `git push origin <my-changes>`
-1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
+1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
 
 ## <a name="dco">Developer Certificate of Origin</a>
 
@@ -85,7 +92,7 @@ __Please note__: All `make` commands should be run in a terminal from within the
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed your machine, preferrably the latest versions.
-1. Clone this repository (`git clone https://github.com/layer5io/meshery.git`), preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH`, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have verion of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 ### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
