@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPoll, faCloud, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import MeshConfigComponent from './MeshConfigComponent';
+import MeshOutClusterConfigComponent from './MeshOutClusterConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
@@ -140,7 +141,24 @@ class MesherySettings extends React.Component {
         </Tabs>
       </Paper>
       {tabVal === 0 && <TabContainer>
-        <MeshConfigComponent />
+        <AppBar position="static" color="default">
+            <Tabs
+              value={subTabVal}
+              onChange={this.handleChange("subTabVal")}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+            >
+              <Tab label="Out of Cluster Deployment" />
+              <Tab label="In Cluster Deployment"/>
+            </Tabs>
+          </AppBar>
+          {subTabVal === 0 && <TabContainer>
+            <MeshOutClusterConfigComponent />
+          </TabContainer>}
+          {subTabVal === 1 && <TabContainer>
+            <MeshConfigComponent />
+          </TabContainer>}
       </TabContainer>}
       {tabVal === 1 && <TabContainer>
         <MeshAdapterConfigComponent />
