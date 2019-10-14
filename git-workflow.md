@@ -39,8 +39,10 @@ To create a new branch and start working on it:
 `git checkout master`
 
 ## Create a new branch (give your branch its own simple informative name)
-For enhancements use "feature/your_username/issue#" or "feature/your_username/name_of_feature"
-For bugs use "bug/your_username/issue#" or "bug/your_username/name_of_bug"
+For enhancements use `feature/your_username/issue#` or `feature/your_username/name_of_feature`
+
+For bugs use `bug/your_username/issue#` or `bug/your_username/name_of_bug`
+
 `git branch feature/jdoe/567`
 
 ## Switch to your new branch
