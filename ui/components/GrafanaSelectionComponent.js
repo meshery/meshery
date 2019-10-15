@@ -7,7 +7,6 @@ import { updateProgress } from '../lib/store';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 
-
 const grafanaStyles = theme => ({
     root: {
       padding: theme.spacing(5),
@@ -109,7 +108,6 @@ class GrafanaSelectionComponent extends Component {
           }
         });
       }
-    
       
       queryTemplateVars = (ind, templateVars, templateVarOptions, selectedTemplateVars) => {
         if (templateVars.length > 0) {

@@ -292,6 +292,7 @@ class GrafanaCustomChart extends Component {
         xAxis: [],
         chartData: [],
         error: '',
+        errorCount: 0,
       };
     }
 
@@ -473,7 +474,7 @@ class GrafanaCustomChart extends Component {
           } else {
             self.createOptions(xAxis, chartData, groups);
           }
-          self.setState({xAxis, chartData, error:''});
+          self.setState({xAxis, chartData, error:'', errorCount: 0});
         }
       };
       if(panelData && panelData[expr]){
@@ -737,7 +738,7 @@ class GrafanaCustomChart extends Component {
     handleError = error => {
       const self = this;
       this.props.updateProgress({showProgress: false});
-      this.setState({error: error.message && error.message !== ''?error.message:(error !== ''?error:'')});
+      this.setState({error: error.message && error.message !== ''?error.message:(error !== ''?error:''), errorCount: self.state.errorCount+1});
     }
     
     render() {
@@ -751,8 +752,14 @@ class GrafanaCustomChart extends Component {
       // if(chartData.datasets.length === filteredData.length){
       //   finalChartData = chartData;
       // }
+      
       const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
-      const {error, chartData, options} = this.state;
+      const {error, errorCount, chartData, options} = this.state;
+
+      if(errorCount > 3 && typeof self.interval !== 'undefined'){
+        clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
+      }
+
       let self = this;
       let iconComponent = (<IconButton
           key="chartDialog"

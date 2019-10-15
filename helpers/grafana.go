@@ -15,16 +15,18 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"fmt"
+	"time"
 
 	"github.com/grafana-tools/sdk"
 )
 
 // GrafanaClient represents a client to Grafana in Meshery
 type GrafanaClient struct {
-	BaseURL string
-	APIKey  string
-	OrgID   uint
-	c       *sdk.Client
+	BaseURL    string
+	APIKey     string
+	OrgID      uint
+	c          *sdk.Client
+	httpClient *http.Client
 
 	promMode bool
 	promURL  string
@@ -32,16 +34,24 @@ type GrafanaClient struct {
 
 // NewGrafanaClient returns a new GrafanaClient
 func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClient, error) {
+	return NewGrafanaClientWithHTTPClient(BaseURL, APIKey, &http.Client{
+		Timeout: 25 * time.Second,
+	}, validateConfig)
+}
+
+// NewGrafanaClientWithHTTPClient returns a new GrafanaClient with the given HTTP Client
+func NewGrafanaClientWithHTTPClient(BaseURL, APIKey string, client *http.Client, validateConfig bool) (*GrafanaClient, error) {
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
 	}
 	g := &GrafanaClient{
-		BaseURL: BaseURL,
-		APIKey:  APIKey,
+		BaseURL:    BaseURL,
+		APIKey:     APIKey,
+		httpClient: client,
 	}
 	if validateConfig {
 		var err error
-		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{})
+		g.c = sdk.NewClient(g.BaseURL, g.APIKey, client)
 		if g.OrgID, err = g.GrafanaConfigValidator(); err != nil {
 			return nil, err
 		}
@@ -49,14 +59,15 @@ func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClie
 	return g, nil
 }
 
-// NewGrafanaClientForPrometheus returns a limited GrafanaClient for use with Prometheus
-func NewGrafanaClientForPrometheus(promURL string) *GrafanaClient {
+// NewGrafanaClientForPrometheusWithHTTPClient returns a limited GrafanaClient for use with Prometheus with the given HTTP client
+func NewGrafanaClientForPrometheusWithHTTPClient(promURL string, client *http.Client) *GrafanaClient {
 	if strings.HasSuffix(promURL, "/") {
 		promURL = strings.Trim(promURL, "/")
 	}
 	g := &GrafanaClient{
-		promURL:  promURL,
-		promMode: true,
+		promURL:    promURL,
+		promMode:   true,
+		httpClient: client,
 	}
 	return g
 }
@@ -69,8 +80,8 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL string) ([]byt
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "autograf")
-	c := &http.Client{}
-	resp, err := c.Do(req)
+	// c := &http.Client{}
+	resp, err := g.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

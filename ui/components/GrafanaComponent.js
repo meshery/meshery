@@ -6,7 +6,7 @@ import dataFetch from '../lib/data-fetch';
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-// import GrafanaCharts from './GrafanaCharts';
+//import GrafanaCharts from './GrafanaCharts';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 import { updateGrafanaConfig, updateProgress } from '../lib/store';
@@ -175,13 +175,13 @@ class GrafanaComponent extends Component {
         if(typeof grafanaURL === 'undefined' || grafanaURL === ''){
           return
         }
-        this.props.updateProgress({showProgress: true});
+        self.props.updateProgress({showProgress: true});
         dataFetch(`/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`, { 
           credentials: 'same-origin',
           method: 'GET',
           credentials: 'include',
         }, result => {
-          this.props.updateProgress({showProgress: false});
+          self.props.updateProgress({showProgress: false});
           if (typeof result !== 'undefined'){
             self.setState({grafanaBoards: result});
             self.props.updateGrafanaConfig({
