@@ -29,7 +29,7 @@ func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*P
 	return NewPrometheusClientWithHTTPClient(ctx, promURL, &http.Client{}, validate)
 }
 
-// NewPrometheusClient returns a PrometheusClient
+// NewPrometheusClientWithHTTPClient returns a PrometheusClient with a given http.Client
 func NewPrometheusClientWithHTTPClient(ctx context.Context, promURL string, client *http.Client, validate bool) (*PrometheusClient, error) {
 	p := &PrometheusClient{
 		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(promURL, client),

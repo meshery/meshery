@@ -39,7 +39,7 @@ func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClie
 	}, validateConfig)
 }
 
-// NewGrafanaClient returns a new GrafanaClient with the given HTTP Client
+// NewGrafanaClientWithHTTPClient returns a new GrafanaClient with the given HTTP Client
 func NewGrafanaClientWithHTTPClient(BaseURL, APIKey string, client *http.Client, validateConfig bool) (*GrafanaClient, error) {
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
