@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"net/http"
 	"net/url"
 	"text/template"
 	"time"
@@ -25,8 +26,13 @@ type PrometheusClient struct {
 
 // NewPrometheusClient returns a PrometheusClient
 func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*PrometheusClient, error) {
+	return NewPrometheusClientWithHTTPClient(ctx, promURL, &http.Client{}, validate)
+}
+
+// NewPrometheusClientWithHTTPClient returns a PrometheusClient with a given http.Client
+func NewPrometheusClientWithHTTPClient(ctx context.Context, promURL string, client *http.Client, validate bool) (*PrometheusClient, error) {
 	p := &PrometheusClient{
-		grafanaClient: NewGrafanaClientForPrometheus(promURL),
+		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(promURL, client),
 		promURL:       promURL,
 	}
 	if validate {

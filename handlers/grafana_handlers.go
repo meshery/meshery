@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/layer5io/meshery/models"
 
@@ -164,7 +165,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
 		return
 	}
-	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
+
+	grafanaClient, err := helpers.NewGrafanaClientWithHTTPClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &http.Client{
+		Timeout: time.Second,
+	}, true)
 	if err != nil {
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
@@ -212,7 +216,9 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
+	grafanaClient, err := helpers.NewGrafanaClientWithHTTPClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &http.Client{
+		Timeout: time.Second,
+	}, true)
 	if err != nil {
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
