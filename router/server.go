@@ -24,6 +24,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(http.HandlerFunc(h.K8SConfigHandler)))
 	mux.Handle("/api/k8sconfig/contexts", h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig)))
 	mux.Handle("/api/k8sconfig/ping", h.AuthMiddleware(http.HandlerFunc(h.KubernetesPingHandler)))
+	mux.Handle("/api/mesh/scan", h.AuthMiddleware(http.HandlerFunc(h.InstalledMeshesHandler)))
 
 	mux.Handle("/api/load-test", h.AuthMiddleware(http.HandlerFunc(h.LoadTestHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(http.HandlerFunc(h.FetchResultsHandler)))

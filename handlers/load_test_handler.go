@@ -33,7 +33,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
-	promURL, _ := session.Values["promURL"].(string)
 	err = req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
@@ -129,31 +128,64 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if sessObj.K8SConfig != nil {
-		if len(sessObj.K8SConfig.Nodes) == 0 {
-			sessObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config)
-			if err != nil {
-				err = errors.Wrap(err, "unable to ping kubernetes")
-				// logrus.Error(err)
-				logrus.Warn(err)
-				// return
-			}
-		}
+		nodesChan := make(chan []*models.K8SNode)
+		versionChan := make(chan string)
+		installedMeshesChan := make(chan map[string]string)
 
-		if sessObj.K8SConfig.ServerVersion == "" {
-			sessObj.K8SConfig.ServerVersion, _ = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config)
-			if err != nil {
-				err = errors.Wrap(err, "unable to ping kubernetes")
-				// logrus.Error(err)
-				logrus.Warn(err)
-				// return
+		go func() {
+			var nodes []*models.K8SNode
+			var err error
+			if len(sessObj.K8SConfig.Nodes) == 0 {
+				nodes, err = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+				if err != nil {
+					err = errors.Wrap(err, "unable to ping kubernetes")
+					// logrus.Error(err)
+					logrus.Warn(err)
+					// return
+				}
 			}
-		}
+			nodesChan <- nodes
+		}()
+		go func() {
+			var serverVersion string
+			var err error
+			if sessObj.K8SConfig.ServerVersion == "" {
+				serverVersion, err = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+				if err != nil {
+					err = errors.Wrap(err, "unable to ping kubernetes")
+					// logrus.Error(err)
+					logrus.Warn(err)
+					// return
+				}
+			}
+			versionChan <- serverVersion
+		}()
+		go func() {
+			installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if err != nil {
+				err = errors.Wrap(err, "unable to scan kubernetes")
+				logrus.Warn(err)
+			}
+			installedMeshesChan <- installedMeshes
+		}()
 
+		nodes := <-nodesChan
+		if len(nodes) > 0 {
+			sessObj.K8SConfig.Nodes = nodes
+		}
+		serverVersion := <-versionChan
+		if serverVersion != "" {
+			sessObj.K8SConfig.ServerVersion = serverVersion
+		}
 		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
 			resultsMap["kubernetes"] = map[string]interface{}{
 				"server_version": sessObj.K8SConfig.ServerVersion,
 				"nodes":          sessObj.K8SConfig.Nodes,
 			}
+		}
+		installedMeshes := <-installedMeshesChan
+		if len(installedMeshes) > 0 {
+			resultsMap["detected-meshes"] = installedMeshes
 		}
 	}
 
@@ -185,6 +217,12 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var promURL string
+	if sessObj.Prometheus != nil {
+		promURL = sessObj.Prometheus.PrometheusURL
+	}
+
+	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" {
 		h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
@@ -202,6 +240,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
+	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
 	promClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false) // probably don't need to validate here
