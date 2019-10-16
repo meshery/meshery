@@ -71,7 +71,7 @@ const styles = theme => ({
 class MesheryPerformanceComponent extends React.Component {
   constructor(props){
     super(props);
-    const {testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig} = props;
+    const {testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig} = props;
 
     this.state = {
       testName, 
@@ -89,6 +89,7 @@ class MesheryPerformanceComponent extends React.Component {
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
+      selectedMesh: '',
     };
   }
 
@@ -141,7 +142,7 @@ class MesheryPerformanceComponent extends React.Component {
 
     let computedTestName = testName;
     if (testName.trim() === '') {
-      const mesh = meshName === ''?'No mesh': meshName;
+      const mesh = meshName === '' || meshName === 'None'?'No mesh': meshName;
       computedTestName = `${mesh}_${(new Date()).getTime()}`;
     }
 
@@ -150,7 +151,7 @@ class MesheryPerformanceComponent extends React.Component {
 
     const data = {
       name: computedTestName, 
-      mesh: meshName, 
+      mesh: meshName === '' || meshName === 'None'?'': meshName, // to prevent None from getting to the DB
       url,
       qps,
       c,
@@ -203,6 +204,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   componentDidMount() {
     this.getStaticPrometheusBoardConfig();
+    this.scanForMeshes();
   }
 
   getStaticPrometheusBoardConfig = () => {
@@ -224,6 +226,26 @@ class MesheryPerformanceComponent extends React.Component {
         self.setState({staticPrometheusBoardConfig: result});
       }
     }, self.handleError("unable to fetch pre-configured boards"));
+  }
+
+  scanForMeshes = () => {
+    const self = this;
+    const {selectedMesh} = this.state;
+    if (typeof self.props.k8sConfig === 'undefined' || !self.props.k8sConfig.clusterConfigured){
+      return;
+    }
+    dataFetch('/api/mesh/scan', { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      if (typeof result !== 'undefined' && Object.keys(result).length > 0){
+        Object.keys(result).forEach(mesh => {
+          self.setState({selectedMesh: mesh});
+          return;
+        })
+      }
+    // }, self.handleError("unable to scan the kubernetes cluster"));
+    }, () => {});
   }
 
   generateUUID(){
@@ -256,7 +278,7 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, 
-        urlError, tError, testUUID } = this.state;
+        urlError, tError, testUUID, selectedMesh } = this.state;
     let staticPrometheusBoardConfig;
     if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
       staticPrometheusBoardConfig = this.props.staticPrometheusBoardConfig;
@@ -340,14 +362,14 @@ class MesheryPerformanceComponent extends React.Component {
               name="meshName"
               label="Service Mesh"
               fullWidth
-              value={meshName}
+              value={meshName === '' && selectedMesh !== ''?selectedMesh:meshName}
               margin="normal"
               variant="outlined"
               onChange={this.handleChange('meshName')}
           >
-                <MenuItem key={'mh_-_none'} value={''}>None</MenuItem>
+                <MenuItem key={'mh_-_none'} value={'None'}>None</MenuItem>
               {meshes && meshes.map((mesh) => (
-                  <MenuItem key={'mh_-_'+mesh} value={mesh}>{mesh}</MenuItem>
+                  <MenuItem key={'mh_-_'+mesh} value={mesh.toLowerCase()}>{mesh}</MenuItem>
               ))}
           </TextField>
         </Grid>
@@ -489,8 +511,9 @@ const mapStateToProps = state => {
   // }
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
+  const k8sConfig = state.get("k8sConfig").toJS();
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
-  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig};
+  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig};
 }
 
 
