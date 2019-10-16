@@ -5,29 +5,18 @@ import (
 
 	"encoding/json"
 
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
-func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {

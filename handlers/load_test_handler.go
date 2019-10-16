@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -20,20 +21,14 @@ import (
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// ensuring session is intact before running load test
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("Error: unable to get session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
+
 	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
-	err = req.ParseForm()
+	err := req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
@@ -110,7 +105,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
-	user, _ := session.Values["user"].(*models.User)
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
