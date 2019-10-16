@@ -56,6 +56,6 @@
   },
   "devDependencies": {
     "http-proxy": "^1.17.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.4"
   }
 }
