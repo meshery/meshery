@@ -117,13 +117,13 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 	sessObj.K8SConfig = kc
 
 	var err error
-	sessObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(k8sConfigBytes)
+	sessObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(kc.Config, kc.ContextName)
 	if err != nil {
 		http.Error(w, "unable to ping the kubernetes server", http.StatusInternalServerError)
 		return
 	}
 
-	sessObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(k8sConfigBytes)
+	sessObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	if err != nil {
 		http.Error(w, "unable to fetch nodes metadata from the kubernetes server", http.StatusInternalServerError)
 		return
@@ -300,8 +300,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	config := sessObj.K8SConfig.Config
-	version, err := helpers.FetchKubernetesVersion(config)
+	version, err := helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to ping kubernetes")
 		logrus.Error(err)
@@ -311,6 +310,46 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	if err = json.NewEncoder(w).Encode(map[string]string{
 		"server_version": version,
 	}); err != nil {
+		err = errors.Wrap(err, "unable to marshal the payload")
+		logrus.Error(err)
+		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		return
+	}
+}
+
+// InstalledMeshesHandler - scans and tries to find out the installed meshes
+func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request) {
+	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	if err != nil {
+		logrus.Error("Unable to get session data.")
+		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
+		return
+	}
+
+	var user *models.User
+	user, _ = session.Values["user"].(*models.User)
+
+	sessObj, err := h.config.SessionPersister.Read(user.UserID)
+	if err != nil {
+		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
+	}
+
+	if sessObj == nil {
+		sessObj = &models.Session{}
+	}
+	if sessObj.K8SConfig == nil {
+		w.Write([]byte("{}"))
+		return
+	}
+
+	installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+	if err != nil {
+		err = errors.Wrap(err, "unable to scan kubernetes")
+		logrus.Error(err)
+		http.Error(w, "unable to scan kubernetes", http.StatusInternalServerError)
+		return
+	}
+	if err = json.NewEncoder(w).Encode(installedMeshes); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
 		logrus.Error(err)
 		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
