@@ -11,6 +11,7 @@ import (
 
 	"os"
 
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -18,24 +19,11 @@ import (
 )
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -276,17 +264,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 }
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request) {
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Error("Unable to get session data.")
-		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
@@ -318,17 +296,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 }
 
 // InstalledMeshesHandler - scans and tries to find out the installed meshes
-func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request) {
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Error("Unable to get session data.")
-		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
+func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("Unable to read session from the session persister. Starting a new session.")

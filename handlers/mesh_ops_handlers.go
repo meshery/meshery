@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -24,14 +25,8 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	_, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("Error getting session: %v.", err)
-		http.Error(w, "Unable to get session.", http.StatusUnauthorized)
-		return
-	}
 
-	err = json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
+	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
 		logrus.Errorf("Error marshalling data: %v.", err)
 		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
@@ -40,20 +35,7 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 }
 
 // MeshAdapterConfigHandler is used to persist adapter config
-func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request) {
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("Error getting session: %v.", err)
-		http.Error(w, "Unable to get session.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
-
+func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
@@ -209,23 +191,11 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 }
 
 // MeshOpsHandler is used to send operations to the adapters
-func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Error("Unable to get session data.")
-		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -279,7 +249,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer mClient.Close()
 
-	operationID, err := uuid.NewV4() 
+	operationID, err := uuid.NewV4()
 
 	if err != nil {
 		logrus.Errorf("Error generating an operation id: %v.", err)
@@ -304,20 +274,11 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 // AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Error("Unable to get session data.")
-		http.Error(w, "Unable to get user data.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
