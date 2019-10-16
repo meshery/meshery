@@ -24,15 +24,16 @@ if (typeof window !== 'undefined') {
 
 
 const meshes = [
+  'Istio',
+  'Linkerd',
   'App Mesh',
   'Aspen Mesh',
   'Consul Connect',
   'Grey Matter',
-  'Istio',
   'Kong',
-  'Linkerd1',
-  'Linkerd2',
   'Mesher',
+  'Network Service Mesh',
+  'Octarine',
   'Rotor',
   'SOFAMesh',
   'Zuul',
