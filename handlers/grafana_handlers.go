@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 
 	"github.com/layer5io/meshery/helpers"
@@ -20,23 +21,11 @@ func init() {
 }
 
 // GrafanaConfigHandler is used for persisting or removing Grafana configuration
-func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -75,28 +64,15 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
-func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet && req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	if req.Method == http.MethodPost {
-		h.SaveSelectedGrafanaBoardsHandler(w, req)
+		h.SaveSelectedGrafanaBoardsHandler(w, req, session, user)
 		return
 	}
-
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -133,24 +109,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
 }
 
 // GrafanaQueryHandler is used for handling Grafana queries
-func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
+
 	reqQuery := req.URL.Query()
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -183,24 +148,13 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request) 
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
-func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
+
 	reqQuery := req.URL.Query()
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
@@ -233,23 +187,11 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
-func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("error getting session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
