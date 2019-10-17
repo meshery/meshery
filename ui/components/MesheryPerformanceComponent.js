@@ -135,7 +135,6 @@ class MesheryPerformanceComponent extends React.Component {
     }
 
     this.submitLoadTest();
-    this.setState({timerDialogOpen: true, result: {}});
   }
 
   submitLoadTest = () => {
@@ -163,19 +162,15 @@ class MesheryPerformanceComponent extends React.Component {
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
-    // console.log(`data to be submitted for load test: ${params}`);
-    let self = this;
-    dataFetch('/api/load-test', { 
-      credentials: 'same-origin',
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      },
-      body: params
-    }, result => {
+    this.startEventStream(`/api/load-test?${params}`);
+  }
+
+  handleSuccess() {
+    const self = this;
+    return (result) => {
+      const {testName, meshName, url, qps, c, t, testUUID} = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.props.enqueueSnackbar('Successfully fetched the data.', {
+        self.props.enqueueSnackbar('Successfully fetched the data.', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -189,7 +184,7 @@ class MesheryPerformanceComponent extends React.Component {
             </IconButton>
           ),
         });
-        this.props.updateLoadTestData({loadTest: {
+        self.props.updateLoadTestData({loadTest: {
           testName,
           meshName,
           url,
@@ -198,9 +193,95 @@ class MesheryPerformanceComponent extends React.Component {
           t, 
           result,
         }});
-        this.setState({result, timerDialogOpen: false, testUUID: self.generateUUID()});
+        self.setState({result, timerDialogOpen: false, testUUID: self.generateUUID()});
       }
-    }, self.handleError("Load test did not run successfully with msg"));
+    }
+  }
+
+  async startEventStream(url) {
+    this.closeEventStream();
+    this.eventStream = new EventSource(url);
+    this.eventStream.onmessage = this.handleEvents();
+    this.eventStream.onerror = this.handleError;
+  }
+
+  handleEvents(){
+    const self = this;
+    let track = 0;
+    return e => {
+      const {events} = this.state;
+      const data = JSON.parse(e.data);
+      // events.push(data);
+      // this.setState({events});
+      switch(data.status){
+        case 'info':
+            self.props.enqueueSnackbar(data.message, {
+              variant: 'info',
+              autoHideDuration: 1000,
+              action: (key) => (
+                <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key) }
+                    >
+                      <CloseIcon />
+                </IconButton>
+              ),
+            });
+            if (track === 0){
+              self.setState({timerDialogOpen: true, result: {}});
+              track++;
+            }
+          break;
+        case 'error':
+          self.handleError("Load test did not run successfully with msg")(data.message);
+          self.closeEventStream();
+          break;
+        case 'success':
+          self.handleSuccess()(data.result);
+          self.closeEventStream();
+          break;
+      }
+    }
+  }
+
+  handleError(){
+    const self = this;
+    return e => {
+      // check if server is available
+      // dataFetch('/api/user', { credentials: 'same-origin' }, user => {
+      //   // attempting to reestablish connection
+      //   setTimeout(() => function() {
+      // self.closeEventStream();
+      self.props.enqueueSnackbar('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.', {
+        variant: 'info',
+        autoHideDuration: 1000,
+        action: (key) => (
+          <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+          </IconButton>
+        ),
+      });
+
+      //     self.startEventStream()
+      //   }, 2000);
+      // }, error => {
+      //   // do nothing here
+      // });
+    }
+  }
+
+  closeEventStream() {
+    if(this.eventStream && this.eventStream.close){
+      this.eventStream.close();
+      this.eventStream = null;
+    }
   }
 
   componentDidMount() {
