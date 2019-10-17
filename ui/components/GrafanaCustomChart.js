@@ -755,12 +755,12 @@ class GrafanaCustomChart extends Component {
       
       const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
       const {error, errorCount, chartData, options} = this.state;
-
+      let self = this;
+      
       if(errorCount > 3 && typeof self.interval !== 'undefined'){
         clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
       }
 
-      let self = this;
       let iconComponent = (<IconButton
           key="chartDialog"
           aria-label="Open chart in a dialog"
