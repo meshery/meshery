@@ -45,11 +45,12 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			GrafanaAPIKey: grafanaAPIKey,
 		}
 
-		_, err = helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
+		g, err := helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
 		if err != nil {
 			http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 			return
 		}
+		defer g.Close()
 		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
 	} else if req.Method == http.MethodDelete {
 		sessObj.Grafana = nil
@@ -93,6 +94,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
 	}
+	defer grafanaClient.Close()
 
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
 	boards, err := grafanaClient.GetGrafanaBoards(dashboardSearch)
@@ -138,6 +140,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
 	}
+	defer grafanaClient.Close()
 
 	data, err := grafanaClient.GrafanaQuery(req.Context(), &reqQuery)
 	if err != nil {
@@ -177,6 +180,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
 	}
+	defer grafanaClient.Close()
 
 	data, err := grafanaClient.GrafanaQueryRange(req.Context(), &reqQuery)
 	if err != nil {

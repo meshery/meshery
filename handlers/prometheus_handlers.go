@@ -89,6 +89,8 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer prometheusClient.Close()
+
 	defer req.Body.Close()
 	boardData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -140,6 +142,8 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer prometheusClient.Close()
+
 	data, err := prometheusClient.Query(req.Context(), &reqQuery)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -178,6 +182,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer prometheusClient.Close()
 
 	testUUID := reqQuery.Get("uuid")
 	if testUUID != "" {
@@ -220,6 +225,8 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer prometheusClient.Close()
+
 	result := map[string]*models.GrafanaBoard{}
 	resultLock := &sync.Mutex{}
 	resultWG := &sync.WaitGroup{}

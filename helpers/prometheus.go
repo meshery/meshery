@@ -73,6 +73,11 @@ func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context) (*models.G
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoardCluster))
 }
 
+// Close - closes idle connections
+func (p *PrometheusClient) Close() {
+	p.grafanaClient.Close()
+}
+
 // GetNodesStaticBoard retrieves the per node static board config
 func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context) (*models.GrafanaBoard, error) {
 	var buf bytes.Buffer
