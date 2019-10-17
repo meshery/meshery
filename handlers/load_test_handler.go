@@ -34,7 +34,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
 		return
 	}
-	q := req.Form
+	q := req.URL.Query()
 
 	testName := q.Get("name")
 	if testName == "" {
@@ -114,11 +114,80 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		sessObj = &models.Session{}
 	}
 
+	log := logrus.WithField("file", "load_test_handler")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		log.Error("Event streaming not supported.")
+		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	notify := w.(http.CloseNotifier).CloseNotify()
+	respChan := make(chan *models.LoadTestResponse, 100)
+	endChan := make(chan struct{})
+	defer close(endChan)
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("Recovered from panic: %v.", r)
+			}
+		}()
+		for data := range respChan {
+			bd, err := json.Marshal(data)
+			if err != nil {
+				logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
+				http.Error(w, "error while running load test", http.StatusInternalServerError)
+				return
+			}
+
+			log.Debug("received new data on response channel")
+			fmt.Fprintf(w, "data: %s\n\n", bd)
+			if flusher != nil {
+				flusher.Flush()
+				log.Debugf("Flushed the messages on the wire...")
+			}
+		}
+		endChan <- struct{}{}
+		log.Debug("response channel closed")
+	}()
+	go func() {
+		h.executeLoadTest(testName, meshName, tokenVal, testUUID, sessObj, loadTestOptions, respChan)
+		close(respChan)
+	}()
+	select {
+	case <-notify:
+		log.Debugf("received signal to close connection and channels")
+		break
+	case <-endChan:
+		log.Debugf("load test completed")
+	}
+}
+
+func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Initiating load test . . . ",
+	}
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
-		logrus.Errorf("error: unable to perform load test: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		err = errors.Wrap(err, "error: unable to perform load test")
+		logrus.Error(err)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: err.Error(),
+		}
 		return
+	}
+
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Load test completed, fetching metadata now",
 	}
 
 	if sessObj.K8SConfig != nil {
@@ -182,7 +251,10 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 			resultsMap["detected-meshes"] = installedMeshes
 		}
 	}
-
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Obtained the needed metadatas, attempting to persist the result",
+	}
 	// // defer fortioResp.Body.Close()
 	// // bd, err := ioutil.ReadAll(fortioResp.Body)
 	// bd, err := json.Marshal(resp)
@@ -197,18 +269,35 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		Mesh:   meshName,
 		Result: resultsMap,
 	}
+	// TODO: can we do something to prevent marshalling twice??
 	bd, err := json.Marshal(result)
 	if err != nil {
-		logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		err = errors.Wrap(err, "unable to marshal meshery result for shipping")
+		logrus.Error(err)
+		// http.Error(w, "error while running load test", http.StatusInternalServerError)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: err.Error(),
+		}
 		return
 	}
 
 	resultID, err := h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 	if err != nil {
-		// logrus.Errorf("Error: unable to parse response from fortio: %v", err)
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		// return
+		err = errors.Wrap(err, "error while persisting load test results")
+		logrus.Error(err)
+		// http.Error(w, "error while running load test", http.StatusInternalServerError)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: err.Error(),
+		}
 		return
+	}
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Done persisting the load test results.",
 	}
 
 	var promURL string
@@ -229,7 +318,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		})
 	}
 
-	w.Write(bd)
+	// w.Write(bd)
+	respChan <- &models.LoadTestResponse{
+		Status: models.LoadTestSuccess,
+		Result: result,
+	}
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS

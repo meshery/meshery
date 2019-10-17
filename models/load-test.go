@@ -30,6 +30,20 @@ type LoadTestOptions struct {
 	GRPCPingDelay    time.Duration
 }
 
+type LoadTestStatus string
+
+const (
+	LoadTestError   LoadTestStatus = "error"
+	LoadTestInfo    LoadTestStatus = "info"
+	LoadTestSuccess LoadTestStatus = "success"
+)
+
+type LoadTestResponse struct {
+	Status  LoadTestStatus `json:"status,omitempty"`
+	Message string         `json:"message,omitempty"`
+	Result  *MesheryResult `json:"result,omitempty"`
+}
+
 // MesheryResult - represents the results from Meshery test run to be shipped
 type MesheryResult struct {
 	ID     uuid.UUID              `json:"meshery_id,omitempty"`
