@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Network Service Mesh
 permalink: installation/adapters/nsm
 ---
 

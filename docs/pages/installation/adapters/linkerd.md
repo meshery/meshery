@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Linkerd
 permalink: installation/adapters/linkerd
 ---
 
