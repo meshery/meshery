@@ -1,0 +1,19 @@
+---
+layout: null
+permalink: /sitemap.xml
+---
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+     <loc>/</loc>
+     <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+{% for section in site.data.toc %}<url>
+     <loc>{{ site.baseurl }}{{ section.url }}/</loc>
+     <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+{% endfor %}
+</urlset>
