@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Kuma
 permalink: installation/adapters/kuma
 ---
 

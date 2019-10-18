@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Maesh
 permalink: installation/adapters/maesh
 ---
 
