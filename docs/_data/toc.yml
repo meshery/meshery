@@ -1,0 +1,20 @@
+- title: Documentation
+  url: '#'
+  links:
+    - title: Overview
+      url: '#'
+    - title: Installation
+      url: installation
+      children:
+        - title: Adapters
+          url: installation/adapters
+        - title: Minikube
+          url: installation/minikube
+        - title: Releases
+          url: installation/releases
+    - title: Architecture
+      url: architecture
+    - title: Performance
+      url: performance
+    - title: Playground
+      url: playground
