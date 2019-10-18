@@ -1,91 +1,53 @@
 <!DOCTYPE html>
-
-<html lang="en-us">
-{% include head.html %}
-<body>
-
-  <div class="page-wrap">
-    <div class="side-bar" style="background-color:transparent !important">
-      <a href="{{ site.url }}{{ site.baseurl }}" class="site-title fs-6 lh-tight" style="background-color:transparent">{{ site.title }}</a>
-      <div class="navigation main-nav js-main-nav">
-        {% include nav.html %}
-      </div>
-    </div>
-    <div class="main-content-wrap js-main-content" tabindex="0">
-      <div class="page-header" style="background-color:transparent !important">
-        <div class="main-content">
-          {% if site.search_enabled != nil %}
-          <div class="search js-search">
-            <div class="search-input-wrap" style="background-color:transparent !important">
-              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search {{ site.title }}" aria-label="Search {{ site.title }}" autocomplete="off">
-              <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg>
-            </div>
-            <div class="js-search-results search-results-wrap"></div>
+<html lang="en" class="no-js">
+  {% include head.html %}
+  {% include google-analytics.html %}
+  <body class="td-section">
+    {% include header.html %}
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+          {% include sidebar.html %}
           </div>
-          {% endif %}
-          {% if site.aux_links != nil %}
-            <ul class="list-style-none text-small mt-md-1 mb-md-1 pb-4 pb-md-0 js-aux-nav aux-nav">
-              {% for link in site.aux_links %}
-                <li class="d-inline-block my-0{% unless forloop.last %} mr-2{% endunless %}"><a href="{{ link.last }}">{{ link.first }}</a></li>
-              {% endfor %}
-            </ul>
-          {% endif %}
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+              <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+                  {% include editable.html %}
+              </div>
+              <nav id="TableOfContents"><ul>
+              <li><ul id="TOC">
+                <!-- Links will be appended here-->
+              </ul></li>
+              </ul></nav>
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	      <ol class="breadcrumb spb-1">
+                <li class="breadcrumb-item active" aria-current="page">
+		  <!-- meshery-custom-begin -->
+	          <a href="{{ site.baseurl }}/{{ page.url }}">{{ page.title }}</a>
+		  <!-- meshery-custom-end -->
+                </li>
+	      </ol>
+           </nav>
+           <div class="td-content">
+	      {{ content }}	
+              {% if section.links %}<div class="section-index">
+               <hr class="panel-line">{% for child in section.links %}
+                 <div class="entry">
+                    <h5>
+                        <a href="{% if child.url %}{{ site.baseurl }}{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>
+                    </h5>
+                    <p>{{ child.description }}</p>
+                 </div>{% endfor %}
+              </div>{% endif %}
+              {% include feedback.html %}
+           </div>
+          </main>
         </div>
       </div>
-      <div class="main-content">
-        {% unless page.url == "/" %}
-          {% if page.parent %}
-            <div class="breadcrumb-nav" style="background-color: transparent">
-              <ol class="breadcrumb-nav-list">
-                {% if page.grand_parent %}
-                  <li class="breadcrumb-nav-list-item"><a href="{{ first_level_url }}">{{ page.grand_parent }}</a></li>
-                  <li class="breadcrumb-nav-list-item"><a href="{{ second_level_url }}">{{ page.parent }}</a></li>
-                {% else %}
-                  <li class="breadcrumb-nav-list-item"><a href="{{ first_level_url }}">{{ page.parent }}</a></li>
-                {% endif %}
-                <li class="breadcrumb-nav-list-item"><span>{{ page.title }}</span></li>
-              </ol>
-            </div>
-          {% endif %}
-        {% endunless %}
-        <div id="main-content" class="page-content card" role="main">
-          <div class="card-content">
-          {{ content }}
-
-          {% if page.has_children == true and page.has_toc != false %}
-          <hr>
-          <h2>Table of contents</h2>
-          {% assign children_list = site.pages | sort:"nav_order" %}
-          <ul>
-            {% for child in children_list %}
-              {% if child.parent == page.title and child.title != page.title %}
-              <li>
-                <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
-              </li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-          {% endif %}
-          </div>
-        </div>
-        {% include footer.html %}
-      </div>
+      {% include footer.html %}
     </div>
-  </div>
-
-  <div id="particles-js"></div>
-
-  <script type="text/javascript" src="{{"/assets/js/jquery-3.2.1.min.js" | absolute_url }}"></script>
-  <script type="text/javascript" src="{{"/assets/js/materialize.min.js" | absolute_url }}"></script>
-  <script src="{{"/assets/js/init.js" | absolute_url }}"></script>
-
-{% if site.tag_manager_id and jekyll.environment == 'production' %}
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{site.tag_manager_id}}"
-                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-{% endif %}
-<script  src="{{"/assets/js/particles/particles.js" | absolute_url }}"></script>
-<script  src="{{"/assets/js/particles/app.js" | absolute_url }}"></script>
-</body>
+    {% include scripts.html %}
+  </body>
 </html>
