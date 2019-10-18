@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Octarine
 permalink: installation/adapters/octarine
 ---
 
