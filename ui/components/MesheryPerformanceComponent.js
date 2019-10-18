@@ -84,6 +84,7 @@ class MesheryPerformanceComponent extends React.Component {
       result,
 
       timerDialogOpen: false,
+      blockRunTest: false,
       urlError: false,
       tError: false,
       testNameError: false,
@@ -163,6 +164,7 @@ class MesheryPerformanceComponent extends React.Component {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
     this.startEventStream(`/api/load-test?${params}`);
+    this.setState({blockRunTest: true}); // to block the button
   }
 
   handleSuccess() {
@@ -193,7 +195,7 @@ class MesheryPerformanceComponent extends React.Component {
           t, 
           result,
         }});
-        self.setState({result, timerDialogOpen: false, testUUID: self.generateUUID()});
+        self.setState({result, testUUID: self.generateUUID()});
       }
     }
   }
@@ -203,6 +205,20 @@ class MesheryPerformanceComponent extends React.Component {
     this.eventStream = new EventSource(url);
     this.eventStream.onmessage = this.handleEvents();
     this.eventStream.onerror = this.handleError;
+    this.props.enqueueSnackbar('Load test has been successfully submitted', {
+      variant: 'info',
+      autoHideDuration: 1000,
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+    });
   }
 
   handleEvents(){
@@ -236,10 +252,12 @@ class MesheryPerformanceComponent extends React.Component {
           break;
         case 'error':
           self.handleError("Load test did not run successfully with msg")(data.message);
+          self.setState({blockRunTest: false, timerDialogOpen: false});
           self.closeEventStream();
           break;
         case 'success':
           self.handleSuccess()(data.result);
+          self.setState({blockRunTest: false, timerDialogOpen: false});
           self.closeEventStream();
           break;
       }
@@ -335,7 +353,6 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleError = (msg) => error => {
-    this.setState({timerDialogOpen: false });
     const self = this;
     this.props.enqueueSnackbar(`${msg}: ${error}`, {
       variant: 'error',
@@ -359,7 +376,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana, prometheus } = this.props;
-    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, 
+    const { timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, 
         urlError, tError, testUUID, selectedMesh } = this.state;
     let staticPrometheusBoardConfig;
     if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
@@ -527,7 +544,7 @@ class MesheryPerformanceComponent extends React.Component {
             size="large"
             onClick={this.handleSubmit}
             className={classes.button}
-            disabled={timerDialogOpen}
+            disabled={blockRunTest}
           >
            Run Test
           </Button>
