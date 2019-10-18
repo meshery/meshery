@@ -1,52 +1,54 @@
-<div class="page-footer">
-        <div class="container">
-          <div class="row">
-            <div class="col s6">
-              <span class="white-text" style="font-weight: bold;font-size:1.3em;">Resources</span>
-              <ul class="footer-list">
-                <li><a class="white-text" href="https://layer5.io/landscape">Service Mesh Comparison</a></li>
-                <li><a class="white-text" href="https://layer5.io/landscape#tools">Service Mesh Tools</a></li>
-                <li><a class="white-text" href="https://layer5.io/books">Service Mesh Books</a></li>
-                <li><a class="white-text" href="https://layer5.io/workshops">Service Mesh Workshop</a></li>
-              </ul>
-            </div>
-            <div class="col s6">
-              <span class="white-text" style="font-weight: bold;font-size:1.3em;">Contact</span>
-                <div>
-            <ul class="footer-list">
-              <a class="white-text" href="mailto:community@layer5.io">
-                <img class="small-on-med-and-down" width="40px" src="/docs/assets/images/email.svg"></a>
-              <a href="http://slack.layer5.io/">
-                <img class="small-on-med-and-down" width="40px" src="/docs/assets/images/slack.svg"></a>
-              <a href="https://twitter.com/layer5">
-                <img class="small-on-med-and-down" width="40px" src="/docs/assets/images/twitter.svg"></a>
-              <a href="https://github.com/layer5io">
-                <img class="small-on-med-and-down" width="40px" src="/docs/assets/images/github.svg"></a>
-                <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">
-                    <img class="small-on-med-and-down" width="40px" src="/docs/assets/images/youtube.svg"></a>
-              <a href="https://hub.docker.com/u/layer5/">
-                <img class="small-on-med-and-down devicon-docker-plain" width="40px" src="/docs/assets/images/docker.svg"></a>
-            </ul>
-          </div>
-              <a class="white-text" href="https://layer5.io/subscribe">Subscribe to mailing list</a>
-            </div>
-          </div>
-        </div>
-        <div class="footer-copyright grey-text text-lighten-1 container">
-          <div class="row">
-            <div class="col s4">
-              <i class="material-icons grey-text" style="padding-right:2px;">&copy;</i>2019 Copyright
-              <a class="waves-effect waves-light grey-text text-lighten-2" style="vertical-align: middle;" href="https://github.com/layer5io/layer5/graphs/contributors">Layer5 Authors</a>
-            </div>
-            <div class="col s4 grey-text text-lighten-2">
-              All rights reserved
-            </div>
-            <div class="col s4">
-                design by
-                <div>
-                  <a class="waves-effect waves-light grey-text text-lighten-2" style="vertical-align: middle;" href="https://calcotestudios.com">Calcote Studios</a>
-                </div> 
-            </div>
-          </div>
-        </div>
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+<!-- meshery-custom-begin
+{% if site.twitter %}<ul class="list-inline mb-0">  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/{{ site.twitter }}">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>{% endif %}
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="{{ site.repo }}">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+
+</div>
+
+<div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+  <small class="text-white">© 2019 {{ site.author }} All Rights Reserved</small>
+  {% if site.privacy %}<small class="ml-1"><a href="{{ site.privacy }}" target="_blank">Privacy Policy</a></small>{% endif %}
+
+  <!-- meshery-custom-begin -->
+
+  <p class="mt-2">
+    <a class="text-white" href="mailto:community@layer5.io">
+      <img class="small-on-med-and-down" width="40px" src="/docs/assets/img/email.svg"></a>
+    <a href="http://slack.layer5.io/">
+      <img class="small-on-med-and-down" width="40px" src="/docs/assets/img/slack.svg"></a>
+    <a href="https://twitter.com/layer5">
+      <img class="small-on-med-and-down" width="40px" src="/docs/assets/img/twitter.svg"></a>
+    <a href="https://github.com/layer5io">
+      <img class="small-on-med-and-down" width="40px" src="/docs/assets/img/github.svg"></a>
+    <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">
+      <img class="small-on-med-and-down" width="40px" src="/docs/assets/img/youtube.svg"></a>
+    <a href="https://hub.docker.com/u/layer5/">
+      <img class="small-on-med-and-down devicon-docker-plain" width="40px" src="/docs/assets/img/docker.svg"></a>
+  </p>	
+
+  <!-- meshery-custom-end -->
+
+      </div>
     </div>
+  </div>
+</footer>
