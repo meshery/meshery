@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Istio
 permalink: installation/adapters/istio
 ---
 
