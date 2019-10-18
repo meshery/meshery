@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: Consul
 permalink: installation/adapters/consul
 ---
 

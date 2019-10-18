@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adapters
+title: App Mesh
 permalink: installation/adapters/app-mesh
 ---
 
