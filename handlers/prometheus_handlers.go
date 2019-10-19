@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -86,7 +85,10 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 
 	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), sessObj.Prometheus.PrometheusURL, false)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to initiate a client to connect to prometheus"
+		err = errors.Wrap(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	defer prometheusClient.Close()
@@ -94,20 +96,22 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	defer req.Body.Close()
 	boardData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		msg := "unable to get the board payload"
+		msg := "unable to read the board payload"
 		logrus.Error(errors.Wrap(err, msg))
 		http.Error(w, msg, http.StatusUnauthorized)
 		return
 	}
 	board, err := prometheusClient.ImportGrafanaBoard(req.Context(), boardData)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to import the boards"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
 		logrus.Errorf("error marshalling board: %v", err)
-		http.Error(w, fmt.Sprintf("unable to marshal board: %v", err), http.StatusInternalServerError)
+		http.Error(w, "unable to marshal the board instance", http.StatusInternalServerError)
 		return
 	}
 }
@@ -139,14 +143,18 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		Timeout: time.Second,
 	}, false)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to create a client to talk to prometheus"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	defer prometheusClient.Close()
 
 	data, err := prometheusClient.Query(req.Context(), &reqQuery)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "connection to prometheus failed"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	w.Write(data)
@@ -179,7 +187,9 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		Timeout: time.Second,
 	}, false)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to create a client to talk to prometheus"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	defer prometheusClient.Close()
@@ -192,7 +202,9 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 	data, err := prometheusClient.QueryRange(req.Context(), &reqQuery)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "connection to prometheus failed"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	w.Write(data)
@@ -222,7 +234,9 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		Timeout: time.Second,
 	}, true)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to create a client to talk to prometheus"
+		logrus.Error(errors.Wrap(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	defer prometheusClient.Close()
@@ -256,7 +270,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
 		logrus.Errorf("error marshalling board: %v", err)
-		http.Error(w, fmt.Sprintf("unable to marshal board: %v", err), http.StatusInternalServerError)
+		http.Error(w, "unable to marshal board instance", http.StatusInternalServerError)
 		return
 	}
 }
@@ -290,8 +304,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
+		logrus.Error(errors.Wrapf(err, msg))
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -299,8 +312,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		msg := "unable to parse the request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
+		logrus.Error(errors.Wrapf(err, msg))
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
