@@ -61,8 +61,10 @@ func main() {
 
 	// Uncomment line below to generate a new UID and force the user to login every time Meshery is started.
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
-	fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
-	fileSessionStore.MaxLength(0)
+	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
+	// fileSessionStore.MaxLength(0)
+
+	cookieSessionStore := sessions.NewCookieStore([]byte("Meshery"))
 
 	queueFactory := memqueue.NewFactory()
 	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
@@ -74,6 +76,8 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+
+	// sessionPersister, _ := helpers.NewMapSessionPersister()
 	defer sessionPersister.Close()
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
@@ -81,8 +85,9 @@ func main() {
 
 		RefCookieName: "meshery_ref",
 
-		SessionName:  "meshery",
-		SessionStore: fileSessionStore,
+		SessionName: "meshery",
+		// SessionStore: fileSessionStore,
+		SessionStore: cookieSessionStore,
 
 		SaaSTokenName: "meshery_saas",
 

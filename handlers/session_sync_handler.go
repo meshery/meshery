@@ -30,10 +30,12 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, s
 	// // We can ignore the errors here. They are logged in the other method
 	// }
 
-	meshAdapters := sessObj.MeshAdapters
-	if meshAdapters == nil {
-		meshAdapters = []*models.Adapter{}
-	}
+	// meshAdapters := sessObj.MeshAdapters
+	// if meshAdapters == nil {
+	// meshAdapters = []*models.Adapter{}
+	// }
+
+	meshAdapters := []*models.Adapter{}
 
 	for _, adapterURL := range h.config.AdapterTracker.GetAdapters(req.Context()) {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
