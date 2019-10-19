@@ -65,5 +65,14 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 // Run starts the http server
 func (r *Router) Run() error {
+	// s := &http.Server{
+	// 	Addr:           fmt.Sprintf(":%d", r.port),
+	// 	Handler:        r.s,
+	// 	ReadTimeout:    5 * time.Second,
+	// 	WriteTimeout:   5 * time.Second,
+	// 	MaxHeaderBytes: 1 << 20,
+	// 	IdleTimeout:    0, //time.Second,
+	// }
+	// return s.ListenAndServe()
 	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.s)
 }

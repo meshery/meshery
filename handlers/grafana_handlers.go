@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -99,13 +98,15 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
 	boards, err := grafanaClient.GetGrafanaBoards(dashboardSearch)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to get grafana boards"
+		logrus.Error(errors.Wrapf(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
 		logrus.Errorf("error marshalling boards: %v", err)
-		http.Error(w, fmt.Sprintf("unable to marshal boards: %v", err), http.StatusInternalServerError)
+		http.Error(w, "unable to marshal boards payload", http.StatusInternalServerError)
 		return
 	}
 }
@@ -144,7 +145,9 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 
 	data, err := grafanaClient.GrafanaQuery(req.Context(), &reqQuery)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to query grafana"
+		logrus.Error(errors.Wrapf(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	w.Write(data)
@@ -184,7 +187,9 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	data, err := grafanaClient.GrafanaQueryRange(req.Context(), &reqQuery)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := "unable to query grafana"
+		logrus.Error(errors.Wrapf(err, msg))
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 	w.Write(data)
@@ -219,8 +224,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
+		logrus.Error(errors.Wrapf(err, msg))
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -228,8 +232,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		msg := "unable to parse the request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
+		logrus.Error(errors.Wrapf(err, msg))
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
