@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
+import { updateLoadTestData, updateStaticPrometheusBoardConfig, updateProgress } from '../lib/store';
 // import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
@@ -165,6 +165,7 @@ class MesheryPerformanceComponent extends React.Component {
     }).join('&');
     this.startEventStream(`/api/load-test?${params}`);
     this.setState({blockRunTest: true}); // to block the button
+    this.props.updateProgress({showProgress: true});
   }
 
   handleSuccess() {
@@ -204,7 +205,7 @@ class MesheryPerformanceComponent extends React.Component {
     this.closeEventStream();
     this.eventStream = new EventSource(url);
     this.eventStream.onmessage = this.handleEvents();
-    this.eventStream.onerror = this.handleError;
+    this.eventStream.onerror = this.handleError('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.');
     this.props.enqueueSnackbar('Load test has been successfully submitted', {
       variant: 'info',
       autoHideDuration: 1000,
@@ -252,46 +253,14 @@ class MesheryPerformanceComponent extends React.Component {
           break;
         case 'error':
           self.handleError("Load test did not run successfully with msg")(data.message);
-          self.setState({blockRunTest: false, timerDialogOpen: false});
-          self.closeEventStream();
           break;
         case 'success':
           self.handleSuccess()(data.result);
           self.setState({blockRunTest: false, timerDialogOpen: false});
+          self.props.updateProgress({showProgress: false});
           self.closeEventStream();
           break;
       }
-    }
-  }
-
-  handleError(){
-    const self = this;
-    return e => {
-      // check if server is available
-      // dataFetch('/api/user', { credentials: 'same-origin' }, user => {
-      //   // attempting to reestablish connection
-      //   setTimeout(() => function() {
-      // self.closeEventStream();
-      self.props.enqueueSnackbar('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.', {
-        variant: 'info',
-        autoHideDuration: 1000,
-        action: (key) => (
-          <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
-              >
-                <CloseIcon />
-          </IconButton>
-        ),
-      });
-
-      //     self.startEventStream()
-      //   }, 2000);
-      // }, error => {
-      //   // do nothing here
-      // });
     }
   }
 
@@ -352,22 +321,27 @@ class MesheryPerformanceComponent extends React.Component {
     return uuid();
   }
 
-  handleError = (msg) => error => {
+  handleError (msg){
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant: 'error',
-      action: (key) => (
-        <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration: 8000,
-    });
+    return error => {
+      self.setState({blockRunTest: false, timerDialogOpen: false});
+      self.props.updateProgress({showProgress: false});
+      self.closeEventStream();
+      self.props.enqueueSnackbar(`${msg}: ${error}`, {
+        variant: 'error',
+        action: (key) => (
+          <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration: 8000,
+      });
+    }
   }
 
   handleTimerDialogClose = () => {
@@ -593,6 +567,7 @@ const mapDispatchToProps = dispatch => {
   return {
     updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
     updateStaticPrometheusBoardConfig: bindActionCreators(updateStaticPrometheusBoardConfig, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = state => {

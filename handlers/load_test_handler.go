@@ -176,11 +176,12 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 	}
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
-		err = errors.Wrap(err, "error: unable to perform load test")
+		msg := "error: unable to perform load test"
+		err = errors.Wrap(err, msg)
 		logrus.Error(err)
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
-			Message: err.Error(),
+			Message: msg,
 		}
 		return
 	}
@@ -272,12 +273,13 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 	// TODO: can we do something to prevent marshalling twice??
 	bd, err := json.Marshal(result)
 	if err != nil {
-		err = errors.Wrap(err, "unable to marshal meshery result for shipping")
+		msg := "error: unable to marshal meshery result for shipping"
+		err = errors.Wrap(err, msg)
 		logrus.Error(err)
 		// http.Error(w, "error while running load test", http.StatusInternalServerError)
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
-			Message: err.Error(),
+			Message: msg,
 		}
 		return
 	}
@@ -286,12 +288,13 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 	if err != nil {
 		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		// return
-		err = errors.Wrap(err, "error while persisting load test results")
+		msg := "error: unable to persist the load test results"
+		err = errors.Wrap(err, msg)
 		logrus.Error(err)
 		// http.Error(w, "error while running load test", http.StatusInternalServerError)
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
-			Message: err.Error(),
+			Message: msg,
 		}
 		return
 	}

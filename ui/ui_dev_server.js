@@ -18,7 +18,7 @@ proxy.on('error', function (err, req, res) {
     'Content-Type': 'text/plain'
   });
 
-  res.end('Something went wrong. And we are reporting a custom error message.');
+  res.end('Something went wrong');
 });
 
 
