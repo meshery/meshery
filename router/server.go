@@ -69,7 +69,7 @@ func (r *Router) Run() error {
 	// 	Addr:           fmt.Sprintf(":%d", r.port),
 	// 	Handler:        r.s,
 	// 	ReadTimeout:    5 * time.Second,
-	// 	WriteTimeout:   5 * time.Second,
+	// 	WriteTimeout:   2 * time.Minute,
 	// 	MaxHeaderBytes: 1 << 20,
 	// 	IdleTimeout:    0, //time.Second,
 	// }
