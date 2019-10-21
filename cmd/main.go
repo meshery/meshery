@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"os/signal"
 	"path"
 
 	"github.com/layer5io/meshery/helpers"
@@ -111,8 +112,15 @@ func main() {
 	// 	}
 	// }()
 
-	logrus.Infof("Starting Server listening on :%d", port)
-	if err := r.Run(); err != nil {
-		logrus.Fatalf("ListenAndServe Error: %v", err)
-	}
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	go func() {
+		logrus.Infof("Starting Server listening on :%d", port)
+		if err := r.Run(); err != nil {
+			logrus.Fatalf("ListenAndServe Error: %v", err)
+		}
+	}()
+	<-c
+	logrus.Info("Shutting down Meshery")
 }
