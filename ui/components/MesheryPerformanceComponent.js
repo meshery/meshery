@@ -198,6 +198,9 @@ class MesheryPerformanceComponent extends React.Component {
         }});
         self.setState({result, testUUID: self.generateUUID()});
       }
+      self.closeEventStream();
+      self.setState({blockRunTest: false, timerDialogOpen: false});
+      self.props.updateProgress({showProgress: false});
     }
   }
 
@@ -226,10 +229,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     let track = 0;
     return e => {
-      const {events} = this.state;
       const data = JSON.parse(e.data);
-      // events.push(data);
-      // this.setState({events});
       switch(data.status){
         case 'info':
             self.props.enqueueSnackbar(data.message, {
@@ -256,9 +256,6 @@ class MesheryPerformanceComponent extends React.Component {
           break;
         case 'success':
           self.handleSuccess()(data.result);
-          self.setState({blockRunTest: false, timerDialogOpen: false});
-          self.props.updateProgress({showProgress: false});
-          self.closeEventStream();
           break;
       }
     }
@@ -327,7 +324,11 @@ class MesheryPerformanceComponent extends React.Component {
       self.setState({blockRunTest: false, timerDialogOpen: false});
       self.props.updateProgress({showProgress: false});
       self.closeEventStream();
-      self.props.enqueueSnackbar(`${msg}: ${error}`, {
+      let finalMsg = msg;
+      if (typeof error === 'string'){
+        finalMsg = `${msg}: ${error}`;
+      }
+      self.props.enqueueSnackbar(finalMsg, {
         variant: 'error',
         action: (key) => (
           <IconButton
