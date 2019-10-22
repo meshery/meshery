@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -20,27 +21,20 @@ import (
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// ensuring session is intact before running load test
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("Error: unable to get session: %v", err)
-		http.Error(w, "unable to get session", http.StatusUnauthorized)
-		return
-	}
+
 	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
-	promURL, _ := session.Values["promURL"].(string)
-	err = req.ParseForm()
+	err := req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
 		return
 	}
-	q := req.Form
+	q := req.URL.Query()
 
 	testName := q.Get("name")
 	if testName == "" {
@@ -111,7 +105,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
-	user, _ := session.Values["user"].(*models.User)
 	sessObj, err := h.config.SessionPersister.Read(user.UserID)
 	if err != nil {
 		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
@@ -121,33 +114,127 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		sessObj = &models.Session{}
 	}
 
+	log := logrus.WithField("file", "load_test_handler")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		log.Error("Event streaming not supported.")
+		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	notify := w.(http.CloseNotifier).CloseNotify()
+	respChan := make(chan *models.LoadTestResponse, 100)
+	endChan := make(chan struct{})
+	defer close(endChan)
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("Recovered from panic: %v.", r)
+			}
+		}()
+		for data := range respChan {
+			bd, err := json.Marshal(data)
+			if err != nil {
+				logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
+				http.Error(w, "error while running load test", http.StatusInternalServerError)
+				return
+			}
+
+			log.Debug("received new data on response channel")
+			fmt.Fprintf(w, "data: %s\n\n", bd)
+			if flusher != nil {
+				flusher.Flush()
+				log.Debugf("Flushed the messages on the wire...")
+			}
+		}
+		endChan <- struct{}{}
+		log.Debug("response channel closed")
+	}()
+	go func() {
+		h.executeLoadTest(testName, meshName, tokenVal, testUUID, sessObj, loadTestOptions, respChan)
+		close(respChan)
+	}()
+	select {
+	case <-notify:
+		log.Debugf("received signal to close connection and channels")
+		break
+	case <-endChan:
+		log.Debugf("load test completed")
+	}
+}
+
+func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Initiating load test . . . ",
+	}
 	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	if err != nil {
-		logrus.Errorf("error: unable to perform load test: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		msg := "error: unable to perform load test"
+		err = errors.Wrap(err, msg)
+		logrus.Error(err)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: msg,
+		}
 		return
 	}
 
-	if sessObj.K8SConfig != nil {
-		if len(sessObj.K8SConfig.Nodes) == 0 {
-			sessObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config)
-			if err != nil {
-				err = errors.Wrap(err, "unable to ping kubernetes")
-				// logrus.Error(err)
-				logrus.Warn(err)
-				// return
-			}
-		}
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Load test completed, fetching metadata now",
+	}
 
-		if sessObj.K8SConfig.ServerVersion == "" {
-			sessObj.K8SConfig.ServerVersion, _ = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config)
-			if err != nil {
-				err = errors.Wrap(err, "unable to ping kubernetes")
-				// logrus.Error(err)
-				logrus.Warn(err)
-				// return
+	if sessObj.K8SConfig != nil {
+		nodesChan := make(chan []*models.K8SNode)
+		versionChan := make(chan string)
+		installedMeshesChan := make(chan map[string]string)
+
+		go func() {
+			var nodes []*models.K8SNode
+			var err error
+			if len(sessObj.K8SConfig.Nodes) == 0 {
+				nodes, err = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+				if err != nil {
+					err = errors.Wrap(err, "unable to ping kubernetes")
+					// logrus.Error(err)
+					logrus.Warn(err)
+					// return
+				}
 			}
-		}
+			nodesChan <- nodes
+		}()
+		go func() {
+			var serverVersion string
+			var err error
+			if sessObj.K8SConfig.ServerVersion == "" {
+				serverVersion, err = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+				if err != nil {
+					err = errors.Wrap(err, "unable to ping kubernetes")
+					// logrus.Error(err)
+					logrus.Warn(err)
+					// return
+				}
+			}
+			versionChan <- serverVersion
+		}()
+		go func() {
+			installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if err != nil {
+				err = errors.Wrap(err, "unable to scan kubernetes")
+				logrus.Warn(err)
+			}
+			installedMeshesChan <- installedMeshes
+		}()
+
+		sessObj.K8SConfig.Nodes = <-nodesChan
+		sessObj.K8SConfig.ServerVersion = <-versionChan
 
 		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
 			resultsMap["kubernetes"] = map[string]interface{}{
@@ -155,8 +242,15 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 				"nodes":          sessObj.K8SConfig.Nodes,
 			}
 		}
+		installedMeshes := <-installedMeshesChan
+		if len(installedMeshes) > 0 {
+			resultsMap["detected-meshes"] = installedMeshes
+		}
 	}
-
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Obtained the needed metadatas, attempting to persist the result",
+	}
 	// // defer fortioResp.Body.Close()
 	// // bd, err := ioutil.ReadAll(fortioResp.Body)
 	// bd, err := json.Marshal(resp)
@@ -171,20 +265,45 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		Mesh:   meshName,
 		Result: resultsMap,
 	}
+	// TODO: can we do something to prevent marshalling twice??
 	bd, err := json.Marshal(result)
 	if err != nil {
-		logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
-		http.Error(w, "error while running load test", http.StatusInternalServerError)
+		msg := "error: unable to marshal meshery result for shipping"
+		err = errors.Wrap(err, msg)
+		logrus.Error(err)
+		// http.Error(w, "error while running load test", http.StatusInternalServerError)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: msg,
+		}
 		return
 	}
 
 	resultID, err := h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
 	if err != nil {
-		// logrus.Errorf("Error: unable to parse response from fortio: %v", err)
-		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		// return
+		msg := "error: unable to persist the load test results"
+		err = errors.Wrap(err, msg)
+		logrus.Error(err)
+		// http.Error(w, "error while running load test", http.StatusInternalServerError)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: msg,
+		}
 		return
 	}
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Done persisting the load test results.",
+	}
 
+	var promURL string
+	if sessObj.Prometheus != nil {
+		promURL = sessObj.Prometheus.PrometheusURL
+	}
+
+	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" {
 		h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
@@ -197,11 +316,16 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request) {
 		})
 	}
 
-	w.Write(bd)
+	// w.Write(bd)
+	respChan <- &models.LoadTestResponse{
+		Status: models.LoadTestSuccess,
+		Result: result,
+	}
 }
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
+	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
 	promClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false) // probably don't need to validate here
