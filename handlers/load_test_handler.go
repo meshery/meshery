@@ -233,14 +233,9 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 			installedMeshesChan <- installedMeshes
 		}()
 
-		nodes := <-nodesChan
-		if len(nodes) > 0 {
-			sessObj.K8SConfig.Nodes = nodes
-		}
-		serverVersion := <-versionChan
-		if serverVersion != "" {
-			sessObj.K8SConfig.ServerVersion = serverVersion
-		}
+		sessObj.K8SConfig.Nodes = <-nodesChan
+		sessObj.K8SConfig.ServerVersion = <-versionChan
+
 		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
 			resultsMap["kubernetes"] = map[string]interface{}{
 				"server_version": sessObj.K8SConfig.ServerVersion,
