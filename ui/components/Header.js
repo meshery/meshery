@@ -53,7 +53,7 @@ const styles = theme => ({
     marginLeft: theme.spacing(1),
   },
   pageTitleWrapper: {
-    flexGrow: 0,
+    flexGrow: 1,
     marginRight: 'auto'
   },
   pageTitle: {
