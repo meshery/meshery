@@ -32,6 +32,7 @@ func (h *Handler) validateAuth(req *http.Request) bool {
 	return false
 }
 
+// SessionInjectorMiddleware - is a middleware which injects user and session object
 func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *sessions.Session, *models.User)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// ensuring session is intact before running load test
