@@ -35,7 +35,7 @@ docker-run-cloud:
 # Runs Meshery on your local machine and points to locally-running  
 #  Meshery Cloud for user authentication.
 run-local-cloud:
-	cd cmd; go clean; go mod tidy; go build -tags draft -a -o meshery; \
+	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	PORT=9081 \
 	DEBUG=true \
@@ -46,7 +46,7 @@ run-local-cloud:
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
 run-local:
-	cd cmd; go clean; go mod tidy; go build -tags draft -a -o meshery; \
+	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
