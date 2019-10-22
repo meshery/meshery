@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Tooltip, MenuItem, IconButton } from '@material-ui/core';
+import { NoSsr, Tooltip, MenuItem, IconButton, CircularProgress } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, updateStaticPrometheusBoardConfig, updateProgress } from '../lib/store';
+import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
 // import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
@@ -165,7 +165,6 @@ class MesheryPerformanceComponent extends React.Component {
     }).join('&');
     this.startEventStream(`/api/load-test?${params}`);
     this.setState({blockRunTest: true}); // to block the button
-    this.props.updateProgress({showProgress: true});
   }
 
   handleSuccess() {
@@ -200,7 +199,6 @@ class MesheryPerformanceComponent extends React.Component {
       }
       self.closeEventStream();
       self.setState({blockRunTest: false, timerDialogOpen: false});
-      self.props.updateProgress({showProgress: false});
     }
   }
 
@@ -322,7 +320,6 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     return error => {
       self.setState({blockRunTest: false, timerDialogOpen: false});
-      self.props.updateProgress({showProgress: false});
       self.closeEventStream();
       let finalMsg = msg;
       if (typeof error === 'string'){
@@ -521,7 +518,7 @@ class MesheryPerformanceComponent extends React.Component {
             className={classes.button}
             disabled={blockRunTest}
           >
-           Run Test
+           {blockRunTest?<CircularProgress size={30} />:'Run Test'}
           </Button>
         </div>
       </React.Fragment>
@@ -568,7 +565,6 @@ const mapDispatchToProps = dispatch => {
   return {
     updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
     updateStaticPrometheusBoardConfig: bindActionCreators(updateStaticPrometheusBoardConfig, dispatch),
-    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = state => {
