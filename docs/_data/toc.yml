@@ -7,7 +7,7 @@
       url: installation
       children:
         - title: Adapters
-          url: installation/adapters/
+          url: installation/adapters
         - title: Minikube
           url: installation/minikube
         - title: Releases
