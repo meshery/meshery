@@ -11,40 +11,42 @@ import (
 
 // HandlerInterface defines the methods a Handler should define
 type HandlerInterface interface {
-	AuthMiddleware(next http.Handler) http.Handler
+	AuthMiddleware(http.Handler) http.Handler
+	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *sessions.Session, *User)) http.Handler
 
 	LoginHandler(w http.ResponseWriter, r *http.Request)
 	LogoutHandler(w http.ResponseWriter, req *http.Request)
-	UserHandler(w http.ResponseWriter, r *http.Request)
+	UserHandler(w http.ResponseWriter, r *http.Request, session *sessions.Session, user *User)
 
-	K8SConfigHandler(w http.ResponseWriter, r *http.Request)
+	K8SConfigHandler(w http.ResponseWriter, r *http.Request, session *sessions.Session, user *User)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
-	KubernetesPingHandler(w http.ResponseWriter, req *http.Request)
+	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 
-	LoadTestHandler(w http.ResponseWriter, req *http.Request)
+	LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
-	FetchResultsHandler(w http.ResponseWriter, req *http.Request)
+	FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 
-	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request)
-	MeshOpsHandler(w http.ResponseWriter, req *http.Request)
+	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	MeshOpsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 	GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request)
-	EventStreamHandler(w http.ResponseWriter, req *http.Request)
-	AdapterPingHandler(w http.ResponseWriter, req *http.Request)
+	EventStreamHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	AdapterPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 
-	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request)
-	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
-	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request)
-	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request)
-	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 
-	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request)
-	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request)
-	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request)
-	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request)
-	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request)
-	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
+	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 
-	SessionSyncHandler(w http.ResponseWriter, req *http.Request)
+	SessionSyncHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *User)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
