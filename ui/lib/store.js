@@ -86,7 +86,7 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ k8sConfig: action.k8sConfig });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
-      return state.mergeDeep({ loadTest: action.loadTest });
+      return state.updateIn(['loadTest'], val => fromJS(action.loadTest));
     case actionTypes.UPDATE_ADAPTERS_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       state = state.updateIn(['meshAdapters'], val => fromJS([]));

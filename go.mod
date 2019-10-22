@@ -23,6 +23,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
+	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/juju/ratelimit v1.0.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
