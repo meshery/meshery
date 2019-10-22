@@ -10,6 +10,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -17,30 +18,18 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	session, err := h.config.SessionStore.Get(req, h.config.SessionName)
-	if err != nil {
-		logrus.Errorf("Error getting session: %v.", err)
-		http.Error(w, "Unable to get session.", http.StatusUnauthorized)
-		return
-	}
-
-	var user *models.User
-	user, _ = session.Values["user"].(*models.User)
-
-	// h.config.SessionPersister.Lock(user.UserID)
-	// defer h.config.SessionPersister.Unlock(user.UserID)
 
 	log := logrus.WithField("file", "events_streamer")
 
 	flusher, ok := w.(http.Flusher)
 
 	if !ok {
-		log.Errorf("Event streaming not supported: %v.", err)
+		log.Error("Event streaming not supported.")
 		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
 		return
 	}

@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/gorilla/sessions"
+	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,4 +30,21 @@ func (h *Handler) validateAuth(req *http.Request) bool {
 	}
 	logrus.Errorf("session invalid, error: %v", err)
 	return false
+}
+
+// SessionInjectorMiddleware - is a middleware which injects user and session object
+func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *sessions.Session, *models.User)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		// ensuring session is intact before running load test
+		session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+		if err != nil {
+			logrus.Errorf("Error: unable to get session: %v", err)
+			http.Error(w, "unable to get session", http.StatusUnauthorized)
+			return
+		}
+
+		user, _ := session.Values["user"].(*models.User)
+
+		next(w, req, session, user)
+	})
 }
