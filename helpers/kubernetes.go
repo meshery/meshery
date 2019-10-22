@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"time"
+
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -37,6 +39,7 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 			return nil, err
 		}
 	}
+	clientConfig.Timeout = 2 * time.Second
 	clientset, err := kubernetes.NewForConfig(clientConfig)
 	if err != nil {
 		err = errors.Wrap(err, "unable to create client set")
