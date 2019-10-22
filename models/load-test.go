@@ -30,14 +30,21 @@ type LoadTestOptions struct {
 	GRPCPingDelay    time.Duration
 }
 
+// LoadTestStatus - used for representing load test status
 type LoadTestStatus string
 
 const (
+	// LoadTestError - respresents an error status
 	LoadTestError   LoadTestStatus = "error"
+
+	// LoadTestInfo - represents a info status
 	LoadTestInfo    LoadTestStatus = "info"
+
+	// LoadTestSuccess - represents a success status
 	LoadTestSuccess LoadTestStatus = "success"
 )
 
+// LoadTestResponse - used to bundle the response with status to the client
 type LoadTestResponse struct {
 	Status  LoadTestStatus `json:"status,omitempty"`
 	Message string         `json:"message,omitempty"`
