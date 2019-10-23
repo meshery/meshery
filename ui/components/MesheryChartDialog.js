@@ -34,7 +34,7 @@ class MesheryChartDialog extends React.Component {
   // };
 
   render() {
-    const { classes, open, handleClose, content } = this.props;
+    const { classes, open, title, handleClose, content } = this.props;
 
     return (
       <React.Fragment>
@@ -46,7 +46,7 @@ class MesheryChartDialog extends React.Component {
           onClose={handleClose}
           aria-labelledby="chart-dialog-title"
         >
-          <DialogTitle id="chart-dialog-title">Comparison</DialogTitle>
+          <DialogTitle id="chart-dialog-title">{title && title.length?title:'Comparison'}</DialogTitle>
           <DialogContent>
             <DialogContentText className={classes.dialogContent}>
               {content}
