@@ -39,12 +39,14 @@ func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, erro
 		}
 	}
 
+	logger := logrus.New()
+	logger.SetLevel(logrus.WarnLevel)
 	fileName := path.Join(folderName, "db")
 	db, err := badger.Open(badger.DefaultOptions(fileName).WithValueLogLoadingMode(options.FileIO).
 		WithMaxTableSize(1 << 20).
 		WithLevelOneSize(1 << 20).
 		WithValueLogFileSize(1 << 20).
-		WithValueLogMaxEntries(1 << 10))
+		WithValueLogMaxEntries(1 << 10).WithLogger(logger))
 	if err != nil {
 		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err
