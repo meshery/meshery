@@ -14,6 +14,7 @@ import MesheryChart from './MesheryChart';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
+import MesheryResultDialog from './MesheryResultDialog';
 
 
 const styles = theme => ({
@@ -43,6 +44,8 @@ class MesheryResults extends Component {
           // startKey: '',
 
           // results_selection,
+
+          selectedRowData: null,
       }
     }
 
@@ -107,9 +110,16 @@ class MesheryResults extends Component {
         });
       }
 
+    resetSelectedRowData(){
+      const self = this;
+      return () =>{
+        self.setState({selectedRowData: null});
+      }
+    }
+
     render() {
         const { classes, results_selection } = this.props;
-        const { results, page, count, pageSize, search, sortOrder } = this.state;
+        const { results, page, count, pageSize, search, selectedRowData, sortOrder } = this.state;
         const self = this;
         const resultsForDisplay = [];
         results.forEach((record) => {
@@ -304,6 +314,11 @@ class MesheryResults extends Component {
 
               self.props.updateResultsSelection({page, results: res});
           },
+          onRowClick: (rowData, {dataIndex, rowIndex}) => {
+            console.log(`row - data ind: ${dataIndex}, row ind: ${rowIndex}, clicked. Data : ${JSON.stringify(rowData)}`);
+            // self.state.results
+            self.setState({selectedRowData: self.state.results[dataIndex]});
+          },
           onTableChange: (action, tableState) => {
 
             // console.log(action, tableState);
@@ -377,6 +392,12 @@ class MesheryResults extends Component {
 
         return (
             <NoSsr>
+            {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 &&
+              <MesheryResultDialog
+                rowData={selectedRowData}
+                close={self.resetSelectedRowData()}
+                />
+            }
             <MUIDataTable title={"Meshery Results"} data={resultsForDisplay} columns={columns} options={options} />
             </NoSsr>
         );
