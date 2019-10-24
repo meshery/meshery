@@ -16,7 +16,7 @@ import Switch from '@material-ui/core/Switch';
 
 const styles = theme => ({
   dialogContent: {
-    minHeight: window.innerHeight * 0.7, //'30rem',
+    // minHeight: window.innerHeight * 0.7, //'30rem',
   }
 });
 
