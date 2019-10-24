@@ -146,7 +146,7 @@ class MesheryResultDialog extends React.Component {
       </Typography>
       <Table className={classes.table} size="small" aria-label="Load Profile" >
         <TableBody>
-          {this.createTableRow('Name', rowData.name)}
+          {/* {this.createTableRow('Name', rowData.name)} */}
           {contents}
         </TableBody>
       </Table>
@@ -159,7 +159,7 @@ class MesheryResultDialog extends React.Component {
 
     return (
       <NoSsr>
-        <MesheryChartDialog title={'Details'} handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
+        <MesheryChartDialog title={`Details${rowData?' - ' + rowData.name:''}`} handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
             <div>
               <Grid container spacing={1}>
                 {rowData && rowData.runner_results && rowData.runner_results.kubernetes &&
