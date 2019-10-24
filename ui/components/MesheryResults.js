@@ -314,9 +314,8 @@ class MesheryResults extends Component {
 
               self.props.updateResultsSelection({page, results: res});
           },
-          onRowClick: (rowData, {dataIndex, rowIndex}) => {
-            console.log(`row - data ind: ${dataIndex}, row ind: ${rowIndex}, clicked. Data : ${JSON.stringify(rowData)}`);
-            // self.state.results
+          onCellClick: function(colData, { colIndex, rowIndex, dataIndex }){
+            // console.log(`row - col ind: ${colIndex}, data ind: ${dataIndex}, row ind: ${rowIndex}`);
             self.setState({selectedRowData: self.state.results[dataIndex]});
           },
           onTableChange: (action, tableState) => {
