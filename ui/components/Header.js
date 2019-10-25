@@ -52,8 +52,16 @@ const styles = theme => ({
   userSpan: {
     marginLeft: theme.spacing(1),
   },
+  pageTitleWrapper: {
+    flexGrow: 1,
+    marginRight: 'auto'
+  },
   pageTitle: {
     paddingLeft: theme.spacing(2),
+    fontSize: '22px',
+    [theme.breakpoints.up('sm')]: {
+      fontSize: '26px'
+    }
   },
   appBar: {
     padding: theme.spacing(1.4),
@@ -72,7 +80,7 @@ class Header extends React.Component {
       <React.Fragment>
         <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
           <Toolbar>
-            <Grid container spacing={8} alignItems="center">
+            <Grid container alignItems="center">
               <Hidden smUp>
                 <Grid item>
                   <IconButton
@@ -85,9 +93,9 @@ class Header extends React.Component {
                   </IconButton>
                 </Grid>
               </Hidden>
-              <Grid container xs alignItems="center">
-                <Grid item className={classes.pageTitle}>
-                <Typography color="inherit" variant="h5">
+              <Grid container xs alignItems="center" className={classes.pageTitleWrapper}>
+                <Grid item>
+                <Typography color="inherit" variant="h5" className={classes.pageTitle}>
                   {title}
                 </Typography>
                 </Grid>
