@@ -1,0 +1,22 @@
+<div id="td-sidebar-menu" class="td-sidebar__inner">  
+  <form class="td-sidebar__search d-flex align-items-center">
+ <input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>  
+  <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
+{% for section in site.data.toc %}<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="{% if section.url %}{{ site.baseurl }}/{{ section.url }}{% else %}{{ section.external_url }}{% endif %}" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">{{ section.title }}</a>
+  </li>{% if section.links %}<ul>
+    <li class="collapse show" id="{{ section.title | slugify }}">
+        <ul class="td-sidebar-nav__section pr-md-3">{% for entry in section.links %}
+          <li class="td-sidebar-nav__section-title">
+            <a href="{% if entry.url %}{{ site.baseurl }}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }}</a>
+          </li>
+          <ul><li class="collapse show" id="{{ child.title | slugify }}">{% if entry.children %}
+              {% for child in entry.children %}<a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>{% endfor %}
+              {% endif %}</li></ul>{% endfor %}
+    </ul>{% endif %}{% endfor %}
+  </nav>
+</div>
