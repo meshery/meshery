@@ -38,6 +38,7 @@ var updateCmd = &cobra.Command{
 		if err := exec.Command("docker-compose", "-f", dockerComposeFile, "pull").Run(); err != nil {
 			log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 		}
+
 		log.Info("Meshery is now up-to-date")
 	},
 }
