@@ -28,11 +28,19 @@ var updateCmd = &cobra.Command{
 	Short: "Pull new Meshery images from Docker Hub.",
 	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Info("Updating Meshery now...")
+
+		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
+			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
+				log.Fatal("update cmd: ", err)
+			}
+		}
+
 		start := exec.Command("docker-compose", "-f", dockerComposeFile, "pull")
 		start.Stdout = os.Stdout
 		start.Stderr = os.Stderr
 		if err := start.Run(); err != nil {
-			log.Error(err)
+			log.Fatal(err)
 		}
 
 		log.Info("Meshery is now up-to-date")
