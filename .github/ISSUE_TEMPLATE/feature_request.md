@@ -5,12 +5,11 @@ title: ''
 labels: 'enhancement'
 assignees: ''
 ---
-
-**Enhancement Description**
-A brief description of the enhancement.
-
-**Related Challenges**
+**Current Behavior**
 A brief description of what the problem is. (e.g. I need to be able to...)
+
+**Desired Behavior**
+A brief description of the enhancement.
 
 ---
 [Optional] **Alternatives**
