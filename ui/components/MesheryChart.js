@@ -244,7 +244,9 @@ class MesheryChart extends React.Component {
           //   };
 
           // }
-          self.titleRef.innerText = chartData.options.title.text.join('\n');
+          if (!self.props.hideTitle){
+            self.titleRef.innerText = chartData.options.title.text.join('\n');
+          }
           self.chart = bb.bb.generate(chartConfig);
       } else {
         self.chart = bb.bb.generate({
@@ -440,7 +442,9 @@ class MesheryChart extends React.Component {
         //   };
 
         // }
-        self.titleRef.innerText = chartData.options.title.text.join('\n');
+        if (!self.props.hideTitle){
+          self.titleRef.innerText = chartData.options.title.text.join('\n');
+        }
         self.chart = bb.bb.generate(chartConfig);
       }
     }
