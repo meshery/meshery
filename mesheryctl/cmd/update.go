@@ -40,7 +40,7 @@ var updateCmd = &cobra.Command{
 		start.Stdout = os.Stdout
 		start.Stderr = os.Stderr
 		if err := start.Run(); err != nil {
-			log.Error(err)
+			log.Fatal(err)
 		}
 
 		log.Info("Meshery is now up-to-date")
