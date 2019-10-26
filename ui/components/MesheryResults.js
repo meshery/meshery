@@ -13,7 +13,9 @@ import Moment from 'react-moment';
 import MesheryChart from './MesheryChart';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
+import MesheryResultDialog from './MesheryResultDialog';
 
 
 const styles = theme => ({
@@ -43,6 +45,8 @@ class MesheryResults extends Component {
           // startKey: '',
 
           // results_selection,
+
+          selectedRowData: null,
       }
     }
 
@@ -107,9 +111,16 @@ class MesheryResults extends Component {
         });
       }
 
+    resetSelectedRowData(){
+      const self = this;
+      return () =>{
+        self.setState({selectedRowData: null});
+      }
+    }
+
     render() {
         const { classes, results_selection } = this.props;
-        const { results, page, count, pageSize, search, sortOrder } = this.state;
+        const { results, page, count, pageSize, search, selectedRowData, sortOrder } = this.state;
         const self = this;
         const resultsForDisplay = [];
         results.forEach((record) => {
@@ -123,14 +134,14 @@ class MesheryResults extends Component {
           }
           if (record.runner_results.DurationHistogram && record.runner_results.DurationHistogram.Percentiles) {
             record.runner_results.DurationHistogram.Percentiles.forEach(({Percentile, Value}) => {
-              row['p'+Percentile] = Value.toFixed(3);
+              row[('p'+Percentile).replace(".","_")] = Value.toFixed(3);
             });
           } else {
             row['p50'] = 0;
             row['p75'] = 0;
             row['p90'] = 0;
             row['p99'] = 0;
-            row['p99.9'] = 0;
+            row['p99_9'] = 0;
           }
           resultsForDisplay.push(row);
           // console.log(`adding custom row: ${JSON.stringify(row)}`);
@@ -187,15 +198,15 @@ class MesheryResults extends Component {
               searchable: false,
              }
            },
-           {
-            name: "threads",
-            label: "Threads",
-            options: {
-              filter: false,
-              sort: false,
-              searchable: false,
-             }
-           },
+          //  {
+          //   name: "threads",
+          //   label: "Threads",
+          //   options: {
+          //     filter: false,
+          //     sort: false,
+          //     searchable: false,
+          //    }
+          //  },
            {
             name: "p50",
             label: "P50",
@@ -233,14 +244,33 @@ class MesheryResults extends Component {
           //   //  }
           //  },
            {
-            name: "p99.9",
+            name: "p99_9",
             label: "P99.9",
             options: {
               filter: false,
               sort: false,
               searchable: false,
              }
-           }
+           },
+           {
+            name: "Details",
+            options: {
+               filter: false,
+               sort: false,
+               searchable: false,
+               customBodyRender: (value, tableMeta, updateValue) => {
+                 return (
+                  <IconButton
+                        aria-label="more"
+                        color="inherit"
+                        onClick={() => self.setState({selectedRowData: self.state.results[tableMeta.rowIndex]})}
+                      >
+                        <MoreHorizIcon />
+                  </IconButton>
+                 );
+               }
+             }
+           },
         ];
 
         let rowsSelected = [];
@@ -263,7 +293,7 @@ class MesheryResults extends Component {
           sort: true,
           search: true,
           filterType: 'textField',
-          responsive: 'stacked',
+          responsive: 'scrollFullHeight',
           // resizableColumns: true,
           // selectableRows: true,
           serverSide: true,
@@ -304,6 +334,10 @@ class MesheryResults extends Component {
 
               self.props.updateResultsSelection({page, results: res});
           },
+          // onCellClick: function(colData, { colIndex, rowIndex, dataIndex }){
+          //   // console.log(`row - col ind: ${colIndex}, data ind: ${dataIndex}, row ind: ${rowIndex}`);
+          //   self.setState({selectedRowData: self.state.results[dataIndex]});
+          // },
           onTableChange: (action, tableState) => {
 
             // console.log(action, tableState);
@@ -356,7 +390,7 @@ class MesheryResults extends Component {
               <TableRow>
                 <TableCell colSpan={colSpan}>
                   <div className={classes.chartContent}>
-                    <MesheryChart data={[row]} />
+                    <MesheryChart data={[row]} hideTitle={true} />
                   </div>
                   {boardConfig && boardConfig !==null && Object.keys(boardConfig).length > 0 && <div>
                     <GrafanaCustomCharts
@@ -377,7 +411,13 @@ class MesheryResults extends Component {
 
         return (
             <NoSsr>
-            <MUIDataTable title={"Meshery Results"} data={resultsForDisplay} columns={columns} options={options} />
+            {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 &&
+              <MesheryResultDialog
+                rowData={selectedRowData}
+                close={self.resetSelectedRowData()}
+                />
+            }
+            <MUIDataTable title={"Performance Test Results"} data={resultsForDisplay} columns={columns} options={options} />
             </NoSsr>
         );
     }
