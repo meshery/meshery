@@ -52,13 +52,16 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 1. [Istio](https://github.com/layer5io/meshery-istio)
 1. [Linkerd2](https://github.com/layer5io/meshery-linkerd)
 1. [Consul Connect](https://github.com/layer5io/meshery-consul)
+1. [Octarine](https://github.com/layer5io/meshery-octarine)
 
 **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
-1. [Octarine](https://github.com/layer5io/meshery-octarine)
+1. [CPX](https://github.com/layer5io/meshery-cpx)
+1. [Kuma](https://github.com/layer5io/meshery-kuma)
+1. [Maesh](https://github.com/layer5io/meshery-maesh)
 1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
 
 **Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
-1. App Mesh
+1. [App Mesh](https://github.com/layer5io/meshery-app-mesh)
 1. SOFAmesh
 
 # Contributing
