@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Playground
-permalink: playground
+title: Management
+permalink: management
 ---
 
 # Deploying service meshes
