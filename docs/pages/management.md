@@ -32,4 +32,13 @@ Particular notifications that Meshery presents are immediately actionable. These
 # Node and Service Mesh Metrics
 
 ## Using Grafana
-* Setting variables
+* Connecting to Grafana
+    - Using a Grafana API Key
+* Importing Grafana boards
+    - Importing existing Grafana boards via API
+    - Importing custom Grafana board via yaml
+* Configuring graph panel preferences
+
+## Using Prometheus
+ * Connecting to Prometheus
+ * Verifying connection
