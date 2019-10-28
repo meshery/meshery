@@ -360,3 +360,9 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Va
 	}
 	return data, nil
 }
+
+// Close - closes idle connections
+func (g *GrafanaClient) Close() {
+	g.httpClient.CloseIdleConnections()
+	g.httpClient = nil
+}

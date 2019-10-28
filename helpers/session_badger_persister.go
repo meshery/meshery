@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"os"
 	"path"
+	"sync"
+	"time"
 
 	"github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger/options"
+	"github.com/jinzhu/copier"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -15,6 +19,8 @@ import (
 type BadgerSessionPersister struct {
 	fileName string
 	db       *badger.DB
+	cache    *sync.Map
+	ticker   *time.Ticker
 }
 
 // NewBadgerSessionPersister creates a new BadgerSessionPersister instance
@@ -33,17 +39,26 @@ func NewBadgerSessionPersister(folderName string) (*BadgerSessionPersister, erro
 		}
 	}
 
+	logger := logrus.New()
+	logger.SetLevel(logrus.WarnLevel)
 	fileName := path.Join(folderName, "db")
-	db, err := badger.Open(badger.DefaultOptions(fileName))
+	db, err := badger.Open(badger.DefaultOptions(fileName).WithValueLogLoadingMode(options.FileIO).
+		WithMaxTableSize(1 << 20).
+		WithLevelOneSize(1 << 20).
+		WithValueLogFileSize(1 << 20).
+		WithValueLogMaxEntries(1 << 10).WithLogger(logger))
 	if err != nil {
 		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err
 	}
-
-	return &BadgerSessionPersister{
+	bd := &BadgerSessionPersister{
 		fileName: fileName,
 		db:       db,
-	}, nil
+		cache:    &sync.Map{},
+		ticker:   time.NewTicker(time.Minute),
+	}
+	go bd.cleanup()
+	return bd, nil
 }
 
 // Read reads the session data for the given userID
@@ -57,6 +72,14 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 
 	if userID == "" {
 		return nil, errors.New("User ID is empty.")
+	}
+
+	dataCopyI, ok := s.cache.Load(userID)
+	if ok {
+		newData, ok1 := dataCopyI.(*models.Session)
+		if ok1 {
+			return newData, nil
+		}
 	}
 
 	if err := s.db.View(func(txn *badger.Txn) error {
@@ -86,7 +109,20 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 			return nil, err
 		}
 	}
+
+	s.writeToCache(userID, data)
 	return data, nil
+}
+
+// Write persists session for the user in the cache
+func (s *BadgerSessionPersister) writeToCache(userID string, data *models.Session) error {
+	newSess := &models.Session{}
+	if err := copier.Copy(newSess, data); err != nil {
+		logrus.Errorf("session copy error: %v", err)
+		return err
+	}
+	s.cache.Store(userID, newSess)
+	return nil
 }
 
 // Write persists session for the user
@@ -101,6 +137,10 @@ func (s *BadgerSessionPersister) Write(userID string, data *models.Session) erro
 
 	if data == nil {
 		return errors.New("Given config data is nil.")
+	}
+
+	if err := s.writeToCache(userID, data); err != nil {
+		return err
 	}
 
 	dataB, err := json.Marshal(data)
@@ -128,6 +168,7 @@ func (s *BadgerSessionPersister) Delete(userID string) error {
 		return errors.New("User ID is empty.")
 	}
 
+	s.cache.Delete(userID)
 	return s.db.Update(func(txn *badger.Txn) error {
 		if err := txn.Delete([]byte(userID)); err != nil {
 			err = errors.Wrapf(err, "Unable to delete config data for the user: %s.", userID)
@@ -142,5 +183,19 @@ func (s *BadgerSessionPersister) Close() {
 	if s.db == nil {
 		return
 	}
+	if s.ticker != nil {
+		s.ticker.Stop()
+	}
 	s.db.Close()
+	s.cache = nil
+}
+
+// Close closes the badger store
+func (s *BadgerSessionPersister) cleanup() {
+	for range s.ticker.C {
+		logrus.Debug("running db gc. . .")
+		if err := s.db.RunValueLogGC(0.7); err != nil {
+			logrus.Debugf("error while running gc: %v", err)
+		}
+	}
 }
