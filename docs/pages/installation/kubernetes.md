@@ -45,3 +45,4 @@ rules:
 
 * **NodePort**
     If your cluster does not have an Ingress Controller or a load balancer, then NodePort is probably the last resort.
+    
