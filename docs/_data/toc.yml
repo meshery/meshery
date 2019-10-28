@@ -8,8 +8,16 @@
       children:
         - title: Adapters
           url: installation/adapters
+        - title: Docker
+          url: installation/docker
+        - title: Kubernetes
+          url: installation/kubernetes
         - title: Minikube
           url: installation/minikube
+        - title: GKE
+          url: installation/gke
+        - title: EKS
+          url: installation/eks
         - title: Releases
           url: installation/releases
     - title: Architecture
