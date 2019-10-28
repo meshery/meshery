@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Tooltip, MenuItem, IconButton } from '@material-ui/core';
+import { NoSsr, Tooltip, MenuItem, IconButton, CircularProgress } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
@@ -24,15 +24,16 @@ if (typeof window !== 'undefined') {
 
 
 const meshes = [
+  'Istio',
+  'Linkerd',
   'App Mesh',
   'Aspen Mesh',
   'Consul Connect',
   'Grey Matter',
-  'Istio',
   'Kong',
-  'Linkerd1',
-  'Linkerd2',
   'Mesher',
+  'Network Service Mesh',
+  'Octarine',
   'Rotor',
   'SOFAMesh',
   'Zuul',
@@ -71,7 +72,7 @@ const styles = theme => ({
 class MesheryPerformanceComponent extends React.Component {
   constructor(props){
     super(props);
-    const {testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig} = props;
+    const {testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig} = props;
 
     this.state = {
       testName, 
@@ -83,12 +84,14 @@ class MesheryPerformanceComponent extends React.Component {
       result,
 
       timerDialogOpen: false,
+      blockRunTest: false,
       urlError: false,
       tError: false,
       testNameError: false,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
+      selectedMesh: '',
     };
   }
 
@@ -133,7 +136,6 @@ class MesheryPerformanceComponent extends React.Component {
     }
 
     this.submitLoadTest();
-    this.setState({timerDialogOpen: true, result: {}});
   }
 
   submitLoadTest = () => {
@@ -141,7 +143,7 @@ class MesheryPerformanceComponent extends React.Component {
 
     let computedTestName = testName;
     if (testName.trim() === '') {
-      const mesh = meshName === ''?'No mesh': meshName;
+      const mesh = meshName === '' || meshName === 'None'?'No mesh': meshName;
       computedTestName = `${mesh}_${(new Date()).getTime()}`;
     }
 
@@ -150,7 +152,7 @@ class MesheryPerformanceComponent extends React.Component {
 
     const data = {
       name: computedTestName, 
-      mesh: meshName, 
+      mesh: meshName === '' || meshName === 'None'?'': meshName, // to prevent None from getting to the DB
       url,
       qps,
       c,
@@ -161,19 +163,16 @@ class MesheryPerformanceComponent extends React.Component {
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
     }).join('&');
-    // console.log(`data to be submitted for load test: ${params}`);
-    let self = this;
-    dataFetch('/api/load-test', { 
-      credentials: 'same-origin',
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      },
-      body: params
-    }, result => {
+    this.startEventStream(`/api/load-test?${params}`);
+    this.setState({blockRunTest: true}); // to block the button
+  }
+
+  handleSuccess() {
+    const self = this;
+    return (result) => {
+      const {testName, meshName, url, qps, c, t, testUUID} = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
-        this.props.enqueueSnackbar('Successfully fetched the data.', {
+        self.props.enqueueSnackbar('Successfully fetched the data.', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -187,7 +186,7 @@ class MesheryPerformanceComponent extends React.Component {
             </IconButton>
           ),
         });
-        this.props.updateLoadTestData({loadTest: {
+        self.props.updateLoadTestData({loadTest: {
           testName,
           meshName,
           url,
@@ -196,13 +195,80 @@ class MesheryPerformanceComponent extends React.Component {
           t, 
           result,
         }});
-        this.setState({result, timerDialogOpen: false, testUUID: self.generateUUID()});
+        self.setState({result, testUUID: self.generateUUID()});
       }
-    }, self.handleError("Load test did not run successfully with msg"));
+      self.closeEventStream();
+      self.setState({blockRunTest: false, timerDialogOpen: false});
+    }
+  }
+
+  async startEventStream(url) {
+    this.closeEventStream();
+    this.eventStream = new EventSource(url);
+    this.eventStream.onmessage = this.handleEvents();
+    this.eventStream.onerror = this.handleError('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.');
+    this.props.enqueueSnackbar('Load test has been successfully submitted', {
+      variant: 'info',
+      autoHideDuration: 1000,
+      action: (key) => (
+        <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+        </IconButton>
+      ),
+    });
+  }
+
+  handleEvents(){
+    const self = this;
+    let track = 0;
+    return e => {
+      const data = JSON.parse(e.data);
+      switch(data.status){
+        case 'info':
+            self.props.enqueueSnackbar(data.message, {
+              variant: 'info',
+              autoHideDuration: 1000,
+              action: (key) => (
+                <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key) }
+                    >
+                      <CloseIcon />
+                </IconButton>
+              ),
+            });
+            if (track === 0){
+              self.setState({timerDialogOpen: true, result: {}});
+              track++;
+            }
+          break;
+        case 'error':
+          self.handleError("Load test did not run successfully with msg")(data.message);
+          break;
+        case 'success':
+          self.handleSuccess()(data.result);
+          break;
+      }
+    }
+  }
+
+  closeEventStream() {
+    if(this.eventStream && this.eventStream.close){
+      this.eventStream.close();
+      this.eventStream = null;
+    }
   }
 
   componentDidMount() {
     this.getStaticPrometheusBoardConfig();
+    this.scanForMeshes();
   }
 
   getStaticPrometheusBoardConfig = () => {
@@ -226,27 +292,54 @@ class MesheryPerformanceComponent extends React.Component {
     }, self.handleError("unable to fetch pre-configured boards"));
   }
 
+  scanForMeshes = () => {
+    const self = this;
+    const {selectedMesh} = this.state;
+    if (typeof self.props.k8sConfig === 'undefined' || !self.props.k8sConfig.clusterConfigured){
+      return;
+    }
+    dataFetch('/api/mesh/scan', { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      if (typeof result !== 'undefined' && Object.keys(result).length > 0){
+        Object.keys(result).forEach(mesh => {
+          self.setState({selectedMesh: mesh});
+          return;
+        })
+      }
+    // }, self.handleError("unable to scan the kubernetes cluster"));
+    }, () => {});
+  }
+
   generateUUID(){
     return uuid();
   }
 
-  handleError = (msg) => error => {
-    this.setState({timerDialogOpen: false });
+  handleError (msg){
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant: 'error',
-      action: (key) => (
-        <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration: 8000,
-    });
+    return error => {
+      self.setState({blockRunTest: false, timerDialogOpen: false});
+      self.closeEventStream();
+      let finalMsg = msg;
+      if (typeof error === 'string'){
+        finalMsg = `${msg}: ${error}`;
+      }
+      self.props.enqueueSnackbar(finalMsg, {
+        variant: 'error',
+        action: (key) => (
+          <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration: 8000,
+      });
+    }
   }
 
   handleTimerDialogClose = () => {
@@ -255,8 +348,8 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana, prometheus } = this.props;
-    const { timerDialogOpen, qps, url, testName, testNameError, meshName, t, c, result, 
-        urlError, tError, testUUID } = this.state;
+    const { timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, 
+        urlError, tError, testUUID, selectedMesh } = this.state;
     let staticPrometheusBoardConfig;
     if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
       staticPrometheusBoardConfig = this.props.staticPrometheusBoardConfig;
@@ -340,14 +433,14 @@ class MesheryPerformanceComponent extends React.Component {
               name="meshName"
               label="Service Mesh"
               fullWidth
-              value={meshName}
+              value={meshName === '' && selectedMesh !== ''?selectedMesh:meshName}
               margin="normal"
               variant="outlined"
               onChange={this.handleChange('meshName')}
           >
-                <MenuItem key={'mh_-_none'} value={''}>None</MenuItem>
+                <MenuItem key={'mh_-_none'} value={'None'}>None</MenuItem>
               {meshes && meshes.map((mesh) => (
-                  <MenuItem key={'mh_-_'+mesh} value={mesh}>{mesh}</MenuItem>
+                  <MenuItem key={'mh_-_'+mesh} value={mesh.toLowerCase()}>{mesh}</MenuItem>
               ))}
           </TextField>
         </Grid>
@@ -423,9 +516,9 @@ class MesheryPerformanceComponent extends React.Component {
             size="large"
             onClick={this.handleSubmit}
             className={classes.button}
-            disabled={timerDialogOpen}
+            disabled={blockRunTest}
           >
-           Run Test
+           {blockRunTest?<CircularProgress size={30} />:'Run Test'}
           </Button>
         </div>
       </React.Fragment>
@@ -489,8 +582,9 @@ const mapStateToProps = state => {
   // }
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
+  const k8sConfig = state.get("k8sConfig").toJS();
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
-  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig};
+  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig};
 }
 
 

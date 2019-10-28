@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"time"
+
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -10,7 +12,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
+func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clientset, error) {
 	var clientConfig *rest.Config
 	var err error
 	if len(kubeconfig) == 0 {
@@ -27,6 +29,9 @@ func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
 			logrus.Error(err)
 			return nil, err
 		}
+		if contextName != "" {
+			config.CurrentContext = contextName
+		}
 		clientConfig, err = clientcmd.NewDefaultClientConfig(*config, &clientcmd.ConfigOverrides{}).ClientConfig()
 		if err != nil {
 			err = errors.Wrap(err, "unable to create client config from config")
@@ -34,6 +39,7 @@ func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
 			return nil, err
 		}
 	}
+	clientConfig.Timeout = 2 * time.Second
 	clientset, err := kubernetes.NewForConfig(clientConfig)
 	if err != nil {
 		err = errors.Wrap(err, "unable to create client set")
@@ -44,8 +50,8 @@ func getK8SClientSet(kubeconfig []byte) (*kubernetes.Clientset, error) {
 }
 
 // FetchKubernetesNodes - function used to fetch nodes metadata
-func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
-	clientset, err := getK8SClientSet(kubeconfig)
+func FetchKubernetesNodes(kubeconfig []byte, contextName string) ([]*models.K8SNode, error) {
+	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -103,8 +109,8 @@ func FetchKubernetesNodes(kubeconfig []byte) ([]*models.K8SNode, error) {
 }
 
 // FetchKubernetesVersion - function used to fetch kubernetes server version
-func FetchKubernetesVersion(kubeconfig []byte) (string, error) {
-	clientset, err := getK8SClientSet(kubeconfig)
+func FetchKubernetesVersion(kubeconfig []byte, contextName string) (string, error) {
+	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return "", err
 	}

@@ -111,30 +111,35 @@ class MesheryNotification extends React.Component {
   async startEventStream() {
     this.closeEventStream();
     this.eventStream = new EventSource("/api/events");
-    this.eventStream.onmessage = this.handleEvents;
-    this.eventStream.onerror = this.handleError;
+    this.eventStream.onmessage = this.handleEvents();
+    this.eventStream.onerror = this.handleError();
     this.setState({createStream: false});
   }
 
-  handleEvents = e => {
-    const {events} = this.state;
-    const data = JSON.parse(e.data);
-    events.push(data);
-    this.setState({events});
+  handleEvents(){
+    const self = this;
+    return e => {
+      const {events} = this.state;
+      const data = JSON.parse(e.data);
+      events.push(data);
+      self.setState({events});
+    }
   }
 
-  handleError = e => {
+  handleError(){
     const self = this;
-    // check if server is available
-    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
-      // attempting to reestablish connection
-      setTimeout(() => function() {
-        self.closeEventStream();
-        self.startEventStream()
-      }, 2000);
-    }, error => {
-      // do nothing here
-    });
+    return e => {
+      self.closeEventStream();
+      // check if server is available
+      dataFetch('/api/user', { credentials: 'same-origin' }, user => {
+        // attempting to reestablish connection
+        setTimeout(() => function() {
+          self.startEventStream()
+        }, 2000);
+      }, error => {
+        // do nothing here
+      });
+    }
   }
 
   closeEventStream() {

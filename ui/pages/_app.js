@@ -367,7 +367,7 @@ class MesheryApp extends App {
                                           vertical: 'top',
                                           horizontal: 'right',
                                       }}
-                                      maxSnack={5}
+                                      maxSnack={10}
                                   >
                                 <MesheryProgressBar />
                                 <main className={classes.mainContent}>

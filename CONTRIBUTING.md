@@ -31,7 +31,7 @@ git merge master // integrate changes from master into your local dev branch.
 ```
 -->
 
-## <a name="dco">Developer Certificate of Origin</a>
+## <a name="commit-signing">Signing-off on Commits - Developer Certificate of Origin</a>
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
@@ -39,8 +39,8 @@ as a contributor, have the legal right to make the contribution.
 
 See the [DCO](https://developercertificate.org) file for the full text of what you must agree to.
 
-To signify that you agree to the DCO for a commit, you add a line to the
-git commit message:
+To signify that you agree to the DCO for contributions, you simply add a line to each of your
+git commit messages:
 
 ```
 Signed-off-by: Jane Smith <jane.smith@example.com>
@@ -79,10 +79,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 `vi <specific page>.md`
 1. Run site locally to preview changes.
 `make site`
-1. Commit and push changes to your remote branch.
+1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
-
 
 
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
