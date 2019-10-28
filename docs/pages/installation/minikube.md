@@ -24,6 +24,7 @@ minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
 <i>Note: minimum memory required is --memory=4096 (for Istio deployments only)</i>
+
 ### 2. Generate config file
 This configuration file will be used by Meshery.
 
