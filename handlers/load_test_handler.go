@@ -444,7 +444,7 @@ func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) (st
 		return "", err
 	}
 	defer func() {
-		resp.Body.Close()
+		_ = resp.Body.Close()
 	}()
 
 	bdr, err := ioutil.ReadAll(resp.Body)
