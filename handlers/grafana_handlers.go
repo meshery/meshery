@@ -60,7 +60,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
@@ -150,7 +150,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
@@ -192,7 +192,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
@@ -220,7 +220,9 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	// 	sessObj.Grafana.GrafanaBoards = []*models.SelectedGrafanaConfig{}
 	// }
 
-	defer req.Body.Close()
+	defer func() {
+		req.Body.Close()
+	}()
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the request body"
@@ -247,5 +249,5 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }

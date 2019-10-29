@@ -44,13 +44,17 @@ func downloadFile(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		_ = out.Close()
+	}()
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	return err

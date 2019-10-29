@@ -29,7 +29,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	sess, err := h.config.SessionStore.Get(r, h.config.SessionName)
 	if err == nil {
 		sess.Options.MaxAge = -1
-		sess.Save(r, w)
+		_ = sess.Save(r, w)
 	}
 
 	if token == "" {
@@ -110,7 +110,9 @@ func (h *Handler) getUserDetails(tokenVal string) (*models.User, error) {
 		logrus.Errorf("unable to fetch user data: %v", err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bd, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read body: %v", err)
@@ -139,13 +141,13 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
 		return
 	}
-	client.Do(cReq)
+	_, _ = client.Do(cReq)
 	// sessionStore.Destroy(w, sessionName)
 
 	sess, err := h.config.SessionStore.Get(req, h.config.SessionName)
 	if err == nil {
 		sess.Options.MaxAge = -1
-		sess.Save(req, w)
+		_ = sess.Save(req, w)
 	}
 
 	http.Redirect(w, req, "/login", http.StatusFound)
