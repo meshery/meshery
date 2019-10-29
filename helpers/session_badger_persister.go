@@ -110,7 +110,7 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 		}
 	}
 
-	s.writeToCache(userID, data)
+	_ = s.writeToCache(userID, data)
 	return data, nil
 }
 
@@ -186,7 +186,7 @@ func (s *BadgerSessionPersister) Close() {
 	if s.ticker != nil {
 		s.ticker.Stop()
 	}
-	s.db.Close()
+	_ = s.db.Close()
 	s.cache = nil
 }
 

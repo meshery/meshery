@@ -37,7 +37,7 @@ var startCmd = &cobra.Command{
 		// var stderr bytes.Buffer
 
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
-			os.Mkdir(mesheryFolder, 0777)
+			_ = os.Mkdir(mesheryFolder, 0777)
 		}
 
 		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
@@ -76,13 +76,13 @@ var startCmd = &cobra.Command{
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
 					// Meshery running on Windows host
-					exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+					_ = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 				} else if runtime.GOOS == "linux" {
 					// Meshery running on Linux host
-					exec.Command("xdg-open", url).Start()
+					_ = exec.Command("xdg-open", url).Start()
 				} else {
 					// Assume Meshery running on MacOS host
-					exec.Command("open", url).Start()
+					_ = exec.Command("open", url).Start()
 				}
 
 				//check flag to check successful deployment
