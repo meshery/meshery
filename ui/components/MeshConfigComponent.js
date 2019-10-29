@@ -80,18 +80,15 @@ const styles = theme => ({
     height:140,
     marginBottom:-40,
   },
-  head: {
-    textAlign:'center',
-  },
-  headRemove: {
-    textAlign:'center',
-    marginBottom:83,
-  },
   buttonconfig: {
-    marginLeft:30,
     display:'inline-block',
     width:'48%',
-  }
+  },
+  configHeading: {
+  	display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+  },
 });
 
 class MeshConfigComponent extends React.Component {
@@ -313,13 +310,20 @@ class MeshConfigComponent extends React.Component {
       let lst = (
         <List>
         <ListItem>
-          <ListItemText primary="Context Name-:" secondary={inClusterConfig?'Using In Cluster Config': contextName } />
+          <ListItemText primary="Context Name" secondary={inClusterConfig?'Using In Cluster Config': contextName } />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Server Name-:" secondary={inClusterConfig?'In Cluster Server':(configuredServer?configuredServer:'')} />
+          <ListItemText primary="Server Name" secondary={inClusterConfig?'In Cluster Server':(configuredServer?configuredServer:'')} />
         </ListItem>
       </List>
       );
+      if(configuredServer){
+        chp = (
+          <Tooltip title={`Server: ${configuredServer}`}>
+          {chp}
+          </Tooltip>
+        );
+      }
       showConfigured = (
         <div>
           {chp}
@@ -331,10 +335,10 @@ class MeshConfigComponent extends React.Component {
       let lst = (
         <List>
         <ListItem>
-          <ListItemText primary="Context Name-:" secondary="Not Configured" />
+          <ListItemText primary="Context Name" secondary="Not Configured" />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Server Name-:" secondary="Not Configured" />
+          <ListItemText primary="Server Name" secondary="Not Configured" />
         </ListItem>
       </List>
       );
@@ -349,30 +353,35 @@ class MeshConfigComponent extends React.Component {
       return (
     <NoSsr>
     <div className={classes.root}>
-      <div className={classes.configure}>
-          <h4 className={classes.head}>
-            Current Configuration Details
-          </h4>
-          {showConfigured}
-      </div>
-      <Divider className={classes.vertical} orientation="vertical" />
-      <div className={classes.buttonconfig}>
-          <h4 className={classes.headRemove}>
-            Change Configuration...
-          </h4>
-          <div className={classes.buttons}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => window.location.reload(false)}
-            className={classes.button}
-          >
-           Discover Cluster
-          </Button>
-        </div>
-      </div>
+	    <div className={classes.configHeading}>
+	    	<h4>
+	    		Current Configuration Details
+	    	</h4>
+	    </div>
+	    <div className={classes.configHeading}>
+	    	<h4>
+	    		Change Configuration...
+	    	</h4>
+	    </div>
+	    
+		<div className={classes.configure}>
+		  {showConfigured}
+		</div>
+		<Divider className={classes.vertical} orientation="vertical" />
+		<div className={classes.buttonconfig}>
+		  <div className={classes.buttons}>
+		  <Button
+		    type="submit"
+		    variant="contained"
+		    color="primary"
+		    size="large"
+		    onClick={() => window.location.reload(false)}
+		    className={classes.button}
+		  >
+		   Discover Cluster
+		  </Button>
+		</div>
+		</div>
     </div>
     </NoSsr>
   );

@@ -59,7 +59,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
@@ -93,7 +93,13 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	}
 	defer prometheusClient.Close()
 
+
 	defer req.Body.Close()
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
 	boardData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the board payload"
@@ -157,7 +163,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
@@ -207,7 +213,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 // PrometheusStaticBoardHandler returns the static board
@@ -227,7 +233,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
-		w.Write([]byte("{}"))
+		_, _ = w.Write([]byte("{}"))
 		return
 	}
 	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
@@ -300,7 +306,10 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	// 	sessObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
 	// }
 
-	defer req.Body.Close()
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the request body"
@@ -327,5 +336,5 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
