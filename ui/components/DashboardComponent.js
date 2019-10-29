@@ -327,9 +327,14 @@ class DashboardComponent extends React.Component {
 
                 
                 return (
-                <Tooltip title={isDisabled?"This adapter is inactive":`${adapterType.toUpperCase()} adapter`}>
+                <Tooltip title={isDisabled?"This adapter is inactive":
+                   `${adapterType
+                       .toLowerCase()
+                       .split(' ')
+                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                       .join(' ')} adapter on port ${aa.label.split(':')[1]}`}>
                   <Chip 
-                  label={aa.label}
+                  label={aa.label.split(':')[0]}
                   // onDelete={self.handleDelete(ind)} 
                   // onDelete={!isDisabled?self.handleDelete:null}
                   // deleteIcon={!isDisabled?<DoneIcon />:null}
