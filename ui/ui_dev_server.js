@@ -18,11 +18,15 @@ proxy.on('error', function (err, req, res) {
     'Content-Type': 'text/plain'
   });
 
-<<<<<<< HEAD
+
+
   res.end('Something went wrong');
-=======
+
   res.end('Unexpected issue.');
->>>>>>> snackbar message improvements
+
+
+  res.end('Unexpected issue.');
+
 });
 
 

@@ -35,7 +35,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
-	w.Write(bdr)
+	_, _ = w.Write(bdr)
 }
 
 func (h *Handler) getResultsFromSaaS(tokenKey, tokenVal, page, pageSize, search, order string) ([]byte, error) {
@@ -70,7 +70,9 @@ func (h *Handler) getResultsFromSaaS(tokenKey, tokenVal, page, pageSize, search,
 		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)

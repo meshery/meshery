@@ -147,7 +147,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 			}
 
 			log.Debug("received new data on response channel")
+
 			fmt.Fprintf(w, "data: %s\n\n", bd)
+
+			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+
 			if flusher != nil {
 				flusher.Flush()
 				log.Debugf("Flushed the messages on the wire...")
@@ -168,6 +172,36 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		log.Debugf("load test completed")
 	}
 }
+
+
+func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Initiating load test . . . ",
+	}
+	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	if err != nil {
+		msg := "error: unable to perform load test"
+		err = errors.Wrap(err, msg)
+		logrus.Error(err)
+		respChan <- &models.LoadTestResponse{
+			Status:  models.LoadTestError,
+			Message: msg,
+		}
+		return
+	}
+
+	respChan <- &models.LoadTestResponse{
+		Status:  models.LoadTestInfo,
+		Message: "Load test completed, fetching metadata now",
+	}
+
+	if sessObj.K8SConfig != nil {
+		nodesChan := make(chan []*models.K8SNode)
+		versionChan := make(chan string)
+		installedMeshesChan := make(chan map[string]string)
+
+
 
 func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
@@ -305,7 +339,7 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" {
-		h.task.Call(&models.SubmitMetricsConfig{
+		_ = h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,
 			PromURL:   promURL,
@@ -413,7 +447,9 @@ func (h *Handler) publishMetricsToSaaS(tokenKey, tokenVal string, bd []byte) err
 		logrus.Infof("metrics successfully published to SaaS")
 		return nil
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
@@ -441,7 +477,10 @@ func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) (st
 		logrus.Errorf("unable to send results: %v", err)
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
 	bdr, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
