@@ -221,7 +221,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	// }
 
 	defer func() {
-		req.Body.Close()
+		_ = req.Body.Close()
 	}()
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
