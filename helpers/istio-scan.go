@@ -160,12 +160,14 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
 		vsList, err := dclientset.NetworkingV1alpha3().VirtualServices(ns.GetName()).List(metav1.ListOptions{})
 		if err != nil {
-			err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns)
+			err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns.GetName())
 			logrus.Error(err)
 			return nil, err
 		}
 		for i, vs := range vsList.Items {
 			logrus.Infof("Index: %d VirtualService Hosts: %+v\n", i, vs.Spec.GetHosts())
+			logrus.Infof("Index: %d VirtualService HTTP: %+v\n", i, vs.Spec.GetHttp())
+			// TODO: only take uri -> exact, bcoz regexes have a lot of possibilities
 		}
 	}
 	return result, nil
