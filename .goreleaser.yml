@@ -13,6 +13,9 @@ builds:
 - main: ./mesheryctl/main.go
   env:
     - CGO_ENABLED=0
+    
+  ldflags:
+    - -s -w -X main.Version={{.Version}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
   # Defaults are darwin and linux.
