@@ -50,6 +50,7 @@ const styles = theme => ({
   link: {
     display: 'inline-flex',
     width: '100%',
+    height:'30px',
   },
   itemActionable: {
     '&:hover': {
@@ -76,6 +77,15 @@ const styles = theme => ({
     width: 30,
     height: 30,
     borderRadius: 'unset',
+  },
+  mainLogo_collapsed: {
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-1),
+    width: 30,
+    height: 30,
+    borderRadius: 'unset',
+
   },
   community: {
     marginTop: theme.spacing(2),
@@ -142,6 +152,21 @@ const styles = theme => ({
     'margin-left': 'auto',
     opacity: '0.7',
     transition: 'opacity 200ms linear',
+    '&:hover': {
+      opacity: 1,
+      background: 'transparent'
+    },
+    '&:focus': {
+      opacity: 1,
+      background: 'transparent'
+    }
+  },
+  collapseButtonWrapperRotated: {
+    width: 'auto',
+    'margin-left': 'auto',
+    opacity: '0.7',
+    transition: 'opacity 200ms linear',
+    'transform':'rotate(180deg)',
     '&:hover': {
       opacity: 1,
       background: 'transparent'
@@ -416,6 +441,13 @@ class Navigator extends React.Component {
         const { classes, updatepagepathandtitle, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
+        var classname;
+        if (isDrawerCollapsed){
+          classname=classes.collapseButtonWrapperRotated;
+        }
+        else{
+          classname=classes.collapseButtonWrapper;
+        }
         // const path = this.updateTitle();
         // console.log("current page:" + path);
         return (
@@ -435,7 +467,7 @@ class Navigator extends React.Component {
                   className={
                     classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
                   }>
-                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
+                  <Avatar className={isDrawerCollapsed? classes.mainLogo_collapsed : classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
                   <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span>
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show, link, children }) => {
@@ -501,11 +533,12 @@ class Navigator extends React.Component {
                         </ListItem>
               </List>
               <div className={classes.fixedSidebarFooter}>
-                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
-                  <img
-                    src='../static/img/sidebar-collapse-toggle-icon.svg'
-                    alt='Sidebar collapse toggle icon' />
-                </ListItem>
+               
+                  <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
+                    <img
+                      src='../static/img/sidebar-collapse-toggle-icon.svg'
+                      alt='Sidebar collapse toggle icon' />
+                  </ListItem>
               </div>
             </Drawer>
             </NoSsr>
