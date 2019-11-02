@@ -125,7 +125,9 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
 		return nil, err
 	}
-	defer mClient.Close()
+	defer func() {
+		_ = mClient.Close()
+	}()
 	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
 		logrus.Errorf("Error getting operations for the mesh: %v.", err)
@@ -247,7 +249,9 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, sessi
 		http.Error(w, "Unable to create a mesh client.", http.StatusBadRequest)
 		return
 	}
-	defer mClient.Close()
+	defer func() {
+		_ = mClient.Close()
+	}()
 
 	operationID, err := uuid.NewV4()
 
@@ -270,7 +274,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, sessi
 		http.Error(w, "There was an error applying the change.", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
 
 // AdapterPingHandler is used to ping a given adapter
@@ -323,7 +327,9 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, s
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return
 	}
-	defer mClient.Close()
+	defer func() {
+		_ = mClient.Close()
+	}()
 
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
@@ -332,5 +338,5 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, s
 		http.Error(w, "Adapter could not be pinged.", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
