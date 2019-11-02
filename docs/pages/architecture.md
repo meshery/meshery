@@ -26,7 +26,7 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 - Meshery NSM Adapter: 10004/tcp
 
 # Adapters (what they are, what purpose they serve)
-* Istio
-* Linkerd
-* Octarine
-* Consul Connect
+* [Istio](https://istio.io/)
+* [Linkerd](https://linkerd.io/)
+* [Octarine](https://www.octarinesec.com/)
+* [Consul Connect](https://www.consul.io/)
