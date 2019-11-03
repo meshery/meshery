@@ -14,7 +14,7 @@ Meshery's compatibility has been confirmed with the following platforms:
 | [Docker Desktop](/docs/installation/docker) | 2.0.x and above |
 | [EKS](/docs/installation/eks) | 1.12.x and above |
 | [GKE](/docs/installation/gke) | 1.14.x and above |
-| [Kubernetes](docs/installation/kubernetes) | 1.12.x and above |
+| [Kubernetes](/docs/installation/kubernetes) | 1.12.x and above |
 | [Minikube](/docs/installation/minikube) | 1.2.x and above |
 
 ## What is `mesheryctl`?
