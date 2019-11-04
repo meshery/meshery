@@ -45,7 +45,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, ses
 }
 
 func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w http.ResponseWriter, req *http.Request) {
-	req.ParseMultipartForm(1 << 20)
+	_ = req.ParseMultipartForm(1 << 20)
 
 	inClusterConfig := req.FormValue("inClusterConfig")
 	logrus.Debugf("inClusterConfig: %s", inClusterConfig)
@@ -63,7 +63,9 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 			http.Error(w, "Unable to get kubernetes config file", http.StatusBadRequest)
 			return
 		}
-		defer k8sfile.Close()
+		defer func() {
+			_ = k8sfile.Close()
+		}()
 		k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
 		if err != nil {
 			logrus.Errorf("error reading config: %v", err)
@@ -140,7 +142,7 @@ func (h *Handler) deleteK8SConfig(user *models.User, sessObj *models.Session, w 
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
@@ -149,7 +151,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	req.ParseMultipartForm(1 << 20)
+	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
 	k8sfile, _, err := req.FormFile("k8sfile")
@@ -158,7 +160,9 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "Unable to get kubernetes config file", http.StatusBadRequest)
 		return
 	}
-	defer k8sfile.Close()
+	defer func() {
+		_ = k8sfile.Close()
+	}()
 	k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Errorf("error reading config: %v", err)
@@ -274,7 +278,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		sessObj = &models.Session{}
 	}
 	if sessObj.K8SConfig == nil {
-		w.Write([]byte("[]"))
+		_, _ = w.Write([]byte("[]"))
 		return
 	}
 
@@ -306,7 +310,7 @@ func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Reques
 		sessObj = &models.Session{}
 	}
 	if sessObj.K8SConfig == nil {
-		w.Write([]byte("{}"))
+		_, _ = w.Write([]byte("{}"))
 		return
 	}
 

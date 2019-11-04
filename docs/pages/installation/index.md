@@ -14,8 +14,9 @@ Meshery's compatibility has been confirmed with the following platforms:
 | [Docker Desktop](/docs/installation/docker) | 2.0.x and above |
 | [EKS](/docs/installation/eks) | 1.12.x and above |
 | [GKE](/docs/installation/gke) | 1.14.x and above |
-| [Kubernetes](docs/installation/kubernetes) | 1.12.x and above |
+| [Kubernetes](/docs/installation/kubernetes) | 1.12.x and above |
 | [Minikube](/docs/installation/minikube) | 1.2.x and above |
+| [WSL2](/docs/installation/wsl2) | Build 18917 and above |
 
 ## What is `mesheryctl`?
 `mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `cleanup`. Running `cleanup` will remove all active container instanaces, prune pulled images and remove any local volumes crated by starting Meshery.
