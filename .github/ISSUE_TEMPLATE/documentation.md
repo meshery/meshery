@@ -5,6 +5,8 @@ title: ''
 labels: 'docs'
 assignees: ''
 ---
+
+---
 **Contributor Resources**
 - [Meshery documentation site](https://meshery.layer5.io/docs/)
 - [Meshery documentation source](https://github.com/layer5io/meshery/tree/master/docs)
