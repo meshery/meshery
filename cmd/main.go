@@ -73,7 +73,12 @@ func main() {
 	})
 
 	// sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	// sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	// if err != nil {
+	// 	logrus.Fatal(err)
+	// }
+
+	sessionPersister, err := helpers.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
 	}
