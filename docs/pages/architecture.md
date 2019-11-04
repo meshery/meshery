@@ -24,6 +24,9 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 - Meshery Consul Adapter: 10002/tcp
 - Meshery Octarine Adapter: 10003/tcp
 - Meshery NSM Adapter: 10004/tcp
+- Meshery App-Mesh Adapter:10005/tcp
+- Meshery Maesh Adapter:10006/tcp
+- Meshery Kuma Adapter:10007/tcp
 
 # Adapters (what they are, what purpose they serve)
 * [Istio](https://istio.io/)
