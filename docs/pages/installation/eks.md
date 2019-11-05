@@ -15,7 +15,8 @@ You may perform the steps outlined under [Managed Kubernetes](#managedk8s) follo
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
 1. Create a `ServiceAccount` with `cluster-admin` role.
-serviceaccount.yaml
+
+``` serviceaccount.yaml
 
 apiVersion: v1
 kind: ServiceAccount
@@ -35,7 +36,8 @@ subjects:
 - kind: ServiceAccount
   name: eks-admin
   namespace: kube-system
-  
+```
+
 1. kubectl create -f serviceaccount.yaml and run ./generate_kubeconfig_gke.sh  eks-admin kube-system  
 1. KUBECONFIG is going to store in KUBECONFIG=/tmp/kube/k8s-eks-admin-kube-system-conf
 1. copy the new KUBECONFIG as input to Meshery.
