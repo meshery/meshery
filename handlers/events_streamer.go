@@ -156,7 +156,7 @@ STOP:
 		}
 		time.Sleep(5 * time.Second)
 	}
-	log.Debug("events handler closed")
+	defer log.Debug("events handler closed")
 }
 
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry) {
