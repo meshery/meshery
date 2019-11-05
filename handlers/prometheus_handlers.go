@@ -224,7 +224,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 			board, err := bfun(req.Context(), sessObj.Prometheus.PrometheusURL)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				// error is already logged
 				return
 			}
 			resultLock.Lock()
@@ -233,6 +233,11 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		}(key, bfunc)
 	}
 	resultWG.Wait()
+
+	if len(result) != len(boardFunc) {
+		http.Error(w, "unable to get static board", http.StatusInternalServerError)
+		return
+	}
 
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
