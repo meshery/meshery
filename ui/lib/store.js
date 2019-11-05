@@ -52,6 +52,7 @@ const initialState = fromJS({
 
 export const actionTypes = {
     UPDATE_PAGE: 'UPDATE_PAGE',
+    UPDATE_TITLE: 'UPDATE_TITLE',
     UPDATE_USER: 'UPDATE_USER',
     UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
     UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
@@ -73,8 +74,13 @@ export const reducer = (state = initialState, action) => {
       // console.log(`received an action to update page: ${action.path} title: ${action.title}`);
       return state.mergeDeep({
           page: {
-            title: action.title,
             path: action.path,
+          }
+      });
+    case actionTypes.UPDATE_TITLE:
+        return state.mergeDeep({
+          page: {
+            title: action.title,
           }
       });
     case actionTypes.UPDATE_USER:
@@ -161,9 +167,14 @@ export const reducer = (state = initialState, action) => {
 }
 
 // ACTION CREATOR
-export const updatepagepathandtitle = ({path, title}) => dispatch => {
+export const updatepagepath = ({path}) => dispatch => {
     // console.log("invoking the updatepagepathandtitle action creator. . .");
-  return dispatch({ type: actionTypes.UPDATE_PAGE, path, title });
+  return dispatch({ type: actionTypes.UPDATE_PAGE, path });
+}
+
+export const updatepagetitle = ({path, title}) => dispatch => {
+  // console.log("invoking the updatepagepathandtitle action creator. . .");
+return dispatch({ type: actionTypes.UPDATE_TITLE, title });
 }
 
 export const updateProgress = ({showProgress}) => dispatch => {
