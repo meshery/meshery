@@ -222,6 +222,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Network Service Mesh', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/nsm", 
+        title: 'Network Service Mesh',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ]
@@ -331,7 +339,7 @@ class Navigator extends React.Component {
           image = "/static/img/consul.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
-        case 'nsm':
+        case 'network service mesh':
           image = "/static/img/nsm.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
