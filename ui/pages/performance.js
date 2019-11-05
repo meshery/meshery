@@ -1,11 +1,32 @@
 import { NoSsr } from "@material-ui/core";
 import MesheryPerformanceComponent from "../components/MesheryPerformanceComponent";
+import { updatepagepath } from "../lib/store";
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux'
+import { getPath } from "../lib/path";
 
+class Performance extends React.Component {
+  componentDidMount () {
+    console.log(`path: ${getPath()}`);
+    this.props.updatepagepath({path: getPath()});
+  }
 
-const Performance = () => (
-  <NoSsr>
-    <MesheryPerformanceComponent />
-  </NoSsr>
-)
+  render () {
+    return (
+      <NoSsr>
+        <MesheryPerformanceComponent />
+      </NoSsr>
+    );
+  }
+}
 
-export default Performance;
+const mapDispatchToProps = dispatch => {
+  return {
+    updatepagepath: bindActionCreators(updatepagepath, dispatch)
+  }
+}
+
+export default connect(
+    null,
+    mapDispatchToProps
+  )(Performance);

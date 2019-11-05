@@ -16,7 +16,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
-import { updatepagepathandtitle } from '../lib/store';
+import { updatepagetitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
@@ -252,15 +252,16 @@ class Navigator extends React.Component {
       });
     }
 
-    static getDerivedStateFromProps(props, state) {
-      const { meshAdapters, meshAdaptersts } = props;
-      let path = (typeof window !== 'undefined' ? window.location.pathname : '');
-      if (path.lastIndexOf('/') > 0) {
-        path = path.substring(0, path.lastIndexOf('/'));
-      }
-      path += window.location.search;
+    componentDidMount(){
+      console.log("navigator mounted")
+    }
 
-      // console.log(`path: ${path}`);
+    componentDidUpdate(){
+      console.log("navigator mounted")
+    }
+
+    static getDerivedStateFromProps(props, state) {
+      const { meshAdapters, meshAdaptersts, path } = props;
       const st = {};
       if(meshAdaptersts > state.mts) {
         st.meshAdapters = meshAdapters;
@@ -270,7 +271,7 @@ class Navigator extends React.Component {
       const fetchNestedPathAndTitle = (path, title, href, children) => {
         if (href === path) {
             // console.log(`updating path: ${path} and title: ${title}`);
-            props.updatepagepathandtitle({path, title});
+            props.updatepagetitle({title});
             return;
         }
         if(children && children.length > 0){
@@ -413,7 +414,7 @@ class Navigator extends React.Component {
     }
 
     render() {
-        const { classes, updatepagepathandtitle, isDrawerCollapsed, ...other } = this.props;
+        const { classes, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
         // const path = this.updateTitle();
@@ -520,7 +521,7 @@ Navigator.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updatepagepathandtitle: bindActionCreators(updatepagepathandtitle, dispatch)
+    updatepagetitle: bindActionCreators(updatepagetitle, dispatch)
   }
 }
 
@@ -528,10 +529,11 @@ const mapStateToProps = state => {
   // const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
+  const path = state.get("page").get("path");
   // const grafana = state.get("grafana").toJS();
   // const prometheus = state.get("prometheus").toJS();
   // return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
-  return {meshAdapters, meshAdaptersts};
+  return {meshAdapters, meshAdaptersts, path};
 }
 
 export default withStyles(styles)(connect(
