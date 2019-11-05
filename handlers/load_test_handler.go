@@ -328,15 +328,11 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
-	promClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false) // probably don't need to validate here
-	if err != nil {
-		return err
-	}
 	queryResults := map[string]map[string]interface{}{}
-	step := promClient.ComputeStep(ctx, config.StartTime, config.EndTime)
+	step := h.config.PrometheusClient.ComputeStep(ctx, config.StartTime, config.EndTime)
 	for query, flag := range queries {
 		if !flag {
-			seriesData, err := promClient.QueryRangeUsingClient(ctx, query, config.StartTime, config.EndTime, step)
+			seriesData, err := h.config.PrometheusClient.QueryRangeUsingClient(ctx, config.PromURL, query, config.StartTime, config.EndTime, step)
 			if err != nil {
 				return err
 			}
@@ -354,12 +350,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 		}
 	}
 
-	prometheusClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false)
-	if err != nil {
-		return err
-	}
-
-	board, err := prometheusClient.GetClusterStaticBoard(ctx)
+	board, err := h.config.PrometheusClient.GetClusterStaticBoard(ctx, config.PromURL)
 	if err != nil {
 		return err
 	}

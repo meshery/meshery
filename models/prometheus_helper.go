@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"bytes"
@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/grafana-tools/sdk"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	promAPI "github.com/prometheus/client_golang/api"
 	promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
@@ -25,51 +24,51 @@ type PrometheusClient struct {
 }
 
 // NewPrometheusClient returns a PrometheusClient
-func NewPrometheusClient(ctx context.Context, promURL string, validate bool) (*PrometheusClient, error) {
-	return NewPrometheusClientWithHTTPClient(ctx, promURL, &http.Client{}, validate)
+func NewPrometheusClient() *PrometheusClient {
+	return NewPrometheusClientWithHTTPClient(&http.Client{})
 }
 
 // NewPrometheusClientWithHTTPClient returns a PrometheusClient with a given http.Client
-func NewPrometheusClientWithHTTPClient(ctx context.Context, promURL string, client *http.Client, validate bool) (*PrometheusClient, error) {
-	p := &PrometheusClient{
-		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(promURL, client),
-		promURL:       promURL,
+func NewPrometheusClientWithHTTPClient(client *http.Client) *PrometheusClient {
+	return &PrometheusClient{
+		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(client),
 	}
-	if validate {
-		_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config")
-		if err != nil {
-			return nil, err
-		}
+}
+
+func (p *PrometheusClient) Validate(ctx context.Context, promURL string) error {
+	_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config", "")
+	if err != nil {
+		return err
 	}
-	return p, nil
+	return nil
 }
 
 // ImportGrafanaBoard takes raw Grafana board json and returns GrafanaBoard pointer for use in Meshery
-func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*models.GrafanaBoard, error) {
+func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []byte) (*GrafanaBoard, error) {
 	board := &sdk.Board{}
 	if err := json.Unmarshal(boardData, board); err != nil {
 		msg := errors.New("unable to parse grafana board data")
 		logrus.Error(errors.Wrap(err, msg.Error()))
 		return nil, msg
 	}
-	return p.grafanaClient.ProcessBoard(board, &sdk.FoundBoard{
+	return p.grafanaClient.ProcessBoard(nil, board, &sdk.FoundBoard{
 		Title: board.Title,
 		URI:   board.Slug,
 	})
 }
 
 // Query queries prometheus using the GrafanaClient
-func (p *PrometheusClient) Query(ctx context.Context, queryData *url.Values) ([]byte, error) {
-	return p.grafanaClient.GrafanaQuery(ctx, queryData)
+func (p *PrometheusClient) Query(ctx context.Context, promURL string, queryData *url.Values) ([]byte, error) {
+	return p.grafanaClient.GrafanaQuery(ctx, promURL, "", queryData)
 }
 
 // QueryRange queries prometheus using the GrafanaClient
-func (p *PrometheusClient) QueryRange(ctx context.Context, queryData *url.Values) ([]byte, error) {
-	return p.grafanaClient.GrafanaQueryRange(ctx, queryData)
+func (p *PrometheusClient) QueryRange(ctx context.Context, promURL string, queryData *url.Values) ([]byte, error) {
+	return p.grafanaClient.GrafanaQueryRange(ctx, promURL, "", queryData)
 }
 
 // GetClusterStaticBoard retrieves the cluster static board config
-func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context) (*models.GrafanaBoard, error) {
+func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context, promURL string) (*GrafanaBoard, error) {
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoardCluster))
 }
 
@@ -79,10 +78,10 @@ func (p *PrometheusClient) Close() {
 }
 
 // GetNodesStaticBoard retrieves the per node static board config
-func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context) (*models.GrafanaBoard, error) {
+func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL string) (*GrafanaBoard, error) {
 	var buf bytes.Buffer
 	ttt := template.New("staticBoard").Delims("[[", "]]")
-	instances, err := p.getAllNodes(ctx)
+	instances, err := p.getAllNodes(ctx, promURL)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to get all the nodes")
 		logrus.Error(err)
@@ -102,10 +101,10 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context) (*models.Gra
 	return p.ImportGrafanaBoard(ctx, buf.Bytes())
 }
 
-func (p *PrometheusClient) getAllNodes(ctx context.Context) ([]string, error) {
+func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]string, error) {
 	// api/datasources/proxy/1/api/v1/series?match[]=node_boot_time_seconds%7Bcluster%3D%22%22%2C%20job%3D%22node-exporter%22%7D&start=1568392571&end=1568396171
 	c, _ := promAPI.NewClient(promAPI.Config{
-		Address: p.promURL,
+		Address: promURL,
 	})
 	qc := promQAPI.NewAPI(c)
 	labelSet, _, err := qc.Series(ctx, []string{`node_boot_time_seconds{cluster="", job="node-exporter"}`}, time.Now().Add(-5*time.Minute), time.Now())
@@ -126,9 +125,9 @@ func (p *PrometheusClient) getAllNodes(ctx context.Context) ([]string, error) {
 }
 
 // QueryRangeUsingClient performs a range query within a window
-func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, query string, startTime, endTime time.Time, step time.Duration) (promModel.Value, error) {
+func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, promURL, query string, startTime, endTime time.Time, step time.Duration) (promModel.Value, error) {
 	c, _ := promAPI.NewClient(promAPI.Config{
-		Address: p.promURL,
+		Address: promURL,
 	})
 	qc := promQAPI.NewAPI(c)
 	result, _, err := qc.QueryRange(ctx, query, promQAPI.Range{
