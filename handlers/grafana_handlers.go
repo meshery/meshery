@@ -5,18 +5,16 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 
-	"github.com/layer5io/meshery/helpers"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	gob.Register(&helpers.GrafanaClient{})
+	gob.Register(&models.GrafanaClient{})
 }
 
 // GrafanaConfigHandler is used for persisting or removing Grafana configuration
@@ -44,12 +42,10 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			GrafanaAPIKey: grafanaAPIKey,
 		}
 
-		g, err := helpers.NewGrafanaClient(grafanaURL, grafanaAPIKey, true)
-		if err != nil {
+		if err := h.config.GrafanaClient.Validate(req.Context(), grafanaURL, grafanaAPIKey); err != nil {
 			http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 			return
 		}
-		defer g.Close()
 		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
 	} else if req.Method == http.MethodDelete {
 		sessObj.Grafana = nil
@@ -88,15 +84,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	grafanaClient, err := helpers.NewGrafanaClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, true)
-	if err != nil {
+	if err := h.config.GrafanaClient.Validate(req.Context(), sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey); err != nil {
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
 	}
-	defer grafanaClient.Close()
 
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
-	boards, err := grafanaClient.GetGrafanaBoards(dashboardSearch)
+	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, dashboardSearch)
 	if err != nil {
 		msg := "unable to get grafana boards"
 		logrus.Error(errors.Wrapf(err, msg))
@@ -134,16 +128,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		return
 	}
 
-	grafanaClient, err := helpers.NewGrafanaClientWithHTTPClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &http.Client{
-		Timeout: time.Second,
-	}, true)
-	if err != nil {
-		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
-		return
-	}
-	defer grafanaClient.Close()
-
-	data, err := grafanaClient.GrafanaQuery(req.Context(), &reqQuery)
+	data, err := h.config.GrafanaClientForQuery.GrafanaQuery(req.Context(), sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &reqQuery)
 	if err != nil {
 		msg := "unable to query grafana"
 		logrus.Error(errors.Wrapf(err, msg))
@@ -176,16 +161,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	grafanaClient, err := helpers.NewGrafanaClientWithHTTPClient(sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &http.Client{
-		Timeout: time.Second,
-	}, true)
-	if err != nil {
-		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
-		return
-	}
-	defer grafanaClient.Close()
-
-	data, err := grafanaClient.GrafanaQueryRange(req.Context(), &reqQuery)
+	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), sessObj.Grafana.GrafanaURL, sessObj.Grafana.GrafanaAPIKey, &reqQuery)
 	if err != nil {
 		msg := "unable to query grafana"
 		logrus.Error(errors.Wrapf(err, msg))

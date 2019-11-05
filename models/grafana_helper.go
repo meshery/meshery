@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"context"
@@ -11,7 +11,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/gosimple/slug"
-	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 
 	"fmt"
@@ -22,60 +21,53 @@ import (
 
 // GrafanaClient represents a client to Grafana in Meshery
 type GrafanaClient struct {
-	BaseURL    string
-	APIKey     string
-	OrgID      uint
-	c          *sdk.Client
 	httpClient *http.Client
 
 	promMode bool
-	promURL  string
 }
 
 // NewGrafanaClient returns a new GrafanaClient
-func NewGrafanaClient(BaseURL, APIKey string, validateConfig bool) (*GrafanaClient, error) {
-	return NewGrafanaClientWithHTTPClient(BaseURL, APIKey, &http.Client{
+func NewGrafanaClient() *GrafanaClient {
+	return NewGrafanaClientWithHTTPClient(&http.Client{
 		Timeout: 25 * time.Second,
-	}, validateConfig)
+	})
 }
 
 // NewGrafanaClientWithHTTPClient returns a new GrafanaClient with the given HTTP Client
-func NewGrafanaClientWithHTTPClient(BaseURL, APIKey string, client *http.Client, validateConfig bool) (*GrafanaClient, error) {
-	if strings.HasSuffix(BaseURL, "/") {
-		BaseURL = strings.Trim(BaseURL, "/")
-	}
-	g := &GrafanaClient{
-		BaseURL:    BaseURL,
-		APIKey:     APIKey,
+func NewGrafanaClientWithHTTPClient(client *http.Client) *GrafanaClient {
+	return &GrafanaClient{
 		httpClient: client,
 	}
-	if validateConfig {
-		var err error
-		g.c = sdk.NewClient(g.BaseURL, g.APIKey, client)
-		if g.OrgID, err = g.GrafanaConfigValidator(); err != nil {
-			return nil, err
-		}
-	}
-	return g, nil
 }
 
 // NewGrafanaClientForPrometheusWithHTTPClient returns a limited GrafanaClient for use with Prometheus with the given HTTP client
-func NewGrafanaClientForPrometheusWithHTTPClient(promURL string, client *http.Client) *GrafanaClient {
-	if strings.HasSuffix(promURL, "/") {
-		promURL = strings.Trim(promURL, "/")
-	}
+func NewGrafanaClientForPrometheusWithHTTPClient(client *http.Client) *GrafanaClient {
+	// if strings.HasSuffix(promURL, "/") {
+	// 	promURL = strings.Trim(promURL, "/")
+	// }
 	g := &GrafanaClient{
-		promURL:    promURL,
 		promMode:   true,
 		httpClient: client,
 	}
 	return g
 }
 
-func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL string) ([]byte, error) {
+func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) error {
+	if strings.HasSuffix(BaseURL, "/") {
+		BaseURL = strings.Trim(BaseURL, "/")
+	}
+	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	if _, err := c.GetActualOrg(); err != nil {
+		err = errors.Wrapf(err, "connection to grafana failed")
+		logrus.Error(err)
+		return err
+	}
+	return nil
+}
+func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
 	if !g.promMode {
-		req.Header.Set("Authorization", g.APIKey)
+		req.Header.Set("Authorization", APIKey)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
@@ -98,62 +90,58 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL string) ([]byt
 	return data, nil
 }
 
-// GrafanaConfigValidator validates connection to Grafana
-func (g *GrafanaClient) GrafanaConfigValidator() (uint, error) {
-	if g.c == nil {
-		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{})
-	}
-	org, err := g.c.GetActualOrg()
-	if err != nil {
-		err = errors.Wrapf(err, "connection to grafana failed")
-		logrus.Error(err)
-		return 0, errors.New("connection to grafana failed")
-	}
-	// logrus.Infof("connection to grafana succeeded @ %s", g.BaseURL)
-	return org.ID, nil
-}
-
 // GetGrafanaBoards retrieves all the Grafana boards matching a search
-func (g *GrafanaClient) GetGrafanaBoards(dashboardSearch string) ([]*models.GrafanaBoard, error) {
-	if g.c == nil {
-		g.c = sdk.NewClient(g.BaseURL, g.APIKey, &http.Client{})
+func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, dashboardSearch string) ([]*GrafanaBoard, error) {
+	if strings.HasSuffix(BaseURL, "/") {
+		BaseURL = strings.Trim(BaseURL, "/")
 	}
-	boardLinks, err := g.c.SearchDashboards(dashboardSearch, false)
+	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+
+	boardLinks, err := c.SearchDashboards(dashboardSearch, false)
 	if err != nil {
 		logrus.Error(errors.Wrapf(err, "error getting boards from grafana"))
 		return nil, errors.New("unable to fetch boards from grafana")
 	}
-	boards := []*models.GrafanaBoard{}
+	boards := []*GrafanaBoard{}
 	for _, link := range boardLinks {
 		if link.Type != "dash-db" {
 			continue
 		}
-		board, _, err := g.c.GetDashboard(link.URI)
+		board, _, err := c.GetDashboard(link.URI)
 		if err != nil {
 			err1 := fmt.Errorf("error getting board from grafana for URI - %s", link.URI)
 			logrus.Error(errors.Wrapf(err, err1.Error()))
 			return nil, err1
 		}
-		grafBoard, err := g.ProcessBoard(&board, &link)
+		grafBoard, err := g.ProcessBoard(c, &board, &link)
 		boards = append(boards, grafBoard)
 	}
 	return boards, nil
 }
 
 // ProcessBoard accepts raw Grafana board and returns a processed GrafanaBoard to be used in Meshery
-func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*models.GrafanaBoard, error) {
-	grafBoard := &models.GrafanaBoard{
+func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.FoundBoard) (*GrafanaBoard, error) {
+	var orgID uint
+	if !g.promMode {
+		org, err := c.GetActualOrg()
+		if err != nil {
+			err = errors.Wrapf(err, "connection to grafana failed")
+			logrus.Error(err)
+			return nil, err
+		}
+		orgID = org.ID
+	}
+	grafBoard := &GrafanaBoard{
 		URI:          link.URI,
 		Title:        link.Title,
 		UID:          board.UID,
 		Slug:         slug.Make(board.Title),
-		TemplateVars: []*models.GrafanaTemplateVars{},
-		// Panels:       []*models.GrafanaPanel{},
+		TemplateVars: []*GrafanaTemplateVars{},
+		// Panels:       []*GrafanaPanel{},
 		Panels: []*sdk.Panel{},
-		OrgID:  g.OrgID,
+		OrgID:  orgID,
 	}
 	var err error
-
 	tmpDsName := map[string]string{}
 	if len(board.Templating.List) > 0 {
 		for _, tmpVar := range board.Templating.List {
@@ -174,8 +162,8 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 				logrus.Error(err)
 				return nil, err
 			}
-			if g.c != nil {
-				ds, err = g.c.GetDatasourceByName(dsName)
+			if c != nil {
+				ds, err = c.GetDatasourceByName(dsName)
 				if err != nil {
 					msg := fmt.Errorf("error getting board datasource with name - %s", dsName)
 					logrus.Error(errors.Wrapf(err, msg.Error()))
@@ -189,10 +177,10 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 			// if tmpVar.Current. {
 			// 	tvVal = tmpVar.Current.Text
 			// }
-			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &models.GrafanaTemplateVars{
+			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
 				Name:  tmpVar.Name,
 				Query: tmpVar.Query,
-				Datasource: &models.GrafanaDataSource{
+				Datasource: &GrafanaDataSource{
 					ID:   ds.ID,
 					Name: ds.Name,
 				},
@@ -210,7 +198,7 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 						// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
 					}
 				}
-				// grafPanel := &models.GrafanaPanel{
+				// grafPanel := &GrafanaPanel{
 				// 	ID:    panel.ID,
 				// 	PType: panel.Type,
 				// 	Title: panel.Title,
@@ -241,7 +229,7 @@ func (g *GrafanaClient) ProcessBoard(board *sdk.Board, link *sdk.FoundBoard) (*m
 }
 
 // GrafanaQuery parses the provided query data and queries Grafana and streams response
-func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values) ([]byte, error) {
+func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
 		err := errors.New("query data is empty")
 		logrus.Error(err)
@@ -269,9 +257,9 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 			}
 			var reqURL string
 			if g.promMode {
-				reqURL = fmt.Sprintf("%s/api/v1/series", g.promURL)
+				reqURL = fmt.Sprintf("%s/api/v1/series", BaseURL)
 			} else {
-				reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/series", g.BaseURL, dsID)
+				reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/series", BaseURL, dsID)
 			}
 			queryURLInst, _ := url.Parse(reqURL)
 			qParams := queryURLInst.Query()
@@ -284,9 +272,9 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 			queryURL = queryURLInst.String()
 		} else {
 			if g.promMode {
-				queryURL = fmt.Sprintf("%s/api/v1/label/%s/values", g.promURL, val)
+				queryURL = fmt.Sprintf("%s/api/v1/label/%s/values", BaseURL, val)
 			} else {
-				queryURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/label/%s/values", g.BaseURL, dsID, val)
+				queryURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/label/%s/values", BaseURL, dsID, val)
 			}
 		}
 	case strings.HasPrefix(query, "query_result("):
@@ -301,9 +289,9 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 		var reqURL string
 		if g.promMode {
 			// reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL, dsID)
-			reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL)
+			reqURL = fmt.Sprintf("%s/api/v1/query", BaseURL)
 		} else {
-			reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query", g.BaseURL, dsID)
+			reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query", BaseURL, dsID)
 		}
 		newURL, _ := url.Parse(reqURL)
 		q := url.Values{}
@@ -319,7 +307,7 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 	}
 	logrus.Debugf("derived query url: %s", queryURL)
 
-	data, err := g.makeRequest(ctx, queryURL)
+	data, err := g.makeRequest(ctx, queryURL, APIKey)
 	if err != nil {
 		msg := errors.New("error getting data from grafana")
 		logrus.Error(errors.Wrap(err, msg.Error()))
@@ -329,7 +317,7 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, queryData *url.Values)
 }
 
 // GrafanaQueryRange parses the given params and performs Grafana range queries
-func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Values) ([]byte, error) {
+func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey string, queryData *url.Values) ([]byte, error) {
 	if queryData == nil {
 		err := errors.New("query data is empty")
 		logrus.Error(err)
@@ -338,9 +326,9 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Va
 	ds := queryData.Get("ds")
 	var reqURL string
 	if g.promMode {
-		reqURL = fmt.Sprintf("%s/api/v1/query_range", g.promURL)
+		reqURL = fmt.Sprintf("%s/api/v1/query_range", BaseURL)
 	} else {
-		reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query_range", g.BaseURL, ds)
+		reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query_range", BaseURL, ds)
 	}
 
 	newURL, _ := url.Parse(reqURL)
@@ -352,7 +340,7 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Va
 	newURL.RawQuery = q.Encode()
 	queryURL := newURL.String()
 	// logrus.Debugf("Query range url: %s", queryURL)
-	data, err := g.makeRequest(ctx, queryURL)
+	data, err := g.makeRequest(ctx, queryURL, APIKey)
 	if err != nil {
 		msg := errors.New("error getting data from grafana")
 		logrus.Error(errors.Wrap(err, msg.Error()))
@@ -363,6 +351,5 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, queryData *url.Va
 
 // Close - closes idle connections
 func (g *GrafanaClient) Close() {
-	g.httpClient.CloseIdleConnections()
 	g.httpClient = nil
 }
