@@ -260,13 +260,13 @@ class Navigator extends React.Component {
       });
     }
 
-    componentDidMount(){
-      console.log("navigator mounted")
-    }
+    // componentDidMount(){
+    //   console.log("navigator mounted")
+    // }
 
-    componentDidUpdate(){
-      console.log("navigator mounted")
-    }
+    // componentDidUpdate(){
+    //   console.log("navigator mounted")
+    // }
 
     static getDerivedStateFromProps(props, state) {
       const { meshAdapters, meshAdaptersts, path } = props;
