@@ -81,17 +81,6 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		return
 	}
 
-	// prometheusClient := helpers.NewPrometheusClient(req.Context())
-
-	// if err != nil {
-	// 	msg := "unable to initiate a client to connect to prometheus"
-	// 	err = errors.Wrap(err, msg)
-	// 	logrus.Error(err)
-	// 	http.Error(w, msg, http.StatusInternalServerError)
-	// 	return
-	// }
-	// defer prometheusClient.Close()
-
 	defer func() {
 		_ = req.Body.Close()
 	}()
