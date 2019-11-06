@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: meshery-linkerd
+  name: meshery-linkerd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: meshery-linkerd
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: meshery-linkerd
+    spec:
+      serviceAccount: meshery
+      containers:
+      - image: layer5/meshery-linkerd
+        name: meshery-linkerd
+        ports:
+        - containerPort: 10001
+        resources: {}
+      restartPolicy: Always
+status: {}

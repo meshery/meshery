@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"os/exec"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -28,8 +26,8 @@ var cleanupCmd = &cobra.Command{
 	Long:  `Clean up Meshery configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Cleaning Meshery config...")
-		if err := exec.Command("rm", "-f", dockerComposeFile).Run(); err != nil {
-			log.Fatal(err)
+		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
+			log.Fatal("cleanup cmd: ", err)
 		}
 		log.Info("Meshery config is now cleaned up.")
 
