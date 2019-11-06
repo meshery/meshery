@@ -93,7 +93,7 @@ __Please note__: All `make` commands should be run in a terminal from within the
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed your machine, preferrably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have verion of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
@@ -105,7 +105,7 @@ Any time changes are made to the GO code, you will have to stop the server and r
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 
 #### Building Docker image
-To build a Docker image of Meshery please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
+To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 ```
 make docker
 ```
