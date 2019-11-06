@@ -105,7 +105,7 @@ Any time changes are made to the GO code, you will have to stop the server and r
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 
 #### Building Docker image
-To build a Docker image of Meshery please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
+To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 ```
 make docker
 ```
