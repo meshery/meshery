@@ -50,6 +50,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --label-enable
-
 volumes:
   meshery-config:
