@@ -380,7 +380,8 @@ class MesheryApp extends App {
                                 </SnackbarProvider>
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                  <span className={classes.footerText}>Built with <FavoriteIcon className={classes.footerIcon} /> by the <span onClick={this.handleL5CommunityClick} className={classes.extl5}>Layer5 Community</span></span>
+                                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
+                                   Built with <FavoriteIcon className={classes.footerIcon} /> by the <className={classes.extl5}> Layer5 Community></span>
                                 </Typography>
                               </footer>
                             </div>
