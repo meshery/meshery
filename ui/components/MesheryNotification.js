@@ -203,7 +203,7 @@ class MesheryNotification extends React.Component {
             <Divider light variant="fullWidth" />
             <DialogContent>
                 <DialogContentText>
-                {ev.details.split('\n').map(det => {
+                {ev.details && ev.details.split('\n').map(det => {
                     return (
                         <div>{det}</div>
                     );
