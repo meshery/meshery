@@ -1,0 +1,28 @@
+- title: Documentation
+  url: '#'
+  links:
+    - title: Overview
+      url: '#'
+    - title: Installation
+      url: installation
+      children:
+        - title: Adapters
+          url: installation/adapters
+        - title: Docker
+          url: installation/docker
+        - title: Kubernetes
+          url: installation/kubernetes
+        - title: Minikube
+          url: installation/minikube
+        - title: GKE
+          url: installation/gke
+        - title: EKS
+          url: installation/eks
+        - title: Releases
+          url: installation/releases
+    - title: Architecture
+      url: architecture
+    - title: Performance
+      url: performance
+    - title: Management
+      url: management

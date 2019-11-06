@@ -74,7 +74,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 		// }()
 		for data := range respChan {
 			log.Debug("received new data on response channel")
-			fmt.Fprintf(w, "data: %s\n\n", data)
+			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
 			if flusher != nil {
 				flusher.Flush()
 				log.Debugf("Flushed the messages on the wire...")

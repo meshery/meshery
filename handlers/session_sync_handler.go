@@ -37,7 +37,8 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, s
 
 	meshAdapters := []*models.Adapter{}
 
-	for _, adapterURL := range h.config.AdapterTracker.GetAdapters(req.Context()) {
+	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
+	for _, adapterURL := range adapters {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
 	}
 

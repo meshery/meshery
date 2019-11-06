@@ -77,7 +77,9 @@ func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -218,7 +220,7 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 					}
 					p3, _ := p2.MarshalJSON()
 					p4 := &sdk.Panel{}
-					p4.UnmarshalJSON(p3)
+					_ = p4.UnmarshalJSON(p3)
 					logrus.Debugf("board: %d, Row panel id: %d", board.ID, p4.ID)
 					grafBoard.Panels = append(grafBoard.Panels, p4)
 				}

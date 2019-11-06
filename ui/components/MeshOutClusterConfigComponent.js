@@ -80,18 +80,16 @@ const styles = theme => ({
     height:150,
     marginBottom:-60,
   },
-  head: {
-    textAlign:'center',
-  },
-  formhead: {
-    textAlign:'center',
-    marginBottom:13,
-  },
   formconfig: {
     display:'inline-block',
     width:'48%',
     marginLeft:30,
-  }
+  },
+  configHeading: {
+  	display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+  },
 });
 
 class MeshConfigComponent extends React.Component {
@@ -105,7 +103,7 @@ class MeshConfigComponent extends React.Component {
         k8sfile, // read from store
         k8sfileElementVal: '',
         contextName, // read from store
-        contextNameForForm: null,
+        contextNameForForm: '',
         contextsFromFile: [],
     
         clusterConfigured, // read from store
@@ -169,7 +167,7 @@ class MeshConfigComponent extends React.Component {
       return;
     }
     if(fileInput.files.length == 0){
-      this.setState({contextsFromFile: [], contextNameForForm: null});
+      this.setState({contextsFromFile: [], contextNameForForm: ''});
       return;
     }
     // formData.append('contextName', contextName);
@@ -191,6 +189,7 @@ class MeshConfigComponent extends React.Component {
             }
           });
           self.setState({contextsFromFile: result, contextNameForForm: ctName});
+          self.submitConfig();
       }
     }, self.handleError);
   }
@@ -234,6 +233,33 @@ class MeshConfigComponent extends React.Component {
     }, self.handleError);
   }
 
+  handleKubernetesClick = () => {
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch(`/api/k8sconfig/ping`, { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError);
+  }
+
   handleError = error => {
     this.props.updateProgress({showProgress: false});
     const self = this;
@@ -273,7 +299,7 @@ class MeshConfigComponent extends React.Component {
         k8sfileElementVal: '',
         k8sfileError: false,
         contextName: '', 
-        contextNameForForm: null,
+        contextNameForForm: '',
         clusterConfigured: false,
       })
       this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
@@ -329,20 +355,28 @@ class MeshConfigComponent extends React.Component {
         <Chip 
               // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
               label={inClusterConfig?'Using In Cluster Config': contextName }
-              onDelete={self.handleReconfigure} 
+              onDelete={self.handleReconfigure}
+              onClick={self.handleKubernetesClick}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
               variant="outlined" />
       );
       let lst = (
         <List>
         <ListItem>
-          <ListItemText primary="Context Name-:" secondary={inClusterConfig?'Using In Cluster Config': contextName } />
+          <ListItemText primary="Context Name" secondary={inClusterConfig?'Using In Cluster Config': contextName } />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Server Name-:" secondary={inClusterConfig?'In Cluster Server':(configuredServer?configuredServer:'')} />
+          <ListItemText primary="Server Name" secondary={inClusterConfig?'In Cluster Server':(configuredServer?configuredServer:'')} />
         </ListItem>
       </List>
       );
+      if(configuredServer){
+        chp = (
+          <Tooltip title={`Server: ${configuredServer}`}>
+          {chp}
+          </Tooltip>
+        );
+      }
       showConfigured = (
         <div>
           {chp}
@@ -354,10 +388,10 @@ class MeshConfigComponent extends React.Component {
       let lst = (
         <List>
         <ListItem>
-          <ListItemText primary="Context Name-:" secondary="Not Configured" />
+          <ListItemText primary="Context Name" secondary="Not Configured" />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Server Name-:" secondary="Not Configured" />
+          <ListItemText primary="Server Name" secondary="Not Configured" />
         </ListItem>
       </List>
       );
@@ -372,7 +406,16 @@ class MeshConfigComponent extends React.Component {
       return (
     <NoSsr>
     <div className={classes.root}>
-    
+    <div className={classes.configHeading}>
+    	<h4>
+    		Current Configuration Details
+    	</h4>
+    </div>
+    <div className={classes.configHeading}>
+    	<h4>
+    		Change Configuration...
+    	</h4>
+    </div>
     {/*showConfigured*/}
       {/*<Grid item xs={12} className={classes.alignCenter}>
       <FormControlLabel
@@ -397,16 +440,10 @@ class MeshConfigComponent extends React.Component {
       />
       </Grid>*/}
       <div className={classes.configure}>
-          <h4 className={classes.head}>
-            Current Configuration Details
-          </h4>
           {showConfigured}
       </div>
       <Divider className={classes.vertical} orientation="vertical" />
       <div className={classes.formconfig}>
-          <h4 className={classes.formhead}>
-            Change Configuration...
-          </h4>
         <FormGroup>
           <input
               className={classes.input}
@@ -422,7 +459,7 @@ class MeshConfigComponent extends React.Component {
                   id="k8sfileLabelText"
                   name="k8sfileLabelText"
                   className={classes.fileLabelText}
-                  label="Upload config"
+                  label="Upload kubeconfig"
                   variant="outlined"
                   fullWidth
                   value={k8sfile.replace('C:\\fakepath\\', '')}

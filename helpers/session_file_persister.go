@@ -92,7 +92,9 @@ func (s *FileSessionPersister) Read(userID string) (*models.Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer fp.Close()
+	defer func() {
+		_ = fp.Close()
+	}()
 	data := &models.Session{}
 	if fs.Size() > 0 {
 		err = json.NewDecoder(fp).Decode(data)
@@ -113,7 +115,9 @@ func (s *FileSessionPersister) Write(userID string, data *models.Session) error 
 	if err != nil {
 		return err
 	}
-	defer fp.Close()
+	defer func() {
+		_ = fp.Close()
+	}()
 	err = json.NewEncoder(fp).Encode(data)
 	if err != nil {
 		logrus.Errorf("error encoding contents to file: %v", err)
@@ -131,7 +135,9 @@ func (s *FileSessionPersister) Delete(userID string) error {
 	if err != nil {
 		return err
 	}
-	fp.Close()
+	defer func() {
+		_ = fp.Close()
+	}()
 	err = os.Remove(path.Join(s.folder, userID))
 	if err != nil {
 		logrus.Errorf("unable to delete the file: %v", err)
