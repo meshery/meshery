@@ -17,7 +17,7 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 
 </div> 
 
-## Network Ports 
+## Adapters and Network Ports 
 Meshery uses the following list of network ports to interface with its various components:
 
 - Meshery web-based UI: 9081/tcp
@@ -29,9 +29,3 @@ Meshery uses the following list of network ports to interface with its various c
 - [Meshery Adapter for App Mesh](/docs/installation/adapters/app-mesh):10005/tcp
 - [Meshery Adapter for Maesh](/docs/installation/adapters/maesh):10006/tcp
 - [Meshery Adapter for Kuma](/docs/installation/adapters/kuma):10007/tcp
-
-# Adapters (what they are, what purpose they serve)
-* [Istio](https://istio.io/)
-* [Linkerd](https://linkerd.io/)
-* [Octarine](https://www.octarinesec.com/)
-* [Consul Connect](https://www.consul.io/)
