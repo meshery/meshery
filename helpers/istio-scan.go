@@ -138,6 +138,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 }
 */
 
+// ScanIstio - lists VirtualServices
 func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {

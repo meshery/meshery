@@ -79,7 +79,9 @@ RETRY:
 	if !locked {
 		goto RETRY
 	}
-	defer s.db.Unlock()
+	defer func() {
+		_ = s.db.Unlock()
+	}()
 
 	dataCopyB, err := s.db.Get([]byte(userID))
 	if err != nil {
@@ -95,7 +97,7 @@ RETRY:
 		}
 	}
 
-	s.writeToCache(userID, data)
+	_ = s.writeToCache(userID, data)
 	return data, nil
 }
 
@@ -133,7 +135,9 @@ RETRY:
 	if !locked {
 		goto RETRY
 	}
-	defer s.db.Unlock()
+	defer func() {
+		_ = s.db.Unlock()
+	}()
 
 	if err := s.writeToCache(userID, data); err != nil {
 		return err
@@ -172,7 +176,9 @@ RETRY:
 	if !locked {
 		goto RETRY
 	}
-	defer s.db.Unlock()
+	defer func() {
+		_ = s.db.Unlock()
+	}()
 
 	s.cache.Delete(userID)
 	if err := s.db.Delete([]byte(userID)); err != nil {
@@ -187,6 +193,6 @@ func (s *BitCaskSessionPersister) Close() {
 	if s.db == nil {
 		return
 	}
-	s.db.Close()
+	_ = s.db.Close()
 	s.cache = nil
 }

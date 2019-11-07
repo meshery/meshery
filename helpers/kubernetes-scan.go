@@ -76,14 +76,13 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string]string, e
 	return result, nil
 }
 
-// ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed
+// ScanPromGrafana - Runs a quick scan for Prometheus & Grafanas
 func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
 	imageNames := []string{"prometheus", "grafana"}
 
 	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
 }
 
-// ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed
 func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imageNames []string) (map[string][]string, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
