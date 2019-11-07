@@ -18,11 +18,13 @@
           url: installation/gke
         - title: EKS
           url: installation/eks
-        - title: Releases
-          url: installation/releases
+        - title: WSL2
+          url: installation/wsl2
     - title: Architecture
       url: architecture
     - title: Performance
       url: performance
     - title: Management
       url: management
+    - title: Releases
+      url: installation/releases
