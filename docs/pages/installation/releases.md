@@ -60,6 +60,7 @@ _Docs_
       <td>Meshery adapter for Network Service Mesh: adapter is now in beta; NSM provisioning. Performance Testing enhancements: performance tests run asynchronously, notifying the user of when test results are available; collect and persist node metrics. Service Mesh Sync: support for discovering service mesh type. Performance enhancements through memory tweaks and code profiling.</td>
       <td>Oct 22, 2019</td>
     </tr>
+        <tr><td colspan="3"><strong>v0.2.0</strong></td></tr>
     <tr>
       <td class="centered">0.1.6</td>
       <td>New UI for managing Meshery's connection to Kubernetes cluster. New mesheryctl compatibility for Windows for opening default browser upon start.</td>
@@ -90,6 +91,7 @@ _Docs_
       <td>Patch for Alpine bug.</td>
       <td>May 31, 2019</td>
     </tr>
+    <tr><td colspan="3"><strong>v0.1.0</strong></td></tr>
     <tr>
       <td class="centered">0.0.9</td>
       <td>Documentation site segragated and content laided out.</td>
