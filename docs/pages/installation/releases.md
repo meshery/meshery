@@ -14,6 +14,22 @@ permalink: /releases
   </thead>
   <tbody>
     <tr>
+      <td class="centered">0.2.4</td>
+      <td>
+**Meshery**      
+  - Meshery adapter for Octarine released as stable.
+
+**mesheryctl**
+  - now available through homebrew.
+
+**Documentation**
+ - revised quick start for Mac, Linux _and_ Windows.
+ - WSL2 support published.
+ - GKE kubeconfig generation script switched to `--decode`.
+       </td>
+       <td>Nov 6, 2019</td>
+    </tr>
+    <tr>
       <td class="centered">0.2.2</td>
       <td>Mesheryctl: improved verbosity of update command; no longer overwriting local .meshery.yml file when running start or logs. Docs: overhaul of docs site with a new jekyll theme (thanks @venilnoronha). Performance Testing: A new modal view to organize and display performance results in a tabular format.</td>
       <td>Oct 26, 2019</td>
