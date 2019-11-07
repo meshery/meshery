@@ -73,8 +73,15 @@ const styles = theme => ({
   mainLogo: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 'unset',
+  },
+  mainLogoText: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: 160,
+    height: '100%',
     borderRadius: 'unset',
   },
   community: {
@@ -436,7 +443,9 @@ class Navigator extends React.Component {
                     classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
                   }>
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span>
+                  <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
+
+                  {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show, link, children }) => {
                       if (typeof show !== 'undefined' && !show){
