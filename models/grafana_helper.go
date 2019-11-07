@@ -52,6 +52,7 @@ func NewGrafanaClientForPrometheusWithHTTPClient(client *http.Client) *GrafanaCl
 	return g
 }
 
+// Validate - helps validate grafana connection
 func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) error {
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
