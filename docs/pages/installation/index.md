@@ -3,8 +3,10 @@ layout: page
 title: Installation Guide
 permalink: installation
 ---
-# Quick Start with Docker
-### Mac or Linux
+# Quick Start 
+Getting Meshery up and running on a locally on Docker-enabled system is easy. Use the Meshery command line interface, `mesheryctl`, to start Meshery on any of its [supported platforms](#compatibility-matrix).
+
+### Using Docker on Mac or Linux
 **Homebrew**
 1. Download `mesheryctl` and install Meshery on Docker on Mac or Linux with homebrew:
 
@@ -23,7 +25,7 @@ sudo chmod a+x /usr/local/bin/meshery
 meshery start
 ```
 
-### Windows
+### Using Docker on Windows
 1. Visit [Meshery releases](https://github.com/layer5io/meshery/releases/latest), download and unzip the `mesheryctl` utility. Add `mesheryctl` to your PATH for ease of use.
 
 ```
