@@ -3,18 +3,19 @@ layout: page
 title: Installation Guide
 permalink: installation
 ---
-# Quick Start 
-## Mac or Linux
+# Quick Start with Docker
+### Mac or Linux
 **Homebrew**
 1. Download `mesheryctl` and install Meshery on Docker on Mac or Linux with homebrew:
 
 ```
 brew tap layer5io/tap
 brew install mesheryctl
+mesheryctl start
 ```
 
 **Bash**
-1. Download `mesheryctl` and install Meshery on Docker on Mac or Linux with homebrew:
+1. Download `meshery` and install Meshery on Docker on Mac or Linux with homebrew:
 
 ```
 sudo curl -L https://git.io/meshery -o /usr/local/bin/meshery
@@ -22,16 +23,20 @@ sudo chmod a+x /usr/local/bin/meshery
 meshery start
 ```
 
-## Windows
-1. Visit [Meshery releases](https://github.com/layer5io/meshery/releases/latest), download and unzip the `mesheryctl` utility.
+### Windows
+1. Visit [Meshery releases](https://github.com/layer5io/meshery/releases/latest), download and unzip the `mesheryctl` utility. Add `mesheryctl` to your PATH for ease of use.
+
+```
+./mesheryctl start
+```
 
 2. Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
 
 ## What is `mesheryctl`?
 `mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `cleanup`. Running `cleanup` will remove all active container instanaces, prune pulled images and remove any local volumes crated by starting Meshery.
 
-# Platform Compatibility <a name="compatibility-matrix"></a>
-Meshery's compatibility has been confirmed with the following platforms:
+# Getting Started with other Platforms<a name="compatibility-matrix"></a>
+The table below provides installation instructions for each platform that Meshery is compatibile with:
 
 | Platform      | Version       |
 | -------------:|:-------------|   
