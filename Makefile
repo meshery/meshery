@@ -39,7 +39,7 @@ run-local-cloud:
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10004" \
 	./meshery; \
 	cd ..
 
@@ -50,7 +50,7 @@ run-local:
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10004" \
 	./meshery; \
 	cd ..
 

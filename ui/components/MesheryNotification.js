@@ -133,9 +133,9 @@ class MesheryNotification extends React.Component {
       // check if server is available
       dataFetch('/api/user', { credentials: 'same-origin' }, user => {
         // attempting to reestablish connection
-        setTimeout(() => function() {
+        // setTimeout(() => function() {
           self.startEventStream()
-        }, 2000);
+        // }, 2000);
       }, error => {
         // do nothing here
       });
@@ -203,7 +203,7 @@ class MesheryNotification extends React.Component {
             <Divider light variant="fullWidth" />
             <DialogContent>
                 <DialogContentText>
-                {ev.details.split('\n').map(det => {
+                {ev.details && ev.details.split('\n').map(det => {
                     return (
                         <div>{det}</div>
                     );
