@@ -3,17 +3,14 @@ layout: page
 title: Meshery Documentation
 permalink: /
 ---
-
 # What is Meshery 
-A service mesh playground to faciliate learning about functionality and performance of different service meshes. 
-Meshery incorporates the collection and display of metrics from applications running in the playground. 
-Meshery Provides these features below as part of it's playground. 
+A multi-service mesh management plane adopting, operating and developing on different service meshes. 
+Meshery faciliates learning about functionality and performance of service meshes and incorporates collection and display of metrics from applications running on or across service meshes. 
+Meshery provides this high-level functionality: 
 
-1. the user interface to authenticate users.
-1. accepts and maintains the Kubernetes cluster config and context.
-1. enables users to generate load against their applications.
-1. collects the results of the performance tests from its load generator (Fortio) and stores in the cloud for historical viewing.
-1. interfaces with the Meshery adapters dynamically and enables users to play with service mesh.
+1. Performance Benchmarking
+1. Service Mesh Lifecycle Management
+1. Service Mesh Interoperability and Federation
 
 <div style="text-align:center;">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br /><i>Delivered at Service Mesh Day 2019</i></div>
