@@ -10,40 +10,41 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   <thead>
     <th class="centered">Version</th>
     <th>Description</th>
-    <th>Release Date</th>
+    <th style="white-space: nowrap;">Release Date</th>
   </thead>
   <tbody>
     <tr>
       <td class="centered">0.2.4</td>
       <td>
 
-*Meshery*
+<i>Meshery</i>
   - Meshery adapter for Octarine released as stable.
-
-*mesheryctl*
+<br />
+<i>mesheryctl</i>
   - now available through homebrew.
-
-*Documentation*
+<br />
+<i>Documentation</i>
  - revised quick start for Mac, Linux _and_ Windows.
  - WSL2 support published.
  - GKE kubeconfig generation script switched to `--decode`.
        </td>
-       <td>Nov 6, 2019</td>
+       <td>Nov 5, 2019</td>
     </tr>
     <tr>
       <td class="centered">0.2.3</td>
       <td>
 
-_Mesheryctl_
+<i>mesheryctl</i>
   - improved `status` output on Windows
-
-_Meshery_
+<br />
+<i>Meshery</i>
   - Ability to deploy Meshery on Istio. 
   - Adapter Chips: Move adapter port number into tooltip
-
-_Docs_
+<br />
+<i>Docs</i>
    - /search no longer redirecting to github.io.
       </td>
+      <td>Nov 3, 2019</td>
     </tr>
     <tr>
       <td class="centered">0.2.2</td>
