@@ -16,18 +16,34 @@ permalink: /releases
     <tr>
       <td class="centered">0.2.4</td>
       <td>
-**Meshery**      
+
+*Meshery*
   - Meshery adapter for Octarine released as stable.
 
-**mesheryctl**
+*mesheryctl*
   - now available through homebrew.
 
-**Documentation**
+*Documentation*
  - revised quick start for Mac, Linux _and_ Windows.
  - WSL2 support published.
  - GKE kubeconfig generation script switched to `--decode`.
        </td>
        <td>Nov 6, 2019</td>
+    </tr>
+    <tr>
+      <td class="centered">0.2.3</td>
+      <td>
+
+_Mesheryctl_
+  - improved `status` output on Windows
+
+_Meshery_
+  - Ability to deploy Meshery on Istio. 
+  - Adapter Chips: Move adapter port number into tooltip
+
+_Docs_
+   - /search no longer redirecting to github.io.
+      </td>
     </tr>
     <tr>
       <td class="centered">0.2.2</td>
