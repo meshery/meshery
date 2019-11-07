@@ -1,10 +1,32 @@
 import { NoSsr } from "@material-ui/core";
 import MesheryResults from "../components/MesheryResults";
+import { updatepagepath } from "../lib/store";
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux'
+import { getPath } from "../lib/path";
 
-const Results = () => (
-  <NoSsr>
-    <MesheryResults />
-  </NoSsr>
-)
+class Results extends React.Component {
+  componentDidMount () {
+    console.log(`path: ${getPath()}`);
+    this.props.updatepagepath({path: getPath()});
+  }
 
-export default Results;
+  render () {
+    return (
+      <NoSsr>
+        <MesheryResults />
+      </NoSsr>
+    );
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updatepagepath: bindActionCreators(updatepagepath, dispatch)
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Results);

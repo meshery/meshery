@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"time"
 
 	"github.com/layer5io/meshery/helpers"
 
@@ -73,7 +75,12 @@ func main() {
 	})
 
 	// sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	// sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	// if err != nil {
+	// 	logrus.Fatal(err)
+	// }
+
+	sessionPersister, err := helpers.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -100,6 +107,12 @@ func main() {
 		SessionPersister: sessionPersister,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
+
+		GrafanaClient:         models.NewGrafanaClient(),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+
+		PrometheusClient:         models.NewPrometheusClient(),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 	})
 
 	port := viper.GetInt("PORT")
