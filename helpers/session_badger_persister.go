@@ -190,8 +190,6 @@ func (s *BadgerSessionPersister) Close() {
 		s.ticker.Stop()
 	}
 
-	s.db.Close()
-
 	_ = s.db.Close()
 
 	s.cache = nil
