@@ -45,7 +45,7 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
                   grep tag_name | sed "s/ *\"tag_name\": *\"\\(.*\\)\",*/\\1/" | \
                   grep -v "rc\.[0-9]$" | sort -t"." -k 1,1 -k 2,2 -k 3,3 -k 4,4 | tail -n 1)
 fi
-
+printf ${MESHERY_VERSION} "\n"
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
   printf "Unable to get latest mesheryctl version. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6"
   exit;
