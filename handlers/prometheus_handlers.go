@@ -7,18 +7,16 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 
-	"github.com/layer5io/meshery/helpers"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	gob.Register(&helpers.PrometheusClient{})
+	gob.Register(&models.PrometheusClient{})
 }
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
@@ -39,7 +37,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
-		if _, err = helpers.NewPrometheusClient(req.Context(), promURL, true); err != nil {
+		if err = h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
 			logrus.Errorf("unable to connect to prometheus: %v", err)
 			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
 			return
@@ -83,19 +81,6 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		return
 	}
 
-	prometheusClient, err := helpers.NewPrometheusClient(req.Context(), sessObj.Prometheus.PrometheusURL, false)
-	if err != nil {
-		msg := "unable to initiate a client to connect to prometheus"
-		err = errors.Wrap(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-	defer prometheusClient.Close()
-
-
-	defer req.Body.Close()
-
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -107,7 +92,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		http.Error(w, msg, http.StatusUnauthorized)
 		return
 	}
-	board, err := prometheusClient.ImportGrafanaBoard(req.Context(), boardData)
+	board, err := h.config.PrometheusClient.ImportGrafanaBoard(req.Context(), boardData)
 	if err != nil {
 		msg := "unable to import the boards"
 		logrus.Error(errors.Wrap(err, msg))
@@ -145,18 +130,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 	reqQuery := req.URL.Query()
 
-	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
-		Timeout: time.Second,
-	}, false)
-	if err != nil {
-		msg := "unable to create a client to talk to prometheus"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-	defer prometheusClient.Close()
-
-	data, err := prometheusClient.Query(req.Context(), &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), sessObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
 		msg := "connection to prometheus failed"
 		logrus.Error(errors.Wrap(err, msg))
@@ -189,24 +163,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 	reqQuery := req.URL.Query()
 
-	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
-		Timeout: time.Second,
-	}, false)
-	if err != nil {
-		msg := "unable to create a client to talk to prometheus"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-	defer prometheusClient.Close()
-
 	testUUID := reqQuery.Get("uuid")
 	if testUUID != "" {
 		q := reqQuery.Get("query")
 		h.config.QueryTracker.AddOrFlagQuery(req.Context(), testUUID, q, false)
 	}
 
-	data, err := prometheusClient.QueryRange(req.Context(), &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), sessObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
 		msg := "connection to prometheus failed"
 		logrus.Error(errors.Wrap(err, msg))
@@ -236,34 +199,24 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		_, _ = w.Write([]byte("{}"))
 		return
 	}
-	prometheusClient, err := helpers.NewPrometheusClientWithHTTPClient(req.Context(), sessObj.Prometheus.PrometheusURL, &http.Client{
-		Timeout: time.Second,
-	}, true)
-	if err != nil {
-		msg := "unable to create a client to talk to prometheus"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-	defer prometheusClient.Close()
 
 	result := map[string]*models.GrafanaBoard{}
 	resultLock := &sync.Mutex{}
 	resultWG := &sync.WaitGroup{}
 
-	boardFunc := map[string]func(context.Context) (*models.GrafanaBoard, error){
-		"cluster": prometheusClient.GetClusterStaticBoard,
-		"node":    prometheusClient.GetNodesStaticBoard,
+	boardFunc := map[string]func(context.Context, string) (*models.GrafanaBoard, error){
+		"cluster": h.config.PrometheusClient.GetClusterStaticBoard,
+		"node":    h.config.PrometheusClient.GetNodesStaticBoard,
 	}
 
 	for key, bfunc := range boardFunc {
 		resultWG.Add(1)
-		go func(k string, bfun func(context.Context) (*models.GrafanaBoard, error)) {
+		go func(k string, bfun func(context.Context, string) (*models.GrafanaBoard, error)) {
 			defer resultWG.Done()
 
-			board, err := bfun(req.Context())
+			board, err := bfun(req.Context(), sessObj.Prometheus.PrometheusURL)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				// error is already logged
 				return
 			}
 			resultLock.Lock()
@@ -272,6 +225,11 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		}(key, bfunc)
 	}
 	resultWG.Wait()
+
+	if len(result) != len(boardFunc) {
+		http.Error(w, "unable to get static board", http.StatusInternalServerError)
+		return
+	}
 
 	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
