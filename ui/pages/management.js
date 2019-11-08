@@ -1,20 +1,44 @@
 import React from 'react';
-import { NoSsr } from '@material-ui/core';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
+import { NoSsr } from "@material-ui/core";
+import { updatepagepath } from "../lib/store";
+import {connect} from "react-redux";
+import { bindActionCreators } from 'redux'
+import { getPath } from "../lib/path";
 
-
-const Manage = ({ query }) => {
-    return(
-    <NoSsr>
-    <React.Fragment>
-        <MesheryPlayComponent adapter={query.adapter} />
-    </React.Fragment>
-    </NoSsr>
-    );
-}
-
-Manage.getInitialProps = ({query}) => {
-    return {query}
+class Manage extends React.Component {
+  static getInitialProps = ({query}) => {
+    return {query};
   }
 
-export default Manage;
+  componentDidMount () {
+    console.log(`path: ${getPath()}`);
+    this.props.updatepagepath({path: getPath()});
+  }
+
+  componentDidUpdate () {
+    console.log(`path: ${getPath()}`);
+    this.props.updatepagepath({path: getPath()});
+  }
+
+  render () {
+    return (
+        <NoSsr>
+        <React.Fragment>
+            <MesheryPlayComponent adapter={this.props.query.adapter} />
+        </React.Fragment>
+        </NoSsr>
+    );
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updatepagepath: bindActionCreators(updatepagepath, dispatch)
+  }
+}
+
+export default connect(
+    null,
+    mapDispatchToProps
+  )(Manage);

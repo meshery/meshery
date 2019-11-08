@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
@@ -28,11 +29,14 @@ var statusCmd = &cobra.Command{
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Meshery containers status . . .\n")
-		out, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()
-		if err != nil {
-			log.Fatal("Please, install docker-compose. The error message: \n", err)
+
+		start := exec.Command("docker-compose", "-f", dockerComposeFile, "ps")
+		start.Stdout = os.Stdout
+		start.Stderr = os.Stderr
+
+		if err := start.Run(); err != nil {
+			log.Fatal(err)
 		}
-		log.Infof("%s", out)
 	},
 }
 

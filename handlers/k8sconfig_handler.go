@@ -311,8 +311,6 @@ func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Reques
 	}
 	if sessObj.K8SConfig == nil {
 
-		w.Write([]byte("{}"))
-=======
 		_, _ = w.Write([]byte("{}"))
 
 		return

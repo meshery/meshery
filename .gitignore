@@ -33,8 +33,6 @@ fortio_chart.js
 
 **/.next/
 
-**/package-lock.json
-
 cmd/meshery
 
 log.txt

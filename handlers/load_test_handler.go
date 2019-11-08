@@ -147,11 +147,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 			}
 
 			log.Debug("received new data on response channel")
-
-			fmt.Fprintf(w, "data: %s\n\n", bd)
-
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-
 			if flusher != nil {
 				flusher.Flush()
 				log.Debugf("Flushed the messages on the wire...")
@@ -172,36 +168,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		log.Debugf("load test completed")
 	}
 }
-
-
-func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Initiating load test . . . ",
-	}
-	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
-	if err != nil {
-		msg := "error: unable to perform load test"
-		err = errors.Wrap(err, msg)
-		logrus.Error(err)
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: msg,
-		}
-		return
-	}
-
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Load test completed, fetching metadata now",
-	}
-
-	if sessObj.K8SConfig != nil {
-		nodesChan := make(chan []*models.K8SNode)
-		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string]string)
-
-
 
 func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
@@ -362,15 +328,11 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
-	promClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false) // probably don't need to validate here
-	if err != nil {
-		return err
-	}
 	queryResults := map[string]map[string]interface{}{}
-	step := promClient.ComputeStep(ctx, config.StartTime, config.EndTime)
+	step := h.config.PrometheusClient.ComputeStep(ctx, config.StartTime, config.EndTime)
 	for query, flag := range queries {
 		if !flag {
-			seriesData, err := promClient.QueryRangeUsingClient(ctx, query, config.StartTime, config.EndTime, step)
+			seriesData, err := h.config.PrometheusClient.QueryRangeUsingClient(ctx, config.PromURL, query, config.StartTime, config.EndTime, step)
 			if err != nil {
 				return err
 			}
@@ -388,12 +350,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 		}
 	}
 
-	prometheusClient, err := helpers.NewPrometheusClient(ctx, config.PromURL, false)
-	if err != nil {
-		return err
-	}
-
-	board, err := prometheusClient.GetClusterStaticBoard(ctx)
+	board, err := h.config.PrometheusClient.GetClusterStaticBoard(ctx, config.PromURL)
 	if err != nil {
 		return err
 	}
