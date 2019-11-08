@@ -14,7 +14,6 @@
 
 #!/usr/bin/env bash
 
-
 ####### COMMON FUNCTIONS
 ############################
 command_exists() {
@@ -52,8 +51,8 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
   exit;
 fi
 
-NAME="mesheryctl-$MESHERY_VERSION"
-URL="https://github.com/layer5io/meshery/releases/download/$MESHERY_VERSION/mesheryctl_$MESHERY_VERSION:1_$OSEXT_$OSARCHITECTURE.zip"
+NAME="mesheryctl-${MESHERY_VERSION}"
+URL="https://github.com/layer5io/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
