@@ -52,8 +52,8 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
   exit;
 fi
 
-NAME="mesheryctl-%s" "${MESHERY_VERSION}"
-URL="https://github.com/layer5io/meshery/releases/download/%s/mesheryctl_%s_%s_%s.zip" "${MESHERY_VERSION}" "${MESHERY_VERSION}" "${OSEXT}" "${OSARCHITECTURE}"
+NAME="mesheryctl-$MESHERY_VERSION"
+URL="https://github.com/layer5io/meshery/releases/download/$MESHERY_VERSION/mesheryctl_$MESHERY_VERSION:1_$OSEXT_$OSARCHITECTURE.zip"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
