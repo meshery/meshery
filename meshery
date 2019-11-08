@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 
 ####### COMMON FUNCTIONS
@@ -54,7 +54,7 @@ fi
 #curl -L "$URL" | tar xz
 
 NAME="mesheryctl-$MESHERY_VERSION"
-URL="https://github.com/layer5io/meshery/releases/download/${MESHERY_VERSION}/mesheryctl_${MESHERY_VERSION:1}_${OSEXT}_${OSARCHITECTURE}.zip"
+URL="https://github.com/layer5io/meshery/releases/download/%s/mesheryctl_%s_%s_%s.zip" "${MESHERY_VERSION}" "${MESHERY_VERSION:1}" "${OSEXT}" "${OSARCHITECTURE}"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
