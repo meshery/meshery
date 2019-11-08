@@ -110,8 +110,6 @@ func (s *BadgerSessionPersister) Read(userID string) (*models.Session, error) {
 		}
 	}
 
-	s.writeToCache(userID, data)
-
 	_ = s.writeToCache(userID, data)
 
 	return data, nil
