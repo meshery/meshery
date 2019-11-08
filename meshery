@@ -51,9 +51,8 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
   printf "Unable to get latest mesheryctl version. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6"
   exit;
 fi
-#curl -L "$URL" | tar xz
 
-NAME="mesheryctl-$MESHERY_VERSION"
+NAME="mesheryctl-%s" "$MESHERY_VERSION"
 URL="https://github.com/layer5io/meshery/releases/download/%s/mesheryctl_%s_%s_%s.zip" "${MESHERY_VERSION}" "${MESHERY_VERSION:1}" "${OSEXT}" "${OSARCHITECTURE}"
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
