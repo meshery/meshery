@@ -174,7 +174,8 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
 	}
-	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	resultsMap, resultInst, err := helpers.WRK2LoadTest(loadTestOptions)
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)

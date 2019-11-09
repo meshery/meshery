@@ -19,6 +19,7 @@ require (
 	github.com/gosimple/slug v1.7.0
 	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
+	github.com/layer5io/gowrk2 v0.0.0-20191108120918-08c01e8ffc0e
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/prologic/bitcask v0.3.5
@@ -33,7 +34,7 @@ require (
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
 	golang.org/x/net v0.0.0-20191021144547-ec77196f6094
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
-	golang.org/x/sys v0.0.0-20191022100944-742c48ecaeb7 // indirect
+	golang.org/x/sys v0.0.0-20191105231009-c1f44814a5cd // indirect
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/grpc v1.23.1
