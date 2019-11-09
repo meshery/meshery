@@ -20,6 +20,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
 	}
 	rURL := strings.TrimLeft(opts.URL, " \t\r\n")
+
 	labels := opts.Name + " -_- " + rURL
 	ro := &api.GoWRK2Config{
 		DurationInSeconds: opts.Duration.Seconds(),
