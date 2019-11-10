@@ -21,7 +21,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } from '@fortawesome/free-solid-svg-icons';
+import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
   categoryHeader: {
@@ -80,7 +80,7 @@ const styles = theme => ({
   mainLogoText: {
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(1),
-    width: 160,
+    width: 170,
     height: '100%',
     borderRadius: 'unset',
   },
@@ -520,9 +520,7 @@ class Navigator extends React.Component {
               </List>
               <div className={classes.fixedSidebarFooter}>
                 <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
-                  <img
-                    src='../static/img/sidebar-collapse-toggle-icon.svg'
-                    alt='Sidebar collapse toggle icon' />
+                <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
                 </ListItem>
               </div>
             </Drawer>
