@@ -11,6 +11,7 @@ Not sure where to start? First, see the [newcomers welcome guide](https://docs.g
 - Meshery Contribution Flow
   - <a href="#contributing-docs">Meshery Documentation</a>
   - <a href="#contributing-meshery">Meshery Backend</a>
+    - <a href="#adapter">Writing a Meshery Adapter</a>
   - <a href="#contributing-ui">Meshery UI</a>
 
 # <a name="contributing">General Contribution Flow</a>
@@ -39,7 +40,7 @@ git merge master // integrate changes from master into your local dev branch.
 ```
 -->
 
-## <a name="commit-signing">Signing-off on Commits - Developer Certificate of Origin</a>
+## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
@@ -135,6 +136,7 @@ Meshery uses adapters to provision and interact with different service meshes. F
 _Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
+Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
 
 ### Install UI dependencies
 To install/update the UI dependencies:
