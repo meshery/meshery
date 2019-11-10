@@ -206,6 +206,14 @@ const categories = [
     link: true,
     children: [
       {
+        id: 'Consul', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/consul", 
+        title: 'Consul',
+        link: false, 
+        show: true,
+      },
+      {
         id: 'Istio', 
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/istio", 
@@ -218,14 +226,6 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/linkerd", 
         title: 'Linkerd',
-        link: false, 
-        show: true,
-      },
-      {
-        id: 'Consul', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/consul", 
-        title: 'Consul',
         link: false, 
         show: true,
       },
