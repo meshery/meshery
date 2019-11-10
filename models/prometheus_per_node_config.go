@@ -1,4 +1,4 @@
-package helpers
+package models
 
 // This is the output of this board: Kubernetes / Compute Resources / Nodes, which comes as part of
 // prometheus operator install &

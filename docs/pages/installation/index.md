@@ -20,9 +20,7 @@ mesheryctl start
 1. Download `meshery` and install Meshery on Docker on Mac or Linux with homebrew:
 
 ```
-sudo curl -L https://git.io/meshery -o /usr/local/bin/meshery
-sudo chmod a+x /usr/local/bin/meshery
-meshery start
+curl -L https://git.io/meshery | bash -
 ```
 
 ### Using Docker on Windows
