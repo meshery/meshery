@@ -73,12 +73,13 @@ const styles = theme => ({
   mainLogo: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(0),
     width: 40,
     height: 40,
     borderRadius: 'unset',
   },
   mainLogoText: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(.5),
     marginTop: theme.spacing(1),
     width: 170,
     height: '100%',
@@ -237,6 +238,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Octarine', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/octarine", 
+        title: 'Octarine',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ]
@@ -348,6 +357,10 @@ class Navigator extends React.Component {
           break;
         case 'network service mesh':
           image = "/static/img/nsm.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'octarine':
+          image = "/static/img/octarine.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:
