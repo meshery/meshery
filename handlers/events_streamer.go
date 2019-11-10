@@ -83,13 +83,14 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 		log.Debug("response channel closed")
 	}()
 
+STOP:
 	for {
 		select {
 		case <-notify:
 			log.Debugf("received signal to close connection and channels")
 			close(newAdaptersChan)
 			close(respChan)
-			break
+			break STOP
 		default:
 			sessObj, err := h.config.SessionPersister.Read(user.UserID)
 			if err != nil {
@@ -109,12 +110,24 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 				log.Debug("No valid Kubernetes config found.") // switching from Error to Debug to prevent it from filling up the logs
 				// http.Error(w, `No valid Kubernetes config found.`, http.StatusBadRequest)
 				// return
+				localMeshAdaptersLock.Lock()
+				for _, mcl := range localMeshAdapters {
+					_ = mcl.Close()
+				}
+				localMeshAdapters = map[string]*meshes.MeshClient{}
+				localMeshAdaptersLock.Unlock()
 			} else {
 				adaptersLen := len(meshAdapters)
 				if adaptersLen == 0 {
 					log.Debug("No valid mesh adapter(s) found.") // switching from Error to Debug to prevent it from filling up the logs
 					// http.Error(w, `No valid mesh adapter(s) found.`, http.StatusBadRequest)
 					// return
+					localMeshAdaptersLock.Lock()
+					for _, mcl := range localMeshAdapters {
+						_ = mcl.Close()
+					}
+					localMeshAdapters = map[string]*meshes.MeshClient{}
+					localMeshAdaptersLock.Unlock()
 				} else {
 					localMeshAdaptersLock.Lock()
 					for _, ma := range meshAdapters {
@@ -128,6 +141,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 						if mClient != nil {
 							_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 							if err != nil {
+								_ = mClient.Close()
 								delete(localMeshAdapters, ma.Location)
 							} else {
 								if !ok { // reusing the map check, only when ok is false a new entry will be added
@@ -142,6 +156,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 		}
 		time.Sleep(5 * time.Second)
 	}
+	defer log.Debug("events handler closed")
 }
 
 func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry) {

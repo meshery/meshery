@@ -17,7 +17,7 @@ docker-run-local-cloud:
 	--link meshery-saas:meshery-saas \
 	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	-e DEBUG=true \
-	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	-e ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -28,7 +28,7 @@ docker-run-cloud:
 	docker run --name meshery -d \
 	-e SAAS_BASE_URL="https://meshery.layer5.io" \
 	-e DEBUG=true \
-	-e ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	-e ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -39,7 +39,7 @@ run-local-cloud:
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
 	./meshery; \
 	cd ..
 
@@ -50,7 +50,7 @@ run-local:
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001" \
+	ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
 	./meshery; \
 	cd ..
 
