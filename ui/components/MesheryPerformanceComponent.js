@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Tooltip, MenuItem, IconButton, CircularProgress } from '@material-ui/core';
+import { NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import LoadTestTimerDialog from '../components/load-test-timer-dialog';
 import MesheryChart from '../components/MesheryChart';
@@ -37,6 +37,11 @@ const meshes = [
   'Rotor',
   'SOFAMesh',
   'Zuul',
+]
+
+const loadGenerators = [
+  'fortio',
+  'wrk2'
 ]
 
 const styles = theme => ({
@@ -81,6 +86,7 @@ class MesheryPerformanceComponent extends React.Component {
       qps,
       c,
       t,
+      loadGenerator : 'fortio',
       result,
 
       timerDialogOpen: false,
@@ -139,7 +145,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   submitLoadTest = () => {
-    const {testName, meshName, url, qps, c, t, testUUID} = this.state;
+    const {testName, meshName, url, qps, c, t, loadGenerator, testUUID} = this.state;
 
     let computedTestName = testName;
     if (testName.trim() === '') {
@@ -159,6 +165,7 @@ class MesheryPerformanceComponent extends React.Component {
       t: t1, 
       dur,
       uuid: testUUID,
+      loadGenerator,
     };
     const params = Object.keys(data).map((key) => {
       return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -170,7 +177,7 @@ class MesheryPerformanceComponent extends React.Component {
   handleSuccess() {
     const self = this;
     return (result) => {
-      const {testName, meshName, url, qps, c, t, testUUID} = this.state;
+      const {testName, meshName, url, qps, c, t, loadGenerator, testUUID} = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined'){
         self.props.enqueueSnackbar('Successfully fetched the data.', {
           variant: 'success',
@@ -193,6 +200,7 @@ class MesheryPerformanceComponent extends React.Component {
           qps,
           c,
           t, 
+          loadGenerator,
           result,
         }});
         self.setState({result, testUUID: self.generateUUID()});
@@ -348,7 +356,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   render() {
     const { classes, grafana, prometheus } = this.props;
-    const { timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, 
+    const { timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, loadGenerator, 
         urlError, tError, testUUID, selectedMesh } = this.state;
     let staticPrometheusBoardConfig;
     if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
@@ -505,6 +513,16 @@ class MesheryPerformanceComponent extends React.Component {
               onChange={this.handleChange('t')}
             />
           </Tooltip>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl component="loadGenerator" className={classes.formControl}>
+            <FormLabel component="loadGenerator">Load generator</FormLabel>
+            <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
+              {loadGenerators.map(lg => (
+                <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
+              ))}
+            </RadioGroup>
+          </FormControl>
         </Grid>
       </Grid>
       <React.Fragment>
