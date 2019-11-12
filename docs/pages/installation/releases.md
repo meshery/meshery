@@ -1,18 +1,51 @@
 ---
 layout: page
 title: Releases
-permalink: installation/releases
+permalink: /releases
 ---
 
-[Releases of Meshery](https://github.com/layer5io/meshery/releases). See the Build and Release Strategy document for details.
+A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases). See the [Build and Release Strategy](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) document for details.
 
 <table class="responsive-table hover striped">
   <thead>
     <th class="centered">Version</th>
     <th>Description</th>
-    <th>Release Date</th>
+    <th style="white-space: nowrap;">Release Date</th>
   </thead>
   <tbody>
+    <tr>
+      <td class="centered">0.2.4</td>
+      <td>
+
+<i>Meshery</i>
+  - Meshery adapter for Octarine released as stable.
+<br />
+<i>mesheryctl</i>
+  - now available through homebrew.
+<br />
+<i>Documentation</i>
+ - revised quick start for Mac, Linux _and_ Windows.
+ - WSL2 support published.
+ - GKE kubeconfig generation script switched to `--decode`.
+       </td>
+       <td>Nov 5, 2019</td>
+    </tr>
+    <tr>
+      <td class="centered">0.2.3</td>
+      <td>
+
+<i>mesheryctl</i>
+  - improved `status` output on Windows
+<br />
+<i>Meshery</i>
+  - Ability to deploy Meshery on Istio. 
+  - Adapter Chips: Move adapter port number into tooltip
+<br />
+<i>Docs</i>
+   - /search no longer redirecting to github.io.
+      </td>
+      <td>Nov 3, 2019</td>
+    </tr>
     <tr>
       <td class="centered">0.2.2</td>
       <td>Mesheryctl: improved verbosity of update command; no longer overwriting local .meshery.yml file when running start or logs. Docs: overhaul of docs site with a new jekyll theme (thanks @venilnoronha). Performance Testing: A new modal view to organize and display performance results in a tabular format.</td>
@@ -28,6 +61,7 @@ permalink: installation/releases
       <td>Meshery adapter for Network Service Mesh: adapter is now in beta; NSM provisioning. Performance Testing enhancements: performance tests run asynchronously, notifying the user of when test results are available; collect and persist node metrics. Service Mesh Sync: support for discovering service mesh type. Performance enhancements through memory tweaks and code profiling.</td>
       <td>Oct 22, 2019</td>
     </tr>
+        <tr><td colspan="3"><strong>v0.2.0</strong></td></tr>
     <tr>
       <td class="centered">0.1.6</td>
       <td>New UI for managing Meshery's connection to Kubernetes cluster. New mesheryctl compatibility for Windows for opening default browser upon start.</td>
@@ -58,6 +92,7 @@ permalink: installation/releases
       <td>Patch for Alpine bug.</td>
       <td>May 31, 2019</td>
     </tr>
+    <tr><td colspan="3"><strong>v0.1.0</strong></td></tr>
     <tr>
       <td class="centered">0.0.9</td>
       <td>Documentation site segragated and content laided out.</td>
