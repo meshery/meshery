@@ -6,6 +6,17 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// LoadGenerator - represents the load generator type
+type LoadGenerator string
+
+const (
+	// FortioLG - represents the Fortio load generator
+	FortioLG LoadGenerator = "fortio"
+
+	// Wrk2LG - represents the wrk2 load generator
+	Wrk2LG LoadGenerator = "wrk2"
+)
+
 // LoadTestOptions represents the load test options
 type LoadTestOptions struct {
 	Name string
@@ -17,6 +28,8 @@ type LoadTestOptions struct {
 
 	IsInsecure bool
 	Duration   time.Duration
+
+	LoadGenerator LoadGenerator
 
 	Cert, Key, CACert string
 
@@ -35,10 +48,10 @@ type LoadTestStatus string
 
 const (
 	// LoadTestError - respresents an error status
-	LoadTestError   LoadTestStatus = "error"
+	LoadTestError LoadTestStatus = "error"
 
 	// LoadTestInfo - represents a info status
-	LoadTestInfo    LoadTestStatus = "info"
+	LoadTestInfo LoadTestStatus = "info"
 
 	// LoadTestSuccess - represents a success status
 	LoadTestSuccess LoadTestStatus = "success"

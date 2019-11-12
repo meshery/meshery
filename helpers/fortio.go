@@ -30,10 +30,10 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	httpOpts.ContentType = ""
 	// httpOpts.Payload = fnet.GeneratePayload(*PayloadFileFlag, *PayloadSizeFlag, *PayloadFlag)
 	// httpOpts.UnixDomainSocket = *unixDomainSocketFlag
-	if false { // *followRedirectsFlag {
-		httpOpts.FollowRedirects = true
-		httpOpts.DisableFastClient = true
-	}
+	// if false { // *followRedirectsFlag {
+	httpOpts.FollowRedirects = true
+	httpOpts.DisableFastClient = true
+	// }
 	return &httpOpts
 }
 
@@ -49,7 +49,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	// 	bincommon.FetchURL(httpOpts)
 	// 	return
 	// }
-	url := httpOpts.URL
+	rURL := httpOpts.URL
 	out := os.Stdout
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	// _, _ = fmt.Fprintf(out, "Fortio %s running at %g queries per second, %d->%d procs",
@@ -68,7 +68,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	if qps <= 0 {
 		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
 	}
-	labels := opts.Name + " -_- " + url
+	labels := opts.Name + " -_- " + rURL
 	// if labels == "" {
 	// 	// hname, _ := os.Hostname()
 	// 	shortURL := url
@@ -95,7 +95,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	if opts.IsGRPC {
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
-			Destination:        url,
+			Destination:        rURL,
 			CACert:             opts.CACert,
 			Service:            opts.GRPCHealthSvc,
 			Streams:            opts.GRPCStreamsCount,
