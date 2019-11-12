@@ -1,4 +1,4 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10004"
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004"
 
 
 # Build the CLI for Meshery - `mesheryctl`.
@@ -33,7 +33,7 @@ docker-run-cloud:
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-v meshery-config:/home/appuser/.meshery/config \
-    -v $(HOME)/.kube:/home/appuser/.kube:ro \
+  -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
