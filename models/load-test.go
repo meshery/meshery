@@ -6,11 +6,15 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// LoadGenerator - represents the load generator type
 type LoadGenerator string
 
 const (
+	// FortioLG - represents the Fortio load generator
 	FortioLG LoadGenerator = "fortio"
-	Wrk2LG   LoadGenerator = "wrk2"
+
+	// Wrk2LG - represents the wrk2 load generator
+	Wrk2LG LoadGenerator = "wrk2"
 )
 
 // LoadTestOptions represents the load test options
