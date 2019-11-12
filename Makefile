@@ -79,6 +79,8 @@ run-ui-dev:
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
 
-# setup wrk for local dev
+# setup wrk for local dev 
+# NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk:
-	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd ..
+	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd wrk2; make; cd ..
+	
