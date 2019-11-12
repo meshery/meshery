@@ -1,3 +1,6 @@
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004"
+
+
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
@@ -17,7 +20,7 @@ docker-run-local-cloud:
 	--link meshery-saas:meshery-saas \
 	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	-e DEBUG=true \
-	-e ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
+	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -28,7 +31,9 @@ docker-run-cloud:
 	docker run --name meshery -d \
 	-e SAAS_BASE_URL="https://meshery.layer5.io" \
 	-e DEBUG=true \
-	-e ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
+	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-v meshery-config:/home/appuser/.meshery/config \
+  -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
@@ -39,7 +44,7 @@ run-local-cloud:
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
 	./meshery; \
 	cd ..
 
@@ -50,7 +55,7 @@ run-local:
 	SAAS_BASE_URL="https://meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS="mesherylocal.layer5.io:10000, mesherylocal.layer5.io:10001, mesherylocal.layer5.io:10002, mesherylocal.layer5.io:10003, mesherylocal.layer5.io:10004" \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
 	./meshery; \
 	cd ..
 
@@ -73,3 +78,7 @@ run-ui-dev:
 # Builds the user interface on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
+
+# setup wrk for local dev
+setup-wrk:
+	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd ..
