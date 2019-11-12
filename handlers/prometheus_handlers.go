@@ -84,6 +84,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	defer func() {
 		_ = req.Body.Close()
 	}()
+
 	boardData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read the board payload"
