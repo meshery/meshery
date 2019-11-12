@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// FortioLoadTest is the actual code which invokes Fortio to run the load test
+// WRK2LoadTest is the actual code which invokes gowrk2 to run the load test
 func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	if qps <= 0 {
@@ -37,14 +37,14 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		err := errors.New("wrk2 does not support gRPC at the moment")
 		logrus.Error(err)
 		return nil, nil, err
-	} else {
-		var gres *api.GoWRK2
-		gres, err = api.WRKRun(ro)
-		if err == nil {
-			logrus.Debugf("WRK Result: %+v", gres)
-			res, err = api.TransformWRKToFortio(gres, ro)
-		}
 	}
+	var gres *api.GoWRK2
+	gres, err = api.WRKRun(ro)
+	if err == nil {
+		logrus.Debugf("WRK Result: %+v", gres)
+		res, err = api.TransformWRKToFortio(gres, ro)
+	}
+
 	if err != nil {
 		err = errors.Wrap(err, "error while running tests")
 		logrus.Error(err)
