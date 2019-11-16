@@ -1,54 +1,52 @@
-# Docsy Jekyll Theme
+# Meshery Docs
 
-[![CircleCI](https://circleci.com/gh/vsoch/docsy-jekyll/tree/master.svg?style=svg)](https://circleci.com/gh/vsoch/docsy-jekyll/tree/master)
-<a href="https://jekyll-themes.com/docsy-jekyll/">
-    <img src="https://img.shields.io/badge/featured%20on-JT-red.svg" height="20" alt="Jekyll Themes Shield" >
-</a>
+![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
+*Check out the [Meshery Docs](https://meshery.layer5.io/docs/)!*
 
-![https://raw.githubusercontent.com/vsoch/docsy-jekyll/master/assets/img/docsy-jekyll.png](https://raw.githubusercontent.com/vsoch/docsy-jekyll/master/assets/img/docsy-jekyll.png)
+## Contributing to the Meshery Documentation
 
-This is a [starter template](https://vsoch.github.com/docsy-jekyll/) for a Docsy jekyll theme, based
-on the Beautiful [Docsy](https://github.com/google/docsy) that renders with Hugo. This version is intended for
-native deployment on GitHub pages. The original [Apache License](https://github.com/vsoch/docsy-jekyll/blob/master/LICENSE) is included.
+Before contributing, please review the [Documenation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review. 
 
-## Changes
+### 1. Set up your development environment
 
-The site is intended for purely documentation, so while the front page banner
-is useful for business or similar, this author (@vsoch) preferred to have
-the main site page go directly to the Documentation view. Posts
-are still provided via a feed.
+* *The Meshery Docs site is built using Jekyll - a simple static site generator! You can learn more about Jekyll and setting up your development environment in the [Jekyll Docs](https://jekyllrb.com/docs/).*
 
-## Usage
+* First [install Ruby](https://jekyllrb.com/docs/installation/), then install Jekyll and Bundler.
 
-### 1. Get the code
+### 2. Get the code
 
-You can clone the repository right to where you want to host the docs:
+* Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+  ```bash
+  $ git clone https://github.com/YOUR-USERNAME/meshery
+  ```
+* Change to the docs directory
+  ```bash
+  $ cd docs
+  ```
+* Install any Ruby dependencies
+  ```bash
+  $ bundle install
+  ```
 
-```bash
-git clone https://github.com/vsoch/docsy-jekyll.git docs
-cd docs
-```
+### 3. Serve the site
 
-### 2. Customize
+* Serve the code locally
+  ```bash
+  $ make site
+  ```
+  *Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`*
 
-To edit configuration values, customize the [_config.yml](https://github.com/vsoch/docsy-jekyll/blob/master/_config.yml).
-To add pages, write them into the [pages](https://github.com/vsoch/docsy-jekyll/blob/master/pages) folder. 
-You define urls based on the `permalink` attribute in your pages,
-and then add them to the navigation by adding to the content of [_data/toc.myl](https://github.com/vsoch/docsy-jekyll/blob/master/_data/toc.yml).
-The top navigation is controlled by [_data/navigation.yml](https://github.com/vsoch/docsy-jekyll/blob/master/_data/navigation.yml)
+### 4. Create a Pull Request
 
-### 3. Options
+* After making changes, don't forget to commit with the sign-off flag (-s)!
+  ```bash
+  $ commit -s -m “my commit message w/signoff”
+  ```
+* Once all changes have been committed, push the changes.
+  ```bash
+  $ git push origin <branch-name>
+  ```
+* Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
 
-Most of the configuration values in the [_config.yml](https://github.com/vsoch/docsy-jekyll/blob/master/_config.yml) are self explanatory,
-and for more details, see the [getting started page](https://vsoch.github.io/docsy-jekyll/docs/getting-started)
-rendered on the site.
-
-### 4. Serve
-
-Depending on how you installed jekyll:
-
-```bash
-jekyll serve
-# or
-bundle exec jekyll serve
-```
+---
+*See the [Meshery Documentation Google Doc](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit) for additional reference.*

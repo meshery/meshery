@@ -67,6 +67,12 @@ type HandlerConfig struct {
 	SessionPersister SessionPersister
 
 	KubeConfigFolder string
+
+	GrafanaClient         *GrafanaClient
+	GrafanaClientForQuery *GrafanaClient
+
+	PrometheusClient         *PrometheusClient
+	PrometheusClientForQuery *PrometheusClient
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics

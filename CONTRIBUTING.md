@@ -1,9 +1,18 @@
-# <a name="contributing">Contributing</a>
+# <a name="contributing">Contributing Overview</a>
 Please do! Thanks for your help improving the project! :balloon:
 
-Contributions, updates, [issues](/../../issues) and [pull requests](/../../pulls) are welcome. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+All contributors are welcome. Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-Not sure where to start? See the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. Or grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in.
+Not sure where to start? First, see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit). Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join the [Slack account](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed.  All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+
+**Sections**
+- <a name="contributing">General Contribution Flow</a>
+  - <a href="#commit-signing">Developer Certificate of Origin</a>
+- Meshery Contribution Flow
+  - <a href="#contributing-docs">Meshery Documentation</a>
+  - <a href="#contributing-meshery">Meshery Backend</a>
+    - <a href="#adapter">Writing a Meshery Adapter</a>
+  - <a href="#contributing-ui">Meshery UI</a>
 
 # <a name="contributing">General Contribution Flow</a>
 <!--
@@ -31,7 +40,7 @@ git merge master // integrate changes from master into your local dev branch.
 ```
 -->
 
-## <a name="commit-signing">Signing-off on Commits - Developer Certificate of Origin</a>
+## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
@@ -93,7 +102,7 @@ __Please note__: All `make` commands should be run in a terminal from within the
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed your machine, preferrably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have verion of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferrably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
@@ -105,7 +114,7 @@ Any time changes are made to the GO code, you will have to stop the server and r
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 
 #### Building Docker image
-To build a Docker image of Meshery please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
+To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
 ```
 make docker
 ```
@@ -127,6 +136,7 @@ Meshery uses adapters to provision and interact with different service meshes. F
 _Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
+Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
 
 ### Install UI dependencies
 To install/update the UI dependencies:
