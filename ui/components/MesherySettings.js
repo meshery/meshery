@@ -107,7 +107,7 @@ class MesherySettings extends React.Component {
         <div className={classes.backToPlay}>
           <Link href={"/management"}>
             <div className={classes.link}>
-            <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth /> You are all set to play with service meshes
+            <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth /> You are all set to manage service meshes 
             </div>
           </Link>    
         </div>
