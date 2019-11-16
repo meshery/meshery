@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -25,10 +25,10 @@ var Build string
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Version Meshery",
-	Long:  `version all Meshery containers, remove their instances and prune their connected volumes.`,
+	Short: "Version of mesheryctl",
+	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Version:\t", Build)
+		log.Info("Version: ", Build)
 	},
 }
 
