@@ -16,12 +16,12 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import Link from "next/link";
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux'
-import { updatepagepathandtitle } from '../lib/store';
+import { updatepagetitle } from '../lib/store';
 import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } from '@fortawesome/free-solid-svg-icons';
+import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
   categoryHeader: {
@@ -73,8 +73,16 @@ const styles = theme => ({
   mainLogo: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    width: 30,
-    height: 30,
+    marginLeft: theme.spacing(0),
+    width: 40,
+    height: 40,
+    borderRadius: 'unset',
+  },
+  mainLogoText: {
+    marginLeft: theme.spacing(.5),
+    marginTop: theme.spacing(1),
+    width: 170,
+    height: '100%',
     borderRadius: 'unset',
   },
   community: {
@@ -199,6 +207,14 @@ const categories = [
     link: true,
     children: [
       {
+        id: 'Consul', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/consul", 
+        title: 'Consul',
+        link: false, 
+        show: true,
+      },
+      {
         id: 'Istio', 
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/istio", 
@@ -215,10 +231,18 @@ const categories = [
         show: true,
       },
       {
-        id: 'Consul', 
+        id: 'Network Service Mesh', 
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/consul", 
-        title: 'Consul',
+        href: "/management/nsm", 
+        title: 'Network Service Mesh',
+        link: false, 
+        show: true,
+      },
+      {
+        id: 'Octarine', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/octarine", 
+        title: 'Octarine',
         link: false, 
         show: true,
       },
@@ -252,15 +276,16 @@ class Navigator extends React.Component {
       });
     }
 
-    static getDerivedStateFromProps(props, state) {
-      const { meshAdapters, meshAdaptersts } = props;
-      let path = (typeof window !== 'undefined' ? window.location.pathname : '');
-      if (path.lastIndexOf('/') > 0) {
-        path = path.substring(0, path.lastIndexOf('/'));
-      }
-      path += window.location.search;
+    // componentDidMount(){
+    //   console.log("navigator mounted")
+    // }
 
-      // console.log(`path: ${path}`);
+    // componentDidUpdate(){
+    //   console.log("navigator mounted")
+    // }
+
+    static getDerivedStateFromProps(props, state) {
+      const { meshAdapters, meshAdaptersts, path } = props;
       const st = {};
       if(meshAdaptersts > state.mts) {
         st.meshAdapters = meshAdapters;
@@ -270,7 +295,7 @@ class Navigator extends React.Component {
       const fetchNestedPathAndTitle = (path, title, href, children) => {
         if (href === path) {
             // console.log(`updating path: ${path} and title: ${title}`);
-            props.updatepagepathandtitle({path, title});
+            props.updatepagetitle({title});
             return;
         }
         if(children && children.length > 0){
@@ -330,8 +355,12 @@ class Navigator extends React.Component {
           image = "/static/img/consul.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
-        case 'nsm':
+        case 'network service mesh':
           image = "/static/img/nsm.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'octarine':
+          image = "/static/img/octarine.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:
@@ -413,7 +442,7 @@ class Navigator extends React.Component {
     }
 
     render() {
-        const { classes, updatepagepathandtitle, isDrawerCollapsed, ...other } = this.props;
+        const { classes, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
         // const path = this.updateTitle();
@@ -436,7 +465,9 @@ class Navigator extends React.Component {
                     classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
                   }>
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span>
+                  <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
+
+                  {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show, link, children }) => {
                       if (typeof show !== 'undefined' && !show){
@@ -502,9 +533,7 @@ class Navigator extends React.Component {
               </List>
               <div className={classes.fixedSidebarFooter}>
                 <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
-                  <img
-                    src='../static/img/sidebar-collapse-toggle-icon.svg'
-                    alt='Sidebar collapse toggle icon' />
+                <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
                 </ListItem>
               </div>
             </Drawer>
@@ -520,7 +549,7 @@ Navigator.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updatepagepathandtitle: bindActionCreators(updatepagepathandtitle, dispatch)
+    updatepagetitle: bindActionCreators(updatepagetitle, dispatch)
   }
 }
 
@@ -528,10 +557,11 @@ const mapStateToProps = state => {
   // const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get("meshAdapters").toJS();
   const meshAdaptersts = state.get("meshAdaptersts");
+  const path = state.get("page").get("path");
   // const grafana = state.get("grafana").toJS();
   // const prometheus = state.get("prometheus").toJS();
   // return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
-  return {meshAdapters, meshAdaptersts};
+  return {meshAdapters, meshAdaptersts, path};
 }
 
 export default withStyles(styles)(connect(

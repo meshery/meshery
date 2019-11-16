@@ -1,4 +1,4 @@
-# <a href="https://layer5.io/meshery"><img align="left" src="https://layer5.io/assets/images/meshery/Meshery-RGB-Full-Light.png"  width="25%" /></a>
+<a href="https://layer5.io/meshery"><img align="left" src="https://raw.githubusercontent.com/layer5io/meshery/master/ui/static/img/meshery-logo/meshery-logo-light-text.png"  width="25%" /></a>
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
@@ -72,7 +72,12 @@ This project is community-built and welcomes collaboration! See the <a href="htt
 - [Contributing](CONTRIBUTING.md/#contributing)
   - [Write an adapter](CONTRIBUTING.md/#adapter)
   - [Build the project](CONTRIBUTING.md/#building)
-  
+
+### Stargazers
+<p align="center">
+  <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
+<a href="../../stargazers"><img align="center" src="https://starchart.cc/layer5io/meshery.svg" /></a></p>
+
 ## License
 
 This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).

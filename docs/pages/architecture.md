@@ -17,16 +17,19 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 
 </div> 
 
-# Network Ports (that Meshery uses and needs)
-- Meshery web-based UI: 9081/tcp
-- Meshery Istio Adapter: 10000/tcp
-- Meshery Linkerd Adapter: 10001/tcp
-- Meshery Consul Adapter: 10002/tcp
-- Meshery Octarine Adapter: 10003/tcp
-- Meshery NSM Adapter: 10004/tcp
+## Network Ports 
+Meshery uses the following list of network ports to interface with its various components:
 
-# Adapters (what they are, what purpose they serve)
-* [Istio](https://istio.io/)
-* [Linkerd](https://linkerd.io/)
-* [Octarine](https://www.octarinesec.com/)
-* [Consul Connect](https://www.consul.io/)
+| Adapter | Port |
+|:-------|:----|
+| Meshery web-based UI | 9081/tcp |
+| [Meshery Adapter for Istio](/docs/installation/adapters/istio) | 10000/tcp |
+| [Meshery Adapter for Linkerd](/docs/installation/adapters/linkerd) | 10001/tcp |
+| [Meshery Adapter for Consul](/docs/installation/adapters/consul) | 10002/tcp |
+| [Meshery Adapter for Octarine](/docs/installation/adapters/octarine) | 10003/tcp |
+| [Meshery Adapter for NSM](/docs/installation/adapters/nsm) | 10004/tcp |
+| [Meshery Adapter for App Mesh](/docs/installation/adapters/app-mesh) |10005/tcp |
+| [Meshery Adapter for Maesh](/docs/installation/adapters/maesh) |10006/tcp |
+| [Meshery Adapter for Kuma](/docs/installation/adapters/kuma) |10007/tcp |
+
+See the [Adapters](installation/adapters) section for more information on the function of an adapter.

@@ -1,4 +1,4 @@
-FROM golang:1.13.1 as bd0
+FROM golang:1.13.4 as bd0
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery
 ADD . .
@@ -13,7 +13,7 @@ RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
-RUN git clone https://github.com/layer5io/wrk2 && cd wrk2 && make 
+RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make 
 
 # FROM alpine
 # RUN apk --update add ca-certificates
@@ -23,7 +23,7 @@ RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
 COPY --from=bd0 /meshery /app/cmd/
 COPY --from=bd0 /etc/passwd /etc/passwd
 COPY --from=bd1 /out /app/ui/out
-COPY --from=bd2 /wrk2 /app/cmd/
+COPY --from=bd2 /wrk2 /app/cmd/wrk2
 COPY --from=bd2 /wrk2/wrk /usr/local/bin
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser

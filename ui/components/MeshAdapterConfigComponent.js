@@ -137,7 +137,7 @@ class MeshAdapterConfigComponent extends React.Component {
     }
   };
   handleInputChange = (inputValue, actionMeta) => {
-    console.log(inputValue);
+    // console.log(inputValue);
     // console.log(`action: ${actionMeta.action}`);
     // console.groupEnd();
 
@@ -304,10 +304,14 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/consul.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
 		            break;
-              case 'nsm':
+              case 'network service mesh':
                 image = "/static/img/nsm.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-		            break;
+                break;
+              case 'octarine':
+                image = "/static/img/octarine.svg";
+                logoIcon = (<img src={image} className={classes.icon} />);
+                break;                
               // default:
             } 
             

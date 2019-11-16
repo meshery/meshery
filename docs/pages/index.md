@@ -3,22 +3,19 @@ layout: page
 title: Meshery Documentation
 permalink: /
 ---
-
 # What is Meshery 
-A service mesh playground to faciliate learning about functionality and performance of different service meshes. 
-Meshery incorporates the collection and display of metrics from applications running in the playground. 
-Meshery Provides these features below as part of it's playground. 
+A multi-service mesh management plane adopting, operating and developing on different service meshes. 
+Meshery faciliates learning about functionality and performance of service meshes and incorporates collection and display of metrics from applications running on or across service meshes. 
+Meshery provides this high-level functionality: 
 
-1. the user interface to authenticate users.
-1. accepts and maintains the Kubernetes cluster config and context.
-1. enables users to generate load against their applications.
-1. collects the results of the performance tests from its load generator (Fortio) and stores in the cloud for historical viewing.
-1. interfaces with the Meshery adapters dynamically and enables users to play with service mesh.
+1. Performance Benchmarking
+1. Service Mesh Lifecycle Management
+1. Service Mesh Interoperability and Federation
 
 <div style="text-align:center;">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br /><i>Delivered at Service Mesh Day 2019</i></div>
 
-# What challenges does Meshery solve? 
+## What challenges does Meshery solve? 
 <p style="text-align:center;"><b>Service mesh management - one or multiple service meshes.</b><br /></p>
 
 <p style="margin-bottom:1em; margin-top:1em;">Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be 1) involved and 2) misinterpreted.</p>
@@ -33,12 +30,10 @@ Meshery Provides these features below as part of it's playground.
 1. Understand behavioral differences between service meshes.
 1. Track your application performance from version to version.
 
-
-
-# Meshery is for Adopters and Operators
+## Meshery is for Adopters and Operators
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
-# Meshery approach to provide performance Metrics around Service Meshes
+## Meshery is for performance benchmarking
 - Identify permutations of workloads, infrastructure types, and measurements to use for: 
     1. Data plane testing
     1. Control plane testing.
@@ -46,22 +41,24 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
         1. Workload(s)
         1. Infrastructure(s)
 
-# Supported Service Meshes
+## Supported Service Meshes
+See the full list of [adapters](installation/adapters).
+
 **Available service mesh adapters** - Service mesh adapters that Meshery currently supports:
 
 1. [Istio](https://github.com/layer5io/meshery-istio)
-1. [Linkerd2](https://github.com/layer5io/meshery-linkerd)
+1. [Linkerd](https://github.com/layer5io/meshery-linkerd)
 1. [Consul Connect](https://github.com/layer5io/meshery-consul)
 1. [Octarine](https://github.com/layer5io/meshery-octarine)
+1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
 
 **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
 1. [CPX](https://github.com/layer5io/meshery-cpx)
-1. [Kuma](https://github.com/layer5io/meshery-kuma)
 1. [Maesh](https://github.com/layer5io/meshery-maesh)
-1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
 
 **Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
 1. [App Mesh](https://github.com/layer5io/meshery-app-mesh)
+1. [Kuma](https://github.com/layer5io/meshery-kuma)
 1. SOFAmesh
 
 # Contributing
@@ -69,12 +66,10 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 ## Community
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
 
-* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics)
-    Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community callender](https://bit.ly/2SbrRhe).
+* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
+  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community callender](https://bit.ly/2SbrRhe).
 
-* Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA)
-    Comment on the [design document](https://docs.google.com/document/d/1nV8TunLmVC8j5cBELT42YfEXYmhG3ZqFtHxeG3-w9t0/edit?usp=sharing).
-  
+* Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
 
 # FAQ 
 
