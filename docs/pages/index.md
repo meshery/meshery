@@ -67,7 +67,7 @@ See the full list of [adapters](installation/adapters).
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
 
 * Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
-  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community callender](https://bit.ly/2SbrRhe).
+  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calender](https://bit.ly/2SbrRhe).
 
 * Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
 
