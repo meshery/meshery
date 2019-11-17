@@ -78,9 +78,22 @@ run-ui-dev:
 # Builds the user interface on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
-
-# setup wrk for local dev 
+  
+# setup wrk2 for local dev 
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
-setup-wrk:
+setup-wrk2:
 	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd wrk2; make; cd ..
-	
+
+#Incorporating Make docs commands from the Docs Makefile	
+jekyll=bundle exec jekyll
+
+docs:
+	$(jekyll) serve --drafts --livereload
+
+build-docs:
+	$(jekyll) build --drafts --livereload
+
+docker-docs:
+	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"	
+
+
