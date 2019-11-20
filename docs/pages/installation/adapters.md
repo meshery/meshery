@@ -9,5 +9,5 @@ Meshery has adapters for managing the following service meshes.
 | Platform      | Version       |
 | -------------:|:------------- |
 {% for adapter in site.adapters -%}
-| [{{ adapter.name}} ]({{ adapter.url }}) | {{ adapter.version }} |
+| [{{ adapter.name}} ]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.version }} |
 {% endfor -%}
