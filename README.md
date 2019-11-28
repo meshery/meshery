@@ -10,7 +10,7 @@
 [![Slack](http://slack.layer5.io/badge.svg)](http://slack.layer5.io)
 
 A multi-mesh management plane with initial functionality as a playground to faciliate learning about functionality and performance of different service meshes. [Meshery](https://layer5.io/meshery) also serves as a service mesh performance benchmark.
-  
+
 In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. As a Service Mesh Interface (SMI) partner, Meshery participates in advancing service mesh adoption through standardization of APIs.
 
 ><p align="center"><i>If you’re using Meshery or if you like the project, please ★ star this repository to show your support! 🤩</i></p>
@@ -59,7 +59,7 @@ This project is community-built and welcomes collaboration! See the <a href="htt
 </p>
 </div>
 
-*Not sure where to start?* Grab an open issue with the [help-wanted label](../../labels/help%20wanted).
+*Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
 ## More about Meshery
 
