@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"fortio.org/fortio/periodic"
 )
 
 // LoadTestHandler runs the load test with the given parameters
@@ -91,6 +92,15 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		qps = 0
 	}
 	loadTestOptions.HTTPQPS = qps
+
+	loadGenerator := q.Get("loadGenerator")
+
+	switch loadGenerator {
+	case "wrk2":
+		loadTestOptions.LoadGenerator = models.Wrk2LG
+	default:
+		loadTestOptions.LoadGenerator = models.FortioLG
+	}
 
 	// q.Set("json", "on")
 
@@ -174,7 +184,17 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
 	}
-	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	var (
+		resultsMap map[string]interface{} 
+		resultInst *periodic.RunnerResults
+		err error
+	)
+	if loadTestOptions.LoadGenerator == models.Wrk2LG {
+		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)	
+	} else {
+		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
+	}
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)
