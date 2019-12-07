@@ -3,6 +3,8 @@ layout: page
 title: Octarine Adapter
 name: Octarine
 version: v1.0
+port: 10003/tcp
+project_status: Available
 ---
 
 # Configuration

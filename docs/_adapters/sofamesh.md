@@ -1,10 +1,8 @@
 ---
 layout: page
-title: Consul Adapter
-name: Consul
-version: v1.5
-port: 10002/tcp
-project_status: Available
+title: SOFAmesh Adapter
+name: SOFAmesh
+project_status: Help-wanted
 ---
 
 ## Configuration
