@@ -15,31 +15,23 @@
 package cmd
 
 import (
-	"os"
-	"os/exec"
-
 	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 )
 
-// statusCmd represents the status command
-var statusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Check Meshery status",
-	Long:  `Check status of Meshery and Meshery adapters.`,
+var Build string
+
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Version of mesheryctl",
+	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Meshery status...")
-
-		start := exec.Command("docker-compose", "-f", dockerComposeFile, "ps")
-		start.Stdout = os.Stdout
-		start.Stderr = os.Stderr
-
-		if err := start.Run(); err != nil {
-			log.Fatal(err)
-		}
+		log.Info("Version: ", Build)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(versionCmd)
 }
