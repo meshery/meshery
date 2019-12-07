@@ -3,6 +3,8 @@ layout: page
 title: Linkerd Adapter
 name: Linkerd
 version: v.2.5.0
+port: 10001/tcp
+project_status: Available
 ---
 
 ## Configuration

@@ -20,16 +20,14 @@ Performance test reports area anonymously sent to Meshery Cloud for statistical 
 ## Network Ports 
 Meshery uses the following list of network ports to interface with its various components:
 
-| Adapter | Port |
-|:-------|:----|
+| Adapter       | Port          |
+| :------------ | :------------ |
 | Meshery web-based UI | 9081/tcp |
-| [Meshery Adapter for Istio](/docs/installation/adapters/istio) | 10000/tcp |
-| [Meshery Adapter for Linkerd](/docs/installation/adapters/linkerd) | 10001/tcp |
-| [Meshery Adapter for Consul](/docs/installation/adapters/consul) | 10002/tcp |
-| [Meshery Adapter for Octarine](/docs/installation/adapters/octarine) | 10003/tcp |
-| [Meshery Adapter for NSM](/docs/installation/adapters/nsm) | 10004/tcp |
-| [Meshery Adapter for App Mesh](/docs/installation/adapters/app-mesh) |10005/tcp |
-| [Meshery Adapter for Maesh](/docs/installation/adapters/maesh) |10006/tcp |
-| [Meshery Adapter for Kuma](/docs/installation/adapters/kuma) |10007/tcp |
+{% assign adaptersSortedByPort = site.adapters | sort: 'port' -%}
+{% for adapter in adaptersSortedByPort -%}
+{% if adapter.port -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} |
+{% endif -%}
+{% endfor %}
 
 See the [Adapters](installation/adapters) section for more information on the function of an adapter.
