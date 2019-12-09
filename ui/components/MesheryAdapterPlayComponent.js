@@ -479,7 +479,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       case 4:
         content = 'Custom Config';
-        description = 'For the brave of hearts who want to speak YAML to your cluster directly';
+        description = 'Customize the configuration of your service mesh';
         break;
     }
     return (
