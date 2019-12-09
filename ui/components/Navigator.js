@@ -50,6 +50,7 @@ const styles = theme => ({
   link: {
     display: 'inline-flex',
     width: '100%',
+    height: '30px',
   },
   itemActionable: {
     '&:hover': {
@@ -73,7 +74,7 @@ const styles = theme => ({
   mainLogo: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(0),
+    marginLeft: theme.spacing(-1),
     width: 40,
     height: 40,
     borderRadius: 'unset',
@@ -150,6 +151,21 @@ const styles = theme => ({
     'margin-left': 'auto',
     opacity: '0.7',
     transition: 'opacity 200ms linear',
+    '&:hover': {
+      opacity: 1,
+      background: 'transparent'
+    },
+    '&:focus': {
+      opacity: 1,
+      background: 'transparent'
+    }
+  },
+  collapseButtonWrapperRotated: {
+    width: 'auto',
+    'margin-left': 'auto',
+    opacity: '0.7',
+    transition: 'opacity 200ms linear',
+    'transform':'rotate(180deg)',
     '&:hover': {
       opacity: 1,
       background: 'transparent'
@@ -445,6 +461,13 @@ class Navigator extends React.Component {
         const { classes, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
+        var classname;
+        if (isDrawerCollapsed){
+          classname=classes.collapseButtonWrapperRotated;
+        }
+        else{
+          classname=classes.collapseButtonWrapper;
+        }
         // const path = this.updateTitle();
         // console.log("current page:" + path);
         return (
@@ -532,7 +555,7 @@ class Navigator extends React.Component {
                         </ListItem>
               </List>
               <div className={classes.fixedSidebarFooter}>
-                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
+                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
                 <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
                 </ListItem>
               </div>
