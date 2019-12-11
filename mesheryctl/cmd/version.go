@@ -20,6 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Build has been exported
 var Build string
 
 // versionCmd represents the version command
