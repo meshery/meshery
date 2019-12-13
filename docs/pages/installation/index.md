@@ -10,10 +10,17 @@ Getting Meshery up and running on a locally on Docker-enabled system is easy. Us
 **Homebrew**
 1. Download `mesheryctl` and install Meshery on Docker on Mac or Linux with homebrew:
 
+**Installation Commands**
 ```
 brew tap layer5io/tap
 brew install mesheryctl
 mesheryctl start
+
+```
+**Upgradation Command**
+```
+brew upgrade mesheryctl
+
 ```
 
 **Bash**
