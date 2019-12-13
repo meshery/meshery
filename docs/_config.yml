@@ -19,7 +19,7 @@ email: community@layer5.io
 author: Meshery
 description: > # this means to ignore newlines until "baseurl:"
   Documentation for Meshery, the multi-service mesh management plane for Istio,
-  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Maesh, App Mesh
+  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Maesh, App Mesh, Citrix Service Mesh
   and other service meshes.
 
 # DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh

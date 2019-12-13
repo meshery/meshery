@@ -16,3 +16,4 @@ Meshery has adapters for managing the following service meshes.
 | [Network Service Mesh](/docs/installation/adapters/nsm) | beta |
 | [Octarine](/docs/installation/adapters/octarine) | v1.0 |
 | [Kuma](/docs/installation/adapters/kuma) | alpha |
+| [Citrix Service Mesh](/docs/installation/adapters/cpx) | alpha |
