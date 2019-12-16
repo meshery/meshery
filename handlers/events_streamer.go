@@ -18,7 +18,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -41,6 +41,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, s
 
 	notify := w.(http.CloseNotifier).CloseNotify()
 
+	var err error
 	// go func() {
 	// 	<-notify
 	// 	// an attempt to re-establish connection
@@ -92,15 +93,6 @@ STOP:
 			close(respChan)
 			break STOP
 		default:
-			sessObj, err := h.config.SessionPersister.Read(user.UserID)
-			if err != nil {
-				log.Warn("Unable to read session from the session persister. Starting with a new session.")
-			}
-
-			if sessObj == nil {
-				sessObj = &models.Session{}
-			}
-
 			meshAdapters := sessObj.MeshAdapters
 			if meshAdapters == nil {
 				meshAdapters = []*models.Adapter{}

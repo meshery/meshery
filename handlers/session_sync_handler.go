@@ -12,20 +12,13 @@ import (
 )
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
-func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Errorf("error retrieving user config data: %v", err)
-		http.Error(w, "unable to get user config data", http.StatusInternalServerError)
-		return
-	}
-
-	err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user, sessObj)
+	err := h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user, sessObj)
 	// if err != nil {
 	// // We can ignore the errors here. They are logged in the other method
 	// }
