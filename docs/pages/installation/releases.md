@@ -14,35 +14,47 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   </thead>
   <tbody>
     <tr>
+      <td class="centered">0.3.2</td>
+      <td>
+        <em>Mesheryctl</em> - adds mesheryctl version as a new subcommand. 
+      </td>
+      <td>Nov 29, 2019</td>
+    </tr>
+    <tr>
+      <td class="centered">0.3.1</td>
+      <td>
+        <em>Meshery</em> - Support for wrk2 as an alternative load generator.
+      </td>
+      <td>Nov 12, 2019</td>
+    </tr>
+    <tr>
       <td class="centered">0.2.4</td>
       <td>
-
-<i>Meshery</i>
-  - Meshery adapter for Octarine released as stable.
-<br />
-<i>mesheryctl</i>
-  - now available through homebrew.
-<br />
-<i>Documentation</i>
- - revised quick start for Mac, Linux _and_ Windows.
- - WSL2 support published.
- - GKE kubeconfig generation script switched to `--decode`.
-       </td>
-       <td>Nov 5, 2019</td>
+        <em>Meshery</em>
+          - Meshery adapter for Octarine released as stable.
+        <br />
+        <em>mesheryctl</em>
+          - now available through homebrew.
+        <br />
+        <em>Documentation</em>
+        - revised quick start for Mac, Linux _and_ Windows.
+        - WSL2 support published.
+        - GKE kubeconfig generation script switched to `--decode`.
+      </td>
+      <td>Nov 5, 2019</td>
     </tr>
     <tr>
       <td class="centered">0.2.3</td>
       <td>
-
-<i>mesheryctl</i>
-  - improved `status` output on Windows
-<br />
-<i>Meshery</i>
-  - Ability to deploy Meshery on Istio. 
-  - Adapter Chips: Move adapter port number into tooltip
-<br />
-<i>Docs</i>
-   - /search no longer redirecting to github.io.
+        <em>mesheryctl</em>
+          - improved `status` output on Windows
+        <br />
+        <em>Meshery</em>
+          - Ability to deploy Meshery on Istio. 
+          - Adapter Chips: Move adapter port number into tooltip
+        <br />
+        <em>Docs</em>
+          - /search no longer redirecting to github.io.
       </td>
       <td>Nov 3, 2019</td>
     </tr>
