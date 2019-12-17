@@ -40,5 +40,6 @@ log.txt
 **/_site
 **/.sass-cache
 **/.jekyll-metadata
+**/.jekyll-cache
 
 dist/
