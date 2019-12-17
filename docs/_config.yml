@@ -75,6 +75,7 @@ collections:
     permalink: /:collection/:path
   adapters:
     output: true
+    permalink: /:collection/:path
 
 # Defaults
 defaults:
