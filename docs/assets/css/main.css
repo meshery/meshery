@@ -7468,7 +7468,7 @@ button.bg-light:focus {
 }
 
 .bg-dark {
-    background-color: #403f4c!important
+    background-color:{{ site.color }}
 }
 
 a.bg-dark:hover,
