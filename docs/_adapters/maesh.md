@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Maesh
-permalink: installation/adapters/maesh
+title: Maesh Adapter
+name: Maesh
+version: alpha
+port: 10006/tcp
+project_status: In-progress
 ---
 
 ## Configuration

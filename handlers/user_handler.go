@@ -11,7 +11,7 @@ import (
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, _ *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return

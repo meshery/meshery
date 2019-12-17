@@ -246,7 +246,7 @@ DEPENDENCIES
   github-pages
 
 RUBY VERSION
-   ruby 2.4.9p362
+   ruby 2.6.3p62
 
 BUNDLED WITH
    2.1.0

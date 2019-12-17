@@ -1,7 +1,10 @@
 ---
 layout: page
-title: App Mesh
-permalink: installation/adapters/app-mesh
+title: Kuma Adapter
+name: Kuma
+version: alpha
+port: 10007/tcp
+project_status: Help-wanted
 ---
 
 ## Configuration

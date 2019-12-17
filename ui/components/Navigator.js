@@ -21,7 +21,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faPollH } from '@fortawesome/free-solid-svg-icons';
+import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
   categoryHeader: {
@@ -50,6 +50,7 @@ const styles = theme => ({
   link: {
     display: 'inline-flex',
     width: '100%',
+    height: '30px',
   },
   itemActionable: {
     '&:hover': {
@@ -73,8 +74,16 @@ const styles = theme => ({
   mainLogo: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    width: 30,
-    height: 30,
+    marginLeft: theme.spacing(-1),
+    width: 40,
+    height: 40,
+    borderRadius: 'unset',
+  },
+  mainLogoText: {
+    marginLeft: theme.spacing(.5),
+    marginTop: theme.spacing(1),
+    width: 170,
+    height: '100%',
     borderRadius: 'unset',
   },
   community: {
@@ -151,6 +160,21 @@ const styles = theme => ({
       background: 'transparent'
     }
   },
+  collapseButtonWrapperRotated: {
+    width: 'auto',
+    'margin-left': 'auto',
+    opacity: '0.7',
+    transition: 'opacity 200ms linear',
+    'transform':'rotate(180deg)',
+    '&:hover': {
+      opacity: 1,
+      background: 'transparent'
+    },
+    '&:focus': {
+      opacity: 1,
+      background: 'transparent'
+    }
+  },
   noPadding: {
     paddingLeft: '16px',
     paddingRight: '16px'
@@ -199,6 +223,14 @@ const categories = [
     link: true,
     children: [
       {
+        id: 'Consul', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/consul", 
+        title: 'Consul',
+        link: false, 
+        show: true,
+      },
+      {
         id: 'Istio', 
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/istio", 
@@ -215,18 +247,18 @@ const categories = [
         show: true,
       },
       {
-        id: 'Consul', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/consul", 
-        title: 'Consul',
-        link: false, 
-        show: true,
-      },
-      {
         id: 'Network Service Mesh', 
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/nsm", 
         title: 'Network Service Mesh',
+        link: false, 
+        show: true,
+      },
+      {
+        id: 'Octarine', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/octarine", 
+        title: 'Octarine',
         link: false, 
         show: true,
       },
@@ -343,6 +375,10 @@ class Navigator extends React.Component {
           image = "/static/img/nsm.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
+        case 'octarine':
+          image = "/static/img/octarine.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
         // default:
       }
       return logoIcon;
@@ -425,6 +461,13 @@ class Navigator extends React.Component {
         const { classes, isDrawerCollapsed, ...other } = this.props;
         const { path } = this.state;
         this.updateCategoriesMenus();
+        var classname;
+        if (isDrawerCollapsed){
+          classname=classes.collapseButtonWrapperRotated;
+        }
+        else{
+          classname=classes.collapseButtonWrapper;
+        }
         // const path = this.updateTitle();
         // console.log("current page:" + path);
         return (
@@ -445,7 +488,9 @@ class Navigator extends React.Component {
                     classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
                   }>
                   <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span>
+                  <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
+
+                  {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
                 </ListItem>
                     {categories.map(({ id: childId, icon, href, show, link, children }) => {
                       if (typeof show !== 'undefined' && !show){
@@ -510,10 +555,8 @@ class Navigator extends React.Component {
                         </ListItem>
               </List>
               <div className={classes.fixedSidebarFooter}>
-                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classes.collapseButtonWrapper}>
-                  <img
-                    src='../static/img/sidebar-collapse-toggle-icon.svg'
-                    alt='Sidebar collapse toggle icon' />
+                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
+                <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
                 </ListItem>
               </div>
             </Drawer>

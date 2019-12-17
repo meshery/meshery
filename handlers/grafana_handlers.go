@@ -18,19 +18,10 @@ func init() {
 }
 
 // GrafanaConfigHandler is used for persisting or removing Grafana configuration
-func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if req.Method == http.MethodPost {
@@ -50,7 +41,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	} else if req.Method == http.MethodDelete {
 		sessObj.Grafana = nil
 	}
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err := h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -60,23 +51,14 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
-func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet && req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	if req.Method == http.MethodPost {
-		h.SaveSelectedGrafanaBoardsHandler(w, req, session, user)
+		h.SaveSelectedGrafanaBoardsHandler(w, req, session, sessObj, user)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
@@ -106,22 +88,13 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 }
 
 // GrafanaQueryHandler is used for handling Grafana queries
-func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	reqQuery := req.URL.Query()
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
 
 	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
 		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
@@ -139,22 +112,13 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
-func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	reqQuery := req.URL.Query()
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
 
 	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {
 		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
@@ -172,19 +136,10 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
-func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Grafana == nil || sessObj.Grafana.GrafanaURL == "" {

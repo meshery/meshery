@@ -12,15 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/cmd"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/spf13/cobra"
 )
 
-var version = "dev"
+// Build - holds the build info
+var Build string
 
-func main() {
-	cmd.Build = version
-	cmd.Execute()
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Version of mesheryctl",
+	Long:  `Version of Meshery command line client - mesheryctl.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Info("Version: ", Build)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }

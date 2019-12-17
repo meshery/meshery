@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Istio
-permalink: installation/adapters/istio
+title: CPX Adapter
+permalink: installation/adapters/cpx
 ---
 
 ## Configuration

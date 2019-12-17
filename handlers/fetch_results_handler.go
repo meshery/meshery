@@ -12,7 +12,7 @@ import (
 )
 
 // FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
