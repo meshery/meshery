@@ -19,20 +19,12 @@ import (
 )
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
 	if req.Method == http.MethodPost {
 		h.addK8SConfig(user, sessObj, w, req)
 		return
@@ -268,15 +260,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 }
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if sessObj.K8SConfig == nil {
 		_, _ = w.Write([]byte("[]"))
 		return
@@ -300,19 +284,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 }
 
 // InstalledMeshesHandler - scans and tries to find out the installed meshes
-func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
+func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if sessObj.K8SConfig == nil {
-
 		_, _ = w.Write([]byte("{}"))
-
 		return
 	}
 
