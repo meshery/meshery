@@ -18,9 +18,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/cmd"
 )
 
-var version = "dev"
+var Version = "dev"
 
 func main() {
-	cmd.Build = version
+	cmd.Build = Version
 	cmd.Execute()
 }
