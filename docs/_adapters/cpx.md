@@ -17,8 +17,4 @@ Step 2)
 2. 
 
 ## Architecture
-<<<<<<< HEAD
 < diagram >
-=======
-< diagram >
->>>>>>> 86fe363fa5365ce1c27de0dbec9fc48070ae376a
