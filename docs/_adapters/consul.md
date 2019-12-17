@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Kuma
-permalink: installation/adapters/kuma
+title: Consul Adapter
+name: Consul
+version: v1.5
+port: 10002/tcp
+project_status: Available
 ---
 
 ## Configuration

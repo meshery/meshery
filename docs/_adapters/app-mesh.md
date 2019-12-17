@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Istio
-permalink: installation/adapters/istio
+title: App-Mesh Adapter
+name: App-Mesh
+version: alpha
+port: 10005/tcp
+project_status: Help-wanted
 ---
 
 ## Configuration

@@ -44,22 +44,19 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 ## Supported Service Meshes
 See the full list of [adapters](installation/adapters).
 
-**Available service mesh adapters** - Service mesh adapters that Meshery currently supports:
+| Platform      | Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 
-1. [Istio](https://github.com/layer5io/meshery-istio)
-1. [Linkerd](https://github.com/layer5io/meshery-linkerd)
-1. [Consul Connect](https://github.com/layer5io/meshery-consul)
-1. [Octarine](https://github.com/layer5io/meshery-octarine)
-1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
+**Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
 
-**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
-1. [CPX](https://github.com/layer5io/meshery-cpx)
-1. [Maesh](https://github.com/layer5io/meshery-maesh)
+**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
 
-**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
-1. [App Mesh](https://github.com/layer5io/meshery-app-mesh)
-1. [Kuma](https://github.com/layer5io/meshery-kuma)
-1. SOFAmesh
+**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support.
 
 # Contributing
 

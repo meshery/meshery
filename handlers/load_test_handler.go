@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"fortio.org/fortio/periodic"
 )
 
 // LoadTestHandler runs the load test with the given parameters
