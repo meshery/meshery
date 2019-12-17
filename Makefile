@@ -17,7 +17,7 @@ docker:
 docker-run-local-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	--link meshery-saas:meshery-saas \
+	--link meshery-cloud:meshery-cloud \
 	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
