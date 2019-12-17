@@ -73,6 +73,8 @@ collections:
   docs:
     output: true
     permalink: /:collection/:path
+  adapters:
+    output: true
 
 # Defaults
 defaults:
