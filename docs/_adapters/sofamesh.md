@@ -1,7 +1,8 @@
 ---
 layout: page
-title: Linkerd
-permalink: installation/adapters/linkerd
+title: SOFAmesh Adapter
+name: SOFAmesh
+project_status: Help-wanted
 ---
 
 ## Configuration

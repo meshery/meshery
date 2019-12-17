@@ -307,7 +307,11 @@ class MeshAdapterConfigComponent extends React.Component {
               case 'network service mesh':
                 image = "/static/img/nsm.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-		            break;
+                break;
+              case 'octarine':
+                image = "/static/img/octarine.svg";
+                logoIcon = (<img src={image} className={classes.icon} />);
+                break;                
               // default:
             } 
             

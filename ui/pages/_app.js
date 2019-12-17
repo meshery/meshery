@@ -216,6 +216,7 @@ let theme = createMuiTheme({
         color: '#737373',
       },
       footerText: {
+        cursor: 'pointer',
         display: 'inline',
         verticalAlign: 'middle',
       },
@@ -223,9 +224,6 @@ let theme = createMuiTheme({
         display: 'inline',
         verticalAlign: 'top',
       },
-      extl5: {
-        cursor: 'pointer',
-      }, 
       icon: {
         fontSize: 20,
       },
@@ -381,7 +379,7 @@ class MesheryApp extends App {
                               <footer className={classes.footer}>
                                 <Typography variant="body2" align="center" color="textSecondary" component="p">
                                  <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                                   Built with <FavoriteIcon className={classes.footerIcon} /> by the <span className={classes.extl5}> Layer5 Community</span></span>
+                                   Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
                                 </Typography>
                               </footer>
                             </div>

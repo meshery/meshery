@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Consul
-permalink: installation/adapters/consul
+title: Istio Adapter
+name: Istio
+version: v1.3
+port: 10000/tcp
+project_status: Available
 ---
 
 ## Configuration

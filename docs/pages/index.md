@@ -44,22 +44,19 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 ## Supported Service Meshes
 See the full list of [adapters](installation/adapters).
 
-**Available service mesh adapters** - Service mesh adapters that Meshery currently supports:
+| Platform      | Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 
-1. [Istio](https://github.com/layer5io/meshery-istio)
-1. [Linkerd](https://github.com/layer5io/meshery-linkerd)
-1. [Consul Connect](https://github.com/layer5io/meshery-consul)
-1. [Octarine](https://github.com/layer5io/meshery-octarine)
-1. [Network Service Mesh](https://github.com/layer5io/meshery-nsm)
+**Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
 
-**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development:
-1. [CPX](https://github.com/layer5io/meshery-cpx)
-1. [Maesh](https://github.com/layer5io/meshery-maesh)
+**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
 
-**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support:
-1. [App Mesh](https://github.com/layer5io/meshery-app-mesh)
-1. [Kuma](https://github.com/layer5io/meshery-kuma)
-1. SOFAmesh
+**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support.
 
 # Contributing
 
@@ -67,7 +64,7 @@ See the full list of [adapters](installation/adapters).
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
 
 * Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
-  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community callender](https://bit.ly/2SbrRhe).
+  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calender](https://bit.ly/2SbrRhe).
 
 * Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
 
@@ -88,6 +85,7 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 # Resources
 
 ## Meshery Presentations
+- NSMCon 2019 talk ([video](https://www.youtube.com/watch?v=4xKixsDTtdM), [deck](https://calcotestudios.com/talks/decks/slides-nsmcon-kubecon-na-2019-adopting-network-service-mesh-with-meshery.html))
 - [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
 - [DockerCon 2019 Open Source Summit](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
 - KubeCon EU 2019 ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))

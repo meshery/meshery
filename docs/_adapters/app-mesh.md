@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Network Service Mesh
-permalink: installation/adapters/nsm
+title: App-Mesh Adapter
+name: App-Mesh
+version: alpha
+port: 10005/tcp
+project_status: Help-wanted
 ---
 
 ## Configuration

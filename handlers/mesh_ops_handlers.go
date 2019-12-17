@@ -35,21 +35,12 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 }
 
 // MeshAdapterConfigHandler is used to persist adapter config
-func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
+func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	meshAdapters := sessObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
-
+	var err error
 	switch req.Method {
 	case http.MethodPost:
 		meshLocationURL := req.FormValue("meshLocationURL")
@@ -193,19 +184,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 }
 
 // MeshOpsHandler is used to send operations to the adapters
-func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	meshAdapters := sessObj.MeshAdapters
@@ -278,19 +260,10 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, sessi
 }
 
 // AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	meshAdapters := sessObj.MeshAdapters

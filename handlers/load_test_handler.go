@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
@@ -21,7 +22,7 @@ import (
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -92,6 +93,15 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	}
 	loadTestOptions.HTTPQPS = qps
 
+	loadGenerator := q.Get("loadGenerator")
+
+	switch loadGenerator {
+	case "wrk2":
+		loadTestOptions.LoadGenerator = models.Wrk2LG
+	default:
+		loadTestOptions.LoadGenerator = models.FortioLG
+	}
+
 	// q.Set("json", "on")
 
 	// client := &http.Client{}
@@ -104,15 +114,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	// fortioURL.RawQuery = q.Encode()
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
 
 	log := logrus.WithField("file", "load_test_handler")
 
@@ -174,7 +175,17 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
 	}
-	resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
+	var (
+		resultsMap map[string]interface{}
+		resultInst *periodic.RunnerResults
+		err        error
+	)
+	if loadTestOptions.LoadGenerator == models.Wrk2LG {
+		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
+	} else {
+		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
+	}
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)
