@@ -20,24 +20,15 @@ func init() {
 }
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
-func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
-		if err = h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
+		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
 			logrus.Errorf("unable to connect to prometheus: %v", err)
 			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
 			return
@@ -50,7 +41,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		sessObj.Prometheus = nil
 	}
 
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err := h.config.SessionPersister.Write(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -61,19 +52,10 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 }
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
-func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
@@ -108,19 +90,10 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 }
 
 // PrometheusQueryHandler handles prometheus queries
-func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
@@ -141,19 +114,10 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
-func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
@@ -180,19 +144,10 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 }
 
 // PrometheusStaticBoardHandler returns the static board
-func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
@@ -231,7 +186,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(result)
+	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
 		logrus.Errorf("error marshalling board: %v", err)
 		http.Error(w, "unable to marshal board instance", http.StatusInternalServerError)
@@ -240,19 +195,10 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 }
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
-func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
-	}
-
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
 	}
 
 	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {

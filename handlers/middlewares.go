@@ -33,7 +33,7 @@ func (h *Handler) validateAuth(req *http.Request) bool {
 }
 
 // SessionInjectorMiddleware - is a middleware which injects user and session object
-func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *sessions.Session, *models.User)) http.Handler {
+func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *sessions.Session, *models.Session, *models.User)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// ensuring session is intact before running load test
 		session, err := h.config.SessionStore.Get(req, h.config.SessionName)
@@ -45,6 +45,15 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 
 		user, _ := session.Values["user"].(*models.User)
 
-		next(w, req, session, user)
+		sessObj, err := h.config.SessionPersister.Read(user.UserID)
+		if err != nil {
+			logrus.Warn("unable to read session from the session persister, starting with a new one")
+		}
+
+		if sessObj == nil {
+			sessObj = &models.Session{}
+		}
+
+		next(w, req, session, sessObj, user)
 	})
 }
