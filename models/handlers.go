@@ -51,20 +51,20 @@ type HandlerInterface interface {
 
 // HandlerConfig holds all the config pieces needed by handler methods
 type HandlerConfig struct {
-	SessionName   string
-	RefCookieName string
+	// SessionName   string
+	// RefCookieName string
 
-	SessionStore sessions.Store
+	// SessionStore sessions.Store
 
-	SaaSTokenName string
-	SaaSBaseURL   string
+	// SaaSTokenName string
+	// SaaSBaseURL   string
 
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface
 
 	Queue taskq.Queue
 
-	SessionPersister SessionPersister
+	// SessionPersister SessionPersister
 
 	KubeConfigFolder string
 
@@ -73,11 +73,14 @@ type HandlerConfig struct {
 
 	PrometheusClient         *PrometheusClient
 	PrometheusClientForQuery *PrometheusClient
+
+	Provider Provider
 }
 
 // SubmitMetricsConfig is used to store config used for submitting metrics
 type SubmitMetricsConfig struct {
 	TestUUID, ResultID, PromURL string
 	StartTime, EndTime          time.Time
-	TokenKey, TokenVal          string
+	// TokenKey,
+	TokenVal string
 }

@@ -81,11 +81,11 @@ func init() {
 
 // SessionPersister defines methods for a session persister
 type SessionPersister interface {
-	Read(userID string) (*Session, error)
-	Write(userID string, data *Session) error
-	Delete(userID string) error
+	ReadFromPersister(userID string) (*Session, error)
+	WriteToPersister(userID string, data *Session) error
+	DeleteFromPersister(userID string) error
 
 	// Lock(userID string)
 	// Unlock(userID string)
-	Close()
+	ClosePersister()
 }

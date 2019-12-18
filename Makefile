@@ -48,6 +48,15 @@ run-local-cloud:
 	./meshery; \
 	cd ..
 
+run-local-noauth:
+	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
+	PORT=9081 \
+	DEBUG=true \
+	NO_AUTH=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	./meshery; \
+	cd ..
+
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
 run-local:
