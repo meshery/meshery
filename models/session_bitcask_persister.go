@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/jinzhu/copier"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
@@ -50,8 +49,8 @@ func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, er
 	return bd, nil
 }
 
-// Read reads the session data for the given userID
-func (s *BitCaskSessionPersister) Read(userID string) (*models.Session, error) {
+// ReadFromPersister - reads the session data for the given userID
+func (s *BitCaskSessionPersister) ReadFromPersister(userID string) (*Session, error) {
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
 	}
@@ -60,11 +59,11 @@ func (s *BitCaskSessionPersister) Read(userID string) (*models.Session, error) {
 		return nil, errors.New("User ID is empty.")
 	}
 
-	data := &models.Session{}
+	data := &Session{}
 
 	dataCopyI, ok := s.cache.Load(userID)
 	if ok {
-		newData, ok1 := dataCopyI.(*models.Session)
+		newData, ok1 := dataCopyI.(*Session)
 		if ok1 {
 			return newData, nil
 		}
@@ -101,9 +100,9 @@ RETRY:
 	return data, nil
 }
 
-// Write persists session for the user in the cache
-func (s *BitCaskSessionPersister) writeToCache(userID string, data *models.Session) error {
-	newSess := &models.Session{}
+// writeToCache persists session for the user in the cache
+func (s *BitCaskSessionPersister) writeToCache(userID string, data *Session) error {
+	newSess := &Session{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err
@@ -112,8 +111,8 @@ func (s *BitCaskSessionPersister) writeToCache(userID string, data *models.Sessi
 	return nil
 }
 
-// Write persists session for the user
-func (s *BitCaskSessionPersister) Write(userID string, data *models.Session) error {
+// WriteToPersister persists session for the user
+func (s *BitCaskSessionPersister) WriteToPersister(userID string, data *Session) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -157,8 +156,8 @@ RETRY:
 	return nil
 }
 
-// Delete removes the session for the user
-func (s *BitCaskSessionPersister) Delete(userID string) error {
+// DeleteFromPersister removes the session for the user
+func (s *BitCaskSessionPersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist.")
 	}
@@ -188,8 +187,8 @@ RETRY:
 	return nil
 }
 
-// Close closes the badger store
-func (s *BitCaskSessionPersister) Close() {
+// ClosePersister closes the badger store
+func (s *BitCaskSessionPersister) ClosePersister() {
 	if s.db == nil {
 		return
 	}

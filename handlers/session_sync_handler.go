@@ -36,7 +36,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 	}
 
 	sessObj.MeshAdapters = meshAdapters
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
 	if err != nil { // ignoring errors in this context
 		logrus.Errorf("unable to save session: %v", err)
 		// http.Error(w, "unable to save session", http.StatusInternalServerError)

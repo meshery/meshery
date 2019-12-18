@@ -23,7 +23,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (h *Handler) validateAuth(req *http.Request) bool {
-	sess, err := h.config.SessionStore.Get(req, h.config.SessionName)
+	sess, err := h.config.Provider.GetSession(req)
 	if err == nil {
 		// logrus.Debugf("session: %v", sess)
 		return !sess.IsNew
@@ -36,16 +36,16 @@ func (h *Handler) validateAuth(req *http.Request) bool {
 func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *sessions.Session, *models.Session, *models.User)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// ensuring session is intact before running load test
-		session, err := h.config.SessionStore.Get(req, h.config.SessionName)
+		session, err := h.config.Provider.GetSession(req)
 		if err != nil {
 			logrus.Errorf("Error: unable to get session: %v", err)
 			http.Error(w, "unable to get session", http.StatusUnauthorized)
 			return
 		}
 
-		user, _ := session.Values["user"].(*models.User)
+		user, _ := h.config.Provider.GetUserDetails(req)
 
-		sessObj, err := h.config.SessionPersister.Read(user.UserID)
+		sessObj, err := h.config.Provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}

@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/helpers"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"time"
-
-	"github.com/layer5io/meshery/helpers"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
@@ -52,11 +52,6 @@ func main() {
 	}
 	logrus.Infof("Log level: %s", logrus.GetLevel())
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
-	if saasBaseURL == "" {
-		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
-	}
-
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
@@ -66,8 +61,6 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
-
-	cookieSessionStore := sessions.NewCookieStore([]byte("Meshery"))
 
 	queueFactory := memqueue.NewFactory()
 	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
@@ -80,31 +73,61 @@ func main() {
 	// 	logrus.Fatal(err)
 	// }
 
-	sessionPersister, err := helpers.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+	sessionPersister, err := models.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
 	// sessionPersister, _ := helpers.NewMapSessionPersister()
-	defer sessionPersister.Close()
+	defer sessionPersister.ClosePersister()
+
+	var prov models.Provider
+	var cookieSessionStore *sessions.CookieStore
+
+	if viper.GetBool("NO_AUTH") {
+		randID, _ := uuid.NewV4()
+		cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
+		prov = &models.LocalProvider{
+			SessionName: "meshery",
+			// SessionStore: fileSessionStore,
+			SessionStore:            cookieSessionStore,
+			BitCaskSessionPersister: sessionPersister,
+		}
+	} else {
+		cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
+		saasBaseURL := viper.GetString("SAAS_BASE_URL")
+		if saasBaseURL == "" {
+			logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+		}
+		prov = &models.CloudProvider{
+			SaaSBaseURL:   saasBaseURL,
+			RefCookieName: "meshery_ref",
+			SessionName:   "meshery",
+			// SessionStore: fileSessionStore,
+			SessionStore:  cookieSessionStore,
+			SaaSTokenName: "meshery_saas",
+
+			BitCaskSessionPersister: sessionPersister,
+		}
+	}
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
-		SaaSBaseURL: saasBaseURL,
+		// SaaSBaseURL: saasBaseURL,
 
-		RefCookieName: "meshery_ref",
+		// RefCookieName: "meshery_ref",
 
-		SessionName: "meshery",
-		// SessionStore: fileSessionStore,
-		SessionStore: cookieSessionStore,
+		// SessionName: "meshery",
+		// // SessionStore: fileSessionStore,
+		// SessionStore: cookieSessionStore,
 
-		SaaSTokenName: "meshery_saas",
+		// SaaSTokenName: "meshery_saas",
+
+		Provider: prov,
 
 		AdapterTracker: adapterTracker,
 		QueryTracker:   queryTracker,
 
 		Queue: mainQueue,
-
-		SessionPersister: sessionPersister,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 

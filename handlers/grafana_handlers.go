@@ -41,7 +41,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	} else if req.Method == http.MethodDelete {
 		sessObj.Grafana = nil
 	}
-	err := h.config.SessionPersister.Write(user.UserID, sessObj)
+	err := h.config.Provider.WriteToPersister(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -174,7 +174,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	} else {
 		sessObj.Grafana.GrafanaBoards = nil
 	}
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)

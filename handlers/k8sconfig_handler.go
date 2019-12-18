@@ -111,7 +111,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 		return
 	}
 
-	if err = h.config.SessionPersister.Write(user.UserID, sessObj); err != nil {
+	if err = h.config.Provider.WriteToPersister(user.UserID, sessObj); err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
@@ -128,7 +128,7 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 
 func (h *Handler) deleteK8SConfig(user *models.User, sessObj *models.Session, w http.ResponseWriter, req *http.Request) {
 	sessObj.K8SConfig = nil
-	err := h.config.SessionPersister.Write(user.UserID, sessObj)
+	err := h.config.Provider.WriteToPersister(user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -249,7 +249,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 			}
 		}
 		sessObj.K8SConfig = kc
-		err = h.config.SessionPersister.Write(user.UserID, sessObj)
+		err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
 		if err != nil {
 			err = errors.Wrapf(err, "unable to persist k8s config")
 			logrus.Error(err)
