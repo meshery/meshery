@@ -18602,3 +18602,33 @@ footer {
         visibility: hidden
     }
 }
+
+.footer-icons-list{
+    display:flex;
+    justify-content: center;
+}
+.footer-icons {
+        position: relative;
+        display: inline-block;
+        padding: 3px;
+}
+.footer-icons .footer-icons-text {
+    visibility: hidden;
+    width: 200px;
+  background-color:#3C494F;
+  color:white;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 0px; 
+  margin-left: -20px;
+  
+}
+
+.footer-icons:hover .footer-icons-text {
+    visibility: visible;
+}
