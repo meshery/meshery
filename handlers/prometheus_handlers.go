@@ -41,7 +41,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		sessObj.Prometheus = nil
 	}
 
-	err := h.config.Provider.WriteToPersister(user.UserID, sessObj)
+	err := h.config.Provider.RecordPreferences(req, user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -234,7 +234,7 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	} else {
 		sessObj.Prometheus.SelectedPrometheusBoardsConfigs = nil
 	}
-	err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
+	err = h.config.Provider.RecordPreferences(req, user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)

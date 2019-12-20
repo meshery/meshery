@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/gob"
+	"time"
 
 	"github.com/grafana-tools/sdk"
 )
@@ -72,6 +73,7 @@ type Session struct {
 	MeshAdapters []*Adapter  `json:"meshAdapters,omitempty"`
 	Grafana      *Grafana    `json:"grafana,omitempty"`
 	Prometheus   *Prometheus `json:"prometheus,omitempty"`
+	UpdatedAt    time.Time   `json:"updated_at,omitempty"`
 }
 
 func init() {

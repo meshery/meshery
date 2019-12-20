@@ -26,4 +26,6 @@ type Provider interface {
 	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishResults(req *http.Request, data []byte) (string, error)
 	PublishMetrics(tokenVal string, data []byte) error
+
+	RecordPreferences(req *http.Request, userID string, data *Session) error
 }
