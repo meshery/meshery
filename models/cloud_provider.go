@@ -193,7 +193,7 @@ func (l *CloudProvider) fetchUserDetails(tokenVal string) (*User, error) {
 	}
 
 	pref_local, _ := l.ReadFromPersister(up.UserID)
-	if up.Preferences.UpdatedAt.After(pref_local.UpdatedAt) {
+	if pref_local == nil || up.Preferences.UpdatedAt.After(pref_local.UpdatedAt) {
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
