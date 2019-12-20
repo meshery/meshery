@@ -76,7 +76,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	sessObj.MeshAdapters = meshAdapters
-	err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
+	err = h.config.Provider.RecordPreferences(req, user.UserID, sessObj)
 	if err != nil {
 		logrus.Errorf("Unable to save session: %v.", err)
 		http.Error(w, "Unable to save session.", http.StatusInternalServerError)
@@ -114,8 +114,9 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		err = errors.Wrapf(err, "Error creating a mesh client.")
 		logrus.Error(err)
 		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
-		return nil, err
+		return meshAdapters, err
 	}
+	logrus.Debugf("created client for adapter: %s", meshLocationURL)
 	defer func() {
 		_ = mClient.Close()
 	}()
@@ -123,17 +124,17 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	if err != nil {
 		logrus.Errorf("Error getting operations for the mesh: %v.", err)
 		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
-		return nil, err
+		return meshAdapters, err
 	}
-
+	logrus.Debugf("retrieved supported ops for adapter: %s", meshLocationURL)
 	meshNameOps, err := mClient.MClient.MeshName(ctx, &meshes.MeshNameRequest{})
 	if err != nil {
 		err = errors.Wrapf(err, "Error getting service mesh name.")
 		logrus.Error(err)
 		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
-		return nil, err
+		return meshAdapters, err
 	}
-
+	logrus.Debugf("retrieved name for adapter: %s", meshLocationURL)
 	result := &models.Adapter{
 		Location: meshLocationURL,
 		Name:     meshNameOps.GetName(),
@@ -141,8 +142,8 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}
 
 	h.config.AdapterTracker.AddAdapter(ctx, meshLocationURL)
-
-	return append(meshAdapters, result), nil
+	meshAdapters = append(meshAdapters, result)
+	return meshAdapters, nil
 }
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
@@ -162,7 +163,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
 		logrus.Error(err)
 		http.Error(w, "Given adapter URL is not valid.", http.StatusBadRequest)
-		return nil, err
+		return meshAdapters, err
 	}
 
 	newMeshAdapters := []*models.Adapter{}

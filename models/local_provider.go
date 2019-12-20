@@ -1,7 +1,11 @@
 package models
 
 import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
@@ -10,9 +14,10 @@ import (
 
 // LocalProvider - represents a local provider
 type LocalProvider struct {
-	*BitCaskSessionPersister
+	*MapSessionPersister
 	SessionName  string
 	SessionStore sessions.Store
+	SaaSBaseURL  string
 }
 
 // GetProviderType - Returns ProviderType
@@ -93,10 +98,74 @@ func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, 
 
 // PublishResults - publishes results to the provider backend syncronously
 func (l *LocalProvider) PublishResults(req *http.Request, data []byte) (string, error) {
+	bf := bytes.NewBuffer(data)
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
+	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+	c := &http.Client{}
+	resp, err := c.Do(cReq)
+	if err != nil {
+		logrus.Warnf("unable to send results: %v", err)
+		return "", nil
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Warnf("unable to read response body: %v", err)
+		return "", nil
+	}
+	if resp.StatusCode == http.StatusCreated {
+		// logrus.Infof("results successfully published to SaaS")
+		idMap := map[string]string{}
+		if err = json.Unmarshal(bdr, &idMap); err != nil {
+			logrus.Warnf("unable to unmarshal body: %v", err)
+			return "", nil
+		}
+		resultID, ok := idMap["id"]
+		if ok {
+			return resultID, nil
+		}
+		return "", nil
+	}
+	logrus.Warnf("error while sending results: %s", bdr)
 	return "", nil
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *LocalProvider) PublishMetrics(_ string, _ []byte) error {
+func (l *LocalProvider) PublishMetrics(_ string, data []byte) error {
+	bf := bytes.NewBuffer(data)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
+	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+	c := &http.Client{}
+	resp, err := c.Do(cReq)
+	if err != nil {
+		logrus.Warnf("unable to send metrics: %v", err)
+		return nil
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("metrics successfully published to SaaS")
+		return nil
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Warnf("unable to read response body: %v", err)
+		return nil
+	}
+	logrus.Warnf("error while sending metrics: %s", bdr)
+	return nil
+}
+
+func (l *LocalProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
+	if err := l.MapSessionPersister.WriteToPersister(userID, data); err != nil {
+		return err
+	}
 	return nil
 }

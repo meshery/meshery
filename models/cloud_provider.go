@@ -26,12 +26,72 @@ type CloudProvider struct {
 	RefCookieName string
 
 	SessionStore        sessions.Store
-	loginCookieDuration time.Duration // loginCookieDuration = 1 * time.Hour
+	LoginCookieDuration time.Duration
+
+	syncStopChan chan struct{}
+	syncChan     chan *userSession
+}
+
+type userSession struct {
+	token   string
+	session *Session
+}
+
+type UserPref struct {
+	User
+	Preferences *Session `json:"preferences,omitempty"`
 }
 
 // GetProviderType - Returns ProviderType
 func (l *CloudProvider) GetProviderType() ProviderType {
 	return CloudProviderType
+}
+
+// SyncPreferences - used to sync preferences with the remote provider
+func (l *CloudProvider) SyncPreferences() {
+	l.syncStopChan = make(chan struct{})
+	l.syncChan = make(chan *userSession, 100)
+	go func() {
+		for {
+			select {
+			case uSess := <-l.syncChan:
+				l.executePrefSync(uSess.token, uSess.session)
+			case <-l.syncStopChan:
+				return
+			}
+		}
+	}()
+}
+
+// StopSyncPreferences - used to stop sync preferences
+func (l *CloudProvider) StopSyncPreferences() {
+	l.syncStopChan <- struct{}{}
+}
+
+func (l *CloudProvider) executePrefSync(tokenVal string, sess *Session) {
+	bd, err := json.Marshal(sess)
+	if err != nil {
+		logrus.Errorf("unable to marshal preference data: %v", err)
+		return
+	}
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/preferences")
+	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bytes.NewReader(bd))
+	req.AddCookie(&http.Cookie{
+		Name:     l.SaaSTokenName,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to upload user preference data: %v", err)
+		return
+	}
+	if resp.StatusCode != http.StatusCreated {
+		logrus.Errorf("unable to upload user preference data, status code received: %d", resp.StatusCode)
+	}
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -42,7 +102,7 @@ func (l *CloudProvider) InitiateLogin(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
 			Value:    "/",
-			Expires:  time.Now().Add(l.loginCookieDuration),
+			Expires:  time.Now().Add(l.LoginCookieDuration),
 			Path:     "/",
 			HttpOnly: true,
 		})
@@ -124,14 +184,21 @@ func (l *CloudProvider) fetchUserDetails(tokenVal string) (*User, error) {
 		logrus.Errorf("unable to read body: %v", err)
 		return nil, err
 	}
-	u := &User{}
-	err = json.Unmarshal(bd, u)
+
+	up := &UserPref{}
+	err = json.Unmarshal(bd, up)
 	if err != nil {
 		logrus.Errorf("unable to unmarshal user: %v", err)
 		return nil, err
 	}
-	logrus.Infof("retrieved user: %v", u)
-	return u, nil
+
+	pref_local, _ := l.ReadFromPersister(up.UserID)
+	if up.Preferences.UpdatedAt.After(pref_local.UpdatedAt) {
+		_ = l.WriteToPersister(up.UserID, up.Preferences)
+	}
+
+	logrus.Infof("retrieved user: %v", up.User)
+	return &up.User, nil
 }
 
 // GetUserDetails - returns the user details
@@ -142,7 +209,10 @@ func (l *CloudProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, err
 	}
 
+	token, _ := l.GetProviderToken(req)
+
 	user, _ := session.Values["user"].(*User)
+	l.fetchUserDetails(token)
 	return user, nil
 }
 
@@ -325,4 +395,16 @@ func (l *CloudProvider) PublishMetrics(tokenVal string, data []byte) error {
 	}
 	logrus.Errorf("error while sending metrics: %s", bdr)
 	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *CloudProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
+	if err := l.BitCaskSessionPersister.WriteToPersister(userID, data); err != nil {
+		return err
+	}
+	tokenVal, _ := l.GetProviderToken(req)
+	l.syncChan <- &userSession{
+		token:   tokenVal,
+		session: data,
+	}
+	return nil
 }

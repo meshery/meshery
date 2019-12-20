@@ -22,7 +22,13 @@ import (
 	"github.com/vmihailenco/taskq/memqueue"
 )
 
+var globalTokenForAnonymousResults string
+
 func main() {
+	if globalTokenForAnonymousResults != "" {
+		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
+	}
+
 	ctx := context.Background()
 
 	viper.AutomaticEnv()
@@ -73,42 +79,56 @@ func main() {
 	// 	logrus.Fatal(err)
 	// }
 
-	sessionPersister, err := models.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
 	// sessionPersister, _ := helpers.NewMapSessionPersister()
-	defer sessionPersister.ClosePersister()
 
 	var prov models.Provider
 	var cookieSessionStore *sessions.CookieStore
 
 	if viper.GetBool("NO_AUTH") {
+		sessionPersister, err := models.NewMapSessionPersister()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer sessionPersister.ClosePersister()
+
 		randID, _ := uuid.NewV4()
 		cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
+		saasBaseURL := viper.GetString("SAAS_BASE_URL")
+		// if saasBaseURL == "" {
+		// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+		// }
 		prov = &models.LocalProvider{
 			SessionName: "meshery",
+			SaaSBaseURL: saasBaseURL,
 			// SessionStore: fileSessionStore,
-			SessionStore:            cookieSessionStore,
-			BitCaskSessionPersister: sessionPersister,
+			SessionStore:        cookieSessionStore,
+			MapSessionPersister: sessionPersister,
 		}
 	} else {
+		sessionPersister, err := models.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer sessionPersister.ClosePersister()
+
 		cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
 		saasBaseURL := viper.GetString("SAAS_BASE_URL")
 		if saasBaseURL == "" {
 			logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 		}
-		prov = &models.CloudProvider{
+		cp := &models.CloudProvider{
 			SaaSBaseURL:   saasBaseURL,
 			RefCookieName: "meshery_ref",
 			SessionName:   "meshery",
 			// SessionStore: fileSessionStore,
-			SessionStore:  cookieSessionStore,
-			SaaSTokenName: "meshery_saas",
-
+			SessionStore:            cookieSessionStore,
+			SaaSTokenName:           "meshery_saas",
+			LoginCookieDuration:     1 * time.Hour,
 			BitCaskSessionPersister: sessionPersister,
 		}
+		cp.SyncPreferences()
+		defer cp.StopSyncPreferences()
+		prov = cp
 	}
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{

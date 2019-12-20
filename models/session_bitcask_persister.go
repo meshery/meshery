@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 	"sync"
-
+	"time"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
@@ -124,6 +124,8 @@ func (s *BitCaskSessionPersister) WriteToPersister(userID string, data *Session)
 	if data == nil {
 		return errors.New("Given config data is nil.")
 	}
+
+	data.UpdatedAt = time.Now()
 
 RETRY:
 	locked, err := s.db.TryLock()

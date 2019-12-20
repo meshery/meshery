@@ -18,7 +18,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	err := h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user, sessObj)
+	err := h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, sessObj)
 	// if err != nil {
 	// // We can ignore the errors here. They are logged in the other method
 	// }
@@ -28,15 +28,18 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 	// meshAdapters = []*models.Adapter{}
 	// }
 
+	// this is just called for getting a fresh copy of preferences
+	h.config.Provider.GetUserDetails(req)
+
 	meshAdapters := []*models.Adapter{}
 
 	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
 	for _, adapterURL := range adapters {
 		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, sessObj, adapterURL)
 	}
-
+	logrus.Debugf("final list of active adapters: %+v", meshAdapters)
 	sessObj.MeshAdapters = meshAdapters
-	err = h.config.Provider.WriteToPersister(user.UserID, sessObj)
+	err = h.config.Provider.RecordPreferences(req, user.UserID, sessObj)
 	if err != nil { // ignoring errors in this context
 		logrus.Errorf("unable to save session: %v", err)
 		// http.Error(w, "unable to save session", http.StatusInternalServerError)
