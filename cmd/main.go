@@ -91,6 +91,12 @@ func main() {
 		}
 		defer sessionPersister.ClosePersister()
 
+		resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer resultPersister.CloseResultPersister()
+
 		randID, _ := uuid.NewV4()
 		cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
 		saasBaseURL := viper.GetString("SAAS_BASE_URL")
@@ -103,6 +109,7 @@ func main() {
 			// SessionStore: fileSessionStore,
 			SessionStore:        cookieSessionStore,
 			MapSessionPersister: sessionPersister,
+			ResultPersister:     resultPersister,
 		}
 	} else {
 		sessionPersister, err := models.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))

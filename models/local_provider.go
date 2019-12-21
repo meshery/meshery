@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
@@ -15,9 +16,10 @@ import (
 // LocalProvider - represents a local provider
 type LocalProvider struct {
 	*MapSessionPersister
-	SessionName  string
-	SessionStore sessions.Store
-	SaaSBaseURL  string
+	SessionName     string
+	SessionStore    sessions.Store
+	SaaSBaseURL     string
+	ResultPersister *BitCaskResultsPersister
 }
 
 // GetProviderType - Returns ProviderType
@@ -93,11 +95,27 @@ func (l *LocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 
 // FetchResults - fetches results from provider backend
 func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	return []byte(`{"results":[], "page":0, "page_size": 0, "total_count": 0}`), nil
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+	return l.ResultPersister.GetResults(pg, pgs)
 }
 
 // PublishResults - publishes results to the provider backend syncronously
 func (l *LocalProvider) PublishResults(req *http.Request, data []byte) (string, error) {
+	if err := l.ResultPersister.WriteResult(data); err != nil {
+		return "", err
+	}
+
 	bf := bytes.NewBuffer(data)
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
