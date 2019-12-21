@@ -119,7 +119,7 @@ class MesheryResults extends Component {
     }
 
     render() {
-        const { classes, results_selection } = this.props;
+        const { classes, results_selection, user } = this.props;
         const { results, page, count, pageSize, search, selectedRowData, sortOrder } = this.state;
         const self = this;
         const resultsForDisplay = [];
@@ -287,11 +287,10 @@ class MesheryResults extends Component {
           }
         });
         // console.log(`selected rows after adjustments: ${JSON.stringify(rowsSelected)}`);
-
         const options = {
           filter: false,
-          sort: true,
-          search: true,
+          sort: user && user.user_id === 'meshery'?false:true,
+          search: user && user.user_id === 'meshery'?false:true,
           filterType: 'textField',
           responsive: 'scrollFullHeight',
           // resizableColumns: true,
@@ -438,10 +437,11 @@ const mapDispatchToProps = dispatch => {
     const startKey = state.get("results").get('startKey');
     const results =  state.get("results").get('results').toArray();
     const results_selection = state.get("results_selection").toObject();
+    const user = state.get("user").toObject();
     if (typeof results !== 'undefined'){
-        return {startKey: startKey, results: results, results_selection};
+        return {startKey: startKey, results: results, results_selection, user};
     }
-    return {results_selection};
+    return {results_selection, user};
   }
   
 export default withStyles(styles)(connect(

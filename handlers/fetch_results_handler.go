@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net/http"
-	"net/url"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
@@ -12,14 +9,11 @@ import (
 )
 
 // FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Session, user *models.User) {
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
-	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
-
 	// TODO: may be force login if token not found?????
 
 	err := req.ParseForm()
@@ -30,59 +24,11 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	bdr, err := h.getResultsFromSaaS(h.config.SaaSTokenName, tokenVal, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	bdr, err := h.config.Provider.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(bdr)
-}
-
-func (h *Handler) getResultsFromSaaS(tokenKey, tokenVal, page, pageSize, search, order string) ([]byte, error) {
-	logrus.Infof("attempting to fetch results from SaaS")
-	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/results")
-	q := saasURL.Query()
-	if page != "" {
-		q.Set("page", page)
-	}
-	if pageSize != "" {
-		q.Set("page_size", pageSize)
-	}
-	if search != "" {
-		q.Set("search", search)
-	}
-	if order != "" {
-		q.Set("order", order)
-	}
-	saasURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed results url: %s", saasURL.String())
-	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
-	req.AddCookie(&http.Cookie{
-		Name:     tokenKey,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
-	c := &http.Client{}
-	resp, err := c.Do(req)
-	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
-		return nil, err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("results successfully retrieved from SaaS")
-		return bdr, nil
-	}
-	logrus.Errorf("error while fetching results: %s", bdr)
-	return nil, fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }

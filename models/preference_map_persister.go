@@ -1,29 +1,29 @@
-package helpers
+package models
 
 import (
 	"sync"
+	"time"
 
 	"github.com/jinzhu/copier"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-// MapSessionPersister assists with persisting session in a badger store
-type MapSessionPersister struct {
+// MapPreferencePersister assists with persisting session in a badger store
+type MapPreferencePersister struct {
 	db *sync.Map
 }
 
-// NewMapSessionPersister creates a new MapSessionPersister instance
-func NewMapSessionPersister() (*MapSessionPersister, error) {
-	return &MapSessionPersister{
+// NewMapPreferencePersister creates a new MapPreferencePersister instance
+func NewMapPreferencePersister() (*MapPreferencePersister, error) {
+	return &MapPreferencePersister{
 		db: &sync.Map{},
 	}, nil
 }
 
-// Read reads the session data for the given userID
-func (s *MapSessionPersister) Read(userID string) (*models.Session, error) {
-	data := &models.Session{}
+// ReadFromPersister reads the session data for the given userID
+func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+	data := &Preference{}
 
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
@@ -36,7 +36,7 @@ func (s *MapSessionPersister) Read(userID string) (*models.Session, error) {
 	dataCopyB, ok := s.db.Load(userID)
 	if ok {
 		logrus.Debugf("retrieved session for user with id: %s", userID)
-		newData, ok1 := dataCopyB.(*models.Session)
+		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
 			logrus.Debugf("session for user with id: %s was read in tact.", userID)
 			data = newData
@@ -49,8 +49,8 @@ func (s *MapSessionPersister) Read(userID string) (*models.Session, error) {
 	return data, nil
 }
 
-// Write persists session for the user
-func (s *MapSessionPersister) Write(userID string, data *models.Session) error {
+// WriteToPersister persists session for the user
+func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -62,7 +62,8 @@ func (s *MapSessionPersister) Write(userID string, data *models.Session) error {
 	if data == nil {
 		return errors.New("Given config data is nil.")
 	}
-	newSess := &models.Session{}
+	data.UpdatedAt = time.Now()
+	newSess := &Preference{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err
@@ -73,8 +74,8 @@ func (s *MapSessionPersister) Write(userID string, data *models.Session) error {
 	return nil
 }
 
-// Delete removes the session for the user
-func (s *MapSessionPersister) Delete(userID string) error {
+// DeleteFromPersister removes the session for the user
+func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist.")
 	}
@@ -86,7 +87,7 @@ func (s *MapSessionPersister) Delete(userID string) error {
 	return nil
 }
 
-// Close closes the DB
-func (s *MapSessionPersister) Close() {
+// ClosePersister closes the DB
+func (s *MapPreferencePersister) ClosePersister() {
 	s.db = nil
 }

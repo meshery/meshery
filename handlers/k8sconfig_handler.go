@@ -19,24 +19,24 @@ import (
 )
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	if req.Method == http.MethodPost {
-		h.addK8SConfig(user, sessObj, w, req)
+		h.addK8SConfig(user, prefObj, w, req)
 		return
 	}
 	if req.Method == http.MethodDelete {
-		h.deleteK8SConfig(user, sessObj, w, req)
+		h.deleteK8SConfig(user, prefObj, w, req)
 		return
 	}
 
 }
 
-func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request) {
 	_ = req.ParseMultipartForm(1 << 20)
 
 	inClusterConfig := req.FormValue("inClusterConfig")
@@ -96,22 +96,22 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 		}
 	}
 	kc.ClusterConfigured = true
-	sessObj.K8SConfig = kc
+	prefObj.K8SConfig = kc
 
 	var err error
-	sessObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(kc.Config, kc.ContextName)
+	prefObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(kc.Config, kc.ContextName)
 	if err != nil {
 		http.Error(w, "unable to ping the kubernetes server", http.StatusInternalServerError)
 		return
 	}
 
-	sessObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
+	prefObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	if err != nil {
 		http.Error(w, "unable to fetch nodes metadata from the kubernetes server", http.StatusInternalServerError)
 		return
 	}
 
-	if err = h.config.SessionPersister.Write(user.UserID, sessObj); err != nil {
+	if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
@@ -126,9 +126,9 @@ func (h *Handler) addK8SConfig(user *models.User, sessObj *models.Session, w htt
 	}
 }
 
-func (h *Handler) deleteK8SConfig(user *models.User, sessObj *models.Session, w http.ResponseWriter, req *http.Request) {
-	sessObj.K8SConfig = nil
-	err := h.config.SessionPersister.Write(user.UserID, sessObj)
+func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request) {
+	prefObj.K8SConfig = nil
+	err := h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -236,11 +236,11 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 }
 
 // ATM used only in the SessionSyncHandler
-func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.User, sessObj *models.Session) error {
-	if sessObj == nil {
-		sessObj = &models.Session{}
+func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Request, user *models.User, prefObj *models.Preference) error {
+	if prefObj == nil {
+		prefObj = &models.Preference{}
 	}
-	if sessObj.K8SConfig == nil {
+	if prefObj.K8SConfig == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
 			kc, err = h.loadInClusterK8SConfig()
@@ -248,8 +248,8 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 				return err
 			}
 		}
-		sessObj.K8SConfig = kc
-		err = h.config.SessionPersister.Write(user.UserID, sessObj)
+		prefObj.K8SConfig = kc
+		err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			err = errors.Wrapf(err, "unable to persist k8s config")
 			logrus.Error(err)
@@ -260,13 +260,13 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(user *models.Use
 }
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
-	if sessObj.K8SConfig == nil {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+	if prefObj.K8SConfig == nil {
 		_, _ = w.Write([]byte("[]"))
 		return
 	}
 
-	version, err := helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+	version, err := helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to ping kubernetes")
 		logrus.Error(err)
@@ -284,13 +284,13 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 }
 
 // InstalledMeshesHandler - scans and tries to find out the installed meshes
-func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
-	if sessObj.K8SConfig == nil {
+func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+	if prefObj.K8SConfig == nil {
 		_, _ = w.Write([]byte("{}"))
 		return
 	}
 
-	installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+	installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to scan kubernetes")
 		logrus.Error(err)

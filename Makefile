@@ -10,7 +10,7 @@ mesheryctl:
 # `make docker` builds Meshery inside of a multi-stage Docker container.
 # This method does NOT require that you have Go, NPM, etc. installed locally.
 docker:
-	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) .
 
 # Runs Meshery in a container locally and points to locally-running 
 #  Meshery Cloud for user authentication.
@@ -44,6 +44,26 @@ run-local-cloud:
 	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
 	PORT=9081 \
 	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	./meshery; \
+	cd ..
+
+run-local-cloud-noauth:
+	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
+	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
+	PORT=9081 \
+	DEBUG=true \
+	NO_AUTH=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	./meshery; \
+	cd ..
+
+run-local-noauth:
+	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
+	SAAS_BASE_URL="https://meshery.layer5.io" \
+	PORT=9081 \
+	DEBUG=true \
+	NO_AUTH=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	./meshery; \
 	cd ..
