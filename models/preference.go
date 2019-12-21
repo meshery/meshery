@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/gob"
+	"time"
 
 	"github.com/grafana-tools/sdk"
 )
@@ -65,27 +66,28 @@ type Prometheus struct {
 	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
-// Session represents the data stored in session / local DB
-type Session struct {
+// Preference represents the data stored in session / local DB
+type Preference struct {
 	// User         *User       `json:"user,omitempty"`
 	K8SConfig    *K8SConfig  `json:"k8sConfig,omitempty"`
 	MeshAdapters []*Adapter  `json:"meshAdapters,omitempty"`
 	Grafana      *Grafana    `json:"grafana,omitempty"`
 	Prometheus   *Prometheus `json:"prometheus,omitempty"`
+	UpdatedAt    time.Time   `json:"updated_at,omitempty"`
 }
 
 func init() {
-	gob.Register(&Session{})
+	gob.Register(&Preference{})
 	gob.Register(map[string]interface{}{})
 }
 
-// SessionPersister defines methods for a session persister
-type SessionPersister interface {
-	Read(userID string) (*Session, error)
-	Write(userID string, data *Session) error
-	Delete(userID string) error
+// PreferencePersister defines methods for a session persister
+type PreferencePersister interface {
+	ReadFromPersister(userID string) (*Preference, error)
+	WriteToPersister(userID string, data *Preference) error
+	DeleteFromPersister(userID string) error
 
 	// Lock(userID string)
 	// Unlock(userID string)
-	Close()
+	ClosePersister()
 }

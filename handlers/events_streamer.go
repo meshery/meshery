@@ -18,7 +18,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -93,12 +93,12 @@ STOP:
 			close(respChan)
 			break STOP
 		default:
-			meshAdapters := sessObj.MeshAdapters
+			meshAdapters := prefObj.MeshAdapters
 			if meshAdapters == nil {
 				meshAdapters = []*models.Adapter{}
 			}
 
-			if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+			if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 				log.Debug("No valid Kubernetes config found.") // switching from Error to Debug to prevent it from filling up the logs
 				// http.Error(w, `No valid Kubernetes config found.`, http.StatusBadRequest)
 				// return
@@ -125,7 +125,7 @@ STOP:
 					for _, ma := range meshAdapters {
 						mClient, ok := localMeshAdapters[ma.Location]
 						if !ok {
-							mClient, err = meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, ma.Location)
+							mClient, err = meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, ma.Location)
 							if err == nil {
 								localMeshAdapters[ma.Location] = mClient
 							}

@@ -1,27 +1,26 @@
-package helpers
+package models
 
 import (
 	"encoding/json"
-	"os"
-	"path"
-	"sync"
-
 	"github.com/jinzhu/copier"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
+	"os"
+	"path"
+	"sync"
+	"time"
 )
 
-// BitCaskSessionPersister assists with persisting session in a Bitcask store
-type BitCaskSessionPersister struct {
+// BitCaskPreferencePersister assists with persisting session in a Bitcask store
+type BitCaskPreferencePersister struct {
 	fileName string
 	db       *bitcask.Bitcask
 	cache    *sync.Map
 }
 
-// NewBitCaskSessionPersister creates a new BitCaskSessionPersister instance
-func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, error) {
+// NewBitCaskPreferencePersister creates a new BitCaskPreferencePersister instance
+func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersister, error) {
 	_, err := os.Stat(folderName)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -42,7 +41,7 @@ func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, er
 		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err
 	}
-	bd := &BitCaskSessionPersister{
+	bd := &BitCaskPreferencePersister{
 		fileName: fileName,
 		db:       db,
 		cache:    &sync.Map{},
@@ -50,8 +49,8 @@ func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, er
 	return bd, nil
 }
 
-// Read reads the session data for the given userID
-func (s *BitCaskSessionPersister) Read(userID string) (*models.Session, error) {
+// ReadFromPersister - reads the session data for the given userID
+func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
 	}
@@ -60,11 +59,11 @@ func (s *BitCaskSessionPersister) Read(userID string) (*models.Session, error) {
 		return nil, errors.New("User ID is empty.")
 	}
 
-	data := &models.Session{}
+	data := &Preference{}
 
 	dataCopyI, ok := s.cache.Load(userID)
 	if ok {
-		newData, ok1 := dataCopyI.(*models.Session)
+		newData, ok1 := dataCopyI.(*Preference)
 		if ok1 {
 			return newData, nil
 		}
@@ -101,9 +100,9 @@ RETRY:
 	return data, nil
 }
 
-// Write persists session for the user in the cache
-func (s *BitCaskSessionPersister) writeToCache(userID string, data *models.Session) error {
-	newSess := &models.Session{}
+// writeToCache persists session for the user in the cache
+func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preference) error {
+	newSess := &Preference{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err
@@ -112,8 +111,8 @@ func (s *BitCaskSessionPersister) writeToCache(userID string, data *models.Sessi
 	return nil
 }
 
-// Write persists session for the user
-func (s *BitCaskSessionPersister) Write(userID string, data *models.Session) error {
+// WriteToPersister persists session for the user
+func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -125,6 +124,8 @@ func (s *BitCaskSessionPersister) Write(userID string, data *models.Session) err
 	if data == nil {
 		return errors.New("Given config data is nil.")
 	}
+
+	data.UpdatedAt = time.Now()
 
 RETRY:
 	locked, err := s.db.TryLock()
@@ -157,8 +158,8 @@ RETRY:
 	return nil
 }
 
-// Delete removes the session for the user
-func (s *BitCaskSessionPersister) Delete(userID string) error {
+// DeleteFromPersister removes the session for the user
+func (s *BitCaskPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist.")
 	}
@@ -188,8 +189,8 @@ RETRY:
 	return nil
 }
 
-// Close closes the badger store
-func (s *BitCaskSessionPersister) Close() {
+// ClosePersister closes the badger store
+func (s *BitCaskPreferencePersister) ClosePersister() {
 	if s.db == nil {
 		return
 	}
