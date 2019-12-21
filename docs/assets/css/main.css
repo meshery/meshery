@@ -724,9 +724,10 @@ pre code {
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
-    margin-bottom: 0px;
+   
+    bottom: 0;
     
-    height: 100px;
+   
 }
 
 .row {
@@ -18642,3 +18643,35 @@ footer {
 .footer-icons:hover .footer-icons-text {
     visibility: visible;
 }
+
+  
+.social__link {
+      display: block;
+      color: white;
+      transition: color .25s;
+}
+.social__link--mail:hover {
+    color: black;
+}
+  
+.social__link--slack:hover {
+    color: #4A154B;
+}
+  
+.social__link--twitter:hover {
+    color: #1da1f2;
+}
+  
+.social__link--github:hover {
+    color: #24292e;
+}
+  
+.social__link--youtube:hover {
+    color: #ff0000;
+}
+  
+.social__link--docker:hover {
+    color: #2496ed;
+}
+ 
+
