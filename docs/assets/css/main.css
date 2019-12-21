@@ -723,7 +723,10 @@ pre code {
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
-    margin-left: auto
+    margin-left: auto;
+    margin-bottom: 0px;
+    
+    height: 100px;
 }
 
 .row {
@@ -735,7 +738,9 @@ pre code {
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin-right: -15px;
-    margin-left: -15px
+    margin-left: -15px;
+
+    
 }
 
 .no-gutters {
@@ -18608,9 +18613,13 @@ footer {
     justify-content: center;
 }
 .footer-icons {
-        position: relative;
-        display: inline-block;
-        padding: 3px;
+    display: flex;
+    height: 0px;
+    justify-content: flex-start;
+    flex-direction: row;
+    padding: 4px;
+    position: relative;
+        
 }
 .footer-icons .footer-icons-text {
     visibility: hidden;
@@ -18623,9 +18632,10 @@ footer {
 
   position: absolute;
   z-index: 1;
-  bottom: 100%;
+  bottom: 45%;
   left: 0px; 
-  margin-left: -20px;
+  margin-left: -30px;
+ 
   
 }
 
