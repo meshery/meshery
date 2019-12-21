@@ -20,7 +20,7 @@ import (
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, sessObj *models.Session, user *models.User) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -155,7 +155,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		log.Debug("response channel closed")
 	}()
 	go func() {
-		h.executeLoadTest(req, testName, meshName, testUUID, sessObj, loadTestOptions, respChan)
+		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
@@ -167,7 +167,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	}
 }
 
-func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
@@ -199,7 +199,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		Message: "Load test completed, fetching metadata now",
 	}
 
-	if sessObj.K8SConfig != nil {
+	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
 		installedMeshesChan := make(chan map[string]string)
@@ -207,8 +207,8 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		go func() {
 			var nodes []*models.K8SNode
 			var err error
-			if len(sessObj.K8SConfig.Nodes) == 0 {
-				nodes, err = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if len(prefObj.K8SConfig.Nodes) == 0 {
+				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
@@ -221,8 +221,8 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		go func() {
 			var serverVersion string
 			var err error
-			if sessObj.K8SConfig.ServerVersion == "" {
-				serverVersion, err = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if prefObj.K8SConfig.ServerVersion == "" {
+				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
@@ -233,7 +233,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 			versionChan <- serverVersion
 		}()
 		go func() {
-			installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 			if err != nil {
 				err = errors.Wrap(err, "unable to scan kubernetes")
 				logrus.Warn(err)
@@ -241,13 +241,13 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 			installedMeshesChan <- installedMeshes
 		}()
 
-		sessObj.K8SConfig.Nodes = <-nodesChan
-		sessObj.K8SConfig.ServerVersion = <-versionChan
+		prefObj.K8SConfig.Nodes = <-nodesChan
+		prefObj.K8SConfig.ServerVersion = <-versionChan
 
-		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
+		if prefObj.K8SConfig.ServerVersion != "" && len(prefObj.K8SConfig.Nodes) > 0 {
 			resultsMap["kubernetes"] = map[string]interface{}{
-				"server_version": sessObj.K8SConfig.ServerVersion,
-				"nodes":          sessObj.K8SConfig.Nodes,
+				"server_version": prefObj.K8SConfig.ServerVersion,
+				"nodes":          prefObj.K8SConfig.Nodes,
 			}
 		}
 		installedMeshes := <-installedMeshesChan
@@ -307,8 +307,8 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	}
 
 	var promURL string
-	if sessObj.Prometheus != nil {
-		promURL = sessObj.Prometheus.PrometheusURL
+	if prefObj.Prometheus != nil {
+		promURL = prefObj.Prometheus.PrometheusURL
 	}
 
 	tokenVal, _ := h.config.Provider.GetProviderToken(req)

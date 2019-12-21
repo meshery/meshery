@@ -50,7 +50,7 @@ func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersist
 }
 
 // ReadFromPersister - reads the session data for the given userID
-func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Session, error) {
+func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
 	}
@@ -59,11 +59,11 @@ func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Session,
 		return nil, errors.New("User ID is empty.")
 	}
 
-	data := &Session{}
+	data := &Preference{}
 
 	dataCopyI, ok := s.cache.Load(userID)
 	if ok {
-		newData, ok1 := dataCopyI.(*Session)
+		newData, ok1 := dataCopyI.(*Preference)
 		if ok1 {
 			return newData, nil
 		}
@@ -101,8 +101,8 @@ RETRY:
 }
 
 // writeToCache persists session for the user in the cache
-func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Session) error {
-	newSess := &Session{}
+func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preference) error {
+	newSess := &Preference{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err
@@ -112,7 +112,7 @@ func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Session) 
 }
 
 // WriteToPersister persists session for the user
-func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Session) error {
+func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}

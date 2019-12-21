@@ -66,8 +66,8 @@ type Prometheus struct {
 	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
-// Session represents the data stored in session / local DB
-type Session struct {
+// Preference represents the data stored in session / local DB
+type Preference struct {
 	// User         *User       `json:"user,omitempty"`
 	K8SConfig    *K8SConfig  `json:"k8sConfig,omitempty"`
 	MeshAdapters []*Adapter  `json:"meshAdapters,omitempty"`
@@ -77,14 +77,14 @@ type Session struct {
 }
 
 func init() {
-	gob.Register(&Session{})
+	gob.Register(&Preference{})
 	gob.Register(map[string]interface{}{})
 }
 
 // PreferencePersister defines methods for a session persister
 type PreferencePersister interface {
-	ReadFromPersister(userID string) (*Session, error)
-	WriteToPersister(userID string, data *Session) error
+	ReadFromPersister(userID string) (*Preference, error)
+	WriteToPersister(userID string, data *Preference) error
 	DeleteFromPersister(userID string) error
 
 	// Lock(userID string)

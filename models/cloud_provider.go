@@ -34,13 +34,13 @@ type CloudProvider struct {
 
 type userSession struct {
 	token   string
-	session *Session
+	session *Preference
 }
 
 // UserPref - is just use to separate out the user info from preference
 type UserPref struct {
 	User
-	Preferences *Session `json:"preferences,omitempty"`
+	Preferences *Preference `json:"preferences,omitempty"`
 }
 
 // GetProviderType - Returns ProviderType
@@ -69,7 +69,7 @@ func (l *CloudProvider) StopSyncPreferences() {
 	l.syncStopChan <- struct{}{}
 }
 
-func (l *CloudProvider) executePrefSync(tokenVal string, sess *Session) {
+func (l *CloudProvider) executePrefSync(tokenVal string, sess *Preference) {
 	bd, err := json.Marshal(sess)
 	if err != nil {
 		logrus.Errorf("unable to marshal preference data: %v", err)
@@ -399,7 +399,7 @@ func (l *CloudProvider) PublishMetrics(tokenVal string, data []byte) error {
 }
 
 // RecordPreferences - records the user preference
-func (l *CloudProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
+func (l *CloudProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
