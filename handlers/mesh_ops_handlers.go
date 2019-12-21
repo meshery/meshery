@@ -35,8 +35,8 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 }
 
 // MeshAdapterConfigHandler is used to persist adapter config
-func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
-	meshAdapters := sessObj.MeshAdapters
+func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
@@ -53,14 +53,14 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return
 		}
 
-		if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+		if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 			err := errors.New("no valid kubernetes config found")
 			logrus.Error(err)
 			http.Error(w, "No valid Kubernetes config found.", http.StatusBadRequest)
 			return
 		}
 
-		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, sessObj, meshLocationURL)
+		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL)
 		if err != nil {
 			http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
@@ -75,8 +75,8 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	sessObj.MeshAdapters = meshAdapters
-	err = h.config.Provider.RecordPreferences(req, user.UserID, sessObj)
+	prefObj.MeshAdapters = meshAdapters
+	err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("Unable to save session: %v.", err)
 		http.Error(w, "Unable to save session.", http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, sessObj *models.Session, meshLocationURL string) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -109,7 +109,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		return meshAdapters, nil
 	}
 
-	mClient, err := meshes.CreateClient(ctx, sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshLocationURL)
+	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil {
 		err = errors.Wrapf(err, "Error creating a mesh client.")
 		logrus.Error(err)
@@ -185,13 +185,13 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 }
 
 // MeshOpsHandler is used to send operations to the adapters
-func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
+func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	meshAdapters := sessObj.MeshAdapters
+	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
@@ -220,13 +220,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, _ *se
 		namespace = "default"
 	}
 
-	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aID].Location)
+	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
 		logrus.Errorf("Error creating a mesh client: %v.", err)
 		http.Error(w, "Unable to create a mesh client.", http.StatusBadRequest)
@@ -261,13 +261,13 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, _ *se
 }
 
 // AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, sessObj *models.Session, user *models.User) {
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	meshAdapters := sessObj.MeshAdapters
+	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
 		meshAdapters = []*models.Adapter{}
 	}
@@ -289,13 +289,13 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	if sessObj.K8SConfig == nil || !sessObj.K8SConfig.InClusterConfig && (sessObj.K8SConfig.Config == nil || len(sessObj.K8SConfig.Config) == 0) {
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
 
-	mClient, err := meshes.CreateClient(req.Context(), sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName, meshAdapters[aID].Location)
+	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
 		logrus.Errorf("Error creating a mesh client: %v.", err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)

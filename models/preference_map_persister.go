@@ -22,8 +22,8 @@ func NewMapPreferencePersister() (*MapPreferencePersister, error) {
 }
 
 // ReadFromPersister reads the session data for the given userID
-func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Session, error) {
-	data := &Session{}
+func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+	data := &Preference{}
 
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
@@ -36,7 +36,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Session, err
 	dataCopyB, ok := s.db.Load(userID)
 	if ok {
 		logrus.Debugf("retrieved session for user with id: %s", userID)
-		newData, ok1 := dataCopyB.(*Session)
+		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
 			logrus.Debugf("session for user with id: %s was read in tact.", userID)
 			data = newData
@@ -50,7 +50,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Session, err
 }
 
 // WriteToPersister persists session for the user
-func (s *MapPreferencePersister) WriteToPersister(userID string, data *Session) error {
+func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preference) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -63,7 +63,7 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Session) 
 		return errors.New("Given config data is nil.")
 	}
 	data.UpdatedAt = time.Now()
-	newSess := &Session{}
+	newSess := &Preference{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err

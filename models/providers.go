@@ -29,5 +29,5 @@ type Provider interface {
 	PublishResults(req *http.Request, data []byte) (string, error)
 	PublishMetrics(tokenVal string, data []byte) error
 
-	RecordPreferences(req *http.Request, userID string, data *Session) error
+	RecordPreferences(req *http.Request, userID string, data *Preference) error
 }
