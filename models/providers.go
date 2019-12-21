@@ -10,7 +10,10 @@ import (
 type ProviderType string
 
 const (
+	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
+
+	// CloudProviderType - represents cloud providers
 	CloudProviderType ProviderType = "cloud"
 )
 
