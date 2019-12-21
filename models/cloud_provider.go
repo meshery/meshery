@@ -37,6 +37,7 @@ type userSession struct {
 	session *Session
 }
 
+// UserPref - is just use to separate out the user info from preference
 type UserPref struct {
 	User
 	Preferences *Session `json:"preferences,omitempty"`
@@ -192,8 +193,8 @@ func (l *CloudProvider) fetchUserDetails(tokenVal string) (*User, error) {
 		return nil, err
 	}
 
-	pref_local, _ := l.ReadFromPersister(up.UserID)
-	if pref_local == nil || up.Preferences.UpdatedAt.After(pref_local.UpdatedAt) {
+	prefLocal, _ := l.ReadFromPersister(up.UserID)
+	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) {
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
@@ -212,7 +213,7 @@ func (l *CloudProvider) GetUserDetails(req *http.Request) (*User, error) {
 	token, _ := l.GetProviderToken(req)
 
 	user, _ := session.Values["user"].(*User)
-	l.fetchUserDetails(token)
+	_, _ = l.fetchUserDetails(token)
 	return user, nil
 }
 
@@ -397,6 +398,7 @@ func (l *CloudProvider) PublishMetrics(tokenVal string, data []byte) error {
 	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// RecordPreferences - records the user preference
 func (l *CloudProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err

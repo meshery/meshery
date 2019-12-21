@@ -29,7 +29,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 	// }
 
 	// this is just called for getting a fresh copy of preferences
-	h.config.Provider.GetUserDetails(req)
+	_, _ = h.config.Provider.GetUserDetails(req)
 
 	meshAdapters := []*models.Adapter{}
 
