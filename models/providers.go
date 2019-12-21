@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+// ProviderType - for representing provider types
 type ProviderType string
 
 const (
@@ -13,6 +14,7 @@ const (
 	CloudProviderType ProviderType = "cloud"
 )
 
+// Provider - interface for providers
 type Provider interface {
 	PreferencePersister
 	// Returns ProviderType

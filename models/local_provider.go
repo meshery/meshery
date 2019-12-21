@@ -181,9 +181,7 @@ func (l *LocalProvider) PublishMetrics(_ string, data []byte) error {
 	return nil
 }
 
+// RecordPreferences - records the user preference
 func (l *LocalProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
-	if err := l.MapPreferencePersister.WriteToPersister(userID, data); err != nil {
-		return err
-	}
-	return nil
+	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
