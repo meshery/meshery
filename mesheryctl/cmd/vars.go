@@ -30,6 +30,8 @@ const (
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
+	mesheryURL                  = "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	downloadMesheryURL          = "https://github.com/layer5io/meshery/releases/download"
 )
 
 // See setFileLocation function below.
