@@ -81,8 +81,8 @@ func init() {
 	gob.Register(map[string]interface{}{})
 }
 
-// SessionPersister defines methods for a session persister
-type SessionPersister interface {
+// PreferencePersister defines methods for a session persister
+type PreferencePersister interface {
 	ReadFromPersister(userID string) (*Session, error)
 	WriteToPersister(userID string, data *Session) error
 	DeleteFromPersister(userID string) error

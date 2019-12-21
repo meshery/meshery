@@ -15,7 +15,7 @@ import (
 
 // LocalProvider - represents a local provider
 type LocalProvider struct {
-	*MapSessionPersister
+	*MapPreferencePersister
 	SessionName     string
 	SessionStore    sessions.Store
 	SaaSBaseURL     string
@@ -182,7 +182,7 @@ func (l *LocalProvider) PublishMetrics(_ string, data []byte) error {
 }
 
 func (l *LocalProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
-	if err := l.MapSessionPersister.WriteToPersister(userID, data); err != nil {
+	if err := l.MapPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	return nil

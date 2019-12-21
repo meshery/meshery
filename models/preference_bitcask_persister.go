@@ -2,25 +2,25 @@ package models
 
 import (
 	"encoding/json"
-	"os"
-	"path"
-	"sync"
-	"time"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
+	"os"
+	"path"
+	"sync"
+	"time"
 )
 
-// BitCaskSessionPersister assists with persisting session in a Bitcask store
-type BitCaskSessionPersister struct {
+// BitCaskPreferencePersister assists with persisting session in a Bitcask store
+type BitCaskPreferencePersister struct {
 	fileName string
 	db       *bitcask.Bitcask
 	cache    *sync.Map
 }
 
-// NewBitCaskSessionPersister creates a new BitCaskSessionPersister instance
-func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, error) {
+// NewBitCaskPreferencePersister creates a new BitCaskPreferencePersister instance
+func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersister, error) {
 	_, err := os.Stat(folderName)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -41,7 +41,7 @@ func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, er
 		logrus.Errorf("Unable to open database: %v.", err)
 		return nil, err
 	}
-	bd := &BitCaskSessionPersister{
+	bd := &BitCaskPreferencePersister{
 		fileName: fileName,
 		db:       db,
 		cache:    &sync.Map{},
@@ -50,7 +50,7 @@ func NewBitCaskSessionPersister(folderName string) (*BitCaskSessionPersister, er
 }
 
 // ReadFromPersister - reads the session data for the given userID
-func (s *BitCaskSessionPersister) ReadFromPersister(userID string) (*Session, error) {
+func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Session, error) {
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
 	}
@@ -101,7 +101,7 @@ RETRY:
 }
 
 // writeToCache persists session for the user in the cache
-func (s *BitCaskSessionPersister) writeToCache(userID string, data *Session) error {
+func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Session) error {
 	newSess := &Session{}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
@@ -112,7 +112,7 @@ func (s *BitCaskSessionPersister) writeToCache(userID string, data *Session) err
 }
 
 // WriteToPersister persists session for the user
-func (s *BitCaskSessionPersister) WriteToPersister(userID string, data *Session) error {
+func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Session) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -159,7 +159,7 @@ RETRY:
 }
 
 // DeleteFromPersister removes the session for the user
-func (s *BitCaskSessionPersister) DeleteFromPersister(userID string) error {
+func (s *BitCaskPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist.")
 	}
@@ -190,7 +190,7 @@ RETRY:
 }
 
 // ClosePersister closes the badger store
-func (s *BitCaskSessionPersister) ClosePersister() {
+func (s *BitCaskPreferencePersister) ClosePersister() {
 	if s.db == nil {
 		return
 	}

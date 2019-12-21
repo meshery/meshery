@@ -17,7 +17,7 @@ import (
 
 // CloudProvider - represents a local provider
 type CloudProvider struct {
-	*BitCaskSessionPersister
+	*BitCaskPreferencePersister
 
 	SaaSTokenName string
 	SaaSBaseURL   string
@@ -398,7 +398,7 @@ func (l *CloudProvider) PublishMetrics(tokenVal string, data []byte) error {
 }
 
 func (l *CloudProvider) RecordPreferences(req *http.Request, userID string, data *Session) error {
-	if err := l.BitCaskSessionPersister.WriteToPersister(userID, data); err != nil {
+	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
 	tokenVal, _ := l.GetProviderToken(req)

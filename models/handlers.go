@@ -64,8 +64,6 @@ type HandlerConfig struct {
 
 	Queue taskq.Queue
 
-	// SessionPersister SessionPersister
-
 	KubeConfigFolder string
 
 	GrafanaClient         *GrafanaClient
