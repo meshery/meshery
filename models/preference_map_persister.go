@@ -9,20 +9,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// MapSessionPersister assists with persisting session in a badger store
-type MapSessionPersister struct {
+// MapPreferencePersister assists with persisting session in a badger store
+type MapPreferencePersister struct {
 	db *sync.Map
 }
 
-// NewMapSessionPersister creates a new MapSessionPersister instance
-func NewMapSessionPersister() (*MapSessionPersister, error) {
-	return &MapSessionPersister{
+// NewMapPreferencePersister creates a new MapPreferencePersister instance
+func NewMapPreferencePersister() (*MapPreferencePersister, error) {
+	return &MapPreferencePersister{
 		db: &sync.Map{},
 	}, nil
 }
 
 // ReadFromPersister reads the session data for the given userID
-func (s *MapSessionPersister) ReadFromPersister(userID string) (*Session, error) {
+func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Session, error) {
 	data := &Session{}
 
 	if s.db == nil {
@@ -50,7 +50,7 @@ func (s *MapSessionPersister) ReadFromPersister(userID string) (*Session, error)
 }
 
 // WriteToPersister persists session for the user
-func (s *MapSessionPersister) WriteToPersister(userID string, data *Session) error {
+func (s *MapPreferencePersister) WriteToPersister(userID string, data *Session) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -75,7 +75,7 @@ func (s *MapSessionPersister) WriteToPersister(userID string, data *Session) err
 }
 
 // DeleteFromPersister removes the session for the user
-func (s *MapSessionPersister) DeleteFromPersister(userID string) error {
+func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist.")
 	}
@@ -88,6 +88,6 @@ func (s *MapSessionPersister) DeleteFromPersister(userID string) error {
 }
 
 // ClosePersister closes the DB
-func (s *MapSessionPersister) ClosePersister() {
+func (s *MapPreferencePersister) ClosePersister() {
 	s.db = nil
 }

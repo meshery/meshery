@@ -73,23 +73,15 @@ func main() {
 		Name: "loadTestReporterQueue",
 	})
 
-	// sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	// sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
-
-	// sessionPersister, _ := helpers.NewMapSessionPersister()
-
 	var prov models.Provider
 	var cookieSessionStore *sessions.CookieStore
 
 	if viper.GetBool("NO_AUTH") {
-		sessionPersister, err := models.NewMapSessionPersister()
+		preferencePersister, err := models.NewMapPreferencePersister()
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		defer sessionPersister.ClosePersister()
+		defer preferencePersister.ClosePersister()
 
 		resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
 		if err != nil {
@@ -107,16 +99,16 @@ func main() {
 			SessionName: "meshery",
 			SaaSBaseURL: saasBaseURL,
 			// SessionStore: fileSessionStore,
-			SessionStore:        cookieSessionStore,
-			MapSessionPersister: sessionPersister,
-			ResultPersister:     resultPersister,
+			SessionStore:           cookieSessionStore,
+			MapPreferencePersister: preferencePersister,
+			ResultPersister:        resultPersister,
 		}
 	} else {
-		sessionPersister, err := models.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
+		preferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		defer sessionPersister.ClosePersister()
+		defer preferencePersister.ClosePersister()
 
 		cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
 		saasBaseURL := viper.GetString("SAAS_BASE_URL")
@@ -128,10 +120,10 @@ func main() {
 			RefCookieName: "meshery_ref",
 			SessionName:   "meshery",
 			// SessionStore: fileSessionStore,
-			SessionStore:            cookieSessionStore,
-			SaaSTokenName:           "meshery_saas",
-			LoginCookieDuration:     1 * time.Hour,
-			BitCaskSessionPersister: sessionPersister,
+			SessionStore:               cookieSessionStore,
+			SaaSTokenName:              "meshery_saas",
+			LoginCookieDuration:        1 * time.Hour,
+			BitCaskPreferencePersister: preferencePersister,
 		}
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()

@@ -14,7 +14,7 @@ const (
 )
 
 type Provider interface {
-	SessionPersister
+	PreferencePersister
 	// Returns ProviderType
 	GetProviderType() ProviderType
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
