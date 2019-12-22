@@ -74,6 +74,7 @@ const styles = theme => ({
   configure: {
     display:'inline-block',
     width:'48%',
+    wordWrap:'break-word',
   },
   vertical: {
     display:'inline-block',
@@ -84,6 +85,12 @@ const styles = theme => ({
     display:'inline-block',
     width:'48%',
     marginLeft:30,
+    [theme.breakpoints.up(600)]: {
+      width:'45%',
+    },
+    [theme.breakpoints.down(599)]: {
+      width:'42%',
+    },
   },
   configHeading: {
   	display: 'inline-block',
