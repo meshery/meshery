@@ -10,8 +10,8 @@ mesheryctl:
 # `make docker` builds Meshery inside of a multi-stage Docker container.
 # This method does NOT require that you have Go, NPM, etc. installed locally.
 docker:
-	powershell.exe -c $$env:DOCKER_BUILDKIT=1
-	docker build -t layer5/meshery .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) .
+
 # Runs Meshery in a container locally and points to locally-running 
 #  Meshery Cloud for user authentication.
 docker-run-local-cloud:
