@@ -292,6 +292,22 @@ class Navigator extends React.Component {
       });
     }
 
+    updateAdaptersLink() {
+      const self = this;
+      categories.forEach((cat, ind) => {
+        if(cat.id === 'Management'){
+          cat.children.forEach((catc, ind1) => {
+            if(categories[ind].children[ind1].children[0]['href']!='undefined'){
+              var val= true;
+              var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
+              categories[ind].children[ind1]['link'] = val;
+              categories[ind].children[ind1]['href'] = newhref;
+            }
+          });
+        }
+      });
+    }
+
     // componentDidMount(){
     //   console.log("navigator mounted")
     // }
@@ -394,11 +410,11 @@ class Navigator extends React.Component {
       // this.setState({ isDrawerCollapsed: !isDrawerCollapsed })
     }
 
-    renderChildren(children, depth) {
+    renderChildren(idname,children, depth) {
       const { classes, isDrawerCollapsed } = this.props;
       const { path } = this.state;
 
-      if (children && children.length > 0){
+      if (idname!='Management' && children && children.length > 0){
       return (
         <List disablePadding>
           {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
@@ -418,14 +434,46 @@ class Navigator extends React.Component {
                   )}>
                 {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
               </ListItem>
-              {this.renderChildren(childrenc, depth + 1)}
+              {this.renderChildren(idname,childrenc, depth + 1)}
               </React.Fragment>
               );
               })}
             </List>
         );
       }
-      return '';
+      else if (idname=='Management'){
+        if (children && children.length>1){
+        return (
+          <List disablePadding>
+            {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+              if (typeof showc !== 'undefined' && !showc){
+                return '';
+              }
+              return (
+                <React.Fragment>
+                <ListItem button
+                  key={idc}
+                  className={classNames(
+                    (depth === 1?classes.nested1:classes.nested2),
+                    classes.item,
+                    classes.itemActionable,
+                    path === hrefc && classes.itemActiveItem,
+                    isDrawerCollapsed && classes.noPadding
+                    )}>
+                  {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                </ListItem>
+                {this.renderChildren(idname,childrenc, depth + 1)}
+                </React.Fragment>
+                );
+                })}
+              </List>
+          );
+        }
+        else if(children && children.length==1){
+          this.updateAdaptersLink();
+        }
+     }
+     return '';
     }
 
     linkContent(iconc, idc, hrefc, linkc, drawerCollapsed){
@@ -523,7 +571,7 @@ class Navigator extends React.Component {
                                 </div>
                             </Link>
                         </ListItem>
-                        {this.renderChildren(children, 1)}
+                        {this.renderChildren(childId,children, 1)}
                         </React.Fragment>
                         );
                       })}
