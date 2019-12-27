@@ -74,15 +74,55 @@ const styles = theme => ({
   configure: {
     display:'inline-block',
     width:'48%',
+    wordWrap:'break-word',
+    [theme.breakpoints.down(599)]: {
+      width:'100%',
+    },
   },
   vertical: {
     display:'inline-block',
     height:140,
     marginBottom:-40,
+    [theme.breakpoints.down(599)]: {
+      display:'none',
+    },
+  },
+  horizontal: {
+    display:'none',
+    [theme.breakpoints.down(599)]: {
+      display:'block',
+    },
   },
   buttonconfig: {
     display:'inline-block',
     width:'48%',
+    [theme.breakpoints.down(599)]: {
+      width: '100%',
+    },
+  },
+  currentConfigHeading: {
+    display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+    [theme.breakpoints.down(599)]: {
+      width: '100%',
+    },
+  },
+  changeConfigHeading: {
+  	display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+    [theme.breakpoints.down(599)]: {
+      display:'none',
+    },
+  },
+  changeConfigHeadingOne: {
+    display: 'none',
+    [theme.breakpoints.down(599)]: {
+      display:'inline-block',
+      width: '100%',
+      textAlign: 'center',
+    },
   },
   configHeading: {
   	display: 'inline-block',
@@ -353,12 +393,12 @@ class MeshConfigComponent extends React.Component {
       return (
     <NoSsr>
     <div className={classes.root}>
-	    <div className={classes.configHeading}>
+	    <div className={classes.currentConfigHeading}>
 	    	<h4>
 	    		Current Configuration Details
 	    	</h4>
 	    </div>
-	    <div className={classes.configHeading}>
+	    <div className={classes.changeConfigHeading}>
 	    	<h4>
 	    		Change Configuration...
 	    	</h4>
@@ -367,7 +407,13 @@ class MeshConfigComponent extends React.Component {
 		<div className={classes.configure}>
 		  {showConfigured}
 		</div>
-		<Divider className={classes.vertical} orientation="vertical" />
+    <Divider className={classes.vertical} orientation="vertical" />
+    <Divider className={classes.horizontal} orientation="horizontal" />
+    <div className={classes.changeConfigHeadingOne}>
+	    	<h4>
+	    		Change Configuration...
+	    	</h4>
+	  </div>
 		<div className={classes.buttonconfig}>
 		  <div className={classes.buttons}>
 		  <Button
