@@ -23,19 +23,6 @@ import CloseIcon from '@material-ui/icons/Close';
 const styles = theme => ({
   root: {
     padding: theme.spacing(5),
-  },
-  root0: {
-    padding:theme.spacing(5),
-    [theme.breakpoints.down(599)]: {
-      display:'none',
-    },
-  },
-  root1: {
-    padding:theme.spacing(5),
-    display:'none',
-    [theme.breakpoints.down(599)]: {
-      display:'block',
-    },
   }, 
   buttons: {
     display: 'flex',
@@ -70,12 +57,6 @@ const styles = theme => ({
   },
   inClusterLabel: {
     paddingRight: theme.spacing(2),
-  },
-  chiplabel: {
-      whiteSpace:'pre-wrap',
-  },
-  chipsize: {
-    height:'auto',
   },
   alignCenter: {
     textAlign: 'center',
@@ -153,7 +134,7 @@ class MeshConfigComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer, tabVal} = props;
+    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer} = props;
     this.state = {
         inClusterConfig, // read from store
         inClusterConfigForm: inClusterConfig,
@@ -162,7 +143,6 @@ class MeshConfigComponent extends React.Component {
         contextName, // read from store
         contextNameForForm: '',
         contextsFromFile: [],
-        tabVal,
         clusterConfigured, // read from store
         configuredServer,
         k8sfileError: false,
@@ -359,8 +339,7 @@ class MeshConfigComponent extends React.Component {
         contextNameForForm: '',
         clusterConfigured: false,
       })
-      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
-        
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}}); 
       this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
         variant: 'success',
         autoHideDuration: 2000,
@@ -411,8 +390,6 @@ class MeshConfigComponent extends React.Component {
         <Chip 
               // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
               label={inClusterConfig?'Using In Cluster Config': contextName }
-              classes={{label:classes.chiplabel}}
-              className={classes.chipsize}
               onDelete={self.handleReconfigure}
               onClick={self.handleKubernetesClick}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
@@ -460,8 +437,7 @@ class MeshConfigComponent extends React.Component {
       )
     }
 
-
-      return (
+    return (
         
     <NoSsr>
     <div className={classes.root}>
