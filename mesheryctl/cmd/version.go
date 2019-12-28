@@ -23,6 +23,9 @@ import (
 // Build - holds the build info
 var Build string
 
+// CommitSHA - holds the Git-SHA info
+var CommitSHA string
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -30,6 +33,7 @@ var versionCmd = &cobra.Command{
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Version: ", Build)
+		log.Info("GitSHA:", CommitSHA)
 	},
 }
 
