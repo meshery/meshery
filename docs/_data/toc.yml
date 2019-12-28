@@ -34,3 +34,8 @@
       url: management
     - title: Releases
       url: releases
+- title: Guides
+  url: guides
+  links:
+  - title: Multiple Adapters
+    url: guides/multiple-adapters
