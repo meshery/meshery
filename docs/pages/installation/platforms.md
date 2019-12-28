@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Supported Platforms
-permalink: platforms
+permalink: installation/platforms
 ---
 # Getting Started with other Platforms<a name="compatibility-matrix"></a>
 The table below provides installation instructions for each platform that Meshery is compatibile with:
