@@ -2,6 +2,7 @@
 layout: guide
 title: Multiple Adapters
 permalink: guides/multiple-adapters
+type: guide
 ---
 # Meshery Adapters: Advanced Configuration
 
