@@ -2,9 +2,9 @@
 layout: page
 title: Kuma Adapter
 name: Kuma
-version: alpha
+version: v1.0
 port: 10007/tcp
-project_status: Help-wanted
+project_status: alpha
 ---
 
 ## Configuration

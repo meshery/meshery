@@ -2,9 +2,9 @@
 layout: page
 title: Maesh Adapter
 name: Maesh
-version: alpha
+version: v1.0
 port: 10006/tcp
-project_status: In-progress
+project_status: alpha
 ---
 
 ## Configuration
