@@ -2,9 +2,9 @@
 layout: page
 title: Network Service Mesh Adapter
 name: Network Service Mesh
-version: beta
+version: v0.2.1
 port: 10004/tcp
-project_status: Available
+project_status: stable
 ---
 
 ## Configuration

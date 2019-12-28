@@ -1,10 +1,10 @@
 ---
 layout: page
-title: App-Mesh Adapter
-name: App-Mesh
-version: alpha
+title: App Mesh Adapter
+name: App Mesh
+version: "-"
 port: 10005/tcp
-project_status: Help-wanted
+project_status: pre-alpha
 ---
 
 ## Configuration
