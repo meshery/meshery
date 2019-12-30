@@ -34,8 +34,24 @@
 
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/main.css">
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/palette.css">
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/anchorjs.css">
 <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>  
+  $(function() {
+  /** AnchorJS options and selector */  
+   anchors.options = {
+      visible : 'hover',
+      placement: 'left'
+   };
+   anchors.add('h1, h2, h3, h4, h5');
+   });
+   </script>
 </head>
+<style>
+
+</style>
