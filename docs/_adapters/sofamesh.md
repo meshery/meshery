@@ -2,7 +2,6 @@
 layout: page
 title: SOFAmesh Adapter
 name: SOFAmesh
-project_status: Help-wanted
 ---
 
 ## Configuration
