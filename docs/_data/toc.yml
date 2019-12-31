@@ -2,18 +2,24 @@
   url: '#'
   links:
     - title: Overview
-      url: '#'
-    - title: Installation
-      url: installation
+      url: 'overview'
+    - title: Service Meshes
+      url: service-meshes
       children:
         - title: Adapters
-          url: installation/adapters
+          url: service-meshes/adapters
+    - title: Quick Start
+      url: installation
+    - title: Supported Platforms
+      url: platforms
+      children:
         - title: Docker
           url: installation/docker
         - title: Kubernetes
           url: installation/kubernetes
-        - title: Minikube
-          url: installation/minikube
+          children:
+          - title: Minikube
+            url: installation/minikube
         - title: GKE
           url: installation/gke
         - title: EKS
@@ -22,9 +28,14 @@
           url: installation/wsl2
     - title: Architecture
       url: architecture
-    - title: Performance
+    - title: Service Mesh Performance
       url: performance
     - title: Management
       url: management
     - title: Releases
       url: releases
+- title: Guides
+  url: guides
+  links:
+  - title: Multiple Adapters
+    url: guides/multiple-adapters

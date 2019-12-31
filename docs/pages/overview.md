@@ -1,9 +1,9 @@
 ---
 layout: page
-title: Meshery Documentation
-permalink: /
+title: Overview
+permalink: overview
 ---
-# What is Meshery 
+# Introducing Meshery 
 A multi-service mesh management plane adopting, operating and developing on different service meshes. 
 Meshery faciliates learning about functionality and performance of service meshes and incorporates collection and display of metrics from applications running on or across service meshes. 
 Meshery provides this high-level functionality: 
@@ -12,14 +12,15 @@ Meshery provides this high-level functionality:
 1. Service Mesh Lifecycle Management
 1. Service Mesh Interoperability and Federation
 
-<div style="text-align:center;">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br /><i>Delivered at Service Mesh Day 2019</i></div>
+<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## What challenges does Meshery solve? 
-<p style="text-align:center;"><b>Service mesh management - one or multiple service meshes.</b><br /></p>
+<div style="text-align:center;width:100%"><emphasis>Delivered at Service Mesh Day 2019</emphasis></div>
+
+
+<h2>What challenges does Meshery solve?</h2>
+<p style="text-align:center;"><b>Service mesh management - one or multiple service meshes.</b></p>
 
 <p style="margin-bottom:1em; margin-top:1em;">Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be 1) involved and 2) misinterpreted.</p>
-
 
 <p style="margin-bottom:1em; margin-top:1em;">Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between service meshes and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.<br /></p>
 
@@ -40,18 +41,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
     - Against a fixed set of:
         1. Workload(s)
         1. Infrastructure(s)
-
-## Supported Service Meshes
-See the full list of [adapters](installation/adapters).
-
-| Platform      | Status        |
-| :------------ | :------------ |
-{% for adapter in site.adapters -%}
-{% if adapter.project_status -%}
-| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-{% endif -%}
-{% endfor %}
-
+\
 **Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
 
 **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
