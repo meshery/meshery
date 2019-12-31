@@ -530,7 +530,7 @@ class Navigator extends React.Component {
                       <Divider className={classes.divider} />
                       <ListItem
                             component="a"
-                            href="https://layer5.io/meshery"
+                            href="https://meshery.io/"
                             target="_blank"
                             key={'about'}
                             className={classNames(
