@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Service Mesh Performance
+title: Performance
 permalink: performance
 published: false
 ---
