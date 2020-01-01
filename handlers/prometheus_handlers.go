@@ -20,37 +20,28 @@ func init() {
 }
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
-func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
-		if err = h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
+		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
 			logrus.Errorf("unable to connect to prometheus: %v", err)
 			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
 			return
 		}
-		sessObj.Prometheus = &models.Prometheus{
+		prefObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}
 		logrus.Debugf("Prometheus URL %s successfully saved", promURL)
 	} else if req.Method == http.MethodDelete {
-		sessObj.Prometheus = nil
+		prefObj.Prometheus = nil
 	}
 
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err := h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -61,22 +52,13 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 }
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
-func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
-	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
 		return
 	}
@@ -108,29 +90,20 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 }
 
 // PrometheusQueryHandler handles prometheus queries
-func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
-	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
 		return
 	}
 
 	reqQuery := req.URL.Query()
 
-	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), sessObj.Prometheus.PrometheusURL, &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
 		msg := "connection to prometheus failed"
 		logrus.Error(errors.Wrap(err, msg))
@@ -141,22 +114,13 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
-func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
-	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
 		return
 	}
@@ -169,7 +133,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		h.config.QueryTracker.AddOrFlagQuery(req.Context(), testUUID, q, false)
 	}
 
-	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), sessObj.Prometheus.PrometheusURL, &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
 		msg := "connection to prometheus failed"
 		logrus.Error(errors.Wrap(err, msg))
@@ -180,22 +144,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 }
 
 // PrometheusStaticBoardHandler returns the static board
-func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
-	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		_, _ = w.Write([]byte("{}"))
 		return
 	}
@@ -214,7 +169,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		go func(k string, bfun func(context.Context, string) (*models.GrafanaBoard, error)) {
 			defer resultWG.Done()
 
-			board, err := bfun(req.Context(), sessObj.Prometheus.PrometheusURL)
+			board, err := bfun(req.Context(), prefObj.Prometheus.PrometheusURL)
 			if err != nil {
 				// error is already logged
 				return
@@ -231,7 +186,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(result)
+	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
 		logrus.Errorf("error marshalling board: %v", err)
 		http.Error(w, "unable to marshal board instance", http.StatusInternalServerError)
@@ -240,28 +195,19 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 }
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
-func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("unable to read session from the session persister, starting with a new one")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
-	if sessObj.Prometheus == nil || sessObj.Prometheus.PrometheusURL == "" {
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
 		return
 	}
 
-	// if sessObj.Prometheus.SelectedPrometheusBoardsConfigs == nil {
-	// 	sessObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
+	// if prefObj.Prometheus.SelectedPrometheusBoardsConfigs == nil {
+	// 	prefObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
 	// }
 
 	defer func() {
@@ -284,11 +230,11 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 		return
 	}
 	if len(boards) > 0 {
-		sessObj.Prometheus.SelectedPrometheusBoardsConfigs = boards
+		prefObj.Prometheus.SelectedPrometheusBoardsConfigs = boards
 	} else {
-		sessObj.Prometheus.SelectedPrometheusBoardsConfigs = nil
+		prefObj.Prometheus.SelectedPrometheusBoardsConfigs = nil
 	}
-	err = h.config.SessionPersister.Write(user.UserID, sessObj)
+	err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)

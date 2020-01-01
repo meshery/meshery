@@ -1,34 +1,31 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"fortio.org/fortio/periodic"
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, user *models.User) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	tokenVal, _ := session.Values[h.config.SaaSTokenName].(string)
 	err := req.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error: unable to parse form: %v", err)
@@ -115,15 +112,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
 
-	sessObj, err := h.config.SessionPersister.Read(user.UserID)
-	if err != nil {
-		logrus.Warn("Unable to read session from the session persister. Starting a new session.")
-	}
-
-	if sessObj == nil {
-		sessObj = &models.Session{}
-	}
-
 	log := logrus.WithField("file", "load_test_handler")
 
 	flusher, ok := w.(http.Flusher)
@@ -167,7 +155,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		log.Debug("response channel closed")
 	}()
 	go func() {
-		h.executeLoadTest(testName, meshName, tokenVal, testUUID, sessObj, loadTestOptions, respChan)
+		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
@@ -179,19 +167,19 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	}
 }
 
-func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string, sessObj *models.Session, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
 	}
 	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	var (
-		resultsMap map[string]interface{} 
+		resultsMap map[string]interface{}
 		resultInst *periodic.RunnerResults
-		err error
+		err        error
 	)
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
-		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)	
+		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
 	} else {
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}
@@ -211,7 +199,7 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		Message: "Load test completed, fetching metadata now",
 	}
 
-	if sessObj.K8SConfig != nil {
+	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
 		installedMeshesChan := make(chan map[string]string)
@@ -219,8 +207,8 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		go func() {
 			var nodes []*models.K8SNode
 			var err error
-			if len(sessObj.K8SConfig.Nodes) == 0 {
-				nodes, err = helpers.FetchKubernetesNodes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if len(prefObj.K8SConfig.Nodes) == 0 {
+				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
@@ -233,8 +221,8 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		go func() {
 			var serverVersion string
 			var err error
-			if sessObj.K8SConfig.ServerVersion == "" {
-				serverVersion, err = helpers.FetchKubernetesVersion(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			if prefObj.K8SConfig.ServerVersion == "" {
+				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
@@ -245,7 +233,7 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 			versionChan <- serverVersion
 		}()
 		go func() {
-			installedMeshes, err := helpers.ScanKubernetes(sessObj.K8SConfig.Config, sessObj.K8SConfig.ContextName)
+			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 			if err != nil {
 				err = errors.Wrap(err, "unable to scan kubernetes")
 				logrus.Warn(err)
@@ -253,13 +241,13 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 			installedMeshesChan <- installedMeshes
 		}()
 
-		sessObj.K8SConfig.Nodes = <-nodesChan
-		sessObj.K8SConfig.ServerVersion = <-versionChan
+		prefObj.K8SConfig.Nodes = <-nodesChan
+		prefObj.K8SConfig.ServerVersion = <-versionChan
 
-		if sessObj.K8SConfig.ServerVersion != "" && len(sessObj.K8SConfig.Nodes) > 0 {
+		if prefObj.K8SConfig.ServerVersion != "" && len(prefObj.K8SConfig.Nodes) > 0 {
 			resultsMap["kubernetes"] = map[string]interface{}{
-				"server_version": sessObj.K8SConfig.ServerVersion,
-				"nodes":          sessObj.K8SConfig.Nodes,
+				"server_version": prefObj.K8SConfig.ServerVersion,
+				"nodes":          prefObj.K8SConfig.Nodes,
 			}
 		}
 		installedMeshes := <-installedMeshesChan
@@ -299,7 +287,7 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 		return
 	}
 
-	resultID, err := h.publishResultsToSaaS(h.config.SaaSTokenName, tokenVal, bd)
+	resultID, err := h.config.Provider.PublishResults(req, bd)
 	if err != nil {
 		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		// return
@@ -319,9 +307,11 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 	}
 
 	var promURL string
-	if sessObj.Prometheus != nil {
-		promURL = sessObj.Prometheus.PrometheusURL
+	if prefObj.Prometheus != nil {
+		promURL = prefObj.Prometheus.PrometheusURL
 	}
+
+	tokenVal, _ := h.config.Provider.GetProviderToken(req)
 
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" {
@@ -331,7 +321,6 @@ func (h *Handler) executeLoadTest(testName, meshName, tokenVal, testUUID string,
 			PromURL:   promURL,
 			StartTime: resultInst.StartTime,
 			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-			TokenKey:  h.config.SaaSTokenName,
 			TokenVal:  tokenVal,
 		})
 	}
@@ -394,88 +383,10 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	logrus.Debugf("Result: %s, size: %d", sd, len(sd))
 
-	if err = h.publishMetricsToSaaS(config.TokenKey, config.TokenVal, sd); err != nil {
+	if err = h.config.Provider.PublishMetrics(config.TokenVal, sd); err != nil {
 		return err
 	}
 	// now to remove all the queries for the uuid
 	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
 	return nil
-}
-
-func (h *Handler) publishMetricsToSaaS(tokenKey, tokenVal string, bd []byte) error {
-	logrus.Infof("attempting to publish metrics to SaaS")
-	bf := bytes.NewBuffer(bd)
-	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result/metrics")
-	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
-	req.AddCookie(&http.Cookie{
-		Name:     tokenKey,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
-	c := &http.Client{}
-	resp, err := c.Do(req)
-	if err != nil {
-		logrus.Errorf("unable to send metrics: %v", err)
-		return err
-	}
-	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
-		return nil
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return err
-	}
-	logrus.Errorf("error while sending metrics: %s", bdr)
-	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
-}
-
-func (h *Handler) publishResultsToSaaS(tokenKey, tokenVal string, bd []byte) (string, error) {
-	logrus.Infof("attempting to publish results to SaaS")
-	bf := bytes.NewBuffer(bd)
-	saasURL, _ := url.Parse(h.config.SaaSBaseURL + "/result")
-	req, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
-	req.AddCookie(&http.Cookie{
-		Name:     tokenKey,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
-	c := &http.Client{}
-	resp, err := c.Do(req)
-	if err != nil {
-		logrus.Errorf("unable to send results: %v", err)
-		return "", err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	bdr, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return "", err
-	}
-	if resp.StatusCode == http.StatusCreated {
-		logrus.Infof("results successfully published to SaaS")
-		idMap := map[string]string{}
-		if err = json.Unmarshal(bdr, &idMap); err != nil {
-			logrus.Errorf("unable to unmarshal body: %v", err)
-			return "", err
-		}
-		resultID, ok := idMap["id"]
-		if ok {
-			return resultID, nil
-		}
-		return "", nil
-	}
-	logrus.Errorf("error while sending results: %s", bdr)
-	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }

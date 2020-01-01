@@ -23,7 +23,7 @@ import CloseIcon from '@material-ui/icons/Close';
 const styles = theme => ({
   root: {
     padding: theme.spacing(5),
-  },
+  }, 
   buttons: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -74,21 +74,59 @@ const styles = theme => ({
   configure: {
     display:'inline-block',
     width:'48%',
+    wordWrap:'break-word',
+    [theme.breakpoints.down(599)]: {
+      width:'100%',
+    },
   },
   vertical: {
     display:'inline-block',
     height:150,
     marginBottom:-60,
+    [theme.breakpoints.down(599)]: {
+      display:'none',
+    },
+  },
+  horizontal: {
+    display:'none',
+    [theme.breakpoints.down(599)]: {
+      display:'block',
+    },
   },
   formconfig: {
     display:'inline-block',
-    width:'48%',
     marginLeft:30,
+    [theme.breakpoints.up(600)]: {
+      width:'45%',
+    },
+    [theme.breakpoints.down(599)]: {
+      width:'100%',
+      marginLeft:0,
+    },
   },
-  configHeading: {
+  currentConfigHeading: {
+    display: 'inline-block',
+    width: '48%',
+    textAlign: 'center',
+    [theme.breakpoints.down(599)]: {
+      width: '100%',
+    },
+  },
+  changeConfigHeading: {
   	display: 'inline-block',
     width: '48%',
     textAlign: 'center',
+    [theme.breakpoints.down(599)]: {
+      display:'none',
+    },
+  },
+  changeConfigHeadingOne: {
+    display: 'none',
+    [theme.breakpoints.down(599)]: {
+      display:'inline-block',
+      width: '100%',
+      textAlign: 'center',
+    },
   },
 });
 
@@ -96,7 +134,7 @@ class MeshConfigComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
+    const {inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer} = props;
     this.state = {
         inClusterConfig, // read from store
         inClusterConfigForm: inClusterConfig,
@@ -105,7 +143,6 @@ class MeshConfigComponent extends React.Component {
         contextName, // read from store
         contextNameForForm: '',
         contextsFromFile: [],
-    
         clusterConfigured, // read from store
         configuredServer,
         k8sfileError: false,
@@ -302,8 +339,7 @@ class MeshConfigComponent extends React.Component {
         contextNameForForm: '',
         clusterConfigured: false,
       })
-      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}});
-        
+      this.props.updateK8SConfig({k8sConfig: {inClusterConfig: false, k8sfile:'', contextName:'', clusterConfigured: false}}); 
       this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
         variant: 'success',
         autoHideDuration: 2000,
@@ -325,7 +361,6 @@ class MeshConfigComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const { inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer } = this.state;
-    
     let showConfigured = '';
     const self = this;
     /*if (clusterConfigured) {
@@ -402,16 +437,16 @@ class MeshConfigComponent extends React.Component {
       )
     }
 
-
-      return (
+    return (
+        
     <NoSsr>
     <div className={classes.root}>
-    <div className={classes.configHeading}>
+    <div className={classes.currentConfigHeading}>
     	<h4>
     		Current Configuration Details
     	</h4>
     </div>
-    <div className={classes.configHeading}>
+    <div className={classes.changeConfigHeading}>
     	<h4>
     		Change Configuration...
     	</h4>
@@ -443,6 +478,12 @@ class MeshConfigComponent extends React.Component {
           {showConfigured}
       </div>
       <Divider className={classes.vertical} orientation="vertical" />
+      <Divider className={classes.horizontal} orientation="horizontal" />
+      <div className={classes.changeConfigHeadingOne}>
+    	<h4>
+    		Change Configuration...
+    	</h4>
+      </div>
       <div className={classes.formconfig}>
         <FormGroup>
           <input
@@ -493,6 +534,7 @@ class MeshConfigComponent extends React.Component {
             ))}
           </TextField>
       </div>
+    </div>
       {/*<React.Fragment>
         <div className={classes.buttons}>
           <Button
@@ -507,7 +549,6 @@ class MeshConfigComponent extends React.Component {
           </Button>
         </div>
       </React.Fragment>*/}
-      </div>
   
   {/* <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}

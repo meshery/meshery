@@ -14,7 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Meshery Docs
+title: Documentation
 email: community@layer5.io
 author: Meshery
 description: > # this means to ignore newlines until "baseurl:"
@@ -32,6 +32,7 @@ url: "https://meshery.layer5.io" # the base hostname & protocol for your site
 repo: "https://github.com/layer5io/meshery"
 github_user: "layer5io"
 github_repo: "meshery"
+project: https://meshery.io
 
 # Optional
 twitter: layer5
@@ -55,6 +56,7 @@ color: "#3C494F" #"#647881" # "#30638e"
 # Build settings
 markdown: kramdown
 
+
 # If you add tags to pages, you can link them to some external search
 # If you want to disable this, comment the URL.
 # tag_search_endpoint: https://ask.cyberinfrastructure.org/search?q=
@@ -71,6 +73,9 @@ exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 # Collections
 collections:
   docs:
+    output: true
+    permalink: /:collection/:path
+  adapters:
     output: true
     permalink: /:collection/:path
 
