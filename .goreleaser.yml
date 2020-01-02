@@ -16,6 +16,7 @@ builds:
     
   ldflags:
     - -s -w -X main.version={{.Version}}
+    - -s -w -X main.commitsha={{.Commit}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
   # Defaults are darwin and linux.
