@@ -17,9 +17,8 @@
           url: installation/docker
         - title: Kubernetes
           url: installation/kubernetes
-          children:
-          - title: Minikube
-            url: installation/minikube
+        - title: Minikube
+          url: installation/minikube
         - title: GKE
           url: installation/gke
         - title: EKS
