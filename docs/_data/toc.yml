@@ -28,8 +28,8 @@
           url: installation/wsl2
     - title: Architecture
       url: architecture
-    - title: Service Mesh Performance
-      url: performance
+    #- title: Service Mesh Performance
+    #  url: performance
     - title: Management
       url: management
     - title: Releases
