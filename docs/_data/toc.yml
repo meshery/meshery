@@ -11,7 +11,7 @@
     - title: Quick Start
       url: installation
     - title: Supported Platforms
-      url: platforms
+      url: installation/platforms
       children:
         - title: Docker
           url: installation/docker
