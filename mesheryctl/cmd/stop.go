@@ -30,7 +30,9 @@ var stopCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Stopping Meshery...")
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
-			_ = os.Mkdir(mesheryFolder, 0777)
+			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
+				log.Fatal("[ERROR] Could not create Meshery directory. The error message: \n", err)
+			}
 		}
 
 		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
