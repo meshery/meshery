@@ -26,3 +26,8 @@ func NewHandlerInstance(
 
 	return h
 }
+
+// GetProviderType - retrieves the provider type
+func (h *Handler) GetProviderType() models.ProviderType {
+	return h.config.Provider.GetProviderType()
+}

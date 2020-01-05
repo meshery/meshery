@@ -262,6 +262,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Cpx', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/cpx", 
+        title: 'Cpx',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ]
@@ -297,7 +305,7 @@ class Navigator extends React.Component {
       categories.forEach((cat, ind) => {
         if(cat.id === 'Management'){
           cat.children.forEach((catc, ind1) => {
-            if(categories[ind].children[ind1].children[0]['href']!='undefined'){
+            if(typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0]['href'] !== 'undefined'){
               var val= true;
               var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
               categories[ind].children[ind1]['link'] = val;
@@ -380,19 +388,23 @@ class Navigator extends React.Component {
           logoIcon = (<img src={image} className={classes.istioIcon} />);
           break;
         case 'linkerd':
-          image = "/static/img/linkerd.svg";
+          image = "/static/img/linkerd-white.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         case 'consul':
-          image = "/static/img/consul.svg";
+          image = "/static/img/consul-white.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         case 'network service mesh':
-          image = "/static/img/nsm.svg";
+          image = "/static/img/nsm-white.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         case 'octarine':
-          image = "/static/img/octarine.svg";
+          image = "/static/img/octarine-white.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'cpx':
+          image = "/static/img/Citrix_blue.png";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:

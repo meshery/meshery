@@ -14,8 +14,18 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 		isValid := h.validateAuth(req)
 		// logrus.Debugf("validate auth: %t", isValid)
 		if !isValid {
-			http.Redirect(w, req, "/login", http.StatusFound)
-			return
+			// if h.GetProviderType() == models.CloudProviderType {
+			// 	http.Redirect(w, req, "/login", http.StatusFound)
+			// } else { // Local Provider
+			// 	h.LoginHandler(w, req)
+			// }
+			// return
+			if h.GetProviderType() == models.CloudProviderType {
+				http.Redirect(w, req, "/login", http.StatusFound)
+				return
+			}
+			// Local Provider
+			h.LoginHandler(w, req, true)
 		}
 		next.ServeHTTP(w, req)
 	}
@@ -51,7 +61,10 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		}
 
 		if prefObj == nil {
-			prefObj = &models.Preference{}
+			prefObj = &models.Preference{
+				AnonymousUsageStats:  true,
+				AnonymousPerfResults: true,
+			}
 		}
 
 		next(w, req, session, prefObj, user)

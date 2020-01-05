@@ -182,6 +182,7 @@ class GrafanaSelectionComponent extends Component {
       return null;
     }
 
+
     addSelectedBoardPanelConfig = () => {
       const {grafanaBoard, grafanaBoards, templateVars, selectedTemplateVars, selectedPanels, panels} = this.state;
       const boardConfig = {};
@@ -207,7 +208,7 @@ class GrafanaSelectionComponent extends Component {
     render = () => {
         var self = this;
         const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
-          handleGrafanaChipDelete } = this.props;
+          handleGrafanaChipDelete, handleGrafanaClick } = this.props;
         const { panels, grafanaBoards, selectedPanels,
           grafanaBoard, templateVars, templateVarOptions } = this.state;
         return (
@@ -218,7 +219,9 @@ class GrafanaSelectionComponent extends Component {
                 <Chip 
                     label={grafanaURL}
                     onDelete={handleGrafanaChipDelete} 
+                    onClick={handleGrafanaClick}
                     icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
+                    key='graf-key'
                     variant="outlined" />
             </div>
             <Grid container spacing={1}>
@@ -343,6 +346,7 @@ GrafanaSelectionComponent.propTypes = {
   // grafanaBoards: PropTypes.array.isRequired,
   handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
   handleGrafanaChipDelete: PropTypes.func.isRequired,
+  handleGrafanaClick: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
 };
