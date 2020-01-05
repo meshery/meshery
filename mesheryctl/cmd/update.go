@@ -32,12 +32,13 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Pull new Meshery images from Docker Hub.",
-	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
+	Short: "Pull new Meshery images from Docker Hub and mesheryctl client.",
+	Long:  `Pull new Meshery images from Docker Hub. Pulls new mesheryctl client. This command may be executed while Meshery is running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Updating Meshery now...")
 
 		//Fetch latest version binary of mesheryctl
+		version := "" //To store lateset mesheryctl version info
 		resp, err := http.Get(mesheryURL)
 		downloadMesheryURL := downloadMesheryURL
 		if err != nil {
@@ -74,40 +75,43 @@ var updateCmd = &cobra.Command{
 				arch = "i386"
 			}
 
-			version := fmt.Sprint("%v", num)
+			version = fmt.Sprint("%v", num)
 			downloadMesheryURL = fmt.Sprintf(downloadMesheryURL+"/%v/mesheryctl_%v_%v_%v.zip", num, version[3:], os, arch)
 		}
 
 		//If sudo is needed to update mesheryctl
 		user, err := user.Current()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
-		if user.Username == "root" {
+		if user.Username == "root" && os.Getenv("SUDO_USER") != "" {
 			if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
 				_ = os.Mkdir(mesheryFolder, 0777)
 			}
 		}
 
 		//download mehseryctl binary
-		if err := downloadFile(mesherybinary, downloadMesheryURL); err != nil {
-			log.Fatal("update cmd: ", err)
-		}
-
-		//Unzip mesheryctl binary
-		uz := unzip.New(mesherybinary, "/usr/local/bin/")
-		err = uz.Extract()
-		if err != nil {
-			log.Warn(err)
-			log.Warn("skiping mesheryctl binary update!")
-			//log.Warn("Unable to update mesheryctl: permission denied")
-			//log.Println("Hint: try using sudo!")
+		if version != Build {
+			log.Info("Downloading latest mesheryctl..")
+			if err := downloadFile(mesherybinary, downloadMesheryURL); err != nil {
+				log.Warn("Unable to download mesheryctl release bundle: ", err)
+			} else {
+				//Unzip mesheryctl binary
+				uz := unzip.New(mesherybinary, "/usr/local/bin/")
+				err = uz.Extract()
+				if err != nil {
+					log.Warn(err)
+					log.Warn("Skipping mesheryctl binary update!")
+				}
+			}
+		} else {
+			log.Info("Latest mesheryctl already present!\nSkipping mesheryctl upgradation!")
 		}
 
 		//update docker image
 		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
 			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
-				log.Fatal("update cmd: ", err)
+				log.Fatal("Could not update Meshery containers: ", err)
 			}
 		}
 
