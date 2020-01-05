@@ -262,6 +262,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Cpx', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/cpx", 
+        title: 'Cpx',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ]
@@ -393,6 +401,10 @@ class Navigator extends React.Component {
           break;
         case 'octarine':
           image = "/static/img/octarine.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'cpx':
+          image = "/static/img/Citrix_blue.png";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:

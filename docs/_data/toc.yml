@@ -15,15 +15,14 @@
       children:
         - title: Docker
           url: installation/docker
-        - title: Kubernetes
-          url: installation/kubernetes
-          children:
-          - title: Minikube
-            url: installation/minikube
-        - title: GKE
-          url: installation/gke
         - title: EKS
           url: installation/eks
+        - title: GKE
+          url: installation/gke
+        - title: Kubernetes
+          url: installation/kubernetes
+        - title: Minikube
+          url: installation/minikube
         - title: WSL2
           url: installation/wsl2
     - title: Architecture

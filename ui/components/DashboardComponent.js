@@ -324,6 +324,10 @@ class DashboardComponent extends React.Component {
                           image = "/static/img/octarine.svg";
                           logoIcon = (<img src={image} className={classes.icon} />);
                           break;
+                        case 'cpx':
+                          image = "/static/img/Citrix_blue.png";
+                          logoIcon = (<img src={image} className={classes.icon} />);
+                          break;
                         }
                     }
                 });
