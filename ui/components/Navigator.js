@@ -297,7 +297,7 @@ class Navigator extends React.Component {
       categories.forEach((cat, ind) => {
         if(cat.id === 'Management'){
           cat.children.forEach((catc, ind1) => {
-            if(categories[ind].children[ind1].children[0]['href']!='undefined'){
+            if(typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0]['href'] !== 'undefined'){
               var val= true;
               var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
               categories[ind].children[ind1]['link'] = val;
