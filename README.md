@@ -88,5 +88,5 @@ This repository and site are available as open source under the terms of the [Ap
 
 **About Layer5**
 
-[Layer5.io](https://layer5.io) is a service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
+[Layer5.io](https://layer5.io) is the service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
 
