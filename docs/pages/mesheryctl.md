@@ -3,6 +3,7 @@ layout: guide
 title: mesheryctl
 description: How to use mesheryctl
 permalink: guides/mesheryctl
+type: guide
 ---
 
 | command | flag  | function  | example usage |
