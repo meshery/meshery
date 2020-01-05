@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"runtime"
 
 	log "github.com/sirupsen/logrus"
@@ -35,18 +36,12 @@ var updateCmd = &cobra.Command{
 	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info("Updating Meshery now...")
-		/*
-			///////////////////////////
-			// 		https://github.com/layer5io/meshery/releases/download/v0.3.3/mesheryctl_0.3.3_Linux_x86_64.zip
-			//		https://github.com/layer5io/meshery/releases/download/v0.3.3/mesheryctl_0.3.3_Windows_x86_64.zip
-			//		https://github.com/layer5io/meshery/releases/download/v0.3.3/mesheryctl_0.3.3_Darwin_i386.zip
-			///////////////////////////
-		*/
+
+		//Fetch latest version binary of mesheryctl
 		resp, err := http.Get(mesheryURL)
-		downloadMesheryURL := downloadMesheryURL // "https://github.com/layer5io/meshery/releases/download"
+		downloadMesheryURL := downloadMesheryURL
 		if err != nil {
-			// download the default version as 1.24.1 if unable to fetch latest page data
-			fmt.Print("error")
+			log.Print("error")
 		} else {
 			var dat map[string]interface{}
 			body, err := ioutil.ReadAll(resp.Body)
@@ -83,19 +78,33 @@ var updateCmd = &cobra.Command{
 			downloadMesheryURL = fmt.Sprintf(downloadMesheryURL+"/%v/mesheryctl_%v_%v_%v.zip", num, version[3:], os, arch)
 		}
 
-		//download mesheryctl binary zip file
-		fmt.Println(downloadMesheryURL)
+		//If sudo is needed to update mesheryctl
+		user, err := user.Current()
+		if err != nil {
+			panic(err)
+		}
+		if user.Username == "root" {
+			if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
+				_ = os.Mkdir(mesheryFolder, 0777)
+			}
+		}
 
+		//download mehseryctl binary
 		if err := downloadFile(mesherybinary, downloadMesheryURL); err != nil {
 			log.Fatal("update cmd: ", err)
 		}
 
+		//Unzip mesheryctl binary
 		uz := unzip.New(mesherybinary, "/usr/local/bin/")
 		err = uz.Extract()
 		if err != nil {
-			fmt.Println(err)
+			log.Warn(err)
+			log.Warn("skiping mesheryctl binary update!")
+			//log.Warn("Unable to update mesheryctl: permission denied")
+			//log.Println("Hint: try using sudo!")
 		}
 
+		//update docker image
 		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
 			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
 				log.Fatal("update cmd: ", err)
