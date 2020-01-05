@@ -1,6 +1,6 @@
 <p style="text-align:center;" align="center">
   <a href="https://layer5.io/meshery">
-    <img align="left" src="https://raw.githubusercontent.com/layer5io/layer5/master/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="80%" />
+    <img align="center" src="https://raw.githubusercontent.com/layer5io/layer5/master/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" />
   </a>
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
