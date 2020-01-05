@@ -9,7 +9,6 @@ import { Paper, Tooltip, AppBar } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPoll, faCloud, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
-import MeshConfigComponent from './MeshConfigComponent';
 import MeshOutClusterConfigComponent from './MeshOutClusterConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
@@ -154,10 +153,10 @@ class MesherySettings extends React.Component {
             </Tabs>
           </AppBar>
           {subTabVal === 0 && <TabContainer>
-            <MeshOutClusterConfigComponent />
+            <MeshOutClusterConfigComponent tabs={subTabVal} />
           </TabContainer>}
           {subTabVal === 1 && <TabContainer>
-            <MeshConfigComponent />
+            <MeshOutClusterConfigComponent tabs={subTabVal} />
           </TabContainer>}
       </TabContainer>}
       {tabVal === 1 && <TabContainer>

@@ -32,6 +32,10 @@ const styles = theme => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+  buttonsCluster: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   margin: {
     margin: theme.spacing(1),
   },
@@ -126,6 +130,13 @@ const styles = theme => ({
       display:'inline-block',
       width: '100%',
       textAlign: 'center',
+    },
+  },
+  buttonconfig: {
+    display:'inline-block',
+    width:'48%',
+    [theme.breakpoints.down(599)]: {
+      width: '100%',
     },
   },
 });
@@ -359,33 +370,12 @@ class MeshConfigComponent extends React.Component {
   }
 
   configureTemplate = () => {
+
     const { classes } = this.props;
     const { inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer } = this.state;
     let showConfigured = '';
     const self = this;
-    /*if (clusterConfigured) {
-      let chp = (
-        <Chip 
-              // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-              label={inClusterConfig?'Using In Cluster Config': contextName }
-              onDelete={self.handleReconfigure} 
-              icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />} 
-              variant="outlined" />
-      );
-      if(configuredServer){
-        chp = (
-          <Tooltip title={`Server: ${configuredServer}`}>
-          {chp}
-          </Tooltip>
-        );
-      }
-      showConfigured = (
-        <div className={classes.alignRight}>
-          {chp}
-        </div>
-      )
-    }*/
-     if (clusterConfigured) {
+    if (clusterConfigured) {
       let chp = (
         <Chip 
               // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
@@ -436,9 +426,19 @@ class MeshConfigComponent extends React.Component {
         </div>
       )
     }
+    if(this.props.tabs==0)
+    {
+      return this.meshOut(showConfigured);
+    }
+    return this.meshIn(showConfigured);
+  }
 
+  meshOut = (showConfigured) =>{
+
+    const { classes } = this.props;
+    const { inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer } = this.state;
+    
     return (
-        
     <NoSsr>
     <div className={classes.root}>
     <div className={classes.currentConfigHeading}>
@@ -487,55 +487,58 @@ class MeshConfigComponent extends React.Component {
       <div className={classes.formconfig}>
         <FormGroup>
           <input
-              className={classes.input}
-              id="k8sfile"
-              type="file"
-              // value={k8sfile}
-              value={k8sfileElementVal}
-              onChange={this.handleChange('k8sfile')}
-              //disabled={inClusterConfigForm === true}
-              className={classes.fileInputStyle}
-          />
-              <TextField
-                  id="k8sfileLabelText"
-                  name="k8sfileLabelText"
-                  className={classes.fileLabelText}
-                  label="Upload kubeconfig"
-                  variant="outlined"
-                  fullWidth
-                  value={k8sfile.replace('C:\\fakepath\\', '')}
-                  onClick={e => document.querySelector('#k8sfile').click()}
-                  margin="normal"
-                  InputProps={{
-                      readOnly: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <CloudUploadIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  disabled
-                  />
-          </FormGroup>
-          <TextField
-            select
-            id="contextName"
-            name="contextName"
-            label="Context Name"
-            fullWidth
-            value={contextNameForForm}
-            margin="normal"
-            variant="outlined"
+            className={classes.input}
+            id="k8sfile"
+            type="file"
+            // value={k8sfile}
+            value={k8sfileElementVal}
+            onChange={this.handleChange('k8sfile')}
             //disabled={inClusterConfigForm === true}
-            onChange={this.handleChange('contextNameForForm')}
-          >
-            {contextsFromFile && contextsFromFile.map((ct) => (
-                <MenuItem key={'ct_---_'+ct.contextName} value={ct.contextName}>{ct.contextName}{ct.currentContext?' (default)':''}</MenuItem>
-            ))}
-          </TextField>
+            className={classes.fileInputStyle}
+          />
+            <TextField
+              id="k8sfileLabelText"
+              name="k8sfileLabelText"
+              className={classes.fileLabelText}
+              label="Upload kubeconfig"
+              variant="outlined"
+              fullWidth
+              value={k8sfile.replace('C:\\fakepath\\', '')}
+              onClick={e => document.querySelector('#k8sfile').click()}
+              margin="normal"
+              InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <CloudUploadIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              disabled
+            />
+        </FormGroup>
+        <TextField
+          select
+          id="contextName"
+          name="contextName"
+          label="Context Name"
+          fullWidth
+          value={contextNameForForm}
+          margin="normal"
+          variant="outlined"
+          //disabled={inClusterConfigForm === true}
+          onChange={this.handleChange('contextNameForForm')}
+        >
+          {contextsFromFile && contextsFromFile.map((ct) => (
+              <MenuItem key={'ct_---_'+ct.contextName} value={ct.contextName}>{ct.contextName}{ct.currentContext?' (default)':''}</MenuItem>
+          ))}
+        </TextField>
       </div>
     </div>
-      {/*<React.Fragment>
+    </NoSsr>
+    );
+  }
+      /*<React.Fragment>
         <div className={classes.buttons}>
           <Button
             type="submit"
@@ -548,9 +551,9 @@ class MeshConfigComponent extends React.Component {
            Submit
           </Button>
         </div>
-      </React.Fragment>*/}
+            </React.Fragment>
   
-  {/* <LoadTestTimerDialog open={timerDialogOpen} 
+   <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}
     onClose={this.handleTimerDialogClose} 
     countDownComplete={this.handleTimerDialogClose} />
@@ -558,10 +561,59 @@ class MeshConfigComponent extends React.Component {
   <Typography variant="h6" gutterBottom className={classes.chartTitle}>
       Results
     </Typography>
-  <MesheryChart data={result} />     */}
+  <MesheryChart data={result} />     */
+  //}}
+  //  </NoSsr>
+  //);
+
+  meshIn = (showConfigured) =>{
+
+    const { classes } = this.props;
+    const { inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer } = this.state;
+
+    return (
+    <NoSsr>
+    <div className={classes.root}>
+	    <div className={classes.currentConfigHeading}>
+	    	<h4>
+	    		Current Configuration Details
+	    	</h4>
+	    </div>
+	    <div className={classes.changeConfigHeading}>
+	    	<h4>
+	    		Change Configuration...
+	    	</h4>
+	    </div>
+	    
+		  <div className={classes.configure}>
+		    {showConfigured}
+		  </div>
+      <Divider className={classes.vertical} orientation="vertical" />
+      <Divider className={classes.horizontal} orientation="horizontal" />
+      <div className={classes.changeConfigHeadingOne}>
+	    	<h4>
+	    		Change Configuration...
+	    	</h4>
+	    </div>
+		  <div className={classes.buttonconfig}>
+        <div className={classes.buttonsCluster}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => window.location.reload(false)}
+            className={classes.button}
+          >
+          Discover Cluster
+          </Button>
+		    </div>
+		  </div>
+    </div>
     </NoSsr>
   );
-    }
+
+  }
 
   render() {
     const { reconfigureCluster } = this.state;
