@@ -723,7 +723,11 @@ pre code {
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
-    margin-left: auto
+    margin-left: auto;
+   
+    bottom: 0;
+    
+   
 }
 
 .row {
@@ -735,7 +739,9 @@ pre code {
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     margin-right: -15px;
-    margin-left: -15px
+    margin-left: -15px;
+
+    
 }
 
 .no-gutters {
@@ -18602,3 +18608,70 @@ footer {
         visibility: hidden
     }
 }
+
+.footer-icons-list{
+    display:flex;
+    justify-content: center;
+}
+.footer-icons {
+    display: flex;
+    height: 0px;
+    justify-content: flex-start;
+    flex-direction: row;
+    padding: 4px;
+    position: relative;
+        
+}
+.footer-icons .footer-icons-text {
+    visibility: hidden;
+    width: 200px;
+  background-color:#3C494F;
+  color:white;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+
+  position: absolute;
+  z-index: 1;
+  bottom: 45%;
+  left: 0px; 
+  margin-left: -30px;
+ 
+  
+}
+
+.footer-icons:hover .footer-icons-text {
+    visibility: visible;
+}
+
+  
+.social__link {
+      display: block;
+      color: white;
+      transition: color .25s;
+}
+.social__link--mail:hover {
+    color: black;
+}
+  
+.social__link--slack:hover {
+    color: #4A154B;
+}
+  
+.social__link--twitter:hover {
+    color: #1da1f2;
+}
+  
+.social__link--github:hover {
+    color: #24292e;
+}
+  
+.social__link--youtube:hover {
+    color: #ff0000;
+}
+  
+.social__link--docker:hover {
+    color: #2496ed;
+}
+ 
+
