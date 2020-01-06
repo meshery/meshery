@@ -696,8 +696,9 @@ class MesheryAdapterPlayComponent extends React.Component {
     //   </NoSsr>
     // )
 
+    if(this.props.adapCount > 1){
     return (
-      <NoSsr>
+        <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
@@ -753,7 +754,38 @@ class MesheryAdapterPlayComponent extends React.Component {
           </div>
         </React.Fragment>
       </NoSsr>
+    )}
+
+    return (
+      <NoSsr>
+      <React.Fragment>
+        <div className={classes.root}>
+        <Grid container spacing={5}>
+        <Grid item xs={12}>
+          <TextField
+            required
+            id="namespace"
+            name="namespace"
+            label="Namespace"
+            fullWidth
+            value={namespace}
+            error={namespaceError}
+            margin="normal"
+            variant="outlined"
+            onChange={this.handleChange('namespace')}
+          />
+        </Grid>
+        {filteredOps.map(val => (
+          <Grid item xs={12} sm={4}>
+            {this.generateCardForCategory(val)}
+          </Grid>
+        ))}
+        </Grid>
+        </div>
+        </React.Fragment>
+      </NoSsr>
     )
+
   }
 }
 
