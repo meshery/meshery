@@ -28,9 +28,9 @@
     - title: Architecture
       url: architecture
     #- title: Service Mesh Performance
-    #  url: performance
-    - title: Management
-      url: management
+    #  url: performance-management
+    - title: Service Mesh Management
+      url: mesh-management
     - title: Releases
       url: releases
 - title: Guides
