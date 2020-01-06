@@ -78,6 +78,10 @@ collections:
   adapters:
     output: true
     permalink: /:collection/:path
+  guides:
+    output: true
+    permalink: /:collection/:path
+
 
 # Defaults
 defaults:
@@ -96,3 +100,8 @@ defaults:
       type: "posts"
     values:
       layout: "post"
+  - scope:
+      path: "guides"
+      type: "guide"
+    values:
+      layout: guide

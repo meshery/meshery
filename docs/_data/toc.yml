@@ -11,7 +11,7 @@
     - title: Quick Start
       url: installation
     - title: Supported Platforms
-      url: platforms
+      url: installation/platforms
       children:
         - title: Docker
           url: installation/docker
@@ -28,9 +28,9 @@
     - title: Architecture
       url: architecture
     #- title: Service Mesh Performance
-    #  url: performance
-    - title: Management
-      url: management
+    #  url: performance-management
+    - title: Service Mesh Management
+      url: mesh-management
     - title: Releases
       url: releases
 - title: Guides
@@ -38,3 +38,5 @@
   links:
   - title: Multiple Adapters
     url: guides/multiple-adapters
+  - title: Using mesheryctl
+    url: guides/mesheryctl

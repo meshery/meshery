@@ -4,7 +4,7 @@ title: Supported Service Meshes
 permalink: service-meshes
 ---
 
-See the full list of [adapters](adapters).
+Meshery supports the following service meshes. Meshery uses both abstraction APIs and service mesh-specific adapters to interface with and manage service meshes. You may review the full list of Meshery [adapters](adapters).
 
 | Platform      | Version       |
 | :------------ | :------------ |

@@ -17,7 +17,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/artdarek/go-unzip"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -97,11 +96,12 @@ var updateCmd = &cobra.Command{
 				log.Warn("Unable to download mesheryctl release bundle: ", err)
 			} else {
 				//Unzip mesheryctl binary
-				uz := unzip.New(mesherybinary, "/usr/local/bin/")
-				err = uz.Extract()
+				_, err := unzip(mesherybinary, "/usr/local/bin/")
 				if err != nil {
 					log.Warn(err)
 					log.Warn("Skipping mesheryctl binary update!")
+				} else {
+					log.Info("mesheryctl updated")
 				}
 			}
 		} else {
