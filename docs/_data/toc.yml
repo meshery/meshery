@@ -38,3 +38,5 @@
   links:
   - title: Multiple Adapters
     url: guides/multiple-adapters
+  - title: Using mesheryctl
+    url: guides/mesheryctl
