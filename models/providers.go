@@ -23,7 +23,7 @@ type Provider interface {
 	// Returns ProviderType
 	GetProviderType() ProviderType
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
-	InitiateLogin(http.ResponseWriter, *http.Request)
+	InitiateLogin(http.ResponseWriter, *http.Request, bool)
 	GetSession(req *http.Request) (*sessions.Session, error)
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)

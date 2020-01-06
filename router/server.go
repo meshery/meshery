@@ -48,7 +48,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/prometheus/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
-	mux.HandleFunc("/login", h.LoginHandler)
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		h.LoginHandler(w, r, false)
+	})
 
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
