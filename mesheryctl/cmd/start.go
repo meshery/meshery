@@ -38,7 +38,7 @@ var startCmd = &cobra.Command{
 
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
-				log.Fatal("[ERROR] Could not create Meshery directory. The error message: \n", err)
+				log.Fatal(err)
 			}
 		}
 
