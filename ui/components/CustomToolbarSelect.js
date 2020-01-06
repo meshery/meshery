@@ -12,6 +12,7 @@ import {connect} from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateResultsSelection, clearResultsSelection } from "../lib/store";
 import GrafanaMetricsCompare from "./GrafanaMetricsCompare";
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const defaultToolbarSelectStyles = {
   iconButton: {
@@ -97,8 +98,16 @@ class CustomToolbarSelect extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, results_selection } = this.props;
+    const fullData = [];
+    const rs = results_selection;
+    Object.keys(rs).map((k1) => {
+        Object.keys(rs[k1]).map((k2) => {
+          if (typeof rs[k1][k2] !== 'undefined'){
+            fullData.push(rs[k1][k2]);
+          }
+        });
+      });
     return (
         <NoSsr>
       <div className={"custom-toolbar-select"}>
@@ -112,6 +121,17 @@ class CustomToolbarSelect extends React.Component {
             <CompareArrowsIcon className={[classes.icon, classes.inverseIcon].join(" ")} />
           </IconButton>
         </Tooltip> */}
+        { fullData.length == 1 && <Tooltip title={"Download"}>
+          <IconButton className={classes.iconButton} 
+          key="download"
+          aria-label="download"
+          color="inherit"
+          // onClick={() => self.props.closeSnackbar(key) }
+          href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(fullData[0]))}`}
+          download={`${fullData[0].name}_test_result.json`}>
+            <GetAppIcon className={classes.icon} />
+          </IconButton>
+        </Tooltip>}
         <Tooltip title={"Compare selected"}>
           <IconButton className={classes.iconButton} onClick={this.handleCompareSelected}>
             <CompareArrowsIcon className={classes.icon} />
