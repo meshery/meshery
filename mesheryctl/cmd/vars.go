@@ -16,11 +16,12 @@ package cmd
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -83,4 +84,17 @@ func setFileLocation() {
 	}
 	mesheryFolder = path.Join(home, mesheryFolder)
 	dockerComposeFile = path.Join(mesheryFolder, dockerComposeFile)
+}
+
+func preReqCheck() {
+	if _, err := os.Stat("/usr/local/bin/docker-compose"); os.IsNotExist(err) {
+		log.Print("not present")
+	} else {
+		log.Print("present")
+	}
+	if err := exec.Command("docker-compose", "-v").Run(); err == nil {
+		log.Print("present")
+	} else {
+		log.Print("not present")
+	}
 }
