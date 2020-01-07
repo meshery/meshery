@@ -18624,9 +18624,8 @@ footer {
     justify-content: center;
     justify-content: flex-start;
     flex-direction: row;
-    bottom:0px;
     justify-content: center;
-    margin-left: 10px;
+   
 }
 .footer-icons {
     display: flex;
