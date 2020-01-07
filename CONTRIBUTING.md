@@ -13,7 +13,7 @@ Not sure where to start? First, see the [newcomers welcome guide](https://docs.g
   - <a href="#contributing-meshery">Meshery Backend</a>
     - <a href="#adapter">Writing a Meshery Adapter</a>
   - <a href="#contributing-ui">Meshery UI</a>
-
+Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 # <a name="contributing">General Contribution Flow</a>
 <!--
 Whether contributing to Meshery's backend, frontend or documentation, the process of contributing follows this flow:
@@ -27,7 +27,7 @@ Whether contributing to Meshery's backend, frontend or documentation, the proces
 1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
 -->
 
-In order to contribute updates to Meshery, please follow the fork and pull request workflow described [here](./git-workflow.md).
+In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./git-workflow.md).
 
 <!--
 ## <a name="sync-to-master">Keep local branch up to HEAD on master</a>
@@ -46,8 +46,8 @@ To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
 as a contributor, have the legal right to make the contribution.
 
-See the [DCO](https://developercertificate.org) file for the full text of what you must agree to.
-
+See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
+and how it works [here](https://github.com/probot/dco#how-it-works).
 To signify that you agree to the DCO for contributions, you simply add a line to each of your
 git commit messages:
 
@@ -95,6 +95,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
+
+Relevant coding style guidelines are the [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments) and the _Formatting and style_ section of Peter Bourgon's [Go: Best 
+Practices for Production Environments](https://peter.bourgon.org/go-in-production/#formatting-and-style).
 
 __Please note__: All `make` commands should be run in a terminal from within the Meshery's main folder.
 
