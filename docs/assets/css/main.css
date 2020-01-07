@@ -10460,7 +10460,14 @@ button.bg-dark:focus {
 .text-center {
     text-align: center!important;
     justify-content: center;
-    margin-left: 550px;
+    position: relative;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+  
 }
 
 @media(min-width:576px) {
