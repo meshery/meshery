@@ -10459,7 +10459,7 @@ button.bg-dark:focus {
 
 .text-center {
     text-align: center!important;
-    justify-content: center;
+
     position: relative;
 	top:0;
 	bottom: 0;
