@@ -180,17 +180,22 @@ class MesheryPlayComponent extends React.Component {
 
   renderIndividualAdapter() {
     const { meshAdapters, classes } = this.props;
+    var adapCount=0;
     let adapter;
     meshAdapters.forEach(adap => {
       if (adap.adapter_location === this.props.adapter){
         adapter = adap;
+        meshAdapters.forEach(ad => {
+          if(ad.name==adap.name)
+            adapCount+=1;
+        })
       }
     });
     if(adapter){
       const imageIcon = this.pickImage(adapter);
       return (
         <React.Fragment>
-          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+          <MesheryAdapterPlayComponent adapter={adapter} adapCount={adapCount} adapter_icon={imageIcon} />
         </React.Fragment>
       )
     }
@@ -228,6 +233,7 @@ class MesheryPlayComponent extends React.Component {
 
     var self = this;
     const imageIcon = self.pickImage(adapter);
+    var adapCount=0;
     return (
       <NoSsr>
         <React.Fragment>
@@ -257,10 +263,18 @@ class MesheryPlayComponent extends React.Component {
                       ))}
                 </TextField>
                 </Grid>
-              </Grid>
-                          
+              </Grid>         
           </div>
           <Divider variant="fullWidth" light />
+          {meshAdapters.forEach(adap => {
+            if (adap.adapter_location === this.props.adapter){
+              adapter = adap;
+              meshAdapters.forEach(ad => {
+                if(ad.name==adap.name)
+                  adapCount+=1;
+              })
+            }
+          })}
           {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />}
         </React.Fragment>
       </NoSsr>
