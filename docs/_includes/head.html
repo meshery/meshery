@@ -8,13 +8,13 @@
 <link rel="alternate" type="application/rss&#43;xml" href="/docs/index.xml">
 
 <link rel="shortcut icon" href="{{ site.baseurl }}/assets/favicons/favicon.ico" >
-<link rel="apple-touch-icon" href="{{ site.baseurl }}/assets/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="apple-touch-icon" href="{{ site.baseurl }}/assets/favicons/apple-touch-icon.png" sizes="180x180">
 <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/favicon-16x16.png" sizes="16x16">
 <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-36x36.png" sizes="36x36">
-<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-48x48.png" sizes="48x48">
-<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-72x72.png" sizes="72x72">
-<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-96x196.png" sizes="96x196">
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="36x36">
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="48x48">
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="72x72">
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="96x196">
 <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/favicons/android-192x192.png"sizes="192x192">
 
@@ -34,8 +34,24 @@
 
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/main.css">
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/palette.css">
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/anchorjs.css">
 <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>  
+  $(function() {
+  /** AnchorJS options and selector */  
+   anchors.options = {
+      visible : 'hover',
+      placement: 'left'
+   };
+   anchors.add('h1, h2, h3, h4, h5');
+   });
+   </script>
 </head>
+<style>
+
+</style>

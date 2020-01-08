@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/helpers"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"time"
-
-	"github.com/layer5io/meshery/helpers"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
@@ -22,7 +22,13 @@ import (
 	"github.com/vmihailenco/taskq/memqueue"
 )
 
+var globalTokenForAnonymousResults string
+
 func main() {
+	if globalTokenForAnonymousResults != "" {
+		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
+	}
+
 	ctx := context.Background()
 
 	viper.AutomaticEnv()
@@ -52,11 +58,6 @@ func main() {
 	}
 	logrus.Infof("Log level: %s", logrus.GetLevel())
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
-	if saasBaseURL == "" {
-		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
-	}
-
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
@@ -67,44 +68,85 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
-	cookieSessionStore := sessions.NewCookieStore([]byte("Meshery"))
-
 	queueFactory := memqueue.NewFactory()
 	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
 
-	// sessionPersister := helpers.NewFileSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	// sessionPersister, err := helpers.NewBadgerSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
+	var prov models.Provider
+	var cookieSessionStore *sessions.CookieStore
 
-	sessionPersister, err := helpers.NewBitCaskSessionPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
+	if viper.GetBool("NO_AUTH") {
+		preferencePersister, err := models.NewMapPreferencePersister()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer preferencePersister.ClosePersister()
+
+		resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer resultPersister.CloseResultPersister()
+
+		randID, _ := uuid.NewV4()
+		cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
+		saasBaseURL := viper.GetString("SAAS_BASE_URL")
+		// if saasBaseURL == "" {
+		// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+		// }
+		prov = &models.LocalProvider{
+			SessionName: "meshery",
+			SaaSBaseURL: saasBaseURL,
+			// SessionStore: fileSessionStore,
+			SessionStore:           cookieSessionStore,
+			MapPreferencePersister: preferencePersister,
+			ResultPersister:        resultPersister,
+		}
+	} else {
+		preferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		defer preferencePersister.ClosePersister()
+
+		cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
+		saasBaseURL := viper.GetString("SAAS_BASE_URL")
+		if saasBaseURL == "" {
+			logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+		}
+		cp := &models.CloudProvider{
+			SaaSBaseURL:   saasBaseURL,
+			RefCookieName: "meshery_ref",
+			SessionName:   "meshery",
+			// SessionStore: fileSessionStore,
+			SessionStore:               cookieSessionStore,
+			SaaSTokenName:              "meshery_saas",
+			LoginCookieDuration:        1 * time.Hour,
+			BitCaskPreferencePersister: preferencePersister,
+		}
+		cp.SyncPreferences()
+		defer cp.StopSyncPreferences()
+		prov = cp
 	}
 
-	// sessionPersister, _ := helpers.NewMapSessionPersister()
-	defer sessionPersister.Close()
-
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
-		SaaSBaseURL: saasBaseURL,
+		// SaaSBaseURL: saasBaseURL,
 
-		RefCookieName: "meshery_ref",
+		// RefCookieName: "meshery_ref",
 
-		SessionName: "meshery",
-		// SessionStore: fileSessionStore,
-		SessionStore: cookieSessionStore,
+		// SessionName: "meshery",
+		// // SessionStore: fileSessionStore,
+		// SessionStore: cookieSessionStore,
 
-		SaaSTokenName: "meshery_saas",
+		// SaaSTokenName: "meshery_saas",
+
+		Provider: prov,
 
 		AdapterTracker: adapterTracker,
 		QueryTracker:   queryTracker,
 
 		Queue: mainQueue,
-
-		SessionPersister: sessionPersister,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
