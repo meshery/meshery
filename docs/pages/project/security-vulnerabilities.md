@@ -34,8 +34,7 @@ Don't send a vulnerability report if:
 
 ## Evaluation
 
-The Meshery team acknowledges and analyzes each vulnerability report within three 
-work days.
+The Meshery team acknowledges and analyzes each vulnerability report within 14 days.
 
 Any vulnerability information you share with the Meshery team stays
 within the Meshery project. We don't disseminate the information to other
