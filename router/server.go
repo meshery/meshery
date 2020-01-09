@@ -55,7 +55,37 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hr
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo.png")
 	}))
+
 	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
+	mux.Handle("/settings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/settings.html")
+	}))
+
+	mux.Handle("/configure", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/configure.html")
+	}))
+
+	mux.Handle("/management", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/management.html")
+	}))
+
+	mux.Handle("/performance", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/performance.html")
+	}))
+
+	mux.Handle("/results", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/results.html")
+	}))
+
+	mux.Handle("/404", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		http.ServeFile(w, r, "../ui/out/404.html")
+	}))
 
 	return &Router{
 		s:    mux,
