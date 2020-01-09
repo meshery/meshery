@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -310,11 +311,64 @@ func (l *CloudProvider) FetchResults(req *http.Request, page, pageSize, search, 
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching results: %s", bdr)
-	return nil, fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetResult - fetches result from provider backend for the given result id
+func (l *CloudProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
+	session, _ := l.GetSession(req)
+
+	tokenVal, _ := session.Values[l.SaaSTokenName].(string)
+
+	saasURL, _ := url.Parse(fmt.Sprintf("%s/result/%s", l.SaaSBaseURL, resultID.String()))
+	logrus.Debugf("constructed result url: %s", saasURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	cReq.AddCookie(&http.Cookie{
+		Name:     l.SaaSTokenName,
+		Value:    tokenVal,
+		Path:     "/",
+		HttpOnly: true,
+		Domain:   saasURL.Hostname(),
+	})
+	c := &http.Client{}
+	resp, err := c.Do(cReq)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("result successfully retrieved from SaaS")
+		res := &MesheryResult{}
+		err = json.Unmarshal(bdr, res)
+		if err != nil {
+			logrus.Errorf("unable to unmarshal meshery result: %v", err)
+			return nil, err
+		}
+		return res, nil
+	}
+	logrus.Errorf("error while fetching result: %s", bdr)
+	return nil, fmt.Errorf("error while getting result - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // PublishResults - publishes results to the provider backend syncronously
-func (l *CloudProvider) PublishResults(req *http.Request, data []byte) (string, error) {
+func (l *CloudProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return "", err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
 	session, _ := l.GetSession(req)
@@ -363,7 +417,14 @@ func (l *CloudProvider) PublishResults(req *http.Request, data []byte) (string, 
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *CloudProvider) PublishMetrics(tokenVal string, data []byte) error {
+func (l *CloudProvider) PublishMetrics(tokenVal string, result *MesheryResult) error {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to publish metrics to SaaS")
 	bf := bytes.NewBuffer(data)
 

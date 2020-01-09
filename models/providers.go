@@ -3,6 +3,7 @@ package models
 import (
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 )
 
@@ -29,8 +30,8 @@ type Provider interface {
 	GetProviderToken(req *http.Request) (string, error)
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	PublishResults(req *http.Request, data []byte) (string, error)
-	PublishMetrics(tokenVal string, data []byte) error
-
+	PublishResults(req *http.Request, result *MesheryResult) (string, error)
+	PublishMetrics(tokenVal string, data *MesheryResult) error
+	GetResult(*http.Request, uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 }

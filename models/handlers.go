@@ -28,6 +28,7 @@ type HandlerInterface interface {
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
+	GetResultHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)

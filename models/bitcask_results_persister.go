@@ -124,8 +124,52 @@ RETRY:
 	return bd, nil
 }
 
+// GetResults - gets result for the page and pageSize
+func (s *BitCaskResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, error) {
+	if s.db == nil {
+		return nil, errors.New("Connection to DB does not exist.")
+	}
+
+RETRY:
+	locked, err := s.db.TryRLock()
+	if err != nil {
+		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
+		logrus.Error(err)
+	}
+	if !locked {
+		goto RETRY
+	}
+	defer func() {
+		_ = s.db.Unlock()
+	}()
+
+	keyb := key.Bytes()
+	if !s.db.Has(keyb) {
+		err = errors.New("given key not found")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	data, err := s.db.Get(keyb)
+	if err != nil {
+		err = errors.Wrapf(err, "Unable to fetch result data")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	result := &MesheryResult{}
+	err = json.Unmarshal(data, result)
+	if err != nil {
+		err = errors.Wrapf(err, "Unable to marshal result data.")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
 // WriteResult persists the result
-func (s *BitCaskResultsPersister) WriteResult(result []byte) error {
+func (s *BitCaskResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	if s.db == nil {
 		return errors.New("connection to DB does not exist")
 	}
@@ -146,8 +190,8 @@ RETRY:
 	defer func() {
 		_ = s.db.Unlock()
 	}()
-	randomID, _ := uuid.NewV4()
-	if err := s.db.Put(randomID.Bytes(), result); err != nil {
+
+	if err := s.db.Put(key.Bytes(), result); err != nil {
 		err = errors.Wrapf(err, "Unable to persist result data.")
 		logrus.Error(err)
 		return err

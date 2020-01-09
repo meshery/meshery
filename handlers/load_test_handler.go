@@ -273,21 +273,8 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		Mesh:   meshName,
 		Result: resultsMap,
 	}
-	// TODO: can we do something to prevent marshalling twice??
-	bd, err := json.Marshal(result)
-	if err != nil {
-		msg := "error: unable to marshal meshery result for shipping"
-		err = errors.Wrap(err, msg)
-		logrus.Error(err)
-		// http.Error(w, "error while running load test", http.StatusInternalServerError)
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: msg,
-		}
-		return
-	}
 
-	resultID, err := h.config.Provider.PublishResults(req, bd)
+	resultID, err := h.config.Provider.PublishResults(req, result)
 	if err != nil {
 		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		// return
@@ -325,6 +312,11 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		})
 	}
 
+	key := uuid.FromStringOrNil(resultID)
+	if key == uuid.Nil {
+		key, _ = uuid.NewV4()
+	}
+	result.ID = key
 	// w.Write(bd)
 	respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
@@ -375,15 +367,8 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 		ServerMetrics:     queryResults,
 		ServerBoardConfig: board,
 	}
-	sd, err := json.Marshal(result)
-	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return err
-	}
 
-	logrus.Debugf("Result: %s, size: %d", sd, len(sd))
-
-	if err = h.config.Provider.PublishMetrics(config.TokenVal, sd); err != nil {
+	if err = h.config.Provider.PublishMetrics(config.TokenVal, result); err != nil {
 		return err
 	}
 	// now to remove all the queries for the uuid
