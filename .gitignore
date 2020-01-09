@@ -45,3 +45,5 @@ log.txt
 dist/
 
 ui/npm-debug.log
+
+Gemfile.lock

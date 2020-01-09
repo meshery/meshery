@@ -101,8 +101,9 @@ func unzip(src string, dest string) ([]string, error) {
 	if err != nil {
 		return filenames, err
 	}
-	defer r.Close()
-
+	defer func() {
+		_ = r.Close()
+	}()
 	for _, f := range r.File {
 
 		// Store filename/path for returning and using later on
@@ -117,7 +118,10 @@ func unzip(src string, dest string) ([]string, error) {
 
 		if f.FileInfo().IsDir() {
 			// Make Folder
-			os.MkdirAll(fpath, os.ModePerm)
+			err = os.MkdirAll(fpath, os.ModePerm)
+			if err != nil {
+				log.Fatal(err)
+			}
 			continue
 		}
 
@@ -139,9 +143,11 @@ func unzip(src string, dest string) ([]string, error) {
 		_, err = io.Copy(outFile, rc)
 
 		// Close the file without defer to close before next iteration of loop
-		outFile.Close()
-		rc.Close()
-
+		err = outFile.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = rc.Close()
 		if err != nil {
 			return filenames, err
 		}
