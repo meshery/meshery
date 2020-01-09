@@ -696,32 +696,72 @@ class MesheryAdapterPlayComponent extends React.Component {
     //   </NoSsr>
     // )
 
-    return (
-      <NoSsr>
+    if(this.props.adapCount > 1){
+      return (
+          <NoSsr>
+          <React.Fragment>
+            <div className={classes.root}>
+            <Grid container spacing={5}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                disabled
+                id="ap"
+                name="ap"
+                label="Adapter URL"
+                fullWidth
+                value={adapter.adapter_location}
+                margin="normal"
+                variant="outlined"
+                // onChange={this.handleChange('namespace')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {adapter_icon}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="namespace"
+                name="namespace"
+                label="Namespace"
+                fullWidth
+                value={namespace}
+                error={namespaceError}
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('namespace')}
+              />
+            </Grid>
+            {filteredOps.map(val => (
+              <Grid item xs={12} sm={4}>
+                {this.generateCardForCategory(val)}
+              </Grid>
+            ))}
+            {/* <Grid item xs={12} sm={3}>
+              {this.generateCardForCategory(1)}
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory(2)}
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory(3)}
+            </Grid> */}
+            </Grid>
+            </div>
+          </React.Fragment>
+        </NoSsr>
+      )}
+  
+      return (
+        <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              disabled
-              id="ap"
-              name="ap"
-              label="Adapter URL"
-              fullWidth
-              value={adapter.adapter_location}
-              margin="normal"
-              variant="outlined"
-              // onChange={this.handleChange('namespace')}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {adapter_icon}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <TextField
               required
               id="namespace"
@@ -740,21 +780,13 @@ class MesheryAdapterPlayComponent extends React.Component {
               {this.generateCardForCategory(val)}
             </Grid>
           ))}
-          {/* <Grid item xs={12} sm={3}>
-            {this.generateCardForCategory(1)}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-          {this.generateCardForCategory(2)}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-          {this.generateCardForCategory(3)}
-          </Grid> */}
           </Grid>
           </div>
-        </React.Fragment>
-      </NoSsr>
-    )
-  }
+          </React.Fragment>
+        </NoSsr>
+      )
+  
+    }
 }
 
 MesheryAdapterPlayComponent.propTypes = {
