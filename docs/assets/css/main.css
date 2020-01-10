@@ -10459,9 +10459,6 @@ button.bg-dark:focus {
 
 .text-center {
     text-align: center!important;
-    justify-content: center;
-    margin-left: 550px;
-
     position: relative;
 	top:0;
 	bottom: 0;
@@ -18623,13 +18620,12 @@ footer {
 
 .footer-icons-list{
     display:flex;
-    justify-content: center;
+    
     justify-content: flex-start;
     flex-direction: row;
 
-    bottom:0px;
-    justify-content: center;
-    margin-left: 10px;
+   
+    
     justify-content: center;
    
 }
