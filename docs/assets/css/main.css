@@ -10459,8 +10459,20 @@ button.bg-dark:focus {
 
 .text-center {
     text-align: center!important;
+<<<<<<< HEAD
     justify-content: center;
     margin-left: 550px;
+=======
+
+    position: relative;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+  
+>>>>>>> f779b58df211077ef44e4834a03ce9b504f715be
 }
 
 @media(min-width:576px) {
@@ -18617,9 +18629,14 @@ footer {
     justify-content: center;
     justify-content: flex-start;
     flex-direction: row;
+<<<<<<< HEAD
     bottom:0px;
     justify-content: center;
     margin-left: 10px;
+=======
+    justify-content: center;
+   
+>>>>>>> f779b58df211077ef44e4834a03ce9b504f715be
 }
 .footer-icons {
     display: flex;

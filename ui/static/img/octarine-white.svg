@@ -3,7 +3,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 174 201" style="enable-background:new 0 0 174 201;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#4D3D75;}
+	<!-- .st0{fill:#4D3D75;}
 	.st1{fill:#604C87;}
 	.st2{fill:#795CA0;}
 	.st3{fill:#8E6EAF;}
@@ -14,7 +14,10 @@
 	.st8{fill:#F99932;}
 	.st9{fill:#D87319;}
 	.st10{fill:#0E784A;}
-	.st11{fill:#EA852A;}
+	.st11{fill:#EA852A;} -->
+	svg {
+            fill:rgba(255, 255, 255, 0.7);
+        }
 	.st12{fill:none;stroke:rgba(255, 255, 255, 0.7);stroke-miterlimit:10;}
 	.st13{fill:none;stroke:rgba(255, 255, 255, 0.7);stroke-width:0.5;stroke-miterlimit:10;}
 </style>
