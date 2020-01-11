@@ -10459,7 +10459,6 @@ button.bg-dark:focus {
 
 .text-center {
     text-align: center!important;
-
     position: relative;
 	top:0;
 	bottom: 0;
@@ -10467,7 +10466,7 @@ button.bg-dark:focus {
 	right: 0;
   	
 	margin: auto;
-  
+
 }
 
 @media(min-width:576px) {
@@ -18624,6 +18623,9 @@ footer {
     justify-content: center;
     justify-content: flex-start;
     flex-direction: row;
+
+   
+    
     justify-content: center;
    
 }
