@@ -154,7 +154,7 @@ func (l *LocalProvider) PublishResults(req *http.Request, result *MesheryResult)
 		return "", err
 	}
 
-	return resultID, nil
+	return key.String(), nil
 }
 
 func (l *LocalProvider) shipResults(req *http.Request, data []byte) (string, error) {

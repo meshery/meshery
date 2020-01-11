@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 // FetchResultsHandler fetches pages of results from provider and presents it to the UI
@@ -60,8 +61,14 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, ses
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("content-type", "application/json")
-	b, err := json.Marshal(bdr)
+	sp, err := bdr.ConvertToSpec()
+	if err != nil {
+		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("content-type", "application/yaml")
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="result_%s.yaml"`, bdr.ID))
+	b, err := yaml.Marshal(sp)
 	if err != nil {
 		logrus.Errorf("Error: unable to marshal result: %v", err)
 		http.Error(w, "error while getting test result", http.StatusInternalServerError)

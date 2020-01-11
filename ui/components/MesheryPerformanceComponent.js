@@ -559,8 +559,7 @@ class MesheryPerformanceComponent extends React.Component {
                   aria-label="download"
                   color="inherit"
                   // onClick={() => self.props.closeSnackbar(key) }
-                  href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(result))}`}
-                  download={`${result.name}_test_result.json`}
+                  href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
                 >
                   <GetAppIcon />
             </IconButton>
