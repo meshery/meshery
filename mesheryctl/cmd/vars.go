@@ -15,11 +15,15 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -86,15 +90,44 @@ func setFileLocation() {
 	dockerComposeFile = path.Join(mesheryFolder, dockerComposeFile)
 }
 
+//Pre-Flight Check
 func preReqCheck() {
-	if _, err := os.Stat("/usr/local/bin/docker-compose"); os.IsNotExist(err) {
-		log.Print("not present")
-	} else {
-		log.Print("present")
+	//Check for installed docker-compose on client system
+	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
+		log.Info("Docker-Compose is not installed")
+		installprereq()
 	}
-	if err := exec.Command("docker-compose", "-v").Run(); err == nil {
-		log.Print("present")
+}
+
+func installprereq() {
+	log.Info("Attempting Docker-Compose installation...")
+	ostype, osarch := prereq()
+	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
+
+	//checks for the latest docker-compose
+	resp, err := http.Get(dockerComposeWebURL)
+	dockerComposeBinaryURL := dockerComposeBinaryURL
+	if err != nil {
+		// download the default version as 1.24.1 if unable to fetch latest page data
+		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
-		log.Print("not present")
+		var dat map[string]interface{}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := json.Unmarshal(body, &dat); err != nil {
+			log.Fatal(err)
+		}
+		num := dat["tag_name"]
+		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
+	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
+	if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+		log.Fatal(err)
+	}
+	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
+		log.Fatal(err)
+	}
+	log.Info("Prerequisite Docker Compose is installed.")
 }
