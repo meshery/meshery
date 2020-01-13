@@ -44,6 +44,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/prometheus/board_import", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler)))
 	mux.Handle("/api/prometheus/query", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryHandler)))
 	mux.Handle("/api/prometheus/query_range", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryRangeHandler)))
+	mux.Handle("/api/prometheus/ping", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusPingHandler)))
 	mux.Handle("/api/prometheus/static_board", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusStaticBoardHandler)))
 	mux.Handle("/api/prometheus/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))
 
