@@ -6,7 +6,7 @@ permalink: architecture
 
 # Architecture
 
-<img class="container" src="https://layer5.io/assets/images/meshery/meshery-architecture.svg" width="960" height="569" ></img>
+<img src="https://layer5.io/assets/images/meshery/meshery-architecture.svg" />
 
 ## Network Ports 
 Meshery uses the following list of network ports to interface with its various components:
