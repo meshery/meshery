@@ -47,5 +47,5 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }

@@ -73,5 +73,5 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	w.Write([]byte("{}"))
+	_, _ = w.Write([]byte("{}"))
 }

@@ -66,6 +66,7 @@ type Prometheus struct {
 	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
+// LoadTestPreferences represents the load test preferences
 type LoadTestPreferences struct {
 	ConcurrentRequests int    `json:"c,omitempty"`
 	QueriesPerSecond   int    `json:"qps,omitempty"`
