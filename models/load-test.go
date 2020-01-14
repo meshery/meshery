@@ -17,6 +17,10 @@ const (
 	Wrk2LG LoadGenerator = "wrk2"
 )
 
+func (l LoadGenerator) Name() string {
+	return string(l)
+}
+
 // LoadTestOptions represents the load test options
 type LoadTestOptions struct {
 	Name string
