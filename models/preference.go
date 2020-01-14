@@ -76,13 +76,14 @@ type LoadTestPreferences struct {
 
 // Preference represents the data stored in session / local DB
 type Preference struct {
-	K8SConfig           *K8SConfig           `json:"k8sConfig,omitempty"`
-	MeshAdapters        []*Adapter           `json:"meshAdapters,omitempty"`
-	Grafana             *Grafana             `json:"grafana,omitempty"`
-	Prometheus          *Prometheus          `json:"prometheus,omitempty"`
-	LoadTestPreferences *LoadTestPreferences `json:"loadTestPrefs,omitempty"`
-	AnonymousStats      bool                 `json:"anonymousStats"`
-	UpdatedAt           time.Time            `json:"updated_at,omitempty"`
+	K8SConfig           	*K8SConfig           `json:"k8sConfig,omitempty"`
+	MeshAdapters        	[]*Adapter           `json:"meshAdapters,omitempty"`
+	Grafana             	*Grafana             `json:"grafana,omitempty"`
+	Prometheus          	*Prometheus          `json:"prometheus,omitempty"`
+	LoadTestPreferences 	*LoadTestPreferences `json:"loadTestPrefs,omitempty"`
+	AnonymousUsageStats     bool                 `json:"anonymousUsageStats"`
+	AnonymousPerfResults	bool                 `json:"anonymousPerfResults"`
+	UpdatedAt           	time.Time            `json:"updated_at,omitempty"`
 }
 
 func init() {
