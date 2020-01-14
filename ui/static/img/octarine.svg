@@ -15,8 +15,8 @@
 	.st9{fill:#D87319;}
 	.st10{fill:#0E784A;}
 	.st11{fill:#EA852A;}
-	.st12{fill:none;stroke:#333333;stroke-miterlimit:10;}
-	.st13{fill:none;stroke:#333333;stroke-width:0.5;stroke-miterlimit:10;}
+	.st12{fill:none;stroke:rgba(255, 255, 255, 0.7);stroke-miterlimit:10;}
+	.st13{fill:none;stroke:rgba(255, 255, 255, 0.7);stroke-width:0.5;stroke-miterlimit:10;}
 </style>
 <title>octarine</title>
 <g id="Layer_2_1_">

@@ -50,6 +50,33 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	_, _ = w.Write([]byte("{}"))
 }
 
+// GrafanaPingHandler - used to initiate a Grafana ping
+func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
+		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
+		return
+	}
+
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+		logrus.Error("No valid kubernetes config found.")
+		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		return
+	}
+
+	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
+		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = w.Write([]byte("{}"))
+
+}
+
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet && req.Method != http.MethodPost {
