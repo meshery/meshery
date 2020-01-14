@@ -41,6 +41,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler)))
 	mux.Handle("/api/grafana/query_range", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryRangeHandler)))
+	mux.Handle("/api/grafana/ping", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler)))
 
 	mux.Handle("/api/prometheus/config", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler)))
 	mux.Handle("/api/prometheus/board_import", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler)))
@@ -50,7 +51,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/prometheus/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
-	mux.HandleFunc("/login", h.LoginHandler)
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		h.LoginHandler(w, r, false)
+	})
 
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

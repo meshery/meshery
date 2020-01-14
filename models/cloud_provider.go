@@ -96,7 +96,7 @@ func (l *CloudProvider) executePrefSync(tokenVal string, sess *Preference) {
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *CloudProvider) InitiateLogin(w http.ResponseWriter, r *http.Request) {
+func (l *CloudProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
 	token := r.URL.Query().Get(l.SaaSTokenName)
 	if token == "" {
