@@ -313,6 +313,24 @@ class MesheryApp extends App {
           }
           store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: result.prometheus });
         }
+        if(result.loadTestPrefs){
+          if(typeof result.loadTestPrefs.c === 'undefined'){
+            result.loadTestPrefs.c = 0;
+          }
+          if(typeof result.loadTestPrefs.qps === 'undefined'){
+            result.loadTestPrefs.qps = 0;
+          }
+          if(typeof result.loadTestPrefs.t === 'undefined'){
+            result.loadTestPrefs.t = '30s';
+          }
+          if(typeof result.loadTestPrefs.gen === 'undefined'){
+            result.loadTestPrefs.gen = '';
+          }
+          store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, prometheus: result.prometheus });
+        }
+        if(typeof result.anonymousStats !== 'undefined'){
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_STATS, anonymousStats: result.anonymousStats });
+        }
       }
       }, error => {
         console.log(`there was an error fetching user config data: ${error}`);

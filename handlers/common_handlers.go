@@ -5,12 +5,12 @@ import (
 )
 
 // LoginHandler redirects user for auth or issues session
-func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	h.config.Provider.InitiateLogin(w, r)
+	h.config.Provider.InitiateLogin(w, r, fromMiddleWare)
 }
 
 // LogoutHandler destroys the session and redirects to home.

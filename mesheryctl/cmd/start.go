@@ -33,8 +33,8 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// var out bytes.Buffer
-		// var stderr bytes.Buffer
+		//Check prerequisite
+		preReqCheck()
 
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
@@ -97,8 +97,6 @@ var startCmd = &cobra.Command{
 				}
 
 				//check flag to check successful deployment
-				checkFlag = 0
-
 				checkFlag = 0
 				break
 			} else {

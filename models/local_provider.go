@@ -28,13 +28,13 @@ func (l *LocalProvider) GetProviderType() ProviderType {
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *LocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request) {
-	l.issueSession(w, r)
+func (l *LocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	l.issueSession(w, r, fromMiddleWare)
 	return
 }
 
 // issueSession issues a cookie session after successful login
-func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request) {
+func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
 	session, _ := l.SessionStore.New(req, l.SessionName)
 	session.Options.Path = "/"
 	user := l.fetchUserDetails()
@@ -42,7 +42,13 @@ func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request) {
 	if err := session.Save(req, w); err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
-	http.Redirect(w, req, "/", http.StatusFound)
+	returnURL := "/"
+	if req.RequestURI != "" {
+		returnURL = req.RequestURI
+	}
+	if !fromMiddleWare {
+		http.Redirect(w, req, returnURL, http.StatusFound)
+	}
 }
 
 func (l *LocalProvider) fetchUserDetails() *User {
@@ -57,13 +63,15 @@ func (l *LocalProvider) fetchUserDetails() *User {
 // GetUserDetails - returns the user details
 func (l *LocalProvider) GetUserDetails(req *http.Request) (*User, error) {
 	// ensuring session is intact before running load test
-	session, err := l.GetSession(req)
-	if err != nil {
-		return nil, err
-	}
+	// session, err := l.GetSession(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	user, _ := session.Values["user"].(*User)
-	return user, nil
+	// user, _ := session.Values["user"].(*User)
+	// return user, nil
+
+	return l.fetchUserDetails(), nil
 }
 
 // GetSession - returns the session
@@ -114,6 +122,11 @@ func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, 
 func (l *LocalProvider) PublishResults(req *http.Request, data []byte) (string, error) {
 	if err := l.ResultPersister.WriteResult(data); err != nil {
 		return "", err
+	}
+	user, _ := l.GetUserDetails(req)
+	pref, _ := l.ReadFromPersister(user.UserID)
+	if !pref.AnonymousStats {
+		return "", nil
 	}
 
 	bf := bytes.NewBuffer(data)
