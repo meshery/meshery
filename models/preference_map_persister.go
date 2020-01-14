@@ -23,7 +23,9 @@ func NewMapPreferencePersister() (*MapPreferencePersister, error) {
 
 // ReadFromPersister reads the session data for the given userID
 func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
-	data := &Preference{}
+	data := &Preference{
+		AnonymousStats: true,
+	}
 
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")
@@ -63,7 +65,9 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 		return errors.New("Given config data is nil.")
 	}
 	data.UpdatedAt = time.Now()
-	newSess := &Preference{}
+	newSess := &Preference{
+		AnonymousStats: true,
+	}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
 		return err

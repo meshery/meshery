@@ -123,6 +123,11 @@ func (l *LocalProvider) PublishResults(req *http.Request, data []byte) (string, 
 	if err := l.ResultPersister.WriteResult(data); err != nil {
 		return "", err
 	}
+	user, _ := l.GetUserDetails(req)
+	pref, _ := l.ReadFromPersister(user.UserID)
+	if !pref.AnonymousStats {
+		return "", nil
+	}
 
 	bf := bytes.NewBuffer(data)
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")

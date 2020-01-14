@@ -49,6 +49,9 @@ type HandlerInterface interface {
 	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 
+	LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
+	AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
+
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 }
 
