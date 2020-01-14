@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
@@ -51,6 +50,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	_, _ = w.Write([]byte("{}"))
 }
 
+// GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
@@ -67,17 +67,15 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
-	
+
 	if err := h.config.GrafanaClient.Validate(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey); err != nil {
 		http.Error(w, "connection to grafana failed", http.StatusInternalServerError)
 		return
 	}
-	
-	_, _ = w.Write([]byte("{}"))
-	
-	
-}
 
+	_, _ = w.Write([]byte("{}"))
+
+}
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
