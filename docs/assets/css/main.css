@@ -10464,9 +10464,7 @@ button.bg-dark:focus {
 	bottom: 0;
 	left: 0;
 	right: 0;
-  	
 	margin: auto;
-
 }
 
 @media(min-width:576px) {
@@ -18623,11 +18621,7 @@ footer {
     justify-content: center;
     justify-content: flex-start;
     flex-direction: row;
-
-   
-    
     justify-content: center;
-   
 }
 .footer-icons {
     display: flex;

@@ -37,6 +37,7 @@ type HandlerInterface interface {
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
+	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 
 	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
