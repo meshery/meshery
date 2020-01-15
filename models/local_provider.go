@@ -16,8 +16,6 @@ import (
 // LocalProvider - represents a local provider
 type LocalProvider struct {
 	*MapPreferencePersister
-	SessionName     string
-	SessionStore    sessions.Store
 	SaaSBaseURL     string
 	ResultPersister *BitCaskResultsPersister
 }
@@ -28,21 +26,27 @@ func (l *LocalProvider) GetProviderType() ProviderType {
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *LocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request) {
-	l.issueSession(w, r)
+func (l *LocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	l.issueSession(w, r, fromMiddleWare)
 	return
 }
 
 // issueSession issues a cookie session after successful login
-func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request) {
-	session, _ := l.SessionStore.New(req, l.SessionName)
-	session.Options.Path = "/"
-	user := l.fetchUserDetails()
-	session.Values["user"] = user
-	if err := session.Save(req, w); err != nil {
-		logrus.Errorf("unable to save session: %v", err)
+func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
+	// session, _ := l.SessionStore.New(req, l.SessionName)
+	// session.Options.Path = "/"
+	// user := l.fetchUserDetails()
+	// session.Values["user"] = user
+	// if err := session.Save(req, w); err != nil {
+	// 	logrus.Errorf("unable to save session: %v", err)
+	// }
+	if !fromMiddleWare {
+		returnURL := "/"
+		if req.RequestURI != "" {
+			returnURL = req.RequestURI
+		}
+		http.Redirect(w, req, returnURL, http.StatusFound)
 	}
-	http.Redirect(w, req, "/", http.StatusFound)
 }
 
 func (l *LocalProvider) fetchUserDetails() *User {
@@ -57,24 +61,27 @@ func (l *LocalProvider) fetchUserDetails() *User {
 // GetUserDetails - returns the user details
 func (l *LocalProvider) GetUserDetails(req *http.Request) (*User, error) {
 	// ensuring session is intact before running load test
-	session, err := l.GetSession(req)
-	if err != nil {
-		return nil, err
-	}
+	// session, err := l.GetSession(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	user, _ := session.Values["user"].(*User)
-	return user, nil
+	// user, _ := session.Values["user"].(*User)
+	// return user, nil
+
+	return l.fetchUserDetails(), nil
 }
 
 // GetSession - returns the session
 func (l *LocalProvider) GetSession(req *http.Request) (*sessions.Session, error) {
-	session, err := l.SessionStore.Get(req, l.SessionName)
-	if err != nil {
-		err = errors.Wrap(err, "Error: unable to get session")
-		logrus.Error(err)
-		return nil, err
-	}
-	return session, nil
+	// session, err := l.SessionStore.Get(req, l.SessionName)
+	// if err != nil {
+	// 	err = errors.Wrap(err, "Error: unable to get session")
+	// 	logrus.Error(err)
+	// 	return nil, err
+	// }
+	// return session, nil
+	return &sessions.Session{}, nil
 }
 
 // GetProviderToken - returns provider token
@@ -84,11 +91,11 @@ func (l *LocalProvider) GetProviderToken(req *http.Request) (string, error) {
 
 // Logout - logout from provider backend
 func (l *LocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	sess, err := l.SessionStore.Get(req, l.SessionName)
-	if err == nil {
-		sess.Options.MaxAge = -1
-		_ = sess.Save(req, w)
-	}
+	// sess, err := l.SessionStore.Get(req, l.SessionName)
+	// if err == nil {
+	// 	sess.Options.MaxAge = -1
+	// 	_ = sess.Save(req, w)
+	// }
 
 	http.Redirect(w, req, "/login", http.StatusFound)
 }
@@ -114,6 +121,11 @@ func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, 
 func (l *LocalProvider) PublishResults(req *http.Request, data []byte) (string, error) {
 	if err := l.ResultPersister.WriteResult(data); err != nil {
 		return "", err
+	}
+	user, _ := l.GetUserDetails(req)
+	pref, _ := l.ReadFromPersister(user.UserID)
+	if !pref.AnonymousPerfResults {
+		return "", nil
 	}
 
 	bf := bytes.NewBuffer(data)

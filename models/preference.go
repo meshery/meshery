@@ -66,14 +66,24 @@ type Prometheus struct {
 	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
+// LoadTestPreferences represents the load test preferences
+type LoadTestPreferences struct {
+	ConcurrentRequests int    `json:"c,omitempty"`
+	QueriesPerSecond   int    `json:"qps,omitempty"`
+	Duration           string `json:"t,omitempty"`
+	LoadGenerator      string `json:"gen,omitempty"`
+}
+
 // Preference represents the data stored in session / local DB
 type Preference struct {
-	// User         *User       `json:"user,omitempty"`
-	K8SConfig    *K8SConfig  `json:"k8sConfig,omitempty"`
-	MeshAdapters []*Adapter  `json:"meshAdapters,omitempty"`
-	Grafana      *Grafana    `json:"grafana,omitempty"`
-	Prometheus   *Prometheus `json:"prometheus,omitempty"`
-	UpdatedAt    time.Time   `json:"updated_at,omitempty"`
+	K8SConfig            *K8SConfig           `json:"k8sConfig,omitempty"`
+	MeshAdapters         []*Adapter           `json:"meshAdapters,omitempty"`
+	Grafana              *Grafana             `json:"grafana,omitempty"`
+	Prometheus           *Prometheus          `json:"prometheus,omitempty"`
+	LoadTestPreferences  *LoadTestPreferences `json:"loadTestPrefs,omitempty"`
+	AnonymousUsageStats  bool                 `json:"anonymousUsageStats"`
+	AnonymousPerfResults bool                 `json:"anonymousPerfResults"`
+	UpdatedAt            time.Time            `json:"updated_at,omitempty"`
 }
 
 func init() {

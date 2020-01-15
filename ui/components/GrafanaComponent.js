@@ -248,6 +248,32 @@ class GrafanaComponent extends Component {
         }, self.handleError(`There was an error communicating with Grafana`));
       }
 
+      handleGrafanaClick = () => {
+        this.props.updateProgress({showProgress: true});
+        let self = this;
+        dataFetch(`/api/grafana/ping`, { 
+          credentials: 'same-origin',
+          credentials: 'include',
+        }, result => {
+          this.props.updateProgress({showProgress: false});
+          if (typeof result !== 'undefined'){
+            this.props.enqueueSnackbar('Grafana successfully pinged!', {
+              variant: 'success',
+              autoHideDuration: 2000,
+              action: (key) => (
+                <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key) }
+                    >
+                      <CloseIcon />
+                </IconButton>
+              ),
+            });
+          }
+        }, self.handleError("Could not ping Grafana."));
+      }
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
@@ -359,6 +385,7 @@ class GrafanaComponent extends Component {
                   grafanaBoardSearch={grafanaBoardSearch}
                   handleGrafanaBoardSearchChange={this.handleChange}
                   handleGrafanaChipDelete={this.handleGrafanaChipDelete}
+                  handleGrafanaClick={this.handleGrafanaClick}
                   addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
                   handleError={this.handleError(`There was an error communicating with Grafana`)}
                 />

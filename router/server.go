@@ -19,6 +19,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/user", h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler)))
+	mux.Handle("/api/user/stats", h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler)))
 	mux.Handle("/api/config/sync", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler)))
 
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler)))
@@ -27,6 +28,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/mesh/scan", h.AuthMiddleware(h.SessionInjectorMiddleware(h.InstalledMeshesHandler)))
 
 	mux.Handle("/api/load-test", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))
+	mux.Handle("/api/load-test-prefs", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestPrefencesHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchResultsHandler)))
 
 	mux.Handle("/api/mesh/manage", h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshAdapterConfigHandler)))
@@ -39,6 +41,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler)))
 	mux.Handle("/api/grafana/query_range", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryRangeHandler)))
+	mux.Handle("/api/grafana/ping", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler)))
 
 	mux.Handle("/api/prometheus/config", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler)))
 	mux.Handle("/api/prometheus/board_import", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler)))
@@ -49,7 +52,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/prometheus/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))
 
 	mux.HandleFunc("/logout", h.LogoutHandler)
-	mux.HandleFunc("/login", h.LoginHandler)
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		h.LoginHandler(w, r, false)
+	})
 
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,35 +64,34 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
 
 	mux.Handle("/settings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/settings.html")
 	}))
 
 	mux.Handle("/configure", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/configure.html")
 	}))
 
 	mux.Handle("/management", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/management.html")
 	}))
 
 	mux.Handle("/performance", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/performance.html")
 	}))
 
 	mux.Handle("/results", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/results.html")
 	}))
 
 	mux.Handle("/404", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// w.Header().Set("Cache-Control", "public, max-age=3600") 
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
 		http.ServeFile(w, r, "../ui/out/404.html")
 	}))
-
 
 	return &Router{
 		s:    mux,

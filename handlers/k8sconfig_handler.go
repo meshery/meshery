@@ -238,7 +238,10 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 // ATM used only in the SessionSyncHandler
 func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Request, user *models.User, prefObj *models.Preference) error {
 	if prefObj == nil {
-		prefObj = &models.Preference{}
+		prefObj = &models.Preference{
+			AnonymousUsageStats:  true,
+			AnonymousPerfResults: true,
+		}
 	}
 	if prefObj.K8SConfig == nil {
 		kc, err := h.loadK8SConfigFromDisk()
