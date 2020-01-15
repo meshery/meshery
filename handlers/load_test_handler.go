@@ -316,7 +316,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(h.config.Provider.GetProviderType() == models.CloudProviderType ||
-			(h.config.Provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousStats)) {
+			(h.config.Provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
 		_ = h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,

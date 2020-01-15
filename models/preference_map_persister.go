@@ -24,7 +24,8 @@ func NewMapPreferencePersister() (*MapPreferencePersister, error) {
 // ReadFromPersister reads the session data for the given userID
 func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	data := &Preference{
-		AnonymousStats: true,
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
 	}
 
 	if s.db == nil {
@@ -66,7 +67,8 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	}
 	data.UpdatedAt = time.Now()
 	newSess := &Preference{
-		AnonymousStats: true,
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
 	}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)

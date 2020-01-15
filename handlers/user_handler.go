@@ -32,20 +32,41 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	stats := req.FormValue("anonymousStats")
-	aStats, err := strconv.ParseBool(stats)
-	if err != nil {
-		err = errors.Wrap(err, "unable to parse anonymous_stats")
-		logrus.Error(err)
-		http.Error(w, "please provide a valid value for anonymous_stats", http.StatusBadRequest)
-		return
+	var trackStats bool
+	usageStats := req.FormValue("anonymousUsageStats")
+	if usageStats != "" {
+		aUsageStats, err := strconv.ParseBool(usageStats)
+		if err != nil {
+			err = errors.Wrap(err, "unable to parse anonymousUsageStats")
+			logrus.Error(err)
+			http.Error(w, "please provide a valid value for anonymousUsageStats", http.StatusBadRequest)
+			return
+		}
+		prefObj.AnonymousUsageStats = aUsageStats
+		trackStats = true
 	}
-	prefObj.AnonymousStats = aStats
-	if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-		logrus.Errorf("unable to save user preferences: %v", err)
-		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+
+	perfStats := req.FormValue("anonymousPerfResults")
+	if perfStats != "" {
+		aPerfStats, err := strconv.ParseBool(perfStats)
+		if err != nil {
+			err = errors.Wrap(err, "unable to parse anonymousPerfResults")
+			logrus.Error(err)
+			http.Error(w, "please provide a valid value for anonymousPerfResults", http.StatusBadRequest)
+			return
+		}
+		prefObj.AnonymousPerfResults = aPerfStats
+		if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+			logrus.Errorf("unable to save user preferences: %v", err)
+			http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+			return
+		}
+		trackStats = true
+	}
+	if trackStats {
+		_, _ = w.Write([]byte("{}"))
 		return
 	}
 
-	_, _ = w.Write([]byte("{}"))
+	http.Error(w, "no stats update requested", http.StatusBadRequest)
 }

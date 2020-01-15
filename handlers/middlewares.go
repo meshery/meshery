@@ -62,7 +62,8 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 
 		if prefObj == nil {
 			prefObj = &models.Preference{
-				AnonymousStats: true,
+				AnonymousUsageStats:  true,
+				AnonymousPerfResults: true,
 			}
 		}
 

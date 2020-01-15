@@ -239,7 +239,8 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Request, user *models.User, prefObj *models.Preference) error {
 	if prefObj == nil {
 		prefObj = &models.Preference{
-			AnonymousStats: true,
+			AnonymousUsageStats:  true,
+			AnonymousPerfResults: true,
 		}
 	}
 	if prefObj.K8SConfig == nil {
