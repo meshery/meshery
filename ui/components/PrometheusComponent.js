@@ -202,6 +202,33 @@ class PrometheusComponent extends Component {
         }, self.handleError);
     }
 
+    handlePrometheusClick = () => {
+      this.props.updateProgress({showProgress: true});
+      let self = this;
+      dataFetch(`/api/prometheus/ping`, { 
+        credentials: 'same-origin',
+        credentials: 'include',
+      }, result => {
+        self.props.updateProgress({showProgress: false});
+        if (typeof result !== 'undefined'){
+          self.props.enqueueSnackbar('Prometheus successfully pinged!', {
+            variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
+              <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    onClick={() => self.props.closeSnackbar(key) }
+                  >
+                    <CloseIcon />
+              </IconButton>
+            ),
+          });
+        }
+      }, self.handleError);
+    }
+
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
@@ -265,6 +292,7 @@ class PrometheusComponent extends Component {
                   prometheusURL={prometheusURL}
                   handlePrometheusChipDelete={this.handlePrometheusChipDelete}
                   addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
+                  handlePrometheusClick={this.handlePrometheusClick}
                   handleError={this.handleError}
                 />
                 {displaySelec}

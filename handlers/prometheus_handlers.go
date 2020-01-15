@@ -51,6 +51,35 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	_, _ = w.Write([]byte("{}"))
 }
 
+// PrometheusPingHandler - fetches server version to simulate ping
+func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+	if req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
+		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
+		return
+	}
+
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+		logrus.Error("No valid kubernetes config found.")
+		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		return
+	}
+
+	if err := h.config.PrometheusClient.Validate(req.Context(), prefObj.Prometheus.PrometheusURL); err != nil {
+		http.Error(w, "connection to Prometheus failed", http.StatusInternalServerError)
+		return
+	}
+
+	_, _ = w.Write([]byte("{}"))
+
+
+}
+
+
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost {

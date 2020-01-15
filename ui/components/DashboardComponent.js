@@ -259,6 +259,33 @@ class DashboardComponent extends React.Component {
       }
     }, self.handleError("Could not ping Grafana."));
   }
+  
+  handlePrometheusClick = () => {
+    this.props.updateProgress({showProgress: true});
+    let self = this;
+    dataFetch(`/api/prometheus/ping`, { 
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, result => {
+      this.props.updateProgress({showProgress: false});
+      if (typeof result !== 'undefined'){
+        this.props.enqueueSnackbar('Prometheus successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError("Could not ping Prometheus."));
+  }
 
   showCard(title, content) {
     const { classes } = this.props;
@@ -404,6 +431,7 @@ class DashboardComponent extends React.Component {
           label={prometheus.prometheusURL}
           // onDelete={self.handleDelete}
           // deleteIcon={<DoneIcon />}
+          onClick={self.handlePrometheusClick}
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
           className={classes.chip}
           key='prom-key'
