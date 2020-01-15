@@ -60,7 +60,8 @@ func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preferen
 	}
 
 	data := &Preference{
-		AnonymousStats: true,
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
 	}
 
 	dataCopyI, ok := s.cache.Load(userID)
@@ -105,7 +106,8 @@ RETRY:
 // writeToCache persists session for the user in the cache
 func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preference) error {
 	newSess := &Preference{
-		AnonymousStats: true,
+		AnonymousUsageStats:  true,
+		AnonymousPerfResults: true,
 	}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)
