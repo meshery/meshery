@@ -209,9 +209,9 @@ class PrometheusComponent extends Component {
         credentials: 'same-origin',
         credentials: 'include',
       }, result => {
-        this.props.updateProgress({showProgress: false});
+        self.props.updateProgress({showProgress: false});
         if (typeof result !== 'undefined'){
-          this.props.enqueueSnackbar('Prometheus successfully pinged!', {
+          self.props.enqueueSnackbar('Prometheus successfully pinged!', {
             variant: 'success',
             autoHideDuration: 2000,
             action: (key) => (
@@ -226,7 +226,7 @@ class PrometheusComponent extends Component {
             ),
           });
         }
-      }, self.handleError("Could not ping Prometheus."));
+      }, self.handleError);
     }
 
 
