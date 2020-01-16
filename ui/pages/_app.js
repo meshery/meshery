@@ -328,8 +328,11 @@ class MesheryApp extends App {
           }
           store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, prometheus: result.prometheus });
         }
-        if(typeof result.anonymousStats !== 'undefined'){
-          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_STATS, anonymousStats: result.anonymousStats });
+        if(typeof result.anonymousUsageStats !== 'undefined'){
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats: result.anonymousUsageStats });
+        }
+        if(typeof result.anonymousPerfResults !== 'undefined'){
+          store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults: result.anonymousPerfResults });
         }
       }
       }, error => {
