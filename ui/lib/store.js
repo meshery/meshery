@@ -54,7 +54,8 @@ const initialState = fromJS({
     ts: new Date(),
   },
   staticPrometheusBoardConfig: {},
-  anonymousStats: true,
+  anonymousUsageStats: true,
+  anonymousPerfResults: true,
   showProgress: false,
 });
 
@@ -73,7 +74,8 @@ export const actionTypes = {
     UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
     UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
     UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
-    UPDATE_ANONYMOUS_STATS: 'UPDATE_ANONYMOUS_STATS',
+    UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
+    UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
     UPDATE_PROGRESS: 'UPDATE_PROGRESS',
 }
 
@@ -105,8 +107,10 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['loadTest'], val => fromJS(action.loadTest));
     case actionTypes.UPDATE_LOAD_GEN_CONFIG:
       return state.mergeDeep({ loadTestPref: action.loadTestPref });
-    case actionTypes.UPDATE_ANONYMOUS_STATS:
-        return state.mergeDeep({ anonymousStats: action.anonymousStats });
+    case actionTypes.UPDATE_ANONYMOUS_USAGE_STATS:
+      return state.mergeDeep({ anonymousUsageStats: action.anonymousUsageStats });
+    case actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS:
+      return state.mergeDeep({ anonymousPerfResults: action.anonymousPerfResults });
     case actionTypes.UPDATE_ADAPTERS_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       state = state.updateIn(['meshAdapters'], val => fromJS([]));
@@ -186,9 +190,11 @@ export const updateLoadTestData = ({loadTest}) => dispatch => {
 export const updateLoadTestPref = ({loadTestPref}) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
 }
-
-export const updateAnonymousStats = ({anonymousStats}) => dispatch => {
-  return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_STATS, anonymousStats });
+export const updateAnonymousUsageStats = ({anonymousUsageStats}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats });
+}
+export const updateAnonymousPerformanceResults = ({anonymousPerfResults}) => dispatch => {
+  return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults });
 }
 
 export const updateAdaptersInfo = ({meshAdapters}) => dispatch => {
