@@ -4,7 +4,7 @@ import "time"
 
 type Environment struct {
 	Kubernetes string `yaml:"kubernetes,omitempty"`
-	NodeCount  string `yaml:"node_count,omitempty"`
+	NodeCount  int    `yaml:"node_count,omitempty"`
 }
 
 type MeshConfig struct {
@@ -88,7 +88,7 @@ type Metrics struct {
 	MeshTelemetry      *MeshTelemetry    `yaml:"mesh_telemetry,omitempty"`
 	MeshPolicy         *MeshPolicy       `yaml:"mesh_policy,omitempty"`
 	MeshControlPlane   *MeshControlPlane `yaml:"mesh_control_plane,omitempty"`
-	IndividualWorkload Workload          `yaml:"individual_workload_1,omitempty"`
+	IndividualWorkload *Workload         `yaml:"individual_workload_1,omitempty"`
 }
 
 type BenchmarkSpec struct {

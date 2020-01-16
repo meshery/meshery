@@ -144,5 +144,18 @@ func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
 			b.Client.LatenciesMs.P99 = p.Value
 		}
 	}
+
+	k8sI, ok := m.Result["kubernetes"]
+	if ok {
+		k8s, _ := k8sI.(map[string]interface{})
+		b.Env.Kubernetes, _ = k8s["server_version"].(string)
+		nodesI, okk := k8s["nodes"]
+		if okk {
+			nodes, okkk := nodesI.([]*K8SNode)
+			if okkk {
+				b.Env.NodeCount = len(nodes)
+			}
+		}
+	}
 	return b, nil
 }
