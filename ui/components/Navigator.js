@@ -401,10 +401,8 @@ class Navigator extends React.Component {
           break;
         case 'octarine':
           image = "/static/img/octarine-white.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        case 'cpx':
-          image = "/static/img/Citrix_blue.png";
+
+
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:

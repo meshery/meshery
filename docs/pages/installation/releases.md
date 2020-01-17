@@ -56,6 +56,48 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
       <td>Dec 20, 2019</td>
     </tr>
     <tr>
+      <td class="centered">0.3.8</td>
+      <td>
+        <em>Mesheryctl</em> - Extraneous command line output removed. Clarity of CLI interaction with mesheryctl is improved in this release.
+      </td>
+      <td>Jan 17, 2020</td>
+    </tr>
+    <tr>
+      <td class="centered">0.3.7</td>
+      <td>
+        <em>Meshery</em> - Ad-hoc connectivity tests for Prometheus is now supported. Users can click the Prometheus chip and have Meshery verify its ability to connect to the configured Prometheus instance.
+      </td>
+      <td>Jan 15, 2020</td>
+    </tr>
+     <tr>
+      <td class="centered">0.3.6</td>
+      <td>
+        <em>Meshery</em> - Ad-hoc connectivity tests for Grafana is now supported. Users can click the Grafana chip and have Meshery verify its ability to connect to the configured Grafana instance.
+      </td>
+      <td>Jan 12, 2020</td>
+    </tr>
+     <tr>
+      <td class="centered">0.3.5</td>
+      <td>
+        <em>Mesheryctl</em> - Removal of init as a command exposed to users. This command's functionality is used internal to mesheryctl start. A new start --check command will provide preflight check functionality in init's place.
+      </td>
+      <td>Jan 12, 2020</td>
+    </tr>
+     <tr>
+      <td class="centered">0.3.4</td>
+      <td>
+        <em>Mesheryctl</em> - mesheryctl version is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release. 
+      </td>
+      <td>Dec 30, 2019</td>
+    </tr>
+     <tr>
+      <td class="centered">0.3.3</td>
+      <td>
+        <em>Meshery</em> - Providers (a new project construct that allows users to select authentication, long-term storage, and so on provider). 
+      </td>
+      <td>Dec 20, 2019</td>
+    </tr>
+    <tr>
       <td class="centered">0.3.2</td>
       <td>
         <em>Mesheryctl</em> - adds mesheryctl version as a new subcommand. 
