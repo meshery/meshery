@@ -157,9 +157,8 @@ jobs:
         fetch-depth: 1
     - name: Docker login
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
-      uses: azure/docker-login@v1
+      uses: azure/container-actions/docker-login@master
       with:
-        login-server: https://index.docker.io/v1/
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Docker build & push
