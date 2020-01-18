@@ -18,7 +18,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, _ models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return

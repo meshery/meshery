@@ -2,22 +2,32 @@ package handlers
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/layer5io/meshery/models"
 )
 
 // LoginHandler redirects user for auth or issues session
-func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	h.config.Provider.InitiateLogin(w, r, fromMiddleWare)
+	p.InitiateLogin(w, r, fromMiddleWare)
 }
 
 // LogoutHandler destroys the session and redirects to home.
-func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	h.config.Provider.Logout(w, req)
+	http.SetCookie(w, &http.Cookie{
+		Name:     h.config.ProviderCookieName,
+		Value:    p.Name(),
+		Expires:  time.Now().Add(-time.Hour),
+		Path:     "/",
+		HttpOnly: true,
+	})
+	p.Logout(w, req)
 }

@@ -21,7 +21,7 @@ type DefaultLocalProvider struct {
 }
 
 // GetName - Returns Provider's friendly name
-func (l *DefaultLocalProvider) GetName() string {
+func (l *DefaultLocalProvider) Name() string {
 	return "Default Local Provider"
 }
 

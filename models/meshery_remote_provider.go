@@ -15,8 +15,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// MesheryCloudProvider - represents a local provider
-type MesheryCloudProvider struct {
+// MesheryRemoteProvider - represents a local provider
+type MesheryRemoteProvider struct {
 	*BitCaskPreferencePersister
 
 	SaaSTokenName string
@@ -44,17 +44,17 @@ type UserPref struct {
 }
 
 // GetName - Returns Provider's friendly name
-func (l *MesheryCloudProvider) GetName() string {
+func (l *MesheryRemoteProvider) Name() string {
 	return "Meshery Cloud Provider"
 }
 
 // GetProviderType - Returns ProviderType
-func (l *MesheryCloudProvider) GetProviderType() ProviderType {
-	return CloudProviderType
+func (l *MesheryRemoteProvider) GetProviderType() ProviderType {
+	return RemoteProviderType
 }
 
 // SyncPreferences - used to sync preferences with the remote provider
-func (l *MesheryCloudProvider) SyncPreferences() {
+func (l *MesheryRemoteProvider) SyncPreferences() {
 	l.syncStopChan = make(chan struct{})
 	l.syncChan = make(chan *userSession, 100)
 	go func() {
@@ -70,11 +70,11 @@ func (l *MesheryCloudProvider) SyncPreferences() {
 }
 
 // StopSyncPreferences - used to stop sync preferences
-func (l *MesheryCloudProvider) StopSyncPreferences() {
+func (l *MesheryRemoteProvider) StopSyncPreferences() {
 	l.syncStopChan <- struct{}{}
 }
 
-func (l *MesheryCloudProvider) executePrefSync(tokenVal string, sess *Preference) {
+func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preference) {
 	bd, err := json.Marshal(sess)
 	if err != nil {
 		logrus.Errorf("unable to marshal preference data: %v", err)
@@ -101,7 +101,7 @@ func (l *MesheryCloudProvider) executePrefSync(tokenVal string, sess *Preference
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *MesheryCloudProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
 	token := r.URL.Query().Get(l.SaaSTokenName)
 	if token == "" {
@@ -120,7 +120,7 @@ func (l *MesheryCloudProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 // issueSession issues a cookie session after successful login
-func (l *MesheryCloudProvider) issueSession(w http.ResponseWriter, req *http.Request) {
+func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
 	var reffURL string
 	reffCk, _ := req.Cookie(l.RefCookieName)
 	if reffCk != nil {
@@ -166,7 +166,7 @@ func (l *MesheryCloudProvider) issueSession(w http.ResponseWriter, req *http.Req
 	http.Redirect(w, req, reffURL, http.StatusFound)
 }
 
-func (l *MesheryCloudProvider) fetchUserDetails(tokenVal string) (*User, error) {
+func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
 	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 	req.AddCookie(&http.Cookie{
@@ -208,7 +208,7 @@ func (l *MesheryCloudProvider) fetchUserDetails(tokenVal string) (*User, error) 
 }
 
 // GetUserDetails - returns the user details
-func (l *MesheryCloudProvider) GetUserDetails(req *http.Request) (*User, error) {
+func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	// ensuring session is intact before running load test
 	session, err := l.GetSession(req)
 	if err != nil {
@@ -223,7 +223,7 @@ func (l *MesheryCloudProvider) GetUserDetails(req *http.Request) (*User, error) 
 }
 
 // GetSession - returns the session
-func (l *MesheryCloudProvider) GetSession(req *http.Request) (*sessions.Session, error) {
+func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session, error) {
 	session, err := l.SessionStore.Get(req, l.SessionName)
 	if err != nil {
 		err = errors.Wrap(err, "Error: unable to get session")
@@ -234,7 +234,7 @@ func (l *MesheryCloudProvider) GetSession(req *http.Request) (*sessions.Session,
 }
 
 // GetProviderToken - returns provider token
-func (l *MesheryCloudProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 	session, err := l.GetSession(req)
 	if err != nil {
 		return "", err
@@ -244,7 +244,7 @@ func (l *MesheryCloudProvider) GetProviderToken(req *http.Request) (string, erro
 }
 
 // Logout - logout from provider backend
-func (l *MesheryCloudProvider) Logout(w http.ResponseWriter, req *http.Request) {
+func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	client := http.Client{}
 	cReq, err := http.NewRequest(http.MethodGet, l.SaaSBaseURL+"/logout", req.Body)
 	if err != nil {
@@ -265,7 +265,7 @@ func (l *MesheryCloudProvider) Logout(w http.ResponseWriter, req *http.Request) 
 }
 
 // FetchResults - fetches results from provider backend
-func (l *MesheryCloudProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	logrus.Infof("attempting to fetch results from cloud")
 	session, _ := l.GetSession(req)
 
@@ -319,7 +319,7 @@ func (l *MesheryCloudProvider) FetchResults(req *http.Request, page, pageSize, s
 }
 
 // PublishResults - publishes results to the provider backend syncronously
-func (l *MesheryCloudProvider) PublishResults(req *http.Request, data []byte) (string, error) {
+func (l *MesheryRemoteProvider) PublishResults(req *http.Request, data []byte) (string, error) {
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
 	session, _ := l.GetSession(req)
@@ -368,7 +368,7 @@ func (l *MesheryCloudProvider) PublishResults(req *http.Request, data []byte) (s
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *MesheryCloudProvider) PublishMetrics(tokenVal string, data []byte) error {
+func (l *MesheryRemoteProvider) PublishMetrics(tokenVal string, data []byte) error {
 	logrus.Infof("attempting to publish metrics to SaaS")
 	bf := bytes.NewBuffer(data)
 
@@ -404,7 +404,7 @@ func (l *MesheryCloudProvider) PublishMetrics(tokenVal string, data []byte) erro
 }
 
 // RecordPreferences - records the user preference
-func (l *MesheryCloudProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}

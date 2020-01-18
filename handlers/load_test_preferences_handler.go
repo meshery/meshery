@@ -12,7 +12,7 @@ import (
 )
 
 // LoadTestPrefencesHandler is used for persisting load test preferences
-func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -67,7 +67,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		QueriesPerSecond:   qps,
 		LoadGenerator:      gen,
 	}
-	if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save user preferences: %v", err)
 		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
 		return

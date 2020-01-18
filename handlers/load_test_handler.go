@@ -20,7 +20,7 @@ import (
 )
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -155,7 +155,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 		log.Debug("response channel closed")
 	}()
 	go func() {
-		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, loadTestOptions, respChan)
+		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
@@ -167,7 +167,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	}
 }
 
-func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
@@ -287,7 +287,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		return
 	}
 
-	resultID, err := h.config.Provider.PublishResults(req, bd)
+	resultID, err := provider.PublishResults(req, bd)
 	if err != nil {
 		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		// return
@@ -311,12 +311,12 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		promURL = prefObj.Prometheus.PrometheusURL
 	}
 
-	tokenVal, _ := h.config.Provider.GetProviderToken(req)
+	tokenVal, _ := provider.GetProviderToken(req)
 
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" &&
-		(h.config.Provider.GetProviderType() == models.CloudProviderType ||
-			(h.config.Provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
+		(provider.GetProviderType() == models.RemoteProviderType ||
+			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
 		_ = h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,
@@ -324,6 +324,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 			StartTime: resultInst.StartTime,
 			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
 			TokenVal:  tokenVal,
+			Provider:  provider,
 		})
 	}
 
@@ -385,7 +386,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	logrus.Debugf("Result: %s, size: %d", sd, len(sd))
 
-	if err = h.config.Provider.PublishMetrics(config.TokenVal, sd); err != nil {
+	if err = config.Provider.PublishMetrics(config.TokenVal, sd); err != nil {
 		return err
 	}
 	// now to remove all the queries for the uuid

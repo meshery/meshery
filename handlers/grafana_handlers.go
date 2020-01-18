@@ -18,7 +18,7 @@ func init() {
 }
 
 // GrafanaConfigHandler is used for persisting or removing Grafana configuration
-func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -41,7 +41,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	} else if req.Method == http.MethodDelete {
 		prefObj.Grafana = nil
 	}
-	err := h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
+	err := p.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
@@ -51,7 +51,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 }
 
 // GrafanaPingHandler - used to initiate a Grafana ping
-func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -78,13 +78,13 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, _
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
-func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet && req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	if req.Method == http.MethodPost {
-		h.SaveSelectedGrafanaBoardsHandler(w, req, session, prefObj, user)
+		h.SaveSelectedGrafanaBoardsHandler(w, req, session, prefObj, user, p)
 		return
 	}
 
@@ -115,7 +115,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 }
 
 // GrafanaQueryHandler is used for handling Grafana queries
-func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -139,7 +139,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
-func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -163,7 +163,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // SaveSelectedGrafanaBoardsHandler is used to persist board and panel selection
-func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -201,7 +201,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	} else {
 		prefObj.Grafana.GrafanaBoards = nil
 	}
-	err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
+	err = p.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save user config data: %v", err)
 		http.Error(w, "unable to save user config data", http.StatusInternalServerError)

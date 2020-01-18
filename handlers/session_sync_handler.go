@@ -12,13 +12,13 @@ import (
 )
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
-func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	err := h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj)
+	err := h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
 	// if err != nil {
 	// // We can ignore the errors here. They are logged in the other method
 	// }
@@ -29,7 +29,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 	// }
 
 	// this is just called for getting a fresh copy of preferences
-	_, _ = h.config.Provider.GetUserDetails(req)
+	_, _ = provider.GetUserDetails(req)
 
 	meshAdapters := []*models.Adapter{}
 
@@ -39,7 +39,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, _
 	}
 	logrus.Debugf("final list of active adapters: %+v", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
-	err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
+	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil { // ignoring errors in this context
 		logrus.Errorf("unable to save session: %v", err)
 		// http.Error(w, "unable to save session", http.StatusInternalServerError)
