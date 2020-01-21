@@ -165,9 +165,12 @@ make run-ui-dev
 Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
-# <a name="maintaining"> Maintaining</a>
+# <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
-# License
+# New to Git?
+Resources: https://lab.github.com and https://try.github.com/
+
+### License
 
 This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
