@@ -46,6 +46,9 @@ brew install mesheryctl
 mesheryctl start
 ```
 
+<strong>Note</strong> : For users using minikube , run `eval $(minikube docker-env)` before executing
+`mesheryctl start` to allow cli to reach the container orchestration environment.
+
 ### Windows
 Download and unzip [`mesheryctl`](https://meshery.layer5.io/docs/guides/mesheryctl) from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add mesheryctl to your PATH for ease of use. Then, execute:
 ```shell
