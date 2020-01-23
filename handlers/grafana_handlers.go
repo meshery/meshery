@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
@@ -27,6 +28,9 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
+		if strings.Contains(grafanaURL, "/graph") {
+			grafanaURL = strings.TrimSuffix(grafanaURL, "/graph")
+		}
 
 		prefObj.Grafana = &models.Grafana{
 			GrafanaURL:    grafanaURL,

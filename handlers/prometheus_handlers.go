@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/gorilla/sessions"
@@ -33,6 +34,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
 			return
 		}
+
+		if strings.Contains(promURL, "/graph") {
+			promURL = strings.TrimSuffix(promURL, "/graph")
+		}
+
 		prefObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}
@@ -76,9 +82,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 	_, _ = w.Write([]byte("{}"))
 
-
 }
-
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
