@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gorilla/sessions"
@@ -28,8 +29,13 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")
-		if strings.Contains(grafanaURL, "/graph") {
-			grafanaURL = strings.TrimSuffix(grafanaURL, "/graph")
+
+		u, err := url.Parse(grafanaURL)
+		if err != nil {
+			return
+		}
+		if strings.Contains(grafanaURL, u.RequestURI()) {
+			grafanaURL = strings.TrimSuffix(grafanaURL, u.RequestURI())
 		}
 
 		prefObj.Grafana = &models.Grafana{

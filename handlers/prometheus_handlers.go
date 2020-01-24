@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -35,8 +36,12 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			return
 		}
 
-		if strings.Contains(promURL, "/graph") {
-			promURL = strings.TrimSuffix(promURL, "/graph")
+		u, err := url.Parse(promURL)
+		if err != nil {
+			return
+		}
+		if strings.Contains(promURL, u.RequestURI()) {
+			promURL = strings.TrimSuffix(promURL, u.RequestURI())
 		}
 
 		prefObj.Prometheus = &models.Prometheus{
