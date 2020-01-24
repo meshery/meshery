@@ -28,7 +28,7 @@ const initialState = fromJS({
   },
   loadTestPref: {
     qps: 0,
-    t: '30s',
+    t: '',
     c: 0,
     gen: '',
     ts: new Date(),
@@ -104,8 +104,10 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ k8sConfig: action.k8sConfig });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
-      return state.updateIn(['loadTest'], val => fromJS(action.loadTest));
+      state=state.updateIn(['loadTest'], val => fromJS(action.loadTest));
+      return state.mergeDeep({ loadTestPref: action.loadTestPref });
     case actionTypes.UPDATE_LOAD_GEN_CONFIG:
+      state=state.updateIn(['loadTestPref'], val => fromJS(action.loadTestPref));
       return state.mergeDeep({ loadTestPref: action.loadTestPref });
     case actionTypes.UPDATE_ANONYMOUS_USAGE_STATS:
       return state.mergeDeep({ anonymousUsageStats: action.anonymousUsageStats });

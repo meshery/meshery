@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"fmt"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
@@ -17,6 +18,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
 	q := req.FormValue("qps")
 	qps, err := strconv.Atoi(q)
 	if err != nil {
@@ -25,10 +27,14 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
 		return
 	}
+
 	if qps < 0 {
 		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println(qps)
+
 	dur := req.FormValue("t")
 	if _, err = time.ParseDuration(dur); err != nil {
 		err = errors.Wrap(err, "unable to parse t as a duration")
@@ -36,6 +42,8 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for t", http.StatusBadRequest)
 		return
 	}
+	fmt.Println(dur)
+
 	cu := req.FormValue("c")
 	c, err := strconv.Atoi(cu)
 	if err != nil {
@@ -48,8 +56,11 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
 		return
 	}
-	gen := req.FormValue("gen")
+	fmt.Println(cu)
+	
+	gen := req.FormValue("loadGenerator")
 	genTrack := false
+	fmt.Println(gen)
 	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
 	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG} {
 		if lg.Name() == gen {
@@ -61,6 +72,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for gen (load generator)", http.StatusBadRequest)
 		return
 	}
+	fmt.Println(gen)
 	prefObj.LoadTestPreferences = &models.LoadTestPreferences{
 		ConcurrentRequests: c,
 		Duration:           dur,

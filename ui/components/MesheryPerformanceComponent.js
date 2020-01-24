@@ -12,7 +12,7 @@ import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
 import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
+import { updateLoadTestData, updateStaticPrometheusBoardConfig, updateLoadTestPref } from '../lib/store';
 // import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
@@ -193,6 +193,14 @@ class MesheryPerformanceComponent extends React.Component {
             </IconButton>
           ),
         });
+        self.props.updateLoadTestPref({loadTestPref: {
+          qps,
+          c,
+          t, 
+          gen,
+        }
+      });
+      
         self.props.updateLoadTestData({loadTest: {
           testName,
           meshName,
@@ -202,14 +210,17 @@ class MesheryPerformanceComponent extends React.Component {
           t, 
           loadGenerator,
           result,
-        }});
+        }
+      });
         self.setState({result, testUUID: self.generateUUID()});
       }
       self.closeEventStream();
+
       self.setState({blockRunTest: false, timerDialogOpen: false});
     }
   }
 
+  
   async startEventStream(url) {
     this.closeEventStream();
     this.eventStream = new EventSource(url);
@@ -583,11 +594,13 @@ const mapDispatchToProps = dispatch => {
   return {
     updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
     updateStaticPrometheusBoardConfig: bindActionCreators(updateStaticPrometheusBoardConfig, dispatch),
+    updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
   }
 }
 const mapStateToProps = state => {
   
   const loadTest = state.get("loadTest").toJS();
+  console.log(loadTest)
   // let newprops = {};
   // if (typeof loadTest !== 'undefined'){
   //   newprops = { 
@@ -602,7 +615,9 @@ const mapStateToProps = state => {
   const prometheus = state.get("prometheus").toJS();
   const k8sConfig = state.get("k8sConfig").toJS();
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
-  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig};
+  const loadTestPref = state.get("loadTestPref").toJS();
+  // console.log(loadTestPref)
+  return {...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig,loadTestPref};
 }
 
 

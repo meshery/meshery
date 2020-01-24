@@ -12,6 +12,7 @@ import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
+import MesherySettingsPerformanceComponent from './MesherySettingsPerformance';
 import PrometheusComponent from './PrometheusComponent';
 import Link from "next/link";
 
@@ -137,6 +138,11 @@ class MesherySettings extends React.Component {
               <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
             } label="Metrics" />
           </Tooltip>
+          <Tooltip title="Performance" placement="top">
+            <Tab icon={
+              <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
+            } label="Performance" />
+          </Tooltip>
         </Tabs>
       </Paper>
       {tabVal === 0 && <TabContainer>
@@ -191,6 +197,9 @@ class MesherySettings extends React.Component {
             <PrometheusComponent />
           </TabContainer>}
         </TabContainer>}
+        {tabVal === 3 && <TabContainer>
+        <MesherySettingsPerformanceComponent />
+      </TabContainer>}
 
         {backToPlay}
     </div>
