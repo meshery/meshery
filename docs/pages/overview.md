@@ -75,6 +75,7 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 # Resources
 
 ## Meshery Presentations
+- [Cloud Native Austin 2020](https://www.meetup.com/Cloud-Native-Austin/events/267784090/)
 - NSMCon 2019 talk ([video](https://www.youtube.com/watch?v=4xKixsDTtdM), [deck](https://calcotestudios.com/talks/decks/slides-nsmcon-kubecon-na-2019-adopting-network-service-mesh-with-meshery.html))
 - [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
 - [DockerCon 2019 Open Source Summit](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
@@ -82,7 +83,7 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 - [KubeCon EU 2019 Istio Founders Meetup](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
 - [Cloud Native Rejekts EU 2019](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
 - [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
-- [Cloud Native Austin talk 2020](https://www.meetup.com/Cloud-Native-Austin/events/267784090/)
+
 
 ## Other Resources
 - [Service Mesh Comparison](https://layer5.io/landscape)
