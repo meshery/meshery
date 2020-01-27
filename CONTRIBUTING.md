@@ -165,6 +165,20 @@ make run-ui-dev
 Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
+### Running Meshery from IDE
+If you want to run Meshery from IDE like Goland, VSCode. set below environment variable
+```
+SAAS_BASE_URL=https://meshery.layer5.io
+PORT=9081
+DEBUG=true
+ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004
+```
+go tool argument
+```cassandraql
+-tags draft
+```
+
+
 # <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
