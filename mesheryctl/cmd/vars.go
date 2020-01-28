@@ -131,3 +131,11 @@ func installprereq() {
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
 }
+
+func isMesheryRunning() bool {
+	op, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(op), "meshery")
+}

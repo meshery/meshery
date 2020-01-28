@@ -30,6 +30,11 @@ var logsCmd = &cobra.Command{
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if ok := isMesheryRunning(); !ok {
+			log.Error("No logs to show. Meshery is not running.")
+			return
+		}
+
 		log.Info("Starting Meshery logging...")
 
 		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
