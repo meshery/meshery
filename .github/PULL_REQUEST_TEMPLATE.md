@@ -1,33 +1,30 @@
 <!--
-Thank you for contributing to layer5io/meshery. Before you submit this PR we'd like to
-make sure you are aware of our technical requirements and best practices:
+Thank you for contributing to Meshery! Before you submit this PR, please review 
+the [project's contributing](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md) requirements and best practices, if you have not already.
 
-* https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md
-
-For a quick overview across what we will look at reviewing your PR, please read
-our review guidelines:
+For an overview of what the review process entails, please read our review guidelines:
 
 * #TODO Add the review document
 
-Following our best practices right from the start will accelerate the review process and
-help get your PR merged quicker.
+By following the community's best practices upfront, the review process will be accelerated
+and your PR merged more quickly.
 
 When updates to your PR are requested, please add new commits and do not squash the
 history. This will make it easier to identify new changes. The PR will be squashed
 anyways when it is merged. Thanks.
 
-Please make sure you test your changes before you push them. Once pushed, a CI
+Please make sure you test your changes before you push them. Once pushed, a CI build
 will run across your changes and do some initial checks and linting. These checks run
-very quickly. Please check the results. We would like these checks to pass before we
-even continue reviewing your changes.
+quickly. Please check the results for any fixes you may need to make. Reviewers/maintainers
+look for passing checks first before starting code review.
 -->
-#### What this PR does / why we need it:
+#### Description of the change included in this PR (why it is necessary):
 
-#### Which issue this PR fixes
+#### Which issue this PR fixes:
 *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close that issue when PR gets merged)*
   - fixes #
 
-#### Special notes for your reviewer:
+#### Notes to reviewers:
 
 #### Checklist
 [Place an '[x]' (no spaces) in all applicable fields. Please remove unrelated fields.]
