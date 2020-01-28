@@ -177,7 +177,10 @@ go tool argument
 ```cassandraql
 -tags draft
 ```
-
+update /etc/hosts
+```cassandraql
+127.0.0.1 mesherylocal.layer5.io
+```
 
 # <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
