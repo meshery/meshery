@@ -262,6 +262,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Citrix', 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/citrix", 
+        title: 'Citrix',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ]
@@ -393,6 +401,10 @@ class Navigator extends React.Component {
           break;
         case 'octarine':
           image = "/static/img/octarine-white.svg";
+          logoIcon = (<img src={image} className={classes.icon} />);
+          break;
+        case 'citrix':
+          image = "/static/img/citrix-light-gray.svg";
           logoIcon = (<img src={image} className={classes.icon} />);
           break;
         // default:
