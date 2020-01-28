@@ -174,11 +174,11 @@ DEBUG=true
 ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004
 ```
 go tool argument
-```cassandraql
+```shell
 -tags draft
 ```
 update /etc/hosts
-```cassandraql
+```shell
 127.0.0.1 mesherylocal.layer5.io
 ```
 
