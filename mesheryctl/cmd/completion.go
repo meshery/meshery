@@ -61,7 +61,7 @@ func getCompletion(sh string, parent *cobra.Command) (string, error) {
 	if len(sh) == 0 {
 		err = errors.New("Shell not specified.")
 	}
-	if len(args) > 1 {
+	if len(sh) > 1 {
 		err = errors.New("Too many arguments. Expected only the shell type.")
 	}
 	switch sh {
