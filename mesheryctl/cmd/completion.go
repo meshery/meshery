@@ -53,10 +53,17 @@ var completionCmd = &cobra.Command{
 	},
 }
 
+// getCompletion checks given arguments and executes command
 func getCompletion(sh string, parent *cobra.Command) (string, error) {
 	var err error
 	var buf bytes.Buffer
 
+	if len(sh) == 0 {
+		err = errors.New("Shell not specified.")
+	}
+	if len(args) > 1 {
+		err = errors.New("Too many arguments. Expected only the shell type.")
+	}
 	switch sh {
 	case "bash":
 		err = parent.GenBashCompletion(&buf)
