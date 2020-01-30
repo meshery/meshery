@@ -22,7 +22,8 @@ var version = "dev"
 var commitsha = "SHA"
 
 func main() {
-	cmd.Build = version
+	cmd.BuildClient = version
+	cmd.BuildServer = version
 	cmd.CommitSHA = commitsha
 	cmd.Execute()
 }
