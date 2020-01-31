@@ -26,6 +26,7 @@ type HandlerInterface interface {
 	InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
+	LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *Preference, user *User)

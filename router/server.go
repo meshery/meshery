@@ -27,6 +27,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/mesh/scan", h.AuthMiddleware(h.SessionInjectorMiddleware(h.InstalledMeshesHandler)))
 
 	mux.Handle("/api/load-test", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))
+	mux.Handle("/api/load-test-smps", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestUsingSMPSHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchResultsHandler)))
 	mux.Handle("/api/result", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetResultHandler)))
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,7 +18,90 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
+
+// LoadTestHandler runs the load test with the given parameters
+func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
+	if req.Method != http.MethodPost && req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	defer func() {
+		_ = req.Body.Close()
+	}()
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	benchMark := &models.BenchmarkSpec{}
+	if err := yaml.Unmarshal(body, benchMark); err != nil {
+		msg := "unable to parse the provided input"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	q := req.URL.Query()
+
+	// testName - should be loaded from the file and updated with a random string appended to the end of the name
+	testName := q.Get("name")
+	if testName == "" {
+		logrus.Errorf("Error: name field is blank")
+		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
+		return
+	}
+	meshName := q.Get("mesh")
+	testUUID := uuid.Must(uuid.NewV4()).String()
+
+	loadTestOptions := &models.LoadTestOptions{}
+
+	loadTestOptions.Duration = benchMark.EndTime.Sub(benchMark.StartTime)
+
+	if loadTestOptions.Duration.Seconds() <= 0 {
+		loadTestOptions.Duration = time.Second
+	}
+
+	loadTestOptions.IsGRPC = false
+
+	loadTestOptions.URL = benchMark.EndpointURL
+	if benchMark.Client != nil {
+		loadTestOptions.HTTPNumThreads = benchMark.Client.Connections
+		loadTestOptions.HTTPQPS = benchMark.Client.Rps
+
+	}
+
+	if loadTestOptions.HTTPNumThreads < 1 {
+		loadTestOptions.HTTPNumThreads = 1
+	}
+
+	ltURL, err := url.Parse(loadTestOptions.URL)
+	if err != nil || !ltURL.IsAbs() {
+		logrus.Errorf("unable to parse the provided load test url: %v", err)
+		http.Error(w, "invalid load test URL", http.StatusBadRequest)
+		return
+	}
+	loadTestOptions.Name = testName
+
+	if loadTestOptions.HTTPQPS < 0 {
+		loadTestOptions.HTTPQPS = 0
+	}
+
+	// loadGenerator := q.Get("loadGenerator")
+
+	// switch loadGenerator {
+	// case "wrk2":
+	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
+	// default:
+	loadTestOptions.LoadGenerator = models.FortioLG
+	// }
+
+	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions)
+}
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
@@ -111,7 +195,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	// fortioURL.RawQuery = q.Encode()
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
+	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions)
+}
 
+func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, testName, meshName, testUUID string,
+	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions) {
 	log := logrus.WithField("file", "load_test_handler")
 
 	flusher, ok := w.(http.Flusher)
