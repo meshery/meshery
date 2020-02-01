@@ -76,7 +76,7 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 
 ## Meshery Presentations
 
-- [Docker Captains 2020](https://calcotestudios.com/talks/decks/slides-docker-captains-2020-meshery-the-multi-service-mesh-manager.html)
+- [Docker Captains Roundtable 2020](https://calcotestudios.com/talks/decks/slides-docker-captains-roundtable-2020-meshery-the-multi-service-mesh-manager.html)
 - [Cloud Native Austin 2020](https://www.meetup.com/Cloud-Native-Austin/events/267784090/)
 - NSMCon 2019 talk ([video](https://www.youtube.com/watch?v=4xKixsDTtdM), [deck](https://calcotestudios.com/talks/decks/slides-nsmcon-kubecon-na-2019-adopting-network-service-mesh-with-meshery.html))
 - [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
