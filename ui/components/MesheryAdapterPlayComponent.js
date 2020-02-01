@@ -458,28 +458,28 @@ class MesheryAdapterPlayComponent extends React.Component {
     let content, description;
     switch(cat){
       case 0:
-        content = 'Install';
-        description = 'Install a servicemesh or SMI adapter on your cluster';
+        content = 'Manage Service Mesh Lifecycle';
+        description = 'Deploy a service mesh or SMI adapter on your cluster.';
         break;
 
       case 1:
-        content = 'Sample Application';
-        description = 'Install some sample applications on/off the servicemesh';
+        content = 'Manage Sample Application Lifecyle';
+        description = 'Deploy sample applications on/off the service mesh.';
         break;
 
       case 2:
-        content = 'Configure';
-        description = 'Configure your cluster using some pre-configured configuration options';
+        content = 'Apply Service Mesh Configuration';
+        description = 'Configure your service mesh using some pre-defined options.';
         break;
 
       case 3:
-        content = 'Validate';
-        description = 'Validate your cluster configuration using provided tools';
+        content = 'Validate Service Mesh Configuration';
+        description = 'Validate your service mesh configuration against best practices.';
         break;
 
       case 4:
-        content = 'Custom Config';
-        description = 'Customize the configuration of your service mesh';
+        content = 'Apply Custom Configuration';
+        description = 'Customize the configuration of your service mesh.';
         break;
     }
     return (
