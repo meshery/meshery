@@ -64,24 +64,24 @@ printf "\nInstalling mesheryctl in /usr/local/bin.\n"
 if mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
   echo "mesheryctl installed"
 else
-	echo "Cannot install mesheryctl. Aborting."
+	echo "Cannot install mesheryctl. Check permissions of $WHOAMI for /usr/local/bin."
   exit 1
 fi
 
 #Transfering permissions and ownership to client USER
 if [ "$SUDO_USER" == "" ] ;
 then
-	if 	chown $WHOAMI:$WHOAMI /usr/local/bin/mesheryctl ; then
+	if 	chown $WHOAMI /usr/local/bin/mesheryctl ; then
     echo "permissions moved to "$WHOAMI
   else
-  	echo "Cannot move permission. Aborting."
+  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $WHOAMI."
     exit 1
   fi
 else
-	if chown $SUDO_USER:$SUDO_USER /usr/local/bin/mesheryctl ; then
+	if chown $SUDO_USER /usr/local/bin/mesheryctl ; then
     echo "permissions moved to "$SUDO_USER
   else
-  	echo "Cannot move permission. Aborting."
+  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $SUDO_USER."
     exit 1
   fi
 fi
