@@ -13,6 +13,14 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     <th style="white-space: nowrap;">Release Date</th>
   </thead>
   <tbody>
+      <tr>
+      <td class="centered">0.3.9</td>
+      <td>
+        <em>Mesheryctl</em> - Addition of mesheryctl version to provide server-side version number, Improvement of mesheryctl logs | stop | start to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
+        <em>Meshery</em> - Striped off extraneous information beyond IP address and port in Grafana and Prometheus endpoints. 
+      </td>
+      <td>Feb 3, 2020</td>
+    </tr>
     <tr>
       <td class="centered">0.3.8</td>
       <td>
