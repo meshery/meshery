@@ -1,7 +1,10 @@
 ---
 layout: page
-title: CPX Adapter
-permalink: installation/adapters/cpx
+title: Citrix CPX Adapter
+name: CPX
+version: "-"
+port: 10008/tcp
+project_status: beta
 ---
 
 ## Configuration
