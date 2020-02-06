@@ -311,7 +311,12 @@ class MeshAdapterConfigComponent extends React.Component {
               case 'octarine':
                 image = "/static/img/octarine.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
+                break;  
+              case 'citrix':
+                image = "/static/img/citrix.svg";
+                logoIcon = (<img src={image} className={classes.icon} />);
                 break;                
+                            
               // default:
             } 
             

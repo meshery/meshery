@@ -271,7 +271,7 @@ class PrometheusSelectionComponent extends Component {
     render = () => {
         var self = this;
         const { classes, prometheusURL, 
-          handlePrometheusChipDelete } = this.props;
+          handlePrometheusChipDelete, handlePrometheusClick } = this.props;
         const { panels, selectedPanels,
           grafanaBoard, templateVars, templateVarOptions } = this.state;
         return (
@@ -282,6 +282,8 @@ class PrometheusSelectionComponent extends Component {
                 <Chip 
                     label={prometheusURL}
                     onDelete={handlePrometheusChipDelete} 
+                    onClick={handlePrometheusClick}
+                    key='prometh-key'
                     icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
                     variant="outlined" />
             </div>
@@ -421,6 +423,7 @@ class PrometheusSelectionComponent extends Component {
 PrometheusSelectionComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   prometheusURL: PropTypes.string.isRequired,
+  handlePrometheusClick: PropTypes.func.isRequired,
   handlePrometheusChipDelete: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,

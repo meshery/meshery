@@ -11,27 +11,26 @@
     - title: Quick Start
       url: installation
     - title: Supported Platforms
-      url: platforms
+      url: installation/platforms
       children:
         - title: Docker
           url: installation/docker
-        - title: Kubernetes
-          url: installation/kubernetes
-          children:
-          - title: Minikube
-            url: installation/minikube
-        - title: GKE
-          url: installation/gke
         - title: EKS
           url: installation/eks
+        - title: GKE
+          url: installation/gke
+        - title: Kubernetes
+          url: installation/kubernetes
+        - title: Minikube
+          url: installation/minikube
         - title: WSL2
           url: installation/wsl2
     - title: Architecture
       url: architecture
     #- title: Service Mesh Performance
-    #  url: performance
-    - title: Management
-      url: management
+    #  url: performance-management
+    - title: Service Mesh Management
+      url: mesh-management
     - title: Releases
       url: releases
 - title: Guides
@@ -39,3 +38,5 @@
   links:
   - title: Multiple Adapters
     url: guides/multiple-adapters
+  - title: Using mesheryctl
+    url: guides/mesheryctl

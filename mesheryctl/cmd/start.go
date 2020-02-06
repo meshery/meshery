@@ -33,11 +33,13 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// var out bytes.Buffer
-		// var stderr bytes.Buffer
+		//Check prerequisite
+		preReqCheck()
 
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
-			_ = os.Mkdir(mesheryFolder, 0777)
+			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
@@ -71,23 +73,30 @@ var startCmd = &cobra.Command{
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
 			if "/meshery_meshery_1" == container.Names[0] {
-				log.Info("Opening Meshery in your broswer. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
+				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
 					// Meshery running on Windows host
-					_ = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+					if err != nil {
+						log.Fatal(err)
+					}
 				} else if runtime.GOOS == "linux" {
 					// Meshery running on Linux host
-					_ = exec.Command("xdg-open", url).Start()
+					err = exec.Command("xdg-open", url).Start()
+					if err != nil {
+						log.Fatal(err)
+					}
 				} else {
 					// Assume Meshery running on MacOS host
-					_ = exec.Command("open", url).Start()
+					err = exec.Command("open", url).Start()
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
 
 				//check flag to check successful deployment
-				checkFlag = 0
-
 				checkFlag = 0
 				break
 			} else {

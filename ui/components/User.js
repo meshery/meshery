@@ -62,9 +62,9 @@ class User extends React.Component {
       user_id = this.state.user.user_id;
     }
     const { open } = this.state;
-    if (user_id === 'meshery') { // indicating a local user
-      return null;
-    }
+    // if (user_id === 'meshery') { // indicating a local user
+    //   return null;
+    // }
     return (
       <div>
         <NoSsr>

@@ -43,3 +43,9 @@ log.txt
 **/.jekyll-cache
 
 dist/
+
+ui/npm-debug.log
+
+Gemfile.lock
+
+**/.idea

@@ -1,8 +1,17 @@
 ---
 layout: page
+title: Meshery Documentation
 permalink: /
 ---
-<h1>Meshery Documentation</h1>
+<p style="text-align:center;" align="center">
+    <a href="https://layer5.io/meshery">
+    <img align="center" 
+         src="https://raw.githubusercontent.com/layer5io/layer5/master/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" />
+    </a><br />
+<h1 style="color:#3C494F;display:inline;text-align:center;width:100%;">Documentation</h1>
+<br />
+</p>
+
 <style>
 div.overview {
     text-align: center; position:relative;float:left;background-color:#3C494F;
@@ -10,6 +19,7 @@ div.overview {
     padding: 20px;
     color:aliceblue;
     margin: 10px;
+    min-width: 205px;
     width: calc(100% / 3.4); 
     overflow-wrap: break-word;
 }
@@ -18,6 +28,14 @@ div.wrapper {
     text-align: justify;
     display: inline-block;
 }
+@media (max-width: 715px) {
+    div.wrapper {
+      display: block;
+    }
+    div.overview {
+      float: none;
+    }
+  }
 </style>
 <div class="wrapper">
     <a href="{{ site.baseurl }}/overview"><div class="overview">Overview</div></a>

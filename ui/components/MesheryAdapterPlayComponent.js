@@ -458,28 +458,28 @@ class MesheryAdapterPlayComponent extends React.Component {
     let content, description;
     switch(cat){
       case 0:
-        content = 'Install';
-        description = 'Install a servicemesh or SMI adapter on your cluster';
+        content = 'Manage Service Mesh Lifecycle';
+        description = 'Deploy a service mesh or SMI adapter on your cluster.';
         break;
 
       case 1:
-        content = 'Sample Application';
-        description = 'Install some sample applications on/off the servicemesh';
+        content = 'Manage Sample Application Lifecyle';
+        description = 'Deploy sample applications on/off the service mesh.';
         break;
 
       case 2:
-        content = 'Configure';
-        description = 'Configure your cluster using some pre-configured configuration options';
+        content = 'Apply Service Mesh Configuration';
+        description = 'Configure your service mesh using some pre-defined options.';
         break;
 
       case 3:
-        content = 'Validate';
-        description = 'Validate your cluster configuration using provided tools';
+        content = 'Validate Service Mesh Configuration';
+        description = 'Validate your service mesh configuration against best practices.';
         break;
 
       case 4:
-        content = 'Custom Config';
-        description = 'Customize the configuration of your service mesh';
+        content = 'Apply Custom Configuration';
+        description = 'Customize the configuration of your service mesh.';
         break;
     }
     return (
@@ -696,32 +696,72 @@ class MesheryAdapterPlayComponent extends React.Component {
     //   </NoSsr>
     // )
 
-    return (
-      <NoSsr>
+    if(this.props.adapCount > 1){
+      return (
+          <NoSsr>
+          <React.Fragment>
+            <div className={classes.root}>
+            <Grid container spacing={5}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                disabled
+                id="ap"
+                name="ap"
+                label="Adapter URL"
+                fullWidth
+                value={adapter.adapter_location}
+                margin="normal"
+                variant="outlined"
+                // onChange={this.handleChange('namespace')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {adapter_icon}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="namespace"
+                name="namespace"
+                label="Namespace"
+                fullWidth
+                value={namespace}
+                error={namespaceError}
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('namespace')}
+              />
+            </Grid>
+            {filteredOps.map(val => (
+              <Grid item xs={12} sm={4}>
+                {this.generateCardForCategory(val)}
+              </Grid>
+            ))}
+            {/* <Grid item xs={12} sm={3}>
+              {this.generateCardForCategory(1)}
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory(2)}
+            </Grid>
+            <Grid item xs={12} sm={3}>
+            {this.generateCardForCategory(3)}
+            </Grid> */}
+            </Grid>
+            </div>
+          </React.Fragment>
+        </NoSsr>
+      )}
+  
+      return (
+        <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
           <Grid container spacing={5}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              disabled
-              id="ap"
-              name="ap"
-              label="Adapter URL"
-              fullWidth
-              value={adapter.adapter_location}
-              margin="normal"
-              variant="outlined"
-              // onChange={this.handleChange('namespace')}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {adapter_icon}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <TextField
               required
               id="namespace"
@@ -740,21 +780,13 @@ class MesheryAdapterPlayComponent extends React.Component {
               {this.generateCardForCategory(val)}
             </Grid>
           ))}
-          {/* <Grid item xs={12} sm={3}>
-            {this.generateCardForCategory(1)}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-          {this.generateCardForCategory(2)}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-          {this.generateCardForCategory(3)}
-          </Grid> */}
           </Grid>
           </div>
-        </React.Fragment>
-      </NoSsr>
-    )
-  }
+          </React.Fragment>
+        </NoSsr>
+      )
+  
+    }
 }
 
 MesheryAdapterPlayComponent.propTypes = {

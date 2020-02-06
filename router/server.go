@@ -19,6 +19,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux := http.NewServeMux()
 
 	mux.Handle("/api/user", h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler)))
+	mux.Handle("/api/user/stats", h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler)))
 	mux.Handle("/api/config/sync", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler)))
 
 	mux.Handle("/api/k8sconfig", h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler)))
@@ -28,6 +29,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	mux.Handle("/api/load-test", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))
 	mux.Handle("/api/load-test-smps", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestUsingSMPSHandler)))
+	mux.Handle("/api/load-test-prefs", h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestPrefencesHandler)))
 	mux.Handle("/api/results", h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchResultsHandler)))
 	mux.Handle("/api/result", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetResultHandler)))
 
@@ -41,11 +43,13 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	mux.Handle("/api/grafana/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler)))
 	mux.Handle("/api/grafana/query", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler)))
 	mux.Handle("/api/grafana/query_range", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryRangeHandler)))
+	mux.Handle("/api/grafana/ping", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaPingHandler)))
 
 	mux.Handle("/api/prometheus/config", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler)))
 	mux.Handle("/api/prometheus/board_import", h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler)))
 	mux.Handle("/api/prometheus/query", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryHandler)))
 	mux.Handle("/api/prometheus/query_range", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryRangeHandler)))
+	mux.Handle("/api/prometheus/ping", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusPingHandler)))
 	mux.Handle("/api/prometheus/static_board", h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusStaticBoardHandler)))
 	mux.Handle("/api/prometheus/boards", h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveSelectedPrometheusBoardsHandler)))
 
@@ -60,6 +64,36 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo.png")
 	}))
 	mux.Handle("/", h.AuthMiddleware(http.FileServer(http.Dir("../ui/out/"))))
+
+	mux.Handle("/settings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/settings.html")
+	}))
+
+	mux.Handle("/configure", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/configure.html")
+	}))
+
+	mux.Handle("/management", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/management.html")
+	}))
+
+	mux.Handle("/performance", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/performance.html")
+	}))
+
+	mux.Handle("/results", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/results.html")
+	}))
+
+	mux.Handle("/404", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, "../ui/out/404.html")
+	}))
 
 	return &Router{
 		s:    mux,
