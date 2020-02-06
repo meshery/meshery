@@ -65,6 +65,18 @@ kubectl create ns meshery
 kubectl -n meshery apply -f deployment_yamls/k8s
 ```
 
+Deploying Meshery by Helm chart
+
+> If you in Helm2 please kindly use `helm template`, the chart only was passed tested under Helm3.
+
+```
+$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ kubectl create namespace meshery
+$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+```
+
+The detail please check [Meshery chart](./install/kubernetes/helm/meshery/README.md)
+
 See the [project site](https://layer5.io/meshery) for quick start instructions and [project documentation](https://meshery.layer5.io/docs) for a complete set of Meshery documentation.
 
 <a name="contributing"></a><a name="community"></a>
