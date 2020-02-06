@@ -43,7 +43,7 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
-// GetName - Returns Provider's friendly name
+// Name - Returns Provider's friendly name
 func (l *MesheryRemoteProvider) Name() string {
 	return "Meshery Cloud Provider"
 }

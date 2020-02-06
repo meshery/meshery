@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// ProviderHandler chooses provider
+// ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 	provider := r.URL.Query().Get("provider")
 	for _, p := range h.config.Providers {
@@ -39,10 +39,10 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "unable to marshal the providers", http.StatusInternalServerError)
 		return
 	}
-	w.Write(bd)
+	_, _ = w.Write(bd)
 }
 
-// ProvidersUIHandler serves providers UI
+// ProviderUIHandler - serves providers UI
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 	ServeUI(w, r, "/provider", "../provider-ui/out/")
 }

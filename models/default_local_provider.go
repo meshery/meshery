@@ -20,7 +20,7 @@ type DefaultLocalProvider struct {
 	ResultPersister *BitCaskResultsPersister
 }
 
-// GetName - Returns Provider's friendly name
+// Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
 	return "Default Local Provider"
 }

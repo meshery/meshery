@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// ServeUI - helps serve static files for both meshery ui and provider ui
 func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string) {
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
