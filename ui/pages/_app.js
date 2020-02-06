@@ -326,7 +326,7 @@ class MesheryApp extends App {
           if(typeof result.loadTestPrefs.gen === 'undefined'){
             result.loadTestPrefs.gen = '';
           }
-          store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, prometheus: result.prometheus });
+          store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref: result.loadTestPrefs });
         }
         if(typeof result.anonymousUsageStats !== 'undefined'){
           store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats: result.anonymousUsageStats });

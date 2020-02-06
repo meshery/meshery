@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/gorilla/sessions"
@@ -33,6 +35,15 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
 			return
 		}
+
+		u, err := url.Parse(promURL)
+		if err != nil {
+			return
+		}
+		if strings.Contains(promURL, u.RequestURI()) {
+			promURL = strings.TrimSuffix(promURL, u.RequestURI())
+		}
+
 		prefObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}

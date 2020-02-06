@@ -50,7 +50,6 @@ var stopCmd = &cobra.Command{
 
 		// Remove all Docker containers
 		stop = exec.Command("docker-compose", "-f", dockerComposeFile, "rm", "-f")
-		stop.Stdout = os.Stdout
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {

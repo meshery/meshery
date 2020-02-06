@@ -19,6 +19,7 @@ div.overview {
     padding: 20px;
     color:aliceblue;
     margin: 10px;
+    min-width: 205px;
     width: calc(100% / 3.4); 
     overflow-wrap: break-word;
 }
@@ -27,6 +28,14 @@ div.wrapper {
     text-align: justify;
     display: inline-block;
 }
+@media (max-width: 715px) {
+    div.wrapper {
+      display: block;
+    }
+    div.overview {
+      float: none;
+    }
+  }
 </style>
 <div class="wrapper">
     <a href="{{ site.baseurl }}/overview"><div class="overview">Overview</div></a>

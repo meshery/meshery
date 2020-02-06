@@ -24,7 +24,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+//TerminalFormatter is exported
+type TerminalFormatter struct{}
+
 var cfgFile string
+
+//Format is exported
+func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
+	return append([]byte(entry.Message), '\n'), nil
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -40,6 +48,8 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	fmt.Println("\n")
+	//log formatter for improved UX
+	log.SetFormatter(new(TerminalFormatter))
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

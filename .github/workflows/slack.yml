@@ -10,4 +10,4 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: pullreminders/slack-action@master
       with:
-        args: '{\"channel\":\"CLVT4TSG4\",\"text\":\"Someone has starred Meshery!\"}'
+        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone has starred Meshery!\"}'

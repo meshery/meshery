@@ -47,3 +47,5 @@ dist/
 */npm-debug.log
 
 Gemfile.lock
+
+**/.idea

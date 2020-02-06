@@ -61,7 +61,32 @@ printf "\nExtracting %s...\n" "$NAME"
 unzip ${PWD}/meshery.zip 
 
 printf "\nInstalling mesheryctl in /usr/local/bin.\n"
-mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl
+if mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
+  echo "mesheryctl installed"
+else
+	echo "Cannot install mesheryctl. Check permissions of $WHOAMI for /usr/local/bin."
+  exit 1
+fi
+
+#Transfering permissions and ownership to client USER
+if [ "$SUDO_USER" == "" ] ;
+then
+	if 	chown $WHOAMI /usr/local/bin/mesheryctl ; then
+    echo "permissions moved to "$WHOAMI
+  else
+  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $WHOAMI."
+    exit 1
+  fi
+else
+	if chown $SUDO_USER /usr/local/bin/mesheryctl ; then
+    echo "permissions moved to "$SUDO_USER
+  else
+  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $SUDO_USER."
+    exit 1
+  fi
+fi
+
+
 
 printf "Removing installation files and opening Meshery..."
 rm -rf meshery.zip LICENSE README.md
