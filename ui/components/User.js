@@ -42,6 +42,10 @@ class User extends React.Component {
     window.location = "/logout";
   };
 
+  handlePreference = () => {
+    window.location = "/userpreference";
+  };
+
   componentDidMount() {
     // console.log("fetching user data");
     dataFetch('/api/user', { credentials: 'same-origin' }, user => {
@@ -87,6 +91,7 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
+                      <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
