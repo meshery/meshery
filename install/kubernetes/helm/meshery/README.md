@@ -8,16 +8,17 @@ The chart bootstraps a single nodes Meshery deployment on Kubernetes cluster usi
 
 ## Prerequisites
 
-* Kubernetes 1.15.0
-* Helm 3.0.0
+* Kubernetes v1.15.0
+* K3s v1.14.4-k3s.1
+* Helm v3.0.2
 
 ## Installing the Chart
 
-> If you in Helm2 please kindly use `helm template` there is not support Helm2. 
+> If you in Helm2 please kindly use `helm template`, the chart only was passed tested under Helm3.
 
 ```
 $ kubectl create namespace meshery
-$ helm install -g meshery --namespace meshery install/kubernetes/helm/meshery
+$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
 ```
 
 
