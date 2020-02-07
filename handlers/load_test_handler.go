@@ -21,7 +21,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// LoadTestHandler runs the load test with the given parameters
+// LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
 func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)

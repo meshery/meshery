@@ -124,7 +124,7 @@ RETRY:
 	return bd, nil
 }
 
-// GetResults - gets result for the page and pageSize
+// GetResult - gets result for a specific key
 func (s *BitCaskResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, error) {
 	if s.db == nil {
 		return nil, errors.New("Connection to DB does not exist.")

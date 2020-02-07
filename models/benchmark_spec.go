@@ -2,11 +2,13 @@ package models
 
 import "time"
 
+// Environment - represents a kubernetes environment
 type Environment struct {
 	Kubernetes string `yaml:"kubernetes,omitempty"`
 	NodeCount  int    `yaml:"node_count,omitempty"`
 }
 
+// MeshConfig - represents a service mesh config
 type MeshConfig struct {
 	MeshPolicyEnabled    bool `yaml:"mesh_policy_enabled,omitempty"`
 	MeshTelemetryEnabled bool `yaml:"mesh_telemetry_enabled,omitempty"`
@@ -14,6 +16,7 @@ type MeshConfig struct {
 	ProxyConcurrency     int  `yaml:"proxy_concurrency,omitempty"`
 }
 
+// MeshClientConfig - represents a load test client config
 type MeshClientConfig struct {
 	Internal    bool         `yaml:"internal,omitempty"`
 	Protocol    string       `yaml:"protocol,omitempty"`
@@ -22,6 +25,7 @@ type MeshClientConfig struct {
 	LatenciesMs *LatenciesMs `yaml:"latencies_ms,omitempty"`
 }
 
+// LatenciesMs - represents a collection of important latencies
 type LatenciesMs struct {
 	Min     float64 `yaml:"min,omitempty"`
 	Average float64 `yaml:"average,omitempty"`
@@ -31,6 +35,7 @@ type LatenciesMs struct {
 	Max     float64 `yaml:"max,omitempty"`
 }
 
+// IngressGateway - holds ingress gateway info
 type IngressGateway struct {
 	Count     int     `yaml:"count,omitempty"`
 	CPUMCores float64 `yaml:"cpu_mCores,omitempty"`
@@ -39,6 +44,7 @@ type IngressGateway struct {
 	Bps       float64 `yaml:"bps,omitempty"`
 }
 
+// Sidecars - holds sidecars info
 type Sidecars struct {
 	Count     int     `yaml:"count,omitempty"`
 	CPUMCores float64 `yaml:"cpu_mCores,omitempty"`
@@ -47,6 +53,7 @@ type Sidecars struct {
 	Bps       float64 `yaml:"bps,omitempty"`
 }
 
+// MeshTelemetry - holds overall Mesh info
 type MeshTelemetry struct {
 	Count     int     `yaml:"count,omitempty"`
 	CPUMCores float64 `yaml:"cpu_mCores,omitempty"`
@@ -54,6 +61,7 @@ type MeshTelemetry struct {
 	Rps       float64 `yaml:"rps,omitempty"`
 }
 
+// MeshPolicy - holds MeshPolicy info
 type MeshPolicy struct {
 	Count        int     `yaml:"count,omitempty"`
 	CPUMCores    float64 `yaml:"cpu_mCores,omitempty"`
@@ -62,6 +70,7 @@ type MeshPolicy struct {
 	CacheHitRate float64 `yaml:"cache_hit_rate,omitempty"`
 }
 
+// MeshControlPlane - holds control plan info
 type MeshControlPlane struct {
 	Count            int     `yaml:"count,omitempty"`
 	CPUMCores        float64 `yaml:"cpu_mCores,omitempty"`
@@ -75,6 +84,7 @@ type MeshControlPlane struct {
 	CdsLatencyMs     float64 `yaml:"cds_latency_ms,omitempty"`
 }
 
+// Workload - holds workload info
 type Workload struct {
 	Name      string  `yaml:"name,omitempty"`
 	Count     int     `yaml:"count,omitempty"`
@@ -82,6 +92,7 @@ type Workload struct {
 	MemMb     float64 `yaml:"mem_mb,omitempty"`
 }
 
+// Metrics - holds overall metrics info
 type Metrics struct {
 	IngressGateway     *IngressGateway   `yaml:"ingress_gateway,omitempty"`
 	Sidecars           *Sidecars         `yaml:"sidecars,omitempty"`
@@ -91,6 +102,7 @@ type Metrics struct {
 	IndividualWorkload *Workload         `yaml:"individual_workload_1,omitempty"`
 }
 
+// BenchmarkSpec - represents SMPS
 type BenchmarkSpec struct {
 	StartTime    time.Time         `yaml:"start_time,omitempty"`
 	EndTime      time.Time         `yaml:"end_time,omitempty"`

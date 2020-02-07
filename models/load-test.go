@@ -86,6 +86,7 @@ type MesheryResult struct {
 	ServerBoardConfig interface{} `json:"server_board_config,omitempty"`
 }
 
+// ConvertToSpec - converts meshery result to SMP
 func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
 	b := &BenchmarkSpec{
 		Env:     &Environment{},
