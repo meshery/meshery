@@ -61,6 +61,7 @@ printf "\nExtracting %s...\n" "$NAME"
 unzip ${PWD}/meshery.zip 
 
 printf "\nInstalling mesheryctl in /usr/local/bin.\n"
+WHOAMI=$(whoami)
 if mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
   echo "mesheryctl installed"
 else
