@@ -27,6 +27,9 @@ app.prepare().then(() => {
     if (pathname.startsWith("/api") || pathname.startsWith("/logout") || pathname.startsWith("/login")){
         proxy.web(req, res, { target: 'http://localhost:9081' });
     } else {
+        if(req.url.startsWith('/provider')){
+          req.url = req.url.replace('/provider','');
+        }
         handle(req, res)
         return
     }
