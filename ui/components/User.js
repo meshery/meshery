@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
+import { withRouter } from 'next/router';
 
 
 const styles = theme => ({
@@ -43,7 +44,7 @@ class User extends React.Component {
   };
 
   handlePreference = () => {
-    window.location = "/userpreference";
+    this.props.router.push('/userpreference');
   };
 
   componentDidMount() {
@@ -114,4 +115,4 @@ const mapDispatchToProps = dispatch => {
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(User));
+)(withRouter(User)));
