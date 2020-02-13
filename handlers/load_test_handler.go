@@ -93,7 +93,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	loadGenerator := q.Get("loadGenerator")
 
 	switch loadGenerator {
-	case "wrk2":
+	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
@@ -314,7 +314,9 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	tokenVal, _ := h.config.Provider.GetProviderToken(req)
 
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
-	if promURL != "" && testUUID != "" && resultID != "" {
+	if promURL != "" && testUUID != "" && resultID != "" &&
+		(h.config.Provider.GetProviderType() == models.CloudProviderType ||
+			(h.config.Provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
 		_ = h.task.Call(&models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,

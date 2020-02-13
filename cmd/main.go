@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/helpers"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"time"
+
+	"github.com/layer5io/meshery/helpers"
 
 	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
@@ -89,17 +89,17 @@ func main() {
 		}
 		defer resultPersister.CloseResultPersister()
 
-		randID, _ := uuid.NewV4()
-		cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
+		// randID, _ := uuid.NewV4()
+		// cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
 		saasBaseURL := viper.GetString("SAAS_BASE_URL")
 		// if saasBaseURL == "" {
 		// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 		// }
 		prov = &models.LocalProvider{
-			SessionName: "meshery",
+			// SessionName: "meshery",
 			SaaSBaseURL: saasBaseURL,
 			// SessionStore: fileSessionStore,
-			SessionStore:           cookieSessionStore,
+			// SessionStore:           cookieSessionStore,
 			MapPreferencePersister: preferencePersister,
 			ResultPersister:        resultPersister,
 		}

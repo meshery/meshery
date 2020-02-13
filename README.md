@@ -35,7 +35,7 @@ A service mesh playground to faciliate learning about functionality of different
 #### Using Bash
 
 ```shell
-curl -L https://git.io/meshery | bash -    
+curl -L https://git.io/meshery | sudo bash -    
 ```
 
 #### Using Brew
@@ -45,6 +45,9 @@ brew tap layer5io/tap
 brew install mesheryctl
 mesheryctl start
 ```
+
+<strong>Note</strong> : For users using minikube , run `eval $(minikube docker-env)` before executing
+`mesheryctl start` to allow cli to reach the container orchestration environment.
 
 ### Windows
 Download and unzip [`mesheryctl`](https://meshery.layer5.io/docs/guides/mesheryctl) from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add mesheryctl to your PATH for ease of use. Then, execute:
@@ -61,6 +64,18 @@ git clone https://github.com/layer5io/meshery.git; cd meshery
 kubectl create ns meshery
 kubectl -n meshery apply -f deployment_yamls/k8s
 ```
+
+Deploying Meshery by Helm chart
+
+> If you in Helm2 please kindly use `helm template`, the chart only was passed tested under Helm3.
+
+```
+$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ kubectl create namespace meshery
+$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+```
+
+The detail please check [Meshery chart](./install/kubernetes/helm/meshery/README.md)
 
 See the [project site](https://layer5.io/meshery) for quick start instructions and [project documentation](https://meshery.layer5.io/docs) for a complete set of Meshery documentation.
 
