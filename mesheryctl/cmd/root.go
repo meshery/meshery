@@ -41,7 +41,12 @@ var rootCmd = &cobra.Command{
 	Long:  `Meshery is a a multi-service mesh performance benchmark and playground tool`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		b, _ := cmd.Flags().GetBool("version")
+		if b {
+			versionCmd.Run(nil, nil)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -72,6 +77,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP("version", "v", false, "Version flag")
 }
 
 // initConfig reads in config file and ENV variables if set.
