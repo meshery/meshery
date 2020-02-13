@@ -38,7 +38,7 @@ func (h *Handler) validateAuth(req *http.Request) bool {
 		// logrus.Debugf("session: %v", sess)
 		return !sess.IsNew
 	}
-	logrus.Errorf("session invalid, error: %v", err)
+	// logrus.Errorf("session invalid, error: %v", err)
 	return false
 }
 
@@ -47,7 +47,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// ensuring session is intact before running load test
 		session, err := h.config.Provider.GetSession(req)
-		if err != nil {
+		if err != nil && h.GetProviderType() == models.CloudProviderType {
 			logrus.Errorf("Error: unable to get session: %v", err)
 			http.Error(w, "unable to get session", http.StatusUnauthorized)
 			return
