@@ -45,6 +45,13 @@ services:
     ports:
       - "${nsm.port}:10004"
     x-enabled: ${nsm.enabled}
+  meshery-cpx:
+    image: layer5/meshery-cpx
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${cpx.port}:10000"
+    x-enabled: ${cpx.enabled}
   watchtower:
     image: v2tec/watchtower
     labels:
