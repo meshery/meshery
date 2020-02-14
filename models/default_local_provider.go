@@ -15,26 +15,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// LocalProvider - represents a local provider
-type LocalProvider struct {
+// DefaultLocalProvider - represents a local provider
+type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	SaaSBaseURL     string
 	ResultPersister *BitCaskResultsPersister
 }
 
+// Name - Returns Provider's friendly name
+func (l *DefaultLocalProvider) Name() string {
+	return "Default Local Provider"
+}
+
 // GetProviderType - Returns ProviderType
-func (l *LocalProvider) GetProviderType() ProviderType {
+func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return LocalProviderType
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *LocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	l.issueSession(w, r, fromMiddleWare)
 	return
 }
 
 // issueSession issues a cookie session after successful login
-func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
 	// session, _ := l.SessionStore.New(req, l.SessionName)
 	// session.Options.Path = "/"
 	// user := l.fetchUserDetails()
@@ -51,7 +56,7 @@ func (l *LocalProvider) issueSession(w http.ResponseWriter, req *http.Request, f
 	}
 }
 
-func (l *LocalProvider) fetchUserDetails() *User {
+func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	return &User{
 		UserID:    "meshery",
 		FirstName: "Meshery",
@@ -61,7 +66,7 @@ func (l *LocalProvider) fetchUserDetails() *User {
 }
 
 // GetUserDetails - returns the user details
-func (l *LocalProvider) GetUserDetails(req *http.Request) (*User, error) {
+func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
 	// ensuring session is intact before running load test
 	// session, err := l.GetSession(req)
 	// if err != nil {
@@ -75,7 +80,7 @@ func (l *LocalProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 // GetSession - returns the session
-func (l *LocalProvider) GetSession(req *http.Request) (*sessions.Session, error) {
+func (l *DefaultLocalProvider) GetSession(req *http.Request) (*sessions.Session, error) {
 	// session, err := l.SessionStore.Get(req, l.SessionName)
 	// if err != nil {
 	// 	err = errors.Wrap(err, "Error: unable to get session")
@@ -87,12 +92,12 @@ func (l *LocalProvider) GetSession(req *http.Request) (*sessions.Session, error)
 }
 
 // GetProviderToken - returns provider token
-func (l *LocalProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, error) {
 	return "", nil
 }
 
 // Logout - logout from provider backend
-func (l *LocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
+func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	// sess, err := l.SessionStore.Get(req, l.SessionName)
 	// if err == nil {
 	// 	sess.Options.MaxAge = -1
@@ -103,7 +108,7 @@ func (l *LocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
 }
 
 // FetchResults - fetches results from provider backend
-func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -120,7 +125,7 @@ func (l *LocalProvider) FetchResults(req *http.Request, page, pageSize, search, 
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *LocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, fmt.Errorf("given resultID is not valid")
@@ -129,7 +134,7 @@ func (l *LocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Meshe
 }
 
 // PublishResults - publishes results to the provider backend syncronously
-func (l *LocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
@@ -162,7 +167,7 @@ func (l *LocalProvider) PublishResults(req *http.Request, result *MesheryResult)
 	return key.String(), nil
 }
 
-func (l *LocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
+func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
@@ -200,7 +205,7 @@ func (l *LocalProvider) shipResults(req *http.Request, data []byte) (string, err
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *LocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -236,6 +241,6 @@ func (l *LocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 }
 
 // RecordPreferences - records the user preference
-func (l *LocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }

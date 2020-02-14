@@ -14,13 +14,19 @@ const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
 
-	// CloudProviderType - represents cloud providers
-	CloudProviderType ProviderType = "cloud"
+	// RemoteProviderType - represents cloud providers
+	RemoteProviderType ProviderType = "remote"
+
+	// ProviderCtxKey is the context key for persisting provider to context
+	ProviderCtxKey = "provider"
 )
 
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+
+	Name() string
+
 	// Returns ProviderType
 	GetProviderType() ProviderType
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue

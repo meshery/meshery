@@ -13,7 +13,7 @@ import (
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, _ *models.Preference, user *models.User) {
+func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, _ *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -27,7 +27,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessi
 }
 
 // AnonymousStatsHandler updates anonymous stats for user
-func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -56,7 +56,7 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 			return
 		}
 		prefObj.AnonymousPerfResults = aPerfStats
-		if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+		if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 			logrus.Errorf("unable to save user preferences: %v", err)
 			http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
 			return

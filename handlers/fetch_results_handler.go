@@ -11,8 +11,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// FetchResultsHandler fetches pages of results from provider and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User) {
+// FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -27,7 +27,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	bdr, err := h.config.Provider.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
@@ -37,7 +37,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GetResultHandler gets an individual result from provider
-func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User) {
+func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -56,7 +56,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, ses
 		return
 	}
 
-	bdr, err := h.config.Provider.GetResult(req, key)
+	bdr, err := p.GetResult(req, key)
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return

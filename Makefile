@@ -48,26 +48,6 @@ run-local-cloud:
 	./meshery; \
 	cd ..
 
-run-local-cloud-noauth:
-	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
-	SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
-	PORT=9081 \
-	DEBUG=true \
-	NO_AUTH=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	./meshery; \
-	cd ..
-
-run-local-noauth:
-	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
-	SAAS_BASE_URL="https://meshery.layer5.io" \
-	PORT=9081 \
-	DEBUG=true \
-	NO_AUTH=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	./meshery; \
-	cd ..
-
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
 run-local:
@@ -90,14 +70,20 @@ proto:
 # Installs dependencies for building the user interface.
 setup-ui-libs:
 	cd ui; npm i; cd ..
+	cd provider-ui; npm i; cd ..
 
-# Runs the UI interface on your local machine.
+# Runs the Meshery UI interface on your local machine.
 run-ui-dev:
 	cd ui; npm run dev; cd ..
 
-# Builds the user interface on your local machine.
+# Runs the Provider UI interface on your local machine.
+run-provider-ui-dev:
+	cd provider-ui; npm run dev; cd ..
+
+# Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
+	cd provider-ui; npm run build && npm run export; cd ..
   
 # setup wrk2 for local dev 
 # NOTE: setup-wrk does not work on Mac Catalina at the moment

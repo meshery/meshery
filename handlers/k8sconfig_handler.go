@@ -19,24 +19,24 @@ import (
 )
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
-func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	if req.Method == http.MethodPost {
-		h.addK8SConfig(user, prefObj, w, req)
+		h.addK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
 	if req.Method == http.MethodDelete {
-		h.deleteK8SConfig(user, prefObj, w, req)
+		h.deleteK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
 
 }
 
-func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	_ = req.ParseMultipartForm(1 << 20)
 
 	inClusterConfig := req.FormValue("inClusterConfig")
@@ -111,7 +111,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		return
 	}
 
-	if err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
+	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
 		return
@@ -126,9 +126,9 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	}
 }
 
-func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request) {
+func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	prefObj.K8SConfig = nil
-	err := h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
+	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 		http.Error(w, "unable to save session", http.StatusInternalServerError)
@@ -236,7 +236,7 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 }
 
 // ATM used only in the SessionSyncHandler
-func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Request, user *models.User, prefObj *models.Preference) error {
+func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Request, user *models.User, prefObj *models.Preference, provider models.Provider) error {
 	if prefObj == nil {
 		prefObj = &models.Preference{
 			AnonymousUsageStats:  true,
@@ -252,7 +252,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			}
 		}
 		prefObj.K8SConfig = kc
-		err = h.config.Provider.RecordPreferences(req, user.UserID, prefObj)
+		err = provider.RecordPreferences(req, user.UserID, prefObj)
 		if err != nil {
 			err = errors.Wrapf(err, "unable to persist k8s config")
 			logrus.Error(err)
@@ -263,7 +263,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 }
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil {
 		_, _ = w.Write([]byte("[]"))
 		return
@@ -287,7 +287,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 }
 
 // InstalledMeshesHandler - scans and tries to find out the installed meshes
-func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User) {
+func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil {
 		_, _ = w.Write([]byte("{}"))
 		return

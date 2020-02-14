@@ -44,7 +44,7 @@ log.txt
 
 dist/
 
-ui/npm-debug.log
+*/npm-debug.log
 
 Gemfile.lock
 

@@ -73,75 +73,67 @@ func main() {
 		Name: "loadTestReporterQueue",
 	})
 
-	var prov models.Provider
+	provs := map[string]models.Provider{}
+
 	var cookieSessionStore *sessions.CookieStore
 
-	if viper.GetBool("NO_AUTH") {
-		preferencePersister, err := models.NewMapPreferencePersister()
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		defer preferencePersister.ClosePersister()
-
-		resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		defer resultPersister.CloseResultPersister()
-
-		// randID, _ := uuid.NewV4()
-		// cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
-		saasBaseURL := viper.GetString("SAAS_BASE_URL")
-		// if saasBaseURL == "" {
-		// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
-		// }
-		prov = &models.LocalProvider{
-			// SessionName: "meshery",
-			SaaSBaseURL: saasBaseURL,
-			// SessionStore: fileSessionStore,
-			// SessionStore:           cookieSessionStore,
-			MapPreferencePersister: preferencePersister,
-			ResultPersister:        resultPersister,
-		}
-	} else {
-		preferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		defer preferencePersister.ClosePersister()
-
-		cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
-		saasBaseURL := viper.GetString("SAAS_BASE_URL")
-		if saasBaseURL == "" {
-			logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
-		}
-		cp := &models.CloudProvider{
-			SaaSBaseURL:   saasBaseURL,
-			RefCookieName: "meshery_ref",
-			SessionName:   "meshery",
-			// SessionStore: fileSessionStore,
-			SessionStore:               cookieSessionStore,
-			SaaSTokenName:              "meshery_saas",
-			LoginCookieDuration:        1 * time.Hour,
-			BitCaskPreferencePersister: preferencePersister,
-		}
-		cp.SyncPreferences()
-		defer cp.StopSyncPreferences()
-		prov = cp
+	preferencePersister, err := models.NewMapPreferencePersister()
+	if err != nil {
+		logrus.Fatal(err)
 	}
+	defer preferencePersister.ClosePersister()
+
+	resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer resultPersister.CloseResultPersister()
+
+	// randID, _ := uuid.NewV4()
+	// cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
+	saasBaseURL := viper.GetString("SAAS_BASE_URL")
+	// if saasBaseURL == "" {
+	// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+	// }
+	lProv := &models.DefaultLocalProvider{
+		// SessionName: "meshery",
+		SaaSBaseURL: saasBaseURL,
+		// SessionStore: fileSessionStore,
+		// SessionStore:           cookieSessionStore,
+		MapPreferencePersister: preferencePersister,
+		ResultPersister:        resultPersister,
+	}
+	provs[lProv.Name()] = lProv
+
+	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer preferencePersister.ClosePersister()
+
+	cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
+	// saasBaseURL := viper.GetString("SAAS_BASE_URL")
+	if saasBaseURL == "" {
+		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+	}
+	cp := &models.MesheryRemoteProvider{
+		SaaSBaseURL:   saasBaseURL,
+		RefCookieName: "meshery_ref",
+		SessionName:   "meshery",
+		// SessionStore: fileSessionStore,
+		SessionStore:               cookieSessionStore,
+		SaaSTokenName:              "meshery_saas",
+		LoginCookieDuration:        1 * time.Hour,
+		BitCaskPreferencePersister: cPreferencePersister,
+	}
+	cp.SyncPreferences()
+	defer cp.StopSyncPreferences()
+	provs[cp.Name()] = cp
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
-		// SaaSBaseURL: saasBaseURL,
-
-		// RefCookieName: "meshery_ref",
-
-		// SessionName: "meshery",
-		// // SessionStore: fileSessionStore,
-		// SessionStore: cookieSessionStore,
-
-		// SaaSTokenName: "meshery_saas",
-
-		Provider: prov,
+		Providers:              provs,
+		ProviderCookieName:     "meshery-provider",
+		ProviderCookieDuration: 1 * time.Hour,
 
 		AdapterTracker: adapterTracker,
 		QueryTracker:   queryTracker,
@@ -159,13 +151,6 @@ func main() {
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)
-
-	// go func() {
-	// 	err := mainQueue.Consumer().Start()
-	// 	if err != nil {
-	// 		logrus.Fatal(err)
-	// 	}
-	// }()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
