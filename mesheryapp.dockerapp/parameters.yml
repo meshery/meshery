@@ -21,5 +21,9 @@ nsm:
   port: 10004
   enabled: false
 
+cpx:
+  port: 10008
+  enabled: false
+
 labels:
   watchtower: "com.centurylinklabs.watchtower.enable=true"
