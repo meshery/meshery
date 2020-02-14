@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
+import { withRouter } from 'next/router';
 
 
 const styles = theme => ({
@@ -40,6 +41,10 @@ class User extends React.Component {
 
   handleLogout = () => {
     window.location = "/logout";
+  };
+
+  handlePreference = () => {
+    this.props.router.push('/userpreference');
   };
 
   componentDidMount() {
@@ -87,6 +92,7 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
+                      <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
@@ -109,4 +115,4 @@ const mapDispatchToProps = dispatch => {
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(User));
+)(withRouter(User)));

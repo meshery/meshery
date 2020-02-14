@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
 // import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 
 let uuid;
@@ -553,7 +554,16 @@ class MesheryPerformanceComponent extends React.Component {
       {result && result.runner_results && 
         (<div>
           <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
-            Test Results
+            Test Results 
+            <IconButton
+                  key="download"
+                  aria-label="download"
+                  color="inherit"
+                  // onClick={() => self.props.closeSnackbar(key) }
+                  href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
+                >
+                  <GetAppIcon />
+            </IconButton>
           </Typography>
           <div className={classes.chartContent} style={chartStyle}>
             <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    

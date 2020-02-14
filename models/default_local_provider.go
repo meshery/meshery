@@ -3,11 +3,13 @@ package models
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -122,9 +124,20 @@ func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, s
 	return l.ResultPersister.GetResults(pg, pgs)
 }
 
+// GetResult - fetches result from provider backend for the given result id
+func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+	// key := uuid.FromStringOrNil(resultID)
+	if resultID == uuid.Nil {
+		return nil, fmt.Errorf("given resultID is not valid")
+	}
+	return l.ResultPersister.GetResult(resultID)
+}
+
 // PublishResults - publishes results to the provider backend syncronously
-func (l *DefaultLocalProvider) PublishResults(req *http.Request, data []byte) (string, error) {
-	if err := l.ResultPersister.WriteResult(data); err != nil {
+func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
 		return "", err
 	}
 	user, _ := l.GetUserDetails(req)
@@ -133,6 +146,28 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, data []byte) (s
 		return "", nil
 	}
 
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	resultID, _ := l.shipResults(req, data)
+
+	key := uuid.FromStringOrNil(resultID)
+	logrus.Debugf("key: %s, is nil: %t", key.String(), (key == uuid.Nil))
+	if key == uuid.Nil {
+		key, _ = uuid.NewV4()
+		result.ID = key
+		data, err = json.Marshal(result)
+		if err != nil {
+			logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
+			return "", err
+		}
+	}
+	if err := l.ResultPersister.WriteResult(key, data); err != nil {
+		return "", err
+	}
+
+	return key.String(), nil
+}
+
+func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
@@ -170,7 +205,14 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, data []byte) (s
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *DefaultLocalProvider) PublishMetrics(_ string, data []byte) error {
+func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	bf := bytes.NewBuffer(data)
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")

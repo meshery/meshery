@@ -70,7 +70,7 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 		// logrus.Debugf("session: %v", sess)
 		return !sess.IsNew
 	}
-	logrus.Errorf("session invalid, error: %v", err)
+	// logrus.Errorf("session invalid, error: %v", err)
 	return false
 }
 

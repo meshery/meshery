@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,7 +18,90 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
+
+// LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
+func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method != http.MethodPost && req.Method != http.MethodGet {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	defer func() {
+		_ = req.Body.Close()
+	}()
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	benchMark := &models.BenchmarkSpec{}
+	if err := yaml.Unmarshal(body, benchMark); err != nil {
+		msg := "unable to parse the provided input"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	q := req.URL.Query()
+
+	// testName - should be loaded from the file and updated with a random string appended to the end of the name
+	testName := q.Get("name")
+	if testName == "" {
+		logrus.Errorf("Error: name field is blank")
+		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
+		return
+	}
+	meshName := q.Get("mesh")
+	testUUID := uuid.Must(uuid.NewV4()).String()
+
+	loadTestOptions := &models.LoadTestOptions{}
+
+	loadTestOptions.Duration = benchMark.EndTime.Sub(benchMark.StartTime)
+
+	if loadTestOptions.Duration.Seconds() <= 0 {
+		loadTestOptions.Duration = time.Second
+	}
+
+	loadTestOptions.IsGRPC = false
+
+	loadTestOptions.URL = benchMark.EndpointURL
+	if benchMark.Client != nil {
+		loadTestOptions.HTTPNumThreads = benchMark.Client.Connections
+		loadTestOptions.HTTPQPS = benchMark.Client.Rps
+
+	}
+
+	if loadTestOptions.HTTPNumThreads < 1 {
+		loadTestOptions.HTTPNumThreads = 1
+	}
+
+	ltURL, err := url.Parse(loadTestOptions.URL)
+	if err != nil || !ltURL.IsAbs() {
+		logrus.Errorf("unable to parse the provided load test url: %v", err)
+		http.Error(w, "invalid load test URL", http.StatusBadRequest)
+		return
+	}
+	loadTestOptions.Name = testName
+
+	if loadTestOptions.HTTPQPS < 0 {
+		loadTestOptions.HTTPQPS = 0
+	}
+
+	// loadGenerator := q.Get("loadGenerator")
+
+	// switch loadGenerator {
+	// case "wrk2":
+	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
+	// default:
+	loadTestOptions.LoadGenerator = models.FortioLG
+	// }
+
+	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+}
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -111,7 +195,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	// fortioURL.RawQuery = q.Encode()
 	// logrus.Infof("load test constructed url: %s", fortioURL.String())
 	// fortioResp, err := client.Get(fortioURL.String())
+	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+}
 
+func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, testName, meshName, testUUID string,
+	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, provider models.Provider) {
 	log := logrus.WithField("file", "load_test_handler")
 
 	flusher, ok := w.(http.Flusher)
@@ -273,21 +361,8 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		Mesh:   meshName,
 		Result: resultsMap,
 	}
-	// TODO: can we do something to prevent marshalling twice??
-	bd, err := json.Marshal(result)
-	if err != nil {
-		msg := "error: unable to marshal meshery result for shipping"
-		err = errors.Wrap(err, msg)
-		logrus.Error(err)
-		// http.Error(w, "error while running load test", http.StatusInternalServerError)
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: msg,
-		}
-		return
-	}
 
-	resultID, err := provider.PublishResults(req, bd)
+	resultID, err := provider.PublishResults(req, result)
 	if err != nil {
 		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		// return
@@ -328,6 +403,11 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		})
 	}
 
+	key := uuid.FromStringOrNil(resultID)
+	if key == uuid.Nil {
+		key, _ = uuid.NewV4()
+	}
+	result.ID = key
 	// w.Write(bd)
 	respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
@@ -378,15 +458,8 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 		ServerMetrics:     queryResults,
 		ServerBoardConfig: board,
 	}
-	sd, err := json.Marshal(result)
-	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
-		return err
-	}
 
-	logrus.Debugf("Result: %s, size: %d", sd, len(sd))
-
-	if err = config.Provider.PublishMetrics(config.TokenVal, sd); err != nil {
+	if err = config.Provider.PublishMetrics(config.TokenVal, result); err != nil {
 		return err
 	}
 	// now to remove all the queries for the uuid

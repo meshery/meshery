@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-
-	"github.com/sirupsen/logrus"
 )
 
 // ServeUI - helps serve static files for both meshery ui and provider ui
@@ -16,7 +14,6 @@ func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath
 	}
 	reqURL := r.URL.RequestURI()
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
-	logrus.Debugf("reqURL: %s", reqURL)
 	var filePath strings.Builder
 	filePath.WriteString(reqURL)
 	if reqURL == "/" || reqURL == "" {
@@ -25,6 +22,5 @@ func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath
 		filePath.WriteString(".html")
 	}
 	finalPath := filepath.Join(baseFolderPath, filePath.String())
-	logrus.Debugf("file path derived: %s", finalPath)
 	http.ServeFile(w, r, finalPath)
 }

@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Citrix CPX Adapter
-name: CPX
+title: Citrix Service Mesh (CPX) Adapter
+name: Citrix Service Mesh
 version: "-"
 port: 10008/tcp
 project_status: beta
