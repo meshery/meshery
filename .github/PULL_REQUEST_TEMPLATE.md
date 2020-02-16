@@ -30,13 +30,13 @@ be accelerated and your PR merged more quickly.
 Thanks for contributing!
 -->
 #### Description
-(description of the change included in this PR; why this change should be incorporated into the project).
+<!-- (description of the change included in this PR; why this change should be incorporated into the project). -->
 
-This PR fixes #    <-- (put issue # here to ensure it is automatically closed upon merge of this PR)
+This PR fixes #    <!-- (put issue # here to ensure it is automatically closed upon merge of this PR) -->
 
 #### Notes to reviewers:
 
 #### Checklist
-Place an '[x]' (no spaces) in all applicable fields.
+<!-- Place an '[x]' (no spaces) in all applicable fields. -->
 - [] [DCO](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin) signed.
 - [] Title of the PR starts with area name, e.g. `meshery:`, `mesheryctl:`, `ui:`.
