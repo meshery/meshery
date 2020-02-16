@@ -18,17 +18,17 @@ spec:
         io.kompose.service: meshery
     spec:
       containers:
-      - env:
-        - name: EVENT
-          value: mesheryLocal
-        - name: SAAS_BASE_URL
-          value: https://meshery.layer5.io
-        - name: ADAPTER_URLS
-          value: meshery-istio:10000 meshery-linkerd:10001
-        image: layer5/meshery
-        name: meshery
-        ports:
-        - containerPort: 8080
-        resources: {}
+        - env:
+            - name: EVENT
+              value: mesheryLocal
+            - name: SAAS_BASE_URL
+              value: https://meshery.layer5.io
+            - name: ADAPTER_URLS
+              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004
+          image: layer5/meshery
+          name: meshery
+          ports:
+            - containerPort: 8080
+          resources: {}
       restartPolicy: Always
 status: {}
