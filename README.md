@@ -35,7 +35,7 @@ A service mesh playground to faciliate learning about functionality of different
 #### Using Bash
 
 ```shell
-curl -L https://git.io/meshery | sudo bash -    
+curl -L https://git.io/meshery | bash -    
 ```
 
 #### Using Brew

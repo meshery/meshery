@@ -50,7 +50,7 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 * Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ```
-curl -L https://git.io/meshery | sudo bash -
+curl -L https://git.io/meshery | bash -
 ```
 
 ### Windows
