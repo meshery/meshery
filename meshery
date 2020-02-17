@@ -64,14 +64,14 @@ printf "\nInstalling mesheryctl in /usr/local/bin.\n"
 WHOAMI=$(whoami)
 if [ $OSEXT = "Linux" ] ; then
   MV_CMD=$(sudo mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl)
+  echo "mesheryctl installed."
 else
-  MV_CMD=$(mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl)
-fi
-if $MV_CMD ; then
-  echo "mesheryctl installed"
-else
-	echo "Cannot install mesheryctl. Check permissions of $WHOAMI for /usr/local/bin."
-  exit 1
+  if sudo mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
+    echo "Permission Resolved: mesheryctl installed using sudo permissions."
+  else
+    echo "Cannot install mesheryctl. Check permissions of $WHOAMI for /usr/local/bin."
+    exit 1
+  fi
 fi
 
 #Transfering permissions and ownership to client USER
