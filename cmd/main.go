@@ -133,7 +133,7 @@ func main() {
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
-		ProviderCookieDuration: 1 * time.Hour,
+		ProviderCookieDuration: 30 * 24 * time.Hour,
 
 		AdapterTracker: adapterTracker,
 		QueryTracker:   queryTracker,
