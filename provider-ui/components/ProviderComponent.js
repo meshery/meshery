@@ -16,7 +16,7 @@ import MenuList from '@material-ui/core/MenuList';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing(10),
+    padding:'80px 0px',
     textAlign: 'center',
   },
   container: {
@@ -38,6 +38,7 @@ class ProviderComponent extends React.Component {
             availableProviders: {},
             selectedRemote: '',
             selectedLocal: '',
+            selectedProvider: '',
             open: false,
           };
         this.anchorRef = null;
@@ -76,7 +77,7 @@ class ProviderComponent extends React.Component {
   }
 
   handleMenuItemClick = (index) => {
-    this.setState({selectedRemote: index});
+    this.setState({selectedProvider: index});
   };
 
   handleToggle(){
@@ -98,7 +99,7 @@ class ProviderComponent extends React.Component {
   
   render(){
     const { classes } = this.props;
-    const { availableProviders, selectedRemote, selectedLocal, open } = this.state;
+    const { availableProviders, selectedRemote, selectedLocal, selectedProvider, open } = this.state;
     const self = this;
       return (
     <NoSsr>
@@ -109,7 +110,7 @@ class ProviderComponent extends React.Component {
         </Typography>  
         <div className={classes.container}>
         <Grid container spacing={10} >
-        <Grid item xs={12} sm={6} justify="flex-end" alignItems="center">
+        {/*<Grid item xs={12} sm={6} justify="flex-end" alignItems="center">
           {selectedLocal !== '' &&
         <Button
             type="submit"
@@ -122,21 +123,22 @@ class ProviderComponent extends React.Component {
           >
            {selectedLocal}
           </Button>}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-        {selectedRemote !== '' && 
+         </Grid>*/}
+        <Grid item xs={12} justify="center">
+        {availableProviders !== '' && 
         <React.Fragment>
         <ButtonGroup variant="contained" color="primary" ref={ref => self.anchorRef = ref} aria-label="split button">
           <Button size="large" 
-            // onClick={self.handleRemoteSubmit(selectedRemote)}
-            href={`/api/provider?provider=${encodeURIComponent(selectedRemote)}`}
-            >{selectedRemote}</Button>
+            // onClick={self.handleRemoteSubmit(selectedRemote)}\
+            //value={selectedRemote !==''?selectedRemote:"Select your provider"}
+            href={selectedProvider==''?'':`/api/provider?provider=${encodeURIComponent(selectedProvider)}`}
+            >{selectedProvider !==''?selectedProvider:"Select Your Provider"}</Button>
           <Button
             color="primary"
             size="small"
             aria-controls={open ? 'split-button-menu' : undefined}
             aria-expanded={open ? 'true' : undefined}
-            aria-label="select remote provider"
+            aria-label="Select Provider"
             aria-haspopup="menu"
             onClick={self.handleToggle()}
           >
@@ -154,11 +156,12 @@ class ProviderComponent extends React.Component {
               <Paper>
                 <ClickAwayListener onClickAway={self.handleClose()}>
                   <MenuList id="split-button-menu">
-                    {Object.keys(availableProviders).filter(key => availableProviders[key] === 'remote').map(key => (
+                    {Object.keys(availableProviders).map(key => (
                       <MenuItem
                         key={key}
                         // disabled={index === 2}
-                        selected={key === selectedRemote}
+                        //selected={key === selectedRemote}
+                        //href={`/api/provider?provider=${encodeURIComponent(key)}`}
                         onClick={ev => self.handleMenuItemClick(key)}
                       >
                         {key}
