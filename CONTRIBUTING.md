@@ -15,30 +15,8 @@ Not sure where to start? First, see the [newcomers welcome guide](https://docs.g
   - <a href="#contributing-ui">Meshery UI</a>
 Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 # <a name="contributing">General Contribution Flow</a>
-<!--
-Whether contributing to Meshery's backend, frontend or documentation, the process of contributing follows this flow:
-1. Get a local copy of the documentation.
-`git clone https://github.com/layer5io/meshery`
-1. Create and checkout a new branch to make changes within.
-`git checkout -b <my-changes>`
-1. Make, save, build, and test changes.
-1. Commit and push changes to your remote branch. Be sure to sign your commits ([see DCO requirement](#dco)).
-`git push origin <my-changes>`
-1. Open a pull request (in your web browser) against the master branch on https://github.com/layer5io/meshery.
--->
 
 In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./git-workflow.md).
-
-<!--
-## <a name="sync-to-master">Keep local branch up to HEAD on master</a>
-Contributors who checkout a feature branch to from master regularly fall prey to errant code changes showing up in their subsequent pull requests based on other contributors' PRs being merged with new changes. The following commands will pull new changes from the master branch into your local branch, effectiving syncing your local branch with the latest changes in master:
-```
-git checkout master  // switch to master branch; checkout master locally.
-git pull // fetch latest changes remote master branch.
-git checkout <YOUR LOCAL BRANCH>` // switch to your local dev branch.
-git merge master // integrate changes from master into your local dev branch.
-```
--->
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -79,7 +57,6 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
 1. Create a fork, if you have not already, by following the steps described [here](./git-workflow.md)
-<!--`git clone https://github.com/layer5io/meshery`-->
 1. In the local copy of your fork, navigate to the docs folder.
 `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -109,16 +86,17 @@ __Please note__: All `make` commands should be run in a terminal from within the
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
-```
+```sh
 make run-local
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
+After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
 #### Building Docker image
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
-```
+```sh
 make docker
 ```
 
