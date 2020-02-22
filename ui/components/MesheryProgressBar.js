@@ -7,35 +7,35 @@ class MesheryProgressBar extends Component {
     key = '';
     
     shouldComponentUpdate(nextProps) {
-        const { showProgress } = this.props;
-        // if ((this.key !== '' && !showProgress) || (this.key === '' && showProgress)){
-        //     return true; 
-        // }
-        return !(showProgress === nextProps.showProgress);
-        // return false;
+      const { showProgress } = this.props;
+      // if ((this.key !== '' && !showProgress) || (this.key === '' && showProgress)){
+      //     return true; 
+      // }
+      return !(showProgress === nextProps.showProgress);
+      // return false;
     }
 
     componentDidUpdate() {
-        const { showProgress } = this.props;
-        if(showProgress){
-            this.key = this.props.enqueueSnackbar(<div style={{width: 250}}><LinearProgress /></div>,{
-                variant: 'default',
-                persist: true,
-            });
-        } else {
-            this.props.closeSnackbar(this.key);
-        }
+      const { showProgress } = this.props;
+      if(showProgress){
+        this.key = this.props.enqueueSnackbar(<div style={{width: 250}}><LinearProgress /></div>,{
+          variant: 'default',
+          persist: true,
+        });
+      } else {
+        this.props.closeSnackbar(this.key);
+      }
     }
 
     render() {
-        return null;
+      return null;
     }
-};
+}
 
 const mapStateToProps = state => {
-    return { showProgress: state.get('showProgress') };
-  }
+  return { showProgress: state.get('showProgress') };
+}
   
 export default connect(
-    mapStateToProps
+  mapStateToProps
 )(withSnackbar(MesheryProgressBar));

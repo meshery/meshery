@@ -74,21 +74,21 @@ class User extends React.Component {
       <div>
         <NoSsr>
           <IconButton color={color} className={iconButtonClassName} 
-          buttonRef={node => {
-            this.anchorEl = node;
-          }}
-          aria-owns={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={this.handleToggle}>
+            buttonRef={node => {
+              this.anchorEl = node;
+            }}
+            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            onClick={this.handleToggle}>
             <Avatar className={avatarClassName}  src={avatar_url} />
           </IconButton>
-              <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
-                {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  id="menu-list-grow"
-                  style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
-                >
+          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                id="menu-list-grow"
+                style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
+              >
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
@@ -100,8 +100,8 @@ class User extends React.Component {
               </Grow>
             )}
           </Popper>
-          </NoSsr>
-    </div>
+        </NoSsr>
+      </div>
     )
   }
 }

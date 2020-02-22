@@ -49,22 +49,22 @@ function getRequiredSteps(){
 
 function getStepContent(step) {
   switch (step) {
-    case 0:
-      return (
-        <MeshConfigComponent />
-      );
-    case 1:
-      return (
-        <MeshAdapterConfigComponent />
-      );
-    case 2:
-      return (
-        <GrafanaComponent />
-      );
-    case 3:
-      return (
-        <PrometheusComponent />
-      );
+  case 0:
+    return (
+      <MeshConfigComponent />
+    );
+  case 1:
+    return (
+      <MeshAdapterConfigComponent />
+    );
+  case 2:
+    return (
+      <GrafanaComponent />
+    );
+  case 3:
+    return (
+      <PrometheusComponent />
+    );
   }
 }
 
@@ -122,14 +122,14 @@ class MesheryConfigSteps extends React.Component {
       activeStep = steps.findIndex((step, i) => !(i in this.state.completed));
     } else {
       switch(this.state.activeStep){
-        case 0:
-        case 1:
-        case 2:
-          activeStep = this.state.activeStep + 1;
-          break;
-        case 3:
-          activeStep = 0;
-          break;
+      case 0:
+      case 1:
+      case 2:
+        activeStep = this.state.activeStep + 1;
+        break;
+      case 3:
+        activeStep = 0;
+        break;
       }
     }
     this.setState({
@@ -140,14 +140,14 @@ class MesheryConfigSteps extends React.Component {
   handleBack = () => {
     let activeStep;
     switch(this.state.activeStep){
-      case 0:
+    case 0:
       activeStep = 3;
-        break;
-      case 1:
-      case 2:
-      case 3:
-        activeStep = this.state.activeStep - 1;
-        break;
+      break;
+    case 1:
+    case 2:
+    case 3:
+      activeStep = this.state.activeStep - 1;
+      break;
     }
     this.setState({activeStep});
   };
@@ -199,7 +199,7 @@ class MesheryConfigSteps extends React.Component {
               <StepButton onClick={this.handleStep(index)} completed={this.state.completed[index]}>
                 <StepLabel className={activeStep == index?classes.titleDecorate:''}
                   // icon={<Icon>k</Icon>}
-                  >
+                >
                   <Typography variant="h6">
                     {label}{getRequiredSteps()[index] && (<Typography variant="h5" style={{
                       display: 'inline',
@@ -212,35 +212,35 @@ class MesheryConfigSteps extends React.Component {
         </Stepper>
         <div>
           
-            <div>
-              <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-              <Divider light variant="fullWidth" />
-              <div className={classes.stepperButtons}>
+          <div>
+            <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+            <Divider light variant="fullWidth" />
+            <div className={classes.stepperButtons}>
               {activeStep !== steps.length &&
                   (this.state.completed[this.state.activeStep] ? (
                     <Typography variant="caption" className={classes.completed}>
                       Step {activeStep + 1} is complete
                     </Typography>
                   ) : '')}
-                <Button
-                  size='large'
-                  // disabled={activeStep === 0}
-                  onClick={this.handleBack}
-                  className={classes.button}
-                >
+              <Button
+                size='large'
+                // disabled={activeStep === 0}
+                onClick={this.handleBack}
+                className={classes.button}
+              >
                   Back
-                </Button>
-                <Button
-                  size='large'
-                  variant="outlined"
-                  color="primary"
-                  onClick={this.handleNext}
-                  className={classes.button}
-                >
+              </Button>
+              <Button
+                size='large'
+                variant="outlined"
+                color="primary"
+                onClick={this.handleNext}
+                className={classes.button}
+              >
                   Next
-                </Button>
-              </div>
+              </Button>
             </div>
+          </div>
         </div>
       </div>
     );

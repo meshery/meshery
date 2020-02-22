@@ -167,18 +167,18 @@ class MesheryAdapterPlayComponent extends React.Component {
       
       if (name === 'selectedOp' && event.target.value !== '') {
         if (event.target.value === 'custom'){ 
-            if (isDelete){
-              if(self.state.cmEditorValDel !== '' && self.cmEditorDel.state.lint.marked.length === 0) {
-                self.setState({ selectionError: false, cmEditorValDelError: false });  
-              }
-            } else {
-              if(self.state.cmEditorValAdd !== '' && self.cmEditorAdd.state.lint.marked.length === 0) {
-                self.setState({ selectionError: false, cmEditorValAddError: false });  
-              }
+          if (isDelete){
+            if(self.state.cmEditorValDel !== '' && self.cmEditorDel.state.lint.marked.length === 0) {
+              self.setState({ selectionError: false, cmEditorValDelError: false });  
             }
           } else {
-            self.setState({ selectionError: false });  
+            if(self.state.cmEditorValAdd !== '' && self.cmEditorAdd.state.lint.marked.length === 0) {
+              self.setState({ selectionError: false, cmEditorValAddError: false });  
+            }
           }
+        } else {
+          self.setState({ selectionError: false });  
+        }
       } 
 
       self.setState({ [name]: event.target.value });
@@ -212,8 +212,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       const {adapter} = self.props;
       const filteredOp = adapter.ops.filter(({key}) => key === selectedOp);
       if (selectedOp === '' || typeof filteredOp === 'undefined' || filteredOp.length === 0) {
-          self.setState({selectionError: true});
-          return;
+        self.setState({selectionError: true});
+        return;
       }
       if(deleteOp){
         if (selectedOp === 'custom' && (cmEditorValDel === '' || self.cmEditorDel.state.lint.marked.length > 0)) {
@@ -272,12 +272,12 @@ class MesheryAdapterPlayComponent extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -298,12 +298,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         variant: 'error',
         action: (key) => (
           <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
-              >
-                <CloseIcon />
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key) }
+          >
+            <CloseIcon />
           </IconButton>
         ),
         autoHideDuration: 8000,
@@ -359,30 +359,31 @@ class MesheryAdapterPlayComponent extends React.Component {
         </DialogTitle>
         <Divider variant="fullWidth" light />
         <DialogContent>
-        <Grid container spacing={5}>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="namespace"
-            name="namespace"
-            label="Namespace"
-            fullWidth
-            value={namespace}
-            error={namespaceError}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('namespace')}
-          />
-        </Grid>
-        <Grid item xs={12}>
-            <CodeMirror
-              editorDidMount={editor => { 
-                if(isDelete){
-                  self.cmEditorDel = editor;
-                } else {
-                  self.cmEditorAdd = editor;
-                }}}
-              value={isDelete?cmEditorValDel:cmEditorValAdd}
+          <Grid container spacing={5}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="namespace"
+                name="namespace"
+                label="Namespace"
+                fullWidth
+                value={namespace}
+                error={namespaceError}
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('namespace')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CodeMirror
+                editorDidMount={editor => { 
+                  if(isDelete){
+                    self.cmEditorDel = editor;
+                  } else {
+                    self.cmEditorAdd = editor;
+                  } 
+}}
+                value={isDelete?cmEditorValDel:cmEditorValAdd}
                 options={{
                   theme: 'material',
                   lineNumbers: true,
@@ -399,19 +400,19 @@ class MesheryAdapterPlayComponent extends React.Component {
                   }
                   if(isDelete){
                     if(value !== '' && self.cmEditorDel.state.lint.marked.length === 0) {
-                        self.setState({ selectionError: false, cmEditorValDelError: false });  
-                      } 
+                      self.setState({ selectionError: false, cmEditorValDelError: false });  
+                    } 
                   } else {
                     if(value !== '' && self.cmEditorAdd.state.lint.marked.length === 0) {
-                        self.setState({ selectionError: false, cmEditorValAddError: false });  
-                      }
+                      self.setState({ selectionError: false, cmEditorValAddError: false });  
                     }
                   }
+                }
                 }
                 onChange={(editor, data, value) => {
                 }}
               />
-          </Grid>
+            </Grid>
           </Grid>
         </DialogContent>
         <Divider variant="fullWidth" light />
@@ -457,30 +458,30 @@ class MesheryAdapterPlayComponent extends React.Component {
     const selectedAdapterOps = adapter && adapter.ops? adapter.ops.filter(({category}) => typeof category === 'undefined' && cat === 0 || category === cat):[];
     let content, description;
     switch(cat){
-      case 0:
-        content = 'Manage Service Mesh Lifecycle';
-        description = 'Deploy a service mesh or SMI adapter on your cluster.';
-        break;
+    case 0:
+      content = 'Manage Service Mesh Lifecycle';
+      description = 'Deploy a service mesh or SMI adapter on your cluster.';
+      break;
 
-      case 1:
-        content = 'Manage Sample Application Lifecyle';
-        description = 'Deploy sample applications on/off the service mesh.';
-        break;
+    case 1:
+      content = 'Manage Sample Application Lifecyle';
+      description = 'Deploy sample applications on/off the service mesh.';
+      break;
 
-      case 2:
-        content = 'Apply Service Mesh Configuration';
-        description = 'Configure your service mesh using some pre-defined options.';
-        break;
+    case 2:
+      content = 'Apply Service Mesh Configuration';
+      description = 'Configure your service mesh using some pre-defined options.';
+      break;
 
-      case 3:
-        content = 'Validate Service Mesh Configuration';
-        description = 'Validate your service mesh configuration against best practices.';
-        break;
+    case 3:
+      content = 'Validate Service Mesh Configuration';
+      description = 'Validate your service mesh configuration against best practices.';
+      break;
 
-      case 4:
-        content = 'Apply Custom Configuration';
-        description = 'Customize the configuration of your service mesh.';
-        break;
+    case 4:
+      content = 'Apply Custom Configuration';
+      description = 'Customize the configuration of your service mesh.';
+      break;
     }
     return (
       <Card className={classes.card}>
@@ -518,13 +519,13 @@ class MesheryAdapterPlayComponent extends React.Component {
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
           {cat !== 3 && <div className={classes.fileLabel}>
-          <IconButton aria-label="delete" ref={ch => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
-          {/*<IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>*/}
-            {/* <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth /> */}
-            <DeleteIcon />
-          </IconButton>
-          {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
-          {cat === 4 && this.generateYAMLEditor(cat, true)}
+            <IconButton aria-label="delete" ref={ch => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
+              {/*<IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}>*/}
+              {/* <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth /> */}
+              <DeleteIcon />
+            </IconButton>
+            {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
+            {cat === 4 && this.generateYAMLEditor(cat, true)}
           </div>}
           {/* <IconButton
             // className={clsx(classes.expand, {
@@ -553,7 +554,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       namespaceError,
       cmEditorValAddError,
       cmEditorValDelError,
-     } = this.state;
+    } = this.state;
 
     const filteredOps = [];
     if (adapter && adapter.ops && adapter.ops.length > 0){
@@ -698,50 +699,50 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     if(this.props.adapCount > 1){
       return (
-          <NoSsr>
+        <NoSsr>
           <React.Fragment>
             <div className={classes.root}>
-            <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                disabled
-                id="ap"
-                name="ap"
-                label="Adapter URL"
-                fullWidth
-                value={adapter.adapter_location}
-                margin="normal"
-                variant="outlined"
-                // onChange={this.handleChange('namespace')}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {adapter_icon}
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="namespace"
-                name="namespace"
-                label="Namespace"
-                fullWidth
-                value={namespace}
-                error={namespaceError}
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('namespace')}
-              />
-            </Grid>
-            {filteredOps.map(val => (
-              <Grid item xs={12} sm={4}>
-                {this.generateCardForCategory(val)}
-              </Grid>
-            ))}
-            {/* <Grid item xs={12} sm={3}>
+              <Grid container spacing={5}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    disabled
+                    id="ap"
+                    name="ap"
+                    label="Adapter URL"
+                    fullWidth
+                    value={adapter.adapter_location}
+                    margin="normal"
+                    variant="outlined"
+                    // onChange={this.handleChange('namespace')}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          {adapter_icon}
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    id="namespace"
+                    name="namespace"
+                    label="Namespace"
+                    fullWidth
+                    value={namespace}
+                    error={namespaceError}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('namespace')}
+                  />
+                </Grid>
+                {filteredOps.map(val => (
+                  <Grid item xs={12} sm={4}>
+                    {this.generateCardForCategory(val)}
+                  </Grid>
+                ))}
+                {/* <Grid item xs={12} sm={3}>
               {this.generateCardForCategory(1)}
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -750,43 +751,44 @@ class MesheryAdapterPlayComponent extends React.Component {
             <Grid item xs={12} sm={3}>
             {this.generateCardForCategory(3)}
             </Grid> */}
-            </Grid>
+              </Grid>
             </div>
           </React.Fragment>
         </NoSsr>
-      )}
+      ) 
+}
   
-      return (
-        <NoSsr>
+    return (
+      <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
-          <Grid container spacing={5}>
-          <Grid item xs={12}>
-            <TextField
-              required
-              id="namespace"
-              name="namespace"
-              label="Namespace"
-              fullWidth
-              value={namespace}
-              error={namespaceError}
-              margin="normal"
-              variant="outlined"
-              onChange={this.handleChange('namespace')}
-            />
-          </Grid>
-          {filteredOps.map(val => (
-            <Grid item xs={12} sm={4}>
-              {this.generateCardForCategory(val)}
+            <Grid container spacing={5}>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  id="namespace"
+                  name="namespace"
+                  label="Namespace"
+                  fullWidth
+                  value={namespace}
+                  error={namespaceError}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('namespace')}
+                />
+              </Grid>
+              {filteredOps.map(val => (
+                <Grid item xs={12} sm={4}>
+                  {this.generateCardForCategory(val)}
+                </Grid>
+              ))}
             </Grid>
-          ))}
-          </Grid>
           </div>
-          </React.Fragment>
-        </NoSsr>
-      )
+        </React.Fragment>
+      </NoSsr>
+    )
   
-    }
+  }
 }
 
 MesheryAdapterPlayComponent.propTypes = {
@@ -798,7 +800,7 @@ MesheryAdapterPlayComponent.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-      updateProgress: bindActionCreators(updateProgress, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 

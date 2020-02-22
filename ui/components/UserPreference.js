@@ -12,9 +12,9 @@ import NoSsr from '@material-ui/core/NoSsr';
 
 
 const styles = theme => ({
-    formContainer: {
-        margin:50,
-    },
+  formContainer: {
+    margin:50,
+  },
 });
 
 class UserPreference extends React.Component {
@@ -32,8 +32,7 @@ class UserPreference extends React.Component {
     if(name == "anonymousUsageStats"){
       //val=anonymousStats;
       self.setState(state => ({ anonymousStats : !state.anonymousStats }));
-    }
-    else{
+    } else{
       //val=perfResultStats;
       self.setState(state => ({ perfResultStats : !state.perfResultStats }));
     }
@@ -48,26 +47,25 @@ class UserPreference extends React.Component {
       variant: 'error',
       action: (key) => (
         <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => self.props.closeSnackbar(key) }
+        >
+          <CloseIcon />
         </IconButton>
       ),
       autoHideDuration: 8000,
     });
   }
 
-  handleChange = (name) =>{
+  handleChange = (name) => {
     const self = this;
     const { anonymousStats , perfResultStats } = this.state;
     var val;
     if(name == "anonymousUsageStats"){
       val=anonymousStats;
-    }
-    else{
+    } else{
       val=perfResultStats;
     }
     const params = encodeURIComponent(name) + '=' + encodeURIComponent(val);
@@ -90,12 +88,12 @@ class UserPreference extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -108,36 +106,36 @@ class UserPreference extends React.Component {
     const { classes } = this.props;
     
     return (
-        <NoSsr>
+      <NoSsr>
         <div className={classes.formContainer}>
-            <FormControlLabel
-                key="UsageStatsPreference"
-                control={
-                <Switch
-                        checked={anonymousStats}
-                        onChange={this.handleToggle('anonymousUsageStats')}
-                        color="default"
-                    />
-                    }
-                labelPlacement="end"
-                label="Send Anonymous Usage Statistics"
-            />
+          <FormControlLabel
+            key="UsageStatsPreference"
+            control={
+              <Switch
+                checked={anonymousStats}
+                onChange={this.handleToggle('anonymousUsageStats')}
+                color="default"
+              />
+            }
+            labelPlacement="end"
+            label="Send Anonymous Usage Statistics"
+          />
         </div>
         <div className={classes.formContainer}>
-            <FormControlLabel
-                key="PerfResultPreference"
-                control={
-                <Switch
-                        checked={perfResultStats}
-                        onChange={this.handleToggle('anonymousPerfResults')}
-                        color="default"
-                    />
-                    }
-                labelPlacement="end"
-                label="Send Anonymous Performance Results"
-            />
+          <FormControlLabel
+            key="PerfResultPreference"
+            control={
+              <Switch
+                checked={perfResultStats}
+                onChange={this.handleToggle('anonymousPerfResults')}
+                color="default"
+              />
+            }
+            labelPlacement="end"
+            label="Send Anonymous Performance Results"
+          />
         </div>
-        </NoSsr>
+      </NoSsr>
     )
   }
 }

@@ -8,11 +8,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
 import MesheryNotification from './MesheryNotification';
-import Link from "next/link";
+import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,35 +22,35 @@ const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = theme => ({
   secondaryBar: {
-    zIndex: 0,
+    zIndex: 0
   },
   menuButton: {
-    marginLeft: -theme.spacing(1),
+    marginLeft: -theme.spacing(1)
   },
   iconButtonAvatar: {
-    padding: 4,
+    padding: 4
   },
   link: {
-    textDecoration: 'none',
-    color: lightColor,
+    'textDecoration': 'none',
+    'color': lightColor,
     '&:hover': {
-      color: theme.palette.common.white,
-    },
+      color: theme.palette.common.white
+    }
   },
   button: {
-    borderColor: lightColor,
+    borderColor: lightColor
   },
   notifications: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(0),
-    marginLeft: theme.spacing(4),
+    marginLeft: theme.spacing(4)
   },
   userContainer: {
     paddingLeft: 1,
-    display: 'flex',
+    display: 'flex'
   },
   userSpan: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(1)
   },
   pageTitleWrapper: {
     flexGrow: 1,
@@ -64,72 +64,71 @@ const styles = theme => ({
     }
   },
   appBar: {
-    padding: theme.spacing(1.4),
+    padding: theme.spacing(1.4)
   },
   itemActiveItem: {
-    color: '#4fc3f7',
-  },
+    color: '#4fc3f7'
+  }
 });
 
 class Header extends React.Component {
-
-  render() {
+  render () {
     const { classes, title, onDrawerToggle } = this.props;
     return (
       <NoSsr>
-      <React.Fragment>
-        <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
-          <Toolbar>
-            <Grid container alignItems="center">
-              <Hidden smUp>
-                <Grid item>
-                  <IconButton
-                    color="inherit"
-                    aria-label="Open drawer"
-                    onClick={onDrawerToggle}
-                    className={classes.menuButton}
-                  >
-                    <MenuIcon />
-                  </IconButton>
+        <React.Fragment>
+          <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
+            <Toolbar>
+              <Grid container alignItems="center">
+                <Hidden smUp>
+                  <Grid item>
+                    <IconButton
+                      color="inherit"
+                      aria-label="Open drawer"
+                      onClick={onDrawerToggle}
+                      className={classes.menuButton}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  </Grid>
+                </Hidden>
+                <Grid container xs alignItems="center" className={classes.pageTitleWrapper}>
+                  <Grid item>
+                    <Typography color="inherit" variant="h5" className={classes.pageTitle}>
+                      {title}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Hidden>
-              <Grid container xs alignItems="center" className={classes.pageTitleWrapper}>
-                <Grid item>
-                <Typography color="inherit" variant="h5" className={classes.pageTitle}>
-                  {title}
-                </Typography>
-                </Grid>
-              </Grid>
-              {/* <Grid item className={classes.notifications}>
+                {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
               </Grid> */}
-              <Grid item className={classes.userContainer}>
-                {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
+                <Grid item className={classes.userContainer}>
+                  {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
-                
-                <IconButton color="inherit">
-                  <Link href={"/"} prefetch>
-                      <DashboardIcon className={title === 'Dashboard'?classes.itemActiveItem:''} />
-                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
-                  </Link>    
-                </IconButton>
-                
-                <IconButton color="inherit">
-                  <Link href={"/settings"} prefetch>
-                      <SettingsIcon className={title === 'Settings'?classes.itemActiveItem:''} />
-                  </Link>    
-                </IconButton>
 
-                <MesheryNotification />
-                <span className={classes.userSpan}>
-                <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
-                </span>
+                  <IconButton color="inherit">
+                    <Link href={'/'} prefetch>
+                      <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
+                    </Link>
+                  </IconButton>
+
+                  <IconButton color="inherit">
+                    <Link href={'/settings'} prefetch>
+                      <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                    </Link>
+                  </IconButton>
+
+                  <MesheryNotification />
+                  <span className={classes.userSpan}>
+                    <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
+                  </span>
+                </Grid>
               </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
-        {/* <AppBar
+            </Toolbar>
+          </AppBar>
+          {/* <AppBar
           component="div"
           className={classes.secondaryBar}
           color="primary"
@@ -139,7 +138,7 @@ class Header extends React.Component {
           <Toolbar>
             <Grid container alignItems="center" spacing={8}>
               <Grid item xs>
-                
+
               </Grid>
               {/* <Grid item>
                 <Button className={classes.button} variant="outlined" color="inherit" size="small">
@@ -156,7 +155,7 @@ class Header extends React.Component {
             </Grid>
           </Toolbar>
         </AppBar> */}
-        {/* <AppBar
+          {/* <AppBar
           component="div"
           className={classes.secondaryBar}
           color="primary"
@@ -170,7 +169,7 @@ class Header extends React.Component {
             <Tab textColor="inherit" label="Usage" />
           </Tabs>
         </AppBar> */}
-      </React.Fragment>
+        </React.Fragment>
       </NoSsr>
     );
   }
@@ -178,14 +177,14 @@ class Header extends React.Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
-  onDrawerToggle: PropTypes.func.isRequired,
+  onDrawerToggle: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = state =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-  return { title: state.get("page").get("title") };
-}
+   ({ title: state.get('page').get('title') })
+;
 
 // const mapDispatchToProps = dispatch => {
 //   return {
@@ -193,6 +192,4 @@ const mapStateToProps = state => {
 //   }
 // }
 
-export default withStyles(styles)(connect(
-  mapStateToProps
-)(Header));
+export default withStyles(styles)(connect(mapStateToProps)(Header));

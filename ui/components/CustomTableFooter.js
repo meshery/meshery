@@ -82,7 +82,7 @@ class TablePaginationActions extends React.Component {
 
 TablePaginationActions.propTypes = {
   classes: PropTypes.object.isRequired,
-//   count: PropTypes.number.isRequired,
+  //   count: PropTypes.number.isRequired,
   onChangePage: PropTypes.func.isRequired,
   page: PropTypes.number.isRequired,
 //   rowsPerPage: PropTypes.number.isRequired,
@@ -98,14 +98,14 @@ const defaultFooterStyles = {
 
 class CustomTableFooter extends Component {
 
-    // state = {
-    //     page: 0,
-    //     rowsPerPage: 10,
-    // }
+  // state = {
+  //     page: 0,
+  //     rowsPerPage: 10,
+  // }
 
-    // handleChangePage = (event, page) => {
-    //     this.setState({ page });
-    // };
+  // handleChangePage = (event, page) => {
+  //     this.setState({ page });
+  // };
 
     // handleChangeRowsPerPage = event => {
     //     this.setState({ page: 0, rowsPerPage: event.target.value });
@@ -115,28 +115,28 @@ class CustomTableFooter extends Component {
     }
 
     render() {
-        // const { rowsPerPage, page } = this.state;
-        return (
-            <TableFooter>
-            <TableRow>
-                <TablePagination 
-                labelRowsPerPage={''}
-                labelDisplayedRows={this.customLabelDisplayedRows}
-                rowsPerPageOptions={[10]}
-                colSpan={3}
-                count={this.props.count}
-                rowsPerPage={this.props.rowsPerPage}
-                page={this.props.page}
-                SelectProps={{
-                    native: true,
-                }}
-                onChangePage={this.props.changePage}
-                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActionsWrapper}
-                />
-            </TableRow>
-            </TableFooter>
-        );
+      // const { rowsPerPage, page } = this.state;
+      return (
+        <TableFooter>
+          <TableRow>
+            <TablePagination 
+              labelRowsPerPage={''}
+              labelDisplayedRows={this.customLabelDisplayedRows}
+              rowsPerPageOptions={[10]}
+              colSpan={3}
+              count={this.props.count}
+              rowsPerPage={this.props.rowsPerPage}
+              page={this.props.page}
+              SelectProps={{
+                native: true,
+              }}
+              onChangePage={this.props.changePage}
+              // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActionsWrapper}
+            />
+          </TableRow>
+        </TableFooter>
+      );
     }
 }
 

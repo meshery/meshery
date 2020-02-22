@@ -186,12 +186,12 @@ class MesheryPerformanceComponent extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -222,12 +222,12 @@ class MesheryPerformanceComponent extends React.Component {
       autoHideDuration: 1000,
       action: (key) => (
         <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => this.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => this.props.closeSnackbar(key) }
+        >
+          <CloseIcon />
         </IconButton>
       ),
     });
@@ -239,32 +239,32 @@ class MesheryPerformanceComponent extends React.Component {
     return e => {
       const data = JSON.parse(e.data);
       switch(data.status){
-        case 'info':
-            self.props.enqueueSnackbar(data.message, {
-              variant: 'info',
-              autoHideDuration: 1000,
-              action: (key) => (
-                <IconButton
-                      key="close"
-                      aria-label="Close"
-                      color="inherit"
-                      onClick={() => self.props.closeSnackbar(key) }
-                    >
-                      <CloseIcon />
-                </IconButton>
-              ),
-            });
-            if (track === 0){
-              self.setState({timerDialogOpen: true, result: {}});
-              track++;
-            }
-          break;
-        case 'error':
-          self.handleError("Load test did not run successfully with msg")(data.message);
-          break;
-        case 'success':
-          self.handleSuccess()(data.result);
-          break;
+      case 'info':
+        self.props.enqueueSnackbar(data.message, {
+          variant: 'info',
+          autoHideDuration: 1000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        if (track === 0){
+          self.setState({timerDialogOpen: true, result: {}});
+          track++;
+        }
+        break;
+      case 'error':
+        self.handleError("Load test did not run successfully with msg")(data.message);
+        break;
+      case 'success':
+        self.handleSuccess()(data.result);
+        break;
       }
     }
   }
@@ -339,12 +339,12 @@ class MesheryPerformanceComponent extends React.Component {
         variant: 'error',
         action: (key) => (
           <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
-              >
-                <CloseIcon />
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key) }
+          >
+            <CloseIcon />
           </IconButton>
         ),
         autoHideDuration: 8000,
@@ -359,7 +359,7 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const { timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, loadGenerator, 
-        urlError, tError, testUUID, selectedMesh } = this.state;
+      urlError, tError, testUUID, selectedMesh } = this.state;
     let staticPrometheusBoardConfig;
     if(this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0){
       staticPrometheusBoardConfig = this.props.staticPrometheusBoardConfig;
@@ -383,9 +383,9 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
             Node Metrics
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
-          prometheusURL={prometheus.prometheusURL} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
+            prometheusURL={prometheus.prometheusURL} />
         </React.Fragment>
       );
     }
@@ -395,9 +395,9 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom cclassName={classes.chartTitleGraf}>
             Prometheus charts
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
-          prometheusURL={prometheus.prometheusURL} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
+            prometheusURL={prometheus.prometheusURL} />
         </React.Fragment>
       );
     }
@@ -407,179 +407,179 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
             Grafana charts
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={grafana.selectedBoardsConfigs} 
-          grafanaURL={grafana.grafanaURL}
-          grafanaAPIKey={grafana.grafanaAPIKey} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={grafana.selectedBoardsConfigs} 
+            grafanaURL={grafana.grafanaURL}
+            grafanaAPIKey={grafana.grafanaAPIKey} />
         </React.Fragment>
       );
     }
     return (
       <NoSsr>
-      <React.Fragment>
-      <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid item xs={12} sm={6}>
-          <Tooltip title={"If a test name is not provided, a random one will be generated for you."}>
-            <TextField
-              id="testName"
-              name="testName"
-              label="Test Name"
-              autoFocus
-              fullWidth
-              value={testName}
-              error={testNameError}
-              margin="normal"
-              variant="outlined"
-              onChange={this.handleChange('testName')}
-              inputProps={{ maxLength: 300 }}
-            />
-          </Tooltip>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-              select
-              id="meshName"
-              name="meshName"
-              label="Service Mesh"
-              fullWidth
-              value={meshName === '' && selectedMesh !== ''?selectedMesh:meshName}
-              margin="normal"
-              variant="outlined"
-              onChange={this.handleChange('meshName')}
-          >
-                <MenuItem key={'mh_-_none'} value={'None'}>None</MenuItem>
-              {meshes && meshes.map((mesh) => (
-                  <MenuItem key={'mh_-_'+mesh} value={mesh.toLowerCase()}>{mesh}</MenuItem>
-              ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="url"
-            name="url"
-            label="URL to test"
-            type="url"
-            autoFocus
-            fullWidth
-            value={url}
-            error={urlError}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('url')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            required
-            id="c"
-            name="c"
-            label="Concurrent requests"
-            type="number"
-            fullWidth
-            value={c}
-            inputProps={{ min: "0", step: "1" }}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('c')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            required
-            id="qps"
-            name="qps"
-            label="Queries per second"
-            type="number"
-            fullWidth
-            value={qps}
-            inputProps={{ min: "0", step: "1" }}
-            margin="normal"
-            variant="outlined"
-            onChange={this.handleChange('qps')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-            <TextField
-              required
-              id="t"
-              name="t"
-              label="Duration"
-              fullWidth
-              value={t}
-              error={tError}
-              margin="normal"
-              variant="outlined"
-              onChange={this.handleChange('t')}
-            />
-          </Tooltip>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl component="loadGenerator" className={classes.formControl}>
-            <FormLabel component="loadGenerator">Load generator</FormLabel>
-            <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
-              {loadGenerators.map(lg => (
-                <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </Grid>
-      </Grid>
-      <React.Fragment>
-        <div className={classes.buttons}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={this.handleSubmit}
-            className={classes.button}
-            disabled={blockRunTest}
-          >
-           {blockRunTest?<CircularProgress size={30} />:'Run Test'}
-          </Button>
-        </div>
-      </React.Fragment>
+        <React.Fragment>
+          <div className={classes.root}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <Tooltip title={"If a test name is not provided, a random one will be generated for you."}>
+                  <TextField
+                    id="testName"
+                    name="testName"
+                    label="Test Name"
+                    autoFocus
+                    fullWidth
+                    value={testName}
+                    error={testNameError}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('testName')}
+                    inputProps={{ maxLength: 300 }}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  select
+                  id="meshName"
+                  name="meshName"
+                  label="Service Mesh"
+                  fullWidth
+                  value={meshName === '' && selectedMesh !== ''?selectedMesh:meshName}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('meshName')}
+                >
+                  <MenuItem key={'mh_-_none'} value={'None'}>None</MenuItem>
+                  {meshes && meshes.map((mesh) => (
+                    <MenuItem key={'mh_-_'+mesh} value={mesh.toLowerCase()}>{mesh}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  id="url"
+                  name="url"
+                  label="URL to test"
+                  type="url"
+                  autoFocus
+                  fullWidth
+                  value={url}
+                  error={urlError}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('url')}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  required
+                  id="c"
+                  name="c"
+                  label="Concurrent requests"
+                  type="number"
+                  fullWidth
+                  value={c}
+                  inputProps={{ min: "0", step: "1" }}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('c')}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  required
+                  id="qps"
+                  name="qps"
+                  label="Queries per second"
+                  type="number"
+                  fullWidth
+                  value={qps}
+                  inputProps={{ min: "0", step: "1" }}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('qps')}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
+                  <TextField
+                    required
+                    id="t"
+                    name="t"
+                    label="Duration"
+                    fullWidth
+                    value={t}
+                    error={tError}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('t')}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl component="loadGenerator" className={classes.formControl}>
+                  <FormLabel component="loadGenerator">Load generator</FormLabel>
+                  <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
+                    {loadGenerators.map(lg => (
+                      <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <React.Fragment>
+              <div className={classes.buttons}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleSubmit}
+                  className={classes.button}
+                  disabled={blockRunTest}
+                >
+                  {blockRunTest?<CircularProgress size={30} />:'Run Test'}
+                </Button>
+              </div>
+            </React.Fragment>
 
-      <div className={classes.centerTimer}>
-        <LoadTestTimerDialog open={timerDialogOpen} 
-        t={t}
-        onClose={this.handleTimerDialogClose} 
-        countDownComplete={this.handleTimerDialogClose}
-        />
-       </div>
+            <div className={classes.centerTimer}>
+              <LoadTestTimerDialog open={timerDialogOpen} 
+                t={t}
+                onClose={this.handleTimerDialogClose} 
+                countDownComplete={this.handleTimerDialogClose}
+              />
+            </div>
 
-      {result && result.runner_results && 
+            {result && result.runner_results && 
         (<div>
           <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
             Test Results 
             <IconButton
-                  key="download"
-                  aria-label="download"
-                  color="inherit"
-                  // onClick={() => self.props.closeSnackbar(key) }
-                  href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
-                >
-                  <GetAppIcon />
+              key="download"
+              aria-label="download"
+              color="inherit"
+              // onClick={() => self.props.closeSnackbar(key) }
+              href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
+            >
+              <GetAppIcon />
             </IconButton>
           </Typography>
           <div className={classes.chartContent} style={chartStyle}>
             <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
           </div>
         </div>)
-      }
+            }
         
       
-      </div>
-    </React.Fragment>
+          </div>
+        </React.Fragment>
 
-    {displayStaticCharts}
+        {displayStaticCharts}
 
-    {displayPromCharts}
+        {displayPromCharts}
 
-    {displayGCharts}
+        {displayGCharts}
 
       </NoSsr>
     );

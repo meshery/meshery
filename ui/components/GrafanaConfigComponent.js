@@ -4,30 +4,30 @@ import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
 
 const grafanaStyles = theme => ({
-    root: {
-      padding: theme.spacing(5),
-    },
-    buttons: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-    },
-    button: {
-      marginTop: theme.spacing(3),
+  root: {
+    padding: theme.spacing(5),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-    }
-  });
+  }
+});
 
 class GrafanaConfigComponent extends Component {
 	
     render = () => {
-        const { classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure } = this.props;
-        return (
-          <NoSsr>
-        <React.Fragment>
+      const { classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure } = this.props;
+      return (
+        <NoSsr>
+          <React.Fragment>
             <div className={classes.root}>
-            <Grid container spacing={1}>
+              <Grid container spacing={1}>
                 <Grid item xs={12} sm={6}>
-                <TextField
+                  <TextField
                     required
                     id="grafanaURL"
                     name="grafanaURL"
@@ -39,17 +39,17 @@ class GrafanaConfigComponent extends Component {
                     error={urlError}
                     margin="normal"
                     variant="outlined"
-                    onKeyDown={(e)=>{
+                    onKeyDown={(e) => {
 								      if(e.keyCode == 13){
 								         handleGrafanaConfigure()
 								      }
 								    }
-							}
+                    }
                     onChange={handleChange('grafanaURL')}
-                />
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                <TextField
+                  <TextField
                     id="grafanaAPIKey"
                     name="grafanaAPIKey"
                     label="API Key"
@@ -57,32 +57,32 @@ class GrafanaConfigComponent extends Component {
                     value={grafanaAPIKey}
                     margin="normal"
                     variant="outlined"
-                    onKeyDown={(e)=>{
+                    onKeyDown={(e) => {
 								      if(e.keyCode == 13){
 								         handleGrafanaConfigure()
 								      }
 								    }
-							}
+                    }
                     onChange={handleChange('grafanaAPIKey')}
-                />
+                  />
                 </Grid>
-                </Grid>
-                <div className={classes.buttons}>
+              </Grid>
+              <div className={classes.buttons}>
                 <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={handleGrafanaConfigure}
-                    className={classes.button}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={handleGrafanaConfigure}
+                  className={classes.button}
                 >
                 Submit
                 </Button>
-                </div>
+              </div>
             </div>
-        </React.Fragment>
+          </React.Fragment>
         </NoSsr>
-        );
+      );
     }
 }
 
