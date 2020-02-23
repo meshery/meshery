@@ -6,6 +6,9 @@ version: v1.0
 port: 10003/tcp
 project_status: stable
 ---
+| Adapter Status |
+| :------------: |
+| [{{ page.project_status }}]({{ page.github_link }})|
 
 # Configuration
 In order to connect to the Octarine Control Plane the adapter requires the follwing environment variables to be set:
