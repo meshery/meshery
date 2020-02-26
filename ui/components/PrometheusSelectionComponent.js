@@ -10,42 +10,42 @@ import {Controlled as CodeMirror} from 'react-codemirror2'
 
 
 const promStyles = theme => ({
-    root: {
-      padding: theme.spacing(5),
-    },
-    buttons: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-    },
-    button: {
-      marginTop: theme.spacing(3),
+  root: {
+    padding: theme.spacing(5),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    chartTitle: {
-      textAlign: 'center',
-    },
-    icon: {
-        width: theme.spacing(2.5),
-    },
-    alignRight: {
-        textAlign: 'right',
-        marginBottom: theme.spacing(2),
-    },
-    formControl: {
-        marginTop: theme.spacing(2),
-        minWidth: window.innerWidth * 0.25,
-    },
-    panelChips: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    panelChip: {
-        margin: theme.spacing(0.25),
-    }
-  });
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  chartTitle: {
+    textAlign: 'center',
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
+  alignRight: {
+    textAlign: 'right',
+    marginBottom: theme.spacing(2),
+  },
+  formControl: {
+    marginTop: theme.spacing(2),
+    minWidth: window.innerWidth * 0.25,
+  },
+  panelChips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  panelChip: {
+    margin: theme.spacing(0.25),
+  }
+});
 
 const dummyBoard = `
 {
@@ -80,35 +80,35 @@ const dummyBoard = `
 `
 
 class PrometheusSelectionComponent extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
         
-        this.state = {
-            grafanaBoard: dummyBoard,
-            grafanaBoardError: false,
-            grafanaBoardObject: {},
-            templateVars: [],
-            templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
+    this.state = {
+      grafanaBoard: dummyBoard,
+      grafanaBoardError: false,
+      grafanaBoardObject: {},
+      templateVars: [],
+      templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
 
-            panels: [],
-            selectedPanels: [],
-            selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
-          };
-    }
+      panels: [],
+      selectedPanels: [],
+      selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
+    };
+  }
     
       handleChange = name => event => {
         if (name === 'grafanaBoard'){
-            // if (this.cmEditor.state.lint.marked.length > 0) {
-            //   this.setState({grafanaBoardError: true});
-            //   return
-            // }
-            // if(this.boardTimeout) {
-            //   clearnTimeout(this.boardTimeout);
-            // }
-            // const self = this;
-            // this.boardTimeout = setTimeout(function(){
-            //   self.boardChange(event.target.value);
-            // }, 500);
+          // if (this.cmEditor.state.lint.marked.length > 0) {
+          //   this.setState({grafanaBoardError: true});
+          //   return
+          // }
+          // if(this.boardTimeout) {
+          //   clearnTimeout(this.boardTimeout);
+          // }
+          // const self = this;
+          // this.boardTimeout = setTimeout(function(){
+          //   self.boardChange(event.target.value);
+          // }, 500);
         } else if (name.startsWith('template_var_')) {
           this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
@@ -137,31 +137,31 @@ class PrometheusSelectionComponent extends Component {
 
       boardChange = (newVal) => {
         this.props.updateProgress({showProgress: true});
-          let self = this;
-          dataFetch('/api/prometheus/board_import', { 
-            credentials: 'same-origin',
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: newVal,
-          }, result => {
-            this.props.updateProgress({showProgress: false});
-            if (typeof result !== 'undefined'){
-              this.setState({
-                grafanaBoardObject: result,
-                panels: result.panels, 
-                selectedPanels: result.panels.map(panel=>panel.id), // selecting all panels by default
-                templateVars: result.template_vars && result.template_vars.length > 0?result.template_vars:[],
-                templateVarOptions: [],
-                selectedTemplateVars: [],
-              });
-              if(result.template_vars && result.template_vars.length > 0){
-                this.queryTemplateVars(0, result.template_vars, [], []);
-              }
+        let self = this;
+        dataFetch('/api/prometheus/board_import', { 
+          credentials: 'same-origin',
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: newVal,
+        }, result => {
+          this.props.updateProgress({showProgress: false});
+          if (typeof result !== 'undefined'){
+            this.setState({
+              grafanaBoardObject: result,
+              panels: result.panels, 
+              selectedPanels: result.panels.map(panel => panel.id), // selecting all panels by default
+              templateVars: result.template_vars && result.template_vars.length > 0?result.template_vars:[],
+              templateVarOptions: [],
+              selectedTemplateVars: [],
+            });
+            if(result.template_vars && result.template_vars.length > 0){
+              this.queryTemplateVars(0, result.template_vars, [], []);
             }
-          }, self.props.handleError);
+          }
+        }, self.props.handleError);
 
         // this.props.grafanaBoards.forEach((board) => {
         //   if (board.uri === newVal) {
@@ -210,17 +210,16 @@ class PrometheusSelectionComponent extends Component {
                 if(result.data.length > 0){
                   if(templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1 
                     && typeof result.data[0] === 'object'){
-                      let q = templateVars[ind].query.replace('label_values(','')
-                      q = q.substr(0,q.length-1); // to remove ')'
-                      let qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
-                      result.data.forEach(d => {
-                        const v = d[qInd];
-                        if(typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1){
-                          tmpVarOpts.push(v);
-                        }
-                      });
-                  }
-                  else {
+                    let q = templateVars[ind].query.replace('label_values(','')
+                    q = q.substr(0,q.length-1); // to remove ')'
+                    let qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
+                    result.data.forEach(d => {
+                      const v = d[qInd];
+                      if(typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1){
+                        tmpVarOpts.push(v);
+                      }
+                    });
+                  } else {
                     tmpVarOpts = result.data;
                   }
                 } 
@@ -240,19 +239,19 @@ class PrometheusSelectionComponent extends Component {
             this.setState({templateVarOptions});
             self.props.handleError(error);
           });
+        }
       }
-    }
 
-    // static getDerivedStateFromProps(props, state){
-    //   if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
-    //     return {
-    //       grafanaBoards: props.grafanaBoards,
-    //       grafanaBoard: '',
-    //       selectedPanels: [],
-    //     };
-    //   }
-    //   return null;
-    // }
+      // static getDerivedStateFromProps(props, state){
+      //   if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
+      //     return {
+      //       grafanaBoards: props.grafanaBoards,
+      //       grafanaBoard: '',
+      //       selectedPanels: [],
+      //     };
+      //   }
+      //   return null;
+      // }
 
     addSelectedBoardPanelConfig = () => {
       const {grafanaBoardObject, templateVars, selectedTemplateVars, selectedPanels, panels} = this.state;
@@ -269,74 +268,76 @@ class PrometheusSelectionComponent extends Component {
     }
     
     render = () => {
-        var self = this;
-        const { classes, prometheusURL, 
-          handlePrometheusChipDelete, handlePrometheusClick } = this.props;
-        const { panels, selectedPanels,
-          grafanaBoard, templateVars, templateVarOptions } = this.state;
-        return (
-          <NoSsr>
-        <React.Fragment>
+      var self = this;
+      const { classes, prometheusURL, 
+        handlePrometheusChipDelete, handlePrometheusClick } = this.props;
+      const { panels, selectedPanels,
+        grafanaBoard, templateVars, templateVarOptions } = this.state;
+      return (
+        <NoSsr>
+          <React.Fragment>
             <div className={classes.root}>
-            <div className={classes.alignRight}>
+              <div className={classes.alignRight}>
                 <Chip 
-                    label={prometheusURL}
-                    onDelete={handlePrometheusChipDelete} 
-                    onClick={handlePrometheusClick}
-                    key='prometh-key'
-                    icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
-                    variant="outlined" />
-            </div>
-            <Grid container spacing={1}>
+                  label={prometheusURL}
+                  onDelete={handlePrometheusChipDelete} 
+                  onClick={handlePrometheusClick}
+                  key='prometh-key'
+                  icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />} 
+                  variant="outlined" />
+              </div>
+              <Grid container spacing={1}>
                 <Grid item xs={12}>
                   Please paste your Grafana board json below
                   <CodeMirror
-                      editorDidMount={editor => { this.cmEditor = editor }}
-                      value={grafanaBoard}
-                      options={{
-                        theme: 'material',
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        gutters: ["CodeMirror-lint-markers"],
-                        lint: true,
-                        mode: "application/json"
-                      }}
-                      onBeforeChange={(editor, data, value) => {
-                        self.setState({
-                          grafanaBoard: value, 
-                          grafanaBoardObject: {},
-                          panels: [], 
-                          selectedPanels: [],
-                          templateVars: [],
-                          templateVarOptions: [],
-                          selectedTemplateVars: [],
-                        });
-                        if(typeof self.boardTimeout !== 'undefined') {
-                          clearTimeout(self.boardTimeout);
-                        }
-                        self.boardTimeout = setTimeout(function(){
-                          console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
-                          if(value !== '' && self.cmEditor.state.lint.marked.length === 0) {
-                            self.setState({ grafanaBoardError: false});
-                          } else {
-                            self.setState({grafanaBoardError: true});
-                            return
-                          }  
-                          self.boardChange(value);
-                        }, 1000);
-                      }}
-                      onChange={(editor, data, value) => {
+                    editorDidMount={editor => {
+ this.cmEditor = editor 
+}}
+                    value={grafanaBoard}
+                    options={{
+                      theme: 'material',
+                      lineNumbers: true,
+                      lineWrapping: true,
+                      gutters: ["CodeMirror-lint-markers"],
+                      lint: true,
+                      mode: "application/json"
+                    }}
+                    onBeforeChange={(editor, data, value) => {
+                      self.setState({
+                        grafanaBoard: value, 
+                        grafanaBoardObject: {},
+                        panels: [], 
+                        selectedPanels: [],
+                        templateVars: [],
+                        templateVarOptions: [],
+                        selectedTemplateVars: [],
+                      });
+                      if(typeof self.boardTimeout !== 'undefined') {
+                        clearTimeout(self.boardTimeout);
+                      }
+                      self.boardTimeout = setTimeout(function(){
+                        console.log(`lint error count: ${self.cmEditor.state.lint.marked.length}`);
+                        if(value !== '' && self.cmEditor.state.lint.marked.length === 0) {
+                          self.setState({ grafanaBoardError: false});
+                        } else {
+                          self.setState({grafanaBoardError: true});
+                          return
+                        }  
+                        self.boardChange(value);
+                      }, 1000);
+                    }}
+                    onChange={(editor, data, value) => {
                         
-                      }}
-                    />
+                    }}
+                  />
                 </Grid>
                 {templateVars.length > 0 && 
                   templateVars.map(({name}, ind) => {
                     // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
-                      if (ind === 0 || typeof this.getSelectedTemplateVar(ind-1) !== 'undefined'){
-                    return (
-                    <Grid item xs={12} sm={4}>
-                        <TextField
+                    if (ind === 0 || typeof this.getSelectedTemplateVar(ind-1) !== 'undefined'){
+                      return (
+                        <Grid item xs={12} sm={4}>
+                          <TextField
                             select
                             id={'template_var_'+ind}
                             name={'template_var_'+ind}
@@ -346,14 +347,14 @@ class PrometheusSelectionComponent extends Component {
                             margin="normal"
                             variant="outlined"
                             onChange={this.handleChange('template_var_'+ind)}
-                            >   
-                                <MenuItem key={'tmplVarOpt__-___'+ind+'_'+self.genRandomNumberForKey()} value={''}></MenuItem>
-                                {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
-                                    <MenuItem key={'tmplVarOpt__-__'+name+'_'+opt+'_'+ind+'_'+self.genRandomNumberForKey()} value={opt}>{opt}</MenuItem>
-                                ))}
-                        </TextField>
-                    </Grid>
-                    );
+                          >   
+                            <MenuItem key={'tmplVarOpt__-___'+ind+'_'+self.genRandomNumberForKey()} value={''}></MenuItem>
+                            {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
+                              <MenuItem key={'tmplVarOpt__-__'+name+'_'+opt+'_'+ind+'_'+self.genRandomNumberForKey()} value={opt}>{opt}</MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                      );
                     } else {
                       return null;
                     }
@@ -364,59 +365,59 @@ class PrometheusSelectionComponent extends Component {
                 </Grid>}
 
                 {panels.length > 0 && <Grid item xs={12}>
-                    <TextField
-                            select
-                            id="panels"
-                            name="panels"
-                            label="Panels"
-                            fullWidth
-                            value={selectedPanels}
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('selectedPanels')}
-                            SelectProps={{
-                              multiple: true,
-                              renderValue: selected => (
-                                <div className={classes.panelChips}>
-                                  {selected.map(value => {
-                                      let selVal = '';
-                                      let panelId = '';
-                                      panels.forEach(panel=>{
-                                        if (panel.id === value){
-                                            selVal = panel.title;
-                                            panelId = panel.id;
-                                        }
-                                      })
-                                      return (
-                                    <Chip key={'pl_--_'+panelId} label={selVal} className={classes.panelChip} />
-                                      )
-                                  })}
-                                </div>
-                            ),
-                            }}
-                        >
-                            {panels.map((panel) => (
-                                <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
-                            ))}
-                    </TextField>
+                  <TextField
+                    select
+                    id="panels"
+                    name="panels"
+                    label="Panels"
+                    fullWidth
+                    value={selectedPanels}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('selectedPanels')}
+                    SelectProps={{
+                      multiple: true,
+                      renderValue: selected => (
+                        <div className={classes.panelChips}>
+                          {selected.map(value => {
+                            let selVal = '';
+                            let panelId = '';
+                            panels.forEach(panel => {
+                              if (panel.id === value){
+                                selVal = panel.title;
+                                panelId = panel.id;
+                              }
+                            })
+                            return (
+                              <Chip key={'pl_--_'+panelId} label={selVal} className={classes.panelChip} />
+                            )
+                          })}
+                        </div>
+                      ),
+                    }}
+                  >
+                    {panels.map((panel) => (
+                      <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>}
-                </Grid>
-                {selectedPanels.length > 0 && <div className={classes.buttons}>
+              </Grid>
+              {selectedPanels.length > 0 && <div className={classes.buttons}>
                 <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={this.addSelectedBoardPanelConfig}
-                    className={classes.button}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.addSelectedBoardPanelConfig}
+                  className={classes.button}
                 >
                 Add
                 </Button>
-                </div>}
+              </div>}
             </div>
-        </React.Fragment>
+          </React.Fragment>
         </NoSsr>
-        );
+      );
     }
 }
 
@@ -431,7 +432,7 @@ PrometheusSelectionComponent.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-      updateProgress: bindActionCreators(updateProgress, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = state => {

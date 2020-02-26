@@ -17,288 +17,288 @@ if (typeof window !== 'undefined') {
 }
 
 const grafanaStyles = theme => ({
-    root: {
-      width: '100%',
-    },
-    column: {
-      flexBasis: '33.33%',
-    },
-    heading: {
-      fontSize: theme.typography.pxToRem(15),
-    },
-    secondaryHeading: {
-      fontSize: theme.typography.pxToRem(15),
-      color: theme.palette.text.secondary,
-    },
-    dateRangePicker: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      marginRight: theme.spacing(1),
-      marginBottom: theme.spacing(2),
-    },
-    cardHeader: {
-      fontSize: theme.spacing(2),
-    },
-    card: {
-      height: '100%',
-    },
-    cardContent: {
-      height: '100%',
-    },
-    error: {
-      color: '#D32F2F',
-      width: '100%',
-      textAlign: 'center',
-      fontSize: '12px',
-      // fontFamily: 'Helvetica Nueue',
-      fontWeight: 'bold',
-    },
-  });
+  root: {
+    width: '100%',
+  },
+  column: {
+    flexBasis: '33.33%',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  },
+  dateRangePicker: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+  },
+  cardHeader: {
+    fontSize: theme.spacing(2),
+  },
+  card: {
+    height: '100%',
+  },
+  cardContent: {
+    height: '100%',
+  },
+  error: {
+    color: '#D32F2F',
+    width: '100%',
+    textAlign: 'center',
+    fontSize: '12px',
+    // fontFamily: 'Helvetica Nueue',
+    fontWeight: 'bold',
+  },
+});
 
 const grafanaDateRangeToDate = (dt, startDate) => {
   let dto = new Date();
   switch (dt) {
-    case 'now-2d':
-        dto.setDate(dto.getDate() - 2);
-        break;
-    case 'now-7d':
-        dto.setDate(dto.getDate() - 7);
-        break;
-    case 'now-30d':
-        dto.setDate(dto.getDate() - 30);
-        break;
-    case 'now-90d':
-        dto.setDate(dto.getDate() - 90);
-        break;
-    case 'now-6M':
-        dto.setMonth(dto.getMonth() - 6);
-        break;
-    case 'now-1y':
-        dto.setFullYear(dto.getFullYear() - 1);
-        break;
-    case 'now-2y':
-        dto.setFullYear(dto.getFullYear() - 2);
-        break;
-    case 'now-5y':
-        dto.setFullYear(dto.getFullYear() - 5);
-        break;
-    case 'now-1d/d':
-        dto.setDate(dto.getDate() - 1);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-2d/d':
-        dto.setDate(dto.getDate() - 2);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-7d/d':
-        dto.setDate(dto.getDate() - 7);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-1w/w':
-        dto.setDate(dto.getDate() - 6 - (dto.getDay() + 8) % 7);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setDate(dto.getDate() + 6);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-1M/M':
-        dto.setMonth(dto.getMonth() - 1);
-        if(startDate){
-          dto.setDate(1);
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setMonth(dto.getMonth());
-          dto.setDate(0);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-1y/y':
-        dto.setFullYear(dto.getFullYear() - 1);
-        if(startDate){
-          dto.setMonth(0);
-          dto.setDate(1);
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setMonth(12);
-          dto.setDate(0);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now/d':
-        dto.setDate(dto.getDate() - 6 - (dto.getDay() + 8) % 7);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now':
-        break;
-    case 'now/w':
-        dto.setDate(dto.getDate() - (dto.getDay() + 7) % 7);
-        if(startDate){
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setDate(dto.getDate() + 6);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now/M':
-        if(startDate){
-          dto.setDate(1);
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setMonth(dto.getMonth()+1);
-          dto.setDate(0);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now/y':
-        if(startDate){
-          dto.setMonth(0);
-          dto.setDate(1);
-          dto.setHours(0);
-          dto.setMinutes(0);
-          dto.setSeconds(0);
-          dto.setMilliseconds(0);
-        } else {
-          dto.setMonth(12);
-          dto.setDate(0);
-          dto.setHours(23);
-          dto.setMinutes(59);
-          dto.setSeconds(59);
-          dto.setMilliseconds(999);
-        }
-        break;
-    case 'now-5m':
-        dto.setMinutes(dto.getMinutes() - 5);
-        break;
-    case 'now-15m':
-        dto.setMinutes(dto.getMinutes() - 15);
-        break;
-    case 'now-30m':
-        dto.setMinutes(dto.getMinutes() - 30);
-        break;
-    case 'now-1h':
-        dto.setHours(dto.getHours() - 1);
-        break;
-    case 'now-3h':
-        dto.setHours(dto.getHours() - 3);
-        break;
-    case 'now-6h':
-        dto.setHours(dto.getHours() - 6);
-        break;
-    case 'now-12h':
-        dto.setHours(dto.getHours() - 12);
-        break;
-    case 'now-24h':
-        dto.setHours(dto.getHours() - 24);
-        break;
-    default:
-      return new Date(parseFloat(dt));
+  case 'now-2d':
+    dto.setDate(dto.getDate() - 2);
+    break;
+  case 'now-7d':
+    dto.setDate(dto.getDate() - 7);
+    break;
+  case 'now-30d':
+    dto.setDate(dto.getDate() - 30);
+    break;
+  case 'now-90d':
+    dto.setDate(dto.getDate() - 90);
+    break;
+  case 'now-6M':
+    dto.setMonth(dto.getMonth() - 6);
+    break;
+  case 'now-1y':
+    dto.setFullYear(dto.getFullYear() - 1);
+    break;
+  case 'now-2y':
+    dto.setFullYear(dto.getFullYear() - 2);
+    break;
+  case 'now-5y':
+    dto.setFullYear(dto.getFullYear() - 5);
+    break;
+  case 'now-1d/d':
+    dto.setDate(dto.getDate() - 1);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-2d/d':
+    dto.setDate(dto.getDate() - 2);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-7d/d':
+    dto.setDate(dto.getDate() - 7);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-1w/w':
+    dto.setDate(dto.getDate() - 6 - (dto.getDay() + 8) % 7);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setDate(dto.getDate() + 6);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-1M/M':
+    dto.setMonth(dto.getMonth() - 1);
+    if(startDate){
+      dto.setDate(1);
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setMonth(dto.getMonth());
+      dto.setDate(0);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-1y/y':
+    dto.setFullYear(dto.getFullYear() - 1);
+    if(startDate){
+      dto.setMonth(0);
+      dto.setDate(1);
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setMonth(12);
+      dto.setDate(0);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now/d':
+    dto.setDate(dto.getDate() - 6 - (dto.getDay() + 8) % 7);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now':
+    break;
+  case 'now/w':
+    dto.setDate(dto.getDate() - (dto.getDay() + 7) % 7);
+    if(startDate){
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setDate(dto.getDate() + 6);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now/M':
+    if(startDate){
+      dto.setDate(1);
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setMonth(dto.getMonth()+1);
+      dto.setDate(0);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now/y':
+    if(startDate){
+      dto.setMonth(0);
+      dto.setDate(1);
+      dto.setHours(0);
+      dto.setMinutes(0);
+      dto.setSeconds(0);
+      dto.setMilliseconds(0);
+    } else {
+      dto.setMonth(12);
+      dto.setDate(0);
+      dto.setHours(23);
+      dto.setMinutes(59);
+      dto.setSeconds(59);
+      dto.setMilliseconds(999);
+    }
+    break;
+  case 'now-5m':
+    dto.setMinutes(dto.getMinutes() - 5);
+    break;
+  case 'now-15m':
+    dto.setMinutes(dto.getMinutes() - 15);
+    break;
+  case 'now-30m':
+    dto.setMinutes(dto.getMinutes() - 30);
+    break;
+  case 'now-1h':
+    dto.setHours(dto.getHours() - 1);
+    break;
+  case 'now-3h':
+    dto.setHours(dto.getHours() - 3);
+    break;
+  case 'now-6h':
+    dto.setHours(dto.getHours() - 6);
+    break;
+  case 'now-12h':
+    dto.setHours(dto.getHours() - 12);
+    break;
+  case 'now-24h':
+    dto.setHours(dto.getHours() - 24);
+    break;
+  default:
+    return new Date(parseFloat(dt));
   }
   return dto;
 }
 
 class GrafanaCustomChart extends Component {
     
-    constructor(props){
-      super(props);
-      this.chartRef = null;
-      this.chart = null;
-      this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
-      this.bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
-      this.panelType = '';
-      switch(props.panel.type){
-        case 'graph':
-          this.panelType = props.panel.type;
-          break;
-        case 'singlestat':
-          this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline && props.panel.sparkline.show === true?'sparkline':'gauge';
-          // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
-          break;
-      }
+  constructor(props){
+    super(props);
+    this.chartRef = null;
+    this.chart = null;
+    this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
+    this.bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
+    this.panelType = '';
+    switch(props.panel.type){
+    case 'graph':
+      this.panelType = props.panel.type;
+      break;
+    case 'singlestat':
+      this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline && props.panel.sparkline.show === true?'sparkline':'gauge';
+      // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
+      break;
+    }
       
-      this.datasetIndex = {};
-      this.state = {
-        xAxis: [],
-        chartData: [],
-        error: '',
-        errorCount: 0,
-      };
-    }
+    this.datasetIndex = {};
+    this.state = {
+      xAxis: [],
+      chartData: [],
+      error: '',
+      errorCount: 0,
+    };
+  }
 
-    componentDidMount() {
-      this.configChartData();
-    }
+  componentDidMount() {
+    this.configChartData();
+  }
 
     configChartData = () => {
       const { panel, refresh, liveTail } = this.props;
@@ -429,26 +429,26 @@ class GrafanaCustomChart extends Component {
             const newData = [];
 
             // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-              let legend = typeof target.legendFormat !== 'undefined'?target.legendFormat:'';
-              if(legend === '') {
-                legend = Object.keys(metric).length > 0?JSON.stringify(metric):'';
-              } else{
-                Object.keys(metric).forEach(metricKey => {
-                  legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
-                              .replace(`{{ ${metricKey} }}`, metric[metricKey]);
-                });
-                legend = legend.replace(`{{ `, '').replace(`{{`, '')
-                            .replace(` }}`, '').replace(`}}`, '');
-              }
+            let legend = typeof target.legendFormat !== 'undefined'?target.legendFormat:'';
+            if(legend === '') {
+              legend = Object.keys(metric).length > 0?JSON.stringify(metric):'';
+            } else{
+              Object.keys(metric).forEach(metricKey => {
+                legend = legend.replace(`{{${metricKey}}}`, metric[metricKey])
+                  .replace(`{{ ${metricKey} }}`, metric[metricKey]);
+              });
+              legend = legend.replace(`{{ `, '').replace(`{{`, '')
+                .replace(` }}`, '').replace(`}}`, '');
+            }
 
-              // bb does NOT like labels which start with a number
-              if(!isNaN(legend.charAt(0))){
-                legend = ` ${legend}`;
-              }
-              // if(legend.trim() === ''){
-              //   legend = 'NO VALUE';
-              // }
-              newData.push(legend);
+            // bb does NOT like labels which start with a number
+            if(!isNaN(legend.charAt(0))){
+              legend = ` ${legend}`;
+            }
+            // if(legend.trim() === ''){
+            //   legend = 'NO VALUE';
+            // }
+            newData.push(legend);
               
             // }
             data.forEach(({x, y}) => {
@@ -491,22 +491,22 @@ class GrafanaCustomChart extends Component {
     transformDataForChart(data, target) {
       if (data && data.status === 'success' && data.data && data.data.resultType && data.data.resultType === 'matrix' 
           && data.data.result && data.data.result.length > 0){
-            let fullData = [];
-            data.data.result.forEach(r => {
-              const localData = r.values.map(arr => {
-                const x = moment(arr[0] * 1000).format(this.timeFormat);
-                const y = parseFloat(parseFloat(arr[1]).toFixed(2));
-                return {
-                  x,
-                  y,
-                };
-              })
-              fullData.push({
-                data: localData,
-                metric: r.metric,
-              })
-            })
-            return fullData;
+        let fullData = [];
+        data.data.result.forEach(r => {
+          const localData = r.values.map(arr => {
+            const x = moment(arr[0] * 1000).format(this.timeFormat);
+            const y = parseFloat(parseFloat(arr[1]).toFixed(2));
+            return {
+              x,
+              y,
+            };
+          })
+          fullData.push({
+            data: localData,
+            metric: r.metric,
+          })
+        })
+        return fullData;
       }
       return [];
     }
@@ -538,11 +538,11 @@ class GrafanaCustomChart extends Component {
         // type : 'category',
         show: showAxis,
         tick: {
-            // format: self.c3TimeFormat,
-            // fit: true,
-            fit: false,
-            count: 5,
-            // centered: true
+          // format: self.c3TimeFormat,
+          // fit: true,
+          fit: false,
+          count: 5,
+          // centered: true
         },
         // label: {
         //   text: "X Label",
@@ -723,14 +723,14 @@ class GrafanaCustomChart extends Component {
       refresh = refresh.substring(0, l - 1);
       let val = parseInt(refresh);
       switch (dur){
-        case 'd':
-          val *= 24;
-        case 'h':
-          val *= 60;
-        case 'm':
-          val *= 60;
-        case 's':
-          return val;
+      case 'd':
+        val *= 24;
+      case 'h':
+        val *= 60;
+      case 'm':
+        val *= 60;
+      case 's':
+        return val;
       }
       return 30; // fallback
     }
@@ -762,22 +762,22 @@ class GrafanaCustomChart extends Component {
       }
 
       let iconComponent = (<IconButton
-          key="chartDialog"
-          aria-label="Open chart in a dialog"
-          color="inherit"
-          onClick={() => handleChartDialogOpen(board, panel, panelData) }
-        >
-          <OpenInNewIcon className={classes.cardHeader} />
-        </IconButton>);
+        key="chartDialog"
+        aria-label="Open chart in a dialog"
+        color="inherit"
+        onClick={() => handleChartDialogOpen(board, panel, panelData) }
+      >
+        <OpenInNewIcon className={classes.cardHeader} />
+      </IconButton>);
       
       let mainChart;
       if(this.panelType === 'gauge'){
         mainChart = (
           <GrafanaCustomGaugeChart
-              data={chartData}
-              panel={panel}
-              error={error}
-            />
+            data={chartData}
+            panel={panel}
+            error={error}
+          />
         );
       } else {
         mainChart = (
@@ -790,15 +790,15 @@ class GrafanaCustomChart extends Component {
       return (
         <NoSsr>
           <Card className={classes.card}>
-          {!inDialog && <CardHeader
-            disableTypography={true}
-            title={panel.title}
-            action={iconComponent}
-            className={classes.cardHeader}
-          />}
-          <CardContent className={classes.cardContent}>
-            {mainChart}
-          </CardContent>
+            {!inDialog && <CardHeader
+              disableTypography={true}
+              title={panel.title}
+              action={iconComponent}
+              className={classes.cardHeader}
+            />}
+            <CardContent className={classes.cardContent}>
+              {mainChart}
+            </CardContent>
           </Card>
         </NoSsr>
       );
@@ -819,7 +819,7 @@ GrafanaCustomChart.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-      updateProgress: bindActionCreators(updateProgress, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 

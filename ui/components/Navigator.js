@@ -275,142 +275,142 @@ const categories = [
 ]
 
 class Navigator extends React.Component {
-    constructor(props){
-      super(props);
-      const {meshAdapters, meshAdaptersts} = props;
-      this.state = {
-        path: '',
-        meshAdapters,
-        mts: new Date()
-      };
+  constructor(props){
+    super(props);
+    const {meshAdapters, meshAdaptersts} = props;
+    this.state = {
+      path: '',
+      meshAdapters,
+      mts: new Date()
+    };
       
-    }
+  }
 
-    updateCategoriesMenus() {
-      const self = this;
-      categories.forEach((cat, ind) => {
-        if(cat.id === 'Management'){
-          cat.children.forEach((catc, ind1) => {
-            const cr = self.fetchChildren(catc.id);
-            const icon = self.pickIcon(catc.id);
-            categories[ind].children[ind1]['icon'] = icon;
-            categories[ind].children[ind1]['children'] = cr;
-          });
-        }
-      });
-    }
-
-    updateAdaptersLink() {
-      const self = this;
-      categories.forEach((cat, ind) => {
-        if(cat.id === 'Management'){
-          cat.children.forEach((catc, ind1) => {
-            if(typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0]['href'] !== 'undefined'){
-              var val= true;
-              var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
-              categories[ind].children[ind1]['link'] = val;
-              categories[ind].children[ind1]['href'] = newhref;
-            }
-          });
-        }
-      });
-    }
-
-    // componentDidMount(){
-    //   console.log("navigator mounted")
-    // }
-
-    // componentDidUpdate(){
-    //   console.log("navigator mounted")
-    // }
-
-    static getDerivedStateFromProps(props, state) {
-      const { meshAdapters, meshAdaptersts, path } = props;
-      const st = {};
-      if(meshAdaptersts > state.mts) {
-        st.meshAdapters = meshAdapters;
-        st.mts = meshAdaptersts;
+  updateCategoriesMenus() {
+    const self = this;
+    categories.forEach((cat, ind) => {
+      if(cat.id === 'Management'){
+        cat.children.forEach((catc, ind1) => {
+          const cr = self.fetchChildren(catc.id);
+          const icon = self.pickIcon(catc.id);
+          categories[ind].children[ind1]['icon'] = icon;
+          categories[ind].children[ind1]['children'] = cr;
+        });
       }
+    });
+  }
 
-      const fetchNestedPathAndTitle = (path, title, href, children) => {
-        if (href === path) {
-            // console.log(`updating path: ${path} and title: ${title}`);
-            props.updatepagetitle({title});
-            return;
-        }
-        if(children && children.length > 0){
-          children.forEach(({title, href, children}) => {
-              fetchNestedPathAndTitle(path, title, href, children);
-          });
-        }
-      }
-
-      categories.forEach(({title, href, children}) => {    
-          fetchNestedPathAndTitle(path, title, href, children); 
-      });
-      st.path = path;
-      return st;
-    }
-
-    fetchChildren(category) {
-      const { meshAdapters } = this.state;
-      const children = [];
-      category = category.toLowerCase();
-      meshAdapters.forEach(adapter => {
-        const aName = adapter.name.toLowerCase();
-        // const imageIcon = this.pickIcon(aName);
-        if (category !== aName) {
-          return;
-        }
-        children.push(
-          {
-            id: adapter.adapter_location, 
-            // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-            icon: <RemoveIcon />,
-            href: `/management?adapter=${adapter.adapter_location}`, 
-            title: `Management - ${adapter.adapter_location}`,
-            link: true, 
-            show: true,
+  updateAdaptersLink() {
+    const self = this;
+    categories.forEach((cat, ind) => {
+      if(cat.id === 'Management'){
+        cat.children.forEach((catc, ind1) => {
+          if(typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0]['href'] !== 'undefined'){
+            var val= true;
+            var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
+            categories[ind].children[ind1]['link'] = val;
+            categories[ind].children[ind1]['href'] = newhref;
           }
-        );
-      });
-      return children;
+        });
+      }
+    });
+  }
+
+  // componentDidMount(){
+  //   console.log("navigator mounted")
+  // }
+
+  // componentDidUpdate(){
+  //   console.log("navigator mounted")
+  // }
+
+  static getDerivedStateFromProps(props, state) {
+    const { meshAdapters, meshAdaptersts, path } = props;
+    const st = {};
+    if(meshAdaptersts > state.mts) {
+      st.meshAdapters = meshAdapters;
+      st.mts = meshAdaptersts;
     }
 
-    pickIcon(aName) {
-      aName = aName.toLowerCase();
-      const {classes} = this.props;
-      let image = "/static/img/meshery-logo.png";
-      let logoIcon = (<img src={image} className={classes.icon} />);
-      switch (aName){
-        case 'istio':
-          image = "/static/img/istio-white.svg";
-          logoIcon = (<img src={image} className={classes.istioIcon} />);
-          break;
-        case 'linkerd':
-          image = "/static/img/linkerd-white.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        case 'consul':
-          image = "/static/img/consul-white.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        case 'network service mesh':
-          image = "/static/img/nsm-white.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        case 'octarine':
-          image = "/static/img/octarine-white.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        case 'citrix':
-          image = "/static/img/citrix-light-gray.svg";
-          logoIcon = (<img src={image} className={classes.icon} />);
-          break;
-        // default:
+    const fetchNestedPathAndTitle = (path, title, href, children) => {
+      if (href === path) {
+        // console.log(`updating path: ${path} and title: ${title}`);
+        props.updatepagetitle({title});
+        return;
       }
-      return logoIcon;
+      if(children && children.length > 0){
+        children.forEach(({title, href, children}) => {
+          fetchNestedPathAndTitle(path, title, href, children);
+        });
+      }
     }
+
+    categories.forEach(({title, href, children}) => {    
+      fetchNestedPathAndTitle(path, title, href, children); 
+    });
+    st.path = path;
+    return st;
+  }
+
+  fetchChildren(category) {
+    const { meshAdapters } = this.state;
+    const children = [];
+    category = category.toLowerCase();
+    meshAdapters.forEach(adapter => {
+      const aName = adapter.name.toLowerCase();
+      // const imageIcon = this.pickIcon(aName);
+      if (category !== aName) {
+        return;
+      }
+      children.push(
+        {
+          id: adapter.adapter_location, 
+          // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+          icon: <RemoveIcon />,
+          href: `/management?adapter=${adapter.adapter_location}`, 
+          title: `Management - ${adapter.adapter_location}`,
+          link: true, 
+          show: true,
+        }
+      );
+    });
+    return children;
+  }
+
+  pickIcon(aName) {
+    aName = aName.toLowerCase();
+    const {classes} = this.props;
+    let image = "/static/img/meshery-logo.png";
+    let logoIcon = (<img src={image} className={classes.icon} />);
+    switch (aName){
+    case 'istio':
+      image = "/static/img/istio-white.svg";
+      logoIcon = (<img src={image} className={classes.istioIcon} />);
+      break;
+    case 'linkerd':
+      image = "/static/img/linkerd-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'consul':
+      image = "/static/img/consul-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'network service mesh':
+      image = "/static/img/nsm-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'octarine':
+      image = "/static/img/octarine-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'citrix':
+      image = "/static/img/citrix-light-gray.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+        // default:
+    }
+    return logoIcon;
+  }
 
     handleTitleClick = (event) => {
       this.props.router.push('/');
@@ -427,34 +427,6 @@ class Navigator extends React.Component {
       const { path } = this.state;
 
       if (idname!='Management' && children && children.length > 0){
-      return (
-        <List disablePadding>
-          {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
-            if (typeof showc !== 'undefined' && !showc){
-              return '';
-            }
-            return (
-              <React.Fragment>
-              <ListItem button
-                key={idc}
-                className={classNames(
-                  (depth === 1?classes.nested1:classes.nested2),
-                  classes.item,
-                  classes.itemActionable,
-                  path === hrefc && classes.itemActiveItem,
-                  isDrawerCollapsed && classes.noPadding
-                  )}>
-                {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
-              </ListItem>
-              {this.renderChildren(idname,childrenc, depth + 1)}
-              </React.Fragment>
-              );
-              })}
-            </List>
-        );
-      }
-      else if (idname=='Management'){
-        if (children && children.length>1){
         return (
           <List disablePadding>
             {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
@@ -463,29 +435,55 @@ class Navigator extends React.Component {
               }
               return (
                 <React.Fragment>
-                <ListItem button
-                  key={idc}
-                  className={classNames(
-                    (depth === 1?classes.nested1:classes.nested2),
-                    classes.item,
-                    classes.itemActionable,
-                    path === hrefc && classes.itemActiveItem,
-                    isDrawerCollapsed && classes.noPadding
+                  <ListItem button
+                    key={idc}
+                    className={classNames(
+                      (depth === 1?classes.nested1:classes.nested2),
+                      classes.item,
+                      classes.itemActionable,
+                      path === hrefc && classes.itemActiveItem,
+                      isDrawerCollapsed && classes.noPadding
                     )}>
-                  {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
-                </ListItem>
-                {this.renderChildren(idname,childrenc, depth + 1)}
+                    {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                  </ListItem>
+                  {this.renderChildren(idname,childrenc, depth + 1)}
                 </React.Fragment>
+              );
+            })}
+          </List>
+        );
+      } else if (idname=='Management'){
+        if (children && children.length>1){
+          return (
+            <List disablePadding>
+              {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+                if (typeof showc !== 'undefined' && !showc){
+                  return '';
+                }
+                return (
+                  <React.Fragment>
+                    <ListItem button
+                      key={idc}
+                      className={classNames(
+                        (depth === 1?classes.nested1:classes.nested2),
+                        classes.item,
+                        classes.itemActionable,
+                        path === hrefc && classes.itemActiveItem,
+                        isDrawerCollapsed && classes.noPadding
+                      )}>
+                      {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                    </ListItem>
+                    {this.renderChildren(idname,childrenc, depth + 1)}
+                  </React.Fragment>
                 );
-                })}
-              </List>
+              })}
+            </List>
           );
-        }
-        else if(children && children.length==1){
+        } else if(children && children.length==1){
           this.updateAdaptersLink();
         }
-     }
-     return '';
+      }
+      return '';
     }
 
     linkContent(iconc, idc, hrefc, linkc, drawerCollapsed){
@@ -497,11 +495,11 @@ class Navigator extends React.Component {
             {iconc}
           </ListItemIcon>
           <ListItemText
-              className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-              classes={{
-                primary: classes.itemPrimary,
-                textDense: classes.textDense
-              }}>
+            className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
+            classes={{
+              primary: classes.itemPrimary,
+              textDense: classes.textDense
+            }}>
             {idc}
           </ListItemText>
 
@@ -509,119 +507,118 @@ class Navigator extends React.Component {
       );
       if(linkc){
         linkContent= (
-        <Link href={hrefc} prefetch>
-        {linkContent}
-        </Link>
+          <Link href={hrefc} prefetch>
+            {linkContent}
+          </Link>
         );
       }
       return linkContent;
     }
 
     render() {
-        const { classes, isDrawerCollapsed, ...other } = this.props;
-        const { path } = this.state;
-        this.updateCategoriesMenus();
-        var classname;
-        if (isDrawerCollapsed){
-          classname=classes.collapseButtonWrapperRotated;
-        }
-        else{
-          classname=classes.collapseButtonWrapper;
-        }
-        // const path = this.updateTitle();
-        // console.log("current page:" + path);
-        return (
-            <NoSsr>
-            <Drawer
-              variant="permanent" {...other}
-              className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
-              classes={{
+      const { classes, isDrawerCollapsed, ...other } = this.props;
+      const { path } = this.state;
+      this.updateCategoriesMenus();
+      var classname;
+      if (isDrawerCollapsed){
+        classname=classes.collapseButtonWrapperRotated;
+      } else{
+        classname=classes.collapseButtonWrapper;
+      }
+      // const path = this.updateTitle();
+      // console.log("current page:" + path);
+      return (
+        <NoSsr>
+          <Drawer
+            variant="permanent" {...other}
+            className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
+            classes={{
               paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded
-              }}
-              style={{ width: "inherit" }}
-            >
+            }}
+            style={{ width: "inherit" }}
+          >
             <List disablePadding>
-                <ListItem 
-                  component="a"
-                  onClick={this.handleTitleClick}
-                  className={
-                    classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
-                  }>
-                  <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                  <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
+              <ListItem 
+                component="a"
+                onClick={this.handleTitleClick}
+                className={
+                  classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
+                }>
+                <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
+                <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
 
-                  {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-                </ListItem>
-                    {categories.map(({ id: childId, icon, href, show, link, children }) => {
-                      if (typeof show !== 'undefined' && !show){
-                        return '';
-                      }
-                      return (
-                        <React.Fragment>
-                        <ListItem
-                            button
-                            dense
-                            key={childId}
-                            className={classNames(
-                            classes.item,
-                            classes.itemActionable,
-                            path === href && classes.itemActiveItem,
-                            )}
-                        >
-                            <Link href={link?href:''} prefetch>
-                                <div className={classNames(classes.link)} >
-                                    <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
-                                    <ListItemText
-                                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                                      classes={{
-                                        primary: classes.itemPrimary,
-                                        textDense: classes.textDense
-                                      }}
-                                    >
-                                    {childId}
-                                  </ListItemText>
-                                </div>
-                            </Link>
-                        </ListItem>
-                        {this.renderChildren(childId,children, 1)}
-                        </React.Fragment>
-                        );
-                      })}
-                      <Divider className={classes.divider} />
-                      <ListItem
-                            component="a"
-                            href="https://meshery.io/"
-                            target="_blank"
-                            key={'about'}
-                            className={classNames(
-                            classes.item,
-                            classes.itemActionable,
-                            classes.community,
-                            )}
-                        >
-                          <div className={classNames(classes.link)} >
-                              <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
-                              <ListItemText
-                                className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                                classes={{
-                                  primary: classes.itemPrimary,
-                                  textDense: classes.textDense
-                                }}
-                              >
-                              {'Community'}
-                            </ListItemText>
+                {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
+              </ListItem>
+              {categories.map(({ id: childId, icon, href, show, link, children }) => {
+                if (typeof show !== 'undefined' && !show){
+                  return '';
+                }
+                return (
+                  <React.Fragment>
+                    <ListItem
+                      button
+                      dense
+                      key={childId}
+                      className={classNames(
+                        classes.item,
+                        classes.itemActionable,
+                        path === href && classes.itemActiveItem,
+                      )}
+                    >
+                      <Link href={link?href:''} prefetch>
+                        <div className={classNames(classes.link)} >
+                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          <ListItemText
+                            className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                            classes={{
+                              primary: classes.itemPrimary,
+                              textDense: classes.textDense
+                            }}
+                          >
+                            {childId}
+                          </ListItemText>
+                        </div>
+                      </Link>
+                    </ListItem>
+                    {this.renderChildren(childId,children, 1)}
+                  </React.Fragment>
+                );
+              })}
+              <Divider className={classes.divider} />
+              <ListItem
+                component="a"
+                href="https://meshery.io/"
+                target="_blank"
+                key={'about'}
+                className={classNames(
+                  classes.item,
+                  classes.itemActionable,
+                  classes.community,
+                )}
+              >
+                <div className={classNames(classes.link)} >
+                  <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  <ListItemText
+                    className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                    classes={{
+                      primary: classes.itemPrimary,
+                      textDense: classes.textDense
+                    }}
+                  >
+                    {'Community'}
+                  </ListItemText>
 
-                          </div>
-                        </ListItem>
-              </List>
-              <div className={classes.fixedSidebarFooter}>
-                <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
+                </div>
+              </ListItem>
+            </List>
+            <div className={classes.fixedSidebarFooter}>
+              <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
                 <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
-                </ListItem>
-              </div>
-            </Drawer>
-            </NoSsr>
-        );
+              </ListItem>
+            </div>
+          </Drawer>
+        </NoSsr>
+      );
     }
 }
 
@@ -648,6 +645,6 @@ const mapStateToProps = state => {
 }
 
 export default withStyles(styles)(connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(withRouter(Navigator)));
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Navigator)));

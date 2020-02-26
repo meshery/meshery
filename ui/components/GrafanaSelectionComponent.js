@@ -8,63 +8,63 @@ import {connect} from "react-redux";
 import { bindActionCreators } from 'redux';
 
 const grafanaStyles = theme => ({
-    root: {
-      padding: theme.spacing(5),
-    },
-    buttons: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-    },
-    button: {
-      marginTop: theme.spacing(3),
+  root: {
+    padding: theme.spacing(5),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    chartTitle: {
-      textAlign: 'center',
-    },
-    icon: {
-        width: theme.spacing(2.5),
-    },
-    alignRight: {
-        textAlign: 'right',
-        marginBottom: theme.spacing(2),
-    },
-    formControl: {
-        marginTop: theme.spacing(2),
-        minWidth: window.innerWidth * 0.25,
-    },
-    panelChips: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    panelChip: {
-        margin: theme.spacing(0.25),
-    }
-  });
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  chartTitle: {
+    textAlign: 'center',
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
+  alignRight: {
+    textAlign: 'right',
+    marginBottom: theme.spacing(2),
+  },
+  formControl: {
+    marginTop: theme.spacing(2),
+    minWidth: window.innerWidth * 0.25,
+  },
+  panelChips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  panelChip: {
+    margin: theme.spacing(0.25),
+  }
+});
 
 class GrafanaSelectionComponent extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
         
-        this.state = {
-            grafanaBoards: [],
-            grafanaBoard: '',
-            grafanaBoardObject: {},
-            templateVars: [],
-            templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
+    this.state = {
+      grafanaBoards: [],
+      grafanaBoard: '',
+      grafanaBoardObject: {},
+      templateVars: [],
+      templateVarOptions: [], // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
 
-            panels: [],
-            selectedPanels: [],
-            selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
-          };
-    }
+      panels: [],
+      selectedPanels: [],
+      selectedTemplateVars: [], // will contain the selected val at the respective index: [v1, v3]
+    };
+  }
     
       handleChange = name => event => {
         if (name === 'grafanaBoard'){
-            this.boardChange(event.target.value);
+          this.boardChange(event.target.value);
         } else if (name.startsWith('template_var_')) {
           this.setSelectedTemplateVar(parseInt(name.replace('template_var_', '')), event.target.value);
         } else {
@@ -94,17 +94,17 @@ class GrafanaSelectionComponent extends Component {
       boardChange = (newVal) => {
         this.props.grafanaBoards.forEach((board) => {
           if (board.uri === newVal) {
-              this.setState({
-                grafanaBoard: newVal,
-                panels: board.panels, 
-                selectedPanels: board.panels.map(panel=>panel.id), // selecting all panels by default
-                templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
-                templateVarOptions: [],
-                selectedTemplateVars: [],
-              });
-              if(board.template_vars && board.template_vars.length > 0){
-                this.queryTemplateVars(0, board.template_vars, [], []);
-              }
+            this.setState({
+              grafanaBoard: newVal,
+              panels: board.panels, 
+              selectedPanels: board.panels.map(panel => panel.id), // selecting all panels by default
+              templateVars: board.template_vars && board.template_vars.length > 0?board.template_vars:[],
+              templateVarOptions: [],
+              selectedTemplateVars: [],
+            });
+            if(board.template_vars && board.template_vars.length > 0){
+              this.queryTemplateVars(0, board.template_vars, [], []);
+            }
           }
         });
       }
@@ -138,17 +138,16 @@ class GrafanaSelectionComponent extends Component {
                 if(result.data.length > 0){
                   if(templateVars[ind].query.startsWith('label_values') && templateVars[ind].query.indexOf(',') > -1 
                     && typeof result.data[0] === 'object'){
-                      let q = templateVars[ind].query.replace('label_values(','')
-                      q = q.substr(0,q.length-1); // to remove ')'
-                      let qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
-                      result.data.forEach(d => {
-                        const v = d[qInd];
-                        if(typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1){
-                          tmpVarOpts.push(v);
-                        }
-                      });
-                  }
-                  else {
+                    let q = templateVars[ind].query.replace('label_values(','')
+                    q = q.substr(0,q.length-1); // to remove ')'
+                    let qInd = q.substr(q.lastIndexOf(',')).replace(',', '').trim();
+                    result.data.forEach(d => {
+                      const v = d[qInd];
+                      if(typeof v !== 'undefined' && v !== null && tmpVarOpts.indexOf(v) === -1){
+                        tmpVarOpts.push(v);
+                      }
+                    });
+                  } else {
                     tmpVarOpts = result.data;
                   }
                 } 
@@ -168,19 +167,19 @@ class GrafanaSelectionComponent extends Component {
             this.setState({templateVarOptions});
             self.props.handleError(error);
           });
+        }
       }
-    }
 
-    static getDerivedStateFromProps(props, state){
-      if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
-        return {
-          grafanaBoards: props.grafanaBoards,
-          grafanaBoard: '',
-          selectedPanels: [],
-        };
+      static getDerivedStateFromProps(props, state){
+        if (JSON.stringify(state.grafanaBoards.sort()) !== JSON.stringify(props.grafanaBoards.sort())) {
+          return {
+            grafanaBoards: props.grafanaBoards,
+            grafanaBoard: '',
+            selectedPanels: [],
+          };
+        }
+        return null;
       }
-      return null;
-    }
 
 
     addSelectedBoardPanelConfig = () => {
@@ -206,61 +205,61 @@ class GrafanaSelectionComponent extends Component {
     }
     
     render = () => {
-        var self = this;
-        const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
-          handleGrafanaChipDelete, handleGrafanaClick } = this.props;
-        const { panels, grafanaBoards, selectedPanels,
-          grafanaBoard, templateVars, templateVarOptions } = this.state;
-        return (
-          <NoSsr>
-        <React.Fragment>
+      var self = this;
+      const { classes, grafanaBoardSearch, grafanaURL, handleGrafanaBoardSearchChange, 
+        handleGrafanaChipDelete, handleGrafanaClick } = this.props;
+      const { panels, grafanaBoards, selectedPanels,
+        grafanaBoard, templateVars, templateVarOptions } = this.state;
+      return (
+        <NoSsr>
+          <React.Fragment>
             <div className={classes.root}>
-            <div className={classes.alignRight}>
+              <div className={classes.alignRight}>
                 <Chip 
-                    label={grafanaURL}
-                    onDelete={handleGrafanaChipDelete} 
-                    onClick={handleGrafanaClick}
-                    icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
-                    key='graf-key'
-                    variant="outlined" />
-            </div>
-            <Grid container spacing={1}>
+                  label={grafanaURL}
+                  onDelete={handleGrafanaChipDelete} 
+                  onClick={handleGrafanaClick}
+                  icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />} 
+                  key='graf-key'
+                  variant="outlined" />
+              </div>
+              <Grid container spacing={1}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                      id="grafanaBoardSearch"
-                      name="grafanaBoardSearch"
-                      label="Board Search"
-                      fullWidth
-                      value={grafanaBoardSearch}
-                      margin="normal"
-                      variant="outlined"
-                      onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')} // this event will be sent to the parent
+                    id="grafanaBoardSearch"
+                    name="grafanaBoardSearch"
+                    label="Board Search"
+                    fullWidth
+                    value={grafanaBoardSearch}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')} // this event will be sent to the parent
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                        select
-                        id="grafanaBoard"
-                        name="grafanaBoard"
-                        label="Board"
-                        fullWidth
-                        value={grafanaBoard}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('grafanaBoard')}
-                    >
-                        {grafanaBoards && grafanaBoards.map((board) => (
-                            <MenuItem key={'bd_---_'+board.uri} value={board.uri}>{board.title}</MenuItem>
-                        ))}
+                    select
+                    id="grafanaBoard"
+                    name="grafanaBoard"
+                    label="Board"
+                    fullWidth
+                    value={grafanaBoard}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('grafanaBoard')}
+                  >
+                    {grafanaBoards && grafanaBoards.map((board) => (
+                      <MenuItem key={'bd_---_'+board.uri} value={board.uri}>{board.title}</MenuItem>
+                    ))}
                   </TextField>
                 </Grid>
                 {templateVars.length > 0 && 
                   templateVars.map(({name}, ind) => {
                     // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
-                      if (ind === 0 || typeof this.getSelectedTemplateVar(ind-1) !== 'undefined'){
-                    return (
-                    <Grid item xs={12} sm={4}>
-                        <TextField
+                    if (ind === 0 || typeof this.getSelectedTemplateVar(ind-1) !== 'undefined'){
+                      return (
+                        <Grid item xs={12} sm={4}>
+                          <TextField
                             select
                             id={'template_var_'+ind}
                             name={'template_var_'+ind}
@@ -270,73 +269,73 @@ class GrafanaSelectionComponent extends Component {
                             margin="normal"
                             variant="outlined"
                             onChange={this.handleChange('template_var_'+ind)}
-                            >   
-                                <MenuItem key={'tmplVarOpt__-___'+ind+'_'+self.genRandomNumberForKey()} value={''}></MenuItem>
-                                {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
-                                    <MenuItem key={'tmplVarOpt__-__'+name+'_'+opt+'_'+ind+'_'+self.genRandomNumberForKey()} value={opt}>{opt}</MenuItem>
-                                ))}
-                        </TextField>
-                    </Grid>
-                    );
+                          >   
+                            <MenuItem key={'tmplVarOpt__-___'+ind+'_'+self.genRandomNumberForKey()} value={''}></MenuItem>
+                            {templateVarOptions[ind] && templateVarOptions[ind].map((opt) => (
+                              <MenuItem key={'tmplVarOpt__-__'+name+'_'+opt+'_'+ind+'_'+self.genRandomNumberForKey()} value={opt}>{opt}</MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                      );
                     } else {
                       return null;
                     }
                   })}
 
                 <Grid item xs={12}>
-                    <TextField
-                            select
-                            id="panels"
-                            name="panels"
-                            label="Panels"
-                            fullWidth
-                            value={selectedPanels}
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('selectedPanels')}
-                            SelectProps={{
-                              multiple: true,
-                              renderValue: selected => (
-                                <div className={classes.panelChips}>
-                                  {selected.map(value => {
-                                      let selVal = '';
-                                      let panelId = '';
-                                      panels.forEach(panel=>{
-                                        if (panel.id === value){
-                                            selVal = panel.title;
-                                            panelId = panel.id;
-                                        }
-                                      })
-                                      return (
-                                    <Chip key={'pl_--_'+panelId} label={selVal} className={classes.panelChip} />
-                                      )
-                                  })}
-                                </div>
-                            ),
-                            }}
-                        >
-                            {panels.map((panel) => (
-                                <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
-                            ))}
-                    </TextField>
+                  <TextField
+                    select
+                    id="panels"
+                    name="panels"
+                    label="Panels"
+                    fullWidth
+                    value={selectedPanels}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange('selectedPanels')}
+                    SelectProps={{
+                      multiple: true,
+                      renderValue: selected => (
+                        <div className={classes.panelChips}>
+                          {selected.map(value => {
+                            let selVal = '';
+                            let panelId = '';
+                            panels.forEach(panel => {
+                              if (panel.id === value){
+                                selVal = panel.title;
+                                panelId = panel.id;
+                              }
+                            })
+                            return (
+                              <Chip key={'pl_--_'+panelId} label={selVal} className={classes.panelChip} />
+                            )
+                          })}
+                        </div>
+                      ),
+                    }}
+                  >
+                    {panels.map((panel) => (
+                      <MenuItem key={'panel_-__-'+panel.id} value={panel.id}>{panel.title}</MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                </Grid>
-                <div className={classes.buttons}>
+              </Grid>
+              <div className={classes.buttons}>
                 <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={this.addSelectedBoardPanelConfig}
-                    className={classes.button}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.addSelectedBoardPanelConfig}
+                  className={classes.button}
                 >
                 Add
                 </Button>
-                </div>
+              </div>
             </div>
-        </React.Fragment>
+          </React.Fragment>
         </NoSsr>
-        );
+      );
     }
 }
 
@@ -353,7 +352,7 @@ GrafanaSelectionComponent.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-      updateProgress: bindActionCreators(updateProgress, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = state => {

@@ -26,12 +26,12 @@ const defaultToolbarSelectStyles = {
 
 class MesheryResultDialog extends React.Component {
     state = {
-        dialogOpen: true,
+      dialogOpen: true,
     }
 
     handleDialogClose = () => {
-        this.setState({dialogOpen: false});
-        this.props.close();
+      this.setState({dialogOpen: false});
+      this.props.close();
     }
 
     createTableRow(key, val) {
@@ -47,14 +47,14 @@ class MesheryResultDialog extends React.Component {
       const {classes} = this.props;
       return (
         <NoSsr>
-        <Typography className={classes.title} variant="h6" id="tableTitle">
+          <Typography className={classes.title} variant="h6" id="tableTitle">
           Environment
-        </Typography>
-        <Table className={classes.table} size="small" aria-label="Environment" >
-          <TableBody>
-            {this.createTableRow('Kubernetes API Server', kubernetes.server_version)}
-                {kubernetes.nodes.map((node, ind) => (
-                  <NoSsr>
+          </Typography>
+          <Table className={classes.table} size="small" aria-label="Environment" >
+            <TableBody>
+              {this.createTableRow('Kubernetes API Server', kubernetes.server_version)}
+              {kubernetes.nodes.map((node, ind) => (
+                <NoSsr>
                   <TableRow>
                     <TableCell colSpan={2} className={classes.row} align="center"><strong>Node {ind+1}</strong></TableCell>
                   </TableRow>
@@ -70,10 +70,10 @@ class MesheryResultDialog extends React.Component {
                   {this.createTableRow('Container runtime version', node.container_runtime_version)}
                   {this.createTableRow('Kubelet version', node.kubelet_version)}
                   {this.createTableRow('Kubeproxy version', node.kubeproxy_version)}
-                  </NoSsr>
-                ))}
-          </TableBody>
-        </Table>
+                </NoSsr>
+              ))}
+            </TableBody>
+          </Table>
         </NoSsr>
       );
     }
@@ -83,83 +83,85 @@ class MesheryResultDialog extends React.Component {
       const meshes = Object.keys(detectedMeshes);
       return (
         <NoSsr>
-        <Typography className={classes.title} variant="h6" id="tableTitle">
+          <Typography className={classes.title} variant="h6" id="tableTitle">
           Service Mesh{meshes.length > 1?'es':''}
-        </Typography>
-        <Table className={classes.table} size="small" aria-label="Service Mesh" >
-          <TableBody>
-            {meshes.map((mesh, ind) => (
-                  <NoSsr>
-                    {meshes.length > 1?
+          </Typography>
+          <Table className={classes.table} size="small" aria-label="Service Mesh" >
+            <TableBody>
+              {meshes.map((mesh, ind) => (
+                <NoSsr>
+                  {meshes.length > 1?
                     <TableRow>
                       <TableCell colSpan={2} className={classes.row} align="center"><strong>Service Mesh {ind+1}</strong></TableCell>
                     </TableRow>:''}
-                    {this.createTableRow('Name', mesh)}
-                    {this.createTableRow('Version', detectedMeshes[mesh])}
-                  </NoSsr>
-                ))}
-          </TableBody>
-        </Table>
+                  {this.createTableRow('Name', mesh)}
+                  {this.createTableRow('Version', detectedMeshes[mesh])}
+                </NoSsr>
+              ))}
+            </TableBody>
+          </Table>
         </NoSsr>
       );
     }
   
-  renderLoadProfile(rowData){
-    const {classes} = this.props;
-    let contents = '';
-    if (rowData.runner_results){
-      let percentiles = '';
-      if(rowData.runner_results.DurationHistogram && rowData.runner_results.DurationHistogram.Percentiles){
-        percentiles = rowData.runner_results.DurationHistogram.Percentiles.map(p => {return this.createTableRow(`p${p.Percentile} Response Time`, p.Value)});
+    renderLoadProfile(rowData){
+      const {classes} = this.props;
+      let contents = '';
+      if (rowData.runner_results){
+        let percentiles = '';
+        if(rowData.runner_results.DurationHistogram && rowData.runner_results.DurationHistogram.Percentiles){
+          percentiles = rowData.runner_results.DurationHistogram.Percentiles.map(p => {
+ return this.createTableRow(`p${p.Percentile} Response Time`, p.Value) 
+});
+        }
+
+        // let reqDuration = rowData.runner_results.RequestedDuration.substring(0, rowData.runner_results.RequestedDuration.length-1);
+        // switch(rowData.runner_results.RequestedDuration.slice(-1)){
+        //   case 's':
+        //     reqDuration += ' seconds';
+        //     break;
+        //   case 'm':
+        //     reqDuration += ' minutes';
+        //     break;
+        //   case 'h':
+        //     reqDuration += ' hours';
+        //     break;
+        // }
+
+        contents = [
+          this.createTableRow('URL', rowData.runner_results.URL),
+          this.createTableRow('Requested QPS', rowData.runner_results.RequestedQPS),
+          this.createTableRow('Actual QPS', rowData.runner_results.ActualQPS),
+          this.createTableRow('Threads', rowData.runner_results.NumThreads),
+          this.createTableRow('Connections', rowData.runner_results.SocketCount),
+          this.createTableRow('Requested Duration', rowData.runner_results.RequestedDuration),
+          this.createTableRow('Actual Duration', (rowData.runner_results.ActualDuration/1000000000).toFixed(1)),
+          this.createTableRow('Average Response Time', rowData.runner_results.DurationHistogram.Avg),
+          ...percentiles,
+          this.createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram.Max)
+        ];
       }
-
-      // let reqDuration = rowData.runner_results.RequestedDuration.substring(0, rowData.runner_results.RequestedDuration.length-1);
-      // switch(rowData.runner_results.RequestedDuration.slice(-1)){
-      //   case 's':
-      //     reqDuration += ' seconds';
-      //     break;
-      //   case 'm':
-      //     reqDuration += ' minutes';
-      //     break;
-      //   case 'h':
-      //     reqDuration += ' hours';
-      //     break;
-      // }
-
-      contents = [
-        this.createTableRow('URL', rowData.runner_results.URL),
-        this.createTableRow('Requested QPS', rowData.runner_results.RequestedQPS),
-        this.createTableRow('Actual QPS', rowData.runner_results.ActualQPS),
-        this.createTableRow('Threads', rowData.runner_results.NumThreads),
-        this.createTableRow('Connections', rowData.runner_results.SocketCount),
-        this.createTableRow('Requested Duration', rowData.runner_results.RequestedDuration),
-        this.createTableRow('Actual Duration', (rowData.runner_results.ActualDuration/1000000000).toFixed(1)),
-        this.createTableRow('Average Response Time', rowData.runner_results.DurationHistogram.Avg),
-        ...percentiles,
-        this.createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram.Max)
-      ];
-    }
-    return (
-      <NoSsr>
-      <Typography className={classes.title} variant="h6" id="tableTitle">
+      return (
+        <NoSsr>
+          <Typography className={classes.title} variant="h6" id="tableTitle">
         Load Profile
-      </Typography>
-      <Table className={classes.table} size="small" aria-label="Load Profile" >
-        <TableBody>
-          {/* {this.createTableRow('Name', rowData.name)} */}
-          {contents}
-        </TableBody>
-      </Table>
-      </NoSsr>
-    );
-  }
+          </Typography>
+          <Table className={classes.table} size="small" aria-label="Load Profile" >
+            <TableBody>
+              {/* {this.createTableRow('Name', rowData.name)} */}
+              {contents}
+            </TableBody>
+          </Table>
+        </NoSsr>
+      );
+    }
 
-  render() {
-    const { classes, rowData } = this.props;
+    render() {
+      const { classes, rowData } = this.props;
 
-    return (
-      <NoSsr>
-        <MesheryChartDialog title={`Details${rowData?' - ' + rowData.name:''}`} handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
+      return (
+        <NoSsr>
+          <MesheryChartDialog title={`Details${rowData?' - ' + rowData.name:''}`} handleClose={this.handleDialogClose} open={this.state.dialogOpen} content={
             <div>
               <Grid container spacing={1}>
                 {rowData && rowData.runner_results && rowData.runner_results.kubernetes &&
@@ -179,10 +181,10 @@ class MesheryResultDialog extends React.Component {
                 }
               </Grid>
             </div>
-        } />
-      </NoSsr>
-    );
-  }
+          } />
+        </NoSsr>
+      );
+    }
 }
 
 

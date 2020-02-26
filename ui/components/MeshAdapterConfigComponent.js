@@ -78,11 +78,11 @@ class MeshAdapterConfigComponent extends React.Component {
     super(props);
     const {meshAdapters} = props;
     this.state = {
-        meshAdapters,
-        availableAdapters: [],
-        ts: new Date(),
-        meshLocationURLError: false,
-      };
+      meshAdapters,
+      availableAdapters: [],
+      ts: new Date(),
+      meshLocationURLError: false,
+    };
   }
 
   static getDerivedStateFromProps(props, state){
@@ -123,7 +123,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleChange = name => event => {
     if (name === 'meshLocationURL' && event.target.value !== '') {
-        this.setState({meshLocationURLError: false})
+      this.setState({meshLocationURLError: false})
     }
     this.setState({ [name]: event.target.value });
   };
@@ -151,9 +151,9 @@ class MeshAdapterConfigComponent extends React.Component {
     const { meshLocationURL } = this.state;
     
     if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === ''){
-        this.setState({meshLocationURLError: true})
-        return;
-      }
+      this.setState({meshLocationURLError: true})
+      return;
+    }
 
     this.submitConfig();
   }
@@ -186,12 +186,12 @@ class MeshAdapterConfigComponent extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -213,17 +213,17 @@ class MeshAdapterConfigComponent extends React.Component {
       this.props.updateProgress({showProgress: false});
       if (typeof result !== 'undefined'){
         this.setState({meshAdapters: result});
-         this.props.enqueueSnackbar('Adapter was successfully removed!', {
+        this.props.enqueueSnackbar('Adapter was successfully removed!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -247,12 +247,12 @@ class MeshAdapterConfigComponent extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -267,12 +267,12 @@ class MeshAdapterConfigComponent extends React.Component {
       variant: 'error',
       action: (key) => (
         <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => self.props.closeSnackbar(key) }
+        >
+          <CloseIcon />
         </IconButton>
       ),
       autoHideDuration: 8000,
@@ -292,42 +292,42 @@ class MeshAdapterConfigComponent extends React.Component {
             let image = "/static/img/meshery-logo.png";
             let logoIcon = (<img src={image} className={classes.icon} />);
             switch (adapter.name.toLowerCase()){
-              case 'istio':
-                image = "/static/img/istio-blue.svg";
-                logoIcon = (<img src={image} className={classes.istioIcon} />);
-                break;
-              case 'linkerd':
-                image = "/static/img/linkerd.svg";
-                logoIcon = (<img src={image} className={classes.icon} />);
-                break;
-              case 'consul':
-                image = "/static/img/consul.svg";
-                logoIcon = (<img src={image} className={classes.icon} />);
+            case 'istio':
+              image = "/static/img/istio-blue.svg";
+              logoIcon = (<img src={image} className={classes.istioIcon} />);
+              break;
+            case 'linkerd':
+              image = "/static/img/linkerd.svg";
+              logoIcon = (<img src={image} className={classes.icon} />);
+              break;
+            case 'consul':
+              image = "/static/img/consul.svg";
+              logoIcon = (<img src={image} className={classes.icon} />);
 		            break;
-              case 'network service mesh':
-                image = "/static/img/nsm.svg";
-                logoIcon = (<img src={image} className={classes.icon} />);
-                break;
-              case 'octarine':
-                image = "/static/img/octarine.svg";
-                logoIcon = (<img src={image} className={classes.icon} />);
-                break;  
-              case 'citrix':
-                image = "/static/img/citrix.svg";
-                logoIcon = (<img src={image} className={classes.icon} />);
-                break;                
+            case 'network service mesh':
+              image = "/static/img/nsm.svg";
+              logoIcon = (<img src={image} className={classes.icon} />);
+              break;
+            case 'octarine':
+              image = "/static/img/octarine.svg";
+              logoIcon = (<img src={image} className={classes.icon} />);
+              break;  
+            case 'citrix':
+              image = "/static/img/citrix.svg";
+              logoIcon = (<img src={image} className={classes.icon} />);
+              break;                
                             
               // default:
             } 
             
             return (
-            <Chip 
-            label={adapter.adapter_location}
-            onDelete={self.handleDelete(adapter.adapter_location)} 
-            onClick={self.handleClick(adapter.adapter_location)} 
-            icon={logoIcon} 
-            variant="outlined" />
-          );
+              <Chip 
+                label={adapter.adapter_location}
+                onDelete={self.handleDelete(adapter.adapter_location)} 
+                onClick={self.handleClick(adapter.adapter_location)} 
+                icon={logoIcon} 
+                variant="outlined" />
+            );
           })}
           
         </div>
@@ -335,33 +335,33 @@ class MeshAdapterConfigComponent extends React.Component {
     }
 
 
-      return (
-    <NoSsr>
-    <div className={classes.root}>
+    return (
+      <NoSsr>
+        <div className={classes.root}>
     
-    {showAdapters}
+          {showAdapters}
     
-    <Grid container spacing={1} alignItems="flex-end">
-      <Grid item xs={12}>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={12}>
 
-        {/* <CreatableSelect
+              {/* <CreatableSelect
           isClearable
           onChange={this.handleMeshLocURLChange}
           onInputChange={this.handleInputChange}
           options={availableAdapters}
         /> */}
 
-        <ReactSelectWrapper
-          onChange={this.handleMeshLocURLChange}
-          onInputChange={this.handleInputChange}
-          options={availableAdapters}
-          value={meshLocationURL}
-          // placeholder={'Mesh Adapter URL'}
-          label={'Mesh Adapter URL'}
-          error={meshLocationURLError}
-        />
+              <ReactSelectWrapper
+                onChange={this.handleMeshLocURLChange}
+                onInputChange={this.handleInputChange}
+                options={availableAdapters}
+                value={meshLocationURL}
+                // placeholder={'Mesh Adapter URL'}
+                label={'Mesh Adapter URL'}
+                error={meshLocationURLError}
+              />
 
-        {/* <TextField
+              {/* <TextField
           required
           id="meshLocationURL"
           name="meshLocationURL"
@@ -374,25 +374,25 @@ class MeshAdapterConfigComponent extends React.Component {
           variant="outlined"
           onChange={this.handleChange('meshLocationURL')}
         /> */}
-      </Grid>
-    </Grid>
-    <React.Fragment>
-      <div className={classes.buttons}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={this.handleSubmit}
-          className={classes.button}
-        >
+            </Grid>
+          </Grid>
+          <React.Fragment>
+            <div className={classes.buttons}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={this.handleSubmit}
+                className={classes.button}
+              >
          Submit
-        </Button>
-      </div>
-    </React.Fragment>
-    </div>
+              </Button>
+            </div>
+          </React.Fragment>
+        </div>
   
-  {/* <LoadTestTimerDialog open={timerDialogOpen} 
+        {/* <LoadTestTimerDialog open={timerDialogOpen} 
     t={t}
     onClose={this.handleTimerDialogClose} 
     countDownComplete={this.handleTimerDialogClose} />
@@ -402,9 +402,9 @@ class MeshAdapterConfigComponent extends React.Component {
     </Typography>
   <MesheryChart data={result} />     */}
 
-    </NoSsr>
-  );
-    }
+      </NoSsr>
+    );
+  }
 
   render() {
     const { reconfigureCluster } = this.state;
@@ -420,18 +420,18 @@ MeshAdapterConfigComponent.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
-        updateProgress: bindActionCreators(updateProgress, dispatch),
-    }
+  return {
+    updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
+  }
 }
 const mapStateToProps = state => {
-    const meshAdapters = state.get("meshAdapters").toJS();
-    const meshAdaptersts = state.get("meshAdaptersts");
-    return {meshAdapters, meshAdaptersts};
+  const meshAdapters = state.get("meshAdapters").toJS();
+  const meshAdaptersts = state.get("meshAdaptersts");
+  return {meshAdapters, meshAdaptersts};
 }
 
 export default withStyles(styles)(connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(withRouter(withSnackbar(MeshAdapterConfigComponent))));
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(withSnackbar(MeshAdapterConfigComponent))));

@@ -1,33 +1,32 @@
 import React from 'react';
-import { NoSsr, Popper, Paper } from '@material-ui/core';
+import { NoSsr, Paper, Popper } from '@material-ui/core';
 
 let ReactCountdownClock;
-if (typeof window !== 'undefined') { 
+if (typeof window !== 'undefined') {
   ReactCountdownClock = require('react-countdown-clock');
 }
 
 class LoadTestTimerDialog extends React.Component {
-
-  render() {
-      const {countDownComplete, t, container, open} = this.props;
-      if (!open) {
-        return '';
-      }
-      let tNum = 0, dur;
-      try {
-        tNum = parseInt(t.substring(0, t.length - 1))
-      }catch(ex){
-      }
-      switch(t.substring(t.length - 1, t.length).toLowerCase()) {
-        case 'h':
-          dur = tNum * 60 * 60;
-          break;
-        case 'm':
-          dur = tNum * 60;
-          break;
-        default:
-          dur = tNum;
-      }
+  render () {
+    const { countDownComplete, t, container, open } = this.props;
+    if (!open) {
+      return '';
+    }
+    let tNum = 0; let dur;
+    try {
+      tNum = parseInt(t.substring(0, t.length - 1));
+    } catch (ex) {
+    }
+    switch (t.substring(t.length - 1, t.length).toLowerCase()) {
+    case 'h':
+      dur = tNum * 60 * 60;
+      break;
+    case 'm':
+      dur = tNum * 60;
+      break;
+    default:
+      dur = tNum;
+    }
     return (
       <NoSsr>
         {/* <Menu
@@ -38,40 +37,40 @@ class LoadTestTimerDialog extends React.Component {
         > */}
         {/* <div id="anc1"></div>
         <Popper open={open} anchorEl={() => document.querySelector('#anc1')}
-           placement='bottom' 
+           placement='bottom'
             modifiers={{
               flip: {
                 enabled: false,
               },
             }}> */}
-                {/* <Paper> */}
-                  {/* <ClickAwayListener onClickAway={this.handleClose}></ClickAwayListener> */}
+        {/* <Paper> */}
+        {/* <ClickAwayListener onClickAway={this.handleClose}></ClickAwayListener> */}
 
-          {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+        {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
           <MenuItem onClick={this.handleClose}>My account</MenuItem>
           <MenuItem onClick={this.handleClose}>Logout</MenuItem> */}
 
-          <div style={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            width: '400px',
-            // height: '400',
-          }}>
+        <div style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          width: '400px'
+          // height: '400',
+        }}>
           <ReactCountdownClock seconds={dur}
-                        color="#667C89"
-                        alpha={0.9}
-                        size={400}
-                        onComplete={countDownComplete}
-                        />
-          </div>
-                        {/* </Paper> */}
-                        {/* </Popper> */}
+            color="#667C89"
+            alpha={0.9}
+            size={400}
+            onComplete={countDownComplete}
+          />
+        </div>
+        {/* </Paper> */}
+        {/* </Popper> */}
         {/* </Menu> */}
-        
-        {/* <Dialog onClose={this.handleTimerDialogClose} 
+
+        {/* <Dialog onClose={this.handleTimerDialogClose}
             {...other} hideBackdrop={true} >
             <DialogContent>
-                    
+
             </DialogContent>
         </Dialog> */}
       </NoSsr>

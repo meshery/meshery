@@ -17,26 +17,26 @@ const styles = theme => ({
   paper: {
     maxWidth: 936,
     margin: 'auto',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   searchBar: {
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
   },
   searchInput: {
-    fontSize: theme.typography.fontSize,
+    fontSize: theme.typography.fontSize
   },
   block: {
-    display: 'block',
+    display: 'block'
   },
   addUser: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   contentWrapper: {
-    margin: '40px 16px',
-  },
+    margin: '40px 16px'
+  }
 });
 
-function Content(props) {
+function Content (props) {
   const { classes } = props;
 
   return (
@@ -53,7 +53,7 @@ function Content(props) {
                 placeholder="Search by email address, phone number, or user UID"
                 InputProps={{
                   disableUnderline: true,
-                  className: classes.searchInput,
+                  className: classes.searchInput
                 }}
               />
             </Grid>
@@ -80,7 +80,7 @@ function Content(props) {
 }
 
 Content.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Content);

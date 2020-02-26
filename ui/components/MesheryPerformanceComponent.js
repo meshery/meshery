@@ -187,12 +187,12 @@ class MesheryPerformanceComponent extends React.Component {
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
         });
@@ -223,12 +223,12 @@ class MesheryPerformanceComponent extends React.Component {
       autoHideDuration: 1000,
       action: (key) => (
         <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => this.props.closeSnackbar(key) }
-            >
-              <CloseIcon />
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => this.props.closeSnackbar(key) }
+        >
+          <CloseIcon />
         </IconButton>
       ),
     });
@@ -240,32 +240,32 @@ class MesheryPerformanceComponent extends React.Component {
     return e => {
       const data = JSON.parse(e.data);
       switch(data.status){
-        case 'info':
-            self.props.enqueueSnackbar(data.message, {
-              variant: 'info',
-              autoHideDuration: 1000,
-              action: (key) => (
-                <IconButton
-                      key="close"
-                      aria-label="Close"
-                      color="inherit"
-                      onClick={() => self.props.closeSnackbar(key) }
-                    >
-                      <CloseIcon />
-                </IconButton>
-              ),
-            });
-            if (track === 0){
-              self.setState({timerDialogOpen: true, result: {}});
-              track++;
-            }
-          break;
-        case 'error':
-          self.handleError("Load test did not run successfully with msg")(data.message);
-          break;
-        case 'success':
-          self.handleSuccess()(data.result);
-          break;
+      case 'info':
+        self.props.enqueueSnackbar(data.message, {
+          variant: 'info',
+          autoHideDuration: 1000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        if (track === 0){
+          self.setState({timerDialogOpen: true, result: {}});
+          track++;
+        }
+        break;
+      case 'error':
+        self.handleError("Load test did not run successfully with msg")(data.message);
+        break;
+      case 'success':
+        self.handleSuccess()(data.result);
+        break;
       }
     }
   }
@@ -347,12 +347,12 @@ class MesheryPerformanceComponent extends React.Component {
         variant: 'error',
         action: (key) => (
           <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
-              >
-                <CloseIcon />
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key) }
+          >
+            <CloseIcon />
           </IconButton>
         ),
         autoHideDuration: 8000,
@@ -397,9 +397,9 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitle}>
             Node Metrics
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
-          prometheusURL={prometheus.prometheusURL} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={[staticPrometheusBoardConfig.cluster, staticPrometheusBoardConfig.node]} 
+            prometheusURL={prometheus.prometheusURL} />
         </React.Fragment>
       );
     }
@@ -409,9 +409,9 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom cclassName={classes.chartTitleGraf}>
             Prometheus charts
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
-          prometheusURL={prometheus.prometheusURL} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={prometheus.selectedPrometheusBoardsConfigs} 
+            prometheusURL={prometheus.prometheusURL} />
         </React.Fragment>
       );
     }
@@ -421,10 +421,10 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
             Grafana charts
           </Typography>
-        <GrafanaCustomCharts
-          boardPanelConfigs={grafana.selectedBoardsConfigs} 
-          grafanaURL={grafana.grafanaURL}
-          grafanaAPIKey={grafana.grafanaAPIKey} />
+          <GrafanaCustomCharts
+            boardPanelConfigs={grafana.selectedBoardsConfigs} 
+            grafanaURL={grafana.grafanaURL}
+            grafanaAPIKey={grafana.grafanaAPIKey} />
         </React.Fragment>
       );
     }
@@ -575,30 +575,30 @@ class MesheryPerformanceComponent extends React.Component {
           <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
             Test Results 
             <IconButton
-                  key="download"
-                  aria-label="download"
-                  color="inherit"
-                  // onClick={() => self.props.closeSnackbar(key) }
-                  href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
-                >
-                  <GetAppIcon />
+              key="download"
+              aria-label="download"
+              color="inherit"
+              // onClick={() => self.props.closeSnackbar(key) }
+              href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
+            >
+              <GetAppIcon />
             </IconButton>
           </Typography>
           <div className={classes.chartContent} style={chartStyle}>
             <MesheryChart data={[result && result.runner_results?result.runner_results:{}]} />    
           </div>
         </div>)
-      }
+            }
         
       
-      </div>
-    </React.Fragment>
+          </div>
+        </React.Fragment>
 
-    {displayStaticCharts}
+        {displayStaticCharts}
 
-    {displayPromCharts}
+        {displayPromCharts}
 
-    {displayGCharts}
+        {displayGCharts}
 
       </NoSsr>
     );

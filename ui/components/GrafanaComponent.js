@@ -15,94 +15,96 @@ import { withSnackbar } from 'notistack';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 
 const grafanaStyles = theme => ({
-    root: {
-      padding: theme.spacing(5),
-    },
-    buttons: {
-      display: 'flex',
+  root: {
+    padding: theme.spacing(5),
+  },
+  buttons: {
+    display: 'flex',
     //   justifyContent: 'flex-end',
-    },
-    button: {
-      marginTop: theme.spacing(3),
+  },
+  button: {
+    marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    chartTitle: {
-      textAlign: 'center',
-    },
-    icon: {
-        width: theme.spacing(2.5),
-    },
-    alignRight: {
-        textAlign: 'right',
-    },
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 180,
-    },
-    panelChips: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    panelChip: {
-        margin: theme.spacing(0.25),
-    },
-    chartTitle: {
-      marginLeft: theme.spacing(3),
-      marginTop: theme.spacing(2),
-    }
-  });
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  chartTitle: {
+    textAlign: 'center',
+  },
+  icon: {
+    width: theme.spacing(2.5),
+  },
+  alignRight: {
+    textAlign: 'right',
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 180,
+  },
+  panelChips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  panelChip: {
+    margin: theme.spacing(0.25),
+  },
+  chartTitle: {
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(2),
+  }
+});
 
 class GrafanaComponent extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = props.grafana;        
-        let grafanaConfigSuccess = false;
-        if (grafanaURL !== ''){ grafanaConfigSuccess = true }
+    const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = props.grafana;        
+    let grafanaConfigSuccess = false;
+    if (grafanaURL !== ''){
+ grafanaConfigSuccess = true 
+}
 
-        this.state = {
-            urlError: false,
+    this.state = {
+      urlError: false,
 
-            grafanaConfigSuccess,
+      grafanaConfigSuccess,
 
-            grafanaURL,
-            grafanaAPIKey,
-            grafanaBoardSearch: '', // we probably dont need this retrieved from store
-            grafanaBoards,
-            selectedBoardsConfigs,
-            ts: new Date(),
-          };
+      grafanaURL,
+      grafanaAPIKey,
+      grafanaBoardSearch: '', // we probably dont need this retrieved from store
+      grafanaBoards,
+      selectedBoardsConfigs,
+      ts: new Date(),
+    };
+  }
+
+  static getDerivedStateFromProps(props, state){
+    const {grafanaURL, grafanaAPIKey, selectedBoardsConfigs} = props.grafana;
+    // if(grafanaURL !== state.grafanaURL || grafanaAPIKey !== state.grafanaAPIKey || JSON.stringify(grafanaBoards) !== JSON.stringify(state.grafanaBoards)
+    //     || JSON.stringify(selectedBoardsConfigs) !== JSON.stringify(state.selectedBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
+    if(props.ts > state.ts) {
+      return {
+        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
+      };
     }
+    return {};
+  }
 
-    static getDerivedStateFromProps(props, state){
-      const {grafanaURL, grafanaAPIKey, selectedBoardsConfigs} = props.grafana;
-      // if(grafanaURL !== state.grafanaURL || grafanaAPIKey !== state.grafanaAPIKey || JSON.stringify(grafanaBoards) !== JSON.stringify(state.grafanaBoards)
-      //     || JSON.stringify(selectedBoardsConfigs) !== JSON.stringify(state.selectedBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
-      if(props.ts > state.ts) {
-        return {
-          grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
-        };
-      }
-      return {};
-    }
+  componentDidMount() {
+    this.getGrafanaBoards();
+  }
 
-    componentDidMount() {
-      this.getGrafanaBoards();
-    }
-
-    componentDidUpdate() {
-    }
+  componentDidUpdate() {
+  }
     
       handleChange = name => event => {
         if (name === 'grafanaURL' && event.target.value !== ''){
           this.setState({urlError: false});
         }
         if (name === 'grafanaBoardSearch') {
-            if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
-            this.boardSearchTimeout = setTimeout(this.getGrafanaBoards, 500); // to delay the search by a few.
+          if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
+          this.boardSearchTimeout = setTimeout(this.getGrafanaBoards, 500); // to delay the search by a few.
         }
 
         this.setState({ [name]: event.target.value });
@@ -121,8 +123,8 @@ class GrafanaComponent extends Component {
       submitGrafanaConfigure = () => {
         const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs} = this.state;
         const data = {
-            grafanaURL,
-            grafanaAPIKey
+          grafanaURL,
+          grafanaAPIKey
         }
         const params = Object.keys(data).map((key) => {
           return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
@@ -146,12 +148,12 @@ class GrafanaComponent extends Component {
               autoHideDuration: 2000,
               action: (key) => (
                 <IconButton
-                      key="close"
-                      aria-label="Close"
-                      color="inherit"
-                      onClick={() => self.props.closeSnackbar(key) }
-                    >
-                      <CloseIcon />
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
                 </IconButton>
               ),
             });
@@ -205,12 +207,12 @@ class GrafanaComponent extends Component {
           variant: 'error',
           action: (key) => (
             <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key) }
+            >
+              <CloseIcon />
             </IconButton>
           ),
           autoHideDuration: 8000,
@@ -262,12 +264,12 @@ class GrafanaComponent extends Component {
               autoHideDuration: 2000,
               action: (key) => (
                 <IconButton
-                      key="close"
-                      aria-label="Close"
-                      color="inherit"
-                      onClick={() => self.props.closeSnackbar(key) }
-                    >
-                      <CloseIcon />
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key) }
+                >
+                  <CloseIcon />
                 </IconButton>
               ),
             });
@@ -306,7 +308,7 @@ class GrafanaComponent extends Component {
       this.persistBoardSelection(selectedBoardsConfigs);
     }
 
-	persistBoardSelection(selectedBoardsConfigs) {
+    persistBoardSelection(selectedBoardsConfigs) {
 	  const {grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch} = this.state;
 	  const self = this;
       dataFetch('/api/grafana/boards', { 
@@ -318,93 +320,93 @@ class GrafanaComponent extends Component {
 	      },
 	      body: JSON.stringify(selectedBoardsConfigs),
 	    }, result => {
-      this.props.updateProgress({showProgress: false});
-      if (typeof result !== 'undefined'){
+        this.props.updateProgress({showProgress: false});
+        if (typeof result !== 'undefined'){
 	  	self.setState({selectedBoardsConfigs});
 	    self.props.updateGrafanaConfig({
-        grafana: {
-          grafanaURL,
-          grafanaAPIKey,
-          grafanaBoardSearch,
-          grafanaBoards,
-          selectedBoardsConfigs,
-        },
+            grafana: {
+              grafanaURL,
+              grafanaAPIKey,
+              grafanaBoardSearch,
+              grafanaBoards,
+              selectedBoardsConfigs,
+            },
 	    });
 	
-        self.props.enqueueSnackbar('Grafana board selection was successfully saved!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
-                >
-                  <CloseIcon />
-            </IconButton>
-          ),
-        });
-      }
+          self.props.enqueueSnackbar('Grafana board selection was successfully saved!', {
+            variant: 'success',
+            autoHideDuration: 2000,
+            action: (key) => (
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={() => self.props.closeSnackbar(key) }
+              >
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+        }
       }, self.handleError(`There was an error persisting the board selection`));
-	}    
+    }    
 
     render() {
-        const {classes} = this.props;
-        const { urlError, grafanaURL, grafanaConfigSuccess,
-          grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } = this.state;
-        if (grafanaConfigSuccess) {
-            let displaySelec = '';
-            if (selectedBoardsConfigs.length > 0) {
-              displaySelec = (
-                <React.Fragment>
-                <GrafanaDisplaySelection 
-                  boardPanelConfigs={selectedBoardsConfigs} 
-                  deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />
+      const {classes} = this.props;
+      const { urlError, grafanaURL, grafanaConfigSuccess,
+        grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } = this.state;
+      if (grafanaConfigSuccess) {
+        let displaySelec = '';
+        if (selectedBoardsConfigs.length > 0) {
+          displaySelec = (
+            <React.Fragment>
+              <GrafanaDisplaySelection 
+                boardPanelConfigs={selectedBoardsConfigs} 
+                deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />
 
-                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+              <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Grafana charts
-                </Typography>  
-                {/* <GrafanaCharts 
+              </Typography>  
+              {/* <GrafanaCharts 
                   boardPanelConfigs={selectedBoardsConfigs} 
                   grafanaURL={grafanaURL} /> */}
-                  <GrafanaCustomCharts
-                  boardPanelConfigs={selectedBoardsConfigs} 
-                  grafanaURL={grafanaURL}
-                  grafanaAPIKey={grafanaAPIKey} />
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <NoSsr>
-              <React.Fragment>
-                <GrafanaSelectionComponent
-                  grafanaURL={grafanaURL}
-                  grafanaBoards={grafanaBoards}
-                  grafanaBoardSearch={grafanaBoardSearch}
-                  handleGrafanaBoardSearchChange={this.handleChange}
-                  handleGrafanaChipDelete={this.handleGrafanaChipDelete}
-                  handleGrafanaClick={this.handleGrafanaClick}
-                  addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
-                  handleError={this.handleError(`There was an error communicating with Grafana`)}
-                />
-                {displaySelec}
-              </React.Fragment>
-              </NoSsr>
-            );
+              <GrafanaCustomCharts
+                boardPanelConfigs={selectedBoardsConfigs} 
+                grafanaURL={grafanaURL}
+                grafanaAPIKey={grafanaAPIKey} />
+            </React.Fragment>
+          );
         }
+
         return (
           <NoSsr>
-            <GrafanaConfigComponent
-              grafanaURL={grafanaURL}
-              grafanaAPIKey={grafanaAPIKey}
-              urlError={urlError}
-              handleChange={this.handleChange}
-              handleGrafanaConfigure={this.handleGrafanaConfigure}
-            />
+            <React.Fragment>
+              <GrafanaSelectionComponent
+                grafanaURL={grafanaURL}
+                grafanaBoards={grafanaBoards}
+                grafanaBoardSearch={grafanaBoardSearch}
+                handleGrafanaBoardSearchChange={this.handleChange}
+                handleGrafanaChipDelete={this.handleGrafanaChipDelete}
+                handleGrafanaClick={this.handleGrafanaClick}
+                addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
+                handleError={this.handleError(`There was an error communicating with Grafana`)}
+              />
+              {displaySelec}
+            </React.Fragment>
           </NoSsr>
         );
+      }
+      return (
+        <NoSsr>
+          <GrafanaConfigComponent
+            grafanaURL={grafanaURL}
+            grafanaAPIKey={grafanaAPIKey}
+            urlError={urlError}
+            handleChange={this.handleChange}
+            handleGrafanaConfigure={this.handleGrafanaConfigure}
+          />
+        </NoSsr>
+      );
     }
 }
 
@@ -414,8 +416,8 @@ GrafanaComponent.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-      updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-      updateProgress: bindActionCreators(updateProgress, dispatch),
+    updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+    updateProgress: bindActionCreators(updateProgress, dispatch),
   }
 }
 const mapStateToProps = st => {
