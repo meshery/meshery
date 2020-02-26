@@ -34,20 +34,44 @@ Meshery provides this high-level functionality:
 ## Meshery is for Adopters and Operators
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
-## Meshery is for performance benchmarking
-- Identify permutations of workloads, infrastructure types, and measurements to use for: 
-    1. Data plane testing
-    1. Control plane testing.
-    - Against a fixed set of:
-        1. Workload(s)
-        1. Infrastructure(s)
-\
-**Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
+## Meshery is for performance testing and benchmarking
+Meshery helps users weigh the value of their service mesh dedployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
+In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 
-**In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
+Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
-**Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support.
+## Meshery is for any service mesh
+Infrastructure diversity is a reality for any enterprise. Whether you're running a single service mesh or multiple types of service meshes, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
 
+- **Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
+
+| Platform      | Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "stable" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
+
+- **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
+
+| Platform      | Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "beta" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
+
+- **Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support.
+
+| Platform      | Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "alpha" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 # Contributing
 
 ## Community

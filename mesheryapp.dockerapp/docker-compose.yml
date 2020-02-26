@@ -1,0 +1,61 @@
+version: '3.7'
+services:
+  meshery:
+    image: layer5/meshery
+    labels:
+      - ${labels.watchtower}
+    environment:
+      - "SAAS_BASE_URL=https://meshery.layer5.io"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004"
+      - "EVENT=mesheryLocal"
+    ports:
+      - "${meshery.port}:8080"
+  meshery-istio:
+    image: layer5/meshery-istio
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${istio.port}:10000"
+    x-enabled: ${istio.enabled}
+  meshery-linkerd:
+    image: layer5/meshery-linkerd
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${linkerd.port}:10001"
+    x-enabled: ${linkerd.enabled}
+  meshery-consul:
+    image: layer5/meshery-consul
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${consul.port}:10002"
+    x-enabled: ${consul.enabled}
+  meshery-octarine:
+    image: layer5/meshery-octarine
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${octarine.port}:10003"
+    x-enabled: ${octarine.enabled}     
+  meshery-nsm:
+    image: layer5/meshery-nsm
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${nsm.port}:10004"
+    x-enabled: ${nsm.enabled}
+  meshery-cpx:
+    image: layer5/meshery-cpx
+    labels:
+      - ${labels.watchtower}
+    ports:
+      - "${cpx.port}:10000"
+    x-enabled: ${cpx.enabled}
+  watchtower:
+    image: v2tec/watchtower
+    labels:
+      - ${labels.watchtower}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --label-enable
