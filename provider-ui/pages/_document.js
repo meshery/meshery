@@ -35,7 +35,7 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = ctx => {
+MesheryDocument.getInitialProps = (ctx) => {
   // Resolution order
   //
   // On the server:
@@ -60,8 +60,8 @@ MesheryDocument.getInitialProps = ctx => {
 
   // Render app and page and get the context of the page with collected side effects.
   let pageContext;
-  const page = ctx.renderPage(Component => {
-    const WrappedComponent = props => {
+  const page = ctx.renderPage((Component) => {
+    const WrappedComponent = (props) => {
       pageContext = props.pageContext;
       return <Component {...props} />;
     };
@@ -84,14 +84,14 @@ MesheryDocument.getInitialProps = ctx => {
     pageContext,
     // Styles fragment is rendered after the app and page rendering finish.
     styles: (
-      <React.Fragment>
+      <>
         <style
           id="jss-server-side"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: css }}
         />
         {flush() || null}
-      </React.Fragment>
+      </>
     ),
   };
 };
