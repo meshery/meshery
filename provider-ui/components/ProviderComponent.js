@@ -54,14 +54,16 @@ class ProviderComponent extends React.Component {
           if (typeof result !== 'undefined'){
             let selectedRemote = '';
             let selectedLocal = '';
+            let selectedProvider = '';
             Object.keys(result).forEach(key => {
               if(result[key] === 'remote'){
                 selectedRemote = key;
+                selectedProvider = key;
               } else {
                 selectedLocal = key;
               }
             })
-            self.setState({availableProviders: result, selectedRemote, selectedLocal});
+            self.setState({availableProviders: result, selectedRemote, selectedLocal, selectedProvider});
             }
           }, error => {
             console.log(`there was an error fetching providers: ${error}`);
@@ -100,6 +102,7 @@ class ProviderComponent extends React.Component {
   render(){
     const { classes } = this.props;
     const { availableProviders, selectedRemote, selectedLocal, selectedProvider, open } = this.state;
+    //selectedProvider=selectedRemote;
     const self = this;
       return (
     <NoSsr>
