@@ -1,11 +1,12 @@
-import ProviderComponent from "../components/ProviderComponent";
-import { NoSsr } from "@material-ui/core";
+import { NoSsr } from '@material-ui/core';
+import React from 'react';
+import ProviderComponent from '../components/ProviderComponent';
 
 class Index extends React.Component {
-  componentDidMount () {
+  componentDidMount() {
   }
 
-  render () {
+  render() {
     return (
       <NoSsr>
         <ProviderComponent />
