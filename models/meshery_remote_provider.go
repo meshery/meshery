@@ -49,6 +49,7 @@ func (l *MesheryRemoteProvider) Name() string {
 	return "Meshery Cloud (persistent session) (free use)"
 }
 
+// Description - returns a short description of the provider for display in the Provider UI
 func (l *MesheryRemoteProvider) Description() string {
 	return `Meshery Cloud 
 	- persistent sessions 

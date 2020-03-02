@@ -27,6 +27,7 @@ func (l *DefaultLocalProvider) Name() string {
 	return "Local (ephemeral session) (free use)"
 }
 
+// Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() string {
 	return `Local Provider
 	- ephemeral sessions
