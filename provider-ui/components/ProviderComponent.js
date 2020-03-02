@@ -35,53 +35,40 @@ class ProviderComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      availableProviders: {},
-      selectedRemote: '',
-      selectedLocal: '',
-      selectedProvider: '',
-      open: false,
-    };
+        availableProviders: {},
+        selectedRemote: '',
+        selectedLocal: '',
+        selectedProvider: '',
+        open: false,
+      };
     this.anchorRef = null;
   }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            availableProviders: {},
-            selectedRemote: '',
-            selectedLocal: '',
-            selectedProvider: '',
-            open: false,
-          };
-        this.anchorRef = null;
-      }
-    
-      loadProvidersFromServer() {
-        const self = this;
-          dataFetch('/api/providers', { 
-            credentials: 'same-origin',
-            method: 'GET',
-            credentials: 'include',
-          }, result => {
-          if (typeof result !== 'undefined'){
-            let selectedRemote = '';
-            let selectedLocal = '';
-            let selectedProvider = '';
-            Object.keys(result).forEach(key => {
-              if(result[key] === 'remote'){
-                selectedRemote = key;
-                selectedProvider = key;
-              } else {
-                selectedLocal = key;
-              }
-            })
-            self.setState({availableProviders: result, selectedRemote, selectedLocal, selectedProvider});
-            }
-          }, error => {
-            console.log(`there was an error fetching providers: ${error}`);
-          });
-      }
-
+   loadProvidersFromServer() {
+    const self = this;
+      dataFetch('/api/providers', { 
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, result => {
+      if (typeof result !== 'undefined'){
+        let selectedRemote = '';
+        let selectedLocal = '';
+        let selectedProvider = '';
+        Object.keys(result).forEach(key => {
+          if(result[key] === 'remote'){
+            selectedRemote = key;
+            selectedProvider = key;
+          } else {
+            selectedLocal = key;
+          }
+        })
+        self.setState({availableProviders: result, selectedRemote, selectedLocal, selectedProvider});
+        }
+      }, error => {
+        console.log(`there was an error fetching providers: ${error}`);
+      });
+  }
       componentDidMount = () => {
         this.loadProvidersFromServer();
       }
