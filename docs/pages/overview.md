@@ -100,7 +100,11 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 
 ## Meshery Presentations
 
-- [Docker Captains Roundtable 2020](https://calcotestudios.com/talks/decks/slides-docker-captains-roundtable-2020-meshery-the-multi-service-mesh-manager.html)
+- [O'Reilly OSCON 2020](https://conferences.oreilly.com/oscon/oscon-or)
+- [O'Reilly Infrastructure & Ops 2020](https://conferences.oreilly.com/infrastructure-ops/io-ca/public/schedule/speaker/226795)
+- [InnoTech Dallas 2020](https://innotechdallas2020.sched.com/event/aN7E/a-management-plane-for-service-meshes)
+- [KubeCon EU 2020](https://kccnceu20.sched.com/event/Zetg/discreetly-studying-the-effects-of-individual-traffic-control-functions-lee-calcote-layer5?iframe=no&w=100%&sidebar=yes&bg=no)
+- [Docker Captains Roundtable 2020](https://calcotestudios.com/talks/decks/slides-docker-captains-2020-meshery-the-multi-service-mesh-manager.html)
 - [Cloud Native Austin 2020](https://www.meetup.com/Cloud-Native-Austin/events/267784090/)
 - NSMCon 2019 talk ([video](https://www.youtube.com/watch?v=4xKixsDTtdM), [deck](https://calcotestudios.com/talks/decks/slides-nsmcon-kubecon-na-2019-adopting-network-service-mesh-with-meshery.html))
 - [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
