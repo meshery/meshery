@@ -60,9 +60,9 @@ var perfCmd = &cobra.Command{
 		//Check prerequisite
 		preReqCheck()
 
-		println("Test name not provided, using random name : ", testName)
+		println("Test name used : ", testName)
 
-		const mesheryURL string = "http://localhost:9081/api/load-test-smps"
+		const mesheryURL string = "http://localhost:9081/api/load-test-smps?"
 		postData := ""
 
 		startTime := time.Now()
@@ -130,7 +130,7 @@ func init() {
 	perfCmd.Flags().StringVar(&qps, "qps", "1", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&parallelRequests, "parallel-requests", "1", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "10s", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Local (ephemeral session) (free use)", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "DESCRIPTION")
 	rootCmd.AddCommand(perfCmd)
 }
