@@ -38,10 +38,10 @@ var (
 	testCookie       = ""
 )
 
-var seededRand *rand.Rand = rand.New(
+var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
-// Generates random string
+// StringWithCharset generates a random string with a given length
 func StringWithCharset(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
