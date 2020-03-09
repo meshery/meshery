@@ -15,21 +15,21 @@
 package cmd
 
 import (
-	// "os"
-	// "os/exec"
-	// log "github.com/sirupsen/logrus"
+	"bytes"
+	"net/http"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	testURL = ""
-	testName = ""
-	testMesh = ""
-	testFile = ""
-	qps = ""
+	testURL          = ""
+	testName         = ""
+	testMesh         = ""
+	testFile         = ""
+	qps              = ""
 	parallelRequests = ""
-	duration = ""
-	loadGenerator = ""
+	duration         = ""
+	loadGenerator    = ""
 )
 
 /*
@@ -46,7 +46,23 @@ var perfCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//Check prerequisite
 		preReqCheck()
-		
+
+		jsonStr := []byte("endpoint_url: https://github.com\nstart_time: 2020-02-05T18:25:53.862091-05:00\nend_time: 2020-02-05T18:26:03.942124809-05:00\nclient:\n connections: 10\n rps: 10")
+
+		req, err := http.NewRequest("POST", "http://localhost:9081/api/load-test-smps?name=testname", bytes.NewBuffer(jsonStr))
+
+		if err != nil {
+			println("err1")
+			return
+		}
+		req.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Default Local Provider"})
+		client := &http.Client{}
+		_, err = client.Do(req)
+		if err != nil {
+			return
+		}
+
+		println("done")
 	},
 }
 
@@ -56,8 +72,8 @@ func init() {
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "YOUR NAME", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testFile, "file", "YOUR NAME", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&qps, "qps", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&parallel_requests, "parallel_requests", "YOUR NAME", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&parallelRequests, "parallel_requests", "YOUR NAME", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&duration, "duration", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&load_generator, "load_generator", "YOUR NAME", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&loadGenerator, "load_generator", "YOUR NAME", "DESCRIPTION")
 	rootCmd.AddCommand(perfCmd)
 }
