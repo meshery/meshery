@@ -38,7 +38,7 @@ func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
 var rootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
-	Long:  `Meshery is a a multi-service mesh performance benchmark and playground tool`,
+	Long:  `Meshery is the multi-service mesh management plane, providing lifecycle, performance, and configuration management of service meshes.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
