@@ -14,6 +14,13 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   </thead>
   <tbody>
       <tr>
+      <td class="centered">0.3.10</td>
+      <td>
+        <em>Mesheryctl</em> - Introduces mesheryctl perf command. See Meshery CLI Commands & Documentation for reference.
+      </td>
+      <td>Mar 9, 2020</td>
+    </tr>
+      <tr>
       <td class="centered">0.3.9</td>
       <td>
         <em>Mesheryctl</em> - Addition of mesheryctl version to provide server-side version number, Improvement of mesheryctl logs | stop | start to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
@@ -77,6 +84,7 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
       </td>
       <td>Nov 12, 2019</td>
     </tr>
+    <tr><td colspan="3"><strong>v0.3.0</strong></td></tr>
     <tr>
       <td class="centered">0.2.4</td>
       <td>
