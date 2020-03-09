@@ -5,6 +5,15 @@ permalink: installation/kubernetes
 ---
 
 # Quick Start with Kubernetes
+## <strong>Using Kubernetes cluster</strong>
+<strong>Helm v3 - run the following:</strong>
+
+```
+  $ git clone https://github.com/layer5io/meshery.git; cd meshery
+  $ kubectl create namespace meshery
+  $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+```
+## <strong>Deploying by YAML file</strong>
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, let us first create a namespace to host the Meshery components:
 ```
 kubectl create ns meshery
