@@ -16,29 +16,42 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
+	"io"
+	"math/rand"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	testURL          = ""
-	testName         = ""
-	testMesh         = ""
-	testFile         = ""
+	testURL  = ""
+	testName = ""
+	testMesh = ""
+	// testFile         = ""
 	qps              = ""
 	parallelRequests = ""
-	duration         = ""
+	testDuration     = ""
 	loadGenerator    = ""
+	testCookie       = ""
 )
 
-/*
-http://localhost:9081/api/load-test?name=test1&mesh=istio&
-url=http%3A%2F%2F192.168.99.103%3A30176%2Fproductpage&qps=100&c=5&t=10&dur=s&
-uuid=134883e9-4eb5-4857-b985-e7786b92a70a&loadGenerator=fortio
-*/
+var seededRand *rand.Rand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
 
-// updateCmd represents the update command
+// Generates random string
+func StringWithCharset(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+// perfCmd represents the Performance command
 var perfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance testing and benchmarking",
@@ -47,33 +60,77 @@ var perfCmd = &cobra.Command{
 		//Check prerequisite
 		preReqCheck()
 
-		jsonStr := []byte("endpoint_url: https://github.com\nstart_time: 2020-02-05T18:25:53.862091-05:00\nend_time: 2020-02-05T18:26:03.942124809-05:00\nclient:\n connections: 10\n rps: 10")
+		println("Test name not provided, using random name : ", testName)
 
-		req, err := http.NewRequest("POST", "http://localhost:9081/api/load-test-smps?name=testname", bytes.NewBuffer(jsonStr))
+		const mesheryURL string = "http://localhost:9081/api/load-test-smps"
+		postData := ""
 
+		startTime := time.Now()
+		duration, err := time.ParseDuration(testDuration)
 		if err != nil {
-			println("err1")
+			println("Error: Test duration invalid")
 			return
 		}
-		req.AddCookie(&http.Cookie{Name: "meshery-provider", Value: "Default Local Provider"})
+		endTime := startTime.Add(duration)
+
+		postData = postData + "start_time: " + startTime.Format(time.RFC3339)
+		postData = postData + "\nend_time: " + endTime.Format(time.RFC3339)
+
+		if len(testURL) > 0 {
+			postData = postData + "\nendpoint_url: " + testURL
+		} else {
+			println("Error: Please enter a TestURL")
+			return
+		}
+
+		postData = postData + "\nclient:"
+		postData = postData + "\n connections: " + parallelRequests
+		postData = postData + "\n rps: " + qps
+
+		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
+		if err != nil {
+			println("Error in building the request")
+			return
+		}
+		cookieConf := strings.SplitN(testCookie, "=", 2)
+		cookieName := cookieConf[0]
+		cookieValue := cookieConf[1]
+		req.AddCookie(&http.Cookie{Name: cookieName, Value: cookieValue})
+		q := req.URL.Query()
+		q.Add("name", testName)
+		q.Add("loadGenerator", loadGenerator)
+		if len(testMesh) > 0 {
+			q.Add("mesh", testMesh)
+		}
+		req.URL.RawQuery = q.Encode()
+
 		client := &http.Client{}
-		_, err = client.Do(req)
+		resp, err := client.Do(req)
 		if err != nil {
 			return
 		}
 
-		println("done")
+		buf := make([]byte, 4)
+		for {
+			n, err := resp.Body.Read(buf)
+			fmt.Print(string(buf[:n]))
+			if err == io.EOF {
+				break
+			}
+		}
+		println("\nTest Completed Successfully!")
 	},
 }
 
 func init() {
-	perfCmd.Flags().StringVar(&testURL, "url", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testName, "name", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testMesh, "mesh", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testFile, "file", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&qps, "qps", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&parallelRequests, "parallel_requests", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&duration, "duration", "YOUR NAME", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&loadGenerator, "load_generator", "YOUR NAME", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testURL, "url", "", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testName, "name", StringWithCharset(8), "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "DESCRIPTION")
+	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&qps, "qps", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&parallelRequests, "parallel-requests", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testDuration, "duration", "10s", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "DESCRIPTION")
 	rootCmd.AddCommand(perfCmd)
 }
