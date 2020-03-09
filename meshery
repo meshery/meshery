@@ -62,8 +62,7 @@ unzip ${PWD}/meshery.zip
 
 printf "\nInstalling mesheryctl in /usr/local/bin.\n"
 WHOAMI=$(whoami)
-if [ $OSEXT = "Linux" ] ; then
-  MV_CMD=$(sudo mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl)
+if mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then		
   echo "mesheryctl installed."
 else
   if sudo mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
