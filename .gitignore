@@ -49,3 +49,4 @@ dist/
 Gemfile.lock
 
 **/.idea
+docs/Gemfile.lock
