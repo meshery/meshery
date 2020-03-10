@@ -84,6 +84,7 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
       </td>
       <td>Nov 12, 2019</td>
     </tr>
+    <tr><td colspan="3"><strong>v0.3.0</strong></td></tr>
     <tr>
       <td class="centered">0.2.4</td>
       <td>
