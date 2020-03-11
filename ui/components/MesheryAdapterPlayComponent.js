@@ -464,7 +464,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       break;
 
     case 1:
-      content = 'Manage Sample Application Lifecyle';
+      content = 'Manage Sample Application Lifecycle';
       description = 'Deploy sample applications on/off the service mesh.';
       break;
 
