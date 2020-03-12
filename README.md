@@ -12,7 +12,7 @@
 
 <p align="center"><i>If you’re using Meshery or if you like the project, please ★ star this repository to show your support! 🤩</i></p>
 
-[Meshery](https://layer5.io/meshery) is a the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
+[Meshery](https://layer5.io/meshery) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
 
 In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. As a partner of Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs. 
 
