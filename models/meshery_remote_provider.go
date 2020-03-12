@@ -148,16 +148,18 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	// 	return
 	// }
 	session.Options.Path = "/"
-	token := ""
-	for k, va := range req.URL.Query() {
-		for _, v := range va {
-			if k == l.SaaSTokenName {
-				// logrus.Infof("setting user in session: %s", v)
-				token = v
-				break
-			}
-		}
-	}
+	// token := ""
+	// for k, va := range req.URL.Query() {
+	// 	for _, v := range va {
+	// 		if k == l.SaaSTokenName {
+	// 			// logrus.Infof("setting user in session: %s", v)
+	// 			token = v
+	// 			break
+	// 		}
+	// 	}
+	// }
+	token := req.URL.Query().Get("token")
+	println("jwt ", token)
 	if reffCk != nil && reffCk.Name != "" {
 		reffCk.Expires = time.Now().Add(-2 * time.Second)
 		http.SetCookie(w, reffCk)
