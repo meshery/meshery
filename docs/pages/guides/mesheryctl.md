@@ -34,6 +34,11 @@ Installation, troubleshooting and debugging of Meshery and its adapaters.
 |           | --parallel-requests (optional)| Number of concurrent requests<br>(default) 1|  |
 |           | --duration (optional) | Duration of the test like 10s, 5m, 2h. We are following the convention )|   |
 |           | --load-generator (optional)| choice of load generator: fortio (OR) wrk2<br>(default) fortio|   |
+|perf       |                |Performance Testing Subcommand| `mesheryctl perf` |
+|           | --url| URL of the endpoint to use for the test| |
+|           | --duration| Duration of the test like 3s,10s.| |
+|           | --qps| Queries per second| |
+|           | --parallel-requests| Number of concurrent requests| |
 
 ### Service Mesh Lifecycle Management
 
