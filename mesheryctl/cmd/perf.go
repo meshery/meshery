@@ -128,7 +128,7 @@ func init() {
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "DESCRIPTION")
 	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&parallelRequests, "Concurrent requests", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Local (ephemeral session) (free use)", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "DESCRIPTION")
