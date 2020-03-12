@@ -81,8 +81,9 @@ See the [project site](https://layer5.io/meshery) for quick start instructions a
 
 <a name="contributing"></a><a name="community"></a>
 ## Community - Join!
-<img src="docs/assets/images/community.svg" width="155px" style="float:left;display:inline;margin-right:25px;" />
 <div>
+<img src="docs/assets/images/community.svg" width="155px" style="float:left;display:inline;margin-right:25px;" />
+
 This project is community-built and welcomes collaboration! See the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a>. 
 <p>
   <ul>
