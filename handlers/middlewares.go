@@ -65,6 +65,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool {
+	// TODO: Validation of auth would be better if the session could be verified from the server
 	sess, err := provider.GetSession(req)
 	if err == nil {
 		// logrus.Debugf("session: %v", sess)
