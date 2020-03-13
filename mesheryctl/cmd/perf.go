@@ -32,7 +32,7 @@ var (
 	testMesh = ""
 	// testFile         = ""
 	qps              = ""
-	parallelRequests = ""
+	concurrentRequests = ""
 	testDuration     = ""
 	loadGenerator    = ""
 	testCookie       = ""
@@ -84,7 +84,7 @@ var perfCmd = &cobra.Command{
 		}
 
 		postData = postData + "\nclient:"
-		postData = postData + "\n connections: " + parallelRequests
+		postData = postData + "\n connections: " + concurrentRequests
 		postData = postData + "\n rps: " + qps
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
