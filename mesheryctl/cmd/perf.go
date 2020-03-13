@@ -31,11 +31,11 @@ var (
 	testName = ""
 	testMesh = ""
 	// testFile         = ""
-	qps              = ""
-	parallelRequests = ""
-	testDuration     = ""
-	loadGenerator    = ""
-	testCookie       = ""
+	qps                = ""
+	concurrentRequests = ""
+	testDuration       = ""
+	loadGenerator      = ""
+	testCookie         = ""
 )
 
 var seededRand = rand.New(
@@ -84,7 +84,7 @@ var perfCmd = &cobra.Command{
 		}
 
 		postData = postData + "\nclient:"
-		postData = postData + "\n connections: " + parallelRequests
+		postData = postData + "\n connections: " + concurrentRequests
 		postData = postData + "\n rps: " + qps
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
@@ -127,9 +127,9 @@ func init() {
 	perfCmd.Flags().StringVar(&testName, "name", StringWithCharset(8), "(optional) A memorable name for the test.")
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the service mesh.")
 	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&qps, "qps", "1", "(optional) Queries per second")
-	perfCmd.Flags().StringVar(&parallelRequests, "parallel-requests", "1", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testDuration, "duration", "10s", "(optional) Duration of the test like 10s, 5m, 2h. We are following the convention described at https://golang.org/pkg/time/#ParseDuration")
+	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
+	perfCmd.Flags().StringVar(&concurrentRequests, "parallel-requests", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Duration of the test like 10s, 5m, 2h. We are following the convention described at https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) identification of choice of provider.")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "	(optional) choice of load generator: fortio (OR) wrk2")
 	rootCmd.AddCommand(perfCmd)
