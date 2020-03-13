@@ -17,10 +17,6 @@
 ## <a name="functionality">Functionality</a>
 <img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/dashboard-screenshot.png" alt="Service Mesh Manager" width="50%" />
 
-### Service Performance Management
-
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred. 
-
 ### Service Mesh Lifecycle Management
 
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
@@ -29,60 +25,22 @@ Meshery manages the provisioning, configuration and operation your service mesh.
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
 
-## <a name="running">Running Meshery</a>
-### Mac or Linux (Docker)
-<p>Install Meshery on your <a href="https://meshery.layer5.io/docs/installation#quick-start">Mac or Linux</a> machine running Docker using bash or brew by executing either of the following commands.</p>    
+<a href="docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-right:10px;" width="50%" align="left" /></a>
 
-#### Using Bash
+### Service Performance Management
 
-```shell
-curl -L https://git.io/meshery | bash -    
-```
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred. 
+<div>&nbsp;</div>
 
-#### Using Brew
+## <a name="running"></a>Running Meshery
 
-```shell
-brew tap layer5io/tap
-brew install mesheryctl
-mesheryctl start
-```
+See [meshery.io](https://meshery.io/#getting-started) for quick start guides on each of the supported platforms: Docker, Kubernetes (helm, minikube, GKE, EKS), WSL2, Windows (binary), Linux (bash) and Mac (brew).
 
-<strong>Note</strong> : For users using minikube , run `eval $(minikube docker-env)` before executing
-`mesheryctl start` to allow cli to reach the container orchestration environment.
-
-### Windows
-Download and unzip [`mesheryctl`](https://meshery.layer5.io/docs/guides/mesheryctl) from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add mesheryctl to your PATH for ease of use. Then, execute:
-```shell
-./mesheryctl start
-```
-Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
-
-### Kubernetes
-Using Kubernetes, install Meshery on your cluster by cloning the Meshery repo and applying environment-appropriate manifests:
-```shell
-git clone https://github.com/layer5io/meshery.git; cd meshery
-
-kubectl create ns meshery
-kubectl -n meshery apply -f deployment_yamls/k8s
-```
-
-Deploying Meshery by Helm chart
-
-> If you in Helm2 please kindly use `helm template`, the chart only was passed tested under Helm3.
-
-```
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
-$ kubectl create namespace meshery
-$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
-```
-
-The detail please check [Meshery chart](./install/kubernetes/helm/meshery/README.md)
-
-See the [project site](https://layer5.io/meshery) for quick start instructions and [project documentation](https://meshery.layer5.io/docs) for a complete set of Meshery documentation.
+The [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
 <a name="contributing"></a><a name="community"></a>
 ## Join! our Community
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
 
 Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
 <p>
@@ -95,15 +53,16 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 *Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
 ## Service Mesh Standards
+<a href="docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="left" /></a>
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+<div>&nbsp;</div>
 
-## [Meshery Documentation](https://meshery.layer5.io/docs)
+## Contributing (yes!)
+We're a warm and welcoming community of open source contributors. Please join. All types of contribution are welcome. Be sure to read the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
 
-- [Quick Start](https://meshery.layer5.io/docs/installation#getting-started)
-- [Supported Platforms](https://meshery.layer5.io/docs/installation/platforms)
-- [Contributing](CONTRIBUTING.md/#contributing)
-  - [Write an adapter](CONTRIBUTING.md/#adapter)
-  - [Build the project](CONTRIBUTING.md/#building)
+- [General Contributing](CONTRIBUTING.md/#contributing)
+- [Write an adapter](CONTRIBUTING.md/#adapter)
+- [Build the project](CONTRIBUTING.md/#building)
 
 ## See Meshery in Action
 - [KubeCon EU 2019](https://kccnceu19.sched.com/event/MPf7/service-meshes-at-what-cost-lee-calcote-layer5-girish-ranganathan-solarwinds?iframe=no&w=100%&sidebar=yes&bg=no) | ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
