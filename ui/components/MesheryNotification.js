@@ -17,10 +17,10 @@ const styles = theme => ({
   sidelist: {
     width: 350,
   },
-  notficiationButton: {
+  notificationButton: {
     height: '100%',
   },
-  notficiationDrawer: {
+  notificationDrawer: {
     backgroundColor: '#FFFFFF',
   },
   notificationTitle: {
@@ -251,7 +251,7 @@ class MesheryNotification extends React.Component {
         <NoSsr>
           <Tooltip title={toolTipMsg}>
             <IconButton
-              className={classes.notficiationButton}
+              className={classes.notificationButton}
               buttonRef={node => {
                 this.anchorEl = node;
               }}
@@ -264,7 +264,7 @@ class MesheryNotification extends React.Component {
 
           <Drawer anchor="right" open={open} onClose={this.handleClose()} 
             classes={{
-              paper: classes.notficiationDrawer,
+              paper: classes.notificationDrawer,
             }}
           >
             <div

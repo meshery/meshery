@@ -89,7 +89,7 @@ export function makeTitle (res) {
     title.push(percStr)
 
     if(res.kubernetes){
-      title.push(`\nKubernets server version: ${res.kubernetes.server_version}`);
+      title.push(`\nKubernetes server version: ${res.kubernetes.server_version}`);
       title.push("\nNodes:");
       res.kubernetes.nodes.forEach((node, ind) => {
         title.push(`\nNode ${ind+1} - Hostname: ${node.hostname}, CPU: ${node.allocatable_cpu}, Memory: ${node.allocatable_memory}, ` +
