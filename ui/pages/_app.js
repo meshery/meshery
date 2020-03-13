@@ -20,7 +20,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
-// link clicks, hence attemtpting to add them here
+// link clicks, hence attempting to add them here
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';

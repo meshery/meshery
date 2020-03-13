@@ -19,4 +19,4 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:80
 {{- end }}
-2. All the Notes.txt of Meshery, Mesheryistio and Mesherylinkerd are need to add the content here. This can achive by sub PR.
+2. All the Notes.txt of Meshery, Mesheryistio and Mesherylinkerd need to add the content here. This can be achieved by sub PR.
