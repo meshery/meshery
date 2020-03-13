@@ -25,7 +25,7 @@ Meshery manages the provisioning, configuration and operation your service mesh.
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
 
-<a href="docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-right:10px;" width="50%" align="left" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-right:10px;" width="50%" align="left" /></a>
 
 ### Service Performance Management
 
@@ -53,7 +53,7 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 *Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
 ## Service Mesh Standards
-<a href="docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="left" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="right" /></a>
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 <div>&nbsp;</div>
 
