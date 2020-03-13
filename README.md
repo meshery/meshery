@@ -12,21 +12,24 @@
 
 <p align="center"><i>If you’re using Meshery or if you like the project, please ★ star this repository to show your support! 🤩</i></p>
 
-[Meshery](https://layer5.io/meshery) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
+[Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
 
-In an effort to produce service mesh agnostic tooling, Meshery uses a [common performance benchmark specification](https://github.com/layer5io/service-mesh-benchmark-spec) to capture and share environment information and test configuration. As a partner of Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs. 
-
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 
 ## <a name="functionality">Functionality</a>
 <img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/dashboard-screenshot.png" alt="Service Mesh Manager" width="50%" />
 
-### Multi-mesh Performance Management
+### Service Performance Management
 
-Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, [within a single project](https://layer5.io/landscape#tools)), a number of different tools *and results* exist. 
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred. 
 
-### Multi-mesh Lifecycle Management
+### Service Mesh Lifecycle Management
 
-A service mesh playground to faciliate learning about functionality of different service meshes. Meshery incorporates a visual interface for manipulating traffic routing rules. Sample applications will be included in Meshery. 
+Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
+
+### Service Mesh Configuration Management
+
+Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
 
 ## <a name="running">Running Meshery</a>
 ### Mac or Linux (Docker)
@@ -81,32 +84,30 @@ See the [project site](https://layer5.io/meshery) for quick start instructions a
 
 <a name="contributing"></a><a name="community"></a>
 ## Join! our Community
-
-<a href="http://slack.layer5.io"><img align="left" alt="Layer5 Service Mesh Community" src="docs/assets/images/community.svg" width="155px" /></a>
-
-Join our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration! Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
-
- <ul>
-  <li style="list-style-type: circle;"><em><strong>Join</strong></em> <a href="https://drive.google.com/open?id=1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.</li>
-  <li style="list-style-type: circle;"><em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.</li>
-  <li style="list-style-type: circle;"><em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">community drive</a>.</li>
-</ul>
+<div style="display:inline;text-align:left;position:relative;float:left;width:195px;">
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/community.svg" width="155px" /></a>
+</div>
+<div>
+Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
+<p>
+✔️ <em><strong>Join</strong></em> <a href="https://drive.google.com/open?id=1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.<br />
+✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
+✔️ <em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">community drive</a>.<br />
+</p>
+</div>
 
 *Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
-## More about Meshery
 
-- [Functionality](#functionality)
-- [Running Meshery](#running)
-  - [Quick start](https://layer5.io/meshery/#getting-started)
-  - [Docs](https://meshery.layer5.io/docs)
-  - [Community Drive](https://drive.google.com/drive/u/0/folders/0ABH8aabN4WAKUk9PVA) (Request access!)
-    - [Architecture](https://drive.google.com/open?id=1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY)
+## [Meshery Documentation](https://meshery.layer5.io/docs)
+
+- [Quick Start](https://meshery.layer5.io/docs/installation#getting-started)
+- [Supported Platforms](https://meshery.layer5.io/docs/installation/platforms)
 - [Contributing](CONTRIBUTING.md/#contributing)
   - [Write an adapter](CONTRIBUTING.md/#adapter)
   - [Build the project](CONTRIBUTING.md/#building)
 
-## Presentations
+## See Meshery in Action
 - [KubeCon EU 2019](https://kccnceu19.sched.com/event/MPf7/service-meshes-at-what-cost-lee-calcote-layer5-girish-ranganathan-solarwinds?iframe=no&w=100%&sidebar=yes&bg=no) | ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
 - Istio Founders Meetup @ KubeCon EU 2019 | [deck](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
 - [Cloud Native Rejekts EU 2019](https://cfp.cloud-native.rejekts.io/cloud-native-rejekts-eu-2019/speaker/GZQTEM/) | [deck](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
@@ -127,5 +128,4 @@ This repository and site are available as open source under the terms of the [Ap
 
 **About Layer5**
 
-[Layer5.io](https://layer5.io) is the service mesh community, serving as a repository for information pertaining to the surrounding technology ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
-
+[Layer5.io](https://layer5.io) is the service mesh community, providing a [service mesh landscape](https://layer5.io/landscape) of technologies pertaining to the surrounding ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
