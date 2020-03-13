@@ -25,20 +25,15 @@ Installation, troubleshooting and debugging of Meshery and its adapaters.
 
 | command   | flag          | function                  | Usage                     |
 |:----------|:-------------:|:--------------------------|:--------------------------|
-|test       |               |Performance test and benchmarking| |
+|perf       |                | Performance Tests and Benchmarking | `mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --parallel-requests 2 --duration 30s --load-generator wrk2` |
 |           | --name        |(optional) A memorable name for the test.<br> (default) a random string|   |
 |           | --mesh optional)| Name of the service mesh.<br>(default) empty string|    |
-|           | --file (optional)| URI to the service mesh performance test configuration file.<br>(default) empty string| |
-|           | --url (required)| URL of the endpoint to use for the test| |
-|           | --qps (optional)| Queries per second<br>(default) 1|   |
-|           | --parallel-requests (optional)| Number of concurrent requests<br>(default) 1|  |
-|           | --duration (optional) | Duration of the test like 10s, 5m, 2h. We are following the convention )|   |
+|           | --file (optional)| URI to the service mesh performance test configuration file.<br>(default) empty string| e.g. soak-test-clusterA.yaml |
+|           | --url (required)| URL of the endpoint send load to during testing| `http://my-service/api/v1/test` |
+|           | --qps (optional)| Queries per second<br>(default) 0| 0 - means to use the CPU unbounded to generate as many requests as possible.  |
+|           | --concurrent-requests (optional)| Number of parallel requests<br>(default) 1|  |
+|           | --duration (optional) | Duration of the test. | e.g. `10s`, `5m`, `2h` We are following the convention )|   |
 |           | --load-generator (optional)| choice of load generator: fortio (OR) wrk2<br>(default) fortio|   |
-|perf       |                |Performance Testing Subcommand| `mesheryctl perf` |
-|           | --url| URL of the endpoint to use for the test| |
-|           | --duration| Duration of the test like 3s,10s.| |
-|           | --qps| Queries per second| |
-|           | --parallel-requests| Number of concurrent requests| |
 
 ### Service Mesh Lifecycle Management
 
