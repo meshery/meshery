@@ -32,7 +32,7 @@ var (
 	testMesh = ""
 	// testFile         = ""
 	qps              = ""
-	parallelRequests = ""
+	concurrentRequests = ""
 	testDuration     = ""
 	loadGenerator    = ""
 	testCookie       = ""
@@ -84,7 +84,7 @@ var perfCmd = &cobra.Command{
 		}
 
 		postData = postData + "\nclient:"
-		postData = postData + "\n connections: " + parallelRequests
+		postData = postData + "\n connections: " + concurrentRequests
 		postData = postData + "\n rps: " + qps
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
@@ -127,9 +127,9 @@ func init() {
 	perfCmd.Flags().StringVar(&testName, "name", StringWithCharset(8), "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "DESCRIPTION")
 	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&qps, "qps", "1", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&parallelRequests, "parallel-requests", "1", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testDuration, "duration", "10s", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&qps, "qps", "0", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Local (ephemeral session) (free use)", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "DESCRIPTION")
 	rootCmd.AddCommand(perfCmd)
