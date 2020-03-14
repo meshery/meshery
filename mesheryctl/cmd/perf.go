@@ -128,7 +128,7 @@ func init() {
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the service mesh.")
 	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
-	perfCmd.Flags().StringVar(&concurrentRequests, "parallel-requests", "1", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "DESCRIPTION")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Duration of the test like 10s, 5m, 2h. We are following the convention described at https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) identification of choice of provider.")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "	(optional) choice of load generator: fortio (OR) wrk2")
