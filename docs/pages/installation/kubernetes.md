@@ -19,9 +19,9 @@ Meshery can also be deployed on an existing Kubernetes cluster. See [compatibili
 kubectl create ns meshery
 ```
 
-All the needed deployment yamls for deploying Meshery are included in the `deployment_yamls/k8s` folder inside the cloned Meshery folder. To deploy the yamls on the cluster please run the following command:
+All the needed deployment yamls for deploying Meshery are included in the `install/deployment_yamls/k8s` folder inside the cloned Meshery folder. To deploy the yamls on the cluster please run the following command:
 ```
-kubectl -n meshery apply -f deployment_yamls/k8s
+kubectl -n meshery apply -f install/deployment_yamls/k8s
 ```
 Once the yaml files are deployed, we need to expose the `meshery` service to be able to access the service from outside the cluster. 
 
