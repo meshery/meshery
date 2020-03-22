@@ -21,16 +21,18 @@
 
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_lifecycle_management.png"  width="50%" align="left"/></a>
+<br/><br/><br/>
 ### Service Mesh Configuration Management
 
-Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
+Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator. 
 
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-right:10px;" width="50%" align="left" /></a>
-
+<br/><br/><br/>
 ### Service Performance Management
 
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred. 
-<div>&nbsp;</div>
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
+<div>&nbsp;</div> 
 
 ## <a name="running"></a>Running Meshery
 
