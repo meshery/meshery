@@ -62,21 +62,23 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <h3>Service Performance Management</h3>
 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
-<br /><br /><br /><br />
+<br /><br />
 </p>
 <div>&nbsp;</div>
 
 ## Meshery Architecture
 You may deploy Meshery internal to your cluster or external to your cluster.
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="90%" align="center" /></a>
+<p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="90%" align="center" /></a></p>
+
+<div>&nbsp;</div>
 
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
 
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;" width="120px" align="right" /></a>
+<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;" width="120px" align="right" /></a>
 
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:15px;" width="155px" align="left" /></a>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
 
 Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
 <p>
@@ -85,13 +87,13 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 ✔️ <em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">community drive</a>.<br />
 </p>
 <p align="center">
-<i>Not sure where to start?</i> Grab an open issue with the <ahttps://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
+<i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
 </p>
 
-<div>&nbsp;<br /></div>
+<div>&nbsp;</div>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="45%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-right:10px;" width="45%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
@@ -107,6 +109,8 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Build the project](CONTRIBUTING.md/#building)
 
 <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+
+<div>&nbsp;</div>
 
 ## See Meshery in Action
 - [Deploying Linkerd with Meshery](https://youtu.be/MXQV-i-Hkf8)
@@ -124,10 +128,14 @@ We're a warm and welcoming community of open source contributors. Please join. A
   <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
 <a href="../../stargazers"><img align="right" src="https://starchart.cc/layer5io/meshery.svg" /></a></p>
 
-## License
+### License
 
 This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
 **About Layer5**
 
-[Layer5.io](https://layer5.io) is the service mesh community, providing a [service mesh landscape](https://layer5.io/landscape) of technologies pertaining to the surrounding ecosystem (service meshes, api gateways, edge proxies, ingress and egress controllers) of microservice management in cloud native environments.
+**Community First**
+<p>The [Layer5](https://layer5.io) community represents the largest collection of service mesh projects and their maintainers in the world.</p>
+
+**Open Source First**
+<p>We build projects to provide learning environments, deployment and operational best practices, performance benchmarks, create documentation, share networking opportunities, and more. Our shared commitment to the open source spirit pushes Layer5 projects forward.</p>
