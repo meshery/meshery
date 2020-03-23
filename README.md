@@ -76,9 +76,9 @@ You may deploy Meshery internal to your cluster or external to your cluster.
 
 <a name="contributing"></a><a name="community"></a>
 
-<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;margin-top:5px;" width="115px" align="right" /></a>
+<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;padding-top:5px;" width="110px" align="right" /></a>
 
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:8px;margin-top:5px;" width="150px" align="left" /></a>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
 
 Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
 <p>
