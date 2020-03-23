@@ -21,18 +21,18 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | Platform | Supported? |
 | --- | :---: |
 | [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
+| - [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
 | [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
-| [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
-| [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
-| [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
-| [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
+| - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
+| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
+| - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
+| - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
 | [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)) | ✔️ |
+| - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
+| - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
@@ -76,11 +76,11 @@ You may deploy Meshery internal to your cluster or external to your cluster.
 
 <a name="contributing"></a><a name="community"></a>
 
-<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;" width="120px" align="right" /></a>
+<a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;margin-top:5px;" width="120px" align="right" /></a>
 
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:8px;margin-top:5px;" width="155px" align="left" /></a>
 
-Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
 <p>
 ✔️ <em><strong>Join</strong></em> <a href="https://drive.google.com/open?id=1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY">weekly community meeting</a> on <a href="https://calendar.google.com/calendar/b/1?cid=bGF5ZXI1LmlvX2VoMmFhOWRwZjFnNDBlbHZvYzc2MmpucGhzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20">Fridays from 10am - 11am Central</a>.<br />
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
@@ -93,7 +93,7 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 <div>&nbsp;</div>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-right:10px;" width="45%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-top:10px;margin-right:10px;" width="45%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
