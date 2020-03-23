@@ -14,6 +14,26 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
 
+## <a name="running"></a>Run Meshery
+
+See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
+
+|| Platform || Supported? ||
+| Docker | ✔️ |
+| Kubernetes | ✔️ |
+| Kubernetes - Docker Desktop | ✔️ |
+| Kubernetes - helm | ✔️ |
+| Kubernetes - minikube | ✔️ |
+| Kubernetes - GKE | ✔️ |
+| Kubernetes - EKS | ✔️ |
+| Linux | ✔️ |
+| Mac | ✔️ |
+| Mac - homebrew | ✔️ |
+| Windows | ✔️ |
+| WSL2 | ✔️ |
+
+[Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
+
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
@@ -42,13 +62,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
 <br /><br /><br /><br />
 </p>
-<div>&nbsp;</div> 
-
-## <a name="running"></a>Running Meshery
-
-See [meshery.io](https://meshery.io/#getting-started) for quick start guides on each of the supported platforms: Docker, Kubernetes (helm, minikube, GKE, EKS), WSL2, Windows (binary), Linux (bash) and Mac (brew).
-
-The [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
+<div>&nbsp;</div>
 
 <a name="contributing"></a><a name="community"></a>
 ## Join! our Community
@@ -64,12 +78,13 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 
 *Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
+<div>&nbsp;</div>
+
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
-<br /><br /><br /><br />
 </p>
 
 <div>&nbsp;</div>
