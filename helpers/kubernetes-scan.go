@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 )
@@ -34,18 +35,18 @@ var meshesMeta = map[string][]string{
 }
 
 // ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed
-func ScanKubernetes(kubeconfig []byte, contextName string) (map[string]string, error) {
+func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]v1.Deployment, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
-	result := map[string]string{}
 	namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
 	if err != nil {
 		err = errors.Wrap(err, "unable to get the list of namespaces")
 		logrus.Error(err)
 		return nil, err
 	}
+	newResults := map[string][]v1.Deployment{}
 	for _, ns := range namespacelist.Items {
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
 
@@ -59,21 +60,23 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string]string, e
 
 		for _, d := range deplist.Items {
 			logrus.Debugf(" * %s (%d replicas)", d.Name, *d.Spec.Replicas)
+			meshIdentifier := ""
 			for _, cont := range d.Spec.Template.Spec.Containers {
 				// logrus.Debugf("    - name: %s, image: %s", cont.Name, cont.Image)
 				for meshName, imageNames := range meshesMeta {
 					for _, imageName := range imageNames {
 						if strings.HasPrefix(cont.Image, imageName) || strings.Contains(cont.Image, imageName+":") {
-							versionInfo := strings.Split(cont.Image, ":")[1]
-							result[meshName] = versionInfo
+							meshIdentifier = meshName
 						}
 					}
 				}
 			}
+			if meshIdentifier != "" {
+				newResults[meshIdentifier] = append(newResults[meshIdentifier], d)
+			}
 		}
 	}
-	logrus.Debugf("Derived mesh versions: %s", result)
-	return result, nil
+	return newResults, nil
 }
 
 // ScanPromGrafana - Runs a quick scan for Prometheus & Grafanas
