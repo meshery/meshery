@@ -18,19 +18,21 @@
 
 See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
 
-|| Platform || Supported? ||
-| Docker | ✔️ |
-| Kubernetes | ✔️ |
-| Kubernetes - Docker Desktop | ✔️ |
-| Kubernetes - helm | ✔️ |
-| Kubernetes - minikube | ✔️ |
-| Kubernetes - GKE | ✔️ |
-| Kubernetes - EKS | ✔️ |
-| Linux | ✔️ |
-| Mac | ✔️ |
-| Mac - homebrew | ✔️ |
-| Windows | ✔️ |
-| WSL2 | ✔️ |
+| Platform | Supported? |
+| --- | :---: |
+| [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
+| Docker - [Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
+| [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
+| Kubernetes - [Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| Kubernetes - [Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
+| Kubernetes - [Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
+| Kubernetes - [EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
+| Kubernetes - [GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
+| [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| Mac - [Homebrew]((https://meshery.layer5.io/docs/installation#mac-or-linux)) | ✔️ |
+| [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
+| [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
@@ -75,10 +77,9 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 ✔️ <em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">community drive</a>.<br />
 </p>
 
-
 *Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
 
-<div>&nbsp;</div>
+<div>&nbsp; <br /><br /></div>
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="right" /></a>
@@ -97,6 +98,8 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Build the project](CONTRIBUTING.md/#building)
 
 ## See Meshery in Action
+<a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="35%" align="right"/></a>
+- [Deploying Linkerd with Meshery](https://youtu.be/MXQV-i-Hkf8)
 - [KubeCon EU 2019](https://kccnceu19.sched.com/event/MPf7/service-meshes-at-what-cost-lee-calcote-layer5-girish-ranganathan-solarwinds?iframe=no&w=100%&sidebar=yes&bg=no) | ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
 - Istio Founders Meetup @ KubeCon EU 2019 | [deck](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
 - [Cloud Native Rejekts EU 2019](https://cfp.cloud-native.rejekts.io/cloud-native-rejekts-eu-2019/speaker/GZQTEM/) | [deck](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
