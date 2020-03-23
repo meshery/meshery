@@ -18,7 +18,7 @@
 
 See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="60%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="55%" align="right" /></a>
 
 | Platform | Supported? |
 | --- | :---: |
@@ -71,8 +71,8 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
-<p style="float:right;" align="center"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
-<br />Join Slack!</a></p>
+<p align="right"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
+<p align="center"><br />Join Slack!</p></a></p>
 
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
 
@@ -104,7 +104,7 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Build the project](CONTRIBUTING.md/#building)
 
 ## See Meshery in Action
-<a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="35%" align="right"/></a>
+<a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="40%" align="right"/></a>
 - [Deploying Linkerd with Meshery](https://youtu.be/MXQV-i-Hkf8)
 - [KubeCon EU 2019](https://kccnceu19.sched.com/event/MPf7/service-meshes-at-what-cost-lee-calcote-layer5-girish-ranganathan-solarwinds?iframe=no&w=100%&sidebar=yes&bg=no) | ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
 - Istio Founders Meetup @ KubeCon EU 2019 | [deck](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
