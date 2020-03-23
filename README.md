@@ -18,19 +18,21 @@
 
 See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
 
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="60%" align="right" /></a>
+
 | Platform | Supported? |
 | --- | :---: |
 | [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| Docker - [Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
+| [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
 | [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
-| Kubernetes - [Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| Kubernetes - [Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
-| Kubernetes - [Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
-| Kubernetes - [EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
-| Kubernetes - [GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
+| [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
+| [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
+| [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
+| [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
 | [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| Mac - [Homebrew]((https://meshery.layer5.io/docs/installation#mac-or-linux)) | ✔️ |
+| [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)) | ✔️ |
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
 
@@ -66,8 +68,12 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 </p>
 <div>&nbsp;</div>
 
+## Join the service mesh community!
+
 <a name="contributing"></a><a name="community"></a>
-## Join! our Community
+<p style="float:right;" align="center"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
+<br />Join Slack!</a></p>
+
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
 
 Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
