@@ -4,8 +4,8 @@ title: Overview
 permalink: overview
 ---
 # Introducing Meshery 
-A multi-service mesh management plane adopting, operating and developing on different service meshes. 
-Meshery faciliates learning about functionality and performance of service meshes and incorporates collection and display of metrics from applications running on or across service meshes. 
+The multi-service mesh management plane adopting, operating and developing on different service meshes. 
+Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes. 
 Meshery provides this high-level functionality: 
 
 1. Performance Benchmarking
@@ -26,7 +26,7 @@ Meshery provides this high-level functionality:
 
 <p style="margin-bottom:1em; margin-top:1em;">Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.<br /></p>
 
-1. By leveraging Meshery you could achieve apples-to-apples performance comparision of service meshes
+1. By leveraging Meshery you could achieve apples-to-apples performance comparison of service meshes
 1. Track your service mesh performance from release to release.
 1. Understand behavioral differences between service meshes.
 1. Track your application performance from version to version.
@@ -35,10 +35,12 @@ Meshery provides this high-level functionality:
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
 ## Meshery is for performance testing and benchmarking
-Meshery helps users weigh the value of their service mesh dedployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
+Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
 In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="../assets/images/readme/meshery_lifecycle_management.png"  width="50%" align="left"/></a>
+<br/>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="assets/images/readme/meshery_lifecycle_management.png"  width="80%" align="center"/></a>
 Establish a performance benchmark and track performance against this baseline as your environment changes over time.
+<br/>
 
 ## Meshery is for any service mesh
 Infrastructure diversity is a reality for any enterprise. Whether you're running a single service mesh or multiple types of service meshes, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
@@ -80,21 +82,21 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
 
 * Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
-  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calender](https://bit.ly/2SbrRhe).
+  * Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calendar](https://bit.ly/2SbrRhe).
 
 * Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
 
 # FAQ 
 
 ## Why use Meshery?
-* because its an open source, vendor neutral projects that facilitates testing across meshes.
-* because fortio is not packaged into a mesh testing utility, but is only a load-generator unto its own.
-* because regpatrol is closed sourcej, binary is not released, scripted for one mesh, and is produced by a vendor of that mesh.
+* Because its an open source, vendor neutral projects that facilitates testing across meshes.
+* Because fortio is not packaged into a mesh testing utility, but is only a load-generator unto its own.
+* Because regpatrol is closed source, binary is not released, scripted for one mesh, and is produced by a vendor of that mesh.
 
 ## Why create Meshery and not use another benchmark tool?
-<p style="margin-bottom:1em; margin-top:1em;">Meshery is purpose built for factilitating benchmarking of service meshes and their workloads. Other benchmark tools are not. There are some other tools used for service mesh benchmarking, like regpatrol. Regpatrol is used by IBM is not open source or available in binary form to use and has the following differences from Meshery:</p>
-- Telemetry - regpatrol sources telemetry from Mixer Prometheus adapter and uses IBM's proprietary node agent.
-- Meshery sources from Mixer Prometheus adapter and uses Prometheus node-exporter.
+<p style="margin-bottom:1em; margin-top:1em;">Meshery is purpose built for facilitating benchmarking of service meshes and their workloads. Other benchmark tools are not. There are some other tools used for service mesh benchmarking, like regpatrol. Regpatrol is used by IBM is not open source or available in binary form to use and has the following differences from Meshery:</p>
+- Telemetry - regpatrol sources telemetry from the Mixer Prometheus adapter and uses IBM's proprietary node agent.
+- Meshery sources from the Mixer Prometheus adapter and uses Prometheus node-exporter.
 - Traffic type - regpatrol uses jmeter, which can parse responses and perform functional tests.
 - Meshery is using fortio, which is for load-gen and perf-testing only.
 
