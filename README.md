@@ -15,23 +15,30 @@
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
 
 ## <a name="functionality">Functionality</a>
-<img align="right" src="https://github.com/layer5io/meshery/raw/master/ui/static/img/dashboard-screenshot.png" alt="Service Mesh Manager" width="50%" />
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="docs/assets/images/readme/meshery_multi_mesh.png"  style="margin-left:10px;" width="50%" align="right"/></a>
 
 ### Service Mesh Lifecycle Management
 
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_lifecycle_management.png"  width="50%" align="left"/></a>
+Interoperate multiple service meshes with service mesh adapters provision, configure, and manage their respective service meshes. Meshery is an implementation of Service Mesh Interface (SMI).
+
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="docs/assets/images/readme/meshery_lifecycle_management.png"  style="margin-right:10px;" width="50%" align="left"/></a>
 <br/><br/><br/>
+
 ### Service Mesh Configuration Management
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator. 
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-right:10px;" width="50%" align="left" /></a>
+Onboard your workload onto the service mesh with confidence. Check your service mesh configuration for anti-patterns and avoid common pitfalls.
+
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-left:10px;" width="50%" align="right" /></a>
 <br/><br/><br/>
+
 ### Service Performance Management
 
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
+
 <div>&nbsp;</div> 
 
 ## <a name="running"></a>Running Meshery
