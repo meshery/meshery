@@ -18,7 +18,7 @@
 
 See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="55%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="50%" align="right" /></a>
 
 | Platform | Supported? |
 | --- | :---: |
@@ -41,7 +41,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="docs/assets/images/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right"/></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="docs/assets/images/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 <h3>Service Mesh Lifecycle Management</h3>
 Meshery manages the provisioning, configuration and operation your service mesh. While supporting different types of service meshes, Meshery also offers a simple way to explore each service mesh and compare them using bundled sample applications.
 
@@ -50,7 +50,7 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 </p>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="docs/assets/images/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="50%" align="left"/></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="docs/assets/images/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
 <h3>Service Mesh Configuration Management</h3>
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator. 
@@ -60,7 +60,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 </p>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="50%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/images/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <h3>Service Performance Management</h3>
 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
@@ -71,8 +71,9 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
-<p align="right"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
-<p align="center"><br />Join Slack!</p></a></p>
+
+<div style="float:right;"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
+<p align="center">Join Slack!</p></a></div>
 
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
 
@@ -88,7 +89,7 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 <div>&nbsp; <br /><br /></div>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="50%" align="right" /></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="45%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
@@ -103,8 +104,9 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Write an adapter](CONTRIBUTING.md/#adapter)
 - [Build the project](CONTRIBUTING.md/#building)
 
+<a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+
 ## See Meshery in Action
-<a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/images/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="40%" align="right"/></a>
 - [Deploying Linkerd with Meshery](https://youtu.be/MXQV-i-Hkf8)
 - [KubeCon EU 2019](https://kccnceu19.sched.com/event/MPf7/service-meshes-at-what-cost-lee-calcote-layer5-girish-ranganathan-solarwinds?iframe=no&w=100%&sidebar=yes&bg=no) | ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
 - Istio Founders Meetup @ KubeCon EU 2019 | [deck](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
