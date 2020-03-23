@@ -18,8 +18,6 @@
 
 See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="50%" align="right" /></a>
-
 | Platform | Supported? |
 | --- | :---: |
 | [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
@@ -53,10 +51,10 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="docs/assets/images/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
 <h3>Service Mesh Configuration Management</h3>
 
-Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator. 
+Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
 
 Onboard your workload onto the service mesh with confidence. Check your service mesh configuration for anti-patterns and avoid common pitfalls.
-<br /><br />
+<br /><br /><br />
 </p>
 
 <p style="clear:both;">
@@ -68,14 +66,17 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 </p>
 <div>&nbsp;</div>
 
+## Meshery Architecture
+You may deploy Meshery internal to your cluster or external to your cluster.
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/meshery-architecture.svg"><img src="docs/assets/images/meshery-architecture.svg" width="90%" align="center" /></a>
+
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
 
-<div style="float:right;"><a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-right:10px;" width="120px" />
-<p align="center">Join Slack!</p></a></div>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/slack-128.png" style="margin-left:10px;" width="120px" align="right" /></a>
 
-<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:10px;" width="155px" align="left" /></a>
+<a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/images/readme/community.png" style="margin-right:15px;" width="155px" align="left" /></a>
 
 Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are community-built and welcome collaboration. 👍Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you.
 <p>
@@ -83,10 +84,11 @@ Jump into our <a href="http://slack.layer5.io">Slack</a>! Our projects are commu
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
 ✔️ <em><strong>Access</strong></em> the <a href="https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA">community drive</a>.<br />
 </p>
+<p align="center">
+<i>Not sure where to start?</i> Grab an open issue with the <ahttps://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
+</p>
 
-*Not sure where to start?* Grab an open issue with the [help-wanted label](https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+).
-
-<div>&nbsp; <br /><br /></div>
+<div>&nbsp;<br /></div>
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/images/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/images/readme/Meshery-Grafana-Charts.png" style="margin-right:10px;" width="45%" align="right" /></a>
@@ -120,7 +122,7 @@ We're a warm and welcoming community of open source contributors. Please join. A
 ### Stargazers
 <p align="center">
   <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
-<a href="../../stargazers"><img align="center" src="https://starchart.cc/layer5io/meshery.svg" /></a></p>
+<a href="../../stargazers"><img align="right" src="https://starchart.cc/layer5io/meshery.svg" /></a></p>
 
 ## License
 
