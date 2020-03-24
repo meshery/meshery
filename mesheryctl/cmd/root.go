@@ -30,7 +30,7 @@ type TerminalFormatter struct{}
 var cfgFile string
 
 var cmdDetails string = `
-Meshery is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
+Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
 
 Usage:
   mesheryctl [command]
@@ -64,7 +64,7 @@ func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
 var rootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
-	Long:  `Meshery is the multi-service mesh management plane, providing lifecycle, performance, and configuration management of service meshes.`,
+	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
