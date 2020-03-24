@@ -92,13 +92,14 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preferenc
 	}
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/preferences")
 	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bytes.NewReader(bd))
-	req.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	// req.AddCookie(&http.Cookie{
+	// 	Name:     l.SaaSTokenName,
+	// 	Value:    tokenVal,
+	// 	Path:     "/",
+	// 	HttpOnly: true,
+	// 	Domain:   saasURL.Hostname(),
+	// })
+	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
 	c := &http.Client{}
 	resp, err := c.Do(req)
 	if err != nil {
@@ -252,7 +253,7 @@ func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, err
 	if err != nil {
 		return "", err
 	}
-	tokenVal, _ := session.Values[l.SaaSTokenName].(string)
+	tokenVal, _ := session.Values["access_token"].(string)
 	return tokenVal, nil
 }
 
@@ -301,13 +302,15 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 	saasURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed results url: %s", saasURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
-	cReq.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	// cReq.AddCookie(&http.Cookie{
+	// 	Name:     l.SaaSTokenName,
+	// 	Value:    tokenVal,
+	// 	Path:     "/",
+	// 	HttpOnly: true,
+	// 	Domain:   saasURL.Hostname(),
+	// })
+	cReq.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
+
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
@@ -341,13 +344,15 @@ func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID)
 	saasURL, _ := url.Parse(fmt.Sprintf("%s/result/%s", l.SaaSBaseURL, resultID.String()))
 	logrus.Debugf("constructed result url: %s", saasURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
-	cReq.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	// cReq.AddCookie(&http.Cookie{
+	// 	Name:     l.SaaSTokenName,
+	// 	Value:    tokenVal,
+	// 	Path:     "/",
+	// 	HttpOnly: true,
+	// 	Domain:   saasURL.Hostname(),
+	// })
+	cReq.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
+
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
@@ -394,13 +399,15 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
-	cReq.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	// cReq.AddCookie(&http.Cookie{
+	// 	Name:     l.SaaSTokenName,
+	// 	Value:    tokenVal,
+	// 	Path:     "/",
+	// 	HttpOnly: true,
+	// 	Domain:   saasURL.Hostname(),
+	// })
+	cReq.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
+
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
@@ -447,13 +454,15 @@ func (l *MesheryRemoteProvider) PublishMetrics(tokenVal string, result *MesheryR
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
 	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
-	cReq.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	// cReq.AddCookie(&http.Cookie{
+	// 	Name:     l.SaaSTokenName,
+	// 	Value:    tokenVal,
+	// 	Path:     "/",
+	// 	HttpOnly: true,
+	// 	Domain:   saasURL.Hostname(),
+	// })
+	cReq.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
+
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
