@@ -113,7 +113,8 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preferenc
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
-	token := r.URL.Query().Get(l.SaaSTokenName)
+	logrus.Infof("url : %s", r.URL.String())
+	token := r.URL.Query().Get("access_token")
 	if token == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
@@ -141,6 +142,12 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 		reffURL = "/"
 	}
 	// session, err := h.config.SessionStore.New(req, h.config.SessionName)
+	accessToken := req.URL.Query().Get("access_token")
+	refreshToken := req.URL.Query().Get("refresh_token")
+	// idToken := req.URL.Query().Get("id_token")
+
+	logrus.Debugf("accessToken : %s", accessToken)
+	logrus.Debugf("refreshToken : %s", refreshToken)
 	session, _ := l.SessionStore.New(req, l.SessionName)
 	// if err != nil {
 	// 	logrus.Errorf("unable to create session: %v", err)
@@ -148,25 +155,27 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	// 	return
 	// }
 	session.Options.Path = "/"
-	token := ""
-	for k, va := range req.URL.Query() {
-		for _, v := range va {
-			if k == l.SaaSTokenName {
-				// logrus.Infof("setting user in session: %s", v)
-				token = v
-				break
-			}
-		}
-	}
-	if reffCk != nil && reffCk.Name != "" {
-		reffCk.Expires = time.Now().Add(-2 * time.Second)
-		http.SetCookie(w, reffCk)
-	}
-	session.Values[l.SaaSTokenName] = token
-	user, err := l.fetchUserDetails(token)
+	// for k, va := range req.URL.Query() {
+	// 	for _, v := range va {
+	// 		if k == l.SaaSTokenName {
+	// 			// logrus.Infof("setting user in session: %s", v)
+	// 			token = v
+	// 			break
+	// 		}
+	// 	}
+	// }
+	// if reffCk != nil && reffCk.Name != "" {
+	// 	reffCk.Expires = time.Now().Add(-2 * time.Second)
+	// 	http.SetCookie(w, reffCk)
+	// }
+	session.Values["access_token"] = accessToken
+	session.Values["refresh_token"] = refreshToken
+	// session.Values["id_token"] = idToken
+
+	logrus.Infof("DONE saving tokens")
+	user, err := l.fetchUserDetails(accessToken)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
-
 	}
 	session.Values["user"] = user
 	err = session.Save(req, w)
@@ -179,13 +188,7 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
 	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
-	req.AddCookie(&http.Cookie{
-		Name:     l.SaaSTokenName,
-		Value:    tokenVal,
-		Path:     "/",
-		HttpOnly: true,
-		Domain:   saasURL.Hostname(),
-	})
+	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenVal))
 	c := &http.Client{}
 	resp, err := c.Do(req)
 	if err != nil {
