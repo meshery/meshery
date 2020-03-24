@@ -29,7 +29,7 @@ type TerminalFormatter struct{}
 
 var cfgFile string
 
-var cmdDetails string = `
+var cmdDetails = `
 Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
 
 Usage:
