@@ -39,6 +39,7 @@ Available Commands:
   cleanup     Clean up Meshery
   help        Help about any command
   logs        Print logs
+  pref        Performance testing and benchmarking
   start       Start Meshery
   status      Check Meshery status
   stop        Stop Meshery
