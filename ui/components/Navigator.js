@@ -263,7 +263,7 @@ const categories = [
         show: true,
       },
       {
-        id: 'Citrix', 
+        id: 'cpx',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/citrix", 
         title: 'Citrix',
