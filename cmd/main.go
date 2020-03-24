@@ -121,8 +121,8 @@ func main() {
 		RefCookieName: "meshery_ref",
 		SessionName:   "meshery",
 		// SessionStore: fileSessionStore,
-		SessionStore:               cookieSessionStore,
-		SaaSTokenName:              "meshery_saas",
+		SessionStore: cookieSessionStore,
+		// SaaSTokenName:              "meshery_saas",
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
 	}
