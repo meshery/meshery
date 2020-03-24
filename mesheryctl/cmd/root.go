@@ -30,7 +30,7 @@ type TerminalFormatter struct{}
 var cfgFile string
 
 var cmdDetails string = `
-Meshery is a a multi-service mesh performance benchmark and playground tool
+Meshery is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and applications running atop them.
 
 Usage:
   mesheryctl [command]
