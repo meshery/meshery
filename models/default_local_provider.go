@@ -29,7 +29,7 @@ func (l *DefaultLocalProvider) Name() string {
 
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() string {
-	return `Local Provider
+	return `Provider: None
 	- ephemeral sessions
 	- environment setup not saved
 	- no performance test result history
