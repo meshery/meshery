@@ -51,7 +51,7 @@ func (l *MesheryRemoteProvider) Name() string {
 
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *MesheryRemoteProvider) Description() string {
-	return `Meshery Cloud 
+	return `Provider: Meshery (default)
 	- persistent sessions 
 	- save environment setup 
 	- retrieve performance test results 
