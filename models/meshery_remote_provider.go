@@ -46,7 +46,7 @@ type UserPref struct {
 
 // Name - Returns Provider's friendly name
 func (l *MesheryRemoteProvider) Name() string {
-	return "Meshery Cloud (persistent session) (free use)"
+	return "Meshery"
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
