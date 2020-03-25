@@ -41,6 +41,16 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return LocalProviderType
 }
 
+// GetProviderProperties - Returns all the provider properties required
+func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
+	var result ProviderProperties
+	result.ProviderType = l.GetProviderType()
+	result.DisplayName = l.Name()
+	result.Description = l.Description()
+	result.Capabilities = make([]Capability, 0)
+	return result
+}
+
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	l.issueSession(w, r, fromMiddleWare)

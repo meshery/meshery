@@ -63,6 +63,16 @@ func (l *MesheryRemoteProvider) GetProviderType() ProviderType {
 	return RemoteProviderType
 }
 
+// GetProviderProperties - Returns all the provider properties required
+func (l *MesheryRemoteProvider) GetProviderProperties() ProviderProperties {
+	var result ProviderProperties
+	result.ProviderType = l.GetProviderType()
+	result.DisplayName = l.Name()
+	result.Description = l.Description()
+	result.Capabilities = make([]Capability, 0)
+	return result
+}
+
 // SyncPreferences - used to sync preferences with the remote provider
 func (l *MesheryRemoteProvider) SyncPreferences() {
 	l.syncStopChan = make(chan struct{})

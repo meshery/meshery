@@ -10,6 +10,20 @@ import (
 // ProviderType - for representing provider types
 type ProviderType string
 
+// ProviderProperties represents the structure of properties that a provider has
+type ProviderProperties struct {
+	ProviderType
+	DisplayName  string
+	Description  string
+	Capabilities []Capability
+}
+
+// Capability is a capability of Provider indicating whether a feature is present
+type Capability struct {
+	FeatureName string
+	IsPresent   bool
+}
+
 const (
 	// LocalProviderType - represents local providers
 	LocalProviderType ProviderType = "local"
@@ -29,6 +43,8 @@ type Provider interface {
 
 	// Returns ProviderType
 	GetProviderType() ProviderType
+
+	GetProviderProperties() ProviderProperties
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
 	InitiateLogin(http.ResponseWriter, *http.Request, bool)
 	GetSession(req *http.Request) (*sessions.Session, error)
