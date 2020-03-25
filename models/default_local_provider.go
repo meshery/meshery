@@ -24,7 +24,7 @@ type DefaultLocalProvider struct {
 
 // Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
-	return "Local (ephemeral session) (free use)"
+	return "None"
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
