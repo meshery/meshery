@@ -14,6 +14,13 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   </thead>
   <tbody>
       <tr>
+      <td class="centered">0.3.11</td>
+      <td>
+        <em>Mesheryctl</em> - Fixes minor user experience issues on mesheryctl perf command. See Meshery CLI Commands & Documentation for reference.
+      </td>
+      <td>Mar 25, 2020</td>
+    </tr>
+      <tr>
       <td class="centered">0.3.10</td>
       <td>
         <em>Mesheryctl</em> - Introduces mesheryctl perf command. See Meshery CLI Commands & Documentation for reference.
