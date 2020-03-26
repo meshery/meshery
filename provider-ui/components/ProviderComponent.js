@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Typography, Button, ButtonGroup, Tooltip
+  NoSsr, Typography, Button, ButtonGroup, Tooltip, List, ListItem
 } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -48,6 +48,9 @@ const styles = (theme) => ({
     color: 'darkcyan',
     cursor: 'pointer',
   },
+  providerDesc: {
+    whiteSpace: 'pre',
+  },
 });
 
 const DialogTitle = withStyles(styles)(props => {
@@ -72,7 +75,6 @@ const DialogContent = withStyles(theme => ({
 
 const DialogActions = withStyles(theme => ({
   root: {
-    //margin: 0,
     padding: theme.spacing(1),
   },
 }))(MuiDialogActions);
@@ -82,8 +84,6 @@ class ProviderComponent extends React.Component {
     super(props);
     this.state = {
         availableProviders: {},
-        selectedRemote: '',
-        selectedLocal: '',
         selectedProvider: '',
         open: false,
         modalOpen: false,
@@ -99,18 +99,13 @@ class ProviderComponent extends React.Component {
         credentials: 'include',
       }, result => {
       if (typeof result !== 'undefined'){
-        let selectedRemote = '';
-        let selectedLocal = '';
         let selectedProvider = '';
         Object.keys(result).forEach(key => {
-          if(result[key] === 'remote'){
-            selectedRemote = key;
+          if(result[key]['ProviderType'] === 'remote'){
             selectedProvider = key;
-          } else {
-            selectedLocal = key;
-          }
+          } 
         })
-        self.setState({availableProviders: result, selectedRemote, selectedLocal, selectedProvider});
+        self.setState({availableProviders: result, selectedProvider});
         }
       }, error => {
         console.log(`there was an error fetching providers: ${error}`);
@@ -157,7 +152,7 @@ class ProviderComponent extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { availableProviders, selectedRemote, selectedLocal, selectedProvider, open, modalOpen } = this.state;
+    const { availableProviders, selectedProvider, open, modalOpen } = this.state;
     const self = this;
     return (
       <NoSsr>
@@ -180,21 +175,20 @@ class ProviderComponent extends React.Component {
                   Login to Meshery by choosing from the available providers. Providers offer authentication,
                   session management and long-term persistence of user preferences, performance tests, service mesh adapter configurations and so on.
                 </p>
-                <b>Meshery Cloud</b>
-                  <ul>
-                    <li>Persistent sessions</li>
-                    <li>Save environment setup and adaper configuration</li>
-                    <li>Retrieve performance test results</li>
-                    <li>Free use</li>
-                  </ul>
-
-                <b>Local Provider</b>
-                  <ul>
-                    <li>Ephemeral sessions</li>
-                    <li>Environment setup not saved</li>
-                    <li>No performance test result history</li>
-                    <li>Free use</li>
-                  </ul>
+                <List>
+                {Object.keys(availableProviders).map((key) => {
+                  return (
+                    <React.Fragment>
+                      <ListItem
+                        key={availableProviders[key]['Description']}
+                        className={classes.providerDesc}
+                      >
+                        {availableProviders[key]['Description']}
+                      </ListItem>
+                    </React.Fragment>
+                  );                  
+                })}
+                </List>
               </Typography>
             </DialogContent>
             <DialogActions>
