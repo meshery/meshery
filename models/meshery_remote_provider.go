@@ -114,9 +114,10 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preferenc
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
-	logrus.Infof("url : %s", r.URL.String())
-	token := r.URL.Query().Get("access_token")
-	if token == "" {
+
+	token, err := r.Cookie("access_token")
+	logrus.Debugf("url token: %v %v", token, err)
+	if err != nil {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
 			Value:    "/",
@@ -142,18 +143,37 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	if reffURL == "" {
 		reffURL = "/"
 	}
-	// session, err := h.config.SessionStore.New(req, h.config.SessionName)
-	accessToken := req.URL.Query().Get("access_token")
-	refreshToken := req.URL.Query().Get("refresh_token")
-	// idToken := req.URL.Query().Get("id_token")
+
+	accessCookie, err := req.Cookie("access_token")
+	if err != nil {
+		logrus.Errorf("Issue Session : %s", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	refreshCookie, err := req.Cookie("refresh_token")
+	if err != nil {
+		logrus.Errorf("Issue Session : %s", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	idCookie, err := req.Cookie("id_token")
+	if err != nil {
+		logrus.Errorf("Issue Session : %s", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	accessToken := accessCookie.Value
+	refreshToken := refreshCookie.Value
+	idToken := idCookie.Value
 
 	logrus.Debugf("accessToken : %s", accessToken)
 	logrus.Debugf("refreshToken : %s", refreshToken)
+	logrus.Debugf("idToken : %s", idToken)
 	session, _ := l.SessionStore.New(req, l.SessionName)
 	// if err != nil {
-	// 	logrus.Errorf("unable to create session: %v", err)
-	// 	http.Error(w, "unable to create session", http.StatusInternalServerError)
-	// 	return
 	// }
 	session.Options.Path = "/"
 	// for k, va := range req.URL.Query() {
@@ -171,6 +191,8 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	// }
 	session.Values["access_token"] = accessToken
 	session.Values["refresh_token"] = refreshToken
+
+	//FIX: Storing the ID token leads to a memory outage
 	// session.Values["id_token"] = idToken
 
 	logrus.Infof("DONE saving tokens")
@@ -183,7 +205,35 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
+	l.clearCookies(&w)
 	http.Redirect(w, req, reffURL, http.StatusFound)
+}
+
+func (l *MesheryRemoteProvider) clearCookies(w *http.ResponseWriter) {
+	ck := &http.Cookie{
+		Name:     "access_token",
+		Value:    "source",
+		MaxAge:   -1,
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(*w, ck)
+	ck = &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "source",
+		MaxAge:   -1,
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(*w, ck)
+	ck = &http.Cookie{
+		Name:     "id_token",
+		Value:    "source",
+		MaxAge:   -1,
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(*w, ck)
 }
 
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
