@@ -180,7 +180,7 @@ class ProviderComponent extends React.Component {
                   return (
                     <React.Fragment>
                       <ListItem
-                        key={availableProviders[key]['Description']}
+                        key={availableProviders[key]['DisplayName']}
                         className={classes.providerDesc}
                       >
                         {availableProviders[key]['Description']}
