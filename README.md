@@ -55,7 +55,7 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
 
 Onboard your workload onto the service mesh with confidence. Check your service mesh configuration for anti-patterns and avoid common pitfalls.
-<br /><br /><br />
+<br /><br /><br /><br />
 </p>
 
 <p style="clear:both;">
