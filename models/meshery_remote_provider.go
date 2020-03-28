@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -14,6 +15,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
 )
 
 // MesheryRemoteProvider - represents a local provider
@@ -115,8 +117,8 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preferenc
 func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
 
-	token, err := r.Cookie("access_token")
-	logrus.Debugf("url token: %v %v", token, err)
+	_, err := r.Cookie("token")
+	// logrus.Debugf("url token: %v %v", token, err)
 	if err != nil {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
@@ -132,6 +134,20 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 	return
 }
 
+func (l *MesheryRemoteProvider) decodeTokenData(tokenString string) (*oauth2.Token, error) {
+	var buff bytes.Buffer
+	var token oauth2.Token
+	tokenB64, _ := base64.RawStdEncoding.DecodeString(tokenString)
+	buff.Write(tokenB64)
+	decoder := gob.NewDecoder(&buff)
+	err := decoder.Decode(&token)
+	if err != nil {
+		logrus.Errorf("token encode error : %s", err.Error())
+		return nil, err
+	}
+	return &token, nil
+}
+
 // issueSession issues a cookie session after successful login
 func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
 	var reffURL string
@@ -144,35 +160,24 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 		reffURL = "/"
 	}
 
-	accessCookie, err := req.Cookie("access_token")
+	tokenCookie, err := req.Cookie("token")
 	if err != nil {
 		logrus.Errorf("Issue Session : %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	tokenString := tokenCookie.Value
+	logrus.Debugf("Belh %s", tokenCookie.Value)
+	token, err := l.decodeTokenData(tokenString)
 
-	refreshCookie, err := req.Cookie("refresh_token")
-	if err != nil {
-		logrus.Errorf("Issue Session : %s", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	idCookie, err := req.Cookie("id_token")
-	if err != nil {
-		logrus.Errorf("Issue Session : %s", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	accessToken := accessCookie.Value
-	refreshToken := refreshCookie.Value
-	idToken := idCookie.Value
+	accessToken := token.AccessToken
+	refreshToken := token.RefreshToken
 
 	logrus.Debugf("accessToken : %s", accessToken)
 	logrus.Debugf("refreshToken : %s", refreshToken)
-	logrus.Debugf("idToken : %s", idToken)
+
 	session, _ := l.SessionStore.New(req, l.SessionName)
+	sessionToken, _ := l.SessionStore.New(req, "token")
 	// if err != nil {
 	// }
 	session.Options.Path = "/"
@@ -185,55 +190,33 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	// 		}
 	// 	}
 	// }
-	// if reffCk != nil && reffCk.Name != "" {
-	// 	reffCk.Expires = time.Now().Add(-2 * time.Second)
-	// 	http.SetCookie(w, reffCk)
-	// }
+
 	session.Values["access_token"] = accessToken
 	session.Values["refresh_token"] = refreshToken
-
+	sessionToken.Values["token"] = tokenString
 	//FIX: Storing the ID token leads to a memory outage
 	// session.Values["id_token"] = idToken
+	err = sessionToken.Save(req, w)
+	if err != nil {
+		logrus.Errorf("token save: %v", err)
+	}
+
+	if tokenCookie != nil && tokenCookie.Name != "" {
+		reffCk.Expires = time.Now().Add(-2 * time.Second)
+		http.SetCookie(w, reffCk)
+	}
 
 	logrus.Infof("DONE saving tokens")
 	user, err := l.fetchUserDetails(accessToken)
 	if err != nil {
-		logrus.Errorf("unable to save session: %v", err)
+		logrus.Errorf("unable to fetch session: %v", err)
 	}
 	session.Values["user"] = user
 	err = session.Save(req, w)
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
-	l.clearCookies(&w)
 	http.Redirect(w, req, reffURL, http.StatusFound)
-}
-
-func (l *MesheryRemoteProvider) clearCookies(w *http.ResponseWriter) {
-	ck := &http.Cookie{
-		Name:     "access_token",
-		Value:    "source",
-		MaxAge:   -1,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(*w, ck)
-	ck = &http.Cookie{
-		Name:     "refresh_token",
-		Value:    "source",
-		MaxAge:   -1,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(*w, ck)
-	ck = &http.Cookie{
-		Name:     "id_token",
-		Value:    "source",
-		MaxAge:   -1,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(*w, ck)
 }
 
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
