@@ -38,11 +38,13 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
+		logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
+		logrus.Debugf("provider %s", provider)
 		isValid := h.validateAuth(provider, req)
 		// logrus.Debugf("validate auth: %t", isValid)
 		if !isValid {

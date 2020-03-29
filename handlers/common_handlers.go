@@ -16,6 +16,14 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 	p.InitiateLogin(w, r, fromMiddleWare)
 }
 
+func (h *Handler) TokenReciever(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
+	// if r.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
+	p.TokenReciever(w, r, fromMiddleWare)
+}
+
 // LogoutHandler destroys the session and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p models.Provider) {
 	if req.Method != http.MethodGet {

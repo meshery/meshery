@@ -43,7 +43,7 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
-	l.issueSession(w, r, fromMiddleWare)
+	// l.issueSession(w, r, fromMiddleWare)
 	return
 }
 
@@ -211,6 +211,10 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 	}
 	logrus.Warnf("error while sending results: %s", bdr)
 	return "", nil
+}
+
+func (l *DefaultLocalProvider) TokenReciever(w http.ResponseWriter, r *http.Request, _ bool) {
+	// l.issueSession(w, r)
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
