@@ -4,22 +4,22 @@ title: Extensibility
 permalink: extensibility
 ---
 
-## Preface
+# Preface
 Meshery provides several extension points for working with different service meshes, load generators and providers. Meshery also offers a REST API.
 
-### Guiding Principles for Extensibility
+## Guiding Principles for Extensibility
 
 1. Recognize that different deployment environments have different systems to integrate with.
 1. Offer a default experience that provides the optimal user experience.
 
-## Extension Points
+# Extension Points
 Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. The following points of extension are currently incorporated into Meshery:
 
 1. Providers
 1. Load Generators
 1. Adapters
 
-### Providers
+## Providers
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
 Eventually, we will be looking to keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
@@ -41,15 +41,16 @@ Providers as an object have the following attributes:
 }
 ```
 
-#### What functionality do Providers perform? 
+### What functionality do Providers perform? 
 - Authentication and Authorization
  - Examples: session management, two factor authentication, LDAP integration
 - Long-Term Persistence
  - Storage and retrieval of performance test results
  - Storage and retrieval of user preferences
 
-#### Types of providers
+### Types of providers
 Two types of providers are defined in Meshery: local and remote.
+
 **Remote Providers**
 Name: “Meshery” (default)
 - Authentication and Authorization
@@ -79,13 +80,13 @@ Load generators will provide the capability to run load tests from Meshery. As o
 Different use cases and different opinions call for different approaches to statistical analysis of the performance results. For example, wrk2 accounts for a concept called Coordinated Omission.
 
 ### Which are currently supported?
-1. **Fortio** - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
-1. **wrk2** - A constant throughput, correct latency recording variant of wrk.
+1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
+1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
 
 
 ## Service Mesh Adapters
 ### What are Meshery adapters?
-Adapters allow Meshery to interface with the different service meshes.
+Adapters allow Meshery to interface with the different service meshes. See a list of all available [service mesh adapters](service-meshes/adapters).
 
 ### Adapter Capabilities
 Meshery communicates with adapters over grpc. Adapters establish communication with the service mesh. Adapters have a predefined set of operations which are grouped based on predefined operation types. 
@@ -96,3 +97,13 @@ The predefined operation types are:
 - Config
 - Validate
 - Custom
+
+### How to create new adapter?
+
+Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
+
+See the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) for additional information and specific steps.
+
+Tip: The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
+
+

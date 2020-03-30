@@ -31,6 +31,8 @@
     #  url: performance-management
     - title: Service Mesh Management
       url: mesh-management
+    - title: Extensibility
+      url: extensibility
     - title: Releases
       url: releases
 - title: Guides
