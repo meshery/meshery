@@ -13,7 +13,7 @@ Meshery uses the following list of network ports to interface with its various c
 
 | Adapter       | Port          |
 | :------------ | :------------ |
-| Meshery web-based UI | 9081/tcp |
+| Meshery REST API | 9081/tcp |
 {% assign adaptersSortedByPort = site.adapters | sort: 'port' -%}
 {% for adapter in adaptersSortedByPort -%}
 {% if adapter.port -%}
