@@ -18,6 +18,7 @@ Meshery is not just an application. It is a set of microservices where the centr
 1. Providers
 1. Load Generators
 1. Adapters
+1. REST API
 
 ## Providers
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
@@ -106,4 +107,16 @@ See the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRI
 
 Tip: The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
+## REST API
+Meshery provides a REST API availble through the default port of 9081/tcp.
 
+### Authentication
+Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers.
+Type of authentication is determined by the selected [Provider](#providers).
+
+### Authorization
+Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
+
+### Endpoints
+Each of the API endpoints are exposed through [server.go]](https://github.com/layer5io/meshery/blob/master/router/server.go).
+Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
