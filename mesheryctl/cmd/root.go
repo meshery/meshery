@@ -39,11 +39,11 @@ Available Commands:
   cleanup     Clean up Meshery
   help        Help about any command
   logs        Print logs
-  pref        Performance testing and benchmarking
+  perf        Performance testing and benchmarking
   start       Start Meshery
   status      Check Meshery status
   stop        Stop Meshery
-  update      Pull new Meshery images from Docker Hub.
+  update      Pull new Meshery images from Docker Hub
   version     Version of mesheryctl
 
 Flags:
