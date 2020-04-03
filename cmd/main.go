@@ -10,7 +10,6 @@ import (
 
 	"github.com/layer5io/meshery/helpers"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
@@ -75,7 +74,7 @@ func main() {
 
 	provs := map[string]models.Provider{}
 
-	var cookieSessionStore *sessions.CookieStore
+	// var cookieSessionStore *sessions.CookieStore
 
 	preferencePersister, err := models.NewMapPreferencePersister()
 	if err != nil {
@@ -111,7 +110,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
+	// cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
 	// saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	if saasBaseURL == "" {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
@@ -121,7 +120,7 @@ func main() {
 		RefCookieName: "meshery_ref",
 		SessionName:   "meshery",
 		// SessionStore: fileSessionStore,
-		SessionStore: cookieSessionStore,
+		// SessionStore: cookieSessionStore,
 		// SaaSTokenName:              "meshery_saas",
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,

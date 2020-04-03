@@ -26,7 +26,6 @@ type MesheryRemoteProvider struct {
 	SessionName   string
 	RefCookieName string
 
-	SessionStore        sessions.Store
 	LoginCookieDuration time.Duration
 
 	syncStopChan chan struct{}
@@ -135,79 +134,6 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 	return
 }
 
-func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.Request, _ bool) {
-	var reffURL string
-	reffCk, _ := req.Cookie(l.RefCookieName)
-	if reffCk != nil {
-		reffURL = reffCk.Value
-	}
-	logrus.Infof("preparing to issue session. retrieved reff url: %s", reffURL)
-	if reffURL == "" {
-		reffURL = "/"
-	}
-	tokenString := req.URL.Query().Get("token")
-
-	logrus.Debugf("Tokenstring recieved : %s", tokenString)
-	// jsonDataFromHttp, _ := ioutil.ReadAll(req.Body)
-
-	// tokenCookie, err := req.Cookie(tokenName)
-	// if err != nil {
-	// 	logrus.Errorf("Issue Session : %s", err.Error())
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-	// tokenString := tokenCookie.Value
-	token, err := l.DecodeTokenData(tokenString)
-
-	accessToken := token.AccessToken
-	refreshToken := token.RefreshToken
-
-	logrus.Debugf("accessToken : %s", accessToken)
-	logrus.Debugf("refreshToken : %s", refreshToken)
-
-	session, _ := l.SessionStore.New(req, l.SessionName)
-	// sessionToken, _ := l.SessionStore.New(req, tokenName)
-	// if err != nil {
-	// }
-	session.Options.Path = "/"
-	// for k, va := range req.URL.Query() {
-	// 	for _, v := range va {
-	// 		if k == l.SaaSTokenName {
-	// 			// logrus.Infof("setting user in session: %s", v)
-	// 			token = v
-	// 			break
-	// 		}
-	// 	}
-	// }
-
-	session.Values["access_token"] = accessToken
-	session.Values["refresh_token"] = refreshToken
-	// sessionToken.Values[tokenName] = tokenString
-
-	// err = sessionToken.Save(req, w)
-	// if err != nil {
-	// 	logrus.Errorf("token save: %v", err)
-	// }
-
-	// if tokenCookie != nil && tokenCookie.Name != "" {
-	// 	reffCk.Expires = time.Now().Add(-2 * time.Second)
-	// 	http.SetCookie(w, reffCk)
-	// }
-
-	user, err := l.fetchUserDetails(tokenString)
-	if err != nil {
-		logrus.Errorf("unable to fetch session: %v", err)
-	}
-
-	session.Values["user"] = user
-	err = session.Save(req, w)
-
-	if err != nil {
-		logrus.Errorf("unable to save session: %v", err)
-	}
-	http.Redirect(w, req, reffURL, http.StatusFound)
-}
-
 // // issueSession issues a cookie session after successful login
 // func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
 
@@ -249,28 +175,31 @@ func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, err
 
 // GetUserDetails - returns the user details
 func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
-	// ensuring session is intact before running load test
-	session, err := l.GetSession(req)
+	token, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
 	}
-
-	token, _ := l.GetToken(req)
-
-	user, _ := session.Values["user"].(*User)
-	_, _ = l.fetchUserDetails(token)
+	user, err := l.fetchUserDetails(token)
+	if err != nil {
+		return nil, err
+	}
 	return user, nil
 }
 
 // GetSession - returns the session
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session, error) {
-	session, err := l.SessionStore.Get(req, l.SessionName)
+	// session, err := l.SessionStore.Get(req, l.SessionName)
+
+	_, err := l.GetToken(req)
+
 	if err != nil {
 		err = errors.Wrap(err, "Error: unable to get session")
 		logrus.Error(err)
 		return nil, err
 	}
-	return session, nil
+	// TODO: This needs to be fixed at any cost
+	// Actual authentication must take place here
+	return &sessions.Session{}, nil
 }
 
 // GetProviderToken - returns provider token
@@ -284,29 +213,6 @@ func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, err
 
 // Logout - logout from provider backend
 func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
-
-	sess, err := l.SessionStore.Get(req, l.SessionName)
-	if err == nil {
-		sess.Options.MaxAge = -1
-		_ = sess.Save(req, w)
-	}
-	// jsonMap := make(map[string]string)
-	// jsonMap[tokenName] = tokenSess.Values[tokenName].(string)
-	// jsonMap["refresh_token"] = sess.Values["refresh_token"].(string)
-	// jsonString, err := json.Marshal(jsonMap)
-
-	// _, err = http.Post(l.SaaSBaseURL+"/logout", "application/json", bytes.NewReader(jsonString))
-	// if err != nil {
-	// 	logrus.Errorf("Error creating a client to logout from tweet app: %v", err)
-	// 	http.Error(w, "unable to logout at the moment", http.StatusInternalServerError)
-	// 	return
-	// }
-
-	sess, err = l.SessionStore.Get(req, tokenName)
-	if err == nil {
-		sess.Options.MaxAge = -1
-		_ = sess.Save(req, w)
-	}
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
 		ck.MaxAge = -1
@@ -318,9 +224,6 @@ func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request)
 // FetchResults - fetches results from provider backend
 func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	logrus.Infof("attempting to fetch results from cloud")
-	// session, _ := l.GetSession(req)
-
-	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/results")
 	q := saasURL.Query()
@@ -370,9 +273,6 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 // GetResult - fetches result from provider backend for the given result id
 func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
-	// session, _ := l.GetSession(req)
-
-	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(fmt.Sprintf("%s/result/%s", l.SaaSBaseURL, resultID.String()))
 	logrus.Debugf("constructed result url: %s", saasURL.String())
@@ -422,9 +322,6 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
-	// session, _ := l.GetSession(req)
-
-	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)

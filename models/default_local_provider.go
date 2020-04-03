@@ -213,10 +213,6 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 	return "", nil
 }
 
-func (l *DefaultLocalProvider) TokenReciever(w http.ResponseWriter, r *http.Request, _ bool) {
-	// l.issueSession(w, r)
-}
-
 // PublishMetrics - publishes metrics to the provider backend asyncronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
