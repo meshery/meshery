@@ -86,11 +86,11 @@ func (l *MesheryRemoteProvider) StopSyncPreferences() {
 	l.syncStopChan <- struct{}{}
 }
 
-func (l *MesheryRemoteProvider) setAuthorizationHeader(req *http.Request, tokenString string) {
-	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenString))
-}
+// func (l *MesheryRemoteProvider) setAuthorizationHeader(req *http.Request, tokenString string) {
+// 	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenString))
+// }
 
-func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preference) {
+func (l *MesheryRemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	bd, err := json.Marshal(sess)
 	if err != nil {
 		logrus.Errorf("unable to marshal preference data: %v", err)
@@ -99,9 +99,12 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preferenc
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/preferences")
 	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bytes.NewReader(bd))
 
-	l.setAuthorizationHeader(req, tokenVal)
-	c := &http.Client{}
-	resp, err := c.Do(req)
+	// tokenString, err := l.GetToken(req)
+	// if err != nil {
+	// 	logrus.Errorf("unable to get results: %v", err)
+	// 	return nil, err
+	// }
+	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to upload user preference data: %v", err)
 		return
@@ -154,7 +157,7 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 	// 	return
 	// }
 	// tokenString := tokenCookie.Value
-	token, err := DecodeTokenData(tokenString)
+	token, err := l.DecodeTokenData(tokenString)
 
 	accessToken := token.AccessToken
 	refreshToken := token.RefreshToken
@@ -214,7 +217,7 @@ func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, err
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
 	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
-	resp, err := DoRequest(req, tokenString)
+	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to fetch user data: %v", err)
 		return nil, err
@@ -252,7 +255,7 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 		return nil, err
 	}
 
-	token, _ := l.GetProviderToken(req)
+	token, _ := l.GetToken(req)
 
 	user, _ := session.Values["user"].(*User)
 	_, _ = l.fetchUserDetails(token)
@@ -272,11 +275,10 @@ func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session
 
 // GetProviderToken - returns provider token
 func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, error) {
-	session, err := l.GetSession(req)
+	tokenVal, err := l.GetToken(req)
 	if err != nil {
 		return "", err
 	}
-	tokenVal, _ := session.Values["access_token"].(string)
 	return tokenVal, nil
 }
 
@@ -316,9 +318,9 @@ func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request)
 // FetchResults - fetches results from provider backend
 func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	logrus.Infof("attempting to fetch results from cloud")
-	session, _ := l.GetSession(req)
+	// session, _ := l.GetSession(req)
 
-	tokenVal, _ := session.Values[l.SaaSTokenName].(string)
+	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/results")
 	q := saasURL.Query()
@@ -338,10 +340,12 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 	logrus.Debugf("constructed results url: %s", saasURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
-	l.setAuthorizationHeader(cReq, tokenVal)
-
-	c := &http.Client{}
-	resp, err := c.Do(cReq)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
@@ -366,18 +370,20 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 // GetResult - fetches result from provider backend for the given result id
 func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
-	session, _ := l.GetSession(req)
+	// session, _ := l.GetSession(req)
 
-	tokenVal, _ := session.Values[l.SaaSTokenName].(string)
+	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(fmt.Sprintf("%s/result/%s", l.SaaSBaseURL, resultID.String()))
 	logrus.Debugf("constructed result url: %s", saasURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
-	l.setAuthorizationHeader(cReq, tokenVal)
-
-	c := &http.Client{}
-	resp, err := c.Do(cReq)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return nil, err
@@ -416,17 +422,18 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
-	session, _ := l.GetSession(req)
+	// session, _ := l.GetSession(req)
 
-	tokenVal, _ := session.Values[l.SaaSTokenName].(string)
+	// tokenVal, _ := session.Values[l.SaaSTokenName].(string)
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
-
-	l.setAuthorizationHeader(cReq, tokenVal)
-
-	c := &http.Client{}
-	resp, err := c.Do(cReq)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return "", err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send results: %v", err)
 		return "", err
@@ -458,7 +465,7 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *MesheryRemoteProvider) PublishMetrics(tokenVal string, result *MesheryResult) error {
+func (l *MesheryRemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -472,10 +479,12 @@ func (l *MesheryRemoteProvider) PublishMetrics(tokenVal string, result *MesheryR
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
 	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
 
-	l.setAuthorizationHeader(cReq, tokenVal)
-
-	c := &http.Client{}
-	resp, err := c.Do(cReq)
+	// tokenString, err := l.GetToken(req)
+	// if err != nil {
+	// 	logrus.Errorf("unable to get results: %v", err)
+	// 	return nil, err
+	// }
+	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send metrics: %v", err)
 		return err
@@ -501,7 +510,7 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
-	tokenVal, _ := l.GetProviderToken(req)
+	tokenVal, _ := l.GetToken(req)
 	l.syncChan <- &userSession{
 		token:   tokenVal,
 		session: data,
