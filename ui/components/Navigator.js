@@ -263,10 +263,10 @@ const categories = [
         show: true,
       },
       {
-        id: 'cpx',
+        id: 'Citrix Service Mesh',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/citrix", 
-        title: 'Citrix',
+        title: 'Citrix Service Mesh',
         link: false, 
         show: true,
       },
@@ -403,7 +403,7 @@ class Navigator extends React.Component {
       image = "/static/img/octarine-white.svg";
       logoIcon = (<img src={image} className={classes.icon} />);
       break;
-    case 'citrix':
+    case 'citrix service mesh':
       image = "/static/img/citrix-light-gray.svg";
       logoIcon = (<img src={image} className={classes.icon} />);
       break;

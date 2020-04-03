@@ -159,7 +159,7 @@ class MesheryPlayComponent extends React.Component {
         image = "/static/img/octarine.svg";
         imageIcon = (<img src={image} className={classes.expTitleIcon} />);
         break;
-      case 'citrix':
+      case 'citrix service mesh':
         image = "/static/img/citrix.svg";
         imageIcon = (<img src={image} className={classes.expTitleIcon} />);
         break;

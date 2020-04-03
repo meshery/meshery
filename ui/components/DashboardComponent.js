@@ -378,7 +378,7 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/octarine.svg";
                     logoIcon = (<img src={image} className={classes.icon} />);
                     break;
-                  case 'cpx':
+                  case 'citrix service mesh':
                     image = "/static/img/citrix.svg";
                     logoIcon = (<img src={image} className={classes.icon} />);
                     break;
