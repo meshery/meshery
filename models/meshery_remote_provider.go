@@ -14,7 +14,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/oauth2"
 )
 
 // MesheryRemoteProvider - represents a local provider
@@ -129,6 +128,7 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
 		return
 	}
+	http.Redirect(w, r, "/", http.StatusFound)
 	return
 }
 
@@ -142,7 +142,9 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 	if reffURL == "" {
 		reffURL = "/"
 	}
-	tokenString := req.URL.Query().Get(tokenName)
+	tokenString := req.URL.Query().Get("token")
+
+	logrus.Debugf("Tokenstring recieved : %s", tokenString)
 	// jsonDataFromHttp, _ := ioutil.ReadAll(req.Body)
 
 	// tokenCookie, err := req.Cookie(tokenName)
@@ -152,7 +154,7 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 	// 	return
 	// }
 	// tokenString := tokenCookie.Value
-	token, err := l.decodeTokenData(tokenString)
+	token, err := DecodeTokenData(tokenString)
 
 	accessToken := token.AccessToken
 	refreshToken := token.RefreshToken
@@ -161,7 +163,7 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 	logrus.Debugf("refreshToken : %s", refreshToken)
 
 	session, _ := l.SessionStore.New(req, l.SessionName)
-	sessionToken, _ := l.SessionStore.New(req, tokenName)
+	// sessionToken, _ := l.SessionStore.New(req, tokenName)
 	// if err != nil {
 	// }
 	session.Options.Path = "/"
@@ -177,19 +179,19 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 
 	session.Values["access_token"] = accessToken
 	session.Values["refresh_token"] = refreshToken
-	sessionToken.Values[tokenName] = tokenString
+	// sessionToken.Values[tokenName] = tokenString
 
-	err = sessionToken.Save(req, w)
-	if err != nil {
-		logrus.Errorf("token save: %v", err)
-	}
+	// err = sessionToken.Save(req, w)
+	// if err != nil {
+	// 	logrus.Errorf("token save: %v", err)
+	// }
 
 	// if tokenCookie != nil && tokenCookie.Name != "" {
 	// 	reffCk.Expires = time.Now().Add(-2 * time.Second)
 	// 	http.SetCookie(w, reffCk)
 	// }
 
-	user, err := l.fetchUserDetails(accessToken)
+	user, err := l.fetchUserDetails(tokenString)
 	if err != nil {
 		logrus.Errorf("unable to fetch session: %v", err)
 	}
@@ -203,33 +205,16 @@ func (l *MesheryRemoteProvider) TokenReciever(w http.ResponseWriter, req *http.R
 	http.Redirect(w, req, reffURL, http.StatusFound)
 }
 
-func (l *MesheryRemoteProvider) decodeTokenData(tokenStringB64 string) (*oauth2.Token, error) {
-	var token oauth2.Token
-	tokenString, err := base64.RawStdEncoding.DecodeString(tokenStringB64)
-	if err != nil {
-		logrus.Errorf("token encode error : %s", err.Error())
-		return nil, err
-	}
-	err = json.Unmarshal(tokenString, &token)
-	if err != nil {
-		logrus.Errorf("token encode error : %s", err.Error())
-		return nil, err
-	}
-	return &token, nil
-}
-
 // // issueSession issues a cookie session after successful login
 // func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
 
 // }
 
-func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
+func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
 	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
-	l.setAuthorizationHeader(req, tokenVal)
-	c := &http.Client{}
-	resp, err := c.Do(req)
+	resp, err := DoRequest(req, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to fetch user data: %v", err)
 		return nil, err
@@ -320,7 +305,11 @@ func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request)
 		sess.Options.MaxAge = -1
 		_ = sess.Save(req, w)
 	}
-
+	ck, err := req.Cookie(tokenName)
+	if err == nil {
+		ck.MaxAge = -1
+		http.SetCookie(w, ck)
+	}
 	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
