@@ -72,9 +72,7 @@ var rootCmd = &cobra.Command{
 		if b {
 			versionCmd.Run(nil, nil)
 		}
-		if len(args) == 0 {
-			log.Print(cmdDetails)
-		}
+		
 	},
 }
 
@@ -107,6 +105,7 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.Flags().BoolP("version", "v", false, "Version flag")
+	rootCmd.Flags().BoolP("version", "version", false, "Version flag")
 }
 
 // initConfig reads in config file and ENV variables if set.
