@@ -30,7 +30,6 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
-
 	installedMeshes, err := helpers.ScanPromGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to scan Kubernetes")
@@ -44,7 +43,6 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
 		return
 	}
-
 }
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
