@@ -35,7 +35,7 @@ var versionCmd = &cobra.Command{
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Client Version: %v \t  GitSHA: %v", BuildClient, CommitSHA)
+		log.Infof("Client Version: %v \t  GitSHA: %v", BuildClient, CommitSHA)
 		log.Info("Server Version: ", BuildServer)
 	},
 }
