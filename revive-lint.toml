@@ -9,7 +9,6 @@ warningCode = 1
 [rule.context-keys-type]
 [rule.dot-imports]
 [rule.error-return]
-#[rule.error-strings]
 [rule.error-naming]
 [rule.exported]
 [rule.if-return]
