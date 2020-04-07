@@ -172,7 +172,7 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     <tr><td colspan="3"><strong>v0.1.0</strong></td></tr>
     <tr>
       <td class="centered">0.0.9</td>
-      <td>Documentation site segragated and content laided out.</td>
+      <td>Documentation site segregated and content laided out.</td>
       <td>May 2, 2019</td>
     </tr>
     <tr>
