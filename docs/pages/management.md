@@ -17,7 +17,7 @@ Commonly adjoining each service mesh is a sample application that facilitates de
 Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.
 
 ## Deleting a service mesh
-Just as Meshery automates the provisioning of various service meshes, so does it faciliate the deprovisioning of service meshes.
+Just as Meshery automates the provisioning of various service meshes, so does it facilitate the deprovisioning of service meshes.
 
 # Management notifications 
 Meshery tracks service mesh and application health. Meshery provides notification of environment issues, application conflicts with service mesh configuration.
