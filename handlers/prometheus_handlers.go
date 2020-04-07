@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/sessions"
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 
 	"github.com/pkg/errors"
@@ -19,6 +20,31 @@ import (
 
 func init() {
 	gob.Register(&models.PrometheusClient{})
+}
+
+// ScanPromGrafanaHandler - fetches  Promotheus and Grafana
+func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+
+	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
+		logrus.Error("No valid kubernetes config found.")
+		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		return
+	}
+
+	availablePromGrafana, err := helpers.ScanPromGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+	if err != nil {
+		err = errors.Wrap(err, "unable to scan Kubernetes")
+		logrus.Error(err)
+		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
+		return
+	}
+	if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
+		err = errors.Wrap(err, "unable to marshal the payload")
+		logrus.Error(err)
+		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
