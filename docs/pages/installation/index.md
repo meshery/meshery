@@ -54,6 +54,8 @@ curl -L https://git.io/meshery | bash -
 ```
 
 ### Windows
+
+**Building from Releae**
 * Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
 ```
@@ -61,3 +63,26 @@ curl -L https://git.io/meshery | bash -
 ```
 
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
+
+**Scoop**
+
+Use [Scoop](https://scoop.sh) to install Meshery on your windows machine.
+
+**Installation Commands**
+
+- Install Scoop-CLI on your windows machine by :
+```sh
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+
+# or shorter
+iwr -useb get.scoop.sh | iex
+```
+- Add Meshery Scoop Bucket by :
+```sh
+scoop bucket add app https://github.com/layer5/scoop-bucket.git
+```
+- Install Meshery by :
+```sh
+scoop install app
+```
+

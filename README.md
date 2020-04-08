@@ -32,7 +32,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - Scoop | [#490](https://github.com/layer5io/meshery/issues/490) |
+| - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
