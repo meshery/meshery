@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/asaskevich/govalidator"
 )
 
 var (
@@ -60,7 +61,7 @@ var perfCmd = &cobra.Command{
 		preReqCheck()
 
 		if len(testName) <= 0 {
-			println("Test Name not provided \n")
+			println("Test Name not provided")
 			testName = StringWithCharset(8)
 			println("Using random test name: ", testName)
 		}
@@ -74,6 +75,7 @@ var perfCmd = &cobra.Command{
 			println("Error: Test duration invalid")
 			return
 		}
+
 		endTime := startTime.Add(duration)
 
 		postData = postData + "start_time: " + startTime.Format(time.RFC3339)
@@ -82,9 +84,18 @@ var perfCmd = &cobra.Command{
 		if len(testURL) > 0 {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			println("Error: Please enter a TestURL")
+			println("Error: Please enter a Test URL")
 			return
 		}
+
+		// Methord to check if the entered Test URL is valid or not
+		var validURL bool = govalidator.IsURL(testURL)
+
+		if (validURL == false) {
+			println("Error: Please enter a valid Test URL")
+			return
+		}
+
 
 		postData = postData + "\nclient:"
 		postData = postData + "\n connections: " + concurrentRequests
@@ -110,6 +121,7 @@ var perfCmd = &cobra.Command{
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
+			println("\nFailed to make request to URL:", testURL)
 			return
 		}
 
