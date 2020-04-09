@@ -27,10 +27,9 @@ import (
 )
 
 var (
-	testURL  = ""
-	testName = ""
-	testMesh = ""
-	// testFile         = ""
+	testURL            = ""
+	testName           = ""
+	testMesh           = ""
 	qps                = ""
 	concurrentRequests = ""
 	testDuration       = ""
@@ -54,13 +53,17 @@ func StringWithCharset(length int) string {
 // perfCmd represents the Performance command
 var perfCmd = &cobra.Command{
 	Use:   "perf",
-	Short: "Performance testing and benchmarking",
-	Long:  `Performance testing and benchmarking.`,
+	Short: "Performance Testing",
+	Long:  `Performance Testing & Benchmarking using Meshery CLI.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//Check prerequisite
 		preReqCheck()
 
-		println("Test name used : ", testName)
+		if len(testName) <= 0 {
+			println("Test Name not provided \n")
+			testName = StringWithCharset(8)
+			println("Using random test name: ", testName)
+		}
 
 		const mesheryURL string = "http://localhost:9081/api/load-test-smps?"
 		postData := ""
@@ -123,14 +126,13 @@ var perfCmd = &cobra.Command{
 }
 
 func init() {
-	perfCmd.Flags().StringVar(&testURL, "url", "", "(required) URL of the endpoint to use for the test")
-	perfCmd.Flags().StringVar(&testName, "name", StringWithCharset(8), "(optional) A memorable name for the test.")
-	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the service mesh.")
-	// perfCmd.Flags().StringVar(&testFile, "file", "", "DESCRIPTION")
+	perfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
+	perfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
+	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
-	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "DESCRIPTION")
-	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Duration of the test like 10s, 5m, 2h. We are following the convention described at https://golang.org/pkg/time/#ParseDuration")
-	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) identification of choice of provider.")
-	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "	(optional) choice of load generator: fortio (OR) wrk2")
+	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(required) Number of Parallel Requests")
+	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Duration of the Test")
+	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
+	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	rootCmd.AddCommand(perfCmd)
 }
