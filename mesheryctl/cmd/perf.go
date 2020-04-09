@@ -84,7 +84,7 @@ var perfCmd = &cobra.Command{
 		if len(testURL) > 0 {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			println("Error: Please enter a Test URL")
+			println("\nError: Please enter a test URL")
 			return
 		}
 
@@ -92,7 +92,7 @@ var perfCmd = &cobra.Command{
 		var validURL bool = govalidator.IsURL(testURL)
 
 		if (validURL == false) {
-			println("Error: Please enter a valid Test URL")
+			println("\nError: Please enter a valid test URL")
 			return
 		}
 
@@ -103,7 +103,7 @@ var perfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			println("Error in building the request")
+			println("\nError in building the request")
 			return
 		}
 		cookieConf := strings.SplitN(testCookie, "=", 2)
