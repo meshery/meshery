@@ -1,7 +1,7 @@
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:7f129c7c04c9
+    image: layer5/meshery-istio:dbf26e602f2624d6a3a8e190774fbb291eb02994
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
