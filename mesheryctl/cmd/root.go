@@ -47,8 +47,8 @@ Available Commands:
   version     Version of mesheryctl
 
 Flags:
-      --config string   config file (default location is: $HOME/.meshery/config.yaml)
-  -h, --help            help for mesheryctl
+      --config string   Config file (default location is: $HOME/.meshery/config.yaml)
+  -h, --help            Help for mesheryctl
   -t, --toggle          Help message for toggle
   -v, --version         Version of mesheryctl
 
