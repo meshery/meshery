@@ -189,7 +189,7 @@ scoop:
 
   # Repository to push the app manifest to.
   bucket:
-    owner: layer5
+    owner: layer5io
     name: scoop-bucket
 
   # Git author used to commit to the repository.
