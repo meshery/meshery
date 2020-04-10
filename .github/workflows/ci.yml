@@ -74,7 +74,7 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/securego/gosec/cmd/gosec; /home/runner/go/bin/gosec ./... 
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/securego/gosec/cmd/gosec; /home/runner/go/bin/gosec ./... 
 #   tests:
 #     # needs: [lint, error_check, static_check, vet, sec_check]
 #     name: Tests
