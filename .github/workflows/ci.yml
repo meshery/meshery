@@ -63,7 +63,7 @@ jobs:
 #         go-version: ${{ secrets.GO_VERSION }}
 #     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
   security_check:
-    name: Run Gosec
+    name: Security Check
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
