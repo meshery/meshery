@@ -36,6 +36,19 @@ jobs:
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
+  vet:
+    name: Go Vet Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
 #   static_check:
 #     name: Static check
 #     runs-on: ubuntu-latest
@@ -49,19 +62,6 @@ jobs:
 #       with:
 #         go-version: ${{ secrets.GO_VERSION }}
 #     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all ./... # https://staticcheck.io/docs/checks
-#   vet:
-#     name: Vet
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
 #   sec_check:
 #     name: Security check
 #     runs-on: ubuntu-latest
