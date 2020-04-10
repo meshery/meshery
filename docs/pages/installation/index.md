@@ -15,10 +15,11 @@ Getting Meshery up and running on a locally on Docker-enabled system is easy. Us
 Use your choice of homebrew or bash to install `mesheryctl`. You only need to use one.
 
 #### Homebrew
-* Install `mesheryctl` and run Meshery on Mac with homebrew:
+Install `mesheryctl` and run Meshery on Mac with Homebrew.
 
 **Installing with Homebrew**
-To install `mesheryctl`, execute the following commands.
+
+To install `mesheryctl`, execute the following commands:
 ```
 brew tap layer5io/tap
 brew install mesheryctl
@@ -26,7 +27,8 @@ mesheryctl start
 ```
 
 **Upgrading with Homebrew**
-To upgrade `mesheryctl`, execute the following command.
+
+To upgrade `mesheryctl`, execute the following command:
 ```
 brew upgrade mesheryctl
 ```
@@ -49,13 +51,15 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 
 #### Bash
 **Installing with Bash**
+
 Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ```
 curl -L https://git.io/meshery | bash -
 ```
 
-**Upgradingg with Bash**
+**Upgrading with Bash**
+
 Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 ```
 curl -L https://git.io/meshery | bash -
@@ -63,7 +67,8 @@ curl -L https://git.io/meshery | bash -
 
 ### Windows
 
-#### Installing the Binary
+#### Installing the `mesheryctl` binary
+
 Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
 ```
@@ -72,7 +77,7 @@ Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/l
 
 #### Scoop
 
-Use [Scoop](https://scoop.sh) to install Meshery on your windows machine.
+Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
 
 **Installing with Scoop**
 
