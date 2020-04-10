@@ -14,17 +14,18 @@ Getting Meshery up and running on a locally on Docker-enabled system is easy. Us
 ### Mac or Linux
 Use your choice of homebrew or bash to install `mesheryctl`. You only need to use one.
 
-**Homebrew**
+#### Homebrew
 * Install `mesheryctl` and run Meshery on Mac with homebrew:
 
-**Installation Commands**
+**Installing with Homebrew**
 To install `mesheryctl`, execute the following commands.
 ```
 brew tap layer5io/tap
 brew install mesheryctl
 mesheryctl start
 ```
-**Upgrading**
+
+**Upgrading with Homebrew**
 To upgrade `mesheryctl`, execute the following command.
 ```
 brew upgrade mesheryctl
@@ -46,18 +47,49 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> No dependents found!
 ```
 
-**Bash**
-* Install `mesheryctl` and run Meshery on Mac or Linux with this script:
+#### Bash
+**Installing with Bash**
+Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ```
 curl -L https://git.io/meshery | bash -
 ```
 
+**Upgradingg with Bash**
+Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
+```
+curl -L https://git.io/meshery | bash -
+```
+
 ### Windows
-* Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
+
+#### Installing the Binary
+Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
 ```
 ./mesheryctl start
 ```
 
+#### Scoop
+
+Use [Scoop](https://scoop.sh) to install Meshery on your windows machine.
+
+**Installing with Scoop**
+
+Install Scoop-CLI on Windows:
+```sh
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+
+# or...
+
+iwr -useb get.scoop.sh | iex
+```
+
+Add the Meshery Scoop Bucket and install:
+```sh
+scoop bucket add app https://github.com/layer5/scoop-bucket.git
+scoop install app
+```
+
+---
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
