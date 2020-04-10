@@ -75,6 +75,7 @@ Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/l
 Use [Scoop](https://scoop.sh) to install Meshery on your windows machine.
 
 **Installing with Scoop**
+
 Add the Meshery Scoop Bucket and install:
 ```sh
 scoop bucket add app https://github.com/layer5io/scoop-bucket.git
