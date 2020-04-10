@@ -1,4 +1,4 @@
-// collection of handlers (aka "HTTP middleware")
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -21,13 +21,14 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		} else {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
 		}
-		if providerName != "" {
-			provider, _ = h.config.Providers[providerName]
-		}
+ 		if providerName != "" {		
+ 			provider = h.config.Providers[providerName]		
+ 		}
 		if provider == nil {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
+		//lint:ignore SA1029 we want to make sure that no two results of errors
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider)
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
