@@ -1,12 +1,11 @@
-Meshery CNCF Proposal
+# Meshery CNCF Proposal
 
 Name of project: Meshery
 
 Description: Meshery is an open source multi-service mesh management plane.
 
 Alignment with CNCF - Why does CNCF need a multi-service mesh management plane?
-===============================================================================
-
+-------------------------------------------------------------------------------
 The CNCF has an impressive portfolio of projects that can be leveraged to build and run complex distributed systems; our team believes Meshery to be a great fit for the CNCF. Meshery's core mission aligns well with Kubernetes, Linkerd and the container and networking ecosystem. 
 
 The CNCF's mission is to "create and drive the adoption of a new computing paradigm that is optimized for modern distributed systems environments capable of scaling to tens of thousands of self-healing multi-tenant nodes." Modern distributed systems rely on networking, connectivity, observability, security, uniform control. As a result, service meshes are an essential piece of this architecture.
@@ -39,7 +38,7 @@ Project Timeline and Snapshot
 Users
 -----
 
--   Ziglu, TicketMaster, HPE
+-   Ziglu, TicketMaster, HPE, HashiCorp
 
 In-Flight Features
 ------------------
@@ -89,11 +88,9 @@ Social Media Accounts
 
 -   Twitter:  <https://twitter.com/mesheryio>
 
--   Google Groups:  <https://groups.google.com/forum/#!forum/projectcontour-announce>
-
 -   Slack:  [http://slack.layer5.io](http://slack.layer5.io/)
 
-Contributor Statistics (valid as of Jan 2020)
+Contributor Statistics (valid as of Mar 2020)
 ---------------------------------------------
 
 -   230 GitHub Stars
