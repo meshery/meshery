@@ -71,7 +71,7 @@ CNCF Donation Details
 
 -   Preferred Maturity Level: Sandbox
 
--   Sponsors: @leecalcote, @justincormack, @michellenoorali,
+-   Sponsors: [@lcalcote](https://twitter.com/lcalcote), [@justincormack](https://twitter.com/justincormack), [@michellenoorali](https://twitter.com/michellenoorali)
 
 -   License: Apache 2
 
