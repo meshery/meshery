@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
-    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config revive-lint.toml -formatter friendly ./...
+    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
-  vet:
+  vet_check:
     name: Go Vet Check
     runs-on: ubuntu-latest
     steps:
@@ -49,32 +49,26 @@ jobs:
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
-#   static_check:
-#     name: Static check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all ./... # https://staticcheck.io/docs/checks
-#   sec_check:
-#     name: Security check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/securego/gosec/cmd/gosec; /home/runner/go/bin/gosec ./... # https://github.com/securego/gosec
+  security_check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      GOPROXY: direct
+      GOSUMDB: off
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./... -exclude=G301,G304,G107
 #   tests:
 #     # needs: [lint, error_check, static_check, vet, sec_check]
 #     name: Tests
