@@ -38,6 +38,27 @@ var (
 	testCookie         = ""
 )
 
+var perfDetails = `
+Performance Testing & Benchmarking using Meshery CLI.
+
+Usage:
+  mesheryctl perf --[flags]
+
+Available Flags for Performance Command:
+  name[string]                  (optional) Name for the Test, if not provided random name will be used.
+  url[string]                   (required) URL Endpoint at which test is to be performed
+  duration[string]              (required) Duration for which test should be performed. See standard notation https://golang.org/pkg/time/#ParseDuration
+  load-generator[string]        (optional) Load-Generator to be used to perform test.(fortio/wrk2) (Default "fortio")
+  mesh[string]              	(optional) Name of the service mesh to be tested.
+  cookie[string]            	(required) Choice of the cloud server provider (Default "Default Local Provider")
+  concurrent-requests[string]   (required) Number of paraller requests to be used (Default "1")
+  qps[string]                   (required) Queries per second (Default "0")
+  help                          Help for perf subcommand
+
+Example usage of Performance Sub-command :-
+ mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --cookie "meshery-provider=None"
+`
+
 var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
@@ -59,6 +80,11 @@ var perfCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//Check prerequisite
 		preReqCheck()
+
+		if len(args) == 0 {
+			fmt.Println(perfDetails)
+			return
+		}
 
 		if len(testName) <= 0 {
 			println("Test Name not provided")
@@ -104,6 +130,7 @@ var perfCmd = &cobra.Command{
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
 			println("\nError in building the request")
+			println("Error Message:\n", err)
 			return
 		}
 		cookieConf := strings.SplitN(testCookie, "=", 2)
@@ -122,6 +149,7 @@ var perfCmd = &cobra.Command{
 		resp, err := client.Do(req)
 		if err != nil {
 			println("\nFailed to make request to URL:", testURL)
+			println("Error Message:\n", err)
 			return
 		}
 
