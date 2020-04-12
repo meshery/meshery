@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -25,6 +26,10 @@ type MesheryRemoteProvider struct {
 
 	SessionName   string
 	RefCookieName string
+
+	TokenStore    map[string]string
+	TokenStoreMut sync.Mutex
+	Keys          []map[string]string
 
 	LoginCookieDuration time.Duration
 
@@ -192,15 +197,27 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session, error) {
 	// session, err := l.SessionStore.Get(req, l.SessionName)
 
-	_, err := l.GetToken(req)
-
+	ts, err := l.GetToken(req)
+	// _, err := l.GetToken(req)
 	if err != nil {
 		err = errors.Wrap(err, "Error: unable to get session")
 		logrus.Error(err)
 		return nil, err
 	}
-	// TODO: This needs to be fixed at any cost
-	// Actual authentication must take place here
+	_, err = l.VerifyToken(ts)
+	if err != nil {
+		logrus.Infof("Error: parsing token, trying refreshing the token ")
+		newts, err := l.refreshToken(ts)
+		if err != nil {
+			logrus.Errorf("Error refreshing token, %v", err.Error())
+			return nil, err
+		}
+		_, err = l.VerifyToken(newts)
+		if err != nil {
+			logrus.Errorf("Error refreshing token, %v", err.Error())
+			return nil, err
+		}
+	}
 	return &sessions.Session{}, nil
 }
 
@@ -415,4 +432,22 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 		session: data,
 	}
 	return nil
+}
+
+func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
+	l.TokenStoreMut.Lock()
+	defer l.TokenStoreMut.Unlock()
+
+	tokenString, _ := l.GetToken(r)
+	newts := l.TokenStore[tokenString]
+	if newts != "" {
+		logrus.Debugf("set updated token: %v", newts)
+		http.SetCookie(w, &http.Cookie{
+			Name:     tokenName,
+			Value:    newts,
+			Path:     "/",
+			HttpOnly: true,
+		})
+		// delete(l.TokenStore, tokenString)
+	}
 }

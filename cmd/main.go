@@ -119,6 +119,7 @@ func main() {
 		SaaSBaseURL:   saasBaseURL,
 		RefCookieName: "meshery_ref",
 		SessionName:   "meshery",
+		TokenStore:    make(map[string]string),
 		// SessionStore: fileSessionStore,
 		// SessionStore: cookieSessionStore,
 		// SaaSTokenName:              "meshery_saas",

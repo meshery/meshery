@@ -253,3 +253,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
+
+func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {
+
+}

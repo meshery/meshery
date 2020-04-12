@@ -34,6 +34,7 @@ type Provider interface {
 	GetSession(req *http.Request) (*sessions.Session, error)
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
+	UpdateToken(http.ResponseWriter, *http.Request)
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult) (string, error)

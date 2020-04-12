@@ -107,6 +107,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			}
 		}
 
+		provider.UpdateToken(w, req)
 		next(w, req, session, prefObj, user, provider)
 	})
 }
