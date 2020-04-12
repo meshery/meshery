@@ -89,10 +89,6 @@ func (l *MesheryRemoteProvider) StopSyncPreferences() {
 	l.syncStopChan <- struct{}{}
 }
 
-// func (l *MesheryRemoteProvider) setAuthorizationHeader(req *http.Request, tokenString string) {
-// 	req.Header.Add("Authorization", fmt.Sprintf("bearer %s", tokenString))
-// }
-
 func (l *MesheryRemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 	bd, err := json.Marshal(sess)
 	if err != nil {
@@ -139,11 +135,6 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 	http.Redirect(w, r, "/", http.StatusFound)
 	return
 }
-
-// // issueSession issues a cookie session after successful login
-// func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
-
-// }
 
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
@@ -192,7 +183,7 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 	return user, nil
 }
 
-// GetSession - returns the session
+// GetSession - validates the current request, attempts for a refresh of token, and then return its validity
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
 
 	ts, err := l.GetToken(req)
@@ -431,6 +422,7 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 	return nil
 }
 
+// UpdateToken - in case the token was refreshed, this routine updates the response with the new token
 func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
@@ -445,6 +437,5 @@ func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Reque
 			Path:     "/",
 			HttpOnly: true,
 		})
-		// delete(l.TokenStore, tokenString)
 	}
 }

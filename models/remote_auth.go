@@ -20,6 +20,7 @@ import (
 
 type JWK map[string]string
 
+//DoRequest - executes a request and does refreshing automatically
 func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
@@ -34,6 +35,7 @@ func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string)
 	return resp, err
 }
 
+// refreshToken - takes a tokenString and returns a new tokenString
 func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
@@ -81,6 +83,7 @@ func (l *MesheryRemoteProvider) doRequestHelper(req *http.Request, tokenString s
 	return resp, nil
 }
 
+// GetToken - extracts token form a request
 func (l *MesheryRemoteProvider) GetToken(req *http.Request) (string, error) {
 	ck, err := req.Cookie(tokenName)
 	if err != nil {
@@ -90,6 +93,7 @@ func (l *MesheryRemoteProvider) GetToken(req *http.Request) (string, error) {
 	return ck.Value, nil
 }
 
+// DecodeTokenData - Decodes a tokenString to a token
 func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, error) {
 	var token oauth2.Token
 	// logrus.Debugf("Token string %s", tokenStringB64)
@@ -106,6 +110,7 @@ func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.
 	return &token, nil
 }
 
+// UpdateJWKs - Updates Keys to the JWKS
 func (l *MesheryRemoteProvider) UpdateJWKs() error {
 	resp, err := http.Get(l.SaaSBaseURL + "/keys")
 	if err != nil {
@@ -129,6 +134,7 @@ func (l *MesheryRemoteProvider) UpdateJWKs() error {
 	return nil
 }
 
+// GetJWK - Takes a keyId and returns the JWK
 func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
 	for _, key := range l.Keys {
 		if key["kid"] == kid {
@@ -147,6 +153,7 @@ func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
 	return nil, fmt.Errorf("Key not found")
 }
 
+// GenerateKey - generate the actual key from the JWK
 func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	// decode the base64 bytes for n
@@ -188,6 +195,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
 }
 
+// VerifyToken - verifies the validity of a tokenstring
 func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
 	dtoken, err := l.DecodeTokenData(tokenString)
 	if err != nil {
