@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -49,13 +48,6 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 
 // issueSession issues a cookie session after successful login
 func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
-	// session, _ := l.SessionStore.New(req, l.SessionName)
-	// session.Options.Path = "/"
-	// user := l.fetchUserDetails()
-	// session.Values["user"] = user
-	// if err := session.Save(req, w); err != nil {
-	// 	logrus.Errorf("unable to save session: %v", err)
-	// }
 	if !fromMiddleWare {
 		returnURL := "/"
 		if req.RequestURI != "" {
@@ -76,28 +68,12 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 
 // GetUserDetails - returns the user details
 func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
-	// ensuring session is intact before running load test
-	// session, err := l.GetSession(req)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// user, _ := session.Values["user"].(*User)
-	// return user, nil
-
 	return l.fetchUserDetails(), nil
 }
 
 // GetSession - returns the session
-func (l *DefaultLocalProvider) GetSession(req *http.Request) (*sessions.Session, error) {
-	// session, err := l.SessionStore.Get(req, l.SessionName)
-	// if err != nil {
-	// 	err = errors.Wrap(err, "Error: unable to get session")
-	// 	logrus.Error(err)
-	// 	return nil, err
-	// }
-	// return session, nil
-	return &sessions.Session{}, nil
+func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
+	return nil
 }
 
 // GetProviderToken - returns provider token
@@ -107,12 +83,6 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	// sess, err := l.SessionStore.Get(req, l.SessionName)
-	// if err == nil {
-	// 	sess.Options.MaxAge = -1
-	// 	_ = sess.Save(req, w)
-	// }
-
 	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
@@ -254,6 +224,5 @@ func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID strin
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
 
-func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {
-
-}
+// UpdateToken - specific to remote auth
+func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}

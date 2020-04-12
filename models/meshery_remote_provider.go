@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -194,15 +193,13 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 }
 
 // GetSession - returns the session
-func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session, error) {
-	// session, err := l.SessionStore.Get(req, l.SessionName)
+func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
 
 	ts, err := l.GetToken(req)
-	// _, err := l.GetToken(req)
 	if err != nil {
 		err = errors.Wrap(err, "Error: unable to get session")
 		logrus.Error(err)
-		return nil, err
+		return err
 	}
 	_, err = l.VerifyToken(ts)
 	if err != nil {
@@ -210,15 +207,15 @@ func (l *MesheryRemoteProvider) GetSession(req *http.Request) (*sessions.Session
 		newts, err := l.refreshToken(ts)
 		if err != nil {
 			logrus.Errorf("Error refreshing token, %v", err.Error())
-			return nil, err
+			return err
 		}
 		_, err = l.VerifyToken(newts)
 		if err != nil {
 			logrus.Errorf("Error refreshing token, %v", err.Error())
-			return nil, err
+			return err
 		}
 	}
-	return &sessions.Session{}, nil
+	return nil
 }
 
 // GetProviderToken - returns provider token
