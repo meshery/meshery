@@ -108,7 +108,7 @@ See the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRI
 Tip: The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 ## REST API
-Meshery provides a REST API availble through the default port of 9081/tcp.
+Meshery provides a REST API available through the default port of 9081/tcp.
 
 ### Authentication
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers.

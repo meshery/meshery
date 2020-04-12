@@ -136,7 +136,6 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 		return
 	}
 	l.issueSession(w, r)
-	return
 }
 
 // issueSession issues a cookie session after successful login

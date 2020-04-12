@@ -71,6 +71,7 @@ var rootCmd = &cobra.Command{
 		b, _ := cmd.Flags().GetBool("version")
 		if b {
 			versionCmd.Run(nil, nil)
+			return
 		}
 		if len(args) == 0 {
 			log.Print(cmdDetails)
