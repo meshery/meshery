@@ -130,6 +130,8 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
 		return
 	}
+
+	// TODO: go to ref cookie
 	http.Redirect(w, r, "/", http.StatusFound)
 	return
 }
