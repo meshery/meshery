@@ -25,8 +25,8 @@ require (
 	github.com/prometheus/client_golang v1.5.1
 	github.com/prometheus/common v0.6.0
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
-	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.3
+	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v0.0.7
 	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
@@ -36,8 +36,8 @@ require (
 	golang.org/x/sys v0.0.0-20191110163157-d32e6e3b99c4 // indirect
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
-	google.golang.org/grpc v1.23.1
-	gopkg.in/yaml.v2 v2.2.2
+	google.golang.org/grpc v1.28.1
+	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
