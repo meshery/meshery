@@ -82,24 +82,24 @@ jobs:
         uses: securego/gosec@master
         with:
           args: ./... -exclude=G301,G304,G107
-#   tests:
-#     # needs: [lint, error_check, static_check, vet, sec_check]
-#     name: Tests
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
+  tests:
+    needs: [lint, error_check, static_check, vet, sec_check]
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Meshery backend build check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet, sec_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -113,7 +113,7 @@ jobs:
   build-ui:
     name: Meshery UI build check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet, sec_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -129,8 +129,7 @@ jobs:
   build_release:
     name: MesheryCTL Build & Release
     runs-on: macOS-latest
-    # runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet, sec_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -157,7 +156,7 @@ jobs:
   docker:
     name: Docker build and push
     runs-on: ubuntu-latest
-    # needs: [build, build_release]
+    needs: [build_release]
     steps:
     - name: Check out code
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
