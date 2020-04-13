@@ -23,17 +23,15 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.5
 	github.com/prometheus/client_golang v1.5.1
-	github.com/prometheus/common v0.6.0
-	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
+	github.com/prometheus/common v0.9.1
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v0.0.7
-	github.com/spf13/viper v1.4.0
+	github.com/spf13/viper v1.6.3
 	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
 	golang.org/x/net v0.0.0-20191021144547-ec77196f6094
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
-	golang.org/x/sys v0.0.0-20191110163157-d32e6e3b99c4 // indirect
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/grpc v1.28.1
