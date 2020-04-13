@@ -11,3 +11,5 @@ jobs:
       uses: pullreminders/slack-action@master
       with:
         args: '{\"channel\":\"CLVT4TSG4\",\"text\":\"Someone has starred Meshery!\"}'
+        run: STAR="$(curl -s https://github.com/layer5io/meshery | nokogiri -e 'puts $_.search('\''a'\'').text' | sed -n 95p | awk '{print $1}')"
+        run: echo "Now at $STAR stars"
