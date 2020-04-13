@@ -13,20 +13,20 @@ require (
 	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
-	github.com/golang/protobuf v1.3.2
+	github.com/golang/protobuf v1.3.5
 	github.com/gorilla/sessions v1.2.0
-	github.com/gosimple/slug v1.7.0
+	github.com/gosimple/slug v1.9.0
 	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
-	github.com/pkg/errors v0.8.1
+	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.5
 	github.com/prometheus/client_golang v1.5.1
 	github.com/prometheus/common v0.6.0
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/sirupsen/logrus v1.5.0
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.4.0
 	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect

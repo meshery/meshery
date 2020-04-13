@@ -151,7 +151,7 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 	return l.ResultPersister.GetResult(resultID)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
