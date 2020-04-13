@@ -87,5 +87,12 @@ scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
 scoop install mesheryctl
 ```
 
+**Upgrading with Scoop**
+
+To upgrade `mesheryctl`, execute the following command:
+```
+scoop update mesheryctl
+```
+
 ---
 Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
