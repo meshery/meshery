@@ -9,7 +9,7 @@ permalink: installation
 Getting Meshery up and running on a locally on Docker-enabled system is easy. Use the Meshery command line interface, `mesheryctl`, to start Meshery on any of its [supported platforms](platforms).
 
 ## Using `mesheryctl`
-`mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `cleanup`. Running `cleanup` will remove all active container instanaces, prune pulled images and remove any local volumes crated by starting Meshery.
+`mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `cleanup`. Running `cleanup` will remove all active container instances, prune pulled images and remove any local volumes created by starting Meshery.
 
 ### Mac or Linux
 Use your choice of homebrew or bash to install `mesheryctl`. You only need to use one.
