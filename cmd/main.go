@@ -73,7 +73,7 @@ func main() {
 		Name: "loadTestReporterQueue",
 	})
 
-	provs := map[string]models.Provider{}
+	providers := map[string]models.Provider{}
 
 	var cookieSessionStore *sessions.CookieStore
 
@@ -103,7 +103,7 @@ func main() {
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 	}
-	provs[lProv.Name()] = lProv
+	providers[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
@@ -128,10 +128,10 @@ func main() {
 	}
 	cp.SyncPreferences()
 	defer cp.StopSyncPreferences()
-	provs[cp.Name()] = cp
+	providers[cp.Name()] = cp
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
-		Providers:              provs,
+		Providers:              providers,
 		ProviderCookieName:     "meshery-provider",
 		ProviderCookieDuration: 30 * 24 * time.Hour,
 

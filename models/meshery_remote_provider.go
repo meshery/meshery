@@ -80,8 +80,8 @@ func (l *MesheryRemoteProvider) SyncPreferences() {
 	go func() {
 		for {
 			select {
-			case uSess := <-l.syncChan:
-				l.executePrefSync(uSess.token, uSess.session)
+			case uSession := <-l.syncChan:
+				l.executePrefSync(uSession.token, uSession.session)
 			case <-l.syncStopChan:
 				return
 			}
@@ -94,8 +94,8 @@ func (l *MesheryRemoteProvider) StopSyncPreferences() {
 	l.syncStopChan <- struct{}{}
 }
 
-func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, sess *Preference) {
-	bd, err := json.Marshal(sess)
+func (l *MesheryRemoteProvider) executePrefSync(tokenVal string, session *Preference) {
+	bd, err := json.Marshal(session)
 	if err != nil {
 		logrus.Errorf("unable to marshal preference data: %v", err)
 		return
@@ -140,14 +140,14 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 
 // issueSession issues a cookie session after successful login
 func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Request) {
-	var reffURL string
-	reffCk, _ := req.Cookie(l.RefCookieName)
-	if reffCk != nil {
-		reffURL = reffCk.Value
+	var referrerURL string
+	referrerCookie, _ := req.Cookie(l.RefCookieName)
+	if referrerCookie != nil {
+		referrerURL = referrerCookie.Value
 	}
-	logrus.Infof("preparing to issue session. retrieved reff url: %s", reffURL)
-	if reffURL == "" {
-		reffURL = "/"
+	logrus.Infof("preparing to issue session. retrieved referrer url: %s", referrerURL)
+	if referrerURL == "" {
+		referrerURL = "/"
 	}
 	// session, err := h.config.SessionStore.New(req, h.config.SessionName)
 	session, _ := l.SessionStore.New(req, l.SessionName)
@@ -167,9 +167,9 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 			}
 		}
 	}
-	if reffCk != nil && reffCk.Name != "" {
-		reffCk.Expires = time.Now().Add(-2 * time.Second)
-		http.SetCookie(w, reffCk)
+	if referrerCookie != nil && referrerCookie.Name != "" {
+		referrerCookie.Expires = time.Now().Add(-2 * time.Second)
+		http.SetCookie(w, referrerCookie)
 	}
 	session.Values[l.SaaSTokenName] = token
 	user, err := l.fetchUserDetails(token)
@@ -182,7 +182,7 @@ func (l *MesheryRemoteProvider) issueSession(w http.ResponseWriter, req *http.Re
 	if err != nil {
 		logrus.Errorf("unable to save session: %v", err)
 	}
-	http.Redirect(w, req, reffURL, http.StatusFound)
+	http.Redirect(w, req, referrerURL, http.StatusFound)
 }
 
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenVal string) (*User, error) {
@@ -274,10 +274,10 @@ func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request)
 	_, _ = client.Do(cReq)
 	// sessionStore.Destroy(w, sessionName)
 
-	sess, err := l.SessionStore.Get(req, l.SessionName)
+	session, err := l.SessionStore.Get(req, l.SessionName)
 	if err == nil {
-		sess.Options.MaxAge = -1
-		_ = sess.Save(req, w)
+		session.Options.MaxAge = -1
+		_ = session.Save(req, w)
 	}
 
 	http.Redirect(w, req, "/login", http.StatusFound)
@@ -383,7 +383,7 @@ func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID)
 	return nil, fmt.Errorf("error while getting result - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -439,7 +439,7 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *MesheryRemoteProvider) PublishMetrics(tokenVal string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {

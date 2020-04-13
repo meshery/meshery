@@ -1,0 +1,77 @@
+{
+  "language": "en",
+  "ignorePaths": [
+    "models/prometheus_per_node_config.go",
+    "models/prometheus_cluster_config.go",
+    "**/node_modules/**"
+  ],
+  "words": [
+    "meshery",
+    "mesheryctl",
+    "uuid",
+    "favicon",
+    "prefs",
+    "grafana",
+    "gzip",
+    
+    // TODO: Fix these
+    "CPUM",
+    "tmpvar",
+    "RQPS",
+    "fnet",
+    "procs",
+    "sconfig",
+    "gres",
+    "Sfile",
+    "fcurl",
+    "smps",
+    "HTTPQPS",
+    "dsid",
+    "QAPI",
+    "saas",
+    "GRPCPing",
+    // Go specific names
+    "wrapf",
+    "debugf",
+    "Warnf",
+    "metav",
+    "Infof",
+    // Linux commands
+    "uname",
+    // Repository names
+    "jinzhu",
+    "fgrpc",
+    "nsmd",
+    "fortio",
+    "vmihailenco",
+    "proxyv",
+    "nsmdp",
+    "taskq",
+    "gosimple",
+    "nsmdp",
+    "gofrs",
+    "gowrk",
+    "fhttp",
+
+    // Service meshes specific
+    "istio",
+    "linkerd",
+    "proxyv2",
+    "hashicorp",
+    "mtls",
+    // TODO: contribute to upstream dictionaries
+    "Kubernetes",
+    "kubelet",
+    "kube",
+    "Unmarshalling",
+    "k8s",
+    "GRPC",
+    "kubeproxy",
+    "kubeconfig",
+    "protobuf",
+    "gzipped",
+    "protoc",
+    "RPCs",
+    "rpc"
+  ]
+}

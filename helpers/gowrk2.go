@@ -17,7 +17,7 @@ import (
 func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
+		qps = -1 // 0==uninitialized struct == default duration, -1 (0 for flag) is max
 	}
 	rURL := strings.TrimLeft(opts.URL, " \t\r\n")
 
@@ -59,9 +59,9 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
 	} else {
-		hres, _ := res.(*fhttp.HTTPRunnerResults)
-		bd, err = json.Marshal(hres)
-		result = hres.Result()
+		hResults, _ := res.(*fhttp.HTTPRunnerResults)
+		bd, err = json.Marshal(hResults)
+		result = hResults.Result()
 	}
 	if err != nil {
 		err = errors.Wrap(err, "error while converting results to map")
@@ -72,7 +72,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
+		err = errors.Wrap(err, "error while unmarshalling data to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}

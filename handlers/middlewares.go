@@ -67,10 +67,10 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool {
-	sess, err := provider.GetSession(req)
+	session, err := provider.GetSession(req)
 	if err == nil {
-		// logrus.Debugf("session: %v", sess)
-		return !sess.IsNew
+		// logrus.Debugf("session: %v", session)
+		return !session.IsNew
 	}
 	// logrus.Errorf("session invalid, error: %v", err)
 	return false

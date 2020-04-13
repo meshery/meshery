@@ -10,6 +10,21 @@ on:
       - master
 
 jobs:
+  spell-check:
+    name: Check spelling in code
+    runs-on: ubuntu-latest
+    # only checks go code for now
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - run: |
+        sudo npm i -g cspell
+        cspell "./**/*.go"
   lint:
     name: Check & Review code
     runs-on: ubuntu-latest

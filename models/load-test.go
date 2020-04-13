@@ -153,10 +153,10 @@ func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
 	if ok {
 		k8s, _ := k8sI.(map[string]interface{})
 		b.Env.Kubernetes, _ = k8s["server_version"].(string)
-		nodesI, okk := k8s["nodes"]
-		if okk {
-			nodes, okkk := nodesI.([]*K8SNode)
-			if okkk {
+		nodesI, ok1 := k8s["nodes"]
+		if ok1 {
+			nodes, ok2 := nodesI.([]*K8SNode)
+			if ok2 {
 				b.Env.NodeCount = len(nodes)
 			}
 		}

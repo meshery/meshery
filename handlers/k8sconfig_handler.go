@@ -68,29 +68,29 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 
 		contextName = req.FormValue("contextName")
 
-		ccfg, err := clientcmd.Load(k8sConfigBytes)
+		cConfig, err := clientcmd.Load(k8sConfigBytes)
 		if err != nil {
 			logrus.Errorf("error parsing k8s config: %v", err)
 			http.Error(w, "Given file is not a valid Kubernetes config file, please try again", http.StatusBadRequest)
 			return
 		}
-		logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", ccfg.CurrentContext, ccfg.Contexts, ccfg.Clusters)
+		logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", cConfig.CurrentContext, cConfig.Contexts, cConfig.Clusters)
 		if contextName != "" {
-			k8sCtx, ok := ccfg.Contexts[contextName]
+			k8sCtx, ok := cConfig.Contexts[contextName]
 			if !ok || k8sCtx == nil {
 				logrus.Errorf("error specified context not found")
 				http.Error(w, "Given context name is not valid, please try again with a valid value", http.StatusBadRequest)
 				return
 			}
-			ccfg.CurrentContext = contextName
+			cConfig.CurrentContext = contextName
 		}
 
 		kc.Config = k8sConfigBytes
-		kc.ContextName = ccfg.CurrentContext
+		kc.ContextName = cConfig.CurrentContext
 
-		k8sContext, ok := ccfg.Contexts[ccfg.CurrentContext]
+		k8sContext, ok := cConfig.Contexts[cConfig.CurrentContext]
 		if ok {
-			k8sServer, ok := ccfg.Clusters[k8sContext.Cluster]
+			k8sServer, ok := cConfig.Clusters[k8sContext.Cluster]
 			if ok {
 				kc.Server = k8sServer.Server
 			}
@@ -163,7 +163,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	cConfig, err := clientcmd.Load(k8sConfigBytes)
 	if err != nil {
 		logrus.Errorf("error parsing k8s config: %v", err)
 		http.Error(w, "Given file is not a valid Kubernetes config file, please try again", http.StatusBadRequest)
@@ -171,11 +171,11 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 
 	contexts := []*models.K8SContext{}
-	for contextName, contextVal := range ccfg.Contexts {
+	for contextName, contextVal := range cConfig.Contexts {
 		ct := &models.K8SContext{
 			ContextName:      contextName,
 			ClusterName:      contextVal.Cluster,
-			IsCurrentContext: (contextName == ccfg.CurrentContext),
+			IsCurrentContext: (contextName == cConfig.CurrentContext),
 		}
 		contexts = append(contexts, ct)
 	}
@@ -198,7 +198,7 @@ func (h *Handler) loadInClusterK8SConfig() (*models.K8SConfig, error) {
 	}
 	return &models.K8SConfig{
 		InClusterConfig: true,
-		// ContextName:       ccfg.CurrentContext,
+		// ContextName:       cConfig.CurrentContext,
 		ClusterConfigured: true,
 	}, nil
 }
@@ -222,7 +222,7 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 		logrus.Error(err)
 		return nil, err
 	}
-	ccfg, err := clientcmd.Load(k8sConfigBytes)
+	cConfig, err := clientcmd.Load(k8sConfigBytes)
 	if err != nil {
 		err = errors.Wrap(err, "error parsing k8s config")
 		logrus.Error(err)
@@ -231,7 +231,7 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 	return &models.K8SConfig{
 		InClusterConfig:   false,
 		Config:            k8sConfigBytes,
-		ContextName:       ccfg.CurrentContext,
+		ContextName:       cConfig.CurrentContext,
 		ClusterConfigured: true,
 	}, nil
 }

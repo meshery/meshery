@@ -202,12 +202,12 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		"node":    h.config.PrometheusClient.GetNodesStaticBoard,
 	}
 
-	for key, bfunc := range boardFunc {
+	for key, bFunc := range boardFunc {
 		resultWG.Add(1)
-		go func(k string, bfun func(context.Context, string) (*models.GrafanaBoard, error)) {
+		go func(k string, bFun func(context.Context, string) (*models.GrafanaBoard, error)) {
 			defer resultWG.Done()
 
-			board, err := bfun(req.Context(), prefObj.Prometheus.PrometheusURL)
+			board, err := bFun(req.Context(), prefObj.Prometheus.PrometheusURL)
 			if err != nil {
 				// error is already logged
 				return
@@ -215,7 +215,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 			resultLock.Lock()
 			defer resultLock.Unlock()
 			result[k] = board
-		}(key, bfunc)
+		}(key, bFunc)
 	}
 	resultWG.Wait()
 

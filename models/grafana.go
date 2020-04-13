@@ -13,7 +13,7 @@ type GrafanaBoard struct {
 	TemplateVars []*GrafanaTemplateVars `json:"template_vars,omitempty"`
 }
 
-// GrafanaTemplateVars represents template variables in a bboard
+// GrafanaTemplateVars represents template variables in a board
 type GrafanaTemplateVars struct {
 	Name       string             `json:"name,omitempty"`
 	Query      string             `json:"query,omitempty"`

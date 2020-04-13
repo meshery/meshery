@@ -66,18 +66,18 @@ func downloadFile(filepath string, url string) error {
 }
 
 func prereq() ([]byte, []byte) {
-	ostype, err := exec.Command("uname", "-s").Output()
+	osType, err := exec.Command("uname", "-s").Output()
 	if err != nil {
 		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 	}
-	//fmt.Printf("%s\n", ostype)
+	//fmt.Printf("%s\n", osType)
 
-	osarch, err := exec.Command("uname", "-m").Output()
+	osArch, err := exec.Command("uname", "-m").Output()
 	if err != nil {
 		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
 	}
 	//	fmt.Printf("%s\n", arch)
-	return ostype, osarch
+	return osType, osArch
 }
 
 func setFileLocation() {
@@ -101,8 +101,8 @@ func preReqCheck() {
 
 func installprereq() {
 	log.Info("Attempting Docker-Compose installation...")
-	ostype, osarch := prereq()
-	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
+	osType, osArch := prereq()
+	osDetails := strings.TrimRight(string(osType), "\r\n") + "-" + strings.TrimRight(string(osArch), "\r\n")
 
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
@@ -122,7 +122,7 @@ func installprereq() {
 		num := dat["tag_name"]
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
-	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
+	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osDetails
 	if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		log.Fatal(err)
 	}

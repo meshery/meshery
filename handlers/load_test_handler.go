@@ -348,7 +348,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	}
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
-		Message: "Obtained the needed metadatas, attempting to persist the result",
+		Message: "Obtained the needed metaData, attempting to persist the result",
 	}
 	// // defer fortioResp.Body.Close()
 	// // bd, err := ioutil.ReadAll(fortioResp.Body)

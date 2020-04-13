@@ -43,6 +43,7 @@ var seededRand = rand.New(
 
 // StringWithCharset generates a random string with a given length
 func StringWithCharset(length int) string {
+	/* cspell:disable-next-line */
 	const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
 	for i := range b {

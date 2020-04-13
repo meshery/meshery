@@ -66,11 +66,11 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	// 	}
 	// }
 	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
+		qps = -1 // 0==uninitialized struct == default duration, -1 (0 for flag) is max
 	}
 	labels := opts.Name + " -_- " + rURL
 	// if labels == "" {
-	// 	// hname, _ := os.Hostname()
+	// 	// hostName, _ := os.Hostname()
 	// 	shortURL := url
 	// 	for _, p := range []string{"https://", "http://"} {
 	// 		if strings.HasPrefix(url, p) {
@@ -130,9 +130,9 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
 	} else {
-		hres, _ := res.(*fhttp.HTTPRunnerResults)
-		bd, err = json.Marshal(hres)
-		result = hres.Result()
+		hResults, _ := res.(*fhttp.HTTPRunnerResults)
+		bd, err = json.Marshal(hResults)
+		result = hResults.Result()
 	}
 	if err != nil {
 		err = errors.Wrap(err, "error while converting results to map")
@@ -143,7 +143,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
+		err = errors.Wrap(err, "error while unmarshalling data to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}

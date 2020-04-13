@@ -95,7 +95,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 		return nil, err
 	}
 
-	dclientset, err := getK8SDynamicClientSet(kubeconfig, contextName)
+	dClientSet, err := getK8SDynamicClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 	}
 	for _, ns := range namespacelist.Items {
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
-		data1, err := dclientset.Resource(res).Namespace(ns.GetName()).List(metav1.ListOptions{})
+		data1, err := dClientSet.Resource(res).Namespace(ns.GetName()).List(metav1.ListOptions{})
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns)
 			logrus.Error(err)
@@ -124,8 +124,8 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 		if data1.IsList() {
 			err = data1.EachListItem(func(obj runtime.Object) error {
 				dataL, _ := obj.(*unstructured.Unstructured)
-				dmap := dataL.UnstructuredContent()
-				spec1 := dmap["spec"].(map[string]interface{})
+				dataMap := dataL.UnstructuredContent()
+				spec1 := dataMap["spec"].(map[string]interface{})
 				hosts, _ := spec1["hosts"].([]string)
 				logrus.Infof("hosts: %v", hosts)
 				hosts, _ := spec1["hosts"].([]string)
@@ -145,7 +145,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 		return nil, err
 	}
 
-	dclientset, err := getIstioClient(kubeconfig, contextName)
+	dClientSet, err := getIstioClient(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 	}
 	for _, ns := range namespacelist.Items {
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
-		vsList, err := dclientset.NetworkingV1alpha3().VirtualServices(ns.GetName()).List(metav1.ListOptions{})
+		vsList, err := dClientSet.NetworkingV1alpha3().VirtualServices(ns.GetName()).List(metav1.ListOptions{})
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns.GetName())
 			logrus.Error(err)
@@ -168,7 +168,7 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 		for i, vs := range vsList.Items {
 			logrus.Infof("Index: %d VirtualService Hosts: %+v\n", i, vs.Spec.GetHosts())
 			logrus.Infof("Index: %d VirtualService HTTP: %+v\n", i, vs.Spec.GetHttp())
-			// TODO: only take uri -> exact, bcoz regexes have a lot of possibilities
+			// TODO: only take uri -> exact, because regexes have a lot of possibilities
 		}
 	}
 	return result, nil

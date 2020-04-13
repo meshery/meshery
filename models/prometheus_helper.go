@@ -20,8 +20,8 @@ import (
 // PrometheusClient represents a prometheus client in Meshery
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
-	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguements as a valid option.
-	promURL       string
+	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguments as a valid option.
+	promURL string
 }
 
 // NewPrometheusClient returns a PrometheusClient
@@ -104,6 +104,7 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL stri
 }
 
 func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]string, error) {
+	/* cspell:disable-next-line */
 	// api/datasources/proxy/1/api/v1/series?match[]=node_boot_time_seconds%7Bcluster%3D%22%22%2C%20job%3D%22node-exporter%22%7D&start=1568392571&end=1568396171
 	c, _ := promAPI.NewClient(promAPI.Config{
 		Address: promURL,

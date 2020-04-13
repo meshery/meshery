@@ -116,10 +116,10 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	// sess, err := l.SessionStore.Get(req, l.SessionName)
+	// session, err := l.SessionStore.Get(req, l.SessionName)
 	// if err == nil {
-	// 	sess.Options.MaxAge = -1
-	// 	_ = sess.Save(req, w)
+	// 	session.Options.MaxAge = -1
+	// 	_ = session.Save(req, w)
 	// }
 
 	http.Redirect(w, req, "/login", http.StatusFound)
@@ -151,7 +151,7 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 	return l.ResultPersister.GetResult(resultID)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -222,7 +222,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 	return "", nil
 }
 
-// PublishMetrics - publishes metrics to the provider backend asyncronously
+// PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
 	data, err := json.Marshal(result)
 	if err != nil {

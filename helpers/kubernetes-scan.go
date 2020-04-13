@@ -126,10 +126,10 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 			}
 			if foundDeployment {
 				logrus.Debugf("found deployment: %s", d.GetName())
-				lbls := d.Spec.Template.ObjectMeta.GetLabels()
+				foundLabels := d.Spec.Template.ObjectMeta.GetLabels()
 				svcClient := clientset.CoreV1().Services(ns.GetName())
 				svcList, err := svcClient.List(metav1.ListOptions{
-					LabelSelector: labels.SelectorFromSet(lbls).String(),
+					LabelSelector: labels.SelectorFromSet(foundLabels).String(),
 				})
 				if err != nil {
 					err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())

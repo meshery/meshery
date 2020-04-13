@@ -143,14 +143,14 @@ RETRY:
 		_ = s.db.Unlock()
 	}()
 
-	keyb := key.Bytes()
-	if !s.db.Has(keyb) {
+	keyBytes := key.Bytes()
+	if !s.db.Has(keyBytes) {
 		err = errors.New("given key not found")
 		logrus.Error(err)
 		return nil, err
 	}
 
-	data, err := s.db.Get(keyb)
+	data, err := s.db.Get(keyBytes)
 	if err != nil {
 		err = errors.Wrapf(err, "Unable to fetch result data")
 		logrus.Error(err)
