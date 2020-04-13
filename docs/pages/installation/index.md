@@ -83,8 +83,8 @@ Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
 
 Add the Meshery Scoop Bucket and install:
 ```sh
-scoop bucket add app https://github.com/layer5io/scoop-bucket.git
-scoop install app
+scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+scoop install mesheryctl
 ```
 
 ---
