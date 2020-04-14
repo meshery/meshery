@@ -118,7 +118,7 @@ var perfCmd = &cobra.Command{
 		// Methord to check if the entered Test URL is valid or not
 		var validURL bool = govalidator.IsURL(testURL)
 
-		if (validURL == false) {
+		if (!validURL) {
 			log.Fatal("\nError: Please enter a valid test URL")
 			return
 		}
