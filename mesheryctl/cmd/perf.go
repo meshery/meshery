@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/asaskevich/govalidator"
 )
@@ -82,14 +84,14 @@ var perfCmd = &cobra.Command{
 		preReqCheck()
 
 		if len(args) == 0 {
-			fmt.Println(perfDetails)
+			log.Print(perfDetails)
 			return
 		}
 
 		if len(testName) <= 0 {
-			println("Test Name not provided")
+			log.Print("Test Name not provided")
 			testName = StringWithCharset(8)
-			println("Using random test name: ", testName)
+			log.Print("Using random test name: ", testName)
 		}
 
 		const mesheryURL string = "http://localhost:9081/api/load-test-smps?"
@@ -98,7 +100,7 @@ var perfCmd = &cobra.Command{
 		startTime := time.Now()
 		duration, err := time.ParseDuration(testDuration)
 		if err != nil {
-			println("Error: Test duration invalid")
+			log.Fatal("Error: Test duration invalid")
 			return
 		}
 
@@ -110,7 +112,7 @@ var perfCmd = &cobra.Command{
 		if len(testURL) > 0 {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			println("\nError: Please enter a test URL")
+			log.Fatal("\nError: Please enter a test URL")
 			return
 		}
 
@@ -118,7 +120,7 @@ var perfCmd = &cobra.Command{
 		var validURL bool = govalidator.IsURL(testURL)
 
 		if (validURL == false) {
-			println("\nError: Please enter a valid test URL")
+			log.Fatal("\nError: Please enter a valid test URL")
 			return
 		}
 
@@ -129,8 +131,8 @@ var perfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			println("\nError in building the request")
-			println("Error Message:\n", err)
+			log.Print("\nError in building the request")
+			log.Fatal("Error Message:\n", err)
 			return
 		}
 		cookieConf := strings.SplitN(testCookie, "=", 2)
@@ -148,15 +150,15 @@ var perfCmd = &cobra.Command{
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			println("\nFailed to make request to URL:", testURL)
-			println("Error Message:\n", err)
+			log.Print("\nFailed to make request to URL:", testURL)
+			log.Fatal("Error Message:\n", err)
 			return
 		}
 
 		buf := make([]byte, 4)
 		for {
 			n, err := resp.Body.Read(buf)
-			fmt.Print(string(buf[:n]))
+			log.Print(string(buf[:n]))
 			if err == io.EOF {
 				break
 			}
@@ -171,7 +173,7 @@ func init() {
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(required) Number of Parallel Requests")
-	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Duration of the Test")
+	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	rootCmd.AddCommand(perfCmd)
