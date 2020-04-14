@@ -422,6 +422,19 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 	return nil
 }
 
+// TokenHandler - specific to remote auth
+func (l *MesheryRemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+	tokenString := r.URL.Query().Get(tokenName)
+	ck := &http.Cookie{
+		Name:     tokenName,
+		Value:    string(tokenString),
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(w, ck)
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
 func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
 	l.TokenStoreMut.Lock()

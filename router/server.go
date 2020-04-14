@@ -83,6 +83,15 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		}
 		h.LoginHandler(w, req, provider, false)
 	})))
+	mux.Handle("/api/token", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		providerI := req.Context().Value(models.ProviderCtxKey)
+		provider, ok := providerI.(models.Provider)
+		if !ok {
+			http.Redirect(w, req, "/provider", http.StatusFound)
+			return
+		}
+		h.TokenHandler(w, req, provider, false)
+	})))
 
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

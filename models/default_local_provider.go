@@ -224,5 +224,8 @@ func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID strin
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
 
-// UpdateToken - specific to remote auth
 func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}
+
+// TokenHandler - specific to remote auth
+func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+}
