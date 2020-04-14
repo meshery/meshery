@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
