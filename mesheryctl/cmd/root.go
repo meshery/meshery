@@ -39,7 +39,7 @@ Available Commands:
   cleanup     Clean up Meshery
   help        Help about any command
   logs        Print logs
-  perf        Performance testing and benchmarking
+  perf        Performance Management: testing and benchmarking
   start       Start Meshery
   status      Check Meshery status
   stop        Stop Meshery
@@ -47,7 +47,7 @@ Available Commands:
   version     Version of mesheryctl
 
 Flags:
-      --config string   config file (default location is: $HOME/.meshery/config.yaml)
+      --config string   config file (default location is: $HOME/.meshery/` + dockerComposeFile + `)
   -h, --help            help for mesheryctl
   -t, --toggle          Help message for toggle
   -v, --version         Version of mesheryctl
