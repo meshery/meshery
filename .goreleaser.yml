@@ -35,8 +35,8 @@ builds:
     - arm
     - arm64
  
- # List of combinations of GOOS + GOARCH + GOARM to ignore.
- ignore:
+  # List of combinations of GOOS + GOARCH + GOARM to ignore.
+  ignore:
       - goos: freebsd
         goarch: arm64
 
