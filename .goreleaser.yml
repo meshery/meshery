@@ -29,10 +29,11 @@ builds:
   # # GOARCH to build for.
   # # For more info refer to: https://golang.org/doc/install/source#environment
   # # Defaults are 386 and amd64.
-  # goarch:
-  #   - amd64
-  #   - arm
-  #   - arm64
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
 archives:
 - replacements:
     darwin: Darwin
