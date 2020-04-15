@@ -34,6 +34,12 @@ builds:
     - amd64
     - arm
     - arm64
+ 
+ # List of combinations of GOOS + GOARCH + GOARM to ignore.
+ ignore:
+      - goos: freebsd
+        goarch: arm64
+
 archives:
 - replacements:
     darwin: Darwin
