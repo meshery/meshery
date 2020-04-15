@@ -1,15 +1,18 @@
-import {connect} from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
-import { withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid, ListItemIcon } from '@material-ui/core';
+import {
+  withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid, ListItemIcon,
+} from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import MesheryAdapterPlayComponent from "./MesheryAdapterPlayComponent";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { ExpansionPanel, ExpansionPanelSummary } from "./ExpansionPanels";
 import SettingsIcon from '@material-ui/icons/Settings';
+import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
+import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
-const styles = theme => ({
+const styles = (theme) => ({
   icon: {
     // margin: theme.spacing(1),
     fontSize: 20,
@@ -84,16 +87,16 @@ const styles = theme => ({
     display: 'inline',
     verticalAlign: 'middle',
     marginLeft: theme.spacing(1),
-  }
+  },
 });
 
 class MesheryPlayComponent extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    
-    const {k8sconfig, meshAdapters} = props;
+
+    const { k8sconfig, meshAdapters } = props;
     let adapter = {};
-    if(meshAdapters && meshAdapters.length > 0){
+    if (meshAdapters && meshAdapters.length > 0) {
       adapter = meshAdapters[0];
     }
     this.state = {
@@ -102,22 +105,22 @@ class MesheryPlayComponent extends React.Component {
 
       meshAdapters,
       mts: new Date(),
-      
+
       adapter,
-    }
+    };
   }
 
-  static getDerivedStateFromProps(props, state){
-    const { meshAdapters, meshAdaptersts, k8sconfig } = props;
+  static getDerivedStateFromProps(props, state) {
+    let { meshAdapters, meshAdaptersts, k8sconfig } = props;
     const st = {};
-    if(meshAdaptersts > state.mts) {
+    if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
       st.mts = meshAdaptersts;
-      if(meshAdapters && meshAdapters.length > 0){
+      if (meshAdapters && meshAdapters.length > 0) {
         st.adapter = meshAdapters[0];
       }
     }
-    if(k8sconfig.ts > state.kts){
+    if (k8sconfig.ts > state.kts) {
       st.inClusterConfig = k8sconfig.inClusterConfig;
       st.k8sfile = k8sconfig.k8sfile;
       st.contextName = k8sconfig.contextName;
@@ -135,36 +138,36 @@ class MesheryPlayComponent extends React.Component {
 
   pickImage(adapter) {
     const { classes } = this.props;
-    let image = "/static/img/meshery-logo.png";
+    let image = '/static/img/meshery-logo.png';
     let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-    if(adapter && adapter.name){
-      switch (adapter.name.toLowerCase()){
-      case 'istio':
-        image = "/static/img/istio-blue.svg";
-        imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
-        break;
-      case 'linkerd':
-        image = "/static/img/linkerd.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'consul':
-        image = "/static/img/consul.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'network service mesh':
-        image = "/static/img/nsm.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'octarine':
-        image = "/static/img/octarine.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'citrix':
-        image = "/static/img/citrix.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
+    if (adapter && adapter.name) {
+      switch (adapter.name.toLowerCase()) {
+        case 'istio':
+          image = '/static/img/istio-blue.svg';
+          imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
+          break;
+        case 'linkerd':
+          image = '/static/img/linkerd.svg';
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'consul':
+          image = '/static/img/consul.svg';
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'network service mesh':
+          image = '/static/img/nsm.svg';
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'octarine':
+          image = '/static/img/octarine.svg';
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'citrix':
+          image = '/static/img/citrix.svg';
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
         // default:
-      } 
+      }
     }
     return imageIcon;
   }
@@ -172,11 +175,11 @@ class MesheryPlayComponent extends React.Component {
   handleAdapterChange = () => {
     const self = this;
     return (event) => {
-      const {meshAdapters} = self.state;
+      const { meshAdapters } = self.state;
       if (event.target.value !== '') {
-        const selectedAdapter = meshAdapters.filter(({adapter_location}) => adapter_location === event.target.value);
+        const selectedAdapter = meshAdapters.filter(({ adapter_location }) => adapter_location === event.target.value);
         if (typeof selectedAdapter !== 'undefined' && selectedAdapter.length === 1) {
-          self.setState({ adapter:  selectedAdapter[0]});
+          self.setState({ adapter: selectedAdapter[0] });
         }
       }
     };
@@ -184,31 +187,32 @@ class MesheryPlayComponent extends React.Component {
 
   renderIndividualAdapter() {
     const { meshAdapters, classes } = this.props;
-    var adapCount=0;
+    let adapCount = 0;
     let adapter;
-    meshAdapters.forEach(adap => {
-      if (adap.adapter_location === this.props.adapter){
+    meshAdapters.forEach((adap) => {
+      if (adap.adapter_location === this.props.adapter) {
         adapter = adap;
-        meshAdapters.forEach(ad => {
-          if(ad.name==adap.name)
-            adapCount+=1;
-        })
+        meshAdapters.forEach((ad) => {
+          if (ad.name == adap.name) adapCount += 1;
+        });
       }
     });
-    if(adapter){
+    if (adapter) {
       const imageIcon = this.pickImage(adapter);
       return (
         <React.Fragment>
           <MesheryAdapterPlayComponent adapter={adapter} adapCount={adapCount} adapter_icon={imageIcon} />
         </React.Fragment>
-      )
+      );
     }
     return '';
   }
 
   render() {
-    const {classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters} = this.props;
-    const {adapter} = this.state;
+    const {
+      classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters,
+    } = this.props;
+    let { adapter } = this.state;
 
     if (k8sconfig.clusterConfigured === false || meshAdapters.length === 0) {
       return (
@@ -220,24 +224,24 @@ class MesheryPlayComponent extends React.Component {
             </Typography> */}
 
               <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-                <SettingsIcon className={classes.icon}/>
-              Configure Settings
+                <SettingsIcon className={classes.icon} />
+                Configure Settings
               </Button>
             </div>
           </React.Fragment>
         </NoSsr>
       );
     }
-    if(this.props.adapter && this.props.adapter !== '') {
+    if (this.props.adapter && this.props.adapter !== '') {
       const indContent = this.renderIndividualAdapter();
-      if(indContent !== ''){
+      if (indContent !== '') {
         return indContent;
       } // else it will render all the available adapters
     }
 
-    var self = this;
+    const self = this;
     const imageIcon = self.pickImage(adapter);
-    var adapCount=0;
+    let adapCount = 0;
     return (
       <NoSsr>
         <React.Fragment>
@@ -250,13 +254,13 @@ class MesheryPlayComponent extends React.Component {
                   name="adapter_name"
                   label="Select the Adapter"
                   fullWidth
-                  value={adapter && adapter.adapter_location?adapter.adapter_location:''}
+                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleAdapterChange()}
                 >
                   {meshAdapters.map((ada, ind) => (
-                    <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location} >
+                    <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location}>
                       {/* <ListItemIcon> */}
                       {self.pickImage(ada)}
                       {/* </ListItemIcon> */}
@@ -267,23 +271,22 @@ class MesheryPlayComponent extends React.Component {
                   ))}
                 </TextField>
               </Grid>
-            </Grid>   
+            </Grid>
           </div>
           <Divider variant="fullWidth" light />
           <Divider variant="fullWidth" light />
-          {meshAdapters.forEach(adap => {
-            if (adap.adapter_location === this.props.adapter){
+          {meshAdapters.forEach((adap) => {
+            if (adap.adapter_location === this.props.adapter) {
               adapter = adap;
-              meshAdapters.forEach(ad => {
-                if(ad.name==adap.name)
-                  adapCount+=1;
-              })
+              meshAdapters.forEach((ad) => {
+                if (ad.name == adap.name) adapCount += 1;
+              });
             }
           })}
           {adapter && adapter.adapter_location && <MesheryAdapterPlayComponent adapter={adapter} adapCount={adapCount} adapter_icon={imageIcon} />}
         </React.Fragment>
       </NoSsr>
-    )
+    );
   }
 }
 
@@ -291,20 +294,18 @@ MesheryPlayComponent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+});
 
-const mapStateToProps = state => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const meshAdaptersts = state.get("meshAdaptersts");
-  return {k8sconfig, meshAdapters, meshAdaptersts};
-}
+const mapStateToProps = (state) => {
+  const k8sconfig = state.get('k8sConfig').toJS();
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const meshAdaptersts = state.get('meshAdaptersts');
+  return { k8sconfig, meshAdapters, meshAdaptersts };
+};
 
 export default withStyles(styles)(connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withRouter(MesheryPlayComponent)));

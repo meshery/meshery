@@ -9,70 +9,70 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import User from './User';
 import NoSsr from '@material-ui/core/NoSsr';
-import MesheryNotification from './MesheryNotification';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import MesheryNotification from './MesheryNotification';
+import User from './User';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
-const styles = theme => ({
+const styles = (theme) => ({
   secondaryBar: {
-    zIndex: 0
+    zIndex: 0,
   },
   menuButton: {
-    marginLeft: -theme.spacing(1)
+    marginLeft: -theme.spacing(1),
   },
   iconButtonAvatar: {
-    padding: 4
+    padding: 4,
   },
   link: {
-    'textDecoration': 'none',
-    'color': lightColor,
+    textDecoration: 'none',
+    color: lightColor,
     '&:hover': {
-      color: theme.palette.common.white
-    }
+      color: theme.palette.common.white,
+    },
   },
   button: {
-    borderColor: lightColor
+    borderColor: lightColor,
   },
   notifications: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(0),
-    marginLeft: theme.spacing(4)
+    marginLeft: theme.spacing(4),
   },
   userContainer: {
     paddingLeft: 1,
-    display: 'flex'
+    display: 'flex',
   },
   userSpan: {
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(1),
   },
   pageTitleWrapper: {
     flexGrow: 1,
-    marginRight: 'auto'
+    marginRight: 'auto',
   },
   pageTitle: {
     paddingLeft: theme.spacing(2),
     fontSize: '22px',
     [theme.breakpoints.up('sm')]: {
-      fontSize: '26px'
-    }
+      fontSize: '26px',
+    },
   },
   appBar: {
-    padding: theme.spacing(1.4)
+    padding: theme.spacing(1.4),
   },
   itemActiveItem: {
-    color: '#4fc3f7'
-  }
+    color: '#4fc3f7',
+  },
 });
 
 class Header extends React.Component {
-  render () {
+  render() {
     const { classes, title, onDrawerToggle } = this.props;
     return (
       <NoSsr>
@@ -108,14 +108,14 @@ class Header extends React.Component {
                 </IconButton> */}
 
                   <IconButton color="inherit">
-                    <Link href={'/'} prefetch>
+                    <Link href="/" prefetch>
                       <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
                       {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                     </Link>
                   </IconButton>
 
                   <IconButton color="inherit">
-                    <Link href={'/settings'} prefetch>
+                    <Link href="/settings" prefetch>
                       <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
                     </Link>
                   </IconButton>
@@ -177,13 +177,13 @@ class Header extends React.Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
-  onDrawerToggle: PropTypes.func.isRequired
+  onDrawerToggle: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state =>
+const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
   // console.log("state: " + JSON.stringify(state));
-   ({ title: state.get('page').get('title') })
+  ({ title: state.get('page').get('title') })
 ;
 
 // const mapDispatchToProps = dispatch => {

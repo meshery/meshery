@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
+import {
+  NoSsr, TextField, Grid, Button,
+} from '@material-ui/core';
 
-const grafanaStyles = theme => ({
+const grafanaStyles = (theme) => ({
   root: {
     padding: theme.spacing(5),
   },
@@ -14,13 +16,14 @@ const grafanaStyles = theme => ({
   button: {
     marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-  }
+  },
 });
 
 class GrafanaConfigComponent extends Component {
-	
     render = () => {
-      const { classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure } = this.props;
+      const {
+        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure,
+      } = this.props;
       return (
         <NoSsr>
           <React.Fragment>
@@ -40,11 +43,10 @@ class GrafanaConfigComponent extends Component {
                     margin="normal"
                     variant="outlined"
                     onKeyDown={(e) => {
-								      if(e.keyCode == 13){
-								         handleGrafanaConfigure()
-								      }
-								    }
-                    }
+                      if (e.keyCode == 13) {
+                        handleGrafanaConfigure();
+                      }
+                    }}
                     onChange={handleChange('grafanaURL')}
                   />
                 </Grid>
@@ -58,11 +60,10 @@ class GrafanaConfigComponent extends Component {
                     margin="normal"
                     variant="outlined"
                     onKeyDown={(e) => {
-								      if(e.keyCode == 13){
-								         handleGrafanaConfigure()
-								      }
-								    }
-                    }
+                      if (e.keyCode == 13) {
+                        handleGrafanaConfigure();
+                      }
+                    }}
                     onChange={handleChange('grafanaAPIKey')}
                   />
                 </Grid>
@@ -76,7 +77,7 @@ class GrafanaConfigComponent extends Component {
                   onClick={handleGrafanaConfigure}
                   className={classes.button}
                 >
-                Submit
+                  Submit
                 </Button>
               </div>
             </div>
@@ -89,8 +90,8 @@ class GrafanaConfigComponent extends Component {
 GrafanaConfigComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
-  grafanaAPIKey: PropTypes.string.isRequired, 
-  handleChange: PropTypes.func.isRequired, 
+  grafanaAPIKey: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
   handleGrafanaConfigure: PropTypes.func.isRequired,
 };
 

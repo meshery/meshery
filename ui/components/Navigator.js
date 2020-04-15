@@ -13,17 +13,19 @@ import LaptopIcon from '@material-ui/icons/Laptop';
 import TimerIcon from '@material-ui/icons/Timer';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RemoveIcon from '@material-ui/icons/Remove';
-import Link from "next/link";
-import {connect} from "react-redux";
-import { bindActionCreators } from 'redux'
-import { updatepagetitle } from '../lib/store';
+import Link from 'next/link';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH,
+} from '@fortawesome/free-solid-svg-icons';
+import { updatepagetitle } from '../lib/store';
 
-const styles = theme => ({
+const styles = (theme) => ({
   categoryHeader: {
     paddingTop: 16,
     paddingBottom: 16,
@@ -80,7 +82,7 @@ const styles = theme => ({
     borderRadius: 'unset',
   },
   mainLogoText: {
-    marginLeft: theme.spacing(.5),
+    marginLeft: theme.spacing(0.5),
     marginTop: theme.spacing(1),
     width: 170,
     height: '100%',
@@ -116,11 +118,11 @@ const styles = theme => ({
   },
   isHidden: {
     opacity: 0,
-    transition: 'opacity 200ms ease-in-out'
+    transition: 'opacity 200ms ease-in-out',
   },
   isDisplayed: {
     opacity: 1,
-    transition: 'opacity 200ms ease-in-out'
+    transition: 'opacity 200ms ease-in-out',
   },
   sidebarCollapsed: {
     transition: theme.transitions.create('width', {
@@ -143,7 +145,7 @@ const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       display: 'flex',
       'margin-top': 'auto',
-      'margin-bottom': '0.5rem'
+      'margin-bottom': '0.5rem',
     },
   },
   collapseButtonWrapper: {
@@ -153,148 +155,147 @@ const styles = theme => ({
     transition: 'opacity 200ms linear',
     '&:hover': {
       opacity: 1,
-      background: 'transparent'
+      background: 'transparent',
     },
     '&:focus': {
       opacity: 1,
-      background: 'transparent'
-    }
+      background: 'transparent',
+    },
   },
   collapseButtonWrapperRotated: {
     width: 'auto',
     'margin-left': 'auto',
     opacity: '0.7',
     transition: 'opacity 200ms linear',
-    'transform':'rotate(180deg)',
+    transform: 'rotate(180deg)',
     '&:hover': {
       opacity: 1,
-      background: 'transparent'
+      background: 'transparent',
     },
     '&:focus': {
       opacity: 1,
-      background: 'transparent'
-    }
+      background: 'transparent',
+    },
   },
   noPadding: {
     paddingLeft: '16px',
-    paddingRight: '16px'
-  }
+    paddingRight: '16px',
+  },
 });
 
 const categories = [
-  { 
-    id: 'Dashboard', 
-    href: "/", 
-    title: 'Dashboard', 
+  {
+    id: 'Dashboard',
+    href: '/',
+    title: 'Dashboard',
     show: false,
     link: true,
   },
-  { 
-    id: 'Performance', 
-    icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-    href: "/performance", 
-    title: 'Performance Test', 
+  {
+    id: 'Performance',
+    icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+    href: '/performance',
+    title: 'Performance Test',
     show: true,
     link: true,
     children: [
-      { 
-        id: 'Results', 
-        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />, 
-        href: "/results", 
-        title: 'View & Compare Results', 
+      {
+        id: 'Results',
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        href: '/results',
+        title: 'View & Compare Results',
         show: true,
         link: true,
       },
-    ]
+    ],
   },
-  { 
-    id: 'Settings', 
-    href: "/settings", 
-    title: 'Settings', 
+  {
+    id: 'Settings',
+    href: '/settings',
+    title: 'Settings',
     show: false,
     link: true,
   }, // title is used for comparison in the Header.js file as well
-  { 
-    id: 'Management', 
-    icon:  <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />, 
-    href: "/management", 
-    title: 'Management', 
+  {
+    id: 'Management',
+    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
+    href: '/management',
+    title: 'Management',
     show: true,
     link: true,
     children: [
       {
-        id: 'Consul', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/consul", 
+        id: 'Consul',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/consul',
         title: 'Consul',
-        link: false, 
+        link: false,
         show: true,
       },
       {
-        id: 'Istio', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/istio", 
+        id: 'Istio',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/istio',
         title: 'Istio',
-        link: false, 
+        link: false,
         show: true,
       },
       {
-        id: 'Linkerd', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/linkerd", 
+        id: 'Linkerd',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/linkerd',
         title: 'Linkerd',
-        link: false, 
+        link: false,
         show: true,
       },
       {
-        id: 'Network Service Mesh', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/nsm", 
+        id: 'Network Service Mesh',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/nsm',
         title: 'Network Service Mesh',
-        link: false, 
+        link: false,
         show: true,
       },
       {
-        id: 'Octarine', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/octarine", 
+        id: 'Octarine',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/octarine',
         title: 'Octarine',
-        link: false, 
+        link: false,
         show: true,
       },
       {
-        id: 'Citrix', 
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/citrix", 
+        id: 'Citrix',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: '/management/citrix',
         title: 'Citrix',
-        link: false, 
+        link: false,
         show: true,
       },
     ],
   },
-]
+];
 
 class Navigator extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    const {meshAdapters, meshAdaptersts} = props;
+    const { meshAdapters, meshAdaptersts } = props;
     this.state = {
       path: '',
       meshAdapters,
-      mts: new Date()
+      mts: new Date(),
     };
-      
   }
 
   updateCategoriesMenus() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if(cat.id === 'Management'){
+      if (cat.id === 'Management') {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
           const icon = self.pickIcon(catc.id);
-          categories[ind].children[ind1]['icon'] = icon;
-          categories[ind].children[ind1]['children'] = cr;
+          categories[ind].children[ind1].icon = icon;
+          categories[ind].children[ind1].children = cr;
         });
       }
     });
@@ -303,13 +304,13 @@ class Navigator extends React.Component {
   updateAdaptersLink() {
     const self = this;
     categories.forEach((cat, ind) => {
-      if(cat.id === 'Management'){
+      if (cat.id === 'Management') {
         cat.children.forEach((catc, ind1) => {
-          if(typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0]['href'] !== 'undefined'){
-            var val= true;
-            var newhref= `${categories[ind].children[ind1].children[0]['href']}`;
-            categories[ind].children[ind1]['link'] = val;
-            categories[ind].children[ind1]['href'] = newhref;
+          if (typeof categories[ind].children[ind1].children[0] !== 'undefined' && typeof categories[ind].children[ind1].children[0].href !== 'undefined') {
+            const val = true;
+            const newhref = `${categories[ind].children[ind1].children[0].href}`;
+            categories[ind].children[ind1].link = val;
+            categories[ind].children[ind1].href = newhref;
           }
         });
       }
@@ -327,7 +328,7 @@ class Navigator extends React.Component {
   static getDerivedStateFromProps(props, state) {
     const { meshAdapters, meshAdaptersts, path } = props;
     const st = {};
-    if(meshAdaptersts > state.mts) {
+    if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
       st.mts = meshAdaptersts;
     }
@@ -335,18 +336,18 @@ class Navigator extends React.Component {
     const fetchNestedPathAndTitle = (path, title, href, children) => {
       if (href === path) {
         // console.log(`updating path: ${path} and title: ${title}`);
-        props.updatepagetitle({title});
+        props.updatepagetitle({ title });
         return;
       }
-      if(children && children.length > 0){
-        children.forEach(({title, href, children}) => {
+      if (children && children.length > 0) {
+        children.forEach(({ title, href, children }) => {
           fetchNestedPathAndTitle(path, title, href, children);
         });
       }
-    }
+    };
 
-    categories.forEach(({title, href, children}) => {    
-      fetchNestedPathAndTitle(path, title, href, children); 
+    categories.forEach(({ title, href, children }) => {
+      fetchNestedPathAndTitle(path, title, href, children);
     });
     st.path = path;
     return st;
@@ -356,7 +357,7 @@ class Navigator extends React.Component {
     const { meshAdapters } = this.state;
     const children = [];
     category = category.toLowerCase();
-    meshAdapters.forEach(adapter => {
+    meshAdapters.forEach((adapter) => {
       const aName = adapter.name.toLowerCase();
       // const imageIcon = this.pickIcon(aName);
       if (category !== aName) {
@@ -364,14 +365,14 @@ class Navigator extends React.Component {
       }
       children.push(
         {
-          id: adapter.adapter_location, 
-          // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+          id: adapter.adapter_location,
+          // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
           icon: <RemoveIcon />,
-          href: `/management?adapter=${adapter.adapter_location}`, 
+          href: `/management?adapter=${adapter.adapter_location}`,
           title: `Management - ${adapter.adapter_location}`,
-          link: true, 
+          link: true,
           show: true,
-        }
+        },
       );
     });
     return children;
@@ -379,34 +380,34 @@ class Navigator extends React.Component {
 
   pickIcon(aName) {
     aName = aName.toLowerCase();
-    const {classes} = this.props;
-    let image = "/static/img/meshery-logo.png";
+    const { classes } = this.props;
+    let image = '/static/img/meshery-logo.png';
     let logoIcon = (<img src={image} className={classes.icon} />);
-    switch (aName){
-    case 'istio':
-      image = "/static/img/istio-white.svg";
-      logoIcon = (<img src={image} className={classes.istioIcon} />);
-      break;
-    case 'linkerd':
-      image = "/static/img/linkerd-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'consul':
-      image = "/static/img/consul-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'network service mesh':
-      image = "/static/img/nsm-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'octarine':
-      image = "/static/img/octarine-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'citrix':
-      image = "/static/img/citrix-light-gray.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
+    switch (aName) {
+      case 'istio':
+        image = '/static/img/istio-white.svg';
+        logoIcon = (<img src={image} className={classes.istioIcon} />);
+        break;
+      case 'linkerd':
+        image = '/static/img/linkerd-white.svg';
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'consul':
+        image = '/static/img/consul-white.svg';
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'network service mesh':
+        image = '/static/img/nsm-white.svg';
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'octarine':
+        image = '/static/img/octarine-white.svg';
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'citrix':
+        image = '/static/img/citrix-light-gray.svg';
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
         // default:
     }
     return logoIcon;
@@ -422,75 +423,83 @@ class Navigator extends React.Component {
       // this.setState({ isDrawerCollapsed: !isDrawerCollapsed })
     }
 
-    renderChildren(idname,children, depth) {
+    renderChildren(idname, children, depth) {
       const { classes, isDrawerCollapsed } = this.props;
       const { path } = this.state;
 
-      if (idname!='Management' && children && children.length > 0){
+      if (idname != 'Management' && children && children.length > 0) {
         return (
           <List disablePadding>
-            {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
-              if (typeof showc !== 'undefined' && !showc){
+            {children.map(({
+              id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc,
+            }) => {
+              if (typeof showc !== 'undefined' && !showc) {
                 return '';
               }
               return (
                 <React.Fragment>
-                  <ListItem button
+                  <ListItem
+                    button
                     key={idc}
                     className={classNames(
-                      (depth === 1?classes.nested1:classes.nested2),
+                      (depth === 1 ? classes.nested1 : classes.nested2),
                       classes.item,
                       classes.itemActionable,
                       path === hrefc && classes.itemActiveItem,
-                      isDrawerCollapsed && classes.noPadding
-                    )}>
+                      isDrawerCollapsed && classes.noPadding,
+                    )}
+                  >
                     {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
-                  {this.renderChildren(idname,childrenc, depth + 1)}
+                  {this.renderChildren(idname, childrenc, depth + 1)}
                 </React.Fragment>
               );
             })}
           </List>
         );
-      } else if (idname=='Management'){
-        if (children && children.length>1){
+      } if (idname == 'Management') {
+        if (children && children.length > 1) {
           return (
             <List disablePadding>
-              {children.map(({id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
-                if (typeof showc !== 'undefined' && !showc){
+              {children.map(({
+                id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc,
+              }) => {
+                if (typeof showc !== 'undefined' && !showc) {
                   return '';
                 }
                 return (
                   <React.Fragment>
-                    <ListItem button
+                    <ListItem
+                      button
                       key={idc}
                       className={classNames(
-                        (depth === 1?classes.nested1:classes.nested2),
+                        (depth === 1 ? classes.nested1 : classes.nested2),
                         classes.item,
                         classes.itemActionable,
                         path === hrefc && classes.itemActiveItem,
-                        isDrawerCollapsed && classes.noPadding
-                      )}>
+                        isDrawerCollapsed && classes.noPadding,
+                      )}
+                    >
                       {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
-                    {this.renderChildren(idname,childrenc, depth + 1)}
+                    {this.renderChildren(idname, childrenc, depth + 1)}
                   </React.Fragment>
                 );
               })}
             </List>
           );
-        } else if(children && children.length==1){
+        } if (children && children.length == 1) {
           this.updateAdaptersLink();
         }
       }
       return '';
     }
 
-    linkContent(iconc, idc, hrefc, linkc, drawerCollapsed){
+    linkContent(iconc, idc, hrefc, linkc, drawerCollapsed) {
       const { classes } = this.props;
 
       let linkContent = (
-        <div className={classNames(classes.link)} >
+        <div className={classNames(classes.link)}>
           <ListItemIcon className={classes.listIcon}>
             {iconc}
           </ListItemIcon>
@@ -498,15 +507,16 @@ class Navigator extends React.Component {
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
               primary: classes.itemPrimary,
-              textDense: classes.textDense
-            }}>
+              textDense: classes.textDense,
+            }}
+          >
             {idc}
           </ListItemText>
 
         </div>
       );
-      if(linkc){
-        linkContent= (
+      if (linkc) {
+        linkContent = (
           <Link href={hrefc} prefetch>
             {linkContent}
           </Link>
@@ -519,38 +529,42 @@ class Navigator extends React.Component {
       const { classes, isDrawerCollapsed, ...other } = this.props;
       const { path } = this.state;
       this.updateCategoriesMenus();
-      var classname;
-      if (isDrawerCollapsed){
-        classname=classes.collapseButtonWrapperRotated;
-      } else{
-        classname=classes.collapseButtonWrapper;
+      let classname;
+      if (isDrawerCollapsed) {
+        classname = classes.collapseButtonWrapperRotated;
+      } else {
+        classname = classes.collapseButtonWrapper;
       }
       // const path = this.updateTitle();
       // console.log("current page:" + path);
       return (
         <NoSsr>
           <Drawer
-            variant="permanent" {...other}
+            variant="permanent"
+            {...other}
             className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
             classes={{
-              paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded
+              paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
             }}
-            style={{ width: "inherit" }}
+            style={{ width: 'inherit' }}
           >
             <List disablePadding>
-              <ListItem 
+              <ListItem
                 component="a"
                 onClick={this.handleTitleClick}
                 className={
                   classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
-                }>
-                <Avatar className={classes.mainLogo} src={'/static/img/meshery-logo.png'} onClick={this.handleTitleClick} />
-                <Avatar className={classes.mainLogoText} src={'/static/img/meshery-logo-text.png'} onClick={this.handleTitleClick} />
+                }
+              >
+                <Avatar className={classes.mainLogo} src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
+                <Avatar className={classes.mainLogoText} src="/static/img/meshery-logo-text.png" onClick={this.handleTitleClick} />
 
                 {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
               </ListItem>
-              {categories.map(({ id: childId, icon, href, show, link, children }) => {
-                if (typeof show !== 'undefined' && !show){
+              {categories.map(({
+                id: childId, icon, href, show, link, children,
+              }) => {
+                if (typeof show !== 'undefined' && !show) {
                   return '';
                 }
                 return (
@@ -565,14 +579,14 @@ class Navigator extends React.Component {
                         path === href && classes.itemActiveItem,
                       )}
                     >
-                      <Link href={link?href:''} prefetch>
-                        <div className={classNames(classes.link)} >
+                      <Link href={link ? href : ''} prefetch>
+                        <div className={classNames(classes.link)}>
                           <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
                               primary: classes.itemPrimary,
-                              textDense: classes.textDense
+                              textDense: classes.textDense,
                             }}
                           >
                             {childId}
@@ -580,7 +594,7 @@ class Navigator extends React.Component {
                         </div>
                       </Link>
                     </ListItem>
-                    {this.renderChildren(childId,children, 1)}
+                    {this.renderChildren(childId, children, 1)}
                   </React.Fragment>
                 );
               })}
@@ -589,23 +603,23 @@ class Navigator extends React.Component {
                 component="a"
                 href="https://meshery.io/"
                 target="_blank"
-                key={'about'}
+                key="about"
                 className={classNames(
                   classes.item,
                   classes.itemActionable,
                   classes.community,
                 )}
               >
-                <div className={classNames(classes.link)} >
+                <div className={classNames(classes.link)}>
                   <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{
                       primary: classes.itemPrimary,
-                      textDense: classes.textDense
+                      textDense: classes.textDense,
                     }}
                   >
-                    {'Community'}
+                    Community
                   </ListItemText>
 
                 </div>
@@ -613,7 +627,7 @@ class Navigator extends React.Component {
             </List>
             <div className={classes.fixedSidebarFooter}>
               <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
-                <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt='Sidebar collapse toggle icon' />
+                <FontAwesomeIcon icon={faChevronCircleLeft} fixedWidth color="#FFFFFF" size="lg" alt="Sidebar collapse toggle icon" />
               </ListItem>
             </div>
           </Drawer>
@@ -624,27 +638,25 @@ class Navigator extends React.Component {
 
 Navigator.propTypes = {
   classes: PropTypes.object.isRequired,
-  onCollapseDrawer: PropTypes.func.isRequired
+  onCollapseDrawer: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updatepagetitle: bindActionCreators(updatepagetitle, dispatch)
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
+});
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   // const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const meshAdaptersts = state.get("meshAdaptersts");
-  const path = state.get("page").get("path");
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const meshAdaptersts = state.get('meshAdaptersts');
+  const path = state.get('page').get('path');
   // const grafana = state.get("grafana").toJS();
   // const prometheus = state.get("prometheus").toJS();
   // return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
-  return {meshAdapters, meshAdaptersts, path};
-}
+  return { meshAdapters, meshAdaptersts, path };
+};
 
 export default withStyles(styles)(connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withRouter(Navigator)));
