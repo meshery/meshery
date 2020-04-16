@@ -3,12 +3,14 @@ layout: page
 title: Overview
 permalink: overview
 ---
-# Introducing Meshery 
-The multi-service mesh management plane adopting, operating and developing on different service meshes. 
-Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes. 
-Meshery provides this high-level functionality: 
+# Introducing Meshery
+The service mesh management plane adopting, operating and developing on different service meshes. 
+Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+Meshery provides this high-level functionality:
 
-1. Performance Benchmarking
+1. Service Mesh Performance Management
+1. Service Mesh Configuration Management
+    1. Configuration best practices
 1. Service Mesh Lifecycle Management
 1. Service Mesh Interoperability and Federation
 
@@ -34,7 +36,7 @@ Meshery provides this high-level functionality:
 ## Meshery is for Adopters and Operators
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
-## Meshery is for performance testing and benchmarking
+## Meshery is for performance management: testing and benchmarking
 Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
 In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 <br/>
