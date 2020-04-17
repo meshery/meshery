@@ -24,8 +24,7 @@ class UserPreference extends React.Component {
     let anonymousStats, perfResultStats;
     console.log(anonymousPerfResults);
     console.log(anonymousUsageStats);
-    if(typeof anonymousUsageStats == 'undefined')
-    {
+    if(typeof anonymousUsageStats == 'undefined') {
     	anonymousStats = false;
     	perfResultStats = false;
     }
