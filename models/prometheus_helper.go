@@ -21,7 +21,7 @@ import (
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
 	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguments as a valid option.
-	promURL       string
+	promURL string
 }
 
 // NewPrometheusClient returns a PrometheusClient
