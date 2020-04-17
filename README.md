@@ -34,6 +34,9 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
+| [Raspberry](https://www.raspberrypi.org) | In Progress |
+| [OpenShift](https://docs.openshift.com/enterprise/3.0/dev_guide/new_app.html) | In Progress |
+
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
