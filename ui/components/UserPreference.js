@@ -20,9 +20,20 @@ const styles = (theme) => ({
 class UserPreference extends React.Component {
   constructor(props) {
     super(props);
+    const { anonymousUsageStats, anonymousPerfResults } = props;
+    let anonymousStats, perfResultStats;
+    console.log(anonymousPerfResults);
+    console.log(anonymousUsageStats);
+    if(typeof anonymousUsageStats == 'undefined')
+    {
+    	anonymousStats = false;
+    	perfResultStats = false;
+    }
     this.state = {
-      anonymousStats: false,
-      perfResultStats: false,
+      anonymousStats,
+      perfResultStats,
+      anonymousUsageStats,
+      anonymousPerfResults,
     };
   }
 
@@ -82,6 +93,10 @@ class UserPreference extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+      	this.setState({
+            anonymousUsageStats: anonymousStats,
+            anonymousPerfResults: perfResultStats,
+          });
         this.props.enqueueSnackbar('Preference was successfully updated!', {
           variant: 'success',
           autoHideDuration: 2000,
