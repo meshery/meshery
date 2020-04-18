@@ -1,8 +1,7 @@
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
-import {connect} from "react-redux";
-import { bindActionCreators } from 'redux'
-import { updateUser } from '../lib/store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
@@ -11,28 +10,28 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
-import dataFetch from '../lib/data-fetch';
 import { withRouter } from 'next/router';
+import dataFetch from '../lib/data-fetch';
+import { updateUser } from '../lib/store';
 
 
-const styles = theme => ({
+const styles = (theme) => ({
   popover: {
     color: 'black',
   },
 });
 
 class User extends React.Component {
-
   state = {
     user: null,
     open: false,
   }
 
   handleToggle = () => {
-    this.setState(state => ({ open: !state.open }));
+    this.setState((state) => ({ open: !state.open }));
   };
 
-  handleClose = event => {
+  handleClose = (event) => {
     if (this.anchorEl.contains(event.target)) {
       return;
     }
@@ -40,7 +39,7 @@ class User extends React.Component {
   };
 
   handleLogout = () => {
-    window.location = "/logout";
+    window.location = '/logout';
   };
 
   handlePreference = () => {
@@ -49,20 +48,21 @@ class User extends React.Component {
 
   componentDidMount() {
     // console.log("fetching user data");
-    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
-      this.setState({user})
-      this.props.updateUser({user})
-    }, error => {
-      return {
-        error
-      };
-    });
+    dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
+      this.setState({ user });
+      this.props.updateUser({ user });
+    }, (error) => ({
+      error,
+    }));
   }
 
   render() {
-    const {color, iconButtonClassName, avatarClassName, classes, ...other} = this.props;
-    let avatar_url, user_id;
-    if (this.state.user && this.state.user !== null){
+    const {
+      color, iconButtonClassName, avatarClassName, classes, ...other
+    } = this.props;
+    let avatar_url; let
+      user_id;
+    if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
       user_id = this.state.user.user_id;
     }
@@ -73,16 +73,19 @@ class User extends React.Component {
     return (
       <div>
         <NoSsr>
-          <IconButton color={color} className={iconButtonClassName} 
-            buttonRef={node => {
+          <IconButton
+            color={color}
+            className={iconButtonClassName}
+            buttonRef={(node) => {
               this.anchorEl = node;
             }}
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
-            onClick={this.handleToggle}>
-            <Avatar className={avatarClassName}  src={avatar_url} />
+            onClick={this.handleToggle}
+          >
+            <Avatar className={avatarClassName} src={avatar_url} />
           </IconButton>
-          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
+          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
@@ -102,17 +105,15 @@ class User extends React.Component {
           </Popper>
         </NoSsr>
       </div>
-    )
+    );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updateUser: bindActionCreators(updateUser, dispatch)
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: bindActionCreators(updateUser, dispatch),
+});
 
 export default withStyles(styles)(connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withRouter(User)));

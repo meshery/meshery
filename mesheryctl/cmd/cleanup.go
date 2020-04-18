@@ -22,14 +22,14 @@ import (
 // cleanupCmd represents the cleanup command
 var cleanupCmd = &cobra.Command{
 	Use:   "cleanup",
-	Short: "Clean up Meshery",
-	Long:  `Clean up Meshery configuration`,
+	Short: "Cleanup Meshery's configuration",
+	Long:  `Reset Meshery to it's default configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Cleaning Meshery config...")
+		log.Info("Reseting Meshery config...")
 		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
 			log.Fatal("cleanup cmd: ", err)
 		}
-		log.Info("Meshery config is now cleaned up.")
+		log.Info("Meshery config has been reset to its default settings.")
 
 	},
 }

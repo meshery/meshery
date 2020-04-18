@@ -29,10 +29,17 @@ builds:
   # # GOARCH to build for.
   # # For more info refer to: https://golang.org/doc/install/source#environment
   # # Defaults are 386 and amd64.
-  # goarch:
-  #   - amd64
-  #   - arm
-  #   - arm64
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
+ 
+  # List of combinations of GOOS + GOARCH + GOARM to ignore.
+  ignore:
+      - goos: freebsd
+        goarch: arm64
+
 archives:
 - replacements:
     darwin: Darwin
@@ -189,7 +196,7 @@ scoop:
 
   # Repository to push the app manifest to.
   bucket:
-    owner: layer5
+    owner: layer5io
     name: scoop-bucket
 
   # Git author used to commit to the repository.

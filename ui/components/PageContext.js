@@ -23,13 +23,13 @@ const theme = createMuiTheme({
 //   },
 });
 
-function createPageContext () {
+function createPageContext() {
   return {
     theme,
     // this is needed in order to deduplicate the injection of CSS in the page.
     sheetsManager: new Map(),
     // this is needed in order to inject the critical CSS.
-    sheetsRegistry: new SheetsRegistry()
+    sheetsRegistry: new SheetsRegistry(),
     // the standard class name generator.
     // generateClassName: createGenerateClassName(),
   };
@@ -37,7 +37,7 @@ function createPageContext () {
 
 let pageContext;
 
-export default function getPageContext () {
+export default function getPageContext() {
   // make sure to create a new context for every server-side request so that data
   // isn't shared between connections (which would be bad).
   if (!process.browser) {

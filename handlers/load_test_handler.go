@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -214,7 +215,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	notify := w.(http.CloseNotifier).CloseNotify()
+	notify := req.Context()
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 	defer close(endChan)
@@ -248,7 +250,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		close(respChan)
 	}()
 	select {
-	case <-notify:
+	case <-notify.Done():
 		log.Debugf("received signal to close connection and channels")
 		break
 	case <-endChan:

@@ -72,7 +72,7 @@ var startCmd = &cobra.Command{
 
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
-			if "/meshery_meshery_1" == container.Names[0] {
+			if container.Names[0] == "/meshery_meshery_1" {
 				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 
 				//check for os of host machine

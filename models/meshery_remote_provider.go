@@ -136,7 +136,6 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 		return
 	}
 	l.issueSession(w, r)
-	return
 }
 
 // issueSession issues a cookie session after successful login
@@ -384,7 +383,7 @@ func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID)
 	return nil, fmt.Errorf("error while getting result - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {

@@ -6,14 +6,14 @@ import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { connect } from 'react-redux';
+import { Divider, StepLabel, Icon } from '@material-ui/core';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
-import {connect} from "react-redux";
-import { Divider, StepLabel, Icon } from '@material-ui/core';
 import PrometheusComponent from './PrometheusComponent';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     // width: '90%',
     padding: theme.spacing(10),
@@ -36,62 +36,66 @@ const styles = theme => ({
     textAlign: 'right',
     marginTop: theme.spacing(2),
     marginRight: theme.spacing(3),
-  }
+  },
 });
 
 function getSteps() {
   return ['Kubernetes', 'Adapters', 'Grafana', 'Prometheus'];
 }
 
-function getRequiredSteps(){
+function getRequiredSteps() {
   return [true, true, false, false];
 }
 
 function getStepContent(step) {
   switch (step) {
-  case 0:
-    return (
-      <MeshConfigComponent />
-    );
-  case 1:
-    return (
-      <MeshAdapterConfigComponent />
-    );
-  case 2:
-    return (
-      <GrafanaComponent />
-    );
-  case 3:
-    return (
-      <PrometheusComponent />
-    );
+    case 0:
+      return (
+        <MeshConfigComponent />
+      );
+    case 1:
+      return (
+        <MeshAdapterConfigComponent />
+      );
+    case 2:
+      return (
+        <GrafanaComponent />
+      );
+    case 3:
+      return (
+        <PrometheusComponent />
+      );
   }
 }
 
 class MesheryConfigSteps extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    const {k8sconfig, meshAdapters, grafana, prometheus} = props;
+    const {
+      k8sconfig, meshAdapters, grafana, prometheus,
+    } = props;
     this.state = {
       activeStep: 0,
       completed: {},
-      k8sconfig, 
-      meshAdapters, 
+      k8sconfig,
+      meshAdapters,
       grafana,
       prometheus,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {k8sconfig, meshAdapters, grafana, prometheus} = props;
+    const {
+      k8sconfig, meshAdapters, grafana, prometheus,
+    } = props;
     const { completed } = state;
 
-    if(k8sconfig.clusterConfigured) {
+    if (k8sconfig.clusterConfigured) {
       completed[0] = true;
     } else {
       completed[0] = false;
     }
-    if(meshAdapters.length > 0){
+    if (meshAdapters.length > 0) {
       completed[1] = true;
     } else {
       completed[1] = false;
@@ -107,7 +111,9 @@ class MesheryConfigSteps extends React.Component {
       completed[3] = false;
     }
 
-    return {k8sconfig, meshAdapters, grafana, prometheus, completed};
+    return {
+      k8sconfig, meshAdapters, grafana, prometheus, completed,
+    };
   }
 
   totalSteps = () => getSteps().length;
@@ -121,15 +127,15 @@ class MesheryConfigSteps extends React.Component {
       const steps = getSteps();
       activeStep = steps.findIndex((step, i) => !(i in this.state.completed));
     } else {
-      switch(this.state.activeStep){
-      case 0:
-      case 1:
-      case 2:
-        activeStep = this.state.activeStep + 1;
-        break;
-      case 3:
-        activeStep = 0;
-        break;
+      switch (this.state.activeStep) {
+        case 0:
+        case 1:
+        case 2:
+          activeStep = this.state.activeStep + 1;
+          break;
+        case 3:
+          activeStep = 0;
+          break;
       }
     }
     this.setState({
@@ -139,20 +145,20 @@ class MesheryConfigSteps extends React.Component {
 
   handleBack = () => {
     let activeStep;
-    switch(this.state.activeStep){
-    case 0:
-      activeStep = 3;
-      break;
-    case 1:
-    case 2:
-    case 3:
-      activeStep = this.state.activeStep - 1;
-      break;
+    switch (this.state.activeStep) {
+      case 0:
+        activeStep = 3;
+        break;
+      case 1:
+      case 2:
+      case 3:
+        activeStep = this.state.activeStep - 1;
+        break;
     }
-    this.setState({activeStep});
+    this.setState({ activeStep });
   };
 
-  handleStep = step => () => {
+  handleStep = (step) => () => {
     this.setState({
       activeStep: step,
     });
@@ -197,13 +203,19 @@ class MesheryConfigSteps extends React.Component {
           {steps.map((label, index) => (
             <Step key={label}>
               <StepButton onClick={this.handleStep(index)} completed={this.state.completed[index]}>
-                <StepLabel className={activeStep == index?classes.titleDecorate:''}
-                  // icon={<Icon>k</Icon>}
-                >
+                <StepLabel className={activeStep == index ? classes.titleDecorate : ''}>
                   <Typography variant="h6">
-                    {label}{getRequiredSteps()[index] && (<Typography variant="h5" style={{
-                      display: 'inline',
-                    }}><sup>*</sup></Typography>)}
+                    {label}
+                    {getRequiredSteps()[index] && (
+                    <Typography
+                      variant="h5"
+                      style={{
+                        display: 'inline',
+                      }}
+                    >
+                      <sup>*</sup>
+                    </Typography>
+                    )}
                   </Typography>
                 </StepLabel>
               </StepButton>
@@ -211,33 +223,37 @@ class MesheryConfigSteps extends React.Component {
           ))}
         </Stepper>
         <div>
-          
+
           <div>
             <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
             <Divider light variant="fullWidth" />
             <div className={classes.stepperButtons}>
-              {activeStep !== steps.length &&
-                  (this.state.completed[this.state.activeStep] ? (
+              {activeStep !== steps.length
+                  && (this.state.completed[this.state.activeStep] ? (
                     <Typography variant="caption" className={classes.completed}>
-                      Step {activeStep + 1} is complete
+                      Step
+                      {' '}
+                      {activeStep + 1}
+                      {' '}
+                      is complete
                     </Typography>
                   ) : '')}
               <Button
-                size='large'
+                size="large"
                 // disabled={activeStep === 0}
                 onClick={this.handleBack}
                 className={classes.button}
               >
-                  Back
+                Back
               </Button>
               <Button
-                size='large'
+                size="large"
                 variant="outlined"
                 color="primary"
                 onClick={this.handleNext}
                 className={classes.button}
               >
-                  Next
+                Next
               </Button>
             </div>
           </div>
@@ -247,18 +263,20 @@ class MesheryConfigSteps extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  const k8sconfig = state.get("k8sConfig").toJS();
-  const meshAdapters = state.get("meshAdapters").toJS();
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
-  return {k8sconfig, meshAdapters, grafana, prometheus};
-}
+const mapStateToProps = (state) => {
+  const k8sconfig = state.get('k8sConfig').toJS();
+  const meshAdapters = state.get('meshAdapters').toJS();
+  const grafana = state.get('grafana').toJS();
+  const prometheus = state.get('prometheus').toJS();
+  return {
+    k8sconfig, meshAdapters, grafana, prometheus,
+  };
+};
 
 MesheryConfigSteps.propTypes = {
   classes: PropTypes.object,
 };
 
 export default withStyles(styles)(connect(
-  mapStateToProps
+  mapStateToProps,
 )(MesheryConfigSteps));

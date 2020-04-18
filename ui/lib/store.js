@@ -254,7 +254,7 @@ export const makeStore = (initialState, options) => {
 
 export const resultsMerge = (arr1, arr2) => {
   const keys = {}
-  const arr = [];
+  var arr = [];
   const compareAndAdd = (a) => {
     if (typeof keys[a.meshery_id] === 'undefined'){
       keys[a.meshery_id] = true;

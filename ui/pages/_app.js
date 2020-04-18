@@ -260,10 +260,10 @@ class MesheryApp extends App {
     const { store } = this.props;
     const self = this;
       dataFetch('/api/config/sync', { 
-	      credentials: 'same-origin',
-	      method: 'GET',
-	      credentials: 'include',
-	    }, result => {
+          credentials: 'same-origin',
+          method: 'GET',
+          credentials: 'include',
+        }, result => {
       if (typeof result !== 'undefined'){
         if(result.k8sConfig){
           if(typeof result.k8sConfig.inClusterConfig === 'undefined'){

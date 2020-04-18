@@ -80,11 +80,15 @@ run-ui-dev:
 run-provider-ui-dev:
 	cd provider-ui; npm run dev; cd ..
 
+# Runs the lint on Meshery UI interface on your local machine.
+run-ui-lint:
+	cd ui; npm run lint; cd ..
+
 # Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
-  
+
 # setup wrk2 for local dev 
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:

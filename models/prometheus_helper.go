@@ -20,6 +20,7 @@ import (
 // PrometheusClient represents a prometheus client in Meshery
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
+	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguments as a valid option.
 	promURL       string
 }
 
@@ -116,7 +117,7 @@ func (p *PrometheusClient) getAllNodes(ctx context.Context, promURL string) ([]s
 	}
 	result := []string{}
 	for _, l := range labelSet {
-		inst, _ := l["instance"]
+		inst := l["instance"]
 		ins := string(inst)
 		if ins != "" {
 			result = append(result, ins)

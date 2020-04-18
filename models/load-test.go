@@ -125,8 +125,6 @@ func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
 		results = httpResults
 		logrus.Debugf("httpresults: %+v", httpResults)
 		b.EndpointURL = httpResults.URL
-	} else {
-		// TODO: GRPC
 	}
 
 	result := results.Result()
