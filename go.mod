@@ -5,6 +5,7 @@ go 1.13
 require (
 	fortio.org/fortio v1.3.1
 	github.com/Microsoft/go-winio v0.4.14 // indirect
+	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/aspenmesh/istio-client-go v0.0.0-20191010215625-4de6e89009c4
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1

@@ -54,7 +54,7 @@ var startCmd = &cobra.Command{
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			// log.Error(stderr.String())
+			log.Fatal("Error starting meshery:", err)
 			return
 		}
 		checkFlag := 0 //flag to check
