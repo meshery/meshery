@@ -7,7 +7,7 @@ type: guide
 ---
 
 ### Meshery Lifecycle Management
-Installation, troubleshooting and debugging of Meshery and its adapaters.
+Installation, troubleshooting and debugging of Meshery and its adapters.
 
 | command   | flag      | function                  | Usage                     |
 |:----------|:---------:|:--------------------------|:--------------------------|
