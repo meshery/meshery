@@ -14,6 +14,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |cleanup    |           | Pulls current meshery.yaml from meshery repo. *Warning: Any local changes will be overwritten.* | `mesheryctl cleanup` |
 |log        |           | Starts tailing Meshery debug logs.                    | `mesheryctl log` |
 |start      |           | Start all Meshery containers.                         | `mesheryctl start` |
+|           | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl start --reset` |
 |status     |           | Displays the status of Meshery's containers.          | `mesheryctl status` |
 |stop       |           | Stop all Meshery containers.                          | `mesheryctl stop` |
 |           | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl stop --reset` |
