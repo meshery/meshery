@@ -1,3 +1,4 @@
+
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -6,8 +7,8 @@ metadata:
     kompose.version: 1.17.0 ()
   creationTimestamp: null
   labels:
-    io.kompose.service: meshery-octarine
-  name: meshery-octarine
+    io.kompose.service: meshery-cpx
+  name: meshery-cpx
 spec:
   replicas: 1
   strategy: {}
@@ -15,14 +16,14 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        io.kompose.service: meshery-octarine
+        io.kompose.service: meshery-cpx
     spec:
       serviceAccount: meshery
       containers:
-        - image: layer5/meshery-octarine
-          name: meshery-octarine
+        - image: layer5/meshery-cpx
+          name: meshery-cpx
           ports:
-            - containerPort: 10003
+            - containerPort: 10008
           resources: {}
       restartPolicy: Always
 status: {}
