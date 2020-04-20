@@ -13,7 +13,14 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     <th style="white-space: nowrap;">Release Date</th>
   </thead>
   <tbody>
-       <tr>
+      <tr>
+      <td class="centered">0.3.13</td>
+      <td>
+        <em>Mesheryctl</em> - Point release for mesheryctl's initial ARM support.
+      </td>
+      <td>Apr 16, 2020</td>
+    </tr>
+      <tr>
       <td class="centered">0.3.12</td>
       <td>
         <em>Mesheryctl</em> - Initial Scoop Bucket and Scoop package for mesheryctl.
