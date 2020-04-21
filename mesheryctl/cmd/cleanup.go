@@ -33,7 +33,7 @@ func init() {
 	rootCmd.AddCommand(cleanupCmd)
 }
 
-// cleans meshery config
+// resets meshery config
 func resetMesheryConfig() {
 	log.Info("Meshery resetting...")
 	if err := downloadFile(dockerComposeFile, fileURL); err != nil {
