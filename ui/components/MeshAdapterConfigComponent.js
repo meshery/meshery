@@ -86,7 +86,6 @@ class MeshAdapterConfigComponent extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const { meshAdapters, meshAdaptersts } = props;
-    // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
     if (meshAdaptersts > state.ts) {
       return {
         meshAdapters, ts: meshAdaptersts,
@@ -126,24 +125,10 @@ class MeshAdapterConfigComponent extends React.Component {
   };
 
   handleMeshLocURLChange = (newValue, actionMeta) => {
-    // console.log(newValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
     if (typeof newValue !== 'undefined') {
       this.setState({ meshLocationURL: newValue, meshLocationURLError: false });
     }
   };
-
-  handleInputChange = (inputValue, actionMeta) => {
-    // console.log(inputValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-
-    // TODO: try to submit it and get
-    // if (typeof inputValue !== 'undefined'){
-    //   this.setState({meshLocationURL: inputValue});
-    // }
-  }
 
   handleSubmit = () => {
     const { meshLocationURL } = this.state;
@@ -198,7 +183,6 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 
   handleDelete = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(`/api/mesh/manage?adapter=${encodeURIComponent(adapterLoc)}`, {
@@ -229,7 +213,6 @@ class MeshAdapterConfigComponent extends React.Component {
   }
 
   handleClick = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
@@ -314,8 +297,6 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = '/static/img/citrix.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
-
-              // default:
             }
 
             return (
@@ -342,37 +323,14 @@ class MeshAdapterConfigComponent extends React.Component {
 
           <Grid container spacing={1} alignItems="flex-end">
             <Grid item xs={12}>
-
-              {/* <CreatableSelect
-          isClearable
-          onChange={this.handleMeshLocURLChange}
-          onInputChange={this.handleInputChange}
-          options={availableAdapters}
-        /> */}
-
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
                 onInputChange={this.handleInputChange}
                 options={availableAdapters}
                 value={meshLocationURL}
-                // placeholder={'Mesh Adapter URL'}
                 label="Mesh Adapter URL"
                 error={meshLocationURLError}
               />
-
-              {/* <TextField
-          required
-          id="meshLocationURL"
-          name="meshLocationURL"
-          label="Mesh Adapter Location"
-          type="url"
-          fullWidth
-          value={meshLocationURL}
-          error={meshLocationURLError}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('meshLocationURL')}
-        /> */}
             </Grid>
           </Grid>
           <React.Fragment>
@@ -390,27 +348,13 @@ class MeshAdapterConfigComponent extends React.Component {
             </div>
           </React.Fragment>
         </div>
-
-        {/* <LoadTestTimerDialog open={timerDialogOpen}
-    t={t}
-    onClose={this.handleTimerDialogClose}
-    countDownComplete={this.handleTimerDialogClose} />
-
-  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-      Results
-    </Typography>
-  <MesheryChart data={result} />     */}
-
       </NoSsr>
     );
   }
 
   render() {
     const { reconfigureCluster } = this.state;
-    // if (reconfigureCluster) {
     return this.configureTemplate();
-    // }
-    // return this.alreadyConfiguredTemplate();
   }
 }
 
