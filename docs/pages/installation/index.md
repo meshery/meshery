@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Installation Guide
-permalink: installation
+permalink: /installation
 ---
 <a name="getting-started"></a>
 
@@ -20,7 +20,8 @@ Install `mesheryctl` and run Meshery on Mac with Homebrew.
 **Installing with Homebrew**
 
 To install `mesheryctl`, execute the following commands:
-```
+
+```bash
 brew tap layer5io/tap
 brew install mesheryctl
 mesheryctl start
@@ -29,12 +30,14 @@ mesheryctl start
 **Upgrading with Homebrew**
 
 To upgrade `mesheryctl`, execute the following command:
-```
+
+```bash
 brew upgrade mesheryctl
 ```
 
 Example output of a successful upgrade:
-```
+
+```bash
 ➜  ~ brew upgrade mesheryctl
 ==> Upgrading 1 outdated package:
 layer5io/tap/mesheryctl 0.3.2 -> 0.3.4
@@ -54,14 +57,15 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 
 Install `mesheryctl` and run Meshery on Mac or Linux with this script:
 
-```
+```bash
 curl -L https://git.io/meshery | bash -
 ```
 
 **Upgrading with Bash**
 
 Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
-```
+
+```bash
 curl -L https://git.io/meshery | bash -
 ```
 
@@ -71,7 +75,7 @@ curl -L https://git.io/meshery | bash -
 
 Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
-```
+```bash
 ./mesheryctl start
 ```
 
@@ -82,7 +86,8 @@ Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
 **Installing with Scoop**
 
 Add the Meshery Scoop Bucket and install:
-```sh
+
+```bash
 scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
 scoop install mesheryctl
 ```
@@ -90,7 +95,8 @@ scoop install mesheryctl
 **Upgrading with Scoop**
 
 To upgrade `mesheryctl`, execute the following command:
-```
+
+```bash
 scoop update mesheryctl
 ```
 

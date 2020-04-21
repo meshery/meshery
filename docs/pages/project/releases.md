@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Releases
-permalink: /releases
+permalink: releases
 ---
 
 A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases). See the [Build and Release Strategy](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) document for details.
