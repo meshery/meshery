@@ -77,7 +77,8 @@ collections:
     permalink: /:collection/:path
   adapters:
     output: true
-    permalink: /:collection/:path
+    permalink: /service-meshes/:collection/:path
+    name: adapters
   guides:
     output: true
     permalink: /:collection/:path
@@ -105,3 +106,8 @@ defaults:
       type: "guide"
     values:
       layout: guide
+  - scope:
+      path: "adapters"
+      type: "adapters"
+    values:
+      layout: default
