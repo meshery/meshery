@@ -185,7 +185,7 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
-
+	return fmt.Errorf("ERROR : REMOVE THIS ERROR")
 	ts, err := l.GetToken(req)
 	if err != nil {
 		err = errors.Wrap(err, "Error: unable to get session")

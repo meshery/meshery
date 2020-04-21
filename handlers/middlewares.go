@@ -47,6 +47,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 		isValid := h.validateAuth(provider, req)
 		// logrus.Debugf("validate auth: %t", isValid)
 		if !isValid {
+			provider.Logout(w, req)
 			// if h.GetProviderType() == models.RemoteProviderType {
 			// 	http.Redirect(w, req, "/login", http.StatusFound)
 			// } else { // Local Provider
@@ -87,6 +88,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// ensuring session is intact before running load test
 		err := provider.GetSession(req)
 		if err != nil {
+			provider.Logout(w, req)
 			logrus.Errorf("Error: unable to get session: %v", err)
 			http.Error(w, "unable to get session", http.StatusUnauthorized)
 			return
