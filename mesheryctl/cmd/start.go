@@ -27,10 +27,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	startResetFlag bool
-)
-
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -53,8 +49,8 @@ var startCmd = &cobra.Command{
 		}
 
 		// Reset Meshery config file to default settings
-		if startResetFlag {
-			cleanupMesheryConfig()
+		if resetFlag {
+			resetMesheryConfig()
 		}
 
 		log.Info("Starting Meshery...")
@@ -140,6 +136,6 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	startCmd.Flags().BoolVarP(&startResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(startCmd)
 }

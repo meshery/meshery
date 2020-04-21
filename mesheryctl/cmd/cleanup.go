@@ -25,7 +25,7 @@ var cleanupCmd = &cobra.Command{
 	Short: "Cleanup Meshery's configuration",
 	Long:  `Reset Meshery to it's default configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cleanupMesheryConfig()
+		resetMesheryConfig()
 	},
 }
 
@@ -34,10 +34,10 @@ func init() {
 }
 
 // cleans meshery config
-func cleanupMesheryConfig() {
+func resetMesheryConfig() {
 	log.Info("Meshery resetting...")
 	if err := downloadFile(dockerComposeFile, fileURL); err != nil {
-		log.Fatal(err)
+		log.Fatal("Error while resetting:", err)
 	}
 	log.Info("Meshery config (" + dockerComposeFile + ") settings reset to defaults.")
 }
