@@ -17,7 +17,7 @@ Commonly adjoining each service mesh is a sample application that facilitates de
 Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.
 
 ## Deleting a service mesh
-Just as Meshery automates the provisioning of various service meshes, so does it faciliate the deprovisioning of service meshes.
+Just as Meshery automates the provisioning of various service meshes, so does it facilitate the deprovisioning of service meshes.
 
 # Management notifications 
 Meshery tracks service mesh and application health. Meshery provides notification of environment issues, application conflicts with service mesh configuration.
@@ -31,9 +31,15 @@ Particular notifications that Meshery presents are immediately actionable. These
 
 # Node and Service Mesh Metrics
 
+ Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
+
 ## Grafana and Meshery
 
 Connect Meshery to your existing Grafana instance and Meshery will import the boards of your choosing. 
+
+<a href="/docs/assets/img/performance-management/meshery-and-grafana.png">
+    <img src="/docs/assets/img/performance-management/meshery-and-grafana.png" />
+</a>
 
 ### Connecting to Grafana
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana.

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Releases
-permalink: /releases
+permalink: releases
 ---
 
 A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases). See the [Build and Release Strategy](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) document for details.
@@ -13,6 +13,27 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     <th style="white-space: nowrap;">Release Date</th>
   </thead>
   <tbody>
+      <tr>
+      <td class="centered">0.3.13</td>
+      <td>
+        <em>Mesheryctl</em> - Point release for mesheryctl's initial ARM support.
+      </td>
+      <td>Apr 16, 2020</td>
+    </tr>
+      <tr>
+      <td class="centered">0.3.12</td>
+      <td>
+        <em>Mesheryctl</em> - Initial Scoop Bucket and Scoop package for mesheryctl.
+      </td>
+      <td>Apr 10, 2020</td>
+    </tr>
+      <tr>
+      <td class="centered">0.3.11</td>
+      <td>
+        <em>Mesheryctl</em> - Fixes minor user experience issues on mesheryctl perf command. See Meshery CLI Commands & Documentation for reference.
+      </td>
+      <td>Mar 25, 2020</td>
+    </tr>
       <tr>
       <td class="centered">0.3.10</td>
       <td>
@@ -165,7 +186,7 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     <tr><td colspan="3"><strong>v0.1.0</strong></td></tr>
     <tr>
       <td class="centered">0.0.9</td>
-      <td>Documentation site segragated and content laided out.</td>
+      <td>Documentation site segregated and content laided out.</td>
       <td>May 2, 2019</td>
     </tr>
     <tr>

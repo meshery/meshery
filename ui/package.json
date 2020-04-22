@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ui_dev_server.js",
+    "lint": "eslint --fix .",
+    "test": "eslint .",
     "next": "next",
     "build": "next build",
     "start": "next start",
@@ -54,17 +56,20 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-jsx": "latest",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "minimist": ">=1.2.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
+    "@babel/traverse": "^7.9.0",
+    "@babel/types": "^7.9.0",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb": "^18.1.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.4.0",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
     "http-proxy": "^1.17.0",
     "nodemon": "^1.19.4"
   }

@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -51,7 +52,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		k8sfile, _, err := req.FormFile("k8sfile")
 		if err != nil {
 			logrus.Errorf("error getting k8s file: %v", err)
-			http.Error(w, "Unable to get kubernetes config file", http.StatusBadRequest)
+			http.Error(w, "Unable to get Kubernetes config file", http.StatusBadRequest)
 			return
 		}
 		defer func() {
@@ -60,7 +61,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
 		if err != nil {
 			logrus.Errorf("error reading config: %v", err)
-			http.Error(w, "Unable to read the kubernetes config file, please try again", http.StatusBadRequest)
+			http.Error(w, "Unable to read the Kubernetes config file, please try again", http.StatusBadRequest)
 			return
 		}
 
@@ -69,7 +70,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 		ccfg, err := clientcmd.Load(k8sConfigBytes)
 		if err != nil {
 			logrus.Errorf("error parsing k8s config: %v", err)
-			http.Error(w, "Given file is not a valid kubernetes config file, please try again", http.StatusBadRequest)
+			http.Error(w, "Given file is not a valid Kubernetes config file, please try again", http.StatusBadRequest)
 			return
 		}
 		logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", ccfg.CurrentContext, ccfg.Contexts, ccfg.Clusters)
@@ -100,13 +101,13 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	var err error
 	prefObj.K8SConfig.ServerVersion, err = helpers.FetchKubernetesVersion(kc.Config, kc.ContextName)
 	if err != nil {
-		http.Error(w, "unable to ping the kubernetes server", http.StatusInternalServerError)
+		http.Error(w, "unable to ping the Kubernetes server", http.StatusInternalServerError)
 		return
 	}
 
 	prefObj.K8SConfig.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
 	if err != nil {
-		http.Error(w, "unable to fetch nodes metadata from the kubernetes server", http.StatusInternalServerError)
+		http.Error(w, "unable to fetch nodes metadata from the Kubernetes server", http.StatusInternalServerError)
 		return
 	}
 
@@ -148,7 +149,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	k8sfile, _, err := req.FormFile("k8sfile")
 	if err != nil {
 		logrus.Errorf("error getting k8s file: %v", err)
-		http.Error(w, "Unable to get kubernetes config file", http.StatusBadRequest)
+		http.Error(w, "Unable to get Kubernetes config file", http.StatusBadRequest)
 		return
 	}
 	defer func() {
@@ -157,14 +158,14 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	k8sConfigBytes, err = ioutil.ReadAll(k8sfile)
 	if err != nil {
 		logrus.Errorf("error reading config: %v", err)
-		http.Error(w, "Unable to read the kubernetes config file, please try again", http.StatusBadRequest)
+		http.Error(w, "Unable to read the Kubernetes config file, please try again", http.StatusBadRequest)
 		return
 	}
 
 	ccfg, err := clientcmd.Load(k8sConfigBytes)
 	if err != nil {
 		logrus.Errorf("error parsing k8s config: %v", err)
-		http.Error(w, "Given file is not a valid kubernetes config file, please try again", http.StatusBadRequest)
+		http.Error(w, "Given file is not a valid Kubernetes config file, please try again", http.StatusBadRequest)
 		return
 	}
 
@@ -270,9 +271,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 
 	version, err := helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
-		err = errors.Wrap(err, "unable to ping kubernetes")
+		err = errors.Wrap(err, "unable to ping Kubernetes")
 		logrus.Error(err)
-		http.Error(w, "unable to ping kubernetes", http.StatusInternalServerError)
+		http.Error(w, "unable to ping Kubernetes", http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(map[string]string{
@@ -294,9 +295,9 @@ func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Reques
 
 	installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
-		err = errors.Wrap(err, "unable to scan kubernetes")
+		err = errors.Wrap(err, "unable to scan Kubernetes")
 		logrus.Error(err)
-		http.Error(w, "unable to scan kubernetes", http.StatusInternalServerError)
+		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(installedMeshes); err != nil {

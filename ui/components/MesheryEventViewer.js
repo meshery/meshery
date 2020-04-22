@@ -1,17 +1,17 @@
 import NoSsr from '@material-ui/core/NoSsr';
-import MesherySnackbarWrapper from './MesherySnackbarWrapper';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import { eventTypes } from '../lib/event-types';
 
-const styles = theme => ({
+const styles = (theme) => ({
   event: {
     margin: theme.spacing(1),
-  }
-})
+  },
+});
 
 class MesheryEventViewer extends React.Component {
-
   state = {
     dialogShow: false,
   }
@@ -28,14 +28,16 @@ class MesheryEventViewer extends React.Component {
   }
 
   render() {
-    const {classes, eventVariant, eventSummary, onClick} = this.props;
+    const {
+      classes, eventVariant, eventSummary, onClick,
+    } = this.props;
 
     return (
       <NoSsr>
         <React.Fragment>
-          <MesherySnackbarWrapper 
+          <MesherySnackbarWrapper
             key={`event_-_${eventVariant}`}
-            variant={eventTypes[eventVariant]?eventTypes[eventVariant].type:eventTypes[0].type}
+            variant={eventTypes[eventVariant] ? eventTypes[eventVariant].type : eventTypes[0].type}
             message={eventSummary}
             onClose={this.handleSnackbarClose}
             onClick={onClick}
@@ -43,13 +45,13 @@ class MesheryEventViewer extends React.Component {
           />
         </React.Fragment>
       </NoSsr>
-    )
+    );
   }
 }
 
 MesheryEventViewer.propTypes = {
   classes: PropTypes.object.isRequired,
-  eventVariant: PropTypes.oneOf([0,1,2]).isRequired,
+  eventVariant: PropTypes.oneOf([0, 1, 2]).isRequired,
   eventSummary: PropTypes.string.isRequired,
   deleteEvent: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,

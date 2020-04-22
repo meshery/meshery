@@ -1,3 +1,4 @@
+//Package handlers : collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (

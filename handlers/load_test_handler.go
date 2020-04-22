@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -18,6 +19,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+	v1 "k8s.io/api/apps/v1"
 )
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
@@ -212,7 +214,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	notify := w.(http.CloseNotifier).CloseNotify()
+	notify := req.Context()
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 	defer close(endChan)
@@ -246,7 +249,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		close(respChan)
 	}()
 	select {
-	case <-notify:
+	case <-notify.Done():
 		log.Debugf("received signal to close connection and channels")
 		break
 	case <-endChan:
@@ -289,7 +292,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string]string)
+		installedMeshesChan := make(chan map[string][]v1.Deployment)
 
 		go func() {
 			var nodes []*models.K8SNode

@@ -48,13 +48,18 @@ var startCmd = &cobra.Command{
 			}
 		}
 
+		// Reset Meshery config file to default settings
+		if resetFlag {
+			resetMesheryConfig()
+		}
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			// log.Error(stderr.String())
+			log.Fatal("Error starting meshery:", err)
 			return
 		}
 		checkFlag := 0 //flag to check
@@ -72,7 +77,7 @@ var startCmd = &cobra.Command{
 
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
-			if "/meshery_meshery_1" == container.Names[0] {
+			if container.Names[0] == "/meshery_meshery_1" {
 				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
 
 				//check for os of host machine
@@ -131,5 +136,6 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(startCmd)
 }

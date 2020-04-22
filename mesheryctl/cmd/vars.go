@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -39,6 +40,7 @@ const (
 
 // See setFileLocation function below.
 var (
+	resetFlag bool
 	mesheryFolder     = ".meshery"
 	dockerComposeFile = "/meshery.yaml"
 )
@@ -95,6 +97,10 @@ func preReqCheck() {
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Info("Docker-Compose is not installed")
+		//No auto installation of Docker-compose for windows
+		if runtime.GOOS == "windows" {
+			return
+		}
 		installprereq()
 	}
 }

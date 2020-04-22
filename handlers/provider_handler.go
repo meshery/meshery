@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	models "github.com/layer5io/meshery/models"
 )
 
 // ProviderHandler - handles the choice of provider
@@ -30,9 +32,10 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	providers := map[string]string{}
+
+	providers := map[string]models.ProviderProperties{}
 	for _, p := range h.config.Providers {
-		providers[p.Name()] = string(p.GetProviderType())
+		providers[p.Name()] = (p.GetProviderProperties())
 	}
 	bd, err := json.Marshal(providers)
 	if err != nil {

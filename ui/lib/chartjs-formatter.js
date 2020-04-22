@@ -1,3 +1,4 @@
+/* eslint block-scoped-var: 0 */ 
 export const linearXAxe = {
     type: 'linear',
     scaleLabel: {
@@ -491,7 +492,7 @@ const multiLabel = (res) => {
 
 const label_trunc = function(str) {
   if (str.length > length) {
-    return str.match(/.{1,20}/g);;
+    return str.match(/.{1,20}/g);
   } else {
     return str;
   }
