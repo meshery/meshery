@@ -34,29 +34,16 @@ const styles = (theme) => ({
 class MesheryResults extends Component {
   constructor(props) {
     super(props);
-    // const {results_selection} = props;
     this.state = {
       page: 0,
       search: '',
-      sortOrder: '',
-      // pageMap: {
-      //   0: '',
-      // },
+      sortOrder: 'asc',
       count: 0,
       pageSize: 10,
       results: [],
-      // startKey: '',
-
-      // results_selection,
-
       selectedRowData: null,
     };
   }
-
-  // static getDerivedStateFromProps(props, state){
-  //   const { results_selection } = props;
-  //   return { results_selection };
-  // }
 
     componentDidMount = () => {
       const {
@@ -82,7 +69,6 @@ class MesheryResults extends Component {
         credentials: 'include',
       }, (result) => {
         self.props.updateProgress({ showProgress: false });
-        // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
           this.setState({
             results: result.results,
@@ -98,7 +84,6 @@ class MesheryResults extends Component {
 
     handleError = (error) => {
       this.props.updateProgress({ showProgress: false });
-      // console.log(`error fetching results: ${error}`);
       const self = this;
       this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
         variant: 'error',
@@ -151,7 +136,6 @@ class MesheryResults extends Component {
           row.p99_9 = 0;
         }
         resultsForDisplay.push(row);
-        // console.log(`adding custom row: ${JSON.stringify(row)}`);
       });
 
       const columns = [
@@ -255,16 +239,15 @@ class MesheryResults extends Component {
           });
         }
       });
-      // console.log(`selected rows after adjustments: ${JSON.stringify(rowsSelected)}`);
       const options = {
         filter: false,
         sort: !(user && user.user_id === 'meshery'),
         search: !(user && user.user_id === 'meshery'),
         filterType: 'textField',
         responsive: 'scrollFullHeight',
-        // resizableColumns: true,
-        // selectableRows: true,
+        selectableRows: true,
         serverSide: true,
+        announceText: null,
         count,
         rowsPerPage: pageSize,
         rowsPerPageOptions: [10, 20, 25],
@@ -274,8 +257,6 @@ class MesheryResults extends Component {
         print: false,
         download: false,
         onRowsSelect: (currentRowsSelected, allRowsSelected) => {
-          // const rs = self.props.results_selection;
-
           const res = {};
           allRowsSelected.forEach(({ dataIndex }) => {
             if (dataIndex < self.state.pageSize) {
@@ -286,16 +267,10 @@ class MesheryResults extends Component {
               }
             }
           });
-
-
-
           self.props.updateResultsSelection({ page, results: res });
         },
-
         onTableChange: (action, tableState) => {
-                        const sortInfo = tableState.announceText.split(' : '); 
-              let order = 'asc';
-
+          let order = 'asc';
           switch (action) {
             case 'changePage':
               self.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
@@ -314,13 +289,8 @@ class MesheryResults extends Component {
               }, 500);
               break;
             case 'sort':
-
-              if (sortInfo.length == 2) {
-                if (sortInfo[1] === 'descending') {
-                  order = 'desc';
-                }
-              }
               if (order !== sortOrder) {
+                order = 'desc';
                 self.fetchResults(self.state.page, self.state.pageSize, self.state.search, `${columns[tableState.activeColumn].name} ${order}`);
               }
               break;
@@ -361,7 +331,6 @@ class MesheryResults extends Component {
           );
         },
       };
-
       return (
         <NoSsr>
           {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0
@@ -381,7 +350,6 @@ MesheryResults.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  // updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
   updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
   clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
   updateProgress: bindActionCreators(updateProgress, dispatch),
