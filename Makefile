@@ -84,6 +84,10 @@ run-provider-ui-dev:
 run-ui-lint:
 	cd ui; npm run lint; cd ..
 
+# Runs the lint on Meshery UI interface on your local machine.
+run-provider-ui-lint:
+	cd provider-ui; npm run lint; cd ..
+
 # Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..

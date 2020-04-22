@@ -83,7 +83,7 @@ jobs:
         with:
           args: ./... -exclude=G301,G304,G107
   tests:
-    needs: [lint, error_check, static_check, vet_check, security_check]
+    needs: [lint, error_check, static_check, vet_check, security_check, lint-UI, lint-Provider-UI]
     name: Tests
     runs-on: ubuntu-latest
     steps:
@@ -99,7 +99,7 @@ jobs:
   build-backend:
     name: Meshery backend build check
     runs-on: ubuntu-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -113,7 +113,7 @@ jobs:
   build-ui:
     name: Meshery UI build check
     runs-on: ubuntu-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -139,6 +139,21 @@ jobs:
         node-version: ${{ secrets.NODE_VERSION }}
     - run: |
         cd ui
+        npm i
+        npm test
+  lint-Provider-UI:
+    name: Meshery Provider UI Lint check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - run: |
+        cd provider-ui
         npm i
         npm test
   build_release:
