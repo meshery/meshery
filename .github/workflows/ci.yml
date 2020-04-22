@@ -141,6 +141,21 @@ jobs:
         cd ui
         npm i
         npm test
+  lint-Provider-UI:
+    name: Meshery Provider UI Lint check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - run: |
+        cd provider-ui
+        npm i
+        npm test
   build_release:
     name: MesheryCTL Build & Release
     runs-on: macOS-latest

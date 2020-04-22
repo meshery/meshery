@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon ui_dev_server.js",
     "lint": "eslint --fix .",
+    "test": "eslint .",
     "next": "next",
     "build": "next build",
     "start": "next start",
