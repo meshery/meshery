@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -24,12 +23,12 @@ type DefaultLocalProvider struct {
 
 // Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
-	return "Local (ephemeral session) (free use)"
+	return "None"
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() string {
-	return `Local Provider
+	return `Provider: None
 	- ephemeral sessions
 	- environment setup not saved
 	- no performance test result history
@@ -41,21 +40,23 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return LocalProviderType
 }
 
+// GetProviderProperties - Returns all the provider properties required
+func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
+	var result ProviderProperties
+	result.ProviderType = l.GetProviderType()
+	result.DisplayName = l.Name()
+	result.Description = l.Description()
+	result.Capabilities = make([]Capability, 0)
+	return result
+}
+
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
-	l.issueSession(w, r, fromMiddleWare)
-	return
+	// l.issueSession(w, r, fromMiddleWare)
 }
 
 // issueSession issues a cookie session after successful login
 func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
-	// session, _ := l.SessionStore.New(req, l.SessionName)
-	// session.Options.Path = "/"
-	// user := l.fetchUserDetails()
-	// session.Values["user"] = user
-	// if err := session.Save(req, w); err != nil {
-	// 	logrus.Errorf("unable to save session: %v", err)
-	// }
 	if !fromMiddleWare {
 		returnURL := "/"
 		if req.RequestURI != "" {
@@ -76,28 +77,12 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 
 // GetUserDetails - returns the user details
 func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
-	// ensuring session is intact before running load test
-	// session, err := l.GetSession(req)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// user, _ := session.Values["user"].(*User)
-	// return user, nil
-
 	return l.fetchUserDetails(), nil
 }
 
 // GetSession - returns the session
-func (l *DefaultLocalProvider) GetSession(req *http.Request) (*sessions.Session, error) {
-	// session, err := l.SessionStore.Get(req, l.SessionName)
-	// if err != nil {
-	// 	err = errors.Wrap(err, "Error: unable to get session")
-	// 	logrus.Error(err)
-	// 	return nil, err
-	// }
-	// return session, nil
-	return &sessions.Session{}, nil
+func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
+	return nil
 }
 
 // GetProviderToken - returns provider token
@@ -107,12 +92,6 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	// sess, err := l.SessionStore.Get(req, l.SessionName)
-	// if err == nil {
-	// 	sess.Options.MaxAge = -1
-	// 	_ = sess.Save(req, w)
-	// }
-
 	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
@@ -142,7 +121,7 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 	return l.ResultPersister.GetResult(resultID)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -252,4 +231,11 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 // RecordPreferences - records the user preference
 func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
+}
+
+// UpdateToken - specific to remote auth
+func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}
+
+// TokenHandler - specific to remote auth
+func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 }

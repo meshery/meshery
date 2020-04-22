@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -5,14 +6,13 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
 // FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
-func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -37,7 +37,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GetResultHandler gets an individual result from provider
-func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, _ *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return

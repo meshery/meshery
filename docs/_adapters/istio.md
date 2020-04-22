@@ -5,14 +5,15 @@ name: Istio
 version: v1.3
 port: 10000/tcp
 project_status: stable
+image: /docs/assets/img/service-meshes/istio.svg
 ---
 | Adapter Status |
 | :------------: |
 | [{{ page.project_status }}]({{ page.github_link }})|
 
-## Configuration
-- Step 1)
-- Step 2)
+## Sample Applications
+
+The Meshery adapter for ({{ page.title }}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
 ## Features
 1. Lifecycle management of Istio
@@ -23,10 +24,3 @@ project_status: stable
 1. Prometheus and Grafana connection
 
 The Meshery adapter for Istio will connect to Istio's Prometheus and Grafana instances running in the control plane (typically found in the `istio-system` namespace).
-
-## Usage
-1. 
-2. 
-
-## Architecture
-< diagram >

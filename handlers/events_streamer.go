@@ -1,3 +1,4 @@
+//Package handlers :collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -10,7 +11,6 @@ import (
 
 	"encoding/json"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -18,7 +18,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, _ models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, _ models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -39,40 +39,32 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	notify := w.(http.CloseNotifier).CloseNotify()
+	notify := req.Context()
 
 	var err error
-	// go func() {
-	// 	<-notify
-	// 	// an attempt to re-establish connection
-	// 	// mClient, _ = meshes.CreateClient(req.Context(), k8sConfigBytes, contextName, meshLocationURL)
-	// }()
+
 	localMeshAdapters := map[string]*meshes.MeshClient{}
 	localMeshAdaptersLock := &sync.Mutex{}
 
 	respChan := make(chan []byte, 100)
-	// defer close(respChan)
 
 	newAdaptersChan := make(chan *meshes.MeshClient)
-	// defer close(newAdaptersChan)
 
 	go func() {
+
 		for mClient := range newAdaptersChan {
-			log.Debug("received a new mesh client, listening for events")
-			go func() {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log)
-				_ = mClient.Close()
-			}()
+      		log.Debug("received a new mesh client, listening for events")
+      		go func(mClient *meshes.MeshClient) {
+	      		listenForAdapterEvents(req.Context(), mClient, respChan, log)
+	     		_ = mClient.Close()
+			}(mClient)
 		}
+
 		log.Debug("new adapters channel closed")
+
 	}()
 
 	go func() {
-		// defer func() {
-		// 	if r := recover(); r != nil {
-		// 		log.Errorf("Recovered from panic: %v.", r)
-		// 	}
-		// }()
 		for data := range respChan {
 			log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
@@ -87,7 +79,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _
 STOP:
 	for {
 		select {
-		case <-notify:
+		case <-notify.Done():
 			log.Debugf("received signal to close connection and channels")
 			close(newAdaptersChan)
 			close(respChan)

@@ -39,6 +39,8 @@ docker-run-cloud:
 
 # Runs Meshery on your local machine and points to locally-running  
 #  Meshery Cloud for user authentication.
+# SAAS_BASE_URL="http://mesherylocal.layer5.io:9876"
+
 run-local-cloud:
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL="http://localhost:9876" \
@@ -80,11 +82,19 @@ run-ui-dev:
 run-provider-ui-dev:
 	cd provider-ui; npm run dev; cd ..
 
+# Runs the lint on Meshery UI interface on your local machine.
+run-ui-lint:
+	cd ui; npm run lint; cd ..
+
+# Runs the lint on Meshery UI interface on your local machine.
+run-provider-ui-lint:
+	cd provider-ui; npm run lint; cd ..
+
 # Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
-  
+
 # setup wrk2 for local dev 
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:

@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -13,16 +14,16 @@ import (
 
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+	v1 "k8s.io/api/apps/v1"
 )
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
-func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -104,7 +105,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -213,7 +214,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	notify := w.(http.CloseNotifier).CloseNotify()
+	notify := req.Context()
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 	defer close(endChan)
@@ -247,7 +249,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		close(respChan)
 	}()
 	select {
-	case <-notify:
+	case <-notify.Done():
 		log.Debugf("received signal to close connection and channels")
 		break
 	case <-endChan:
@@ -290,7 +292,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string]string)
+		installedMeshesChan := make(chan map[string][]v1.Deployment)
 
 		go func() {
 			var nodes []*models.K8SNode

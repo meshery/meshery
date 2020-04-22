@@ -67,6 +67,9 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 }
 func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
+	if err != nil {
+		return nil, err
+	}
 	if !g.promMode {
 		req.Header.Set("Authorization", APIKey)
 	}
@@ -117,6 +120,9 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 			return nil, err1
 		}
 		grafBoard, err := g.ProcessBoard(c, &board, &link)
+		if err != nil {
+			return nil, err
+		}
 		boards = append(boards, grafBoard)
 	}
 	return boards, nil

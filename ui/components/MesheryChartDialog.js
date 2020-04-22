@@ -14,10 +14,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 
-const styles = theme => ({
+const styles = (theme) => ({
   dialogContent: {
     // minHeight: window.innerHeight * 0.7, //'30rem',
-  }
+  },
 });
 
 class MesheryChartDialog extends React.Component {
@@ -33,15 +33,17 @@ class MesheryChartDialog extends React.Component {
   //   this.setState({ open: false });
   // };
 
-  render () {
-    const { classes, open, title, handleClose, content } = this.props;
+  render() {
+    const {
+      classes, open, title, handleClose, content,
+    } = this.props;
 
     return (
       <React.Fragment>
         <Dialog
           // fullScreen={true}
-          fullWidth={true}
-          maxWidth={'md'}
+          fullWidth
+          maxWidth="md"
           open={open}
           onClose={handleClose}
           aria-labelledby="chart-dialog-title"
@@ -67,7 +69,7 @@ MesheryChartDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  content: PropTypes.node.isRequired
+  content: PropTypes.node.isRequired,
 };
 
 export default withStyles(styles)(MesheryChartDialog);

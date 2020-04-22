@@ -5,6 +5,7 @@ name: Consul
 version: v1.5
 port: 10002/tcp
 project_status: stable
+image: /docs/assets/img/service-meshes/consul.svg
 ---
 | Adapter Status |
 | :------------: |
