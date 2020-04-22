@@ -20,9 +20,9 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		} else {
 			providerName = req.Header.Get(h.config.ProviderCookieName)
 		}
- 		if providerName != "" {		
- 			provider = h.config.Providers[providerName]		
- 		}
+		if providerName != "" {
+			provider = h.config.Providers[providerName]
+		}
 		if provider == nil {
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
@@ -68,8 +68,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool {
-	err := provider.GetSession(req)
-	if err == nil {
+	if err := provider.GetSession(req); err == nil {
 		// logrus.Debugf("session: %v", sess)
 		return true
 	}

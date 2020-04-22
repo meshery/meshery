@@ -53,7 +53,6 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	// l.issueSession(w, r, fromMiddleWare)
-	return
 }
 
 // issueSession issues a cookie session after successful login
@@ -234,6 +233,7 @@ func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID strin
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
 
+// UpdateToken - specific to remote auth
 func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {}
 
 // TokenHandler - specific to remote auth

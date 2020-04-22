@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -18,13 +19,21 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// JWK - a type respresting the JSON web Key
 type JWK map[string]string
+
+// SafeClose is a helper function help to close the io
+func SafeClose(co io.Closer) {
+	if cerr := co.Close(); cerr != nil {
+		logrus.Error(cerr)
+	}
+}
 
 //DoRequest - executes a request and does refreshing automatically
 func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		logrus.Errorf("Trying after refresh")
+		logrus.Errorf("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
 		if err != nil {
 			logrus.Errorf("error doing token : %v", err.Error())
@@ -52,7 +61,11 @@ func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error)
 		return "", err
 	}
 	r, err := http.Post(l.SaaSBaseURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
-	defer r.Body.Close()
+	if err != nil {
+		logrus.Errorf("error refreshing token : %v", err.Error())
+		return "", err
+	}
+	defer SafeClose(r.Body)
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)
 	if err != nil {
@@ -70,14 +83,14 @@ func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error)
 func (l *MesheryRemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
 	token, err := l.DecodeTokenData(tokenString)
 	if err != nil {
-		logrus.Errorf("Error performing the request, %s", err.Error())
+		logrus.Errorf("error performing the request, %s", err.Error())
 		return nil, err
 	}
 	c := &http.Client{}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token.AccessToken))
 	resp, err := c.Do(req)
 	if err != nil {
-		logrus.Errorf("Error performing the request, %s", err.Error())
+		logrus.Errorf("error performing the request, %s", err.Error())
 		return nil, err
 	}
 	return resp, nil
@@ -87,7 +100,7 @@ func (l *MesheryRemoteProvider) doRequestHelper(req *http.Request, tokenString s
 func (l *MesheryRemoteProvider) GetToken(req *http.Request) (string, error) {
 	ck, err := req.Cookie(tokenName)
 	if err != nil {
-		logrus.Errorf("Error in getting the token, %s", err.Error())
+		logrus.Errorf("error in getting the token, %s", err.Error())
 		return "", err
 	}
 	return ck.Value, nil
@@ -116,16 +129,18 @@ func (l *MesheryRemoteProvider) UpdateJWKs() error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer SafeClose(resp.Body)
 	if err != nil {
 		return err
 	}
-	jsonDataFromHttp, err := ioutil.ReadAll(resp.Body)
+	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 	jwksJSON := map[string][]map[string]string{}
-	json.Unmarshal([]byte(jsonDataFromHttp), &jwksJSON)
+	if err := json.Unmarshal([]byte(jsonDataFromHTTP), &jwksJSON); err != nil {
+		return err
+	}
 
 	jwks := jwksJSON["keys"]
 
@@ -150,7 +165,7 @@ func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
 			return key, nil
 		}
 	}
-	return nil, fmt.Errorf("Key not found")
+	return nil, fmt.Errorf("key not found")
 }
 
 // GenerateKey - generate the actual key from the JWK
@@ -191,7 +206,9 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	}
 
 	var out bytes.Buffer
-	pem.Encode(&out, block)
+	if err := pem.Encode(&out, block); err != nil {
+		return nil, err
+	}
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
 }
 
@@ -228,7 +245,7 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("Error parsing claims")
+		return nil, fmt.Errorf("error parsing claims")
 	}
 	return &claims, nil
 }

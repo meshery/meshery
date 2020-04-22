@@ -145,7 +145,6 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 
 	// TODO: go to ref cookie
 	http.Redirect(w, r, "/", http.StatusFound)
-	return
 }
 
 func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
