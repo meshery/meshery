@@ -22,10 +22,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	resetFlag bool
-)
-
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
@@ -72,12 +68,7 @@ var stopCmd = &cobra.Command{
 
 		// Reset Meshery config file to default settings
 		if resetFlag {
-			log.Info("Meshery resetting...")
-
-			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
-				log.Fatal(err)
-			}
-			log.Info("Meshery config (" + dockerComposeFile + ") settings reset to defaults.")
+			resetMesheryConfig()
 		}
 	},
 }

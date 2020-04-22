@@ -48,6 +48,11 @@ var startCmd = &cobra.Command{
 			}
 		}
 
+		// Reset Meshery config file to default settings
+		if resetFlag {
+			resetMesheryConfig()
+		}
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -131,5 +136,6 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(startCmd)
 }
