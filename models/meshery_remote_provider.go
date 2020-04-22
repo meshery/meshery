@@ -34,6 +34,8 @@ type MesheryRemoteProvider struct {
 
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
+
+	ProviderVersion string
 }
 
 type userSession struct {
@@ -127,7 +129,7 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 			Path:     "/",
 			HttpOnly: true,
 		})
-		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
+		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
 

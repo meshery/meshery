@@ -47,7 +47,6 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 		isValid := h.validateAuth(provider, req)
 		// logrus.Debugf("validate auth: %t", isValid)
 		if !isValid {
-			provider.Logout(w, req)
 			// if h.GetProviderType() == models.RemoteProviderType {
 			// 	http.Redirect(w, req, "/login", http.StatusFound)
 			// } else { // Local Provider
@@ -55,7 +54,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			// }
 			// return
 			if provider.GetProviderType() == models.RemoteProviderType {
-				http.Redirect(w, req, "/login", http.StatusFound)
+				provider.Logout(w, req)
 				return
 			}
 			// Local Provider

@@ -125,6 +125,7 @@ func main() {
 		// SaaSTokenName:              "meshery_saas",
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
+		ProviderVersion:            "0.3.30",
 	}
 	cp.SyncPreferences()
 	defer cp.StopSyncPreferences()
