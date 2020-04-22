@@ -28,19 +28,17 @@ var stopCmd = &cobra.Command{
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		preReqCheck()
+
 		log.Info("Stopping Meshery...")
 		if !isMesheryRunning() {
 			log.Info("Meshery is not running. Nothing to stop.")
-			return 
+			return
 		}
 		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
 				log.Fatal(err)
 			}
-		}
-
-		if err := downloadFile(dockerComposeFile, fileURL); err != nil {
-			log.Fatal(err)
 		}
 
 		// Stop all Docker containers
@@ -67,9 +65,15 @@ var stopCmd = &cobra.Command{
 		// }
 
 		log.Info("Meshery is stopped.")
+
+		// Reset Meshery config file to default settings
+		if resetFlag {
+			resetMesheryConfig()
+		}
 	},
 }
 
 func init() {
+	stopCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(stopCmd)
 }

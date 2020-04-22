@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   {% include head.html %}
-  {% include google-analytics.html %}
   <body class="td-section">
     {% include header.html %}
     <div class="container-fluid td-outer">
@@ -24,7 +23,8 @@
             <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
 	      <ol class="breadcrumb spb-1">
                 <li class="breadcrumb-item active" aria-current="page">
-		  <!-- meshery-custom-begin -->
+      <!-- meshery-custom-begin -->
+          <a href="{{ site.baseurl }}/">Home</a> /
           <a href="{{ site.baseurl }}/guides">Guides</a> /
           <a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
       <!-- meshery-custom-end -->
@@ -51,6 +51,7 @@
       {% include footer.html %}
     </div>
     {% include scripts.html %}
+    {% include google-analytics.html %}
   </body>
 </html>
 

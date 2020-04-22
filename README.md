@@ -24,16 +24,18 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | - [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
 | [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
 | - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
-| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
 | - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
 | - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
+| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
+| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
+| - Kubernetes - OpenShift | In Progress |
 | [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - Scoop | [#490](https://github.com/layer5io/meshery/issues/490) |
+| - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
+| Raspberry Pi | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
@@ -41,7 +43,6 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 
 <div class="container flex">
   <div class="text editable">
-    <h2>Interoperate <strong>multiple</strong> service meshes</h2>
     <p>Service mesh adapters provision, configure, and manage their respective service meshes.
       <table class="adapters">
         <thead style="display:none;">

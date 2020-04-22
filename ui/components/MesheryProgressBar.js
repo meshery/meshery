@@ -1,15 +1,15 @@
-import { Component } from "react";
+import { Component } from 'react';
 import { withSnackbar } from 'notistack';
-import {connect} from 'react-redux';
-import { LinearProgress } from "@material-ui/core";
+import { connect } from 'react-redux';
+import { LinearProgress } from '@material-ui/core';
 
 class MesheryProgressBar extends Component {
     key = '';
-    
+
     shouldComponentUpdate(nextProps) {
       const { showProgress } = this.props;
       // if ((this.key !== '' && !showProgress) || (this.key === '' && showProgress)){
-      //     return true; 
+      //     return true;
       // }
       return !(showProgress === nextProps.showProgress);
       // return false;
@@ -17,8 +17,8 @@ class MesheryProgressBar extends Component {
 
     componentDidUpdate() {
       const { showProgress } = this.props;
-      if(showProgress){
-        this.key = this.props.enqueueSnackbar(<div style={{width: 250}}><LinearProgress /></div>,{
+      if (showProgress) {
+        this.key = this.props.enqueueSnackbar(<div style={{ width: 250 }}><LinearProgress /></div>, {
           variant: 'default',
           persist: true,
         });
@@ -32,10 +32,8 @@ class MesheryProgressBar extends Component {
     }
 }
 
-const mapStateToProps = state => {
-  return { showProgress: state.get('showProgress') };
-}
-  
+const mapStateToProps = (state) => ({ showProgress: state.get('showProgress') });
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
 )(withSnackbar(MesheryProgressBar));

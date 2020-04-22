@@ -1,5 +1,5 @@
 - title: Documentation
-  url: '#'
+  url: ''
   links:
     - title: Overview
       url: 'overview'
@@ -33,8 +33,7 @@
       url: mesh-management
     - title: Extensibility
       url: extensibility
-    - title: Releases
-      url: releases
+
 - title: Guides
   url: guides
   links:
@@ -42,3 +41,11 @@
     url: guides/multiple-adapters
   - title: Using mesheryctl
     url: guides/mesheryctl
+
+- title: Project
+  url: project
+  links:
+  - title: Releases
+    url: project/releases
+  - title: Vulnerabilities
+    url: project/security-vulnerabilities

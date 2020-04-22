@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
+import {
+  NoSsr, TextField, Grid, Button,
+} from '@material-ui/core';
 
-const promStyles = theme => ({
+const promStyles = (theme) => ({
   root: {
     padding: theme.spacing(5),
   },
@@ -14,12 +16,14 @@ const promStyles = theme => ({
   button: {
     marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
-  }
+  },
 });
 
 class PrometheusConfigComponent extends Component {
     render = () => {
-      const { classes, prometheusURL, urlError, handleChange, handlePrometheusConfigure } = this.props;
+      const {
+        classes, prometheusURL, urlError, handleChange, handlePrometheusConfigure,
+      } = this.props;
       return (
         <NoSsr>
           <React.Fragment>
@@ -51,7 +55,7 @@ class PrometheusConfigComponent extends Component {
                   onClick={handlePrometheusConfigure}
                   className={classes.button}
                 >
-                Submit
+                  Submit
                 </Button>
               </div>
             </div>
@@ -64,7 +68,7 @@ class PrometheusConfigComponent extends Component {
 PrometheusConfigComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   prometheusURL: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired, 
+  handleChange: PropTypes.func.isRequired,
   handlePrometheusConfigure: PropTypes.func.isRequired,
 };
 

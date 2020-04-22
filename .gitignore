@@ -50,3 +50,5 @@ Gemfile.lock
 
 **/.idea
 docs/Gemfile.lock
+
+yarn.lock

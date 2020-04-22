@@ -39,7 +39,7 @@ Available Commands:
   cleanup     Clean up Meshery
   help        Help about any command
   logs        Print logs
-  perf        Performance testing and benchmarking
+  perf        Performance Management: testing and benchmarking
   start       Start Meshery
   status      Check Meshery status
   stop        Stop Meshery
@@ -47,7 +47,7 @@ Available Commands:
   version     Version of mesheryctl
 
 Flags:
-      --config string   config file (default location is: $HOME/.meshery/config.yaml)
+      --config string   config file (default location is: $HOME/.meshery/` + dockerComposeFile + `)
   -h, --help            help for mesheryctl
   -t, --toggle          Help message for toggle
   -v, --version         Version of mesheryctl
@@ -71,6 +71,7 @@ var rootCmd = &cobra.Command{
 		b, _ := cmd.Flags().GetBool("version")
 		if b {
 			versionCmd.Run(nil, nil)
+			return
 		}
 		if len(args) == 0 {
 			log.Print(cmdDetails)
@@ -81,14 +82,12 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	fmt.Println("\n")
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Println("\n")
 }
 
 func init() {

@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
-    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config revive-lint.toml -formatter friendly ./...
+    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
     runs-on: ubuntu-latest
@@ -36,63 +36,70 @@ jobs:
       with:
         go-version: ${{ secrets.GO_VERSION }}
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
-#   static_check:
-#     name: Static check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all ./... # https://staticcheck.io/docs/checks
-#   vet:
-#     name: Vet
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
-#   sec_check:
-#     name: Security check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/securego/gosec/cmd/gosec; /home/runner/go/bin/gosec ./... # https://github.com/securego/gosec
-#   tests:
-#     # needs: [lint, error_check, static_check, vet, sec_check]
-#     name: Tests
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
+  static_check:
+    name: Static check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
+  vet_check:
+     name: Go Vet Check
+     runs-on: ubuntu-latest
+     steps:
+     - name: Check out code
+       uses: actions/checkout@master
+       with:
+         fetch-depth: 1
+     - name: Setup Go
+       uses: actions/setup-go@v1
+       with:
+         go-version: ${{ secrets.GO_VERSION }}
+     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
+  security_check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      GOPROXY: direct
+      GOSUMDB: off
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./... -exclude=G301,G304,G107
+  tests:
+    needs: [lint, error_check, static_check, vet_check, security_check]
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Meshery backend build check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -106,7 +113,7 @@ jobs:
   build-ui:
     name: Meshery UI build check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -119,11 +126,25 @@ jobs:
         cd ui
         npm i
         npm run build && npm run export
+  lint-UI:
+    name: Meshery UI Lint check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - run: |
+        cd ui
+        npm i
+        npm test
   build_release:
     name: MesheryCTL Build & Release
     runs-on: macOS-latest
-    # runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -150,7 +171,7 @@ jobs:
   docker:
     name: Docker build and push
     runs-on: ubuntu-latest
-    # needs: [build, build_release]
+    needs: [build_release]
     steps:
     - name: Check out code
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
@@ -182,4 +203,3 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-    

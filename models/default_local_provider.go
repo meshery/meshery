@@ -54,7 +54,6 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	l.issueSession(w, r, fromMiddleWare)
-	return
 }
 
 // issueSession issues a cookie session after successful login
@@ -152,7 +151,7 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 	return l.ResultPersister.GetResult(resultID)
 }
 
-// PublishResults - publishes results to the provider backend syncronously
+// PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {

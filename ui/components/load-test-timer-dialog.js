@@ -7,8 +7,10 @@ if (typeof window !== 'undefined') {
 }
 
 class LoadTestTimerDialog extends React.Component {
-  render () {
-    const { countDownComplete, t, container, open } = this.props;
+  render() {
+    const {
+      countDownComplete, t, container, open,
+    } = this.props;
     if (!open) {
       return '';
     }
@@ -16,16 +18,17 @@ class LoadTestTimerDialog extends React.Component {
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
     } catch (ex) {
+      console.error('Unexpected Error');
     }
     switch (t.substring(t.length - 1, t.length).toLowerCase()) {
-    case 'h':
-      dur = tNum * 60 * 60;
-      break;
-    case 'm':
-      dur = tNum * 60;
-      break;
-    default:
-      dur = tNum;
+      case 'h':
+        dur = tNum * 60 * 60;
+        break;
+      case 'm':
+        dur = tNum * 60;
+        break;
+      default:
+        dur = tNum;
     }
     return (
       <NoSsr>
@@ -53,10 +56,12 @@ class LoadTestTimerDialog extends React.Component {
         <div style={{
           marginLeft: 'auto',
           marginRight: 'auto',
-          width: '400px'
+          width: '400px',
           // height: '400',
-        }}>
-          <ReactCountdownClock seconds={dur}
+        }}
+        >
+          <ReactCountdownClock
+            seconds={dur}
             color="#667C89"
             alpha={0.9}
             size={400}
