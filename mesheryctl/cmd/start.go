@@ -52,11 +52,17 @@ var startCmd = &cobra.Command{
 			}
 		}
 
+		//////// FLAGS
 		// Control whether to pull for new Meshery container images
 		if updateFlag {
 			log.Info("Skipping Meshery update...")
 		} else {
 			updateMesheryContainers()
+		}
+
+		// Reset Meshery config file to default settings
+		if resetFlag {
+			resetMesheryConfig()
 		}
 
 		log.Info("Starting Meshery...")
@@ -143,5 +149,6 @@ var startCmd = &cobra.Command{
 
 func init() {
 	startCmd.Flags().BoolVarP(&updateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(startCmd)
 }
