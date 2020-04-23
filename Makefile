@@ -41,10 +41,11 @@ docker-run-cloud:
 #  Meshery Cloud for user authentication.
 # SAAS_BASE_URL="http://mesherylocal.layer5.io:9876"
 	# SAAS_BASE_URL="https://staging-meshery.layer5.io"
+	# SAAS_BASE_URL="http://localhost:9876"
 
 run-local-cloud:
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
-	SAAS_BASE_URL="http://localhost:9876" \
+	SAAS_BASE_URL="https://staging-meshery.layer5.io" \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \

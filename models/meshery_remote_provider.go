@@ -125,16 +125,6 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenString string, sess *Prefer
 	}
 }
 
-// setVersionCookie - A helper function that sets the provider version
-func (l *MesheryRemoteProvider) setVersionCookie(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "provider_version",
-		Value:    l.ProviderVersion,
-		Path:     "/",
-		HttpOnly: true,
-	})
-}
-
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
 func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
@@ -149,8 +139,7 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 			Path:     "/",
 			HttpOnly: true,
 		})
-		l.setVersionCookie(w, r)
-		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu)), http.StatusFound)
+		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.URLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
 
@@ -446,6 +435,7 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 // TokenHandler - specific to remote auth
 func (l *MesheryRemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
+	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
 		Name:     tokenName,
 		Value:    string(tokenString),
