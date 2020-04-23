@@ -1,5 +1,9 @@
 ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008"
 
+MESHERY_CLOUD_LOCAL=http://mesherylocal.layer5.io:9876
+MESHERY_CLOUD_DEV=http://localhost:9876
+MESHERY_CLOUD_PROD=https://meshery.layer5.io
+MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
 
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
@@ -18,7 +22,7 @@ docker-run-local-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
-	-e SAAS_BASE_URL="http://mesherylocal.layer5.io:9876" \
+	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-p 9081:8080 \
@@ -29,7 +33,7 @@ docker-run-local-cloud:
 docker-run-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e SAAS_BASE_URL="https://meshery.layer5.io" \
+	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-v meshery-config:/home/appuser/.meshery/config \
@@ -39,13 +43,10 @@ docker-run-cloud:
 
 # Runs Meshery on your local machine and points to locally-running  
 #  Meshery Cloud for user authentication.
-# SAAS_BASE_URL="http://mesherylocal.layer5.io:9876"
-	# SAAS_BASE_URL="https://staging-meshery.layer5.io"
-	# SAAS_BASE_URL="http://localhost:9876"
 
 run-local-cloud:
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
-	SAAS_BASE_URL="https://staging-meshery.layer5.io" \
+	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -56,7 +57,7 @@ run-local-cloud:
 #  and points to remote Meshery Cloud for user authentication.
 run-local:
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
-	SAAS_BASE_URL="https://meshery.layer5.io" \
+	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
