@@ -27,6 +27,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	skipUpdateFlag bool
+)
+
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -46,6 +50,14 @@ var startCmd = &cobra.Command{
 			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
 				log.Fatal("start cmd: ", err)
 			}
+		}
+
+		//////// FLAGS
+		// Control whether to pull for new Meshery container images
+		if skipUpdateFlag {
+			log.Info("Skipping Meshery update...")
+		} else {
+			updateMesheryContainers()
 		}
 
 		// Reset Meshery config file to default settings
@@ -136,6 +148,7 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	rootCmd.AddCommand(startCmd)
 }
