@@ -29,7 +29,6 @@ require (
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.6.3
 	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
-	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
