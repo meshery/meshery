@@ -11,7 +11,6 @@ import (
 
 	"encoding/json"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -19,7 +18,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, _ models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, _ models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return

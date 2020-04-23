@@ -14,7 +14,6 @@ import (
 
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -24,7 +23,7 @@ import (
 )
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
-func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -106,7 +105,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return

@@ -6,14 +6,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // LoadTestPrefencesHandler is used for persisting load test preferences
-func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return

@@ -6,14 +6,13 @@ import (
 
 	"encoding/json"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -27,7 +26,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessi
 }
 
 // AnonymousStatsHandler updates anonymous stats for user
-func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
