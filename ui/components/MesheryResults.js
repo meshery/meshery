@@ -293,8 +293,11 @@ class MesheryResults extends Component {
         },
 
         onTableChange: (action, tableState) => {
-                        const sortInfo = tableState.announceText.split(' : '); 
-              let order = 'asc';
+          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[]; 
+          let order='';
+          if(tableState.activeColumn){
+            order = `${columns[tableState.activeColumn].name} desc`;
+          }
 
           switch (action) {
             case 'changePage':
@@ -316,12 +319,12 @@ class MesheryResults extends Component {
             case 'sort':
 
               if (sortInfo.length == 2) {
-                if (sortInfo[1] === 'descending') {
-                  order = 'desc';
+                if (sortInfo[1] === 'ascending') {
+                  order = `${columns[tableState.activeColumn].name} asc`;
                 }
               }
-              if (order !== sortOrder) {
-                self.fetchResults(self.state.page, self.state.pageSize, self.state.search, `${columns[tableState.activeColumn].name} ${order}`);
+              if (order !== this.state.sortOrder) {
+                self.fetchResults(self.state.page, self.state.pageSize, self.state.search, order);
               }
               break;
           }
