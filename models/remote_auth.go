@@ -117,7 +117,7 @@ func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.
 	}
 	err = json.Unmarshal(tokenString, &token)
 	if err != nil {
-		logrus.Errorf("token decode error : %s", err.Error())
+		logrus.Errorf("token extraction error : %s", err.Error())
 		return nil, err
 	}
 	return &token, nil
@@ -127,22 +127,28 @@ func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.
 func (l *MesheryRemoteProvider) UpdateJWKs() error {
 	resp, err := http.Get(l.SaaSBaseURL + "/keys")
 	if err != nil {
+		logrus.Errorf("error fetching keys from Saas : %v", err.Error())
 		return err
 	}
 	defer SafeClose(resp.Body)
-	if err != nil {
-		return err
-	}
 	jsonDataFromHTTP, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		logrus.Errorf("error reading keys response as JSON : %v", err.Error())
 		return err
 	}
 	jwksJSON := map[string][]map[string]string{}
 	if err := json.Unmarshal([]byte(jsonDataFromHTTP), &jwksJSON); err != nil {
+		logrus.Errorf("error converting JSON response to map : %v", err.Error())
 		return err
 	}
 
 	jwks := jwksJSON["keys"]
+
+	if jwks == nil {
+		err = fmt.Errorf("Key response invalid")
+		logrus.Errorf("Key response invalid : %v", err.Error())
+		return err
+	}
 
 	l.Keys = jwks
 
@@ -174,7 +180,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	// decode the base64 bytes for n
 	nb, err := base64.RawURLEncoding.DecodeString(jwk["n"])
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Errorf("error decoding JWK, %v", err.Error())
 		return nil, err
 	}
 
@@ -185,7 +191,8 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 		e = 65537
 	} else {
 		// need to decode "e" as a big-endian int
-		logrus.Fatal("need to deocde e:", jwk["e"])
+		err = fmt.Errorf("error decoding JWK as big-endian int")
+		logrus.Errorf("%v", err.Error())
 		return nil, err
 	}
 
@@ -196,7 +203,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	der, err := x509.MarshalPKIXPublicKey(pk)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Errorf("error mashalling PKIX, :", err.Error())
 		return nil, err
 	}
 
@@ -207,6 +214,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	var out bytes.Buffer
 	if err := pem.Encode(&out, block); err != nil {
+		logrus.Errorf("error encoding jwk to pem, :", err.Error())
 		return nil, err
 	}
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
@@ -216,23 +224,24 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
 	dtoken, err := l.DecodeTokenData(tokenString)
 	if err != nil {
-		logrus.Error("E1")
+		logrus.Error("error decoding token : %v", err.Error())
 		return nil, err
 	}
 	tokenString = dtoken.AccessToken
 	tokenUP, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
-		logrus.Error("2")
+		logrus.Error("error parsing token (unverified) : %v", err.Error())
 		return nil, err
 	}
 	kid := tokenUP.Header["kid"].(string)
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
-		logrus.Error("3")
+		logrus.Error("error fetching JWK corresponding to token : %v", err.Error())
 		return nil, err
 	}
 	key, err := l.GenerateKey(keyJSON)
 	if err != nil {
+		logrus.Error("error generating Key from JWK : %v", err.Error())
 		return nil, err
 	}
 
@@ -241,6 +250,7 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 	})
 
 	if err != nil {
+		logrus.Errorf("error validating token : %v", err.Error())
 		return nil, err
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)

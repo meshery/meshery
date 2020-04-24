@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -108,9 +109,13 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		logrus.Debugf("Adapter already configured...")
 		return meshAdapters, nil
 	}
-
+	if prefObj.K8SConfig == nil {
+		err := fmt.Errorf("K8s config is nil")
+		logrus.Error(err)
+		return nil, err
+	}
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
-	if err != nil {
+	if err != nil || prefObj.K8SConfig == nil {
 		err = errors.Wrapf(err, "Error creating a mesh client.")
 		logrus.Error(err)
 		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
