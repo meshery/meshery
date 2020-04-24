@@ -228,12 +228,23 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 		return nil, err
 	}
 	tokenString = dtoken.AccessToken
-	tokenUP, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	tokenUP, x, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
 		logrus.Error("error parsing token (unverified) : %v", err.Error())
 		return nil, err
 	}
 	kid := tokenUP.Header["kid"].(string)
+
+	// print "issued at time"
+	var jtk map[string]interface{}
+	t, _ := base64.RawStdEncoding.DecodeString(x[1])
+	json.Unmarshal(t, &jtk)
+	iat := int64(jtk["iat"].(float64))
+	tm := time.Unix(iat, 0)
+
+	logrus.Debugf("Token issued at : %v %v", tm, iat)
+	logrus.Debugf("Current system time : %v", time.Now())
+
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
 		logrus.Error("error fetching JWK corresponding to token : %v", err.Error())
