@@ -21,13 +21,14 @@ class UserPreference extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      anonymousStats: false,
-      perfResultStats: false,
+      anonymousStats: props.anonymousStats,
+      perfResultStats: props.perfResultStats,
     };
   }
 
   handleToggle = (name) => () => {
     const self = this;
+
     if (name == 'anonymousUsageStats') {
       // val=anonymousStats;
       self.setState((state) => ({ anonymousStats: !state.anonymousStats }));
@@ -67,7 +68,7 @@ class UserPreference extends React.Component {
     } else {
       val = perfResultStats;
     }
-    const params = `${encodeURIComponent(name)}=${encodeURIComponent(val)}`;
+    const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
     // console.log(`data to be submitted for load test: ${params}`);
     this.props.updateProgress({ showProgress: true });
     // let self = this;
