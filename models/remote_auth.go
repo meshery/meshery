@@ -235,15 +235,24 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 	}
 	kid := tokenUP.Header["kid"].(string)
 
-	// print "issued at time"
 	var jtk map[string]interface{}
 	t, _ := base64.RawStdEncoding.DecodeString(x[1])
 	json.Unmarshal(t, &jtk)
-	iat := int64(jtk["iat"].(float64))
-	tm := time.Unix(iat, 0)
 
-	logrus.Debugf("Token issued at : %v %v", tm, iat)
-	logrus.Debugf("Current system time : %v", time.Now())
+	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
+	// we should rather configure hydra auth server to remove nbf field in the token
+	exp := int64(jtk["exp"].(float64))
+	if jwt.TimeFunc().Unix() > exp {
+		err := fmt.Errorf("Token has expired")
+		logrus.Errorf("error validating token : %v", err.Error())
+		return nil, err
+	}
+
+	// Enable only for Debugging
+	// iat := int64(jtk["iat"].(float64))
+	// tm := time.Unix(iat, 0)
+	// logrus.Debugf("Token issued at : %v %v", tm, iat)
+	// logrus.Debugf("Current system time : %v", time.Now())
 
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
@@ -256,7 +265,11 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 		return nil, err
 	}
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	// Verifies the signature
+	tokenParser := jwt.Parser{
+		SkipClaimsValidation: true,
+	}
+	token, err := tokenParser.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 
