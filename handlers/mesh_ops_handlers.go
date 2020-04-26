@@ -110,7 +110,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		return meshAdapters, nil
 	}
 	if prefObj.K8SConfig == nil {
-		err := fmt.Errorf("K8s config is nil")
+		err := fmt.Errorf("k8s config is nil")
 		logrus.Error(err)
 		return nil, err
 	}

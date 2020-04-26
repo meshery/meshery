@@ -198,7 +198,7 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
 	if err != nil {
-		err = fmt.Error("Session not found")
+		err = fmt.Errorf("session not found")
 		logrus.Infof(err.Error())
 		return err
 	}

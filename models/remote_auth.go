@@ -145,7 +145,7 @@ func (l *MesheryRemoteProvider) UpdateJWKs() error {
 	jwks := jwksJSON["keys"]
 
 	if jwks == nil {
-		err = fmt.Errorf("Key response invalid")
+		err = fmt.Errorf("key response invalid")
 		logrus.Errorf("Key response invalid : %v", err.Error())
 		return err
 	}
@@ -203,7 +203,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	der, err := x509.MarshalPKIXPublicKey(pk)
 	if err != nil {
-		logrus.Fatalf("error mashalling PKIX, :", err.Error())
+		logrus.Fatalf("error mashalling PKIX, : %v", err.Error())
 		return nil, err
 	}
 
@@ -214,7 +214,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	var out bytes.Buffer
 	if err := pem.Encode(&out, block); err != nil {
-		logrus.Fatalf("error encoding jwk to pem, :", err.Error())
+		logrus.Fatalf("error encoding jwk to pem, : %v", err.Error())
 		return nil, err
 	}
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
@@ -237,25 +237,28 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 
 	var jtk map[string]interface{}
 	t, _ := base64.RawStdEncoding.DecodeString(x[1])
-	json.Unmarshal(t, &jtk)
+	if err := json.Unmarshal(t, &jtk); err != nil {
+		logrus.Fatalf("error parsing token (unverified) : %v", err.Error())
+		return nil, err
+	}
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
 	exp := int64(jtk["exp"].(float64))
 	if jwt.TimeFunc().Unix() > exp {
-		err := fmt.Errorf("Token has expired")
+		err := fmt.Errorf("token has expired")
 		logrus.Errorf("error validating token : %v", err.Error())
 		return nil, err
 	}
 
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
-		logrus.Error("error fetching JWK corresponding to token : %v", err.Error())
+		logrus.Errorf("error fetching JWK corresponding to token : %v", err.Error())
 		return nil, err
 	}
 	key, err := l.GenerateKey(keyJSON)
 	if err != nil {
-		logrus.Error("error generating Key from JWK : %v", err.Error())
+		logrus.Errorf("error generating Key from JWK : %v", err.Error())
 		return nil, err
 	}
 
