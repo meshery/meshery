@@ -180,7 +180,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	// decode the base64 bytes for n
 	nb, err := base64.RawURLEncoding.DecodeString(jwk["n"])
 	if err != nil {
-		logrus.Errorf("error decoding JWK, %v", err.Error())
+		logrus.Fatalf("error decoding JWK, %v", err.Error())
 		return nil, err
 	}
 
@@ -192,7 +192,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	} else {
 		// need to decode "e" as a big-endian int
 		err = fmt.Errorf("error decoding JWK as big-endian int")
-		logrus.Errorf("%v", err.Error())
+		logrus.Fatalf("%v", err.Error())
 		return nil, err
 	}
 
@@ -203,7 +203,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	der, err := x509.MarshalPKIXPublicKey(pk)
 	if err != nil {
-		logrus.Errorf("error mashalling PKIX, :", err.Error())
+		logrus.Fatalf("error mashalling PKIX, :", err.Error())
 		return nil, err
 	}
 
@@ -214,7 +214,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 
 	var out bytes.Buffer
 	if err := pem.Encode(&out, block); err != nil {
-		logrus.Errorf("error encoding jwk to pem, :", err.Error())
+		logrus.Fatalf("error encoding jwk to pem, :", err.Error())
 		return nil, err
 	}
 	return jwt.ParseRSAPublicKeyFromPEM(out.Bytes())
@@ -224,13 +224,13 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
 	dtoken, err := l.DecodeTokenData(tokenString)
 	if err != nil {
-		logrus.Error("error decoding token : %v", err.Error())
+		logrus.Fatalf("error decoding token : %v", err.Error())
 		return nil, err
 	}
 	tokenString = dtoken.AccessToken
 	tokenUP, x, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
-		logrus.Error("error parsing token (unverified) : %v", err.Error())
+		logrus.Fatalf("error parsing token (unverified) : %v", err.Error())
 		return nil, err
 	}
 	kid := tokenUP.Header["kid"].(string)
@@ -247,12 +247,6 @@ func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims,
 		logrus.Errorf("error validating token : %v", err.Error())
 		return nil, err
 	}
-
-	// Enable only for Debugging
-	// iat := int64(jtk["iat"].(float64))
-	// tm := time.Unix(iat, 0)
-	// logrus.Debugf("Token issued at : %v %v", tm, iat)
-	// logrus.Debugf("Current system time : %v", time.Now())
 
 	keyJSON, err := l.GetJWK(kid)
 	if err != nil {
