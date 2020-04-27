@@ -216,7 +216,7 @@ class MesheryPerformanceComponent extends React.Component {
             result,
           },
         });
-        self.setState({ result, testUUID: self.generateUUID() });
+        self.setState({ testName: result.name, result, testUUID: self.generateUUID() });
       }
       self.closeEventStream();
       self.setState({ blockRunTest: false, timerDialogOpen: false });
