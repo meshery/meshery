@@ -198,21 +198,21 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
 	if err != nil {
-		err = errors.Wrap(err, "Error: unable to get session")
-		logrus.Error(err)
+		err = fmt.Errorf("session not found")
+		logrus.Infof(err.Error())
 		return err
 	}
 	_, err = l.VerifyToken(ts)
 	if err != nil {
-		logrus.Infof("Error: parsing token, trying refreshing the token ")
+		logrus.Infof("Token validation error : %v", err.Error())
 		newts, err := l.refreshToken(ts)
 		if err != nil {
-			logrus.Errorf("Error refreshing token, %v", err.Error())
+			logrus.Errorf("Token Refresh failed : %v", err.Error())
 			return err
 		}
 		_, err = l.VerifyToken(newts)
 		if err != nil {
-			logrus.Errorf("Error refreshing token, %v", err.Error())
+			logrus.Errorf("Validation of refreshed token failed : %v", err.Error())
 			return err
 		}
 	}
