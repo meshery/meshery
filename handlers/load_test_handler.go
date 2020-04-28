@@ -39,7 +39,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	benchMark := &models.BenchmarkSpec{}
+	benchMark := &models.PerformanceSpec{}
 	if err := yaml.Unmarshal(body, benchMark); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)

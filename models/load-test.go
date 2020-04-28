@@ -87,8 +87,8 @@ type MesheryResult struct {
 }
 
 // ConvertToSpec - converts meshery result to SMP
-func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
-	b := &BenchmarkSpec{
+func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
+	b := &PerformanceSpec{
 		Env:     &Environment{},
 		Client:  &MeshClientConfig{},
 		Metrics: &Metrics{},
