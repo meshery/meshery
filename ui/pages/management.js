@@ -12,7 +12,6 @@ class Manage extends React.Component {
   }
   constructor(props) {
     super(props);
-    props.query = props.query || {};
     if (!props.query.adapter) {
       const urlParams = new URLSearchParams(window.location.search);
       this.props.query.adapter = urlParams.get("adapter");
