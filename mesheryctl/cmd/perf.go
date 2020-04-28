@@ -16,20 +16,19 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
 	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"strings"
+	"os"
+	"path"
 	"time"
-
-	models "github.com/layer5io/meshery/models"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -41,7 +40,7 @@ var (
 	testDuration       = ""
 	loadGenerator      = ""
 	filePath           = ""
-	testCookie         = ""
+	credPath           = ""
 )
 
 var perfDetails = `
@@ -69,6 +68,9 @@ Example usage of perf subcommand :
  mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
+const tokenName = "token"
+const providerName = "meshery-provider"
+
 var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
@@ -82,6 +84,52 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
+func AddAuthDetails(req *http.Request, filename string) error {
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Printf("File read failed : %v", err.Error())
+		return err
+	}
+	var tokenObj map[string]string
+	json.Unmarshal(file, &tokenObj)
+	req.AddCookie(&http.Cookie{
+		Name:     tokenName,
+		Value:    tokenObj[tokenName],
+		HttpOnly: true,
+	})
+	req.AddCookie(&http.Cookie{
+		Name:     providerName,
+		Value:    tokenObj[providerName],
+		HttpOnly: true,
+	})
+	return nil
+}
+
+func UpdateAuthDetails(filename string) error {
+	const mesheryAuthToken string = "http://localhost:9081/api/gettoken"
+	req, _ := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
+	AddAuthDetails(req, filename)
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+
+	data, _ := ioutil.ReadAll(resp.Body)
+	log.Printf("%v", string(data))
+	ioutil.WriteFile(filename, data, os.ModePerm)
+	return nil
+}
+
+func defaultAuthConfig() string {
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("[ERROR] Cannot determine location of $HOME")
+	}
+	mesheryFolder = path.Join(home, mesheryFolder)
+	return path.Join(mesheryFolder, "auth.json")
+}
+
 // perfCmd represents the Performance command
 var perfCmd = &cobra.Command{
 	Use:   "perf",
@@ -92,28 +140,28 @@ var perfCmd = &cobra.Command{
 		preReqCheck()
 
 		if len(args) == 0 {
-			log.Print(perfDetails)
-			return
+			// log.Print(perfDetails)
+			// return
 		}
 		if filePath != "" {
-			var t models.PerformanceSpec
-			err := yaml.Unmarshal([]byte(filePath), &t)
+			// var t models.PerformanceSpec
+			// err := yaml.Unmarshal([]byte(filePath), &t)
 
-			if err != nil {
-				log.Errorf("Error: Invalid yaml file.\n%v", err)
-			}
-			if testDuration == "" {
-				testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
-			}
-			if testURL == "" {
-				testURL = t.EndpointURL
-			}
-			if concurrentRequests == "" {
-				concurrentRequests = fmt.Sprintf("%d", t.Client.Connections)
-			}
-			if qps == "" {
-				qps = fmt.Sprintf("%f", t.Client.Rps)
-			}
+			// if err != nil {
+			// 	log.Errorf("Error: Invalid yaml file.\n%v", err)
+			// }
+			// if testDuration == "" {
+			// 	testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
+			// }
+			// if testURL == "" {
+			// 	testURL = t.EndpointURL
+			// }
+			// if concurrentRequests == "" {
+			// 	concurrentRequests = fmt.Sprintf("%d", t.Client.Connections)
+			// }
+			// if qps == "" {
+			// 	qps = fmt.Sprintf("%f", t.Client.Rps)
+			// }
 		}
 		if len(testName) <= 0 {
 			log.Print("Test Name not provided")
@@ -122,6 +170,7 @@ var perfCmd = &cobra.Command{
 		}
 
 		const mesheryURL string = "http://localhost:9081/api/load-test-smps?"
+
 		postData := ""
 
 		startTime := time.Now()
@@ -161,10 +210,8 @@ var perfCmd = &cobra.Command{
 			log.Fatal("Error Message:\n", err)
 			return
 		}
-		cookieConf := strings.SplitN(testCookie, "=", 2)
-		cookieName := cookieConf[0]
-		cookieValue := cookieConf[1]
-		req.AddCookie(&http.Cookie{Name: cookieName, Value: cookieValue})
+		AddAuthDetails(req, credPath)
+
 		q := req.URL.Query()
 		q.Add("name", testName)
 		q.Add("loadGenerator", loadGenerator)
@@ -175,6 +222,7 @@ var perfCmd = &cobra.Command{
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
+		log.Printf(resp.Status)
 		if err != nil {
 			log.Print("\nFailed to make request to URL:", testURL)
 			log.Fatal("Error Message:\n", err)
@@ -189,6 +237,8 @@ var perfCmd = &cobra.Command{
 				break
 			}
 		}
+
+		UpdateAuthDetails(credPath)
 		println("\nTest Completed Successfully!")
 	},
 }
@@ -200,7 +250,7 @@ func init() {
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(required) Number of Parallel Requests")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
+	perfCmd.Flags().StringVar(&credPath, "cred", defaultAuthConfig(), "(optional) Path to meshery auth config")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	perfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration")
 	rootCmd.AddCommand(perfCmd)
