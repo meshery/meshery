@@ -5,15 +5,18 @@ description: How to Upgrade mesheryctl
 permalink: guides/upgrade
 type: guide
 ---
+Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI.
 
+## Upgrade Meshery Server, Adapters, and UI
+All three of these components are released as part of the same set of artifacts. In order to upgrade Meshery server, UI and adapters, you may execute the following command:
 
-**Upgrade Meshery server**
 ```
 mesheryctl upgrade
 ```
 
+## Upgrade Meshery Client (mesheryctl)
 
-**Upgrading with Homebrew**
+### Upgrading mesheryctl using Homebrew
 
 To upgrade `mesheryctl`, execute the following command:
 
@@ -39,7 +42,7 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ```
 
 
-**Upgrading with Bash**
+### Upgrading mesheryctl using Bash
 
 Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
@@ -47,7 +50,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 curl -L https://git.io/meshery | bash -
 ```
 
-**Upgrading with Scoop**
+### Upgrading mesheryctl using Scoop
 
 To upgrade `mesheryctl`, execute the following command:
 
