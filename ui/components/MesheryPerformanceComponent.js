@@ -99,7 +99,6 @@ class MesheryPerformanceComponent extends React.Component {
       blockRunTest: false,
       urlError: false,
       tError: false,
-      testNameError: false,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -111,9 +110,6 @@ class MesheryPerformanceComponent extends React.Component {
   handleChange = (name) => (event) => {
     if (name === 'url' && event.target.value !== '') {
       this.setState({ urlError: false });
-    }
-    if (name === 'testName`' && event.target.value !== '') {
-      this.setState({ testNameError: false });
     }
     if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
       || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
@@ -131,13 +127,8 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
 
-    // if (testName === ''){
-    //   this.setState({testNameError: true})
-    //   return;
-    // }
-
-    let err = false; let
-      tNum = 0;
+    let err = false; 
+    let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
     } catch (ex) {
@@ -163,6 +154,7 @@ class MesheryPerformanceComponent extends React.Component {
       const mesh = meshName === '' || meshName === 'None' ? 'No mesh' : meshName;
       computedTestName = `${mesh}_${(new Date()).getTime()}`;
     }
+    this.setState({testName: computedTestName});
 
     const t1 = t.substring(0, t.length - 1);
     const dur = t.substring(t.length - 1, t.length).toLowerCase();
@@ -216,7 +208,7 @@ class MesheryPerformanceComponent extends React.Component {
             result,
           },
         });
-        self.setState({ testName: result.name, result, testUUID: self.generateUUID() });
+        self.setState({ result, testUUID: self.generateUUID() });
       }
       self.closeEventStream();
       self.setState({ blockRunTest: false, timerDialogOpen: false });
@@ -376,7 +368,7 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const {
-      timerDialogOpen, blockRunTest, qps, url, testName, testNameError, meshName, t, c, result, loadGenerator,
+      timerDialogOpen, blockRunTest, qps, url, testName, meshName, t, c, result, loadGenerator,
       urlError, tError, testUUID, selectedMesh, availableAdapters,
     } = this.state;
     let staticPrometheusBoardConfig;
@@ -456,7 +448,6 @@ class MesheryPerformanceComponent extends React.Component {
                     autoFocus
                     fullWidth
                     value={testName}
-                    error={testNameError}
                     margin="normal"
                     variant="outlined"
                     onChange={this.handleChange('testName')}
