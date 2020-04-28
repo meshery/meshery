@@ -16,16 +16,20 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 
+	models "github.com/layer5io/meshery/models"
+
 	log "github.com/sirupsen/logrus"
 
-	"github.com/spf13/cobra"
 	"github.com/asaskevich/govalidator"
+	"github.com/spf13/cobra"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -36,6 +40,7 @@ var (
 	concurrentRequests = ""
 	testDuration       = ""
 	loadGenerator      = ""
+	filePath           = ""
 	testCookie         = ""
 )
 
@@ -54,8 +59,10 @@ Available Flags for Performance Command:
   cookie[string]            	(required) Choice of the cloud server provider (Default "Default Local Provider")
   concurrent-requests[string]   (required) Number of paraller requests to be used (Default "1")
   qps[string]                   (required) Queries per second (Default "0")
+  file[string]					(optional) file containing SMPS-compatible test configuration
   help                          Help for perf subcommand
 
+url,duration,concurrent-requests,qps are optional as flag inputs if specified through an SMPS compatible yaml file
 Example usage of Performance Sub-command :-
  mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --cookie "meshery-provider=None"
 `
@@ -86,7 +93,26 @@ var perfCmd = &cobra.Command{
 			log.Print(perfDetails)
 			return
 		}
+		if filePath != "" {
+			var t models.PerformanceSpec
+			err := yaml.Unmarshal([]byte(filePath), &t)
 
+			if err != nil {
+				log.Errorf("Error: Invalid yaml file.\n%v", err)
+			}
+			if testDuration == "" {
+				testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
+			}
+			if testURL == "" {
+				testURL = t.EndpointURL
+			}
+			if concurrentRequests == "" {
+				concurrentRequests = fmt.Sprintf("%d", t.Client.Connections)
+			}
+			if qps == "" {
+				qps = fmt.Sprintf("%f", t.Client.Rps)
+			}
+		}
 		if len(testName) <= 0 {
 			log.Print("Test Name not provided")
 			testName = StringWithCharset(8)
@@ -118,11 +144,10 @@ var perfCmd = &cobra.Command{
 		// Methord to check if the entered Test URL is valid or not
 		var validURL bool = govalidator.IsURL(testURL)
 
-		if (!validURL) {
+		if !validURL {
 			log.Fatal("\nError: Please enter a valid test URL")
 			return
 		}
-
 
 		postData = postData + "\nclient:"
 		postData = postData + "\n connections: " + concurrentRequests
@@ -175,5 +200,6 @@ func init() {
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
+	perfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration")
 	rootCmd.AddCommand(perfCmd)
 }
