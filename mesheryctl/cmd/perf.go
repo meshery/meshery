@@ -51,20 +51,22 @@ Usage:
   mesheryctl perf --[flags]
 
 Available Flags for Performance Command:
-  name[string]                  (optional) Name for the Test, if not provided random name will be used.
-  url[string]                   (required) URL Endpoint at which test is to be performed
-  duration[string]              (required) Duration for which test should be performed. See standard notation https://golang.org/pkg/time/#ParseDuration
-  load-generator[string]        (optional) Load-Generator to be used to perform test.(fortio/wrk2) (Default "fortio")
-  mesh[string]              	(optional) Name of the service mesh to be tested.
-  cookie[string]            	(required) Choice of the cloud server provider (Default "Default Local Provider")
-  concurrent-requests[string]   (required) Number of paraller requests to be used (Default "1")
-  qps[string]                   (required) Queries per second (Default "0")
-  file[string]					(optional) file containing SMPS-compatible test configuration
+  name[string]                  (optional) A short descriptor to serve as reference for this test. If not provided, a random name will be generate.
+  url[string]                   (required) URL endpoint to send requests.
+  duration[string]              (required) Length of time to perform test (e.g 30s, 15m, 1hr). See standard notation https://golang.org/pkg/time/#ParseDuration
+  load-generator[string]        (optional) Name of load generator to be used to perform test (default: "fortio")
+  mesh[string]              	(optional) Name of the service mesh to be tested (default: "None")
+  provider[string]            	(required) Choice of Provider (default: "Meshery")
+  concurrent-requests[string]   (required) Number of parallel requests to be sent (default: "1")
+  qps[string]                   (required) Queries per second (default: "0")
+  file[string]			(optional) file containing SMPS-compatible test configuration. See https://github.com/layer5io/service-mesh-performance-specification
   help                          Help for perf subcommand
 
-url,duration,concurrent-requests,qps are optional as flag inputs if specified through an SMPS compatible yaml file
-Example usage of Performance Sub-command :-
- mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --cookie "meshery-provider=None"
+url, duration, concurrent-requests, and qps can be considered optional flags if specified through an SMPS compatible yaml file using --file
+
+Example usage of perf subcommand :
+
+ mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
 var seededRand = rand.New(
