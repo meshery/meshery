@@ -12,6 +12,7 @@ import (
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
+
 		var providerName string
 		var provider models.Provider
 		ck, err := req.Cookie(h.config.ProviderCookieName)
