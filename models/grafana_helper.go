@@ -58,7 +58,7 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 		BaseURL = strings.Trim(BaseURL, "/")
 	}
 	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
-	if _, err := c.GetActualOrg(); err != nil {
+	if _, err := c.GetActualOrg(ctx); err != nil {
 		err = errors.Wrapf(err, "connection to grafana failed")
 		logrus.Error(err)
 		return err
@@ -103,7 +103,7 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 	}
 	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
 
-	boardLinks, err := c.SearchDashboards(dashboardSearch, false)
+	boardLinks, err := c.SearchDashboards(ctx, dashboardSearch, false)
 	if err != nil {
 		logrus.Error(errors.Wrapf(err, "error getting boards from grafana"))
 		return nil, errors.New("unable to fetch boards from grafana")
@@ -113,13 +113,14 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 		if link.Type != "dash-db" {
 			continue
 		}
-		board, _, err := c.GetDashboard(link.URI)
+		// TODO Need to do the unitest for Grafana helper
+		board, _, err := c.GetDashboardByUID(ctx, link.UID)
 		if err != nil {
 			err1 := fmt.Errorf("error getting board from grafana for URI - %s", link.URI)
 			logrus.Error(errors.Wrapf(err, err1.Error()))
 			return nil, err1
 		}
-		grafBoard, err := g.ProcessBoard(c, &board, &link)
+		grafBoard, err := g.ProcessBoard(ctx, c, &board, &link)
 		if err != nil {
 			return nil, err
 		}
@@ -129,10 +130,10 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 }
 
 // ProcessBoard accepts raw Grafana board and returns a processed GrafanaBoard to be used in Meshery
-func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.FoundBoard) (*GrafanaBoard, error) {
+func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *sdk.Board, link *sdk.FoundBoard) (*GrafanaBoard, error) {
 	var orgID uint
 	if !g.promMode {
-		org, err := c.GetActualOrg()
+		org, err := c.GetActualOrg(ctx)
 		if err != nil {
 			err = errors.Wrapf(err, "connection to grafana failed")
 			logrus.Error(err)
@@ -146,7 +147,6 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 		UID:          board.UID,
 		Slug:         slug.Make(board.Title),
 		TemplateVars: []*GrafanaTemplateVars{},
-		// Panels:       []*GrafanaPanel{},
 		Panels: []*sdk.Panel{},
 		OrgID:  orgID,
 	}
@@ -154,7 +154,6 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 	tmpDsName := map[string]string{}
 	if len(board.Templating.List) > 0 {
 		for _, tmpVar := range board.Templating.List {
-			// logrus.Debugf("tmpvar: %+#v", tmpVar)
 			var ds sdk.Datasource
 			var dsName string
 			if tmpVar.Type == "datasource" {
@@ -172,7 +171,7 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 				return nil, err
 			}
 			if c != nil {
-				ds, err = c.GetDatasourceByName(dsName)
+				ds, err = c.GetDatasourceByName(ctx, dsName)
 				if err != nil {
 					msg := fmt.Errorf("error getting board datasource with name - %s", dsName)
 					logrus.Error(errors.Wrapf(err, msg.Error()))
@@ -183,9 +182,6 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 			}
 
 			tvVal := tmpVar.Current.Text
-			// if tmpVar.Current. {
-			// 	tvVal = tmpVar.Current.Text
-			// }
 			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
 				Name:  tmpVar.Name,
 				Query: tmpVar.Query,
@@ -204,16 +200,8 @@ func (g *GrafanaClient) ProcessBoard(c *sdk.Client, board *sdk.Board, link *sdk.
 				if p1.Datasource != nil {
 					if strings.HasPrefix(*p1.Datasource, "$") {
 						*p1.Datasource = tmpDsName[strings.Replace(*p1.Datasource, "$", "", 1)]
-						// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
 					}
 				}
-				// grafPanel := &GrafanaPanel{
-				// 	ID:    panel.ID,
-				// 	PType: panel.Type,
-				// 	Title: panel.Title,
-				// }
-				// grafBoard.Panels = append(grafBoard.Panels, grafPanel)
-				// logrus.Debugf("board: %d, panel id: %d", board.ID, p1.ID)
 				grafBoard.Panels = append(grafBoard.Panels, p1)
 			}
 		}
@@ -297,7 +285,6 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string
 		}
 		var reqURL string
 		if g.promMode {
-			// reqURL = fmt.Sprintf("%s/api/v1/query", g.promURL, dsID)
 			reqURL = fmt.Sprintf("%s/api/v1/query", BaseURL)
 		} else {
 			reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query", BaseURL, dsID)
@@ -308,7 +295,6 @@ func (g *GrafanaClient) GrafanaQuery(ctx context.Context, BaseURL, APIKey string
 		newURL.RawQuery = q.Encode()
 		queryURL = newURL.String()
 	default:
-		// {"status":"success","data":["istio-pilot.istio-system.svc.cluster.local","istio-telemetry.istio-system.svc.cluster.local"]}
 		return json.Marshal(map[string]interface{}{
 			"status": "success",
 			"data":   []string{query},
@@ -348,7 +334,6 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey s
 	q.Set("step", queryData.Get("step"))
 	newURL.RawQuery = q.Encode()
 	queryURL := newURL.String()
-	// logrus.Debugf("Query range url: %s", queryURL)
 	data, err := g.makeRequest(ctx, queryURL, APIKey)
 	if err != nil {
 		msg := errors.New("error getting data from grafana")
