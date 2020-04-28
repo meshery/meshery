@@ -67,8 +67,8 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
-	queueFactory := memqueue.NewFactory()
-	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
+	QueueFactory := memqueue.NewFactory()
+	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
 

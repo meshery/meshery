@@ -11,8 +11,9 @@ before:
     # - go generate ./...
 builds:
 - main: ./mesheryctl/main.go
+
   env:
-    - CGO_ENABLED=1
+    - CGO_ENABLED=0
     
   ldflags:
     - -s -w -X main.version={{.Version}}
