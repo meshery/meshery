@@ -17,8 +17,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/vmihailenco/taskq"
-	"github.com/vmihailenco/taskq/memqueue"
+	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
 var globalTokenForAnonymousResults string
