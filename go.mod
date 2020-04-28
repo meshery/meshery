@@ -17,7 +17,7 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.0
 	github.com/gosimple/slug v1.9.0
-	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
+	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
