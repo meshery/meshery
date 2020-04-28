@@ -102,7 +102,7 @@ type Metrics struct {
 	IndividualWorkload *Workload         `yaml:"individual_workload_1,omitempty"`
 }
 
-// PerformanceSpec - represents SMPS
+// PerformanceSpec - represents SMPS, see here https://github.com/layer5io/service-mesh-performance-specification
 type PerformanceSpec struct {
 	StartTime    time.Time         `yaml:"start_time,omitempty"`
 	EndTime      time.Time         `yaml:"end_time,omitempty"`
