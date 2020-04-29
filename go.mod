@@ -7,17 +7,16 @@ require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/aspenmesh/istio-client-go v0.0.0-20191010215625-4de6e89009c4
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.0
-	github.com/gorilla/sessions v1.2.0
 	github.com/gosimple/slug v1.9.0
-	github.com/grafana-tools/sdk v0.0.0-20190705114053-83ac18ae3b6c
+	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
@@ -28,14 +27,14 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.6.3
-	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
-	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
+	github.com/vmihailenco/taskq/v3 v3.0.0-beta.8
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
-	golang.org/x/net v0.0.0-20191021144547-ec77196f6094
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
+	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
-	google.golang.org/appengine v1.6.5 // indirect
-	google.golang.org/grpc v1.28.1
+
+	google.golang.org/grpc v1.29.1
+
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719

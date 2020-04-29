@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 )
 
 // ProviderType - for representing provider types
@@ -47,9 +46,11 @@ type Provider interface {
 	GetProviderProperties() ProviderProperties
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
 	InitiateLogin(http.ResponseWriter, *http.Request, bool)
-	GetSession(req *http.Request) (*sessions.Session, error)
+	TokenHandler(http.ResponseWriter, *http.Request, bool)
+	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
 	GetProviderToken(req *http.Request) (string, error)
+	UpdateToken(http.ResponseWriter, *http.Request)
 	Logout(http.ResponseWriter, *http.Request)
 	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult) (string, error)

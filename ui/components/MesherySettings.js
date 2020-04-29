@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -63,15 +64,31 @@ class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
     const {
-      k8sconfig, meshAdapters, grafana, prometheus,
+      k8sconfig, meshAdapters, grafana, prometheus, router: {asPath}
     } = props;
+
+    let tabVal = 0;
+    const splittedPath = asPath.split('#');
+    if(splittedPath.length >= 2 && splittedPath[1]) {
+      switch (splittedPath[1]) {
+        case 'environment': 
+          tabVal = 0;
+          break;
+        case 'service-mesh': 
+          tabVal = 1;
+          break;
+        case 'metrics': 
+          tabVal = 2;
+          break;
+      }
+    }
     this.state = {
       completed: {},
       k8sconfig,
       meshAdapters,
       grafana,
       prometheus,
-      tabVal: 0,
+      tabVal,
       subTabVal: 0,
     };
   }
@@ -93,6 +110,19 @@ class MesherySettings extends React.Component {
     const self = this;
     return (event, newVal) => {
       if (val === 'tabVal') {
+        let newRoute = this.props.router.route;
+        switch(newVal) {
+          case 0:
+            newRoute+='#environment'
+            break;
+          case 1:
+            newRoute+='#service-mesh'
+            break;
+          case 2:
+            newRoute+='#metrics'
+            break;
+        }
+        if(this.props.router.route != newRoute) this.props.router.push(newRoute)
         self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
         self.setState({ subTabVal: newVal });
@@ -251,4 +281,4 @@ MesherySettings.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(MesherySettings));
+export default withStyles(styles)(connect(mapStateToProps)(withRouter(MesherySettings)));

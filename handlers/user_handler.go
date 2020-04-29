@@ -6,14 +6,13 @@ import (
 
 	"encoding/json"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // UserHandler returns info about the logged in user
-func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -27,7 +26,14 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *sessi
 }
 
 // AnonymousStatsHandler updates anonymous stats for user
-func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, _ *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method == http.MethodGet {
+		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
+			logrus.Errorf("Error encoding user preference object: %v", err)
+			http.Error(w, "Error encoding user preference object", http.StatusInternalServerError)
+		}
+		return
+	}
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -64,7 +70,11 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		trackStats = true
 	}
 	if trackStats {
-		_, _ = w.Write([]byte("{}"))
+		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
+			logrus.Errorf("unable to save user preferences: %v", err)
+			http.Error(w, "Unable to decode preferences", http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 

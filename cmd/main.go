@@ -10,7 +10,6 @@ import (
 
 	"github.com/layer5io/meshery/helpers"
 
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
@@ -18,8 +17,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/vmihailenco/taskq"
-	"github.com/vmihailenco/taskq/memqueue"
+	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
 var globalTokenForAnonymousResults string
@@ -68,14 +67,14 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
-	queueFactory := memqueue.NewFactory()
-	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
+	QueueFactory := memqueue.NewFactory()
+	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
 
 	provs := map[string]models.Provider{}
 
-	var cookieSessionStore *sessions.CookieStore
+	// var cookieSessionStore *sessions.CookieStore
 
 	preferencePersister, err := models.NewMapPreferencePersister()
 	if err != nil {
@@ -111,7 +110,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
+	// cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
 	// saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	if saasBaseURL == "" {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
@@ -120,11 +119,13 @@ func main() {
 		SaaSBaseURL:   saasBaseURL,
 		RefCookieName: "meshery_ref",
 		SessionName:   "meshery",
+		TokenStore:    make(map[string]string),
 		// SessionStore: fileSessionStore,
-		SessionStore:               cookieSessionStore,
-		SaaSTokenName:              "meshery_saas",
+		// SessionStore: cookieSessionStore,
+		// SaaSTokenName:              "meshery_saas",
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
+		ProviderVersion:            "v0.3.14",
 	}
 	cp.SyncPreferences()
 	defer cp.StopSyncPreferences()

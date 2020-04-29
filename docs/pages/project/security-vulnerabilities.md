@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Security Vulnerabilities
-permalink: security-vulnerabilities
+permalink: project/security-vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
 ---
 

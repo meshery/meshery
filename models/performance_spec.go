@@ -102,8 +102,8 @@ type Metrics struct {
 	IndividualWorkload *Workload         `yaml:"individual_workload_1,omitempty"`
 }
 
-// BenchmarkSpec - represents SMPS
-type BenchmarkSpec struct {
+// PerformanceSpec - represents SMPS, see here https://github.com/layer5io/service-mesh-performance-specification
+type PerformanceSpec struct {
 	StartTime    time.Time         `yaml:"start_time,omitempty"`
 	EndTime      time.Time         `yaml:"end_time,omitempty"`
 	MeshBuild    string            `yaml:"mesh_build,omitempty"`
@@ -118,7 +118,3 @@ type BenchmarkSpec struct {
 	Client       *MeshClientConfig `yaml:"client,omitempty"`
 	Metrics      *Metrics          `yaml:"metrics,omitempty"`
 }
-
-// func (b *BenchmarkSpec) ConvertToMesheryResult() *MesheryResult {
-
-// }

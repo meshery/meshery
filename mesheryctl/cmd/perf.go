@@ -16,16 +16,20 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 
+	models "github.com/layer5io/meshery/models"
+
 	log "github.com/sirupsen/logrus"
 
-	"github.com/spf13/cobra"
 	"github.com/asaskevich/govalidator"
+	"github.com/spf13/cobra"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -36,6 +40,7 @@ var (
 	concurrentRequests = ""
 	testDuration       = ""
 	loadGenerator      = ""
+	filePath           = ""
 	testCookie         = ""
 )
 
@@ -46,18 +51,22 @@ Usage:
   mesheryctl perf --[flags]
 
 Available Flags for Performance Command:
-  name[string]                  (optional) Name for the Test, if not provided random name will be used.
-  url[string]                   (required) URL Endpoint at which test is to be performed
-  duration[string]              (required) Duration for which test should be performed. See standard notation https://golang.org/pkg/time/#ParseDuration
-  load-generator[string]        (optional) Load-Generator to be used to perform test.(fortio/wrk2) (Default "fortio")
-  mesh[string]              	(optional) Name of the service mesh to be tested.
-  cookie[string]            	(required) Choice of the cloud server provider (Default "Default Local Provider")
-  concurrent-requests[string]   (required) Number of paraller requests to be used (Default "1")
-  qps[string]                   (required) Queries per second (Default "0")
+  name[string]                  (optional) A short descriptor to serve as reference for this test. If not provided, a random name will be generate.
+  url[string]                   (required) URL endpoint to send requests.
+  duration[string]              (required) Length of time to perform test (e.g 30s, 15m, 1hr). See standard notation https://golang.org/pkg/time/#ParseDuration
+  load-generator[string]        (optional) Name of load generator to be used to perform test (default: "fortio")
+  mesh[string]              	(optional) Name of the service mesh to be tested (default: "None")
+  provider[string]            	(required) Choice of Provider (default: "Meshery")
+  concurrent-requests[string]   (required) Number of parallel requests to be sent (default: "1")
+  qps[string]                   (required) Queries per second (default: "0")
+  file[string]			        (optional) file containing SMPS-compatible test configuration. See https://github.com/layer5io/service-mesh-performance-specification
   help                          Help for perf subcommand
 
-Example usage of Performance Sub-command :-
- mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --cookie "meshery-provider=None"
+url, duration, concurrent-requests, and qps can be considered optional flags if specified through an SMPS compatible yaml file using --file
+
+Example usage of perf subcommand :
+
+ mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
 var seededRand = rand.New(
@@ -85,6 +94,28 @@ var perfCmd = &cobra.Command{
 		if len(args) == 0 {
 			log.Print(perfDetails)
 			return
+		}
+
+		// Importing SMPS Configuration from the file
+		if filePath != "" {
+			var t models.PerformanceSpec
+			err := yaml.Unmarshal([]byte(filePath), &t)
+
+			if err != nil {
+				log.Errorf("Error: Invalid yaml file.\n%v", err)
+			}
+			if testDuration == "" {
+				testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
+			}
+			if testURL == "" {
+				testURL = t.EndpointURL
+			}
+			if concurrentRequests == "" {
+				concurrentRequests = fmt.Sprintf("%d", t.Client.Connections)
+			}
+			if qps == "" {
+				qps = fmt.Sprintf("%f", t.Client.Rps)
+			}
 		}
 
 		if len(testName) <= 0 {
@@ -115,14 +146,13 @@ var perfCmd = &cobra.Command{
 			return
 		}
 
-		// Methord to check if the entered Test URL is valid or not
+		// Method to check if the entered Test URL is valid or not
 		var validURL bool = govalidator.IsURL(testURL)
 
-		if (!validURL) {
+		if !validURL {
 			log.Fatal("\nError: Please enter a valid test URL")
 			return
 		}
-
 
 		postData = postData + "\nclient:"
 		postData = postData + "\n connections: " + concurrentRequests
@@ -175,5 +205,6 @@ func init() {
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
+	perfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	rootCmd.AddCommand(perfCmd)
 }
