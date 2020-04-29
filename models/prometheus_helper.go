@@ -53,7 +53,7 @@ func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []b
 		logrus.Error(errors.Wrap(err, msg.Error()))
 		return nil, msg
 	}
-	return p.grafanaClient.ProcessBoard(nil, board, &sdk.FoundBoard{
+	return p.grafanaClient.ProcessBoard(ctx, nil, board, &sdk.FoundBoard{
 		Title: board.Title,
 		URI:   board.Slug,
 	})
