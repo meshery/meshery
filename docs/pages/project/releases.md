@@ -14,6 +14,13 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   </thead>
   <tbody>
       <tr>
+      <td class="centered">0.3.14</td>
+      <td>
+        <em>Mesheryctl</em> - Behavior change in mesheryctl start to check for new Meshery server images by default.
+      </td>
+      <td>Apr 24, 2020</td>
+    </tr>
+      <tr>
       <td class="centered">0.3.13</td>
       <td>
         <em>Mesheryctl</em> - Point release for mesheryctl's initial ARM support.
