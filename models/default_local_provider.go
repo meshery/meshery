@@ -240,7 +240,7 @@ func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) {
 func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 }
 
-// TokenHandler - Returns the auth token and the provider type
+// ExtractToken - Returns the auth token and the provider type
 func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
@@ -251,5 +251,4 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
 	}
-	return
 }
