@@ -12,7 +12,6 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.0
@@ -28,7 +27,6 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.6.3
-	github.com/vmihailenco/taskq v0.0.0-20190605141845-97870321dc66
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.8
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
