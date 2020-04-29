@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	// "fortio.org/fortio/periodic"
+	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
@@ -245,7 +245,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		log.Debug("response channel closed")
 	}()
 	go func() {
-		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
+		ctx := context.Background()
+		h.executeLoadTest(ctx, req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
@@ -257,7 +258,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
@@ -265,14 +266,14 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	var (
 		resultsMap map[string]interface{}
-		// resultInst *periodic.RunnerResults
+		resultInst *periodic.RunnerResults
 		err        error
 	)
-	// if loadTestOptions.LoadGenerator == models.Wrk2LG {
-	// 	resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
-	// } else {
-	// 	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
-	// }
+	if loadTestOptions.LoadGenerator == models.Wrk2LG {
+		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
+	} else {
+		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
+	}
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)
@@ -388,22 +389,22 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 		promURL = prefObj.Prometheus.PrometheusURL
 	}
 
-	// tokenVal, _ := provider.GetProviderToken(req)
+	tokenVal, _ := provider.GetProviderToken(req)
 
 	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
-	// if promURL != "" && testUUID != "" && resultID != "" &&
-	// 	(provider.GetProviderType() == models.RemoteProviderType ||
-	// 		(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-	// 	// _ = h.task.Call(&models.SubmitMetricsConfig{
-	// 	// 	TestUUID:  testUUID,
-	// 	// 	ResultID:  resultID,
-	// 	// 	PromURL:   promURL,
-	// 	// 	StartTime: resultInst.StartTime,
-	// 	// 	EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
-	// 	// 	TokenVal:  tokenVal,
-	// 	// 	Provider:  provider,
-	// 	// })
-	// }
+	if promURL != "" && testUUID != "" && resultID != "" &&
+		(provider.GetProviderType() == models.RemoteProviderType ||
+			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
+		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig {
+			TestUUID:  testUUID,
+			ResultID:  resultID,
+			PromURL:   promURL,
+			StartTime: resultInst.StartTime,
+			EndTime:   resultInst.StartTime.Add(resultInst.ActualDuration),
+			TokenVal:  tokenVal,
+			Provider:  provider,
+		})
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	if key == uuid.Nil {
