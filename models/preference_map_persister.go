@@ -29,11 +29,11 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	}
 
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist.")
+		return nil, errors.New("Connection to DB does not exist")
 	}
 
 	if userID == "" {
-		return nil, errors.New("User ID is empty.")
+		return nil, errors.New("User ID is empty")
 	}
 
 	dataCopyB, ok := s.db.Load(userID)
@@ -59,11 +59,11 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("User ID is empty")
 	}
 
 	if data == nil {
-		return errors.New("Given config data is nil.")
+		return errors.New("Given config data is nil")
 	}
 	data.UpdatedAt = time.Now()
 	newSess := &Preference{
@@ -83,11 +83,11 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 // DeleteFromPersister removes the session for the user
 func (s *MapPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
-		return errors.New("Connection to DB does not exist.")
+		return errors.New("Connection to DB does not exist")
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty.")
+		return errors.New("User ID is empty")
 	}
 	s.db.Delete(userID)
 	return nil
