@@ -241,6 +241,12 @@ class MesheryResults extends Component {
           },
         },
       ];
+      
+      columns.forEach((column, idx) => {
+        if(column.name === this.state.sortOrder.split(' ')[0]) {
+          columns[idx].options.sortDirection = this.state.sortOrder.split(' ')[1];
+        }
+      })
 
       const rowsSelected = [];
       Object.keys(results_selection).forEach((pg) => {
@@ -275,7 +281,6 @@ class MesheryResults extends Component {
         download: false,
         onRowsSelect: (currentRowsSelected, allRowsSelected) => {
           // const rs = self.props.results_selection;
-
           const res = {};
           allRowsSelected.forEach(({ dataIndex }) => {
             if (dataIndex < self.state.pageSize) {
@@ -286,8 +291,6 @@ class MesheryResults extends Component {
               }
             }
           });
-
-
 
           self.props.updateResultsSelection({ page, results: res });
         },
@@ -317,10 +320,11 @@ class MesheryResults extends Component {
               }, 500);
               break;
             case 'sort':
-
               if (sortInfo.length == 2) {
                 if (sortInfo[1] === 'ascending') {
                   order = `${columns[tableState.activeColumn].name} asc`;
+                } else {
+                  order = `${columns[tableState.activeColumn].name} desc`;
                 }
               }
               if (order !== this.state.sortOrder) {
