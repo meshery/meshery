@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"github.com/vmihailenco/taskq"
+	"github.com/vmihailenco/taskq/v3"
 )
 
 // HandlerInterface defines the methods a Handler should define
