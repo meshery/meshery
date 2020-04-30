@@ -60,7 +60,7 @@ class GrafanaComponent extends Component {
     super(props);
 
     const {
-      grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs,
+      grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs,
     } = props.grafana;
     let grafanaConfigSuccess = false;
     if (grafanaURL !== '') {
@@ -71,7 +71,7 @@ class GrafanaComponent extends Component {
       urlError: false,
 
       grafanaConfigSuccess,
-
+      grafanaBoardSearch: '',
       grafanaURL,
       grafanaAPIKey,
       grafanaBoardSearch,
