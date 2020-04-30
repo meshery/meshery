@@ -469,7 +469,11 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 
-	tokenString, _ := l.GetToken(r)
+	tokenString, err := l.GetToken(r)
+	if err != nil {
+		logrus.Errorf("Token not found:  %s", err.Error())
+		return
+	}
 	newts := l.TokenStore[tokenString]
 	if newts != "" {
 		tokenString = newts

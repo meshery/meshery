@@ -85,6 +85,7 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
+// AddAuthDetails Adds authentication cookies to the request
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -109,6 +110,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 	return nil
 }
 
+// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
 	req, err := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
 	if err != nil {
@@ -131,10 +133,7 @@ func UpdateAuthDetails(filepath string) error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(filepath, data, os.ModePerm); err != nil {
-		return err
-	}
-	return nil
+	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
 // perfCmd represents the Performance command
@@ -146,10 +145,7 @@ var perfCmd = &cobra.Command{
 		//Check prerequisite
 		preReqCheck()
 
-		// if len(args) == 0 {
-		// log.Print(perfDetails)
-		// return
-		// }
+		// Importing SMPS Configuration from the file
 		if filePath != "" {
 			var t models.PerformanceSpec
 			err := yaml.Unmarshal([]byte(filePath), &t)
@@ -194,7 +190,7 @@ var perfCmd = &cobra.Command{
 		if len(testURL) > 0 {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			log.Fatal("\nError: Please enter a test URL")
+			log.Fatal("Error: Please enter a test URL")
 			return
 		}
 
@@ -212,7 +208,7 @@ var perfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			log.Print("\nError in building the request")
+			log.Print("Error in building the request")
 			log.Fatal("Error Message:\n", err)
 			return
 		}
@@ -244,7 +240,7 @@ var perfCmd = &cobra.Command{
 		defer SafeClose(resp.Body)
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Printf("Erro reading body: %v", err.Error())
+			log.Printf("Error reading body: %v", err.Error())
 			return
 		}
 		log.Print(string(data))
