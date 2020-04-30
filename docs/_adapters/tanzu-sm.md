@@ -3,7 +3,7 @@ layout: page
 title: Tanzu Service Mesh Adapter
 name: Tanzu SM
 version: pre-GA
-port: 10008/tcp
+port: 10009/tcp
 project_status: alpha
 image: 
 ---
