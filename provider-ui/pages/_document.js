@@ -5,26 +5,10 @@ import flush from 'styled-jsx/server';
 
 class MesheryDocument extends Document {
   render() {
-    const { pageContext } = this.props;
-
     return (
       <html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
-          {/* Use minimum-scale=1 to enable GPU rasterization */}
-          {/* <meta
-            name="viewport"
-            content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-          /> */}
-          {/* PWA primary color */}
-          {/* <meta
-            name="theme-color"
-            content={pageContext ? pageContext.theme.palette.primary.main : null}
-          /> */}
-          {/* <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-          /> */}
         </Head>
         <body>
           <Main />
@@ -59,7 +43,7 @@ MesheryDocument.getInitialProps = (ctx) => {
   // 4. page.render
 
   // Render app and page and get the context of the page with collected side effects.
-  let pageContext;
+  let { pageContext } = this.props;
   const page = ctx.renderPage((Component) => {
     const WrappedComponent = (props) => {
       pageContext = props.pageContext;
