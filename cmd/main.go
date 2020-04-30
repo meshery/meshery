@@ -17,8 +17,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/vmihailenco/taskq"
-	"github.com/vmihailenco/taskq/memqueue"
+	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
 var globalTokenForAnonymousResults string
@@ -67,8 +67,8 @@ func main() {
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
 
-	queueFactory := memqueue.NewFactory()
-	mainQueue := queueFactory.NewQueue(&taskq.QueueOptions{
+	QueueFactory := memqueue.NewFactory()
+	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
 

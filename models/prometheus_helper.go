@@ -21,7 +21,7 @@ import (
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
 	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguments as a valid option.
-	promURL       string
+	promURL string
 }
 
 // NewPrometheusClient returns a PrometheusClient
@@ -53,7 +53,7 @@ func (p *PrometheusClient) ImportGrafanaBoard(ctx context.Context, boardData []b
 		logrus.Error(errors.Wrap(err, msg.Error()))
 		return nil, msg
 	}
-	return p.grafanaClient.ProcessBoard(nil, board, &sdk.FoundBoard{
+	return p.grafanaClient.ProcessBoard(ctx, nil, board, &sdk.FoundBoard{
 		Title: board.Title,
 		URI:   board.Slug,
 	})

@@ -41,6 +41,8 @@
     url: guides/multiple-adapters
   - title: Using mesheryctl
     url: guides/mesheryctl
+  - title: Upgrading Meshery
+    url: guides/upgrade
 
 - title: Project
   url: project
