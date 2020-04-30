@@ -16,20 +16,20 @@ package cmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"strings"
+	"os"
 	"time"
 
-	models "github.com/layer5io/meshery/models"
-
+	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -41,7 +41,7 @@ var (
 	testDuration       = ""
 	loadGenerator      = ""
 	filePath           = ""
-	testCookie         = ""
+	tokenPath          = ""
 )
 
 var perfDetails = `
@@ -69,6 +69,9 @@ Example usage of perf subcommand :
  mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
+const tokenName = "token"
+const providerName = "meshery-provider"
+
 var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
@@ -82,6 +85,57 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
+// AddAuthDetails Adds authentication cookies to the request
+func AddAuthDetails(req *http.Request, filepath string) error {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		log.Errorf("File read failed : %v", err.Error())
+		return err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		log.Errorf("Token file invalid : %v", err.Error())
+		return err
+	}
+	req.AddCookie(&http.Cookie{
+		Name:     tokenName,
+		Value:    tokenObj[tokenName],
+		HttpOnly: true,
+	})
+	req.AddCookie(&http.Cookie{
+		Name:     providerName,
+		Value:    tokenObj[providerName],
+		HttpOnly: true,
+	})
+	return nil
+}
+
+// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
+func UpdateAuthDetails(filepath string) error {
+	req, err := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
+	if err != nil {
+		return err
+	}
+	if err := AddAuthDetails(req, filepath); err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	defer SafeClose(resp.Body)
+
+	if err != nil {
+		return err
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filepath, data, os.ModePerm)
+}
+
 // perfCmd represents the Performance command
 var perfCmd = &cobra.Command{
 	Use:   "perf",
@@ -90,11 +144,6 @@ var perfCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//Check prerequisite
 		preReqCheck()
-
-		if len(args) == 0 {
-			log.Print(perfDetails)
-			return
-		}
 
 		// Importing SMPS Configuration from the file
 		if filePath != "" {
@@ -124,7 +173,6 @@ var perfCmd = &cobra.Command{
 			log.Print("Using random test name: ", testName)
 		}
 
-		const mesheryURL string = "http://localhost:9081/api/load-test-smps?"
 		postData := ""
 
 		startTime := time.Now()
@@ -142,7 +190,7 @@ var perfCmd = &cobra.Command{
 		if len(testURL) > 0 {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			log.Fatal("\nError: Please enter a test URL")
+			log.Fatal("Error: Please enter a test URL")
 			return
 		}
 
@@ -160,14 +208,16 @@ var perfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			log.Print("\nError in building the request")
+			log.Print("Error in building the request")
 			log.Fatal("Error Message:\n", err)
 			return
 		}
-		cookieConf := strings.SplitN(testCookie, "=", 2)
-		cookieName := cookieConf[0]
-		cookieValue := cookieConf[1]
-		req.AddCookie(&http.Cookie{Name: cookieName, Value: cookieValue})
+
+		if err := AddAuthDetails(req, tokenPath); err != nil {
+			log.Printf("Error Authorizing request : %v", err.Error())
+			return
+		}
+
 		q := req.URL.Query()
 		q.Add("name", testName)
 		q.Add("loadGenerator", loadGenerator)
@@ -178,21 +228,29 @@ var perfCmd = &cobra.Command{
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
+
 		if err != nil {
 			log.Print("\nFailed to make request to URL:", testURL)
 			log.Fatal("Error Message:\n", err)
 			return
 		}
+		log.Print("Initiating Performance test ...")
+		log.Printf(resp.Status)
 
-		buf := make([]byte, 4)
-		for {
-			n, err := resp.Body.Read(buf)
-			log.Print(string(buf[:n]))
-			if err == io.EOF {
-				break
-			}
+		defer SafeClose(resp.Body)
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("Error reading body: %v", err.Error())
+			return
 		}
-		println("\nTest Completed Successfully!")
+		log.Print(string(data))
+
+		if err := UpdateAuthDetails(tokenPath); err != nil {
+			log.Printf("Error updating token : %v", err.Error())
+			return
+		}
+
+		log.Print("Test Completed Successfully!")
 	},
 }
 
@@ -203,7 +261,7 @@ func init() {
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(required) Number of Parallel Requests")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	perfCmd.Flags().StringVar(&testCookie, "cookie", "meshery-provider=Default Local Provider", "(required) Choice of Provider")
+	perfCmd.Flags().StringVar(&tokenPath, "token", authConfigFile, "(optional) Path to meshery auth config")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	perfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	rootCmd.AddCommand(perfCmd)
