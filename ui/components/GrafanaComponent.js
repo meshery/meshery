@@ -74,7 +74,7 @@ class GrafanaComponent extends Component {
 
       grafanaURL,
       grafanaAPIKey,
-      grafanaBoardSearch: '', // we probably dont need this retrieved from store
+      grafanaBoardSearch,
       grafanaBoards,
       selectedBoardsConfigs,
       ts: new Date(),
@@ -83,8 +83,6 @@ class GrafanaComponent extends Component {
 
   static getDerivedStateFromProps(props, state) {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
-    // if(grafanaURL !== state.grafanaURL || grafanaAPIKey !== state.grafanaAPIKey || JSON.stringify(grafanaBoards) !== JSON.stringify(state.grafanaBoards)
-    //     || JSON.stringify(selectedBoardsConfigs) !== JSON.stringify(state.selectedBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
     if (props.ts > state.ts) {
       return {
         grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
@@ -202,7 +200,7 @@ class GrafanaComponent extends Component {
         }, self.handleError('There was an error communicating with Grafana'));
       }
 
-      handleError = (msg) => (error) => {
+      handleError = (msg) => {
         const self = this;
         // this.setState({timerDialogOpen: false });
         this.props.updateProgress({ showProgress: false });
@@ -282,31 +280,18 @@ class GrafanaComponent extends Component {
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {
-        grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs,
+          selectedBoardsConfigs,
       } = this.state;
-      // selectedBoardsConfigs.push(boardsSelection);
-      // this.persistBoardSelection(selectedBoardsConfigs);
 
       if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {
         selectedBoardsConfigs.push(boardsSelection);
         this.persistBoardSelection(selectedBoardsConfigs);
-
-        // this.setState({selectedBoardsConfigs});
-        // this.props.updateGrafanaConfig({
-        //   grafana: {
-        //     grafanaURL,
-        //     grafanaAPIKey,
-        //     grafanaBoardSearch,
-        //     grafanaBoards,
-        //     selectedBoardsConfigs,
-        //   },
-        // });
       }
     }
 
     deleteSelectedBoardPanelConfig = (indexes) => {
       const {
-        grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs,
+        selectedBoardsConfigs,
       } = this.state;
       indexes.sort();
       for (let i = indexes.length - 1; i >= 0; i--) {
