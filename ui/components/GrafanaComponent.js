@@ -200,7 +200,7 @@ class GrafanaComponent extends Component {
         }, self.handleError('There was an error communicating with Grafana'));
       }
 
-      handleError = (msg) => {
+      handleError = (msg) => () => {
         const self = this;
         // this.setState({timerDialogOpen: false });
         this.props.updateProgress({ showProgress: false });
