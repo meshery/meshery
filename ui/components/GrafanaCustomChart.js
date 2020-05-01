@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, IconButton, Card, CardContent, Typography, CardHeader,
+  NoSsr, IconButton, Card, CardContent, CardHeader,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -392,11 +392,11 @@ class GrafanaCustomChart extends Component {
       return step;
     }
 
-    getData = async (ind, target, chartInst) => {
+    getData = async (ind, target) => {
       const {
-        prometheusURL, grafanaURL, grafanaAPIKey, panel, from, to, templateVars, testUUID, liveTail, panelData,
+        prometheusURL, grafanaURL, panel, from, to, templateVars, testUUID, panelData,
       } = this.props;
-      const { data, chartData } = this.state;
+      const { chartData } = this.state;
       let { xAxis } = this.state;
 
       let queryRangeURL = '';
@@ -425,7 +425,7 @@ class GrafanaCustomChart extends Component {
       const processReceivedData = (result) => {
         self.props.updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
-          const fullData = self.transformDataForChart(result, target);
+          const fullData = self.transformDataForChart(result);
           xAxis = ['x'];
           fullData.forEach(({ metric, data }, di) => {
             const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
@@ -493,7 +493,7 @@ class GrafanaCustomChart extends Component {
       }
     }
 
-    transformDataForChart(data, target) {
+    transformDataForChart(data) {
       if (data && data.status === 'success' && data.data && data.data.resultType && data.data.resultType === 'matrix'
           && data.data.result && data.data.result.length > 0) {
         const fullData = [];
@@ -725,7 +725,7 @@ class GrafanaCustomChart extends Component {
         classes, board, panel, inDialog, handleChartDialogOpen, panelData,
       } = this.props;
       const {
-        error, errorCount, chartData, options,
+        error, errorCount, chartData,
       } = this.state;
       const self = this;
 

@@ -129,8 +129,8 @@ class DashboardComponent extends React.Component {
       st.kts = props.ts;
     }
 
-    st.grafana = props.grafana;
-    st.prometheus = props.prometheus;
+    st.grafana = grafana;
+    st.prometheus = prometheus;
 
     return st;
   }
@@ -357,7 +357,7 @@ class DashboardComponent extends React.Component {
               let image = '/static/img/meshery-logo.png';
               let logoIcon = (<img src={image} className={classes.icon} />);
               let adapterType = '';
-              meshAdapters.forEach((adapter, ind) => {
+              meshAdapters.forEach((adapter) => {
                 if (aa.value === adapter.adapter_location) {
                   isDisabled = false;
                   adapterType = adapter.name;

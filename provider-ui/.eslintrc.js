@@ -1,5 +1,6 @@
 module.exports = {
     "env": {
+        "node": true,
         "browser": true,
         "es6": true
     },
@@ -40,14 +41,14 @@ module.exports = {
             "1tbs"
         ],
         "react/react-in-jsx-scope": "off",
-        "no-undef": "off",
+        "no-undef": "error",
         "react/prop-types": 0,
         "react/jsx-uses-vars": [
             2
         ],
         "react/jsx-no-undef": "error",
         "no-console": 0,
-        "no-unused-vars": "warn",
+        "no-unused-vars": "error",
         "react/jsx-key": "off",
         "no-dupe-keys": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
