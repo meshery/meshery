@@ -118,5 +118,5 @@ Type of authentication is determined by the selected [Provider](#providers).
 Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
 
 ### Endpoints
-Each of the API endpoints are exposed through [server.go]](https://github.com/layer5io/meshery/blob/master/router/server.go).
+Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go).
 Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
