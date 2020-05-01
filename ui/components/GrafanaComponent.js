@@ -74,7 +74,6 @@ class GrafanaComponent extends Component {
       grafanaBoardSearch: '',
       grafanaURL,
       grafanaAPIKey,
-      grafanaBoardSearch,
       grafanaBoards,
       selectedBoardsConfigs,
       ts: new Date(),
