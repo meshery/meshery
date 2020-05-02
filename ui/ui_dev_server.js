@@ -20,9 +20,9 @@ proxy.on('error', function (err, req, res) {
 
 app.prepare().then(() => {
   createServer((req, res) => {
-  	// Be sure to pass `true` as the second argument to `url.parse`.
+    // Be sure to pass `true` as the second argument to `url.parse`.
     // This tells it to parse the query portion of the URL.
-  	const parsedUrl = parse(req.url, true)
+    const parsedUrl = parse(req.url, true)
     const { pathname, query } = parsedUrl
     if (pathname.startsWith("/api") || pathname.startsWith("/logout") || pathname.startsWith("/login")){
         proxy.web(req, res, { target: 'http://localhost:9081' });
