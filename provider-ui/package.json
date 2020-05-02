@@ -9,7 +9,7 @@
     "test": "eslint .",
     "next": "next",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production nodemon ui_dev_server.js",
     "export": "next export"
   },
   "keywords": [],
