@@ -157,7 +157,7 @@ jobs:
         npm i
         npm test
   build_release:
-    name: MesheryCTL Build & Release
+    name: Mesheryctl Build & Release
     runs-on: macos-latest
     needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
