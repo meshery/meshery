@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Chip, IconButton, Card, CardContent, Typography, CardHeader, Tooltip,
+  NoSsr, Chip, IconButton, Button, Card, CardContent, Typography, CardHeader, Tooltip,
 } from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
-// import DoneIcon from '@material-ui/icons/Done';
-
 
 const styles = (theme) => ({
   root: {
@@ -32,12 +31,12 @@ const styles = (theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+    alreadyConfigured: {
+    textAlign: 'center',
+    padding: theme.spacing(2),
+  },
   margin: {
     margin: theme.spacing(1),
-  },
-  alreadyConfigured: {
-    textAlign: 'center',
-    padding: theme.spacing(20),
   },
   colorSwitchBase: {
     color: blue[300],
@@ -61,13 +60,6 @@ const styles = (theme) => ({
   alignCenter: {
     textAlign: 'center',
   },
-  //   alignRight: {
-  //     textAlign: 'right',
-  //     marginBottom: theme.spacing(2),
-  //   },
-  //   fileInputStyle: {
-  //     opacity: '0.01',
-  //   },
   icon: {
     width: theme.spacing(2.5),
   },
@@ -103,6 +95,8 @@ class DashboardComponent extends React.Component {
 
       clusterConfigured: k8sconfig.clusterConfigured, // read from store
       configuredServer: k8sconfig.configuredServer,
+            grafanaUrl: grafana.grafanaURL,
+            prometheusUrl: prometheus.prometheusURL,
       k8sfileError: false,
       kts: new Date(),
 
@@ -209,6 +203,10 @@ class DashboardComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
+    handleConfigure = () => {
+    this.props.router.push('/settings#metrics');
+  }
+
   handleKubernetesClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
@@ -311,17 +309,14 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, availableAdapters, grafana, prometheus,
+      inClusterConfig, contextName, clusterConfigured, configuredServer, meshAdapters, grafanaUrl, prometheusUrl, availableAdapters, grafana, prometheus,
     } = this.state;
     const self = this;
     let showConfigured = 'Not connected to Kubernetes.';
     if (clusterConfigured) {
       let chp = (
         <Chip
-          // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
           label={inClusterConfig ? 'Using In Cluster Config' : contextName}
-          // onDelete={self.handleDelete}
-          // deleteIcon={<DoneIcon />}
           onClick={self.handleKubernetesClick}
           icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
           className={classes.chip}
@@ -414,10 +409,19 @@ class DashboardComponent extends React.Component {
         </div>
       );
     }
-
-    let showGrafana = 'Not connected to Grafana.';
-    if (grafana && grafana.grafanaURL && grafana.grafanaURL !== '') {
+let showGrafana;
+    if(grafanaUrl === '') {
       showGrafana = (
+                <div className={classes.alreadyConfigured}>
+              <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+                <SettingsIcon className={classes.icon} />
+                Configure Grafana
+              </Button>
+              </div>
+            );
+  }
+    if (grafana && grafana.grafanaURL && grafana.grafanaURL !== '') {
+        showGrafana = (
         <Chip
           label={grafana.grafanaURL}
           onClick={self.handleGrafanaClick}
@@ -429,13 +433,21 @@ class DashboardComponent extends React.Component {
       );
     }
 
-    let showPrometheus = 'Not connected to Prometheus.';
+let showPrometheus;
+    if(prometheusUrl === '') {
+      showPrometheus = (
+                <div className={classes.alreadyConfigured}>
+              <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+                <SettingsIcon className={classes.icon} />
+                Configure Prometheus
+              </Button>
+              </div>
+            );
+  }
     if (prometheus && prometheus.prometheusURL && prometheus.prometheusURL !== '') {
       showPrometheus = (
         <Chip
           label={prometheus.prometheusURL}
-          // onDelete={self.handleDelete}
-          // deleteIcon={<DoneIcon />}
           onClick={self.handlePrometheusClick}
           icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
           className={classes.chip}
@@ -454,31 +466,6 @@ class DashboardComponent extends React.Component {
           </Typography>
 
           <Grid container spacing={1}>
-            {/* <Grid item xs={12} sm={2}>
-        Kubernetes
-        </Grid>
-        <Grid item xs={12} sm={10}>
-        {showConfigured}
-        </Grid>
-        <Grid item xs={12} sm={2}>
-        Adapters
-        </Grid>
-        <Grid item xs={12} sm={10}>
-        {showAdapters}
-        </Grid>
-        <Grid item xs={12} sm={2}>
-        Grafana
-        </Grid>
-        <Grid item xs={12} sm={10}>
-        {showGrafana}
-        </Grid>
-        <Grid item xs={12} sm={2}>
-        Prometheus
-        </Grid>
-        <Grid item xs={12} sm={10}>
-        {showPrometheus}
-        </Grid> */}
-
             <Grid item xs={12} sm={6}>
               {self.showCard('Kubernetes', showConfigured)}
             </Grid>
@@ -499,11 +486,9 @@ class DashboardComponent extends React.Component {
   }
 
   render() {
-    // const { reconfigureCluster } = this.state;
-    // if (reconfigureCluster) {
+
     return this.configureTemplate();
-    // }
-    // return this.alreadyConfiguredTemplate();
+
   }
 }
 
@@ -512,7 +497,6 @@ DashboardComponent.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 const mapStateToProps = (state) => {
