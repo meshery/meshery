@@ -31,7 +31,7 @@ const styles = (theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
-    alreadyConfigured: {
+  alreadyConfigured: {
     textAlign: 'center',
     padding: theme.spacing(2),
   },
@@ -66,6 +66,10 @@ const styles = (theme) => ({
   istioIcon: {
     width: theme.spacing(1.5),
   },
+  settingsIcon: {
+  	width: theme.spacing(2.5),
+  	paddingRight: theme.spacing(0.5),
+  },
   cardHeader: {
     fontSize: theme.spacing(2),
   },
@@ -95,8 +99,8 @@ class DashboardComponent extends React.Component {
 
       clusterConfigured: k8sconfig.clusterConfigured, // read from store
       configuredServer: k8sconfig.configuredServer,
-            grafanaUrl: grafana.grafanaURL,
-            prometheusUrl: prometheus.prometheusURL,
+      grafanaUrl: grafana.grafanaURL,
+      prometheusUrl: prometheus.prometheusURL,
       k8sfileError: false,
       kts: new Date(),
 
@@ -414,7 +418,7 @@ let showGrafana;
       showGrafana = (
                 <div className={classes.alreadyConfigured}>
               <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-                <SettingsIcon className={classes.icon} />
+                <SettingsIcon className={classes.settingsIcon} />
                 Configure Grafana
               </Button>
               </div>
@@ -438,7 +442,7 @@ let showPrometheus;
       showPrometheus = (
                 <div className={classes.alreadyConfigured}>
               <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-                <SettingsIcon className={classes.icon} />
+                <SettingsIcon className={classes.settingsIcon} />
                 Configure Prometheus
               </Button>
               </div>
