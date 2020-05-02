@@ -67,8 +67,8 @@ const styles = (theme) => ({
     width: theme.spacing(1.5),
   },
   settingsIcon: {
-  	width: theme.spacing(2.5),
-  	paddingRight: theme.spacing(0.5),
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
   cardHeader: {
     fontSize: theme.spacing(2),
