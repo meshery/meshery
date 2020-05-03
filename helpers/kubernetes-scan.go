@@ -33,7 +33,8 @@ var meshesMeta = map[string][]string{
 		"docker.io/networkservicemesh/nsmd-k8s",
 	},
 	"Citrix": []string{
-		"docker.io/citrix/citrix-k8s-ingress-controller",
+		"quay.io/citrix/citrix-istio-adaptor",
+		"quay.io/citrix/citrix-k8s-cpx-ingress",
 	},
 }
 
