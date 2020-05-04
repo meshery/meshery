@@ -23,3 +23,12 @@ Meshery uses the following list of network ports to interface with its various c
 
 See the [Adapters](service-meshes/adapters) section for more information on the function of an adapter.
 
+
+## Meshery State
+
+| Components        | state       |
+| :------------     | :------------ |
+| Mesheryctl        | stateless   |
+| Adapters          | stateless   |
+| Meshery Server    | aches state |
+| Meshery Providers | stateless   |
