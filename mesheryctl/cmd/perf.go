@@ -57,7 +57,7 @@ Available Flags for Performance Command:
   load-generator[string]        (optional) Name of load generator to be used to perform test (default: "fortio")
   mesh[string]              	(optional) Name of the service mesh to be tested (default: "None")
   provider[string]            	(required) Choice of Provider (default: "Meshery")
-  concurrent-requests[string]   (required) Number of parallel requests to be sent (default: "1")
+  concurrent-requests[string]   (optional) Number of parallel requests to be sent (default: "1")
   qps[string]                   (required) Queries per second (default: "0")
   file[string]			        (optional) file containing SMPS-compatible test configuration. See https://github.com/layer5io/service-mesh-performance-specification
   help                          Help for perf subcommand
@@ -259,7 +259,7 @@ func init() {
 	perfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
 	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
 	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
-	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(required) Number of Parallel Requests")
+	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
 	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	perfCmd.Flags().StringVar(&tokenPath, "token", authConfigFile, "(optional) Path to meshery auth config")
 	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
