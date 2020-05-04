@@ -39,7 +39,7 @@
     "minimist": ">=1.2.2",
     "moment": "^2.25.1",
     "mui-datatables": "^2.13.3",
-    "next": "^9.1.5",    
+    "next": "^9.1.5",
     "next-compose": "0.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.3",
     "notistack": "^0.8.2",
