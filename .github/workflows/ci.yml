@@ -126,6 +126,10 @@ jobs:
         cd ui
         npm i
         npm run build && npm run export
+        cd ..
+        cd provider-ui
+        npm i
+        npm run build && npm run export
   lint-UI:
     name: Meshery UI Lint check
     runs-on: ubuntu-latest
