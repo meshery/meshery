@@ -15,9 +15,9 @@ class Performance extends React.Component {
   render () {
     return (
       <NoSsr>
-                              <Head>
-                <title>Performance | Meshery</title>
-                </Head>
+        <Head>
+          <title>Performance | Meshery</title>
+        </Head>
         <MesheryPerformanceComponent />
       </NoSsr>
     );

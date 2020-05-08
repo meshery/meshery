@@ -15,9 +15,9 @@ class Results extends React.Component {
   render () {
     return (
       <NoSsr>
-                  <Head>
-                <title>Results | Meshery</title>
-                </Head>
+        <Head>
+          <title>Results | Meshery</title>
+        </Head>
         <MesheryResults />
       </NoSsr>
     );

@@ -46,9 +46,9 @@ class UserPref extends React.Component {
     }
     return (
       <NoSsr>
-                        <Head>
-                <title>Preferences | Meshery</title>
-                </Head>
+        <Head>
+          <title>Preferences | Meshery</title>
+        </Head>
         <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
       </NoSsr>
     );

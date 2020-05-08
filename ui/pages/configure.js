@@ -15,9 +15,9 @@ class Config extends React.Component {
   render () {
     return (
       <NoSsr>
-                        <Head>
-                <title>Configure | Meshery</title>
-                </Head>
+        <Head>
+          <title>Configure | Meshery</title>
+        </Head>
         <MesheryConfigSteps />
       </NoSsr>
     );

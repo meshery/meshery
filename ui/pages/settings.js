@@ -16,9 +16,9 @@ class Settings extends React.Component {
   render () {
     return (
       <NoSsr>
-                  <Head>
-                <title>Settings | Meshery</title>
-                </Head>
+        <Head>
+          <title>Settings | Meshery</title>
+        </Head>
         <MesherySettings />
       </NoSsr>
     );

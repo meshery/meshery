@@ -30,11 +30,10 @@ class Manage extends React.Component {
 
   render() {
     return (
-
       <NoSsr>
-            <Head>
-                <title>Management | Meshery</title>
-                </Head>
+        <Head>
+          <title>Management | Meshery</title>
+        </Head>
         <React.Fragment>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
         </React.Fragment>
