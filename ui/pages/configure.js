@@ -25,10 +25,10 @@ class Config extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  })
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
 
 export default connect(
-    null,
-    mapDispatchToProps
-  )(Config);
+  null,
+  mapDispatchToProps
+)(Config);

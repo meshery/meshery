@@ -25,8 +25,8 @@ class Results extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  })
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
 
 export default connect(
   null,

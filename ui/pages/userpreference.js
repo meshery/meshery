@@ -32,9 +32,9 @@ class UserPref extends React.Component {
           })
         }
       },
-        // Ignore error because we will fallback to default state
-        // and to avoid try catch due to async await functions
-        resolve);
+      // Ignore error because we will fallback to default state
+      // and to avoid try catch due to async await functions
+      resolve);
     })
   }
 
@@ -56,10 +56,10 @@ class UserPref extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  })
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
 
 export default connect(
-    null,
-    mapDispatchToProps
-  )(UserPref);
+  null,
+  mapDispatchToProps
+)(UserPref);
