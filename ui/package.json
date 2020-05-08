@@ -26,7 +26,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/pickers": "^3.2.8",
     "@zeit/next-css": "^1.0.1",
-    "billboard.js": "^1.12.7",
+    "billboard.js": "=1.11.0",
     "caniuse-lite": "^1.0.30001048",
     "classnames": "^2.2.6",
     "codemirror": "^5.53.2",
@@ -37,7 +37,7 @@
     "jsonlint-mod": "^1.7.4",
     "jss": "latest",
     "minimist": ">=1.2.2",
-    "moment": "^2.25.1",
+    "moment": "^2.24.0",
     "mui-datatables": "^2.13.3",
     "next": "^9.1.5",
     "next-compose": "0.0.2",
@@ -60,8 +60,8 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/traverse": "^7.9.6",
-    "@babel/types": "^7.9.6",
+    "@babel/traverse": "^7.9.0",
+    "@babel/types": "^7.9.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
