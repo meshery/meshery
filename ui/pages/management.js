@@ -1,6 +1,7 @@
 import React from 'react';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
 import { NoSsr } from "@material-ui/core";
+import Head from 'next/head';
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
@@ -29,7 +30,11 @@ class Manage extends React.Component {
 
   render() {
     return (
+
       <NoSsr>
+            <Head>
+                <title>Management | Meshery</title>
+                </Head>
         <React.Fragment>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
         </React.Fragment>

@@ -3,6 +3,7 @@ import MesheryResults from "../components/MesheryResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
+import Head from 'next/head';
 import { getPath } from "../lib/path";
 
 class Results extends React.Component {
@@ -14,6 +15,9 @@ class Results extends React.Component {
   render () {
     return (
       <NoSsr>
+                  <Head>
+                <title>Results | Meshery</title>
+                </Head>
         <MesheryResults />
       </NoSsr>
     );

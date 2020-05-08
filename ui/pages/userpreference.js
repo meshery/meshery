@@ -2,8 +2,9 @@ import UserPreference from "../components/UserPreference";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
+import Head from 'next/head';
 import dataFetch from '../lib/data-fetch';
 
 
@@ -45,6 +46,9 @@ class UserPref extends React.Component {
     }
     return (
       <NoSsr>
+                        <Head>
+                <title>Preferences | Meshery</title>
+                </Head>
         <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
       </NoSsr>
     );
