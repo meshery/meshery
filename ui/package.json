@@ -26,7 +26,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/pickers": "^3.2.8",
     "@zeit/next-css": "^1.0.1",
-    "billboard.js": "^1.12.7",
+    "billboard.js": "=1.11.0",
     "caniuse-lite": "^1.0.30001048",
     "classnames": "^2.2.6",
     "codemirror": "^5.53.2",
