@@ -232,14 +232,14 @@ class MesherySettings extends React.Component {
               <Tab label={(
                 <div className={classes.iconText}>
                   Grafana
-                  <img src="/public/static/img/grafana_icon.svg" className={classes.icon} />
+                  <img src="/static/img/grafana_icon.svg" className={classes.icon} />
                 </div>
               )}
               />
               <Tab label={(
                 <div className={classes.iconText}>
                   Prometheus
-                  <img src="/public/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                  <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
                 </div>
               )}
               />

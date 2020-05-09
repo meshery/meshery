@@ -224,7 +224,7 @@ class GrafanaSelectionComponent extends Component {
                   label={grafanaURL}
                   onDelete={handleGrafanaChipDelete}
                   onClick={handleGrafanaClick}
-                  icon={<img src="/public/static/img/grafana_icon.svg" className={classes.icon} />}
+                  icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
                   key="graf-key"
                   variant="outlined"
                 />

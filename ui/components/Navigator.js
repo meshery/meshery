@@ -381,31 +381,31 @@ class Navigator extends React.Component {
   pickIcon(aName) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
-    let image = '/public/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo.png';
     let logoIcon = (<img src={image} className={classes.icon} />);
     switch (aName) {
       case 'istio':
-        image = '/public/static/img/istio-white.svg';
+        image = '/static/img/istio-white.svg';
         logoIcon = (<img src={image} className={classes.istioIcon} />);
         break;
       case 'linkerd':
-        image = '/public/static/img/linkerd-white.svg';
+        image = '/static/img/linkerd-white.svg';
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'consul':
-        image = '/public/static/img/consul-white.svg';
+        image = '/static/img/consul-white.svg';
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'network service mesh':
-        image = '/public/static/img/nsm-white.svg';
+        image = '/static/img/nsm-white.svg';
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'octarine':
-        image = '/public/static/img/octarine-white.svg';
+        image = '/static/img/octarine-white.svg';
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'citrix':
-        image = '/public/static/img/citrix-light-gray.svg';
+        image = '/static/img/citrix-light-gray.svg';
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
         // default:
@@ -556,8 +556,8 @@ class Navigator extends React.Component {
                   classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)
                 }
               >
-                <Avatar className={classes.mainLogo} src="/public/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
-                <Avatar className={classes.mainLogoText} src="/public/static/img/meshery-logo-text.png" onClick={this.handleTitleClick} />
+                <Avatar className={classes.mainLogo} src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
+                <Avatar className={classes.mainLogoText} src="/static/img/meshery-logo-text.png" onClick={this.handleTitleClick} />
 
                 {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
               </ListItem>

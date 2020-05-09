@@ -21,7 +21,6 @@ const promStyles = (theme) => ({
   },
   button: {
     marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
   },
   margin: {
     margin: theme.spacing(1),
@@ -289,7 +288,7 @@ class PrometheusSelectionComponent extends Component {
                   onDelete={handlePrometheusChipDelete}
                   onClick={handlePrometheusClick}
                   key="prometh-key"
-                  icon={<img src="/public/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
+                  icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
                   variant="outlined"
                 />
               </div>

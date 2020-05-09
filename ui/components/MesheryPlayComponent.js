@@ -137,32 +137,32 @@ class MesheryPlayComponent extends React.Component {
 
   pickImage(adapter) {
     const { classes } = this.props;
-    let image = '/public/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo.png';
     let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
     if (adapter && adapter.name) {
       switch (adapter.name.toLowerCase()) {
         case 'istio':
-          image = '/public/static/img/istio-blue.svg';
+          image = '/static/img/istio-blue.svg';
           imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
           break;
         case 'linkerd':
-          image = '/public/static/img/linkerd.svg';
+          image = '/static/img/linkerd.svg';
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'consul':
-          image = '/public/static/img/consul.svg';
+          image = '/static/img/consul.svg';
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'network service mesh':
-          image = '/public/static/img/nsm.svg';
+          image = '/static/img/nsm.svg';
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'octarine':
-          image = '/public/static/img/octarine.svg';
+          image = '/static/img/octarine.svg';
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'citrix':
-          image = '/public/static/img/citrix.svg';
+          image = '/static/img/citrix.svg';
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         // default:

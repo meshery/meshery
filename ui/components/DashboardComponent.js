@@ -322,7 +322,7 @@ class DashboardComponent extends React.Component {
         <Chip
           label={inClusterConfig ? 'Using In Cluster Config' : contextName}
           onClick={self.handleKubernetesClick}
-          icon={<img src="/public/static/img/kubernetes.svg" className={classes.icon} />}
+          icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
           className={classes.chip}
           key="k8s-key"
           variant="outlined"
@@ -353,7 +353,7 @@ class DashboardComponent extends React.Component {
           {
             availableAdapters.map((aa, ia) => {
               let isDisabled = true;
-              let image = '/public/static/img/meshery-logo.png';
+              let image = '/static/img/meshery-logo.png';
               let logoIcon = (<img src={image} className={classes.icon} />);
               let adapterType = '';
               meshAdapters.forEach((adapter) => {
@@ -362,27 +362,27 @@ class DashboardComponent extends React.Component {
                   adapterType = adapter.name;
                   switch (adapter.name.toLowerCase()) {
                     case 'istio':
-                      image = '/public/static/img/istio-blue.svg';
+                      image = '/static/img/istio-blue.svg';
                       logoIcon = (<img src={image} className={classes.istioIcon} />);
                       break;
                     case 'linkerd':
-                      image = '/public/static/img/linkerd.svg';
+                      image = '/static/img/linkerd.svg';
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
                     case 'consul':
-                      image = '/public/static/img/consul.svg';
+                      image = '/static/img/consul.svg';
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
                     case 'network service mesh':
-                      image = '/public/static/img/nsm.svg';
+                      image = '/static/img/nsm.svg';
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
                     case 'octarine':
-                      image = '/public/static/img/octarine.svg';
+                      image = '/static/img/octarine.svg';
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
                     case 'cpx':
-                      image = '/public/static/img/citrix.svg';
+                      image = '/static/img/citrix.svg';
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
                   }
@@ -429,7 +429,7 @@ let showGrafana;
         <Chip
           label={grafana.grafanaURL}
           onClick={self.handleGrafanaClick}
-          icon={<img src="/public/static/img/grafana_icon.svg" className={classes.icon} />}
+          icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
           className={classes.chip}
           key="graf-key"
           variant="outlined"
@@ -453,7 +453,7 @@ let showPrometheus;
         <Chip
           label={prometheus.prometheusURL}
           onClick={self.handlePrometheusClick}
-          icon={<img src="/public/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
+          icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
           className={classes.chip}
           key="prom-key"
           variant="outlined"
