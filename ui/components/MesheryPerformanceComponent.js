@@ -11,7 +11,6 @@ import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import GrafanaCharts from './GrafanaCharts';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';

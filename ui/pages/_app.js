@@ -354,9 +354,9 @@ class MesheryApp extends App {
     const { isDrawerCollapsed } = this.state;
     return (
       <NoSsr>
-      <Container>
             <Provider store={store}>
                 <Head>
+                <link rel="shortcut icon" href="/ui/static/img/meshery-logo/meshery-logo.svg" />
                 <title>Meshery</title>
                 </Head>
                 <MuiThemeProvider theme={theme}>
@@ -408,7 +408,6 @@ class MesheryApp extends App {
                     </MuiPickersUtilsProvider>
                 </MuiThemeProvider>
             </Provider>
-      </Container>
       </NoSsr>
     );
   }
