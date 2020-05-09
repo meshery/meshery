@@ -391,7 +391,7 @@ class MeshConfigComponent extends React.Component {
           label={inClusterConfig ? 'Using In Cluster Config' : contextName}
           onDelete={self.handleReconfigure}
           onClick={self.handleKubernetesClick}
-          icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+          icon={<img src="/public/static/img/kubernetes.svg" className={classes.icon} />}
           variant="outlined"
         />
       );

@@ -289,7 +289,7 @@ class PrometheusSelectionComponent extends Component {
                   onDelete={handlePrometheusChipDelete}
                   onClick={handlePrometheusClick}
                   key="prometh-key"
-                  icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
+                  icon={<img src="/public/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
                   variant="outlined"
                 />
               </div>

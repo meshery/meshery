@@ -287,31 +287,31 @@ class MeshAdapterConfigComponent extends React.Component {
       showAdapters = (
         <div className={classes.alignRight}>
           {meshAdapters.map((adapter, ind) => {
-            let image = '/static/img/meshery-logo.png';
+            let image = '/public/static/img/meshery-logo.png';
             let logoIcon = (<img src={image} className={classes.icon} />);
             switch (adapter.name.toLowerCase()) {
               case 'istio':
-                image = '/static/img/istio-blue.svg';
+                image = '/public/static/img/istio-blue.svg';
                 logoIcon = (<img src={image} className={classes.istioIcon} />);
                 break;
               case 'linkerd':
-                image = '/static/img/linkerd.svg';
+                image = '/public/static/img/linkerd.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'consul':
-                image = '/static/img/consul.svg';
+                image = '/public/static/img/consul.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'network service mesh':
-                image = '/static/img/nsm.svg';
+                image = '/public/static/img/nsm.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'octarine':
-                image = '/static/img/octarine.svg';
+                image = '/public/static/img/octarine.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'citrix':
-                image = '/static/img/citrix.svg';
+                image = '/public/static/img/citrix.svg';
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
 
