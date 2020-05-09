@@ -106,15 +106,65 @@ qps, c, t, loadGenerator,
       loadGenerator,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    this.startEventStream(`/api/load-test?${params}`);
+    this.startEventStream(`/api/load-test-prefs?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }
+    async startEventStream(url) {
+    this.closeEventStream();
+    this.eventStream = new EventSource(url);
+    this.eventStream.onmessage = this.handleEvents();
+    this.eventStream.onerror = this.handleError('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.');
+    this.props.enqueueSnackbar('Load test has been successfully submitted', {
+      variant: 'info',
+      autoHideDuration: 1000,
+      action: (key) => (
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={() => this.props.closeSnackbar(key)}
+        >
+          <CloseIcon />
+        </IconButton>
+      ),
+    });
+  }
+
 
   handleSuccess() {
-    const self = this;
-
+   const self = this;
+    return (result) => {
+      const {
+         qps, c, t, loadGenerator
+      } = this.state;
+      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
+        self.props.enqueueSnackbar('Successfully fetched the data.', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        self.props.updateLoadTestPref({
+          loadTest: {
+            qps,
+            c,
+            t,
+            loadGenerator,
+          },
+        });
+        self.setState({ result, testUUID: self.generateUUID() });
+      }
       self.closeEventStream();
       self.setState({ blockRunTest: false, timerDialogOpen: false });
+    };
     }
   
 
