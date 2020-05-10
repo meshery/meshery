@@ -3,7 +3,7 @@ const { parse } = require('url')
 const next = require('next')
 // const pathMatch = require('path-match')
 
-const port = parseInt(process.env.PORT, 10) || 3010
+const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()

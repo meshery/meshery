@@ -25,6 +25,6 @@ describe('My Third Test', () => {
 })
 describe('Visit Meshery', () => {
   it('Visits meshery', () => {
-    cy.visit('http://localhost:3010')
+    cy.visit('http://localhost:3000')
   })
 })
