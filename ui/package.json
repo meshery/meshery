@@ -11,7 +11,7 @@
     "start": "next start",
     "export": "next export",
     "cy:run": "cypress run",
-    "test": "start-server-and-test dev http://localhost:3010 cy:run && eslint."
+    "test": "start-server-and-test dev http://localhost:3010 cy:run && eslint ."
   },
   "keywords": [],
   "author": "",
