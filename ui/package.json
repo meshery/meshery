@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "nodemon ui_dev_server.js",
     "lint": "eslint --fix .",
-    "test": "eslint .",
     "next": "next",
     "build": "next build",
     "start": "next start",
-    "export": "next export"
+    "export": "next export",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test dev http://localhost:3010 cy:run && eslint."
   },
   "keywords": [],
   "author": "",
@@ -63,6 +64,7 @@
     "@babel/traverse": "^7.9.6",
     "@babel/types": "^7.9.6",
     "babel-eslint": "^10.1.0",
+    "cypress": "^4.5.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-google": "^0.14.0",
@@ -71,6 +73,7 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
     "http-proxy": "^1.17.0",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "start-server-and-test": "^1.11.0"
   }
 }
