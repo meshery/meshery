@@ -21,7 +21,6 @@ const promStyles = (theme) => ({
   },
   button: {
     marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
   },
   margin: {
     margin: theme.spacing(1),
