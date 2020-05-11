@@ -208,8 +208,8 @@ class DashboardComponent extends React.Component {
   }
 
     handleConfigure = () => {
-    this.props.router.push('/settings#metrics');
-  }
+      this.props.router.push('/settings#metrics');
+    }
 
   handleKubernetesClick = () => {
     this.props.updateProgress({ showProgress: true });
@@ -409,23 +409,23 @@ class DashboardComponent extends React.Component {
                 </Tooltip>
               );
             })
-}
+          }
         </div>
       );
     }
-let showGrafana;
+    let showGrafana;
     if(grafanaUrl === '') {
       showGrafana = (
-                <div className={classes.alreadyConfigured}>
-              <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-                <SettingsIcon className={classes.settingsIcon} />
+        <div className={classes.alreadyConfigured}>
+          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+            <SettingsIcon className={classes.settingsIcon} />
                 Configure Grafana
-              </Button>
-              </div>
-            );
-  }
+          </Button>
+        </div>
+      );
+    }
     if (grafana && grafana.grafanaURL && grafana.grafanaURL !== '') {
-        showGrafana = (
+      showGrafana = (
         <Chip
           label={grafana.grafanaURL}
           onClick={self.handleGrafanaClick}
@@ -437,17 +437,17 @@ let showGrafana;
       );
     }
 
-let showPrometheus;
+    let showPrometheus;
     if(prometheusUrl === '') {
       showPrometheus = (
-                <div className={classes.alreadyConfigured}>
-              <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
-                <SettingsIcon className={classes.settingsIcon} />
+        <div className={classes.alreadyConfigured}>
+          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+            <SettingsIcon className={classes.settingsIcon} />
                 Configure Prometheus
-              </Button>
-              </div>
-            );
-  }
+          </Button>
+        </div>
+      );
+    }
     if (prometheus && prometheus.prometheusURL && prometheus.prometheusURL !== '') {
       showPrometheus = (
         <Chip

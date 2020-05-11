@@ -207,14 +207,14 @@ class MesheryConfigSteps extends React.Component {
                   <Typography variant="h6">
                     {label}
                     {getRequiredSteps()[index] && (
-                    <Typography
-                      variant="h5"
-                      style={{
-                        display: 'inline',
-                      }}
-                    >
-                      <sup>*</sup>
-                    </Typography>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          display: 'inline',
+                        }}
+                      >
+                        <sup>*</sup>
+                      </Typography>
                     )}
                   </Typography>
                 </StepLabel>

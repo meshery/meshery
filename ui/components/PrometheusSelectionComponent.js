@@ -366,64 +366,64 @@ class PrometheusSelectionComponent extends Component {
                   })}
 
                 {panels.length === 0 && (
-                <Grid item xs={12} style={{ textAlign: 'center' }}>
+                  <Grid item xs={12} style={{ textAlign: 'center' }}>
                   Please load a valid Grafana board json to be able to view the panels.
-                </Grid>
+                  </Grid>
                 )}
 
                 {panels.length > 0 && (
-                <Grid item xs={12}>
-                  <TextField
-                    select
-                    id="panels"
-                    name="panels"
-                    label="Panels"
-                    fullWidth
-                    value={selectedPanels}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('selectedPanels')}
-                    SelectProps={{
-                      multiple: true,
-                      renderValue: (selected) => (
-                        <div className={classes.panelChips}>
-                          {selected.map((value) => {
-                            let selVal = '';
-                            let panelId = '';
-                            panels.forEach((panel) => {
-                              if (panel.id === value) {
-                                selVal = panel.title;
-                                panelId = panel.id;
-                              }
-                            });
-                            return (
-                              <Chip key={`pl_--_${panelId}`} label={selVal} className={classes.panelChip} />
-                            );
-                          })}
-                        </div>
-                      ),
-                    }}
-                  >
-                    {panels.map((panel) => (
-                      <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      select
+                      id="panels"
+                      name="panels"
+                      label="Panels"
+                      fullWidth
+                      value={selectedPanels}
+                      margin="normal"
+                      variant="outlined"
+                      onChange={this.handleChange('selectedPanels')}
+                      SelectProps={{
+                        multiple: true,
+                        renderValue: (selected) => (
+                          <div className={classes.panelChips}>
+                            {selected.map((value) => {
+                              let selVal = '';
+                              let panelId = '';
+                              panels.forEach((panel) => {
+                                if (panel.id === value) {
+                                  selVal = panel.title;
+                                  panelId = panel.id;
+                                }
+                              });
+                              return (
+                                <Chip key={`pl_--_${panelId}`} label={selVal} className={classes.panelChip} />
+                              );
+                            })}
+                          </div>
+                        ),
+                      }}
+                    >
+                      {panels.map((panel) => (
+                        <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
                 )}
               </Grid>
               {selectedPanels.length > 0 && (
-              <div className={classes.buttons}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={this.addSelectedBoardPanelConfig}
-                  className={classes.button}
-                >
+                <div className={classes.buttons}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={this.addSelectedBoardPanelConfig}
+                    className={classes.button}
+                  >
                   Add
-                </Button>
-              </div>
+                  </Button>
+                </div>
               )}
             </div>
           </React.Fragment>

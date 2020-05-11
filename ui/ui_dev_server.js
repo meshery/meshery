@@ -25,10 +25,10 @@ app.prepare().then(() => {
   createServer((req, res) => {
     const { pathname } = parse(req.url, true)
     if (pathname.startsWith("/api") || pathname.startsWith("/logout") || pathname.startsWith("/login")){
-        proxy.web(req, res, { target: 'http://localhost:9081' });
+      proxy.web(req, res, { target: 'http://localhost:9081' });
     } else {
-        handle(req, res)
-        return
+      handle(req, res)
+      return
     }
     // const params = match(pathname)
     // if (params === false) {
