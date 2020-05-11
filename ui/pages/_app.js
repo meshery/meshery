@@ -354,60 +354,60 @@ class MesheryApp extends App {
     const { isDrawerCollapsed } = this.state;
     return (
       <NoSsr>
-          <Provider store={store}>
-            <Head>
-              <link rel="shortcut icon" href="/ui/public/static/img/meshery-logo/meshery-logo.svg" />
-              <title>Meshery</title>
-            </Head>
-            <MuiThemeProvider theme={theme}>
-              <MuiPickersUtilsProvider utils={MomentUtils}>
-                <div className={classes.root}>
-                  <CssBaseline />
-                  <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
-                    <Hidden smUp implementation="js">
-                      <Navigator
-                        variant="temporary"
-                        open={this.state.mobileOpen}
-                        onClose={this.handleDrawerToggle}
-                        onCollapseDrawer={this.handleCollapseDrawer}
-                        isDrawerCollapsed={isDrawerCollapsed}
-                      />
-                    </Hidden>
-                    <Hidden xsDown implementation="css">
-                      <Navigator
-                        onCollapseDrawer={this.handleCollapseDrawer}
-                        isDrawerCollapsed={isDrawerCollapsed} />
-                    </Hidden>
-                  </nav>
-                  <div className={classes.appContent}>
-                    <Header onDrawerToggle={this.handleDrawerToggle} />
-                    <SnackbarProvider
-                      anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                      maxSnack={10}
-                    >
-                      <MesheryProgressBar />
-                      <main className={classes.mainContent}>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <Paper className={classes.paper}>
-                            <Component pageContext={this.pageContext} {...pageProps} />
-                          </Paper>
-                        </MuiPickersUtilsProvider>
-                      </main>
-                    </SnackbarProvider>
-                    <footer className={classes.footer}>
-                      <Typography variant="body2" align="center" color="textSecondary" component="p">
-                        <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
+        <Provider store={store}>
+          <Head>
+            <link rel="shortcut icon" href="/ui/public/static/img/meshery-logo/meshery-logo.svg" />
+            <title>Meshery</title>
+          </Head>
+          <MuiThemeProvider theme={theme}>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <div className={classes.root}>
+                <CssBaseline />
+                <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
+                  <Hidden smUp implementation="js">
+                    <Navigator
+                      variant="temporary"
+                      open={this.state.mobileOpen}
+                      onClose={this.handleDrawerToggle}
+                      onCollapseDrawer={this.handleCollapseDrawer}
+                      isDrawerCollapsed={isDrawerCollapsed}
+                    />
+                  </Hidden>
+                  <Hidden xsDown implementation="css">
+                    <Navigator
+                      onCollapseDrawer={this.handleCollapseDrawer}
+                      isDrawerCollapsed={isDrawerCollapsed} />
+                  </Hidden>
+                </nav>
+                <div className={classes.appContent}>
+                  <Header onDrawerToggle={this.handleDrawerToggle} />
+                  <SnackbarProvider
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    maxSnack={10}
+                  >
+                    <MesheryProgressBar />
+                    <main className={classes.mainContent}>
+                      <MuiPickersUtilsProvider utils={MomentUtils}>
+                        <Paper className={classes.paper}>
+                          <Component pageContext={this.pageContext} {...pageProps} />
+                        </Paper>
+                      </MuiPickersUtilsProvider>
+                    </main>
+                  </SnackbarProvider>
+                  <footer className={classes.footer}>
+                    <Typography variant="body2" align="center" color="textSecondary" component="p">
+                      <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
                                    Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
-                      </Typography>
-                    </footer>
-                  </div>
+                    </Typography>
+                  </footer>
                 </div>
-              </MuiPickersUtilsProvider>
-            </MuiThemeProvider>
-          </Provider>
+              </div>
+            </MuiPickersUtilsProvider>
+          </MuiThemeProvider>
+        </Provider>
       </NoSsr>
     );
   }
