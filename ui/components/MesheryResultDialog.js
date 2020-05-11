@@ -187,25 +187,25 @@ class MesheryResultDialog extends React.Component {
                 <Grid container spacing={1}>
                   {rowData && rowData.runner_results && rowData.runner_results.kubernetes
                 && (
-                <Grid item xs={12} sm={6}>
-                  {this.renderKubernetesInfo(rowData.runner_results.kubernetes)}
-                </Grid>
+                  <Grid item xs={12} sm={6}>
+                    {this.renderKubernetesInfo(rowData.runner_results.kubernetes)}
+                  </Grid>
                 )}
                   {rowData
                 && (
-                <Grid item xs={12} sm={6}>
-                  {this.renderLoadProfile(rowData)}
-                </Grid>
+                  <Grid item xs={12} sm={6}>
+                    {this.renderLoadProfile(rowData)}
+                  </Grid>
                 )}
                   {rowData && rowData.runner_results && rowData.runner_results['detected-meshes']
                 && (
-                <Grid item xs={12} sm={6}>
-                  {this.renderMeshesInfo(rowData.runner_results['detected-meshes'])}
-                </Grid>
+                  <Grid item xs={12} sm={6}>
+                    {this.renderMeshesInfo(rowData.runner_results['detected-meshes'])}
+                  </Grid>
                 )}
                 </Grid>
               </div>
-          )}
+            )}
           />
         </NoSsr>
       );

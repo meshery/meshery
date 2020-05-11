@@ -97,17 +97,17 @@ class GrafanaCustomCharts extends Component {
             <div className={classes.root}>
               {!(boardPanelData && boardPanelData !== null)
                 && (
-                <div className={classes.dateRangePicker}>
-                  <GrafanaDateRangePicker
-                    from={from}
-                    startDate={startDate}
-                    to={to}
-                    endDate={endDate}
-                    liveTail={liveTail}
-                    refresh={refresh}
-                    updateDateRange={this.updateDateRange}
-                  />
-                </div>
+                  <div className={classes.dateRangePicker}>
+                    <GrafanaDateRangePicker
+                      from={from}
+                      startDate={startDate}
+                      to={to}
+                      endDate={endDate}
+                      liveTail={liveTail}
+                      refresh={refresh}
+                      updateDateRange={this.updateDateRange}
+                    />
+                  </div>
                 )}
               <Dialog
                 fullWidth
@@ -120,17 +120,17 @@ class GrafanaCustomCharts extends Component {
                 <DialogContent>
                   {!(chartDialogPanelData && chartDialogPanelData !== null && Object.keys(chartDialogPanelData).length > 0)
                       && (
-                      <div className={classes.dateRangePicker}>
-                        <GrafanaDateRangePicker
-                          from={from}
-                          startDate={startDate}
-                          to={to}
-                          endDate={endDate}
-                          liveTail={liveTail}
-                          refresh={refresh}
-                          updateDateRange={this.updateDateRange}
-                        />
-                      </div>
+                        <div className={classes.dateRangePicker}>
+                          <GrafanaDateRangePicker
+                            from={from}
+                            startDate={startDate}
+                            to={to}
+                            endDate={endDate}
+                            liveTail={liveTail}
+                            refresh={refresh}
+                            updateDateRange={this.updateDateRange}
+                          />
+                        </div>
                       )}
                   <GrafanaCustomChart
                     key={this.genRandomNumberForKey()}

@@ -279,7 +279,7 @@ class GrafanaComponent extends Component {
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
       const {
-          selectedBoardsConfigs,
+        selectedBoardsConfigs,
       } = this.state;
 
       if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {

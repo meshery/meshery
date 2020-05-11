@@ -49,185 +49,185 @@ if (typeof window !== 'undefined') {
 }
 
 let theme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-      h5: {
-        fontWeight: 500,
-        fontSize: 26,
-        letterSpacing: 0.5,
-      },
+  typography: {
+    useNextVariants: true,
+    h5: {
+      fontWeight: 500,
+      fontSize: 26,
+      letterSpacing: 0.5,
     },
-    palette: {
-      // primary: {
-      //   light: '#cfd8dc',
-      //   main: '#607d8b',
-      //   dark: '#455a64',
-      // },
-      primary: blueGrey,
-      secondary: {
-        main: '#EE5351',
-      },
+  },
+  palette: {
+    // primary: {
+    //   light: '#cfd8dc',
+    //   main: '#607d8b',
+    //   dark: '#455a64',
+    // },
+    primary: blueGrey,
+    secondary: {
+      main: '#EE5351',
     },
-    shape: {
-      borderRadius: 8,
-    },
-  });
+  },
+  shape: {
+    borderRadius: 8,
+  },
+});
   
-  theme = {
-    ...theme,
-    overrides: {
-      MuiDrawer: {
-        paper: {
-          backgroundColor: '#263238',
-        },
+theme = {
+  ...theme,
+  overrides: {
+    MuiDrawer: {
+      paper: {
+        backgroundColor: '#263238',
       },
-      MuiButton: {
-        label: {
-          textTransform: 'initial',
-        },
-        contained: {
+    },
+    MuiButton: {
+      label: {
+        textTransform: 'initial',
+      },
+      contained: {
+        boxShadow: 'none',
+        '&:active': {
           boxShadow: 'none',
-          '&:active': {
-            boxShadow: 'none',
-          },
-        },
-      },
-      MuiTabs: {
-        root: {
-          marginLeft: theme.spacing(1),
-        },
-        indicator: {
-          height: 3,
-          borderTopLeftRadius: 3,
-          borderTopRightRadius: 3,
-        },
-      },
-      MuiTab: {
-        root: {
-          textTransform: 'initial',
-          margin: '0 16px',
-          minWidth: 0,
-          // [theme.breakpoints.up('md')]: {
-          //   minWidth: 0,
-          // },
-        },
-        labelContainer: {
-          padding: 0,
-          // [theme.breakpoints.up('md')]: {
-          //   padding: 0,
-          // },
-        },
-      },
-      MuiIconButton: {
-        root: {
-          padding: theme.spacing(1),
-        },
-      },
-      MuiTooltip: {
-        tooltip: {
-          borderRadius: 4,
-        },
-      },
-      MuiDivider: {
-        root: {
-          backgroundColor: '#404854',
-        },
-      },
-      MuiListItemText: {
-        primary: {
-          fontWeight: theme.typography.fontWeightMedium,
-        },
-      },
-      MuiListItemIcon: {
-        root: {
-          color: 'inherit',
-          marginRight: 0,
-          '& svg': {
-            fontSize: 20,
-          },
-        },
-      },
-      MuiAvatar: {
-        root: {
-          width: 32,
-          height: 32,
         },
       },
     },
-    props: {
-      MuiTab: {
-        disableRipple: true,
+    MuiTabs: {
+      root: {
+        marginLeft: theme.spacing(1),
+      },
+      indicator: {
+        height: 3,
+        borderTopLeftRadius: 3,
+        borderTopRightRadius: 3,
       },
     },
-    mixins: {
-      ...theme.mixins,
-      toolbar: {
-        minHeight: 48,
+    MuiTab: {
+      root: {
+        textTransform: 'initial',
+        margin: '0 16px',
+        minWidth: 0,
+        // [theme.breakpoints.up('md')]: {
+        //   minWidth: 0,
+        // },
+      },
+      labelContainer: {
+        padding: 0,
+        // [theme.breakpoints.up('md')]: {
+        //   padding: 0,
+        // },
       },
     },
-  };
+    MuiIconButton: {
+      root: {
+        padding: theme.spacing(1),
+      },
+    },
+    MuiTooltip: {
+      tooltip: {
+        borderRadius: 4,
+      },
+    },
+    MuiDivider: {
+      root: {
+        backgroundColor: '#404854',
+      },
+    },
+    MuiListItemText: {
+      primary: {
+        fontWeight: theme.typography.fontWeightMedium,
+      },
+    },
+    MuiListItemIcon: {
+      root: {
+        color: 'inherit',
+        marginRight: 0,
+        '& svg': {
+          fontSize: 20,
+        },
+      },
+    },
+    MuiAvatar: {
+      root: {
+        width: 32,
+        height: 32,
+      },
+    },
+  },
+  props: {
+    MuiTab: {
+      disableRipple: true,
+    },
+  },
+  mixins: {
+    ...theme.mixins,
+    toolbar: {
+      minHeight: 48,
+    },
+  },
+};
   
-  const drawerWidth = 256;
+const drawerWidth = 256;
 
-  const styles = {
-    root: {
-      display: 'flex',
-      minHeight: '100vh',
+const styles = {
+  root: {
+    display: 'flex',
+    minHeight: '100vh',
+  },
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
     },
-    drawer: {
-      [theme.breakpoints.up('sm')]: {
-        width: drawerWidth,
-        flexShrink: 0,
-      },
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerCollapsed: {
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(7) + 1,
     },
-    drawerCollapsed: {
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(7) + 1,
-      },
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: 'hidden',
-    },
-    appContent: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    mainContent: {
-      flex: 1,
-      padding: '48px 36px 24px',
-      background: '#eaeff1',
-    },
-    paper: {
-        maxWidth: '90%',
-        margin: 'auto',
-        overflow: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+  },
+  appContent: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  mainContent: {
+    flex: 1,
+    padding: '48px 36px 24px',
+    background: '#eaeff1',
+  },
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
 
-      },
-      footer: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(2),
-        color: '#737373',
-      },
-      footerText: {
-        cursor: 'pointer',
-        display: 'inline',
-        verticalAlign: 'middle',
-      },
-      footerIcon: {
-        display: 'inline',
-        verticalAlign: 'top',
-      },
-      icon: {
-        fontSize: 20,
-      },
-  };
+  },
+  footer: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2),
+    color: '#737373',
+  },
+  footerText: {
+    cursor: 'pointer',
+    display: 'inline',
+    verticalAlign: 'middle',
+  },
+  footerIcon: {
+    display: 'inline',
+    verticalAlign: 'top',
+  },
+  icon: {
+    fontSize: 20,
+  },
+};
 
 
 class MesheryApp extends App {
@@ -259,11 +259,11 @@ class MesheryApp extends App {
   async loadConfigFromServer() {
     const { store } = this.props;
     const self = this;
-      dataFetch('/api/config/sync', { 
-          credentials: 'same-origin',
-          method: 'GET',
-          credentials: 'include',
-        }, result => {
+    dataFetch('/api/config/sync', { 
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, result => {
       if (typeof result !== 'undefined'){
         if(result.k8sConfig){
           if(typeof result.k8sConfig.inClusterConfig === 'undefined'){
@@ -335,15 +335,15 @@ class MesheryApp extends App {
           store.dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults: result.anonymousPerfResults });
         }
       }
-      }, error => {
-        console.log(`there was an error fetching user config data: ${error}`);
-      });
+    }, error => {
+      console.log(`there was an error fetching user config data: ${error}`);
+    });
   }
 
   static async getInitialProps({Component, ctx}) {
-        const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-        return {pageProps};
-    }
+    const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+    return {pageProps};
+  }
 
   componentDidMount(){
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
@@ -354,71 +354,71 @@ class MesheryApp extends App {
     const { isDrawerCollapsed } = this.state;
     return (
       <NoSsr>
-      <Container>
-            <Provider store={store}>
-                <Head>
-                <title>Meshery</title>
-                </Head>
-                <MuiThemeProvider theme={theme}>
-                  <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <div className={classes.root}>
-                            <CssBaseline />
-                            <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
-                                <Hidden smUp implementation="js">
-                                <Navigator
-                                    variant="temporary"
-                                    open={this.state.mobileOpen}
-                                    onClose={this.handleDrawerToggle}
-                                    onCollapseDrawer={this.handleCollapseDrawer}
-                                    isDrawerCollapsed={isDrawerCollapsed}
-                                />
-                                </Hidden>
-                                <Hidden xsDown implementation="css">
-                                <Navigator
-                                  onCollapseDrawer={this.handleCollapseDrawer}
-                                  isDrawerCollapsed={isDrawerCollapsed} />
-                                </Hidden>
-                            </nav>
-                            <div className={classes.appContent}>
-                                <Header onDrawerToggle={this.handleDrawerToggle} />
-                                <SnackbarProvider
-                                      anchorOrigin={{
-                                          vertical: 'top',
-                                          horizontal: 'right',
-                                      }}
-                                      maxSnack={10}
-                                  >
-                                <MesheryProgressBar />
-                                <main className={classes.mainContent}>
-                                    <MuiPickersUtilsProvider utils={MomentUtils}>
-                                      <Paper className={classes.paper}>
-                                          <Component pageContext={this.pageContext} {...pageProps} />
-                                      </Paper>
-                                    </MuiPickersUtilsProvider>
-                                </main>
-                                </SnackbarProvider>
-                              <footer className={classes.footer}>
-                                <Typography variant="body2" align="center" color="textSecondary" component="p">
-                                 <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
+        <Container>
+          <Provider store={store}>
+            <Head>
+              <title>Meshery</title>
+            </Head>
+            <MuiThemeProvider theme={theme}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <div className={classes.root}>
+                  <CssBaseline />
+                  <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
+                    <Hidden smUp implementation="js">
+                      <Navigator
+                        variant="temporary"
+                        open={this.state.mobileOpen}
+                        onClose={this.handleDrawerToggle}
+                        onCollapseDrawer={this.handleCollapseDrawer}
+                        isDrawerCollapsed={isDrawerCollapsed}
+                      />
+                    </Hidden>
+                    <Hidden xsDown implementation="css">
+                      <Navigator
+                        onCollapseDrawer={this.handleCollapseDrawer}
+                        isDrawerCollapsed={isDrawerCollapsed} />
+                    </Hidden>
+                  </nav>
+                  <div className={classes.appContent}>
+                    <Header onDrawerToggle={this.handleDrawerToggle} />
+                    <SnackbarProvider
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      maxSnack={10}
+                    >
+                      <MesheryProgressBar />
+                      <main className={classes.mainContent}>
+                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                          <Paper className={classes.paper}>
+                            <Component pageContext={this.pageContext} {...pageProps} />
+                          </Paper>
+                        </MuiPickersUtilsProvider>
+                      </main>
+                    </SnackbarProvider>
+                    <footer className={classes.footer}>
+                      <Typography variant="body2" align="center" color="textSecondary" component="p">
+                        <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
                                    Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</span>
-                                </Typography>
-                              </footer>
-                            </div>
-                        </div>
-                    </MuiPickersUtilsProvider>
-                </MuiThemeProvider>
-            </Provider>
-      </Container>
+                      </Typography>
+                    </footer>
+                  </div>
+                </div>
+              </MuiPickersUtilsProvider>
+            </MuiThemeProvider>
+          </Provider>
+        </Container>
       </NoSsr>
     );
   }
 }
 
 MesheryApp.propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
+  classes: PropTypes.object.isRequired,
+};
   
 export default withStyles(styles)(withRedux(makeStore, {
-    serializeState: state => state.toJS(),
-    deserializeState: state => fromJS(state)
-  })(MesheryApp));
+  serializeState: state => state.toJS(),
+  deserializeState: state => fromJS(state)
+})(MesheryApp));
