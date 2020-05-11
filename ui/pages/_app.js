@@ -356,7 +356,7 @@ class MesheryApp extends App {
       <NoSsr>
             <Provider store={store}>
                 <Head>
-                <link rel="shortcut icon" href="/ui/static/img/meshery-logo/meshery-logo.svg" />
+                <link rel="shortcut icon" href="/ui/public/static/img/meshery-logo/meshery-logo.svg" />
                 <title>Meshery</title>
                 </Head>
                 <MuiThemeProvider theme={theme}>
