@@ -765,12 +765,12 @@ class GrafanaCustomChart extends Component {
         <NoSsr>
           <Card className={classes.card}>
             {!inDialog && (
-            <CardHeader
-              disableTypography
-              title={panel.title}
-              action={iconComponent}
-              className={classes.cardHeader}
-            />
+              <CardHeader
+                disableTypography
+                title={panel.title}
+                action={iconComponent}
+                className={classes.cardHeader}
+              />
             )}
             <CardContent className={classes.cardContent}>
               {mainChart}

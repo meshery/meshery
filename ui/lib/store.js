@@ -60,23 +60,23 @@ const initialState = fromJS({
 });
 
 export const actionTypes = {
-    UPDATE_PAGE: 'UPDATE_PAGE',
-    UPDATE_TITLE: 'UPDATE_TITLE',
-    UPDATE_USER: 'UPDATE_USER',
-    UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
-    UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
-    UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
-    // UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
-    UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
-    // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
-    CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
-    UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
-    UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
-    UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
-    UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
-    UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
-    UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
-    UPDATE_PROGRESS: 'UPDATE_PROGRESS',
+  UPDATE_PAGE: 'UPDATE_PAGE',
+  UPDATE_TITLE: 'UPDATE_TITLE',
+  UPDATE_USER: 'UPDATE_USER',
+  UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
+  UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
+  UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
+  // UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
+  UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
+  // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
+  CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
+  UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
+  UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
+  UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
+  UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
+  UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
+  UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
+  UPDATE_PROGRESS: 'UPDATE_PROGRESS',
 }
 
 // REDUCERS
@@ -85,15 +85,15 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_PAGE:
       // console.log(`received an action to update page: ${action.path} title: ${action.title}`);
       return state.mergeDeep({
-          page: {
-            path: action.path,
-          }
+        page: {
+          path: action.path,
+        }
       });
     case actionTypes.UPDATE_TITLE:
-        return state.mergeDeep({
-          page: {
-            title: action.title,
-          }
+      return state.mergeDeep({
+        page: {
+          title: action.title,
+        }
       });
     case actionTypes.UPDATE_USER:
       // console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
@@ -148,7 +148,7 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['prometheus'], val => fromJS(action.prometheus));
 
     case actionTypes.UPDATE_STATIC_BOARD_CONFIG:
-        return state.updateIn(['staticPrometheusBoardConfig'], val => fromJS(action.staticPrometheusBoardConfig));
+      return state.updateIn(['staticPrometheusBoardConfig'], val => fromJS(action.staticPrometheusBoardConfig));
     case actionTypes.CLEAR_RESULTS_SELECTION:
       state = state.deleteIn(['results_selection']);
       return state.mergeDeep({results_selection: fromJS({})});
@@ -162,13 +162,13 @@ export const reducer = (state = initialState, action) => {
 
 // ACTION CREATOR
 export const updatepagepath = ({path}) => dispatch => {
-    // console.log("invoking the updatepagepathandtitle action creator. . .");
+  // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type: actionTypes.UPDATE_PAGE, path });
 }
 
 export const updatepagetitle = ({path, title}) => dispatch => {
   // console.log("invoking the updatepagepathandtitle action creator. . .");
-return dispatch({ type: actionTypes.UPDATE_TITLE, title });
+  return dispatch({ type: actionTypes.UPDATE_TITLE, title });
 }
 
 export const updateProgress = ({showProgress}) => dispatch => {

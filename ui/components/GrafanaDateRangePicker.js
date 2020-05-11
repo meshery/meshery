@@ -101,7 +101,7 @@ class GrafanaDateRangePicker extends Component {
 
     setRange = (range) => () => {
       let startDate; let endDate; let liveTail; let startGDate; let
-        endGDate;
+          endGDate;
       switch (range) {
         case 'Last 2 days':
           startDate = new Date();
@@ -587,7 +587,7 @@ class GrafanaDateRangePicker extends Component {
                             color="default"
                             onChange={this.handleChange('liveTail')}
                           />
-)}
+                        )}
                         label="Live tail"
                       />
                       <TextField

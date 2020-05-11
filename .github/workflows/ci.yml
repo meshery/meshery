@@ -22,6 +22,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
@@ -35,6 +42,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
   static_check:
     name: Static check
@@ -48,20 +62,34 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
   vet_check:
-     name: Go Vet Check
-     runs-on: ubuntu-latest
-     steps:
-     - name: Check out code
-       uses: actions/checkout@master
-       with:
-         fetch-depth: 1
-     - name: Setup Go
-       uses: actions/setup-go@v1
-       with:
-         go-version: ${{ secrets.GO_VERSION }}
-     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
+    name: Go Vet Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
   security_check:
     name: Security Check
     runs-on: ubuntu-latest
@@ -70,18 +98,25 @@ jobs:
       GOPROXY: direct
       GOSUMDB: off
     steps:
-      - name: Checkout code 
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
-      - name: Setup Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ secrets.GO_VERSION }}
-      - name: Run Gosec Security Scanner
-        uses: securego/gosec@master
-        with:
-          args: ./... -exclude=G301,G304,G107
+    - name: Checkout code 
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - name: Run Gosec Security Scanner
+      uses: securego/gosec@master
+      with:
+        args: ./... -exclude=G301,G304,G107
   tests:
     needs: [lint, error_check, static_check, vet_check, security_check, lint-UI, lint-Provider-UI]
     name: Tests
@@ -95,6 +130,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Meshery backend build check
@@ -109,6 +151,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
   build-ui:
     name: Meshery UI build check
@@ -122,8 +171,18 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - run: |
         cd ui
+        npm i
+        npm run build && npm run export
+        cd ..
+        cd provider-ui
         npm i
         npm run build && npm run export
   lint-UI:
@@ -137,6 +196,12 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - run: |
         cd ui
         npm i
@@ -152,12 +217,18 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - run: |
         cd provider-ui
         npm i
         npm test
   build_release:
-    name: MesheryCTL Build & Release
+    name: Mesheryctl Build & Release
     runs-on: macos-latest
     needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
@@ -169,6 +240,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - name: goreleaser with tag
       uses: goreleaser/goreleaser-action@v1
       if: success() && startsWith(github.ref, 'refs/tags/')

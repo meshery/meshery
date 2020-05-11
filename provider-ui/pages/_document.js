@@ -5,6 +5,8 @@ import flush from 'styled-jsx/server';
 
 class MesheryDocument extends Document {
   render() {
+    // eslint-disable-next-line no-unused-vars
+    const { pageContext } = this.props;
     return (
       <html lang="en" dir="ltr">
         <Head>
@@ -43,7 +45,7 @@ MesheryDocument.getInitialProps = (ctx) => {
   // 4. page.render
 
   // Render app and page and get the context of the page with collected side effects.
-  let { pageContext } = this.props;
+  let pageContext;
   const page = ctx.renderPage((Component) => {
     const WrappedComponent = (props) => {
       pageContext = props.pageContext;
