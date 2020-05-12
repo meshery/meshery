@@ -26,7 +26,7 @@ app.prepare().then(() => {
     if (pathname.startsWith("/api") || pathname.startsWith("/logout") || pathname.startsWith("/login")){
       proxy.web(req, res, { target: 'http://localhost:9081' });
     } else {
-        handle(req, res)
+      handle(req, res)
     }
 
   }).listen(port, err => {
