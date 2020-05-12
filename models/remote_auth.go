@@ -33,8 +33,9 @@ func SafeClose(co io.Closer) {
 func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
-		logrus.Errorf("trying after refresh")
+		logrus.Error("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
+		logrus.Info("token refresh successful")
 		if err != nil {
 			logrus.Errorf("error doing token : %v", err.Error())
 			return nil, err
@@ -73,7 +74,7 @@ func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error)
 		return "", err
 	}
 	l.TokenStore[tokenString] = target[tokenName]
-	time.AfterFunc(5*time.Minute, func() {
+	time.AfterFunc(1*time.Hour, func() {
 		logrus.Infof("deleting old ts")
 		delete(l.TokenStore, tokenString)
 	})

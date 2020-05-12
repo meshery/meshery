@@ -96,6 +96,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		}
 		h.TokenHandler(w, req, provider, false)
 	})))
+	mux.Handle("/api/gettoken", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
+		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+			provider.ExtractToken(w, req)
+		}))))
 
 	// TODO: have to change this too
 	mux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -463,3 +463,29 @@ func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Reque
 		})
 	}
 }
+
+// ExtractToken - Returns the auth token and the provider type
+func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
+	l.TokenStoreMut.Lock()
+	defer l.TokenStoreMut.Unlock()
+
+	tokenString, err := l.GetToken(r)
+	if err != nil {
+		logrus.Errorf("Token not found:  %s", err.Error())
+		return
+	}
+	newts := l.TokenStore[tokenString]
+	if newts != "" {
+		tokenString = newts
+	}
+
+	resp := map[string]interface{}{
+		"meshery-provider": l.Name(),
+		tokenName:          tokenString,
+	}
+	logrus.Debugf("encoded response : %v", resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		logrus.Errorf("Unable to extract auth details: %v", err)
+		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
+	}
+}
