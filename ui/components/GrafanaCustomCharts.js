@@ -5,7 +5,6 @@ import {
   NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 import GrafanaCustomChart from './GrafanaCustomChart';
