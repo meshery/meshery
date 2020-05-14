@@ -5,10 +5,14 @@ permalink: architecture
 ---
 
 # Architecture
-
+## Overview
 <a href="{{site.baseurl}}/assets/images/meshery-architecture.svg"><img src="{{site.baseurl}}/assets/images/meshery-architecture.svg" /></a>
-<a href="{{site.baseurl}}/assets/images/meshery-architecture1.svg"><img src="{{site.baseurl}}/assets/images/meshery-architecture1.svg" /></a>
-<a href="{{site.baseurl}}/assets/images/meshery-architecture2.svg"><img src="{{site.baseurl}}/assets/images/meshery-architecture2.svg" /></a>
+
+## Clients
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg" /></a>
+
+## Providers
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-providers.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-providers.svg" /></a>
 
 ## Network Ports 
 Meshery uses the following list of network ports to interface with its various components:
@@ -24,4 +28,3 @@ Meshery uses the following list of network ports to interface with its various c
 {% endfor %}
 
 See the [Adapters](service-meshes/adapters) section for more information on the function of an adapter.
-
