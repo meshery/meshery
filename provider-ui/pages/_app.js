@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import { NoSsr, Typography } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
-import { blueGrey, grey } from '@material-ui/core/colors';
+import { blueGrey } from '@material-ui/core/colors';
 import getPageContext from '../components/PageContext';
 
 let theme = createMuiTheme({
@@ -21,11 +21,6 @@ let theme = createMuiTheme({
     },
   },
   palette: {
-    // primary: {
-    //   light: '#cfd8dc',
-    //   main: '#607d8b',
-    //   dark: '#455a64',
-    // },
     primary: blueGrey,
     secondary: {
       main: '#EE5351',
@@ -225,9 +220,8 @@ class MesheryProviderApp extends App {
 
   render() {
     const {
-      Component, store, pageProps, classes,
+      Component, pageProps, classes,
     } = this.props;
-    // const { isDrawerCollapsed } = this.state;
     return (
       <NoSsr>
         <Container>

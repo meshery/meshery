@@ -36,13 +36,16 @@ const (
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
+	mesheryAuthToken            = url + "/api/gettoken"
+	mesheryURL                  = url + "/api/load-test-smps?"
 )
 
 // See setFileLocation function below.
 var (
-	resetFlag bool
+	resetFlag         bool
 	mesheryFolder     = ".meshery"
 	dockerComposeFile = "/meshery.yaml"
+	authConfigFile    = "/auth.json"
 )
 
 func downloadFile(filepath string, url string) error {
@@ -90,6 +93,7 @@ func setFileLocation() {
 	}
 	mesheryFolder = path.Join(home, mesheryFolder)
 	dockerComposeFile = path.Join(mesheryFolder, dockerComposeFile)
+	authConfigFile = path.Join(mesheryFolder, authConfigFile)
 }
 
 //Pre-Flight Check

@@ -198,21 +198,6 @@ class ProviderComponent extends React.Component {
             </DialogActions>
           </Dialog>
           <div className={classes.container}>
-            <Grid container spacing={10}>
-                {/* <Grid item xs={12} sm={6} justify="flex-end" alignItems="center">
-                {selectedLocal !== '' &&
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // onClick={self.handleLocalSubmit}
-                  href={`/api/provider?provider=${encodeURIComponent(selectedLocal)}`}
-                  // className={classes.button}
-                >
-                  {selectedLocal}
-                </Button>}
-              </Grid> */}
               <Grid item xs={12} justify="center">
                 {availableProviders !== ''
                 && (
@@ -220,8 +205,6 @@ class ProviderComponent extends React.Component {
                 <ButtonGroup variant="contained" color="primary" ref={(ref) => self.anchorRef = ref} aria-label="split button">
                   <Button
                     size="large"
-                  // onClick={self.handleRemoteSubmit(selectedRemote)}\
-                  // value={selectedRemote !==''?selectedRemote:"Select your provider"}
                     href={selectedProvider == '' ? '' : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`}
                   >
                     {selectedProvider !== '' ? selectedProvider : 'Select Your Provider'}
@@ -252,10 +235,7 @@ class ProviderComponent extends React.Component {
                             {Object.keys(availableProviders).map((key) => (
                               <MenuItem
                                 key={key}
-                            // disabled={index === 2}
-                            // selected={key === selectedRemote}
-                            // href={`/api/provider?provider=${encodeURIComponent(key)}`}
-                                onClick={(ev) => self.handleMenuItemClick(key)}
+                                onClick={() => self.handleMenuItemClick(key)}
                               >
                                 {key}
                               </MenuItem>
@@ -269,7 +249,6 @@ class ProviderComponent extends React.Component {
                 </>
                 )}
               </Grid>
-            </Grid>
           </div>
         </div>
       </NoSsr>

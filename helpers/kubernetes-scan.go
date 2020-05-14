@@ -32,6 +32,10 @@ var meshesMeta = map[string][]string{
 		"docker.io/networkservicemesh/nsmd",
 		"docker.io/networkservicemesh/nsmd-k8s",
 	},
+	"Citrix": []string{
+		"quay.io/citrix/citrix-istio-adaptor",
+		"quay.io/citrix/citrix-k8s-cpx-ingress",
+	},
 }
 
 // ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed

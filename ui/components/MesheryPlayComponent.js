@@ -14,7 +14,6 @@ import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
 const styles = (theme) => ({
   icon: {
-    // margin: theme.spacing(1),
     fontSize: 20,
   },
   root: {

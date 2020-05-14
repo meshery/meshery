@@ -21,6 +21,19 @@ const styles = (theme) => ({
   },
 });
 
+function exportToJsonFile(jsonData, filename) {
+  let dataStr = JSON.stringify(jsonData);
+  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+  let exportFileDefaultName = filename;
+
+  let linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  linkElement.remove()
+}
+
 class User extends React.Component {
   state = {
     user: null,
@@ -46,6 +59,14 @@ class User extends React.Component {
     this.props.router.push('/userpreference');
   };
 
+  handleGetToken = () => {
+    dataFetch('/api/gettoken', { credentials: 'same-origin' }, (data) => {
+      exportToJsonFile(data, "auth.json");
+    }, (error) => ({
+      error,
+    }));
+  };
+
   componentDidMount() {
     // console.log("fetching user data");
     dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
@@ -61,7 +82,7 @@ class User extends React.Component {
       color, iconButtonClassName, avatarClassName, classes, ...other
     } = this.props;
     let avatar_url; let
-      user_id;
+        user_id;
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
       user_id = this.state.user.user_id;
@@ -95,6 +116,7 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
+                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>

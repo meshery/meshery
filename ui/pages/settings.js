@@ -2,8 +2,10 @@ import MesherySettings from "../components/MesherySettings";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import Head from 'next/head';
+import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
+
 
 class Settings extends React.Component {
   componentDidMount () {
@@ -14,6 +16,9 @@ class Settings extends React.Component {
   render () {
     return (
       <NoSsr>
+        <Head>
+          <title>Settings | Meshery</title>
+        </Head>
         <MesherySettings />
       </NoSsr>
     );
@@ -21,10 +26,10 @@ class Settings extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  })
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
 
 export default connect(
-    null,
-    mapDispatchToProps
-  )(Settings);
+  null,
+  mapDispatchToProps
+)(Settings);
