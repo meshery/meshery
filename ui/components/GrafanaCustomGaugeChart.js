@@ -1,13 +1,5 @@
-import { Component, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import { IconButton, NoSsr } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withSnackbar } from 'notistack';
 import makeStyles from '@material-ui/styles/makeStyles';
-import dataFetch from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
 
 let bb;
 if (typeof window !== 'undefined') {
