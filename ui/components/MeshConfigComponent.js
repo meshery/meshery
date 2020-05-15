@@ -211,7 +211,7 @@ class MeshConfigComponent extends React.Component {
   }
 
   fetchContexts = () => {
-    const { inClusterConfigForm, k8sfile } = this.state;
+    const { inClusterConfigForm } = this.state;
     const fileInput = document.querySelector('#k8sfile');
     const formData = new FormData();
     if (inClusterConfigForm) {
@@ -380,7 +380,7 @@ class MeshConfigComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer,
+      inClusterConfig, contextName, clusterConfigured, configuredServer,
     } = this.state;
     let showConfigured = '';
     const self = this;
@@ -445,7 +445,7 @@ class MeshConfigComponent extends React.Component {
   meshOut = (showConfigured) => {
     const { classes } = this.props;
     const {
-      inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer,
+      k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile,
     } = this.state;
 
     return (
@@ -488,7 +488,7 @@ class MeshConfigComponent extends React.Component {
                 variant="outlined"
                 fullWidth
                 value={k8sfile.replace('C:\\fakepath\\', '')}
-                onClick={(e) => document.querySelector('#k8sfile').click()}
+                onClick={() => document.querySelector('#k8sfile').click()}
                 margin="normal"
                 InputProps={{
                   readOnly: true,
@@ -528,9 +528,6 @@ class MeshConfigComponent extends React.Component {
 
   meshIn = (showConfigured) => {
     const { classes } = this.props;
-    const {
-      inClusterConfig, inClusterConfigForm, k8sfile, k8sfileElementVal, contextName, contextNameForForm, contextsFromFile, clusterConfigured, configuredServer,
-    } = this.state;
 
     return (
       <NoSsr>
@@ -576,11 +573,7 @@ class MeshConfigComponent extends React.Component {
   }
 
   render() {
-    const { reconfigureCluster } = this.state;
-    // if (reconfigureCluster) {
     return this.configureTemplate();
-    // }
-    // return this.alreadyConfiguredTemplate();
   }
 }
 

@@ -117,15 +117,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     this.delIconEles = {};
     // initializing menuState;
     if (adapter && adapter.ops) {
-      // adapter.ops.forEach(({category}) => {
-      //   if(typeof category === 'undefined'){
-      //     category = 0;
-      //   }
-      //   // menuState[category] = {
-      //   //   add: false,
-      //   //   delete: false,
-      //   // }
-      // })
       // NOTE: this will have to updated to match the categories
       [0, 1, 2, 3, 4].forEach((i) => {
         menuState[i] = {
@@ -196,15 +187,11 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
-  // handleDelete = (selectedOp) => () => {
-  //   this.handleSubmit(selectedOp, true)();
-  // }
-
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
     return () => {
       const {
-        namespace, namespaceError, cmEditorValAdd, cmEditorValAddError, cmEditorValDel, cmEditorValDelError,
+        namespace, cmEditorValAdd, cmEditorValDel,
       } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
@@ -320,12 +307,6 @@ class MesheryAdapterPlayComponent extends React.Component {
         keepMounted
         open={menuState[cat][isDelete ? 'delete' : 'add']}
         onClose={this.addDelHandleClick(cat, isDelete)}
-        // PaperProps={{
-        //   style: {
-        //     maxHeight: ITEM_HEIGHT * 4.5,
-        //     width: 200,
-        //   },
-        // }}
       >
         {selectedAdapterOps.map(({ key, value }) => (
           <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(cat, key, isDelete)}>
@@ -340,7 +321,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     const { adapter } = this.props;
     const {
       customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel,
-      cmEditorValAddError, cmEditorValDelError,
     } = this.state;
     const self = this;
     return (
@@ -406,8 +386,6 @@ class MesheryAdapterPlayComponent extends React.Component {
                     self.setState({ selectionError: false, cmEditorValAddError: false });
                   }
                 }}
-                onChange={(editor, data, value) => {
-                }}
               />
             </Grid>
           </Grid>
@@ -419,10 +397,6 @@ class MesheryAdapterPlayComponent extends React.Component {
             {!isDelete && <PlayIcon />}
             {isDelete && <DeleteIcon />}
           </IconButton>
-
-          {/* <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit('custom', isDelete)}>
-            <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth />
-          </IconButton> */}
 
         </DialogActions>
       </Dialog>
@@ -449,12 +423,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       cat = 0;
     }
     const { classes, adapter } = this.props;
-    const { menuState } = this.state;
     // const expanded = false;
 
     const selectedAdapterOps = adapter && adapter.ops ? adapter.ops.filter(({ category }) => typeof category === 'undefined' && cat === 0 || category === cat) : [];
     let content; let
-      description;
+        description;
     switch (cat) {
       case 0:
         content = 'Manage Service Mesh Lifecycle';
@@ -484,32 +457,9 @@ class MesheryAdapterPlayComponent extends React.Component {
     return (
       <Card className={classes.card}>
         <CardHeader
-          // avatar={
-          //   <Avatar aria-label="recipe" className={classes.avatar}>
-          //     R
-          //   </Avatar>
-          // }
-          // action={
-          //   <IconButton aria-label="settings">
-          //     <MoreVertIcon />
-          //   </IconButton>
-          // }
-          // title="Shrimp and Chorizo Paella"
-          // subheader="September 14, 2016"
           title={content}
           subheader={description}
         />
-        {/* <CardMedia
-          className={classes.media}
-          image="/static/images/cards/paella.jpg"
-          title="Paella dish"
-        /> */}
-        {/* <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
-            This impressive paella is a perfect party dish and a fun meal to cook together with your
-            guests. Add 1 cup of frozen peas along with the mussels, if you like.
-          </Typography>
-        </CardContent> */}
         <CardActions disableSpacing>
           <IconButton aria-label="install" ref={(ch) => this.addIconEles[cat] = ch} onClick={this.addDelHandleClick(cat, false)}>
             {cat !== 3 && cat !== 4 ? <AddIcon /> : <PlayIcon />}
@@ -517,15 +467,13 @@ class MesheryAdapterPlayComponent extends React.Component {
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
           {cat !== 3 && (
-          <div className={classes.fileLabel}>
-            <IconButton aria-label="delete" ref={(ch) => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
-              {/* <IconButton aria-label="Delete" color="primary" onClick={this.handleSubmit(key, true)}> */}
-              {/* <FontAwesomeIcon icon={faTrashAlt} transform="shrink-4" fixedWidth /> */}
-              <DeleteIcon />
-            </IconButton>
-            {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
-            {cat === 4 && this.generateYAMLEditor(cat, true)}
-          </div>
+            <div className={classes.fileLabel}>
+              <IconButton aria-label="delete" ref={(ch) => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
+                <DeleteIcon />
+              </IconButton>
+              {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
+              {cat === 4 && this.generateYAMLEditor(cat, true)}
+            </div>
           )}
           {/* <IconButton
             // className={clsx(classes.expand, {
@@ -544,12 +492,9 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   render() {
     const {
-      classes, color, iconButtonClassName, avatarClassName, adapter, adapter_icon,
+      classes, adapter, adapter_icon,
     } = this.props;
     const {
-      selectedOp,
-      cmEditorValAdd,
-      cmEditorValDel,
       namespace,
       namespaceError,
     } = this.state;
@@ -566,8 +511,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       });
       filteredOps.sort();
     }
-
-    const self = this;
 
     if (this.props.adapCount > 1) {
       return (

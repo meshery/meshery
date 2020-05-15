@@ -5,3 +5,4 @@ static
 package.json
 package-lock.json
 nodemon.json 
+next.config.js
