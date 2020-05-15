@@ -78,7 +78,13 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
-# Contributing
+# Contributing(yes!)
+
+We're a warm and welcoming community of open source contributors. Please join. All types of contribution are welcome. Be sure to read the [Meshery Contributors Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit#heading=h.rcr9t5pnt3bw) for a tour of resources available to you and how to get started.
+
+* [General Contributing](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#contributing)
+* [Write an adapter](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#adapter)
+* [Build the project](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#building)
 
 ## Community
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
