@@ -3,6 +3,7 @@ import MesheryResults from "../components/MesheryResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
+import Head from 'next/head';
 import { getPath } from "../lib/path";
 
 class Results extends React.Component {
@@ -14,6 +15,9 @@ class Results extends React.Component {
   render () {
     return (
       <NoSsr>
+        <Head>
+          <title>Results | Meshery</title>
+        </Head>
         <MesheryResults />
       </NoSsr>
     );
@@ -21,8 +25,8 @@ class Results extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  })
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
 
 export default connect(
   null,

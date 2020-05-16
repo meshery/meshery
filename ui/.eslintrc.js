@@ -39,6 +39,16 @@ module.exports = {
             "error",
             "1tbs"
         ],
+        'indent': [
+            'error', 2, {
+            "FunctionExpression": {"parameters": "first"},
+            "FunctionDeclaration": {"parameters": "first"},
+            "MemberExpression": 1,
+            "SwitchCase": 1,
+            "outerIIFEBody": 0,
+            "VariableDeclarator": { "var": 2, "let": 2, "const": 3 }
+          }
+        ],
         "react/react-in-jsx-scope": "off",
         "no-undef": "off",
         "react/prop-types": 0,

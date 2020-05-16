@@ -351,17 +351,17 @@ class MesheryResults extends Component {
                   <MesheryChart data={[row]} hideTitle />
                 </div>
                 {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-                <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]}
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()}
-                    endDate={endTime}
-                    to={endTime.getTime().toString()}
-                    liveTail={false}
-                  />
-                </div>
+                  <div>
+                    <GrafanaCustomCharts
+                      boardPanelConfigs={[boardConfig]}
+                      boardPanelData={[serverMetrics]}
+                      startDate={startTime}
+                      from={startTime.getTime().toString()}
+                      endDate={endTime}
+                      to={endTime.getTime().toString()}
+                      liveTail={false}
+                    />
+                  </div>
                 )}
               </TableCell>
             </TableRow>
@@ -373,10 +373,10 @@ class MesheryResults extends Component {
         <NoSsr>
           {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0
               && (
-              <MesheryResultDialog
-                rowData={selectedRowData}
-                close={self.resetSelectedRowData()}
-              />
+                <MesheryResultDialog
+                  rowData={selectedRowData}
+                  close={self.resetSelectedRowData()}
+                />
               )}
           <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
         </NoSsr>

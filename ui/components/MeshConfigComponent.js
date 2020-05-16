@@ -445,7 +445,7 @@ class MeshConfigComponent extends React.Component {
   meshOut = (showConfigured) => {
     const { classes } = this.props;
     const {
-        k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile,
+      k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile,
     } = this.state;
 
     return (

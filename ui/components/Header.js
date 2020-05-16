@@ -108,14 +108,14 @@ class Header extends React.Component {
                 </IconButton> */}
 
                   <IconButton color="inherit">
-                    <Link href="/" prefetch>
+                    <Link href="/">
                       <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
                       {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                     </Link>
                   </IconButton>
 
                   <IconButton color="inherit">
-                    <Link href="/settings" prefetch>
+                    <Link href="/settings">
                       <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
                     </Link>
                   </IconButton>

@@ -78,7 +78,13 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
-# Contributing
+# Contributing(yes!)
+
+We're a warm and welcoming community of open source contributors. Please join. All types of contribution are welcome. Be sure to read the [Meshery Contributors Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit#heading=h.rcr9t5pnt3bw) for a tour of resources available to you and how to get started.
+
+* [General Contributing](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#contributing)
+* [Write an adapter](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#adapter)
+* [Build the project](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md/#building)
 
 ## Community
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
@@ -119,7 +125,7 @@ This project is community-built and welcomes collaboration! [Fork here on Github
 - [KubeCon EU 2019 Istio Founders Meetup](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
 - [Cloud Native Rejekts EU 2019](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
 - [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
-
+- Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/))
 
 ## Other Resources
 - [Service Mesh Comparison](https://layer5.io/landscape)

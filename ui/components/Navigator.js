@@ -517,7 +517,7 @@ class Navigator extends React.Component {
       );
       if (linkc) {
         linkContent = (
-          <Link href={hrefc} prefetch>
+          <Link href={hrefc}>
             {linkContent}
           </Link>
         );
@@ -579,7 +579,7 @@ class Navigator extends React.Component {
                         path === href && classes.itemActiveItem,
                       )}
                     >
-                      <Link href={link ? href : ''} prefetch>
+                      <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
                           <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                           <ListItemText

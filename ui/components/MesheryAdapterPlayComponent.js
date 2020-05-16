@@ -427,7 +427,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     const selectedAdapterOps = adapter && adapter.ops ? adapter.ops.filter(({ category }) => typeof category === 'undefined' && cat === 0 || category === cat) : [];
     let content; let
-      description;
+        description;
     switch (cat) {
       case 0:
         content = 'Manage Service Mesh Lifecycle';
@@ -467,13 +467,13 @@ class MesheryAdapterPlayComponent extends React.Component {
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
           {cat !== 3 && (
-          <div className={classes.fileLabel}>
-            <IconButton aria-label="delete" ref={(ch) => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
-              <DeleteIcon />
-            </IconButton>
-            {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
-            {cat === 4 && this.generateYAMLEditor(cat, true)}
-          </div>
+            <div className={classes.fileLabel}>
+              <IconButton aria-label="delete" ref={(ch) => this.delIconEles[cat] = ch} className={classes.deleteRight} onClick={this.addDelHandleClick(cat, true)}>
+                <DeleteIcon />
+              </IconButton>
+              {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
+              {cat === 4 && this.generateYAMLEditor(cat, true)}
+            </div>
           )}
           {/* <IconButton
             // className={clsx(classes.expand, {

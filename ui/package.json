@@ -8,7 +8,7 @@
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "cy:run": "cypress run",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint ."
