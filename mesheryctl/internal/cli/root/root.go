@@ -42,13 +42,13 @@ Usage:
 
 Available Commands:
   help        Help about any command
-  perf        Performance Testing
-  system      System level actions
-  version     Version of mesheryctl
+  perf        Performance Management 
+  system      Meshery Lifecyle Management
+  version     Print mesheryctl version
 
 
 Flags:
-      --config string   config file (default location is: $HOME/.meshery/` + utils.DockerComposeFile + `)
+      --config string    config file (default location is: $HOME/.meshery/` + utils.DockerComposeFile + `)
   -h, --help            help for mesheryctl
   -v, --version         Version of mesheryctl
 

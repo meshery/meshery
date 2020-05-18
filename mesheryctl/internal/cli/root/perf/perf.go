@@ -143,7 +143,7 @@ func UpdateAuthDetails(filepath string) error {
 	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
-// PerfCmd represents the Performance command
+// PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Testing",

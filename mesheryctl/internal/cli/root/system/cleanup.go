@@ -37,5 +37,5 @@ func resetMesheryConfig() {
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 		log.Fatal("Error while resetting:", err)
 	}
-	log.Info("Meshery config (" + utils.DockerComposeFile + ") settings reset to defaults.")
+	log.Info("Meshery config (" + utils.DockerComposeFile + ") reset to default settings.")
 }

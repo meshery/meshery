@@ -53,8 +53,8 @@ var (
 // SystemCmd represents the system level commands
 var SystemCmd = &cobra.Command{
 	Use:   "system",
-	Short: "System level actions",
-	Long:  `Perform system level actions on meshery client and server.`,
+	Short: "Meshery Lifecycle Management",
+	Long:  `Manage the state and configuration of Meshery server, adapters, and client.`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		for _, subcommand := range availableSubcommands {
