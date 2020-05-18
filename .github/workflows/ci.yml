@@ -186,7 +186,7 @@ jobs:
         npm i
         npm run build && npm run export
   lint-UI:
-    name: Meshery UI Lint check
+    name: Meshery UI Tests
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
