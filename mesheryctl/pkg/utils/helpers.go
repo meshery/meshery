@@ -138,6 +138,7 @@ func installprereq() {
 	log.Info("Prerequisite Docker Compose is installed.")
 }
 
+// IsMesheryRunning checks if the meshery server containers are up and running
 func IsMesheryRunning() bool {
 	op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
 	if err != nil {
