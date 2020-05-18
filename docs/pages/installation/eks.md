@@ -12,28 +12,18 @@ In order to run Meshery in a managed Kubernetes environment, you will need to as
 Note: Make sure you are able to access EKS with kubectl by follwing <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide</a>
 
 
-
-
-
-
-
-### 1. Create a `ServiceAccount` with `cluster-admin` role.
-
-
+### 1. Create a `ServiceAccount` with `cluster-admin` role
 
  &nbsp;&nbsp;&nbsp; a. Create a service account
 
+```
+kubectl create serviceaccount meshery
+```
+&nbsp;&nbsp;&nbsp; b. Adding/Binding `cluster-admin` role to new service account `meshery`
 
 ```
-kubectl create serviceaccount sa-1
-```
-&nbsp;&nbsp;&nbsp; b. Adding/Binding `cluster-admin` role to new service account `sa-1`
-
-
-
-```
-kubectl create clusterrolebinding sa-1-binding --clusterrole=cluster-admin \
- --serviceaccount=default:sa-1
+kubectl create clusterrolebinding meshery-binding --clusterrole=cluster-admin \
+ --serviceaccount=default:meshery
  ```
 
 ### 2. Get secret name from `ServiceAccount`.
@@ -45,20 +35,20 @@ $ kubectl get secrets
 
 NAME                           TYPE                                  DATA   AGE
 default-token-fnfjp            kubernetes.io/service-account-token   3      95d
-sa-1-token-5z9xj               kubernetes.io/service-account-token   3      66m
+meshery-token-5z9xj               kubernetes.io/service-account-token   3      66m
 
 ```
-Note: Here my secret Name is **sa-1-token-5z9xj** 
+Note: Here the secret name is **meshery-token-5z9xj** 
 
 &nbsp;&nbsp;&nbsp; b. Get secret/token
 
 ```
 
 $ kubectl describe secret  sa-1-token-5z9xj 
-Name:         sa-1-token-5z9xj
+Name:         meshery-token-5z9xj
 Namespace:    default
 Labels:       <none>
-Annotations:  kubernetes.io/service-account.name: sa-1
+Annotations:  kubernetes.io/service-account.name: meshery
               kubernetes.io/service-account.uid: 397XXX-XXX-XXXX-XXXXX-XXXXX
 
 Type:  kubernetes.io/service-account-token
@@ -77,15 +67,15 @@ token:      XXXhbGciOiJSUXXXX
 &nbsp;&nbsp;&nbsp; a.Set config Credential using above generate `token`.
 
 ```
-kubectl config set-credentials sa-1 --token=XXXXX
+kubectl config set-credentials meshery --token=XXXXX
 
-o/p:User "sa-1" set.
+o/p:User "meshery" set.
 ```
 
-&nbsp;&nbsp;&nbsp; b. Set current context to our new service account `sa-1`
+&nbsp;&nbsp;&nbsp; b. Set current context to our new service account `meshery`
 
 ```
-kubectl config set-context --current --user=sa-1
+kubectl config set-context --current --user=meshery
 
 o/p:
 Context "aws" modified.
@@ -96,5 +86,3 @@ Context "aws" modified.
  ```
  kubectl config view --minify --flatten >  config_aws_eks.yaml 
  ```
-
-
