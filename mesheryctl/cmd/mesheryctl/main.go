@@ -12,34 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package main
 
 import (
-	"os"
-	"os/exec"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
-// statusCmd represents the status command
-var statusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Check Meshery status",
-	Long:  `Check status of Meshery and Meshery adapters.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Meshery status...")
+var version = "dev"
+var commitsha = "SHA"
 
-		start := exec.Command("docker-compose", "-f", dockerComposeFile, "ps")
-		start.Stdout = os.Stdout
-		start.Stderr = os.Stderr
-
-		if err := start.Run(); err != nil {
-			log.Fatal(err)
-		}
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(statusCmd)
+func main() {
+	root.BuildClient = version
+	root.BuildServer = version
+	root.CommitSHA = commitsha
+	root.Execute()
 }

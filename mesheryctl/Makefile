@@ -20,12 +20,12 @@ GCFLAGS :=
 .PHONY: $(BINNAME_DARWIN)
 $(BINNAME_DARWIN):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=darwin GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_DARWIN) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=darwin GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_DARWIN) ./cmd/mesheryctl/main.go
 
 .PHONY: $(BINNAME_LINUX)
 $(BINNAME_LINUX):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=linux GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_LINUX) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=linux GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_LINUX) ./cmd/mesheryctl/main.go
 
 .PHONY: $(BINNAME_WINDOWS)
 $(BINNAME_WINDOWS):

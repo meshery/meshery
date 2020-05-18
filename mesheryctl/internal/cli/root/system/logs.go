@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package system
 
 import (
 	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -29,21 +31,22 @@ var logsCmd = &cobra.Command{
 	Use:   "logs",
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		if ok := isMesheryRunning(); !ok {
+		if ok := utils.IsMesheryRunning(); !ok {
 			log.Error("No logs to show. Meshery is not running.")
 			return
 		}
 
 		log.Info("Starting Meshery logging...")
 
-		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
-			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
+		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 				log.Fatal("start cmd: ", err)
 			}
 		}
 
-		cmdlog := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")
+		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
 			log.Fatal(err)
@@ -61,8 +64,4 @@ var logsCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(logsCmd)
 }

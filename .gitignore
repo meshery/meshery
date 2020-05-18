@@ -52,3 +52,5 @@ Gemfile.lock
 docs/Gemfile.lock
 
 yarn.lock
+
+**/_output

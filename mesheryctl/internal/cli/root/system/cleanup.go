@@ -12,34 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package system
 
 import (
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
 )
 
-// BuildClient - holds the build info of Client
-var BuildClient string
-
-// BuildServer - holds the build info of server
-var BuildServer string
-
-// CommitSHA - holds the Git-SHA info
-var CommitSHA string
-
-// versionCmd represents the version command
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Version of mesheryctl",
-	Long:  `Version of Meshery command line client - mesheryctl.`,
+// cleanupCmd represents the cleanup command
+var cleanupCmd = &cobra.Command{
+	Use:   "cleanup",
+	Short: "Cleanup Meshery's configuration",
+	Long:  `Reset Meshery to it's default configuration.`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Client Version: %v \t  GitSHA: %v", BuildClient, CommitSHA)
-		log.Info("Server Version: ", BuildServer)
+		resetMesheryConfig()
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(versionCmd)
+// resets meshery config
+func resetMesheryConfig() {
+	log.Info("Meshery resetting...")
+	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
+		log.Fatal("Error while resetting:", err)
+	}
+	log.Info("Meshery config (" + utils.DockerComposeFile + ") settings reset to defaults.")
 }

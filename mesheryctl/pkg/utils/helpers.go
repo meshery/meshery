@@ -1,18 +1,4 @@
-// Copyright 2019 The Meshery Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package cmd
+package utils
 
 import (
 	"encoding/json"
@@ -30,25 +16,28 @@ import (
 )
 
 const (
-	url                         = "http://localhost:9081"
-	fileURL                     = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	dockerComposeWebURL         = "https://api.github.com/repos/docker/compose/releases/latest"
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
-	mesheryAuthToken            = url + "/api/gettoken"
-	mesheryURL                  = url + "/api/load-test-smps?"
 )
 
-// See setFileLocation function below.
 var (
-	resetFlag         bool
-	mesheryFolder     = ".meshery"
-	dockerComposeFile = "/meshery.yaml"
-	authConfigFile    = "/auth.json"
+	ResetFlag         bool
+	MesheryFolder     = ".meshery"
+	DockerComposeFile = "/meshery.yaml"
+	AuthConfigFile    = "/auth.json"
 )
 
-func downloadFile(filepath string, url string) error {
+// SafeClose is a helper function help to close the io
+func SafeClose(co io.Closer) {
+	if cerr := co.Close(); cerr != nil {
+		log.Error(cerr)
+	}
+}
+
+// DownloadFile from url and save to configured file location
+func DownloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
@@ -85,19 +74,20 @@ func prereq() ([]byte, []byte) {
 	return ostype, osarch
 }
 
-func setFileLocation() {
+// SetFileLocation to set absolute path
+func SetFileLocation() {
 	// Find home directory.
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal("[ERROR] Cannot determine location of $HOME")
 	}
-	mesheryFolder = path.Join(home, mesheryFolder)
-	dockerComposeFile = path.Join(mesheryFolder, dockerComposeFile)
-	authConfigFile = path.Join(mesheryFolder, authConfigFile)
+	MesheryFolder = path.Join(home, MesheryFolder)
+	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
 }
 
-//Pre-Flight Check
-func preReqCheck() {
+//PreReqCheck prerequisites check
+func PreReqCheck() {
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Info("Docker-Compose is not installed")
@@ -133,7 +123,7 @@ func installprereq() {
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := downloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
+	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
 		log.Fatal(err)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
@@ -142,8 +132,8 @@ func installprereq() {
 	log.Info("Prerequisite Docker Compose is installed.")
 }
 
-func isMesheryRunning() bool {
-	op, err := exec.Command("docker-compose", "-f", dockerComposeFile, "ps").Output()
+func IsMesheryRunning() bool {
+	op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
 	if err != nil {
 		return false
 	}

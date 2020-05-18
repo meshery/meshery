@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package perf
 
 import (
 	"bytes"
@@ -24,12 +24,19 @@ import (
 	"os"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+
 	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
+)
+
+const (
+	mesheryAuthToken = "http://localhost:9081/api/gettoken"
+	mesheryURL       = "http://localhost:9081/api/load-test-smps?"
 )
 
 var (
@@ -122,7 +129,7 @@ func UpdateAuthDetails(filepath string) error {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
+	defer utils.SafeClose(resp.Body)
 
 	if err != nil {
 		return err
@@ -136,14 +143,20 @@ func UpdateAuthDetails(filepath string) error {
 	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
-// perfCmd represents the Performance command
-var perfCmd = &cobra.Command{
+// PerfCmd represents the Performance command
+var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Testing",
 	Long:  `Performance Testing & Benchmarking using Meshery CLI.`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Print(perfDetails)
+			return
+		}
+
 		//Check prerequisite
-		preReqCheck()
+		utils.PreReqCheck()
 
 		// Importing SMPS Configuration from the file
 		if filePath != "" {
@@ -237,7 +250,7 @@ var perfCmd = &cobra.Command{
 		log.Print("Initiating Performance test ...")
 		log.Printf(resp.Status)
 
-		defer SafeClose(resp.Body)
+		defer utils.SafeClose(resp.Body)
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Printf("Error reading body: %v", err.Error())
@@ -255,14 +268,13 @@ var perfCmd = &cobra.Command{
 }
 
 func init() {
-	perfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
-	perfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	perfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
-	perfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
-	perfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
-	perfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	perfCmd.Flags().StringVar(&tokenPath, "token", authConfigFile, "(optional) Path to meshery auth config")
-	perfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
-	perfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-	rootCmd.AddCommand(perfCmd)
+	PerfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
+	PerfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
+	PerfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
+	PerfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
+	PerfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
+	PerfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
+	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
+	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
+	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }

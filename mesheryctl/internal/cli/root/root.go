@@ -12,10 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package root
 
 import (
+	"errors"
 	"fmt"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 
@@ -35,18 +41,14 @@ Usage:
   mesheryctl [command]
 
 Available Commands:
-  cleanup     Clean up Meshery
   help        Help about any command
-  logs        Print logs
-  perf        Performance Management: testing and benchmarking
-  start       Start Meshery
-  status      Check Meshery status
-  stop        Stop Meshery
-  update      Pull new Meshery images from Docker Hub
+  perf        Performance Testing
+  system      System level actions
   version     Version of mesheryctl
 
+
 Flags:
-      --config string   config file (default location is: $HOME/.meshery/` + dockerComposeFile + `)
+      --config string   config file (default location is: $HOME/.meshery/` + utils.DockerComposeFile + `)
   -h, --help            help for mesheryctl
   -v, --version         Version of mesheryctl
 
@@ -58,50 +60,68 @@ func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
 	return append([]byte(entry.Message), '\n'), nil
 }
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var (
+	availableSubcommands = []*cobra.Command{}
+)
+
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
 	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
+	Args:  cobra.MinimumNArgs(1),
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		b, _ := cmd.Flags().GetBool("version")
 		if b {
 			versionCmd.Run(nil, nil)
-			return
+			return nil
 		}
-		if len(args) == 0 {
-			log.Print(cmdDetails)
+
+		for _, subcommand := range availableSubcommands {
+			if args[0] == subcommand.Name() {
+				return nil
+			}
 		}
+
+		return errors.New("sub-command not found : " + "\"" + args[0] + "\"")
 	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		log.Fatalf("fatal err %v", err)
 	}
 }
 
 func init() {
-	setFileLocation() //from vars.go
+	utils.SetFileLocation() //from vars.go
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+dockerComposeFile+")")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
 
 	// Preparing for an "edge" channel
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
+	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("version", "v", false, "Version flag")
+	RootCmd.Flags().BoolP("version", "v", false, "Version flag")
+
+	availableSubcommands = []*cobra.Command{
+		versionCmd,
+		system.SystemCmd,
+		perf.PerfCmd,
+	}
+
+	RootCmd.AddCommand(availableSubcommands...)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -111,8 +131,8 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Use default ".meshery" folder location.
-		viper.AddConfigPath(mesheryFolder)
-		log.Debug("initConfig: ", mesheryFolder)
+		viper.AddConfigPath(utils.MesheryFolder)
+		log.Debug("initConfig: ", utils.MesheryFolder)
 		viper.SetConfigName("config.yaml")
 	}
 
