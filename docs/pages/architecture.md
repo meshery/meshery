@@ -8,6 +8,12 @@ permalink: architecture
 
 <a href="{{site.baseurl}}/assets/img/meshery-architecture.svg"><img src="{{site.baseurl}}/assets/img/meshery-architecture.svg" /></a>
 
+## Clients
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg" /></a>
+
+## Providers
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-providers.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-providers.svg" /></a>
+
 ## Network Ports 
 Meshery uses the following list of network ports to interface with its various components:
 
@@ -22,7 +28,6 @@ Meshery uses the following list of network ports to interface with its various c
 {% endfor %}
 
 See the [Adapters](service-meshes/adapters) section for more information on the function of an adapter.
-
 
 ## Statefulness in Meshery components
 Some components within Meshery's architecture are concerned with persisting data while others are only

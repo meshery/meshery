@@ -14,6 +14,13 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
   </thead>
   <tbody>
       <tr>
+        <td class="centered">0.3.15</td>
+        <td>
+          <em>Mesheryctl</em> -Feature: Addition of mesheryctl perf --file <smps.yaml> support for SMPS formatted performance test profiles. Behavior changemesheryctl perf for using tokens and supporting JWT.
+        </td>
+        <td>May 1, 2020</td>
+      </tr>
+      <tr>
       <td class="centered">0.3.14</td>
       <td>
         <em>Mesheryctl</em> - Behavior change in mesheryctl start to check for new Meshery server images by default.
