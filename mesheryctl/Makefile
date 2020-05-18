@@ -1,4 +1,4 @@
-OUTDIR := _output
+OUTDIR := bin
 
 ARCH := amd64
 
@@ -30,4 +30,8 @@ $(BINNAME_LINUX):
 .PHONY: $(BINNAME_WINDOWS)
 $(BINNAME_WINDOWS):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=windows GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_WINDOWS) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=windows GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_WINDOWS) ./cmd/mesheryctl/main.go
+
+.PHONY: clean
+clean:
+	rm -rf $(OUTDIR)
