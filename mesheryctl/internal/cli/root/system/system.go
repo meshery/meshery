@@ -26,7 +26,7 @@ const (
 )
 
 var systemDetails = `
-System level functionality to configure and interact with the Meshery client and server.
+Manage the state and configuration of Meshery server, adapters, and client..
 
 Usage:
   mesheryctl system [command]
@@ -50,7 +50,7 @@ var (
 	availableSubcommands = []*cobra.Command{}
 )
 
-// SystemCmd represents the system level commands
+// SystemCmd represents Meshery Lifecycle Management cli commands
 var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
