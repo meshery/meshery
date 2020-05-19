@@ -1,3 +1,7 @@
+make:
+	go build -o mesheryctl cmd/mesheryctl/main.go
+forwin:
+	go build -o mesheryctl.exe cmd/mesheryctl/main.go
 OUTDIR := bin
 
 ARCH := amd64

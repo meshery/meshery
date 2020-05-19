@@ -35,7 +35,7 @@ Usage:
 
 Available Commands:
   cleanup     Clean up Meshery
-  help        Help about any command
+  help        Help for system commands
   logs        Print logs
   start       Start Meshery
   status      Check Meshery status
@@ -43,7 +43,7 @@ Available Commands:
   update      Pull new Meshery images from Docker Hub
 
 Flags:
-  -h, --help            help for mesheryctl system
+  -h, --help            help for system commands
 
 Use "mesheryctl system [command] --help" for more information about a command.
 `

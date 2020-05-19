@@ -28,7 +28,7 @@ import (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images from Docker Hub.",
-	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
+	Long:  `Pull Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
