@@ -10,7 +10,7 @@ before:
     # you may remove this if you don't need go generate
     # - go generate ./...
 builds:
-- main: ./mesheryctl/main.go
+- main: ./mesheryctl/cmd/mesheryctl/main.go
 
   env:
     - CGO_ENABLED=0
