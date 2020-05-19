@@ -33,21 +33,16 @@
       url: mesh-management
     - title: Extensibility
       url: extensibility
-
-- title: Guides
-  url: guides
-  links:
-  - title: Multiple Adapters
-    url: guides/multiple-adapters
-  - title: Using mesheryctl
-    url: guides/mesheryctl
-  - title: Upgrading Meshery
-    url: guides/upgrade
-
-- title: Project
-  url: project
-  links:
-  - title: Releases
-    url: project/releases
-  - title: Vulnerabilities
-    url: project/security-vulnerabilities
+    - title: Guides
+      url: guides
+      children:
+        - title: Multiple Adapters
+          url: guides/multiple-adapters
+        - title: Using mesheryctl
+          url: guides/mesheryctl
+        - title: Upgrading Meshery
+          url: guides/upgrade
+    - title: Releases
+      url: releases
+    - title: Vulnerabilities
+      url: security-vulnerabilities
