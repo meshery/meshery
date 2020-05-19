@@ -1,5 +1,5 @@
 # Meshery
-mesheryctl/mesheryctl
+mesheryctl/cmd/mesheryctl/mesheryctl
 mesheryctl/.meshery/
 
 # Binaries for programs and plugins
