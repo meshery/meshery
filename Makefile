@@ -8,7 +8,7 @@ MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
-	cd mesheryctl; go build -o mesheryctl
+	cd mesheryctl; go build -o mesheryctl cmd/mesheryctl/main.go
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery .
 
 # `make docker` builds Meshery inside of a multi-stage Docker container.

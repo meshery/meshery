@@ -1,4 +1,8 @@
-OUTDIR := _output
+make:
+	go build -o mesheryctl cmd/mesheryctl/main.go
+forwin:
+	go build -o mesheryctl.exe cmd/mesheryctl/main.go
+OUTDIR := bin
 
 ARCH := amd64
 
@@ -20,14 +24,18 @@ GCFLAGS :=
 .PHONY: $(BINNAME_DARWIN)
 $(BINNAME_DARWIN):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=darwin GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_DARWIN) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=darwin GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_DARWIN) ./cmd/mesheryctl/main.go
 
 .PHONY: $(BINNAME_LINUX)
 $(BINNAME_LINUX):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=linux GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_LINUX) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=linux GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_LINUX) ./cmd/mesheryctl/main.go
 
 .PHONY: $(BINNAME_WINDOWS)
 $(BINNAME_WINDOWS):
 	@echo
-	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=windows GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_WINDOWS) ./main.go
+	CGO_ENABLED=0 GOARCH=$(ARCH) GOOS=windows GO111MODULE=on go build -ldflags='$(LDFLAGS)' -gcflags='$(GCFLAGS)' -o $(OUTDIR)/$(BINNAME_WINDOWS) ./cmd/mesheryctl/main.go
+
+.PHONY: clean
+clean:
+	rm -rf $(OUTDIR)

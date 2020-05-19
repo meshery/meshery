@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package system
 
 import (
 	"os"
 	"os/exec"
+
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,11 +28,12 @@ import (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images from Docker Hub.",
-	Long:  `Poll Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
+	Long:  `Pull Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
-			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
+		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 				log.Fatal("update cmd: ", err)
 			}
 		}
@@ -44,15 +47,11 @@ var updateCmd = &cobra.Command{
 func updateMesheryContainers() {
 
 	log.Info("Updating Meshery now...")
-	start := exec.Command("docker-compose", "-f", dockerComposeFile, "pull")
+	start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "pull")
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr
 	if err := start.Run(); err != nil {
 		log.Fatal(err)
 	}
 
-}
-
-func init() {
-	rootCmd.AddCommand(updateCmd)
 }
