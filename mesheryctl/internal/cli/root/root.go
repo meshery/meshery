@@ -94,9 +94,7 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
-	if err := RootCmd.Execute(); err != nil {
-		log.Fatalf("fatal err %v", err)
-	}
+	_ = RootCmd.Execute()
 }
 
 func init() {
