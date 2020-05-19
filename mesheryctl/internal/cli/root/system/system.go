@@ -17,6 +17,8 @@ package system
 import (
 	"errors"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 )
 
@@ -55,8 +57,14 @@ var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
 	Long:  `Manage the state and configuration of Meshery server, adapters, and client.`,
-	Args:  cobra.MinimumNArgs(1),
+	//Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		if len(args) == 0 {
+			log.Print(systemDetails)
+			return nil
+		}
+
 		for _, subcommand := range availableSubcommands {
 			if args[0] == subcommand.Name() {
 				return nil

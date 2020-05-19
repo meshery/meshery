@@ -148,7 +148,7 @@ var PerfCmd = &cobra.Command{
 	Use:   "perf",
 	Short: "Performance Testing",
 	Long:  `Performance Testing & Benchmarking using Meshery CLI.`,
-	Args:  cobra.NoArgs,
+	//Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Print(perfDetails)

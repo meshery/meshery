@@ -69,13 +69,18 @@ var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
 	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
-	Args:  cobra.MinimumNArgs(1),
+	//Args:  cobra.MinimumNArgs(1),
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: func(cmd *cobra.Command, args []string) error {
 		b, _ := cmd.Flags().GetBool("version")
 		if b {
 			versionCmd.Run(nil, nil)
+			return nil
+		}
+
+		if len(args) == 0 {
+			log.Print(cmdDetails)
 			return nil
 		}
 
