@@ -5,8 +5,8 @@ permalink: architecture
 ---
 
 # Architecture
-## Overview
-<a href="{{site.baseurl}}/assets/images/meshery-architecture.svg"><img src="{{site.baseurl}}/assets/images/meshery-architecture.svg" /></a>
+
+<a href="{{site.baseurl}}/assets/img/meshery-architecture.svg"><img src="{{site.baseurl}}/assets/img/meshery-architecture.svg" /></a>
 
 ## Clients
 <a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-clients.svg" /></a>
