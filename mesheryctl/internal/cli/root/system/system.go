@@ -34,7 +34,7 @@ Usage:
   mesheryctl system [command]
 
 Available Commands:
-  cleanup     Clean up Meshery
+  reset       Reset Meshery's configuration
   help        Help for system commands
   logs        Print logs
   start       Start Meshery
@@ -77,7 +77,7 @@ var SystemCmd = &cobra.Command{
 
 func init() {
 	availableSubcommands = []*cobra.Command{
-		cleanupCmd,
+		resetCmd,
 		logsCmd,
 		startCmd,
 		stopCmd,
