@@ -52,33 +52,33 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 - **Available service mesh adapters** - Service mesh adapters that Meshery currently supports.
 
-    | Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
-    | :------------ | :------------ |
-    {% for adapter in site.adapters -%}
-    {% if adapter.project_status == "stable" -%}
-    | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }})                     |       {{ adapter.project_status }} |
-    {% endif -%}
-    {% endfor %}
+| Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "stable" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }})                     |       {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 <br>
 - **In-progress service mesh adapters** - Service mesh adapters for which community-contributed support has been committed and are currently under development.
 
-    | Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
-    | :------------ | :------------ |
-    {% for adapter in site.adapters -%}
-    {% if adapter.project_status == "beta" -%}
-    | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-    {% endif -%}
-    {% endfor %}
+| Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
+| :------------ | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "beta" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 <br>
 - **Help-wanted service mesh adapters** - Service mesh adapters adapters for which we are seeking community-contributed support.
 
-    | Platform                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  | Status        |
-    | :------------               | :------------ |
-    {% for adapter in site.adapters -%}
-    {% if adapter.project_status == "alpha" -%}
-    | [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
-    {% endif -%}
-    {% endfor %}
+| Platform          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     | Status        |
+| :------------               | :------------ |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "alpha" -%}
+| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
 
 ## Community
 This project is community-built and welcomes collaboration! [Fork here on Github](https://github.com/layer5io/meshery)
