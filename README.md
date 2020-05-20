@@ -144,7 +144,8 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 
 ## Meshery Architecture
 You may deploy Meshery internal to your cluster or external to your cluster.
-<p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/meshery-architecture.svg"><img src="docs/assets/img/meshery-architecture.svg" width="90%" align="center" /></a></p>
+<p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/architecture/meshery-architecture.svg"><img src="docs/assets/img/architecture/meshery-architecture.svg" width="90%" align="center" /></a></p>
+Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's architecture</a>.
 
 <div>&nbsp;</div>
 
