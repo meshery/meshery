@@ -20,7 +20,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 
 | command | arg          | flag      | function                                                     | Usage                     |
 |:--------|:------------|:---------:|:--------------------------------------------------------------|:--------------------------|
-|system   | cleanup     |           | Resets `meshery.yaml` with copy from Meshery repo. *Warning: Any local changes will be overwritten.* | `mesheryctl system cleanup` |
+|system   | reset     |           | Resets `meshery.yaml` with copy from Meshery repo. *Warning: Any local changes will be overwritten.* | `mesheryctl system reset` |
 |         | log         |           | Starts tailing Meshery server debug logs.                     | `mesheryctl system log` |
 |         | start       |           | Start all Meshery containers.                                 | `mesheryctl system start` |
 |         |             | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl system start --reset` |

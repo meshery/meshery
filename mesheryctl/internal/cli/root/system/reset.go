@@ -20,10 +20,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cleanupCmd represents the cleanup command
-var cleanupCmd = &cobra.Command{
-	Use:   "cleanup",
-	Short: "Cleanup Meshery's configuration",
+// resetCmd represents the reset command
+var resetCmd = &cobra.Command{
+	Use:   "reset",
+	Short: "Reset Meshery's configuration",
 	Long:  `Reset Meshery to it's default configuration.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
