@@ -4,9 +4,198 @@ title: Releases
 permalink: project/releases
 ---
 
-A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases). See the [Build and Release Strategy](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) document for details.
+<!-- A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases). See the [Build and Release Strategy](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) document for details. -->
 
-<table class="responsive-table hover striped">
+<!-- <div class="card">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+<br>
+<div class="card">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+<br>
+<div class="card">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div> -->
+
+# Meshery Releases
+
+### [v0.3.15](https://github.com/layer5io/meshery/releases/tag/v0.3.15)
+Released on 1 May 2020
+
+**What's new ?**
+- Mesheryctl
+    + Feature: Addition of mesheryctl perf --file <smps.yaml> support for SMPS formatted performance test profiles.
+    + Feature: Behavior changemesheryctl perf for using tokens and supporting JWT.
+
+### [v0.3.14](https://github.com/layer5io/meshery/releases/tag/v0.3.14) 
+
+**What's new ?**
+- Mesheryctl
+    + Behavior change in mesheryctl start to check for new Meshery server images by default.
+
+### [v0.3.13](https://github.com/layer5io/meshery/releases/tag/v0.3.13)
+
+**What's new ?**
+- Mesheryctl
+    + Point release for mesheryctl's initial ARM support.
+
+### [v0.3.11](https://github.com/layer5io/meshery/releases/tag/v0.3.11)
+
+**What's new ?**
+- Mesheryctl
+    + Fixes minor user experience issues on mesheryctl perf command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
+
+### [v0.3.10](https://github.com/layer5io/meshery/releases/tag/v0.3.10)
+
+**What's new ?**
+- Mesheryctl
+    + Introduces `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
+
+
+### [v0.3.9](https://github.com/layer5io/meshery/releases/tag/v0.3.12)
+
+**What's new ?**
+- Mesheryctl
+    + Addition of mesheryctl version to provide server-side version number.
+    + Improvement of mesheryctl logs | stop | start to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
+- Meshery Server
+    + Strip off extraneous information beyond IP address and port in Grafana and Prometheus endpoints ([#612](https://github.com/layer5io/meshery/issues/612))
+
+### [v0.3.8](https://github.com/layer5io/meshery/releases/tag/v0.3.8)
+
+**What's new ?**
+- Mesheryctl
+    + Extraneous command line output removed. Clarity of CLI interaction with mesheryctl is improved in this release.
+
+### [v0.3.7](https://github.com/layer5io/meshery/releases/tag/v0.3.7)
+
+**What's new ?**
+- Meshery Server
+    + Ad-hoc connectivity tests for Prometheus is now supported. Users can click the Prometheus chip and have Meshery verify its ability to connect to the configured Prometheus instance.
+
+### [v0.3.6](https://github.com/layer5io/meshery/releases/tag/v0.3.6)
+
+**What's new ?**
+- Mesheryctl
+    + Ad-hoc connectivity tests for Grafana is now supported. Users can click the Grafana chip and have Meshery verify its ability to connect to the configured Grafana instance.
+
+### [v0.3.5](https://github.com/layer5io/meshery/releases/tag/v0.3.5)
+
+**What's new ?**
+- Mesheryctl
+    + Removal of `init` as a command exposed to users. This command's functionality is used internal to mesheryctl start. A new start `--check` command will provide preflight check functionality in init's place.
+
+### [v0.3.4](https://github.com/layer5io/meshery/releases/tag/v0.3.4)
+
+**What's new ?**
+- Mesheryctl
+    + `mesheryctl version` is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release.
+
+### [v0.3.3](https://github.com/layer5io/meshery/releases/tag/v0.3.3)
+
+**What's new ?**
+- Meshery Server
+    + Providers - a new project construct that allows users to select authentication, long-term storage, and so on provider.
+
+### [v0.3.2](https://github.com/layer5io/meshery/releases/tag/v0.3.2)
+
+**What's new ?**
+- Mesheryctl
+    + Addition of `mesheryctl version` as a new subcommand.
+
+### [v0.3.1](https://github.com/layer5io/meshery/releases/tag/v0.3.1)
+
+**What's new ?**
+- Meshery Server
+    + Support for wrk2 as an alternative load generator.
+
+### [v0.2.4](https://github.com/layer5io/meshery/releases/tag/v0.2.4)
+
+**What's new ?**
+- Mesheryctl
+    + Homebrew support available for mesheryctl.
+- Meshery Server
+    + Meshery adapter for Octarine released as stable.
+- Documentation
+    + Revised quick start guide for Mac, Linux and Windows.
+    + WSL2 support published.
+    + GKE kubeconfig generation script switched to --decode.
+
+### [v0.2.3](https://github.com/layer5io/meshery/releases/tag/v0.2.3)
+
+**What's new ?**
+- Mesheryctl
+    + Improved `status` command output on Windows.
+- Meshery Server
+    + Ability to deploy Meshery on Istio.
+    + Adapter Chips: Move adapter port number into tooltip.
+
+### [v0.2.2](https://github.com/layer5io/meshery/releases/tag/v0.2.2)
+
+**What's new ?**
+- Mesheryctl
+    + Improved `update` command, no overwriting in local configuration while `start` command.
+- Meshery UI
+    + A new modal view to organize and display performance results in a tabular format.
+
+### [v0.2.1](https://github.com/layer5io/meshery/releases/tag/v0.2.1)
+
+**What's new ?**
+- Mesheryctl
+    + Overhaul of in-cluster vs out-of-cluster Kubernetes setup.
+
+## [v0.2.0](https://github.com/layer5io/meshery/releases/tag/v0.2.1)
+
+**What's new?**
+- Meshery Adapters
+    + Adapter introduced for Network Service Mesh.
+- Meshery Server
+    + Ability to run performance tests asynchronously.
+    + Collect & persist node metrics.
+
+<!-- <table class="responsive-table hover striped">
   <thead>
     <th class="centered">Version</th>
     <th>Description</th>
@@ -240,3 +429,4 @@ A list of the [releases of Meshery](https://github.com/layer5io/meshery/releases
     </tr>
   </tbody>
 </table>
+ -->
