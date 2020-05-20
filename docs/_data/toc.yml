@@ -27,8 +27,6 @@
           url: installation/wsl2
     - title: Architecture
       url: architecture
-    #- title: Service Mesh Performance
-    #  url: performance-management
     - title: Service Mesh Management
       url: mesh-management
     - title: Extensibility
@@ -42,7 +40,13 @@
           url: guides/mesheryctl
         - title: Upgrading Meshery
           url: guides/upgrade
-    - title: Releases
-      url: releases
-    - title: Vulnerabilities
-      url: security-vulnerabilities
+    - title: Project
+      url: project
+      children:
+        - title: Contributing
+          url: project/contributing
+        - title: Releases
+          url: project/releases
+        - title: Vulnerabilities
+          url: project/security-vulnerabilities
+
