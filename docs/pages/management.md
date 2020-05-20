@@ -37,8 +37,8 @@ Particular notifications that Meshery presents are immediately actionable. These
 
 Connect Meshery to your existing Grafana instance and Meshery will import the boards of your choosing. 
 
-<a href="/docs/assets/img/performance-management/meshery-and-grafana.png">
-    <img src="/docs/assets/img/performance-management/meshery-and-grafana.png" />
+<a href="/docs/assets//docs/assets/images/performance-management/meshery-and-grafana.png">
+    </docs/assets/images/ src="/docs/assets//docs/assets/images/performance-management/meshery-and-grafana.png" />
 </a>
 
 ### Connecting to Grafana
