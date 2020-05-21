@@ -54,4 +54,4 @@ docs/Gemfile.lock
 yarn.lock
 
 # Generated binaries
-**/bin
+**/_dist
