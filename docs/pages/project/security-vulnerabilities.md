@@ -5,10 +5,9 @@ permalink: project/security-vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
 ---
 
+# Reporting a vulnerability
 We are very grateful to the security researchers and users that report
 back Meshery security vulnerabilities. We investigate every report thoroughly.
-
-## Reporting a vulnerability
 
 To make a report, send an email to the private
 [meshery-security-vulns-reports@layer5.io](mailto:meshery-security-vulns-reports@layer5.io)

@@ -7,7 +7,7 @@ permalink: installation/platforms
 The table below provides installation instructions for each platform that Meshery is compatible with:
 
 | Platform      | Version       |
-| -------------:|:-------------|   
+|  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;||   
 | [Docker Engine](/docs/installation/docker) | 19.x and above |
 | [Docker Desktop](/docs/installation/docker) | 2.0.x and above |
 | [EKS](/docs/installation/eks) | 1.12.x and above |
