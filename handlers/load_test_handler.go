@@ -99,6 +99,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
 	// default:
 	loadTestOptions.LoadGenerator = models.FortioLG
+	loadTestOptions.AllowInitialErrors = true
 	// }
 
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
@@ -168,6 +169,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.URL = loadTestURL
 	loadTestOptions.Name = testName
+	loadTestOptions.AllowInitialErrors = true
 
 	qps, _ := strconv.ParseFloat(q.Get("qps"), 64)
 	if qps < 0 {
@@ -395,7 +397,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(provider.GetProviderType() == models.RemoteProviderType ||
 			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig {
+		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,
 			PromURL:   promURL,

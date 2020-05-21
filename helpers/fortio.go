@@ -33,6 +33,7 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	// if false { // *followRedirectsFlag {
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
+	httpOpts.AddAndValidateExtraHeader("h1:v1")
 	// }
 	return &httpOpts
 }
