@@ -9,7 +9,7 @@ permalink: installation/eks
 ## Managed Kubernetes
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
-Note: Make sure you are able to access EKS with kubectl by follwing <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide</a>
+Note: Make sure you are able to access EKS with kubectl by following the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide</a>
 
 
 ### 1. Create a `ServiceAccount` with `cluster-admin` role
