@@ -37,6 +37,8 @@ type LoadTestOptions struct {
 
 	HTTPNumThreads int
 
+	Headers *map[string]string
+
 	IsInsecure bool
 	Duration   time.Duration
 

@@ -105,6 +105,15 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
+func (h *Handler) parseHeaders(headersString string) *map[string]string {
+	headers := make(map[string]string)
+	err := json.Unmarshal([]byte(headersString), &headers)
+	if err != nil {
+		return nil
+	}
+	return &headers
+}
+
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
@@ -128,8 +137,13 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
+	headersString := q.Get("headers")
+
+	headers := h.parseHeaders(headersString)
+	logrus.Debugf("Headers : %v", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}
+	loadTestOptions.Headers = headers
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
