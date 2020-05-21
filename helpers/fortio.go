@@ -31,10 +31,14 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	// httpOpts.Payload = fnet.GeneratePayload(*PayloadFileFlag, *PayloadSizeFlag, *PayloadFlag)
 	// httpOpts.UnixDomainSocket = *unixDomainSocketFlag
 	// if false { // *followRedirectsFlag {
+	// }
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
-	httpOpts.AddAndValidateExtraHeader("h1:v1")
-	// }
+
+	for key, val := range *opts.Headers {
+		httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+	}
+
 	return &httpOpts
 }
 
