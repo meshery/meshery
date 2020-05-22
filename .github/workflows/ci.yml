@@ -274,8 +274,8 @@ jobs:
     - name: Set properties file with release tag
       if: success() && startsWith(github.ref, 'refs/tags/')
       run: |
-        echo git-sha=${GITHUB_SHA::8} >> properties.yml
-        echo release-tag=${GITHUB_REF/refs\/tags\//} >> properties.yml
+        echo git-sha:${GITHUB_SHA::8} >> properties.yml
+        echo release-tag:${GITHUB_REF/refs\/tags\//} >> properties.yml
     - name: Get Previous tag
       id: previoustag
       if: success() && (github.ref == 'refs/heads/master')
@@ -285,8 +285,8 @@ jobs:
     - name: Set properties file with previous release tag
       if: success() && (github.ref == 'refs/heads/master')
       run: |
-        echo git-sha=${GITHUB_SHA::8} >> properties.yml
-        echo release-tag=${{ steps.previoustag.outputs.tag }}-${GITHUB_SHA::6} >> properties.yml
+        echo git-sha:${GITHUB_SHA::8} >> properties.yml
+        echo release-tag:${{ steps.previoustag.outputs.tag }}-${GITHUB_SHA::6} >> properties.yml
     - name: Docker login
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
       uses: azure/docker-login@v1
