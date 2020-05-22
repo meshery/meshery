@@ -5,7 +5,7 @@ name: Maesh
 version: v1.0
 port: 10006/tcp
 project_status: alpha
-image: https://raw.githubusercontent.com/containous/maesh/master/docs/content/assets/img/maesh.png
+image: /docs/assets/img/service-meshes/maesh.png
 ---
 | Adapter Status |
 | :------------: |

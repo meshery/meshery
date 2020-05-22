@@ -5,7 +5,7 @@ name: Tanzu SM
 version: pre-GA
 port: 10009/tcp
 project_status: alpha
-image: 
+image: /docs/assets/img/service-meshes/tanzu.png
 ---
 | Adapter Status |
 | :------------: |
