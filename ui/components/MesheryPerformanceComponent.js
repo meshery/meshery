@@ -498,20 +498,20 @@ class MesheryPerformanceComponent extends React.Component {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextareaAutosize
+                <TextField
                 id="headers"
                 name="headers"
                 label="Request Headers"
                 autoFocus
                 fullWidth
                 value={headers}
-                // error={urlError}
+                multiline
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleChange('headers')}
                 >
 
-                </TextareaAutosize>
+                </TextField>
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
