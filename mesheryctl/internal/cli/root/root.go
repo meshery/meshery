@@ -16,7 +16,6 @@ package root
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -32,7 +31,10 @@ import (
 //TerminalFormatter is exported
 type TerminalFormatter struct{}
 
-var cfgFile string
+var (
+	cfgFile     string
+	mctlCfgFile string
+)
 
 var cmdDetails = `
 Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
@@ -48,9 +50,11 @@ Available Commands:
 
 
 Flags:
-      --config string    config file (default location is: $HOME/.meshery/` + utils.DockerComposeFile + `)
-  -h, --help            help for mesheryctl
-  -v, --version         Version of mesheryctl
+      --config string      config file (default location is: $HOME/.meshery/` + utils.DockerComposeFile + `)
+      --mesheryctl-config  mesheryctl config file (default location is: <unset>. Uses default config.)
+  -h, --help               help for mesheryctl
+  -v, --version            version of mesheryctl
+  -d, --debug              enable debug logging
 
 Use "mesheryctl [command] --help" for more information about a command.
 `
@@ -97,6 +101,12 @@ var RootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
+	log.SetLevel(log.InfoLevel)
+
+	if debug, err := RootCmd.Flags().GetBool("debug"); err == nil && debug {
+		log.SetLevel(log.DebugLevel)
+	}
+
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 	_ = RootCmd.Execute()
@@ -110,6 +120,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
+	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", "", "mesheryctl config file to override defaults (default file: <unset>")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -117,6 +128,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	RootCmd.Flags().BoolP("version", "v", false, "Version flag")
+	RootCmd.Flags().BoolP("debug", "d", false, "Debug flag")
 
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
@@ -136,13 +148,46 @@ func initConfig() {
 		// Use default ".meshery" folder location.
 		viper.AddConfigPath(utils.MesheryFolder)
 		log.Debug("initConfig: ", utils.MesheryFolder)
-		viper.SetConfigName("config.yaml")
+		viper.SetConfigName("meshery")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Debugf("Using config file: %s", viper.ConfigFileUsed())
+	} else {
+		log.WithError(err).Errorf("failed to read in meshery configv")
+	}
+
+	// Read in mesheryctl config or use defaults
+	// Default config:
+	//  baseMesheryURL: "http://localhost:9081/api",
+	//  perf:
+	//	  authTokenURI:    "/gettoken",
+	//	  loadTestSmpsURI: "/load-test-smps",
+	if mctlCfgFile != "" {
+		viper.SetConfigFile(mctlCfgFile)
+		if err := viper.ReadInConfig(); err == nil {
+			log.Debugf("Using mesheryctl config file: %s", viper.ConfigFileUsed())
+		} else {
+			log.Errorf("failed to read in mesheryctl config - %v", err)
+		}
+	} else {
+		setMesheryctlConfigDefaults(map[string]interface{}{
+			"baseMesheryURL": "http://localhost:9081/api",
+			"perf": map[string]interface{}{
+				"authTokenURI":    "/gettoken",
+				"loadTestSmpsURI": "/load-test-smps",
+			},
+		})
+	}
+}
+
+// setMesheryctlConfigDefaults loads the hardcoded defaults in to viper kv store
+func setMesheryctlConfigDefaults(defaults map[string]interface{}) {
+	v := viper.GetViper()
+	for key, value := range defaults {
+		v.SetDefault(key, value)
 	}
 }
