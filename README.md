@@ -28,6 +28,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
 | - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
 | - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
+| - [Kubernetes - kind](https://meshery.layer5.io/docs/installation/kind) | ✔️ |
 | - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
 | - Kubernetes - OpenShift | In Progress |
 | [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
