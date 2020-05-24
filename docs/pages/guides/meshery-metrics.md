@@ -2,7 +2,7 @@
 layout: guide
 title: meshery metrics
 description: How to use meshery metrics
-permalink: guides/mesherymetrics
+permalink: guides/meshery-metrics
 type: guide
 ---
 
