@@ -57,7 +57,7 @@ http://172.17.0.2:30822
 
 **3)Expose Grafana service**
 
-a)By default  `Grafana`  spec type is configured to `ClusterIP`  you can chage it to `NodePort` using below command.
+a)By default  `Grafana`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
 
 ```
 $kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
