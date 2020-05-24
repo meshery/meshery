@@ -17,8 +17,11 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	q := req.FormValue("qps")
-	qps, err := strconv.Atoi(q)
+	q := req.URL.Query()
+
+	// qps, _ := strconv.ParseInt(q.Get("qps"), 32)
+	qs := q.Get("qps")
+	qps, err := strconv.Atoi(qs)
 	if err != nil {
 		err = errors.Wrap(err, "unable to parse qps")
 		logrus.Error(err)
@@ -29,14 +32,14 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for qps", http.StatusBadRequest)
 		return
 	}
-	dur := req.FormValue("t")
+	dur := q.Get("t")
 	if _, err = time.ParseDuration(dur); err != nil {
 		err = errors.Wrap(err, "unable to parse t as a duration")
 		logrus.Error(err)
 		http.Error(w, "please provide a valid value for t", http.StatusBadRequest)
 		return
 	}
-	cu := req.FormValue("c")
+	cu := q.Get("c")
 	c, err := strconv.Atoi(cu)
 	if err != nil {
 		err = errors.Wrap(err, "unable to parse c")
@@ -48,7 +51,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
 		return
 	}
-	gen := req.FormValue("gen")
+	gen := q.Get("loadGenerator")
 	genTrack := false
 	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
 	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG} {
