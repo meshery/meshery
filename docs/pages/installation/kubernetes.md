@@ -22,7 +22,7 @@ Run the following:
  ```
  $ git clone https://github.com/layer5io/meshery.git; cd meshery
  $ kubectl create namespace meshery
- $ helm template meshery --namespace meshery install/kubernetes/helm/meshery
+ $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | kubectl apply -f -
  ```
 ## Using Kubernetes Manifests
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:

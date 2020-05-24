@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "nodemon ui_dev_server.js",
     "lint": "eslint --fix .",
-    "test": "eslint .",
     "next": "next",
     "build": "next build",
-    "start": "next start",
-    "export": "next export"
+    "start": "NODE_ENV=production node ui_dev_server.js",
+    "export": "next export",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint ."
   },
   "keywords": [],
   "author": "",
@@ -26,7 +27,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/pickers": "^3.2.8",
     "@zeit/next-css": "^1.0.1",
-    "billboard.js": "^1.12.7",
+    "billboard.js": "=1.11.0",
     "caniuse-lite": "^1.0.30001048",
     "classnames": "^2.2.6",
     "codemirror": "^5.53.2",
@@ -63,6 +64,7 @@
     "@babel/traverse": "^7.9.6",
     "@babel/types": "^7.9.6",
     "babel-eslint": "^10.1.0",
+    "cypress": "^4.5.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-google": "^0.14.0",
@@ -71,6 +73,7 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
     "http-proxy": "^1.17.0",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "start-server-and-test": "^1.11.0"
   }
 }

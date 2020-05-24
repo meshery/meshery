@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package system
 
 import (
 	"bufio"
@@ -20,6 +20,8 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -36,18 +38,19 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		//Check prerequisite
-		preReqCheck()
+		utils.PreReqCheck()
 
-		if _, err := os.Stat(mesheryFolder); os.IsNotExist(err) {
-			if err := os.Mkdir(mesheryFolder, 0777); err != nil {
+		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 				log.Fatal(err)
 			}
 		}
 
-		if _, err := os.Stat(dockerComposeFile); os.IsNotExist(err) {
-			if err := downloadFile(dockerComposeFile, fileURL); err != nil {
+		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 				log.Fatal("start cmd: ", err)
 			}
 		}
@@ -61,12 +64,12 @@ var startCmd = &cobra.Command{
 		}
 
 		// Reset Meshery config file to default settings
-		if resetFlag {
+		if utils.ResetFlag {
 			resetMesheryConfig()
 		}
 
 		log.Info("Starting Meshery...")
-		start := exec.Command("docker-compose", "-f", dockerComposeFile, "up", "-d")
+		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
 		start.Stderr = os.Stderr
 
@@ -125,7 +128,7 @@ var startCmd = &cobra.Command{
 		//code for logs
 		if checkFlag == 1 {
 			log.Info("Starting Meshery logging . . .")
-			cmdlog := exec.Command("docker-compose", "-f", dockerComposeFile, "logs", "-f")
+			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
 				log.Fatal(err)
@@ -149,6 +152,5 @@ var startCmd = &cobra.Command{
 
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	startCmd.Flags().BoolVarP(&resetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	rootCmd.AddCommand(startCmd)
+	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 }

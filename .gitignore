@@ -1,5 +1,5 @@
 # Meshery
-mesheryctl/mesheryctl
+mesheryctl/cmd/mesheryctl/mesheryctl
 mesheryctl/.meshery/
 
 # Binaries for programs and plugins
@@ -52,3 +52,6 @@ Gemfile.lock
 docs/Gemfile.lock
 
 yarn.lock
+
+# Generated binaries
+**/bin

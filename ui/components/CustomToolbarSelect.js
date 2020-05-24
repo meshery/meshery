@@ -119,19 +119,19 @@ class CustomToolbarSelect extends React.Component {
           </IconButton>
         </Tooltip> */}
           { fullData.length == 1 && (
-          <Tooltip title="Download">
-            <IconButton
-              className={classes.iconButton}
-              key="download"
-              aria-label="download"
-              color="inherit"
-              // onClick={() => self.props.closeSnackbar(key) }
-              href={`/api/result?id=${encodeURIComponent(fullData[0].meshery_id)}`}
-              download={`${fullData[0].name}_test_result.json`}
-            >
-              <GetAppIcon className={classes.icon} />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title="Download">
+              <IconButton
+                className={classes.iconButton}
+                key="download"
+                aria-label="download"
+                color="inherit"
+                // onClick={() => self.props.closeSnackbar(key) }
+                href={`/api/result?id=${encodeURIComponent(fullData[0].meshery_id)}`}
+                download={`${fullData[0].name}_test_result.json`}
+              >
+                <GetAppIcon className={classes.icon} />
+              </IconButton>
+            </Tooltip>
           )}
           <Tooltip title="Compare selected">
             <IconButton className={classes.iconButton} onClick={this.handleCompareSelected}>
@@ -147,7 +147,7 @@ class CustomToolbarSelect extends React.Component {
             <div>
               <MesheryChart data={this.state.data} />
             </div>
-        )}
+          )}
         />
       </NoSsr>
     );

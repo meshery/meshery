@@ -82,7 +82,7 @@ class User extends React.Component {
       color, iconButtonClassName, avatarClassName, classes, ...other
     } = this.props;
     let avatar_url; let
-      user_id;
+        user_id;
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
       user_id = this.state.user.user_id;

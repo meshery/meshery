@@ -165,7 +165,7 @@ class MesherySettings extends React.Component {
               <Tab
                 icon={
                   <FontAwesomeIcon icon={faCloud} transform={mainIconScale} fixedWidth />
-              }
+                }
                 label="Environment"
               />
             </Tooltip>
@@ -173,7 +173,7 @@ class MesherySettings extends React.Component {
               <Tab
                 icon={
                   <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} fixedWidth />
-              }
+                }
                 label="Service Meshes"
               />
             </Tooltip>
@@ -181,7 +181,7 @@ class MesherySettings extends React.Component {
               <Tab
                 icon={
                   <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
-              }
+                }
                 label="Metrics"
               />
             </Tooltip>
@@ -196,74 +196,74 @@ class MesherySettings extends React.Component {
           </Tabs>
         </Paper>
         {tabVal === 0 && (
-        <TabContainer>
-          <AppBar position="static" color="default">
-            <Tabs
-              value={subTabVal}
-              onChange={this.handleChange('subTabVal')}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-            >
-              <Tab label="Out of Cluster Deployment" />
-              <Tab label="In Cluster Deployment" />
-            </Tabs>
-          </AppBar>
-          {subTabVal === 0 && (
           <TabContainer>
-            <MeshConfigComponent tabs={subTabVal} />
+            <AppBar position="static" color="default">
+              <Tabs
+                value={subTabVal}
+                onChange={this.handleChange('subTabVal')}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+              >
+                <Tab label="Out of Cluster Deployment" />
+                <Tab label="In Cluster Deployment" />
+              </Tabs>
+            </AppBar>
+            {subTabVal === 0 && (
+              <TabContainer>
+                <MeshConfigComponent tabs={subTabVal} />
+              </TabContainer>
+            )}
+            {subTabVal === 1 && (
+              <TabContainer>
+                <MeshConfigComponent tabs={subTabVal} />
+              </TabContainer>
+            )}
           </TabContainer>
-          )}
-          {subTabVal === 1 && (
-          <TabContainer>
-            <MeshConfigComponent tabs={subTabVal} />
-          </TabContainer>
-          )}
-        </TabContainer>
         )}
         {tabVal === 1 && (
-        <TabContainer>
-          <MeshAdapterConfigComponent />
-        </TabContainer>
+          <TabContainer>
+            <MeshAdapterConfigComponent />
+          </TabContainer>
         )}
         {tabVal === 2
         && (
-        <TabContainer>
-          <AppBar position="static" color="default">
-            <Tabs
-              value={subTabVal}
-              onChange={this.handleChange('subTabVal')}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-            >
-              <Tab label={(
-                <div className={classes.iconText}>
+          <TabContainer>
+            <AppBar position="static" color="default">
+              <Tabs
+                value={subTabVal}
+                onChange={this.handleChange('subTabVal')}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+              >
+                <Tab label={(
+                  <div className={classes.iconText}>
                   Grafana
-                  <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                </div>
-              )}
-              />
-              <Tab label={(
-                <div className={classes.iconText}>
+                    <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                  </div>
+                )}
+                />
+                <Tab label={(
+                  <div className={classes.iconText}>
                   Prometheus
-                  <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
-                </div>
-              )}
-              />
-            </Tabs>
-          </AppBar>
-          {subTabVal === 0 && (
-          <TabContainer>
-            <GrafanaComponent />
+                    <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                  </div>
+                )}
+                />
+              </Tabs>
+            </AppBar>
+            {subTabVal === 0 && (
+              <TabContainer>
+                <GrafanaComponent />
+              </TabContainer>
+            )}
+            {subTabVal === 1 && (
+              <TabContainer>
+                <PrometheusComponent />
+              </TabContainer>
+            )}
           </TabContainer>
-          )}
-          {subTabVal === 1 && (
-          <TabContainer>
-            <PrometheusComponent />
-          </TabContainer>
-          )}
-        </TabContainer>
         )}
         {tabVal === 3 && (
         <TabContainer>

@@ -5,7 +5,7 @@ name: Citrix Service Mesh
 version: "-"
 port: 10008/tcp
 project_status: beta
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s
+image: /docs/assets/img/service-meshes/cpx.png
 ---
 | Adapter Status |
 | :------------: |
