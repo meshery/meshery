@@ -189,7 +189,7 @@ class MesherySettings extends React.Component {
               <Tab
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
-              }
+                }
                 label="Performance"
               />
             </Tooltip>
@@ -266,10 +266,10 @@ class MesherySettings extends React.Component {
           </TabContainer>
         )}
         {tabVal === 3 && (
-        <TabContainer>
+          <TabContainer>
             <MesherySettingsPerformanceComponent />
 
-        </TabContainer>
+          </TabContainer>
         )}
 
         {backToPlay}

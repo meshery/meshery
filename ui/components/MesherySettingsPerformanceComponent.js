@@ -42,7 +42,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-    qps, c, t,
+      qps, c, t,
     } = props;
 
     this.state = {
@@ -89,7 +89,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   submitLoadTest = () => {
     const {
-qps, c, t, loadGenerator,
+      qps, c, t, loadGenerator,
     } = this.state;
 
 
@@ -109,7 +109,7 @@ qps, c, t, loadGenerator,
     this.startEventStream(`/api/load-test-prefs?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }
-    async startEventStream(url) {
+  async startEventStream(url) {
     this.closeEventStream();
     this.eventStream = new EventSource(url);
     this.eventStream.onmessage = this.handleEvents();
@@ -132,10 +132,10 @@ qps, c, t, loadGenerator,
 
 
   handleSuccess() {
-   const self = this;
+    const self = this;
     return (result) => {
       const {
-         qps, c, t, loadGenerator
+        qps, c, t, loadGenerator
       } = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         self.props.enqueueSnackbar('Successfully fetched the data.', {
@@ -165,7 +165,7 @@ qps, c, t, loadGenerator,
       self.closeEventStream();
       self.setState({ blockRunTest: false, timerDialogOpen: false });
     };
-    }
+  }
   
 
   handleEvents() {
@@ -248,7 +248,7 @@ qps, c, t, loadGenerator,
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
-                        <label><strong>Performance Load Test Defaults</strong></label>
+            <label><strong>Performance Load Test Defaults</strong></label>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={4}>
                 <TextField
