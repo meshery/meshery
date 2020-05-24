@@ -43,7 +43,7 @@
         - title: Upgrading Meshery
           url: guides/upgrade
         - title: Meshery Metrics
-          url: guides/mesherymetrics
+          url: guides/meshery-metrics
     - title: Project
       url: project
       children:
@@ -53,4 +53,3 @@
           url: project/releases
         - title: Vulnerabilities
           url: project/security-vulnerabilities
-
