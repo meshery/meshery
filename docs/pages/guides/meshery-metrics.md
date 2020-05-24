@@ -6,7 +6,7 @@ permalink: guides/mesherymetrics
 type: guide
 ---
 
-Inorder to generate reports/load testing of your k8 applications, meshery uses `Grafana` and `Prometheus`.
+In order to generate report/load testing of your k8s applications, Meshery uses `Grafana` and `Prometheus`.
 Here you can find steps to generate these endpoints in different environemnts/service mesh adaptors.
 
 * TOC
