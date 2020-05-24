@@ -34,7 +34,7 @@ Get Minikube ip by executed below command.
 
 **2)Expose Prometheus service**
 
-a)By default  `prometheus`  spec type is configured to `ClusterIP`  you can chage it to `NodePort` using below command.
+a)By default  `prometheus`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
 
 ```
 $kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
