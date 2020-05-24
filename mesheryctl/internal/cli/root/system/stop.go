@@ -18,6 +18,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/pkg/errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -30,17 +32,18 @@ var stopCmd = &cobra.Command{
 	Short: "Stop Meshery",
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		utils.PreReqCheck()
-
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return utils.PreReqCheck()
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Stopping Meshery...")
 		if !utils.IsMesheryRunning() {
 			log.Info("Meshery is not running. Nothing to stop.")
-			return
+			return nil
 		}
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				log.Fatal(err)
+				return errors.Wrapf(err, "failed to mkdir %s", utils.MesheryFolder)
 			}
 		}
 
@@ -50,7 +53,7 @@ var stopCmd = &cobra.Command{
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
-			log.Fatal("[ERROR] Could not completely stop all containers. The error message: \n", err)
+			return errors.Wrap(err, "failed to stop meshery - could not stop some containers.")
 		}
 
 		// Remove all Docker containers
@@ -58,7 +61,7 @@ var stopCmd = &cobra.Command{
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
-			log.Fatal("[ERROR] Could not completely remove all containers. The error message: \n", err)
+			return errors.Wrap(err, "failed to stop meshery")
 		}
 
 		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
@@ -71,8 +74,12 @@ var stopCmd = &cobra.Command{
 
 		// Reset Meshery config file to default settings
 		if utils.ResetFlag {
-			resetMesheryConfig()
+			err := resetMesheryConfig()
+			if err != nil {
+				return errors.Wrap(err, "failed to reset meshery config")
+			}
 		}
+		return nil
 	},
 }
 

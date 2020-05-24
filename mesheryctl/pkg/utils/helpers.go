@@ -12,6 +12,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -30,9 +32,9 @@ var (
 	MesheryFolder = ".meshery"
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located?
-	DockerComposeFile = "/meshery.yaml"
+	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
-	AuthConfigFile = "/auth.json"
+	AuthConfigFile = "auth.json"
 )
 
 // SafeClose is a helper function help to close the io
@@ -47,7 +49,7 @@ func DownloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -55,87 +57,99 @@ func DownloadFile(filepath string, url string) error {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to create file %s", filepath)
 	}
 	defer func() {
 		_ = out.Close()
 	}()
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return err
+	if err != nil {
+		return errors.Wrap(err, "failed to copy response body")
+	}
+
+	return nil
 }
 
-func prereq() ([]byte, []byte) {
+func prereq() ([]byte, []byte, error) {
 	ostype, err := exec.Command("uname", "-s").Output()
 	if err != nil {
-		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+		return nil, nil, errors.Wrap(err, "could not find os type")
 	}
-	//fmt.Printf("%s\n", ostype)
 
 	osarch, err := exec.Command("uname", "-m").Output()
 	if err != nil {
-		log.Fatal("[ERROR] Please, install docker-compose. The error message: \n", err)
+		return nil, nil, errors.Wrap(err, "could not find os arch type")
 	}
-	//	fmt.Printf("%s\n", arch)
-	return ostype, osarch
+
+	return ostype, osarch, nil
 }
 
 // SetFileLocation to set absolute path
-func SetFileLocation() {
+func SetFileLocation() error {
 	// Find home directory.
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal("[ERROR] Cannot determine location of $HOME")
+		return errors.Wrap(err, "failed to get users home directory")
 	}
 	MesheryFolder = path.Join(home, MesheryFolder)
 	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
+	return nil
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck() {
+func PreReqCheck() error {
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Info("Docker-Compose is not installed")
 		//No auto installation of Docker-compose for windows
 		if runtime.GOOS == "windows" {
-			return
+			return errors.Wrap(err, "please install docker-compose")
 		}
-		installprereq()
+		err = installprereq()
+		if err != nil {
+			return errors.Wrap(err, "failed to install prerequisites")
+		}
 	}
+	return nil
 }
 
-func installprereq() {
+func installprereq() error {
 	log.Info("Attempting Docker-Compose installation...")
-	ostype, osarch := prereq()
+	ostype, osarch, err := prereq()
+	if err != nil {
+		return errors.Wrap(err, "failed to get prerequisites")
+	}
+
 	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
 
+	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
-	dockerComposeBinaryURL := dockerComposeBinaryURL
 	if err != nil {
-		// download the default version as 1.24.1 if unable to fetch latest page data
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
 		var dat map[string]interface{}
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "failed to read response body")
 		}
 		if err := json.Unmarshal(body, &dat); err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "failed to unmarshal json into object")
 		}
 		num := dat["tag_name"]
 		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
 	}
 	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
 	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
-		log.Fatal(err)
+		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
 	}
 	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-		log.Fatal(err)
+		return errors.Wrap(err, "failed to execute command")
 	}
 	log.Info("Prerequisite Docker Compose is installed.")
+	return nil
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running

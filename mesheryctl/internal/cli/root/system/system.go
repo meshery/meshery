@@ -15,10 +15,6 @@
 package system
 
 import (
-	"errors"
-
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
 )
 
@@ -26,27 +22,6 @@ const (
 	url     = "http://localhost:9081"
 	fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 )
-
-var systemDetails = `
-Manage the state and configuration of Meshery server, adapters, and client..
-
-Usage:
-  mesheryctl system [command]
-
-Available Commands:
-  reset       Reset Meshery's configuration
-  help        Help for system commands
-  logs        Print logs
-  start       Start Meshery
-  status      Check Meshery status
-  stop        Stop Meshery
-  update      Pull new Meshery images from Docker Hub
-
-Flags:
-  -h, --help            help for system commands
-
-Use "mesheryctl system [command] --help" for more information about a command.
-`
 
 var (
 	availableSubcommands = []*cobra.Command{}
@@ -57,22 +32,7 @@ var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Meshery Lifecycle Management",
 	Long:  `Manage the state and configuration of Meshery server, adapters, and client.`,
-	//Args:  cobra.MinimumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-
-		if len(args) == 0 {
-			log.Print(systemDetails)
-			return nil
-		}
-
-		for _, subcommand := range availableSubcommands {
-			if args[0] == subcommand.Name() {
-				return nil
-			}
-		}
-
-		return errors.New("sub-command not found : " + "\"" + args[0] + "\"")
-	},
+	Args:  cobra.MinimumNArgs(1),
 }
 
 func init() {

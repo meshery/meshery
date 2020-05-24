@@ -20,6 +20,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/pkg/errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -32,24 +34,24 @@ var logsCmd = &cobra.Command{
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsMesheryRunning(); !ok {
 			log.Error("No logs to show. Meshery is not running.")
-			return
+			return nil
 		}
 
 		log.Info("Starting Meshery logging...")
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				log.Fatal("start cmd: ", err)
+				return errors.Wrapf(err, "failed to download %s file from %s", utils.DockerComposeFile, fileURL)
 			}
 		}
 
 		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "failed to create stdout pipe")
 		}
 		scanner := bufio.NewScanner(cmdReader)
 		go func() {
@@ -58,10 +60,11 @@ var logsCmd = &cobra.Command{
 			}
 		}()
 		if err := cmdlog.Start(); err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "failed start logger")
 		}
 		if err := cmdlog.Wait(); err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "failed to wait for exec process")
 		}
+		return nil
 	},
 }
