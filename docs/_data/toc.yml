@@ -42,6 +42,8 @@
           url: guides/mesheryctl
         - title: Upgrading Meshery
           url: guides/upgrade
+        - title: Meshery Metrics
+          url: guides/mesherymetrics
     - title: Project
       url: project
       children:
