@@ -94,17 +94,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
       qps, c, t, loadGenerator,
     } = this.state;
 
-
-
-    const t1 = t.substring(0, t.length - 1);
-    const dur = t.substring(t.length - 1, t.length).toLowerCase();
-
     const data = {
 
       qps,
       c,
-      t: t1,
-      dur,
+      t,
       loadGenerator,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
@@ -138,14 +132,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
           ),
         });
         this.props.updateLoadTestPref({
-              loadTestPref: {
-                qps,
-                c,
-                t: t1,
-                dur,
-                loadGenerator,
-              },
-            });
+          loadTestPref: {
+            qps,
+            c,
+            t,
+            loadGenerator,
+          },
+        });
       }
     }, this.handleError('There was an error sending your preference'));
   }
