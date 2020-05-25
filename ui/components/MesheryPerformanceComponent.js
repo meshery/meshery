@@ -81,7 +81,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig,
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
     } = props;
 
     this.state = {
@@ -105,6 +105,17 @@ class MesheryPerformanceComponent extends React.Component {
       availableAdapters: [],
     };
   }
+    static getDerivedStateFromProps(props, state) {
+
+      return {
+        qps: props.loadTestPrefs.qps,
+        c: props.loadTestPrefs.c,
+        loadGenerator: props.loadTestPrefs.gen,
+        t: props.loadTestPrefs.t
+      };
+  
+}
+        
 
   handleChange = (name) => (event) => {
     if (name === 'url' && event.target.value !== '') {
@@ -634,9 +645,10 @@ const mapStateToProps = (state) => {
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
   const k8sConfig = state.get('k8sConfig').toJS();
+  const loadTestPrefs = state.get('loadTestPrefs').toJS();
   const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
   return {
-    ...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig,
+    ...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
   };
 };
 
