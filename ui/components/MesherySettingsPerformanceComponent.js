@@ -6,11 +6,13 @@ import Grid from '@material-ui/core/Grid';
 import {
   NoSsr, Tooltip, IconButton, CircularProgress, FormControl, RadioGroup, FormControlLabel, Radio,
 } from '@material-ui/core';
+import dataFetch from '../lib/data-fetch';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import CloseIcon from '@material-ui/icons/Close';
 import LoadTestTimerDialog from './load-test-timer-dialog';
+import { updateLoadTestPref, updateProgress } from '../lib/store';
 
 
 const loadGenerators = [
@@ -106,39 +108,22 @@ class MesherySettingsPerformanceComponent extends React.Component {
       loadGenerator,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    this.startEventStream(`/api/load-test-prefs?${params}`);
+    // this.startEventStream(`/api/load-test-prefs?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
-  }
-  async startEventStream(url) {
-    this.closeEventStream();
-    this.eventStream = new EventSource(url);
-    this.eventStream.onmessage = this.handleEvents();
-    this.eventStream.onerror = this.handleError('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.');
-    this.props.enqueueSnackbar('Load test has been successfully submitted', {
-      variant: 'info',
-      autoHideDuration: 1000,
-      action: (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => this.props.closeSnackbar(key)}
-        >
-          <CloseIcon />
-        </IconButton>
-      ),
-    });
-  }
 
+    // let self = this;
+    dataFetch('/api/load-test-prefs', {
+      credentials: 'same-origin',
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: params,
+    }, (result) => {
 
-  handleSuccess() {
-    const self = this;
-    return (result) => {
-      const {
-        qps, c, t, loadGenerator
-      } = this.state;
-      if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
-        self.props.enqueueSnackbar('Successfully fetched the data.', {
+      if (typeof result !== 'undefined') {
+        this.props.enqueueSnackbar('Preference was successfully updated!', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -152,53 +137,22 @@ class MesherySettingsPerformanceComponent extends React.Component {
             </IconButton>
           ),
         });
-        self.props.updateLoadTestPref({
-          loadTest: {
-            qps,
-            c,
-            t,
-            loadGenerator,
-          },
-        });
-        self.setState({ result, testUUID: self.generateUUID() });
+        this.props.updateLoadTestPref({
+              loadTestPref: {
+                qps,
+                c,
+                t: t1,
+                dur,
+                loadGenerator,
+              },
+            });
       }
-      self.closeEventStream();
-      self.setState({ blockRunTest: false, timerDialogOpen: false });
-    };
+    }, this.handleError('There was an error sending your preference'));
   }
+
+
   
 
-  handleEvents() {
-    const self = this;
-    let track = 0;
-    return (e) => {
-      const data = JSON.parse(e.data);
-      switch (data.status) {
-        case 'info':
-          self.props.enqueueSnackbar(data.message, {
-            variant: 'info',
-            autoHideDuration: 1000,
-            action: (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => self.props.closeSnackbar(key)}
-              >
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
-          break;
-        case 'error':
-          self.handleError('Load test did not run successfully with msg')(data.message);
-          break;
-        case 'success':
-          self.handleSuccess();
-          break;
-      }
-    };
-  }
 
   closeEventStream() {
     if (this.eventStream && this.eventStream.close) {
@@ -343,6 +297,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
 MesherySettingsPerformanceComponent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
+
+});
 
 
 
