@@ -185,11 +185,10 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
     const {
       timerDialogOpen, blockRunTest, qps, t, c, loadGenerator,
-      tError,
-    } = this.state;
+      tError, classes
+    } = this.props;
 
     return (
       <NoSsr>
@@ -289,6 +288,10 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
 MesherySettingsPerformanceComponent.propTypes = {
   classes: PropTypes.object.isRequired,
+    qps: PropTypes.string.isRequired,
+  loadGenerator: PropTypes.string.isRequired,
+  t: PropTypes.string.isRequired,
+  c: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
