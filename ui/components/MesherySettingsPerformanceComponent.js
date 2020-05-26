@@ -288,7 +288,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
 MesherySettingsPerformanceComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-    qps: PropTypes.string.isRequired,
+  qps: PropTypes.string.isRequired,
   loadGenerator: PropTypes.string.isRequired,
   t: PropTypes.string.isRequired,
   c: PropTypes.string.isRequired,

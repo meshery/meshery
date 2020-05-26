@@ -105,16 +105,16 @@ class MesheryPerformanceComponent extends React.Component {
       availableAdapters: [],
     };
   }
-    static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props, state) {
 
-      return {
-        qps: this.props.loadTestPrefs.qps,
-        c: this.props.loadTestPrefs.c,
-        loadGenerator: this.props.loadTestPrefs.gen,
-        t: this.props.loadTestPrefs.t
-      };
+    return {
+      qps: this.props.loadTestPrefs.qps,
+      c: this.props.loadTestPrefs.c,
+      loadGenerator: this.props.loadTestPrefs.gen,
+      t: this.props.loadTestPrefs.t
+    };
   
-}
+  }
         
 
   handleChange = (name) => (event) => {
