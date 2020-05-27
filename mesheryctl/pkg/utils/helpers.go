@@ -22,6 +22,19 @@ const (
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
+
+	// Usage URLs
+	perfUsageURL   = "https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
+	systemUsageURL = "https://meshery.layer5.io/docs/guides/mesheryctl#meshery-lifecycle-management"
+	meshUsageURL   = "https://meshery.layer5.io/docs/guides/mesheryctl#service-mesh-lifecycle-management"
+)
+
+type cmdType string
+
+const (
+	cmdPerf   cmdType = "perf"
+	cmdMesh   cmdType = "mesh"
+	cmdSystem cmdType = "system"
 )
 
 var (
@@ -159,4 +172,35 @@ func IsMesheryRunning() bool {
 		return false
 	}
 	return strings.Contains(string(op), "meshery")
+}
+
+// PerfError returns a formatted error message with a link to 'perf' command usage page at
+// in addition to the error message
+func PerfError(msg string) string {
+	return formatError(msg, cmdPerf)
+}
+
+// SystemError returns a formatted error message with a link to 'system' command usage page
+// in addition to the error message
+func SystemError(msg string) string {
+	return formatError(msg, cmdSystem)
+}
+
+// MeshError returns a formatted error message with a link to 'mesh' command usage page
+// in addition to the error message
+//func MeshError(msg string) string {
+//	return formatError(msg, cmdMesh)
+//}
+
+// formatError returns a formatted error message with a link to the meshery command URL
+func formatError(msg string, cmd cmdType) string {
+	switch cmd {
+	case cmdPerf:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
+	case cmdMesh:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
+	case cmdSystem:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
+	}
+	return fmt.Sprintf("%s\n", msg)
 }

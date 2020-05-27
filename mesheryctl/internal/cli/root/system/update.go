@@ -15,6 +15,7 @@
 package system
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -36,13 +37,13 @@ var updateCmd = &cobra.Command{
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, "failed to download %s file from %s", utils.DockerComposeFile, fileURL)
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 			}
 		}
 
 		err := updateMesheryContainers()
 		if err != nil {
-			return errors.Wrap(err, "failed to update meshery containers")
+			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
 
 		log.Info("Meshery is now up-to-date")
@@ -56,7 +57,7 @@ func updateMesheryContainers() error {
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr
 	if err := start.Run(); err != nil {
-		return errors.Wrap(err, "failed to start meshery")
+		return errors.Wrap(err, utils.SystemError("failed to start meshery"))
 	}
 	return nil
 }

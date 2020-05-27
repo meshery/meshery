@@ -44,14 +44,14 @@ var logsCmd = &cobra.Command{
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, "failed to download %s file from %s", utils.DockerComposeFile, fileURL)
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 			}
 		}
 
 		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
-			return errors.Wrap(err, "failed to create stdout pipe")
+			return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
 		}
 		scanner := bufio.NewScanner(cmdReader)
 		go func() {
@@ -60,10 +60,10 @@ var logsCmd = &cobra.Command{
 			}
 		}()
 		if err := cmdlog.Start(); err != nil {
-			return errors.Wrap(err, "failed start logger")
+			return errors.Wrap(err, utils.SystemError("failed start logger"))
 		}
 		if err := cmdlog.Wait(); err != nil {
-			return errors.Wrap(err, "failed to wait for exec process")
+			return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
 		}
 		return nil
 	},

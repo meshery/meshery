@@ -15,9 +15,13 @@
 package system
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +40,7 @@ var resetCmd = &cobra.Command{
 func resetMesheryConfig() error {
 	log.Info("Meshery resetting...")
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-		return errors.Wrapf(err, "failed to download %s file from %s", utils.DockerComposeFile, fileURL)
+		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 	}
 	log.Info("Meshery config (" + utils.DockerComposeFile + ") reset to default settings.")
 	return nil

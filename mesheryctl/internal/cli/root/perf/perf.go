@@ -73,11 +73,11 @@ func StringWithCharset(length int) string {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return errors.Wrapf(err, "failed to read file %s", filepath)
+		return errors.Wrapf(err, utils.PerfError("failed to read file %s"), filepath)
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		return errors.Wrap(err, "failed to json unmarshal file into token object")
+		return errors.Wrap(err, utils.PerfError("failed to json unmarshal file into token object"))
 	}
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
@@ -96,10 +96,10 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 func UpdateAuthDetails(filepath string) error {
 	req, err := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
 	if err != nil {
-		return errors.Wrap(err, "failed to create new auth token request")
+		return errors.Wrap(err, utils.PerfError("failed to create new auth token request"))
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
-		return errors.Wrap(err, "failed to add auth details")
+		return errors.Wrap(err, utils.PerfError("failed to add auth details"))
 	}
 
 	client := &http.Client{}
@@ -107,12 +107,12 @@ func UpdateAuthDetails(filepath string) error {
 	resp, err := client.Do(req)
 	defer utils.SafeClose(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "failed to sent auth token request")
+		return errors.Wrap(err, utils.PerfError("failed to sent auth token request"))
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, "failed to read response body")
+		return errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}
 
 	return ioutil.WriteFile(filepath, data, os.ModePerm)
@@ -135,7 +135,7 @@ var PerfCmd = &cobra.Command{
 			var t models.PerformanceSpec
 			err := yaml.Unmarshal([]byte(filePath), &t)
 			if err != nil {
-				return errors.Wrapf(err, "failed to unmarshal yaml file %s", filePath)
+				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to unmarshal yaml file %s", filePath)))
 			}
 			if testDuration == "" {
 				testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
@@ -162,7 +162,7 @@ var PerfCmd = &cobra.Command{
 		startTime := time.Now()
 		duration, err := time.ParseDuration(testDuration)
 		if err != nil {
-			return errors.Wrapf(err, "failed to parse test duration %s", testDuration)
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to parse test duration %s", testDuration)))
 		}
 
 		endTime := startTime.Add(duration)
@@ -173,14 +173,14 @@ var PerfCmd = &cobra.Command{
 		if testURL != "" {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			return errors.New("please enter a test URL")
+			return errors.New(utils.PerfError("please enter a test URL"))
 		}
 
 		// Method to check if the entered Test URL is valid or not
 		var validURL = govalidator.IsURL(testURL)
 
 		if !validURL {
-			return errors.New("please enter a valid test URL")
+			return errors.New(utils.PerfError("please enter a valid test URL"))
 		}
 
 		postData = postData + "\nclient:"
@@ -189,11 +189,11 @@ var PerfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			return errors.Wrapf(err, "failed to create new request to %s", mesheryURL)
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mesheryURL)))
 		}
 
 		if err := AddAuthDetails(req, tokenPath); err != nil {
-			return errors.Wrap(err, "failed to add auth details to request")
+			return errors.Wrap(err, utils.PerfError("failed to add auth details to request"))
 		}
 
 		q := req.URL.Query()
@@ -207,7 +207,7 @@ var PerfCmd = &cobra.Command{
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			return errors.Wrapf(err, "failed to make request to %s", testURL)
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to make request to %s", testURL)))
 		}
 		log.Debug("Initiating Performance test ...")
 		log.Debug(resp.Status)
@@ -215,12 +215,12 @@ var PerfCmd = &cobra.Command{
 		defer utils.SafeClose(resp.Body)
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, "failed to read response body")
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
 		log.Debug(string(data))
 
 		if err := UpdateAuthDetails(tokenPath); err != nil {
-			return errors.Wrap(err, "failed to update auth details")
+			return errors.Wrap(err, utils.PerfError("failed to update auth details"))
 		}
 
 		log.Debug("Test Completed Successfully!")

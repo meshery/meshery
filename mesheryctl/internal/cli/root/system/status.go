@@ -40,7 +40,7 @@ var statusCmd = &cobra.Command{
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			return errors.Wrap(err, "failed to start meshery")
+			return errors.Wrap(err, utils.SystemError("failed to start meshery"))
 		}
 		return nil
 	},

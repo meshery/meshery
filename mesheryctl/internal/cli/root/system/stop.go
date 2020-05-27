@@ -15,6 +15,7 @@
 package system
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -43,7 +44,7 @@ var stopCmd = &cobra.Command{
 		}
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				return errors.Wrapf(err, "failed to mkdir %s", utils.MesheryFolder)
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
 			}
 		}
 
@@ -53,7 +54,7 @@ var stopCmd = &cobra.Command{
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, "failed to stop meshery - could not stop some containers.")
+			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
 		}
 
 		// Remove all Docker containers
@@ -61,7 +62,7 @@ var stopCmd = &cobra.Command{
 		stop.Stderr = os.Stderr
 
 		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, "failed to stop meshery")
+			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
 		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
@@ -76,7 +77,7 @@ var stopCmd = &cobra.Command{
 		if utils.ResetFlag {
 			err := resetMesheryConfig()
 			if err != nil {
-				return errors.Wrap(err, "failed to reset meshery config")
+				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
 			}
 		}
 		return nil
