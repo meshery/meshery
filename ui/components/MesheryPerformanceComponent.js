@@ -499,16 +499,16 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                id="headers"
-                name="headers"
-                label="Request Headers"
-                autoFocus
-                fullWidth
-                value={headers}
-                multiline
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('headers')}
+                  id="headers"
+                  name="headers"
+                  label="Request Headers"
+                  autoFocus
+                  fullWidth
+                  value={headers}
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('headers')}
                 >
 
                 </TextField>
