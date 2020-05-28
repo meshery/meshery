@@ -24,6 +24,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |         | log         |           | Starts tailing Meshery server debug logs.                     | `mesheryctl system log` |
 |         | start       |           | Start all Meshery containers.                                 | `mesheryctl system start` |
 |         |             | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl system start --reset` |
+|         |             | --skip-update | (optional) skip updates available in Meshery. | `mesheryctl system start --skip-update` |
 |         | status      |           | Displays the status of Meshery's containers (server and adapters). | `mesheryctl system status` |
 |         | stop        |           | Stop all Meshery containers.                                  | `mesheryctl system stop` |
 |         |             | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl system stop --reset` |
