@@ -36,7 +36,8 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	httpOpts.DisableFastClient = true
 
 	for key, val := range *opts.Headers {
-		httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+		value = key + ":" + val
+		httpOpts.AddAndValidateExtraHeader(value)
 	}
 
 	return &httpOpts
