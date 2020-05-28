@@ -24,6 +24,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
+
+	"github.com/spf13/viper"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/layer5io/meshery/models"
@@ -32,11 +36,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
-)
-
-const (
-	mesheryAuthToken = "http://localhost:9081/api/gettoken"
-	mesheryURL       = "http://localhost:9081/api/load-test-smps?"
 )
 
 var (
@@ -49,6 +48,8 @@ var (
 	loadGenerator      = ""
 	filePath           = ""
 	tokenPath          = ""
+
+	mctlCfg *cfg.MesheryCtl
 )
 
 var perfDetails = `
@@ -119,7 +120,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
-	req, err := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetPerf().GetAuthTokenURL(), bytes.NewBuffer([]byte("")))
 	if err != nil {
 		return err
 	}
@@ -150,6 +151,7 @@ var PerfCmd = &cobra.Command{
 	Long:  `Performance Testing & Benchmarking using Meshery CLI.`,
 	//Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		var err error
 		if len(args) == 0 {
 			log.Print(perfDetails)
 			return
@@ -157,6 +159,16 @@ var PerfCmd = &cobra.Command{
 
 		//Check prerequisite
 		utils.PreReqCheck()
+
+		// Get the mesheryctl configuration
+		// TODO: Nitish Malhotra (05/23/2020)
+		// mesheryctl is currently used only for perf configurations
+		// Plan is to extend this to more commands. See https://github.com/layer5io/meshery/issues/1022
+		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Print(perfDetails)
+			return
+		}
 
 		// Importing SMPS Configuration from the file
 		if filePath != "" {
@@ -219,7 +231,7 @@ var PerfCmd = &cobra.Command{
 		postData = postData + "\n connections: " + concurrentRequests
 		postData = postData + "\n rps: " + qps
 
-		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
+		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL(), bytes.NewBuffer([]byte(postData)))
 		if err != nil {
 			log.Print("Error in building the request")
 			log.Fatal("Error Message:\n", err)
@@ -277,4 +289,5 @@ func init() {
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+
 }
