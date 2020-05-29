@@ -216,6 +216,7 @@ func formatError(msg string, cmd cmdType) string {
 	return fmt.Sprintf("%s\n", msg)
 }
 
+// IsValidSubcommand checks if the passed subcommand is supported by the parent command
 func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 	for _, s := range available {
 		if sub == s.CalledAs() {

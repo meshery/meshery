@@ -30,7 +30,8 @@ The Meshery adapter for {{ page.name }} includes a handful of sample application
     - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Image Hub](https://github.com/layer5io/image-hub)
     - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
-
+    
+![Layer5 Image Hub on HashiCorp Consul](/docs/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
 
 
 ## Performance management of Consul and it workloads
@@ -41,4 +42,4 @@ The Meshery adapter for {{ page.name }} will connect to {{ page.name }}'s Promet
 
 ## Architecture
 
-![Consul Service Mesh Archicture](consul/service-mesh-architecture-consul.png)
+![Consul Service Mesh Archicture](/docs/service-meshes/adapters/consul/service-mesh-architecture-consul.png)
