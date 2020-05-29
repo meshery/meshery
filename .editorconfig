@@ -1,0 +1,20 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = false
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.go]
+indent_size = 4
+indent_style = tab
+
+[*.js]
+indent_size = 2
+indent_style = space
+
+[*.{diff,md}]
+trim_trailing_whitespace = false
+

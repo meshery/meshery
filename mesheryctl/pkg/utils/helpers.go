@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,6 +25,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
+	rootUsageURL   = "https://meshery.layer5.io/docs/guides/mesheryctl#global-commands-and-flags"
 	perfUsageURL   = "https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
 	systemUsageURL = "https://meshery.layer5.io/docs/guides/mesheryctl#meshery-lifecycle-management"
 	meshUsageURL   = "https://meshery.layer5.io/docs/guides/mesheryctl#service-mesh-lifecycle-management"
@@ -32,6 +34,7 @@ const (
 type cmdType string
 
 const (
+	cmdRoot   cmdType = "root"
 	cmdPerf   cmdType = "perf"
 	cmdMesh   cmdType = "mesh"
 	cmdSystem cmdType = "system"
@@ -174,6 +177,12 @@ func IsMesheryRunning() bool {
 	return strings.Contains(string(op), "meshery")
 }
 
+// RootError returns a formatted error message with a link to 'root' command usage page at
+// in addition to the error message
+func RootError(msg string) string {
+	return formatError(msg, cmdRoot)
+}
+
 // PerfError returns a formatted error message with a link to 'perf' command usage page at
 // in addition to the error message
 func PerfError(msg string) string {
@@ -195,6 +204,8 @@ func SystemError(msg string) string {
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
 	switch cmd {
+	case cmdRoot:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, rootUsageURL)
 	case cmdPerf:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
 	case cmdMesh:
@@ -203,4 +214,13 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
 	}
 	return fmt.Sprintf("%s\n", msg)
+}
+
+func IsValidSubcommand(available []*cobra.Command, sub string) bool {
+	for _, s := range available {
+		if sub == s.CalledAs() {
+			return true
+		}
+	}
+	return false
 }

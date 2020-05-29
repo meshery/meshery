@@ -24,6 +24,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -36,11 +37,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	mesheryAuthToken = "http://localhost:9081/api/gettoken"
-	mesheryURL       = "http://localhost:9081/api/load-test-smps?"
-)
-
 var (
 	testURL            = ""
 	testName           = ""
@@ -51,6 +47,8 @@ var (
 	loadGenerator      = ""
 	filePath           = ""
 	tokenPath          = ""
+
+	mctlCfg *cfg.MesheryCtl
 )
 
 const tokenName = "token"
@@ -94,7 +92,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
-	req, err := http.NewRequest("GET", mesheryAuthToken, bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetPerf().GetAuthTokenURL(), bytes.NewBuffer([]byte("")))
 	if err != nil {
 		return errors.Wrap(err, utils.PerfError("failed to create new auth token request"))
 	}
@@ -187,9 +185,9 @@ var PerfCmd = &cobra.Command{
 		postData = postData + "\n connections: " + concurrentRequests
 		postData = postData + "\n rps: " + qps
 
-		req, err := http.NewRequest("POST", mesheryURL, bytes.NewBuffer([]byte(postData)))
+		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL(), bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mesheryURL)))
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mctlCfg.GetBaseMesheryURL())))
 		}
 
 		if err := AddAuthDetails(req, tokenPath); err != nil {
@@ -238,4 +236,5 @@ func init() {
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+
 }
