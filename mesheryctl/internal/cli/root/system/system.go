@@ -83,6 +83,7 @@ func init() {
 		stopCmd,
 		statusCmd,
 		updateCmd,
+		configCmd,
 	}
 	SystemCmd.AddCommand(availableSubcommands...)
 }
