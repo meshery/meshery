@@ -16,12 +16,10 @@ package perf
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
@@ -77,9 +75,6 @@ Example usage of perf subcommand :
  mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
-const tokenName = "token"
-const providerName = "meshery-provider"
-
 var seededRand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
@@ -91,57 +86,6 @@ func StringWithCharset(length int) string {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(b)
-}
-
-// AddAuthDetails Adds authentication cookies to the request
-func AddAuthDetails(req *http.Request, filepath string) error {
-	file, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		log.Errorf("File read failed : %v", err.Error())
-		return err
-	}
-	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		log.Errorf("Token file invalid : %v", err.Error())
-		return err
-	}
-	req.AddCookie(&http.Cookie{
-		Name:     tokenName,
-		Value:    tokenObj[tokenName],
-		HttpOnly: true,
-	})
-	req.AddCookie(&http.Cookie{
-		Name:     providerName,
-		Value:    tokenObj[providerName],
-		HttpOnly: true,
-	})
-	return nil
-}
-
-// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
-func UpdateAuthDetails(filepath string) error {
-	req, err := http.NewRequest("GET", mctlCfg.GetPerf().GetAuthTokenURL(), bytes.NewBuffer([]byte("")))
-	if err != nil {
-		return err
-	}
-	if err := AddAuthDetails(req, filepath); err != nil {
-		return err
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	defer utils.SafeClose(resp.Body)
-
-	if err != nil {
-		return err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
 // PerfCmd represents the Performance Management CLI command
@@ -238,7 +182,7 @@ var PerfCmd = &cobra.Command{
 			return
 		}
 
-		if err := AddAuthDetails(req, tokenPath); err != nil {
+		if err := utils.AddAuthDetails(req, tokenPath); err != nil {
 			log.Printf("Error Authorizing request : %v", err.Error())
 			return
 		}
@@ -270,7 +214,7 @@ var PerfCmd = &cobra.Command{
 		}
 		log.Print(string(data))
 
-		if err := UpdateAuthDetails(tokenPath); err != nil {
+		if err := utils.UpdateAuthDetails(tokenPath); err != nil {
 			log.Printf("Error updating token : %v", err.Error())
 			return
 		}

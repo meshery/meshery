@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -34,6 +35,9 @@ var (
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "/auth.json"
 )
+
+const tokenName = "token"
+const providerName = "meshery-provider"
 
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer) {
@@ -145,4 +149,56 @@ func IsMesheryRunning() bool {
 		return false
 	}
 	return strings.Contains(string(op), "meshery")
+}
+
+// AddAuthDetails Adds authentication cookies to the request
+func AddAuthDetails(req *http.Request, filepath string) error {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		log.Errorf("File read failed : %v", err.Error())
+		return err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		log.Errorf("Token file invalid : %v", err.Error())
+		return err
+	}
+	req.AddCookie(&http.Cookie{
+		Name:     tokenName,
+		Value:    tokenObj[tokenName],
+		HttpOnly: true,
+	})
+	req.AddCookie(&http.Cookie{
+		Name:     providerName,
+		Value:    tokenObj[providerName],
+		HttpOnly: true,
+	})
+	return nil
+}
+
+// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
+func UpdateAuthDetails(filepath string) error {
+	// TODO: get this from the global config
+	req, err := http.NewRequest("GET", "http://localhost:9081/api/user", bytes.NewBuffer([]byte("")))
+	if err != nil {
+		return err
+	}
+	if err := AddAuthDetails(req, filepath); err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	defer SafeClose(resp.Body)
+
+	if err != nil {
+		return err
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
