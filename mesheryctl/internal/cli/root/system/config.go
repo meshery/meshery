@@ -63,10 +63,8 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	}
 	part.Write(fileContents)
 
-	if params != nil {
-		for key, val := range params {
-			_ = writer.WriteField(key, val)
-		}
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
 	}
 	err = writer.Close()
 	if err != nil {
@@ -81,35 +79,36 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	return request, nil
 }
 
-func getContext(configFile, tokenPath string) (string, error) {
+func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 
 	req, err := UploadFileWithParams(URL1, nil, paramName, configFile)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var val []map[string]string
 	json.Unmarshal(body, &val)
-	if len(val) < 1 {
-		return "", nil
-	}
 
-	return val[0]["contextName"], nil
+	var contexts []string
+	for _, item := range val {
+		contexts = append(contexts, item["contextName"])
+	}
+	return contexts, nil
 }
 
 // TODO: show used the available context and let user choose which context to set
@@ -134,6 +133,7 @@ func SetDefaultContext(configFile, cname, tokenPath string) error {
 	if err != nil {
 		return err
 	}
+	// TODO: Pretty print the output
 	fmt.Printf("%v\n", string(body))
 	return nil
 }
@@ -152,7 +152,7 @@ var configCmd = &cobra.Command{
 
 		switch args[0] {
 		case "minikube":
-			generateCFG := exec.Command("scripts/generate_kubeconfig_minikube.sh")
+			generateCFG := exec.Command("sh", "-c", utils.ScriptMinikube())
 			generateCFG.Stdout = os.Stdout
 			generateCFG.Stderr = os.Stderr
 
@@ -161,7 +161,8 @@ var configCmd = &cobra.Command{
 				return
 			}
 		case "gke":
-			generateCFG := exec.Command("scripts/generate_kubeconfig_gke.sh", "sa_meshery_1", "default")
+			saName := "sa-meshery-" + utils.StringWithCharset(8)
+			generateCFG := exec.Command("sh", "-c", utils.ScriptGKE(saName, "default"))
 			generateCFG.Stdout = os.Stdout
 			generateCFG.Stderr = os.Stderr
 
@@ -174,13 +175,27 @@ var configCmd = &cobra.Command{
 		}
 		configPath := "/tmp/meshery/kubeconfig.yaml"
 
-		cName, err := getContext(configPath, tokenPath)
-		if err != nil {
-			log.Printf("Error getting contexts : %s", err.Error())
+		contexts, err := getContexts(configPath, tokenPath)
+		if err != nil || len(contexts) < 1 {
+			log.Fatalf("Error getting contexts : %s", err.Error())
 		}
-		err = SetDefaultContext(configPath, cName, tokenPath)
+
+		choosenCtx := contexts[0]
+		if len(contexts) > 1 {
+			fmt.Println("List of available contexts : ")
+			for i, ctx := range contexts {
+				fmt.Printf("(%d) %s \n", i+1, ctx)
+			}
+			var choice int
+			fmt.Print("Enter choice: ")
+			_, err = fmt.Scanf("%d", &choice)
+			choosenCtx = contexts[choice-1]
+		}
+
+		log.Debugf("Choosen context : %s", choosenCtx)
+		err = SetDefaultContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
-			log.Printf("Error setting context : %s", err.Error())
+			log.Fatalf("Error setting context : %s", err.Error())
 		}
 	},
 }

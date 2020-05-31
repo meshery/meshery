@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"time"
 
@@ -75,19 +74,6 @@ Example usage of perf subcommand :
  mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 `
 
-var seededRand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
-
-// StringWithCharset generates a random string with a given length
-func StringWithCharset(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-	return string(b)
-}
-
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
@@ -138,7 +124,7 @@ var PerfCmd = &cobra.Command{
 
 		if len(testName) <= 0 {
 			log.Print("Test Name not provided")
-			testName = StringWithCharset(8)
+			testName = utils.StringWithCharset(8)
 			log.Print("Using random test name: ", testName)
 		}
 

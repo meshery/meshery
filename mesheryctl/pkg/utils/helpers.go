@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -38,6 +40,20 @@ var (
 
 const tokenName = "token"
 const providerName = "meshery-provider"
+
+var seededRand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+// StringWithCharset generates a random string with a given length
+func StringWithCharset(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz"
+	// + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
 
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer) {
