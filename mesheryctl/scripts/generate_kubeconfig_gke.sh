@@ -10,7 +10,7 @@ fi
 
 SERVICE_ACCOUNT_NAME=$1
 NAMESPACE="$2"
-KUBECFG_FILE_NAME="config-${SERVICE_ACCOUNT_NAME}-${NAMESPACE}.yaml"
+KUBECFG_FILE_NAME="kubeconfig.yaml"
 TARGET_FOLDER="/tmp/meshery/"
 
 create_target_folder() {

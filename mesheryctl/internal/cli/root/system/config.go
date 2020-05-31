@@ -22,6 +22,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -36,6 +37,8 @@ const tokenName = "token"
 const providerName = "meshery-provider"
 const paramName = "k8sfile"
 const contextName = "contextName"
+
+var tokenPath string
 
 func UploadFileWithParams(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
 	file, err := os.Open(path)
@@ -140,18 +143,48 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
 	Long:  `Configure the Kubernetes cluster used by Meshery.`,
-	Args:  cobra.NoArgs,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		path := "/home/kanishkarj/Downloads/config_minikube.yaml"
-		tokenPath := "/home/kanishkarj/Downloads/auth.json"
 
-		cName, err := getContext(path, tokenPath)
+		if tokenPath == "" {
+			log.Fatal("Token path invalid")
+		}
+
+		switch args[0] {
+		case "minikube":
+			generateCFG := exec.Command("scripts/generate_kubeconfig_minikube.sh")
+			generateCFG.Stdout = os.Stdout
+			generateCFG.Stderr = os.Stderr
+
+			if err := generateCFG.Run(); err != nil {
+				log.Fatal("Error generating config:", err)
+				return
+			}
+		case "gke":
+			generateCFG := exec.Command("scripts/generate_kubeconfig_gke.sh", "sa_meshery_1", "default")
+			generateCFG.Stdout = os.Stdout
+			generateCFG.Stderr = os.Stderr
+
+			if err := generateCFG.Run(); err != nil {
+				log.Fatal("Error generating config:", err)
+				return
+			}
+		default:
+			log.Fatal("The argument has to be one of GKE | Minikube")
+		}
+		configPath := "/tmp/meshery/kubeconfig.yaml"
+
+		cName, err := getContext(configPath, tokenPath)
 		if err != nil {
 			log.Printf("Error getting contexts : %s", err.Error())
 		}
-		err = SetDefaultContext(path, cName, tokenPath)
+		err = SetDefaultContext(configPath, cName, tokenPath)
 		if err != nil {
 			log.Printf("Error setting context : %s", err.Error())
 		}
 	},
+}
+
+func init() {
+	configCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 }
