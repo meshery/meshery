@@ -16,7 +16,7 @@ import (
 
 // SharedHTTPOptions is the flag->httpoptions transfer code shared between
 // fortio_main and fcurl.
-func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
+func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error) {
 	url := strings.TrimLeft(opts.URL, " \t\r\n")
 	httpOpts := fhttp.HTTPOptions{}
 	httpOpts.URL = url
@@ -36,7 +36,10 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
 	for key, val := range *opts.Headers {
-		httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+		err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	cookies := ""
@@ -44,7 +47,10 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 		cookies += fmt.Sprintf(" %s=%s;", key, val)
 	}
 	if len(*opts.Cookies) > 0 {
-		httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
+		err := httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
+		if err != nil {
+			return nil, err
+		}
 	}
 	if len(opts.Body) > 0 {
 		httpOpts.Payload = opts.Body
@@ -53,14 +59,17 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 		httpOpts.ContentType = opts.ContentType
 	}
 
-	return &httpOpts
+	return &httpOpts, nil
 }
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
 func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	defaults := &periodic.DefaultRunnerOptions
 	// httpOpts := bincommon.SharedHTTPOptions()
-	httpOpts := sharedHTTPOptions(opts)
+	httpOpts, err := sharedHTTPOptions(opts)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "generating load test options failed")
+	}
 	if opts.IsInsecure {
 		httpOpts.Insecure = true
 	}
@@ -110,7 +119,6 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		Exactly:     0,
 	}
 	var res periodic.HasRunnerResult
-	var err error
 	if opts.IsGRPC {
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
