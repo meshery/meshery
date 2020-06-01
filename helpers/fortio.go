@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"strings"
 
@@ -37,6 +38,17 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 
 	for key, val := range *opts.Headers {
 		httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+	}
+
+	cookies := ""
+	for key, val := range *opts.Cookies {
+		cookies += fmt.Sprintf(" %s=%s;", key, val)
+	}
+	if len(*opts.Cookies) > 0 {
+		httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
+	}
+	if len(opts.Body) > 0 {
+		httpOpts.Payload = opts.Body
 	}
 
 	return &httpOpts

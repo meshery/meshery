@@ -81,7 +81,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, headers
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, headers, cookies, reqBody
     } = props;
 
     this.state = {
@@ -94,6 +94,8 @@ class MesheryPerformanceComponent extends React.Component {
       loadGenerator: 'fortio',
       result,
       headers: "",
+      cookies: "",
+      reqBody: "",
 
       timerDialogOpen: false,
       blockRunTest: false,
@@ -148,7 +150,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitLoadTest = () => {
     const {
-      testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers,
+      testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody
     } = this.state;
 
     let computedTestName = testName;
@@ -171,7 +173,9 @@ class MesheryPerformanceComponent extends React.Component {
       dur,
       uuid: testUUID,
       loadGenerator,
-      headers: headers
+      headers: headers,
+      cookies: cookies,
+      reqBody: reqBody,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
     this.startEventStream(`/api/load-test?${params}`);
@@ -372,7 +376,7 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana, prometheus } = this.props;
     const {
       timerDialogOpen, blockRunTest, qps, url, testName, meshName, t, c, result, loadGenerator,
-      urlError, tError, testUUID, selectedMesh, availableAdapters, headers
+      urlError, tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -510,7 +514,36 @@ class MesheryPerformanceComponent extends React.Component {
                 variant="outlined"
                 onChange={this.handleChange('headers')}
                 >
-
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                id="cookies"
+                name="cookies"
+                label="Request Cookies"
+                autoFocus
+                fullWidth
+                value={cookies}
+                multiline
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('cookies')}
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                id="cookies"
+                name="cookies"
+                label="Request Body"
+                autoFocus
+                fullWidth
+                value={reqBody}
+                multiline
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('reqBody')}
+                >
                 </TextField>
               </Grid>
               <Grid item xs={12} sm={4}>

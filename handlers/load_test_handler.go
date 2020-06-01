@@ -105,7 +105,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
-func (h *Handler) parseHeaders(headersString string) *map[string]string {
+func (h *Handler) JSONtoMap(headersString string) *map[string]string {
 	headers := make(map[string]string)
 	err := json.Unmarshal([]byte(headersString), &headers)
 	if err != nil {
@@ -137,13 +137,20 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
-	headersString := q.Get("headers")
 
-	headers := h.parseHeaders(headersString)
+	headersString := q.Get("headers")
+	cookiesString := q.Get("cookies")
+	bodyString := q.Get("reqBody")
+
+	headers := h.JSONtoMap(headersString)
+	cookies := h.JSONtoMap(cookiesString)
+	body := []byte(bodyString)
 	logrus.Debugf("Headers : %v", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}
 	loadTestOptions.Headers = headers
+	loadTestOptions.Cookies = cookies
+	loadTestOptions.Body = body
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
