@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"strings"
 
@@ -31,9 +32,27 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	// httpOpts.Payload = fnet.GeneratePayload(*PayloadFileFlag, *PayloadSizeFlag, *PayloadFlag)
 	// httpOpts.UnixDomainSocket = *unixDomainSocketFlag
 	// if false { // *followRedirectsFlag {
+	// }
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
-	// }
+	for key, val := range *opts.Headers {
+		httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+	}
+
+	cookies := ""
+	for key, val := range *opts.Cookies {
+		cookies += fmt.Sprintf(" %s=%s;", key, val)
+	}
+	if len(*opts.Cookies) > 0 {
+		httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
+	}
+	if len(opts.Body) > 0 {
+		httpOpts.Payload = opts.Body
+	}
+	if len(opts.ContentType) > 0 {
+		httpOpts.ContentType = opts.ContentType
+	}
+
 	return &httpOpts
 }
 

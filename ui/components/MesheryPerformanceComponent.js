@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider,
+  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider, TextareaAutosize,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
@@ -81,7 +81,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig,
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, headers, cookies, reqBody, contentType
     } = props;
 
     this.state = {
@@ -93,6 +93,10 @@ class MesheryPerformanceComponent extends React.Component {
       t,
       loadGenerator: 'fortio',
       result,
+      headers: "",
+      cookies: "",
+      reqBody: "",
+      contentType: "",
 
       timerDialogOpen: false,
       blockRunTest: false,
@@ -118,9 +122,11 @@ class MesheryPerformanceComponent extends React.Component {
   };
 
   handleSubmit = () => {
+    
     const {
-      url, t, testName, meshName,
+      url, t, testName, meshName
     } = this.state;
+
     if (url === '') {
       this.setState({ urlError: true });
       return;
@@ -145,7 +151,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitLoadTest = () => {
     const {
-      testName, meshName, url, qps, c, t, loadGenerator, testUUID,
+      testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
     } = this.state;
 
     let computedTestName = testName;
@@ -168,6 +174,10 @@ class MesheryPerformanceComponent extends React.Component {
       dur,
       uuid: testUUID,
       loadGenerator,
+      headers: headers,
+      cookies: cookies,
+      reqBody: reqBody,
+      contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
     this.startEventStream(`/api/load-test?${params}`);
@@ -368,7 +378,7 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana, prometheus } = this.props;
     const {
       timerDialogOpen, blockRunTest, qps, url, testName, meshName, t, c, result, loadGenerator,
-      urlError, tError, testUUID, selectedMesh, availableAdapters,
+      urlError, tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -492,6 +502,66 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange('url')}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  id="headers"
+                  name="headers"
+                  label="Request Headers"
+                  autoFocus
+                  fullWidth
+                  value={headers}
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('headers')}
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                id="cookies"
+                name="cookies"
+                label="Request Cookies"
+                autoFocus
+                fullWidth
+                value={cookies}
+                multiline
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('cookies')}
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                id="contentType"
+                name="contentType"
+                label="Content Type"
+                autoFocus
+                fullWidth
+                value={contentType}
+                multiline
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('contentType')}
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                id="cookies"
+                name="cookies"
+                label="Request Body"
+                autoFocus
+                fullWidth
+                value={reqBody}
+                multiline
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('reqBody')}
+                >
+                </TextField>
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
