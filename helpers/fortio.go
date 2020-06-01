@@ -50,6 +50,9 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) *fhttp.HTTPOptions {
 	if len(opts.Body) > 0 {
 		httpOpts.Payload = opts.Body
 	}
+	if len(opts.ContentType) > 0 {
+		httpOpts.ContentType = opts.ContentType
+	}
 
 	return &httpOpts
 }

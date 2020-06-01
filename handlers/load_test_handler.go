@@ -140,6 +140,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	headersString := q.Get("headers")
 	cookiesString := q.Get("cookies")
+	contentType := q.Get("contentType")
 	bodyString := q.Get("reqBody")
 
 	headers := h.JSONtoMap(headersString)
@@ -151,6 +152,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestOptions.Headers = headers
 	loadTestOptions.Cookies = cookies
 	loadTestOptions.Body = body
+	loadTestOptions.ContentType = contentType
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
