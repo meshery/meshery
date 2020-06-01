@@ -520,46 +520,46 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                id="cookies"
-                name="cookies"
-                label="Request Cookies"
-                autoFocus
-                fullWidth
-                value={cookies}
-                multiline
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('cookies')}
+                  id="cookies"
+                  name="cookies"
+                  label="Request Cookies"
+                  autoFocus
+                  fullWidth
+                  value={cookies}
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('cookies')}
                 >
                 </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                id="contentType"
-                name="contentType"
-                label="Content Type"
-                autoFocus
-                fullWidth
-                value={contentType}
-                multiline
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('contentType')}
+                  id="contentType"
+                  name="contentType"
+                  label="Content Type"
+                  autoFocus
+                  fullWidth
+                  value={contentType}
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('contentType')}
                 >
                 </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                id="cookies"
-                name="cookies"
-                label="Request Body"
-                autoFocus
-                fullWidth
-                value={reqBody}
-                multiline
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('reqBody')}
+                  id="cookies"
+                  name="cookies"
+                  label="Request Body"
+                  autoFocus
+                  fullWidth
+                  value={reqBody}
+                  multiline
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('reqBody')}
                 >
                 </TextField>
               </Grid>
