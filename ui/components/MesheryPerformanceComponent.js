@@ -81,11 +81,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-<<<<<<< HEAD
       testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
-=======
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, headers, cookies, reqBody, contentType
->>>>>>> master
     } = props;
 
     this.state = {
