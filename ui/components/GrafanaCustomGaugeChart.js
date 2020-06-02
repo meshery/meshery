@@ -1,4 +1,4 @@
-import { IconButton, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 
 let bb;
@@ -70,7 +70,6 @@ export default function GrafanaCustomGaugeChart(props) {
       glabel = data[0][0];
     }
 
-    let bbChart;
     if (chartRef && chartRef !== null) {
       bbChart = bb.bb.generate({
         // oninit: function(args){
@@ -92,10 +91,10 @@ export default function GrafanaCustomGaugeChart(props) {
           // units,
           label: {
             // show: glabel && glabel !== '',
-            format(value, ratio) {
+            format(value) {
               return value + units;
             },
-            extents(value, isMax) {
+            extents() {
               // return (isMax ? "Max:" : "Min:") + value;
               return '';
             },
@@ -126,7 +125,7 @@ export default function GrafanaCustomGaugeChart(props) {
   useEffect(() => {
     configChartData();
   });
-  const { panel, error } = props;
+  const { error } = props;
   const classes = useStyles();
 
   // const {chartData, options} = this.state;

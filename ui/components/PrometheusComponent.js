@@ -7,10 +7,8 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
 import dataFetch from '../lib/data-fetch';
-import GrafanaConfigComponent from './GrafanaConfigComponent';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-// import GrafanaCharts from './GrafanaCharts';
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../lib/store';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
@@ -157,8 +155,7 @@ class PrometheusComponent extends Component {
         }, self.handleError);
       }
 
-      handleError = (error) => {
-        // this.setState({timerDialogOpen: false });
+      handleError = () => {
         const self = this;
         this.props.updateProgress({ showProgress: false });
         this.props.enqueueSnackbar('There was an error communicating with Prometheus', {

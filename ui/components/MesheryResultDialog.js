@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, Grid, Table, TableHead, TableRow, TableCell, TableBody, Typography,
+  NoSsr, Grid, Table, TableRow, TableCell, TableBody, Typography,
 } from '@material-ui/core';
 import MesheryChartDialog from './MesheryChartDialog';
 
@@ -174,7 +174,7 @@ class MesheryResultDialog extends React.Component {
     }
 
     render() {
-      const { classes, rowData } = this.props;
+      const { rowData } = this.props;
 
       return (
         <NoSsr>

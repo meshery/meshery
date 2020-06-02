@@ -8,10 +8,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import CollectionsIcon from '@material-ui/icons/Collections';
-import LaptopIcon from '@material-ui/icons/Laptop';
-import TimerIcon from '@material-ui/icons/Timer';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Link from 'next/link';
 import { connect } from 'react-redux';
@@ -21,7 +17,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH,
+  faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 
@@ -279,7 +275,7 @@ const categories = [
 class Navigator extends React.Component {
   constructor(props) {
     super(props);
-    const { meshAdapters, meshAdaptersts } = props;
+    const { meshAdapters } = props;
     this.state = {
       path: '',
       meshAdapters,
@@ -302,7 +298,6 @@ class Navigator extends React.Component {
   }
 
   updateAdaptersLink() {
-    const self = this;
     categories.forEach((cat, ind) => {
       if (cat.id === 'Management') {
         cat.children.forEach((catc, ind1) => {
@@ -413,7 +408,7 @@ class Navigator extends React.Component {
     return logoIcon;
   }
 
-    handleTitleClick = (event) => {
+    handleTitleClick = () => {
       this.props.router.push('/');
     }
 

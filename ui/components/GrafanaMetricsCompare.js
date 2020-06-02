@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { MenuItem, NoSsr, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-const grafanaStyles = (theme) => ({
+const grafanaStyles = () => ({
   root: {
     width: '100%',
   },
@@ -78,7 +77,6 @@ class GrafanaMetricsCompare extends Component {
   }
 
   render() {
-    const { classes } = this.props;
     const {
       panels, panel, selectedSeries, series,
     } = this.state;
@@ -121,9 +119,7 @@ GrafanaMetricsCompare.propTypes = {
   chartCompare: PropTypes.array.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  // updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+const mapDispatchToProps = () => ({});
 
 export default withStyles(grafanaStyles)(connect(
   null,
