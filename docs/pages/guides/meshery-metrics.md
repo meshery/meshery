@@ -60,7 +60,7 @@ http://172.17.0.2:30822
 a) By default  `Grafana`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
 
 ```
-$kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
+$ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
 ```
 
 b) Get NodePort of `Grafana` service using below command
@@ -77,27 +77,26 @@ c) Grafana endpoint will be http://$MINIKUBE_IP:NODE_PORT
 http://172.17.0.2:32130
 ```
 
+**4) Expose Istio BookInfo sample app `productpage` service**
 
-**4)Expose  istio sample app service productpage**
-
-a)By default  `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
-
-```
-$kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
-```
-
-b)Get NodePort of `productpage` service using below command
+a) By default  `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
 
 ```
-$kubectl describe services productpage -n book-info|grep NodePort
+$ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
+```
+
+b) Get NodePort of `productpage` service using below command
+
+```
+$ kubectl describe services productpage -n book-info|grep NodePort
 
 o/p:NodePort:  http  30535/TCP
 ```
 
-c) productpage endpoint will be http://$MINIKUBE_IP:NODE_PORT
+c) `productpage` endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
 ```
-http://172.17.0.2:30535
+http://172.17.0.2:30535/productpage
 ```
 
 ### Linkerd
