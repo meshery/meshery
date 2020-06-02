@@ -6,36 +6,31 @@ permalink: guides/meshery-metrics
 type: guide
 ---
 
-In order to generate report/load testing of your k8s applications, Meshery uses `Grafana` and `Prometheus`.
-Here you can find steps to generate these endpoints in different environments or for different service mesh adapters.
+In order to generate performance test reports of service meshes and their workloads, Meshery uses `Grafana` and/or `Prometheus` as visualization and metrics systems, respectively. This document outlines the requirements necessary for Meshery to connect to these systems. Steps vary depending upon the service mesh and its configuration.
 
 * TOC
 {:toc}
 
 
-### Istio + Minikube(dev env)
+## Istio + Minikube
 
+In this scenario, Meshery has deployed Istio to a Kubernetes cluster running in Minikube. The service ports of Grafana and Prometheus need to be exposed in order for Meshery to connect to and interact with these visualization and metrics systems.
 
-
-In order for Meshery to gain access to Grafana and Prometheus, their network ports need to be exposed.
-
-
-
-**1) Get minikube ip**
+### Get minikube ip
 
 Retreive the IP address of your Minikube cluster by executing:
     
 ```        
-    $minikube ip
-    o/p: 172.17.0.2
+    $ minikube ip
+    172.17.0.2
 ```
 
-<i>Note: Istio is installed in `istio-system` namespace and the "BookInfo" sample app is installed in `book-info` namespace.
+<i>Note: Istio is installed in `istio-system` namespace and the "BookInfo" sample app is installed in `default` namespace unless otherwise specified upon deployment of "BookInfo".
 </i>
 
 **2) Expose Prometheus service**
 
-a) By default  `prometheus`  spec type is configured to `ClusterIP`. You can change it to `NodePort` by executing:
+a) By default  `prometheus` service spec type is configured to `ClusterIP`. You can change it to `NodePort` by executing:
 
 ```
 $kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
@@ -79,18 +74,18 @@ http://172.17.0.2:32130
 
 **4) Expose Istio BookInfo sample app `productpage` service**
 
-a) By default  `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
+a) By default `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
 
 ```
 $ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
 ```
 
-b) Get NodePort of `productpage` service using below command
+b) Get NodePort of `productpage` service by executing:
 
 ```
 $ kubectl describe services productpage -n book-info|grep NodePort
 
-o/p:NodePort:  http  30535/TCP
+NodePort:  http  30535/TCP
 ```
 
 c) `productpage` endpoint will be http://$MINIKUBE_IP:NODE_PORT
