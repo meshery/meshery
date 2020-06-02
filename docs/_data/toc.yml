@@ -42,7 +42,7 @@
           url: guides/mesheryctl
         - title: Upgrading Meshery
           url: guides/upgrade
-        - title: Meshery Metrics
+        - title: Integrating Prometheus and Grafana
           url: guides/meshery-metrics
     - title: Project
       url: project
