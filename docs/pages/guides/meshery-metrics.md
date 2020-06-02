@@ -28,20 +28,20 @@ Retreive the IP address of your Minikube cluster by executing:
 <i>Note: Istio is installed in `istio-system` namespace and the "BookInfo" sample app is installed in `default` namespace unless otherwise specified upon deployment of "BookInfo".
 </i>
 
-**2) Expose Prometheus service**
+### Expose Prometheus service
 
 a) By default  `prometheus` service spec type is configured to `ClusterIP`. You can change it to `NodePort` by executing:
 
 ```
-$kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
+$ kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
 ```
 
 b) Get NodePort of `prometheus` service by executing:
 
 ```
-$kubectl describe services prometheus -n istio-system|grep NodePort
+$ kubectl describe services prometheus -n istio-system|grep NodePort
 
-o/p:NodePort:  http  30535/TCP
+NodePort:  http  30535/TCP
 ```
 
 c) Prometheus endpoint will be http://$MINIKUBE_IP:NODE_PORT
@@ -50,9 +50,9 @@ c) Prometheus endpoint will be http://$MINIKUBE_IP:NODE_PORT
 http://172.17.0.2:30822
 ```
 
-**3) Expose Grafana service**
+### Expose Grafana service
 
-a) By default  `Grafana`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
+a) By default  `Grafana`  spec type is configured to `ClusterIP`  you can change it to `NodePort` by executing:
 
 ```
 $ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
@@ -72,9 +72,9 @@ c) Grafana endpoint will be http://$MINIKUBE_IP:NODE_PORT
 http://172.17.0.2:32130
 ```
 
-**4) Expose Istio BookInfo sample app `productpage` service**
+### Expose Istio BookInfo sample app `productpage` service
 
-a) By default `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` using below command.
+a) By default `productpage`  spec type is configured to `ClusterIP`  you can change it to `NodePort` by executing:
 
 ```
 $ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
@@ -94,6 +94,6 @@ c) `productpage` endpoint will be http://$MINIKUBE_IP:NODE_PORT
 http://172.17.0.2:30535/productpage
 ```
 
-### Linkerd
+## Linkerd
 
-**To be Updated**
+_coming soon..._
