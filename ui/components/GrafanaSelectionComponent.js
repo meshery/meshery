@@ -358,7 +358,7 @@ GrafanaSelectionComponent.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
 export default withStyles(grafanaStyles)(connect(
   mapStateToProps,
