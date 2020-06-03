@@ -1,9 +1,14 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"os/exec"
+)
 
-func ScriptMinikube() string {
-	return `set -e
+// GenerateConfigMinikube generates kube config file in /tmp/meshery/kubeconfig.yaml for a Minikube cluster
+func GenerateConfigMinikube() error {
+	script := `set -e
 	set -o pipefail
 	
 	TARGET_FOLDER="/tmp/meshery"
@@ -11,10 +16,17 @@ func ScriptMinikube() string {
 	
 	mkdir -p $TARGET_FOLDER
 	kubectl config view --minify --flatten > $TARGET_FILE`
+
+	generateCFG := exec.Command("sh", "-c", script)
+	generateCFG.Stdout = os.Stdout
+	generateCFG.Stderr = os.Stderr
+
+	return generateCFG.Run()
 }
 
-func ScriptGKE(saName, namespc string) string {
-	return fmt.Sprintf(`
+// GenerateConfigGKE generates kube config file in /tmp/meshery/kubeconfig.yaml for a GKE cluster
+func GenerateConfigGKE(SAName, namespc string) error {
+	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
 	
@@ -106,5 +118,11 @@ func ScriptGKE(saName, namespc string) string {
 	echo "you should not have any permissions by default - you have just created the authentication part"
 	echo "You will need to create RBAC permissions"
 	KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods
-	`,saName,namespc)
+	`, SAName, namespc)
+
+	generateCFG := exec.Command("sh", "-c", script)
+	generateCFG.Stdout = os.Stdout
+	generateCFG.Stderr = os.Stderr
+
+	return generateCFG.Run()
 }

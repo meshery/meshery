@@ -15,14 +15,10 @@
 package system
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"mime/multipart"
 	"net/http"
-	"os"
-	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -30,59 +26,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const URL1 = "http://localhost:9081/api/k8sconfig/contexts"
-const URL2 = "http://localhost:9081/api/k8sconfig"
+// TODO: https://github.com/layer5io/meshery/issues/1022
 
-const tokenName = "token"
-const providerName = "meshery-provider"
+// GETCONTEXTS endpoint points to the URL return the contexts available
+const GETCONTEXTS = "http://localhost:9081/api/k8sconfig/contexts"
+
+// SETCONTEXT endpoint points to set context
+const SETCONTEXT = "http://localhost:9081/api/k8sconfig"
+
 const paramName = "k8sfile"
 const contextName = "contextName"
 
 var tokenPath string
 
-func UploadFileWithParams(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	fileContents, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-	fi, err := file.Stat()
-	if err != nil {
-		return nil, err
-	}
-	file.Close()
-
-	body := new(bytes.Buffer)
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, fi.Name())
-	if err != nil {
-		return nil, err
-	}
-	part.Write(fileContents)
-
-	for key, val := range params {
-		_ = writer.WriteField(key, val)
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	request, err := http.NewRequest("POST", uri, body)
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Add("Content-Type", writer.FormDataContentType())
-	return request, nil
-}
-
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 
-	req, err := UploadFileWithParams(URL1, nil, paramName, configFile)
+	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, paramName, configFile)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +62,10 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 	}
 
 	var val []map[string]string
-	json.Unmarshal(body, &val)
+	err = json.Unmarshal(body, &val)
+	if err != nil {
+		return nil, err
+	}
 
 	var contexts []string
 	for _, item := range val {
@@ -111,13 +74,12 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 	return contexts, nil
 }
 
-// TODO: show used the available context and let user choose which context to set
-func SetDefaultContext(configFile, cname, tokenPath string) error {
+func setContext(configFile, cname, tokenPath string) error {
 	client := &http.Client{}
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
-	req, err := UploadFileWithParams(URL2, extraParams1, paramName, configFile)
+	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, paramName, configFile)
 	if err != nil {
 		return err
 	}
@@ -152,27 +114,20 @@ var configCmd = &cobra.Command{
 
 		switch args[0] {
 		case "minikube":
-			generateCFG := exec.Command("sh", "-c", utils.ScriptMinikube())
-			generateCFG.Stdout = os.Stdout
-			generateCFG.Stderr = os.Stderr
-
-			if err := generateCFG.Run(); err != nil {
+			if err := utils.GenerateConfigMinikube(); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
 		case "gke":
-			saName := "sa-meshery-" + utils.StringWithCharset(8)
-			generateCFG := exec.Command("sh", "-c", utils.ScriptGKE(saName, "default"))
-			generateCFG.Stdout = os.Stdout
-			generateCFG.Stderr = os.Stderr
-
-			if err := generateCFG.Run(); err != nil {
+			SAName := "sa-meshery-" + utils.StringWithCharset(8)
+			if err := utils.GenerateConfigGKE(SAName, "default"); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
 		default:
 			log.Fatal("The argument has to be one of GKE | Minikube")
 		}
+
 		configPath := "/tmp/meshery/kubeconfig.yaml"
 
 		contexts, err := getContexts(configPath, tokenPath)
@@ -189,11 +144,14 @@ var configCmd = &cobra.Command{
 			var choice int
 			fmt.Print("Enter choice: ")
 			_, err = fmt.Scanf("%d", &choice)
+			if err != nil {
+				log.Fatalf("Error reading input:  %s", err.Error())
+			}
 			choosenCtx = contexts[choice-1]
 		}
 
 		log.Debugf("Choosen context : %s", choosenCtx)
-		err = SetDefaultContext(configPath, choosenCtx, tokenPath)
+		err = setContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
 			log.Fatalf("Error setting context : %s", err.Error())
 		}
