@@ -117,7 +117,6 @@ func GenerateConfigGKE(SAName, namespc string) error {
 	echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
 	echo "you should not have any permissions by default - you have just created the authentication part"
 	echo "You will need to create RBAC permissions"
-	KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods
 	`, SAName, namespc)
 
 	generateCFG := exec.Command("sh", "-c", script)
