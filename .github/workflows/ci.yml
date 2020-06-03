@@ -181,7 +181,25 @@ jobs:
         cd ui
         npm i
         npm run build && npm run export
-        cd ..
+  build-provider-ui:
+    name: Meshery Provider-UI build check
+    runs-on: ubuntu-latest
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: |
         cd provider-ui
         npm i
         npm run build && npm run export
