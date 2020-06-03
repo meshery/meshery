@@ -39,6 +39,12 @@ const contextName = "contextName"
 
 var tokenPath string
 
+type k8sContext struct {
+	contextName    string
+	clusterName    string
+	currentContext bool
+}
+
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 
@@ -61,15 +67,16 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 		return nil, err
 	}
 
-	var val []map[string]string
-	err = json.Unmarshal(body, &val)
+	var results []map[string]interface{}
+	json.Unmarshal(body, &results)
+
 	if err != nil {
 		return nil, err
 	}
 
 	var contexts []string
-	for _, item := range val {
-		contexts = append(contexts, item["contextName"])
+	for _, item := range results {
+		contexts = append(contexts, item["contextName"].(string))
 	}
 	return contexts, nil
 }
@@ -131,7 +138,7 @@ var configCmd = &cobra.Command{
 		configPath := "/tmp/meshery/kubeconfig.yaml"
 
 		contexts, err := getContexts(configPath, tokenPath)
-		if err != nil || len(contexts) < 1 {
+		if err != nil || contexts == nil || len(contexts) < 1 {
 			log.Fatalf("Error getting contexts : %s", err.Error())
 		}
 
