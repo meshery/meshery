@@ -15,7 +15,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 
 
-const styles = (theme) => ({
+const styles = () => ({
   popover: {
     color: 'black',
   },
@@ -79,18 +79,13 @@ class User extends React.Component {
 
   render() {
     const {
-      color, iconButtonClassName, avatarClassName, classes, ...other
+      color, iconButtonClassName, avatarClassName, classes,
     } = this.props;
-    let avatar_url; let
-        user_id;
+    let avatar_url; 
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
-      user_id = this.state.user.user_id;
     }
     const { open } = this.state;
-    // if (user_id === 'meshery') { // indicating a local user
-    //   return null;
-    // }
     return (
       <div>
         <NoSsr>

@@ -99,9 +99,19 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
 	// default:
 	loadTestOptions.LoadGenerator = models.FortioLG
+	loadTestOptions.AllowInitialErrors = true
 	// }
 
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+}
+
+func (h *Handler) jsonToMap(headersString string) *map[string]string {
+	headers := make(map[string]string)
+	err := json.Unmarshal([]byte(headersString), &headers)
+	if err != nil {
+		return nil
+	}
+	return &headers
 }
 
 // LoadTestHandler runs the load test with the given parameters
@@ -128,7 +138,21 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
 
+	headersString := q.Get("headers")
+	cookiesString := q.Get("cookies")
+	contentType := q.Get("contentType")
+	bodyString := q.Get("reqBody")
+
+	headers := h.jsonToMap(headersString)
+	cookies := h.jsonToMap(cookiesString)
+	body := []byte(bodyString)
+	logrus.Debugf("Headers : %v", headers)
+
 	loadTestOptions := &models.LoadTestOptions{}
+	loadTestOptions.Headers = headers
+	loadTestOptions.Cookies = cookies
+	loadTestOptions.Body = body
+	loadTestOptions.ContentType = contentType
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
@@ -168,6 +192,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.URL = loadTestURL
 	loadTestOptions.Name = testName
+	loadTestOptions.AllowInitialErrors = true
 
 	qps, _ := strconv.ParseFloat(q.Get("qps"), 64)
 	if qps < 0 {
@@ -395,7 +420,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(provider.GetProviderType() == models.RemoteProviderType ||
 			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig {
+		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,
 			PromURL:   promURL,

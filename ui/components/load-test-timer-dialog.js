@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr, Paper, Popper } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 
 let ReactCountdownClock;
 if (typeof window !== 'undefined') {
@@ -9,7 +9,7 @@ if (typeof window !== 'undefined') {
 class LoadTestTimerDialog extends React.Component {
   render() {
     const {
-      countDownComplete, t, container, open,
+      countDownComplete, t, open,
     } = this.props;
     if (!open) {
       return '';

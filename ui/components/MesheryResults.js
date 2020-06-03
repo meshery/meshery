@@ -12,11 +12,10 @@ import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
-  updateMeshResults, updateResultsSelection, clearResultsSelection, updateProgress,
+  updateResultsSelection, clearResultsSelection, updateProgress,
 } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
-import CustomTableFooter from './CustomTableFooter';
 import MesheryChart from './MesheryChart';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
@@ -126,7 +125,7 @@ class MesheryResults extends Component {
     render() {
       const { classes, results_selection, user } = this.props;
       const {
-        results, page, count, pageSize, search, selectedRowData, sortOrder,
+        results, page, count, pageSize, selectedRowData,
       } = this.state;
       const self = this;
       const resultsForDisplay = [];
@@ -180,7 +179,7 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: false,
-            customBodyRender: (value, tableMeta, updateValue) => (
+            customBodyRender: (value) => (
               <Moment format="LLLL">{value}</Moment>
             ),
           },
@@ -229,7 +228,7 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
-            customBodyRender: (value, tableMeta, updateValue) => (
+            customBodyRender: (value, tableMeta) => (
               <IconButton
                 aria-label="more"
                 color="inherit"

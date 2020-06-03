@@ -11,20 +11,6 @@ class MesheryDocument extends Document {
       <html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
-          {/* use minimum-scale=1 to enable GPU rasterization */}
-          {/* <meta
-            name="viewport"
-            content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-          /> */}
-          {/* pWA primary color */}
-          {/* <meta
-            name="theme-color"
-            content={pageContext ? pageContext.theme.palette.primary.main : null}
-          /> */}
-          {/* <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-          /> */}
         </Head>
         <body>
           <Main />

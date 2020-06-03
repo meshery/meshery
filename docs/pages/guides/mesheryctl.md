@@ -7,12 +7,12 @@ type: guide
 ---
 ### Global Commands and Flags
 
-| command           | flag      | function                                                     | Usage                     |
-|:------------------|:---------:|:-------------------------------------------------------------|:--------------------------|
-|mesheryctl         |           | Displays help about any command.                             | `mesheryctl system version` |
-|                   | version   | Displays the version of the Meshery Client (`mesheryctl`) and the SHA of the release binary.     | `mesheryctl system version` |
-|                   | help      | Displays help about any command. | `mesheryctl --help` |
-
+| command           | flag                | function                                                     | Usage                     |
+|:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
+|mesheryctl         |                     | Displays help about any command.                             | `mesheryctl` |
+|                   | version             | Displays the version of the Meshery Client (`mesheryctl`) and the SHA of the release binary. | `mesheryctl system version` |
+|                   | help                | Displays help about any command. | `mesheryctl --help` |
+|                   | --mesheryctl-config | (optional) path to Meshery Client (`mesheryctl`) configuration file (`~/.meshery/mesheryctl.yaml`) to overrides defaults. | `mesheryctl perf <args> --mesheryctl-config=~/.meshery/mesheryctl.yaml` |
 
 ### Meshery Lifecycle Management
 
@@ -24,6 +24,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |         | log         |           | Starts tailing Meshery server debug logs.                     | `mesheryctl system log` |
 |         | start       |           | Start all Meshery containers.                                 | `mesheryctl system start` |
 |         |             | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl system start --reset` |
+|         |             | --skip-update | (optional) skip updates available in Meshery. | `mesheryctl system start --skip-update` |
 |         | status      |           | Displays the status of Meshery's containers (server and adapters). | `mesheryctl system status` |
 |         | stop        |           | Stop all Meshery containers.                                  | `mesheryctl system stop` |
 |         |             | --reset   | (optional) reset Meshery's configuration file to default settings. | `mesheryctl system stop --reset` |

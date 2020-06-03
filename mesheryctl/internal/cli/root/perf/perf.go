@@ -22,8 +22,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
-
-	"github.com/spf13/viper"
+	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -49,64 +48,24 @@ var (
 	mctlCfg *cfg.MesheryCtl
 )
 
-var perfDetails = `
-Performance Testing & Benchmarking using Meshery CLI.
-
-Usage:
-  mesheryctl perf --[flags]
-
-Available Flags for Performance Command:
-  name[string]                  (optional) A short descriptor to serve as reference for this test. If not provided, a random name will be generate.
-  url[string]                   (required) URL endpoint to send requests.
-  duration[string]              (required) Length of time to perform test (e.g 30s, 15m, 1hr). See standard notation https://golang.org/pkg/time/#ParseDuration
-  load-generator[string]        (optional) Name of load generator to be used to perform test (default: "fortio")
-  mesh[string]              	(optional) Name of the service mesh to be tested (default: "None")
-  provider[string]            	(required) Choice of Provider (default: "Meshery")
-  concurrent-requests[string]   (optional) Number of parallel requests to be sent (default: "1")
-  qps[string]                   (required) Queries per second (default: "0")
-  file[string]			        (optional) file containing SMPS-compatible test configuration. See https://github.com/layer5io/service-mesh-performance-specification
-  help                          Help for perf subcommand
-
-url, duration, concurrent-requests, and qps can be considered optional flags if specified through an SMPS compatible yaml file using --file
-
-Example usage of perf subcommand :
-
- mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
-`
-
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
-	Use:   "perf",
-	Short: "Performance Testing",
-	Long:  `Performance Testing & Benchmarking using Meshery CLI.`,
-	//Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		var err error
-		if len(args) == 0 {
-			log.Print(perfDetails)
-			return
-		}
-
+	Use:     "perf",
+	Short:   "Performance Testing",
+	Long:    `Performance Testing & Benchmarking using Meshery CLI.`,
+	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
+	Args:    cobra.NoArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		utils.PreReqCheck()
-
-		// Get the mesheryctl configuration
-		// TODO: Nitish Malhotra (05/23/2020)
-		// mesheryctl is currently used only for perf configurations
-		// Plan is to extend this to more commands. See https://github.com/layer5io/meshery/issues/1022
-		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Print(perfDetails)
-			return
-		}
-
+		return utils.PreReqCheck()
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		// Importing SMPS Configuration from the file
 		if filePath != "" {
 			var t models.PerformanceSpec
 			err := yaml.Unmarshal([]byte(filePath), &t)
-
 			if err != nil {
-				log.Errorf("Error: Invalid yaml file.\n%v", err)
+				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to unmarshal yaml file %s", filePath)))
 			}
 			if testDuration == "" {
 				testDuration = fmt.Sprintf("%fs", t.EndTime.Sub(t.StartTime).Seconds())
@@ -122,10 +81,10 @@ var PerfCmd = &cobra.Command{
 			}
 		}
 
-		if len(testName) <= 0 {
-			log.Print("Test Name not provided")
+		if testName == "" {
+			log.Debug("Test Name not provided")
 			testName = utils.StringWithCharset(8)
-			log.Print("Using random test name: ", testName)
+			log.Debug("Using random test name: ", testName)
 		}
 
 		postData := ""
@@ -133,8 +92,7 @@ var PerfCmd = &cobra.Command{
 		startTime := time.Now()
 		duration, err := time.ParseDuration(testDuration)
 		if err != nil {
-			log.Fatal("Error: Test duration invalid")
-			return
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to parse test duration %s", testDuration)))
 		}
 
 		endTime := startTime.Add(duration)
@@ -142,19 +100,17 @@ var PerfCmd = &cobra.Command{
 		postData = postData + "start_time: " + startTime.Format(time.RFC3339)
 		postData = postData + "\nend_time: " + endTime.Format(time.RFC3339)
 
-		if len(testURL) > 0 {
+		if testURL != "" {
 			postData = postData + "\nendpoint_url: " + testURL
 		} else {
-			log.Fatal("Error: Please enter a test URL")
-			return
+			return errors.New(utils.PerfError("please enter a test URL"))
 		}
 
 		// Method to check if the entered Test URL is valid or not
-		var validURL bool = govalidator.IsURL(testURL)
+		var validURL = govalidator.IsURL(testURL)
 
 		if !validURL {
-			log.Fatal("\nError: Please enter a valid test URL")
-			return
+			return errors.New(utils.PerfError("please enter a valid test URL"))
 		}
 
 		postData = postData + "\nclient:"
@@ -163,49 +119,42 @@ var PerfCmd = &cobra.Command{
 
 		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL(), bytes.NewBuffer([]byte(postData)))
 		if err != nil {
-			log.Print("Error in building the request")
-			log.Fatal("Error Message:\n", err)
-			return
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mctlCfg.GetBaseMesheryURL())))
 		}
 
 		if err := utils.AddAuthDetails(req, tokenPath); err != nil {
-			log.Printf("Error Authorizing request : %v", err.Error())
-			return
+			return errors.Wrap(err, utils.PerfError("failed to add auth details to request"))
 		}
 
 		q := req.URL.Query()
 		q.Add("name", testName)
 		q.Add("loadGenerator", loadGenerator)
-		if len(testMesh) > 0 {
+		if testMesh != "" {
 			q.Add("mesh", testMesh)
 		}
 		req.URL.RawQuery = q.Encode()
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
-
 		if err != nil {
-			log.Print("\nFailed to make request to URL:", testURL)
-			log.Fatal("Error Message:\n", err)
-			return
+			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to make request to %s", testURL)))
 		}
-		log.Print("Initiating Performance test ...")
-		log.Printf(resp.Status)
+		log.Debug("Initiating Performance test ...")
+		log.Debug(resp.Status)
 
 		defer utils.SafeClose(resp.Body)
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Printf("Error reading body: %v", err.Error())
-			return
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		log.Print(string(data))
+		log.Debug(string(data))
 
 		if err := utils.UpdateAuthDetails(tokenPath); err != nil {
-			log.Printf("Error updating token : %v", err.Error())
-			return
+			return errors.Wrap(err, utils.PerfError("failed to update auth details"))
 		}
 
-		log.Print("Test Completed Successfully!")
+		log.Debug("Test Completed Successfully!")
+		return nil
 	},
 }
 
