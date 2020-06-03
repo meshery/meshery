@@ -1,6 +1,8 @@
 # Meshery
 mesheryctl/cmd/mesheryctl/mesheryctl
 mesheryctl/.meshery/
+mesheryctl/mesheryctl
+main
 
 # Binaries for programs and plugins
 *.exe
