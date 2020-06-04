@@ -68,8 +68,7 @@ func getContexts(configFile, tokenPath string) ([]string, error) {
 	}
 
 	var results []map[string]interface{}
-	json.Unmarshal(body, &results)
-
+	err = json.Unmarshal(body, &results)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +148,7 @@ var configCmd = &cobra.Command{
 				fmt.Printf("(%d) %s \n", i+1, ctx)
 			}
 			var choice int
-			fmt.Print("Enter choice: ")
+			fmt.Print("Enter choice (number) : ")
 			_, err = fmt.Scanf("%d", &choice)
 			if err != nil {
 				log.Fatalf("Error reading input:  %s", err.Error())
