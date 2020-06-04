@@ -5,31 +5,33 @@ import { TextField } from '@material-ui/core';
 import moment from 'moment';
 
 class MesheryDateTimePicker extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.dateFormat = 'YYYY-MM-DD, hh:mm:ss a';
     this.state = {
-      hasError: false
+      hasError: false,
     };
   }
 
-  static getDerivedStateFromError (error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch (error, info) {
+  componentDidCatch(error, info) {
     console.log(`error: ${error}, info: ${info}`);
   }
 
-  dateChange () {
+  dateChange() {
     const self = this;
-    return event => {
+    return (event) => {
       self.props.onChange(moment(event.target.value));
     };
   }
 
-  render () {
-    const { selectedDate, onChange, label, className, disabled } = this.props;
+  render() {
+    const {
+      selectedDate, onChange, label, className, disabled,
+    } = this.props;
     const { hasError } = this.state;
 
     if (hasError) {
@@ -47,7 +49,7 @@ class MesheryDateTimePicker extends Component {
             fullWidth
             // className={classes.textField}
             InputLabelProps={{
-              shrink: true
+              shrink: true,
             }}
           />
         </div>
@@ -55,8 +57,15 @@ class MesheryDateTimePicker extends Component {
     }
     return (
       <div className={className}>
-        <DateTimePicker disabled={disabled} value={selectedDate} onChange={onChange}
-          label={label} variant="outlined" fullWidth format={this.dateFormat} />
+        <DateTimePicker
+          disabled={disabled}
+          value={selectedDate}
+          onChange={onChange}
+          label={label}
+          variant="outlined"
+          fullWidth
+          format={this.dateFormat}
+        />
       </div>
     );
   }
@@ -66,7 +75,7 @@ MesheryDateTimePicker.propTypes = {
   label: PropTypes.string.isRequired,
   selectedDate: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
-  className: PropTypes.object.isRequired
+  className: PropTypes.object.isRequired,
 };
 
 export default MesheryDateTimePicker;

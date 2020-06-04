@@ -2,20 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Typography, IconButton } from '@material-ui/core';
-import dataFetch from '../lib/data-fetch';
-import GrafanaConfigComponent from './GrafanaConfigComponent';
-import PrometheusSelectionComponent from './PrometheusSelectionComponent';
-import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-// import GrafanaCharts from './GrafanaCharts';
-import {connect} from "react-redux";
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../lib/store';
 import CloseIcon from '@material-ui/icons/Close';
 import { withSnackbar } from 'notistack';
+import dataFetch from '../lib/data-fetch';
+import PrometheusSelectionComponent from './PrometheusSelectionComponent';
+import GrafanaDisplaySelection from './GrafanaDisplaySelection';
+import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../lib/store';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 
-const promStyles = theme => ({
+const promStyles = (theme) => ({
   root: {
     padding: theme.spacing(5),
   },
@@ -53,7 +51,7 @@ const promStyles = theme => ({
   chartTitle: {
     marginLeft: theme.spacing(3),
     marginTop: theme.spacing(2),
-  }
+  },
 });
 
 class PrometheusComponent extends Component {
@@ -61,11 +59,11 @@ class PrometheusComponent extends Component {
     super(props);
 
     // const {selectedPrometheusBoardsConfigs} = props.grafana;
-    const {prometheusURL, selectedPrometheusBoardsConfigs} = props.prometheus;
+    const { prometheusURL, selectedPrometheusBoardsConfigs } = props.prometheus;
     let prometheusConfigSuccess = false;
-    if (prometheusURL !== ''){
- prometheusConfigSuccess = true 
-}
+    if (prometheusURL !== '') {
+      prometheusConfigSuccess = true;
+    }
 
     this.state = {
       urlError: false,
@@ -77,54 +75,52 @@ class PrometheusComponent extends Component {
     };
   }
 
-  static getDerivedStateFromProps(props, state){
+  static getDerivedStateFromProps(props, state) {
     // const {prometheusURL, selectedPrometheusBoardsConfigs} = props.grafana;
     // if(prometheusURL !== state.prometheusURL || JSON.stringify(selectedPrometheusBoardsConfigs) !== JSON.stringify(state.selectedPrometheusBoardsConfigs)) { // JSON.stringify is not the best. Will leave it for now until a better solution is found
-    if(props.ts > state.ts) {
+    if (props.ts > state.ts) {
       return {
         prometheusURL, selectedPrometheusBoardsConfigs, prometheusConfigSuccess: (prometheusURL !== ''), ts: props.ts,
       };
     }
     return {};
   }
-    
-      handleChange = name => event => {
-        if (name === 'prometheusURL' && event.target.value !== ''){
-          this.setState({urlError: false});
+
+      handleChange = (name) => (event) => {
+        if (name === 'prometheusURL' && event.target.value !== '') {
+          this.setState({ urlError: false });
         }
         this.setState({ [name]: event.target.value });
       };
-    
+
       handlePrometheusConfigure = () => {
         const { prometheusURL } = this.state;
         if (prometheusURL === '' || !(prometheusURL.toLowerCase().startsWith('http://') || prometheusURL.toLowerCase().startsWith('https://'))) {
-          this.setState({urlError: true})
+          this.setState({ urlError: true });
           return;
         }
         this.submitPrometheusConfigure();
       }
-    
+
       submitPrometheusConfigure = () => {
-        const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
+        const { prometheusURL, selectedPrometheusBoardsConfigs } = this.state;
         const data = {
-          prometheusURL
-        }
-        const params = Object.keys(data).map((key) => {
-          return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-        }).join('&');
-        this.props.updateProgress({showProgress: true});
-        let self = this;
-        dataFetch('/api/prometheus/config', { 
+          prometheusURL,
+        };
+        const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+        this.props.updateProgress({ showProgress: true });
+        const self = this;
+        dataFetch('/api/prometheus/config', {
           credentials: 'same-origin',
           method: 'POST',
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
           },
-          body: params
-        }, result => {
-          this.props.updateProgress({showProgress: false});
-          if (typeof result !== 'undefined'){
+          body: params,
+        }, (result) => {
+          this.props.updateProgress({ showProgress: false });
+          if (typeof result !== 'undefined') {
             this.props.enqueueSnackbar('Prometheus was successfully configured!', {
               variant: 'success',
               autoHideDuration: 2000,
@@ -133,13 +129,13 @@ class PrometheusComponent extends Component {
                   key="close"
                   aria-label="Close"
                   color="inherit"
-                  onClick={() => self.props.closeSnackbar(key) }
+                  onClick={() => self.props.closeSnackbar(key)}
                 >
                   <CloseIcon />
                 </IconButton>
               ),
             });
-            this.setState({prometheusConfigSuccess: true});
+            this.setState({ prometheusConfigSuccess: true });
             // this.props.updateGrafanaConfig({
             //   grafana: {
             //     prometheusURL,
@@ -153,24 +149,23 @@ class PrometheusComponent extends Component {
               prometheus: {
                 prometheusURL,
                 selectedPrometheusBoardsConfigs,
-              }
-            })
+              },
+            });
           }
         }, self.handleError);
       }
-    
-      handleError = error => {
-        // this.setState({timerDialogOpen: false });
+
+      handleError = () => {
         const self = this;
-        this.props.updateProgress({showProgress: false});
-        this.props.enqueueSnackbar(`There was an error communicating with Prometheus`, {
+        this.props.updateProgress({ showProgress: false });
+        this.props.enqueueSnackbar('There was an error communicating with Prometheus', {
           variant: 'error',
           action: (key) => (
             <IconButton
               key="close"
               aria-label="Close"
               color="inherit"
-              onClick={() => self.props.closeSnackbar(key) }
+              onClick={() => self.props.closeSnackbar(key)}
             >
               <CloseIcon />
             </IconButton>
@@ -181,14 +176,14 @@ class PrometheusComponent extends Component {
 
       handlePrometheusChipDelete = () => {
         const self = this;
-        self.props.updateProgress({showProgress: true});
-        dataFetch(`/api/prometheus/config`, { 
+        self.props.updateProgress({ showProgress: true });
+        dataFetch('/api/prometheus/config', {
           credentials: 'same-origin',
           method: 'DELETE',
           credentials: 'include',
-        }, result => {
-          self.props.updateProgress({showProgress: false});
-          if (typeof result !== 'undefined'){
+        }, (result) => {
+          self.props.updateProgress({ showProgress: false });
+          if (typeof result !== 'undefined') {
             self.setState({
               prometheusConfigSuccess: false,
               prometheusURL: '',
@@ -198,21 +193,21 @@ class PrometheusComponent extends Component {
               prometheus: {
                 prometheusURL: '',
                 selectedPrometheusBoardsConfigs: [],
-              }
-            })
+              },
+            });
           }
         }, self.handleError);
       }
 
     handlePrometheusClick = () => {
-      this.props.updateProgress({showProgress: true});
-      let self = this;
-      dataFetch(`/api/prometheus/ping`, { 
+      this.props.updateProgress({ showProgress: true });
+      const self = this;
+      dataFetch('/api/prometheus/ping', {
         credentials: 'same-origin',
         credentials: 'include',
-      }, result => {
-        self.props.updateProgress({showProgress: false});
-        if (typeof result !== 'undefined'){
+      }, (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
           self.props.enqueueSnackbar('Prometheus successfully pinged!', {
             variant: 'success',
             autoHideDuration: 2000,
@@ -221,7 +216,7 @@ class PrometheusComponent extends Component {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                onClick={() => self.props.closeSnackbar(key) }
+                onClick={() => self.props.closeSnackbar(key)}
               >
                 <CloseIcon />
               </IconButton>
@@ -233,10 +228,10 @@ class PrometheusComponent extends Component {
 
 
     addSelectedBoardPanelConfig = (boardsSelection) => {
-      const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
-      if(boardsSelection && boardsSelection.panels && boardsSelection.panels.length){
+      const { prometheusURL, selectedPrometheusBoardsConfigs } = this.state;
+      if (boardsSelection && boardsSelection.panels && boardsSelection.panels.length) {
         selectedPrometheusBoardsConfigs.push(boardsSelection);
-        this.setState({selectedPrometheusBoardsConfigs});
+        this.setState({ selectedPrometheusBoardsConfigs });
         this.props.updatePrometheusConfig({
           prometheus: {
             prometheusURL,
@@ -247,12 +242,12 @@ class PrometheusComponent extends Component {
     }
 
     deleteSelectedBoardPanelConfig = (indexes) => {
-      const {prometheusURL, selectedPrometheusBoardsConfigs} = this.state;
+      const { prometheusURL, selectedPrometheusBoardsConfigs } = this.state;
       indexes.sort();
-      for(let i=indexes.length-1;i>=0;i--){
-        selectedPrometheusBoardsConfigs.splice(indexes[i], 1)
+      for (let i = indexes.length - 1; i >= 0; i--) {
+        selectedPrometheusBoardsConfigs.splice(indexes[i], 1);
       }
-      this.setState({selectedPrometheusBoardsConfigs});
+      this.setState({ selectedPrometheusBoardsConfigs });
       this.props.updatePrometheusConfig({
         prometheus: {
           prometheusURL,
@@ -260,29 +255,33 @@ class PrometheusComponent extends Component {
         },
       });
     }
-    
+
 
     render() {
-      const {classes} = this.props;
-      const { urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs } = this.state;
+      const { classes } = this.props;
+      const {
+        urlError, prometheusURL, prometheusConfigSuccess, selectedPrometheusBoardsConfigs,
+      } = this.state;
       if (prometheusConfigSuccess) {
         let displaySelec = '';
         if (selectedPrometheusBoardsConfigs.length > 0) {
           displaySelec = (
             <React.Fragment>
-              <GrafanaDisplaySelection 
-                boardPanelConfigs={selectedPrometheusBoardsConfigs} 
-                deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig} />
+              <GrafanaDisplaySelection
+                boardPanelConfigs={selectedPrometheusBoardsConfigs}
+                deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
+              />
 
               <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Prometheus charts
-              </Typography>  
-              {/* <GrafanaCharts 
-                  boardPanelConfigs={selectedPrometheusBoardsConfigs} 
+                Prometheus charts
+              </Typography>
+              {/* <GrafanaCharts
+                  boardPanelConfigs={selectedPrometheusBoardsConfigs}
                   prometheusURL={prometheusURL} /> */}
               <GrafanaCustomCharts
-                boardPanelConfigs={selectedPrometheusBoardsConfigs} 
-                prometheusURL={prometheusURL} />
+                boardPanelConfigs={selectedPrometheusBoardsConfigs}
+                prometheusURL={prometheusURL}
+              />
             </React.Fragment>
           );
         }
@@ -319,20 +318,18 @@ PrometheusComponent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-    updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-    updateProgress: bindActionCreators(updateProgress, dispatch),
-  }
-}
-const mapStateToProps = st => {
-  const grafana = st.get("grafana").toJS();
-  const prometheus = st.get("prometheus").toJS();
-  return {grafana, prometheus};
-}
+const mapDispatchToProps = (dispatch) => ({
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+const mapStateToProps = (st) => {
+  const grafana = st.get('grafana').toJS();
+  const prometheus = st.get('prometheus').toJS();
+  return { grafana, prometheus };
+};
 
 export default withStyles(promStyles)(connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withSnackbar(PrometheusComponent)));

@@ -1,12 +1,4 @@
-import { Component, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { IconButton, NoSsr } from '@material-ui/core';
-import { updateProgress } from '../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import dataFetch from '../lib/data-fetch';
-import { withSnackbar } from 'notistack';
+import { NoSsr } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 
 let bb;
@@ -18,33 +10,33 @@ const useStyles = makeStyles({
   '@global': {
     '.bb-chart-arcs-background': {
       fill: '#e0e0e0',
-      stroke: 'none'
-    }
+      stroke: 'none',
+    },
   },
-  'root': {
+  root: {
     width: '100%',
     height: '75%',
-    minHeight: '18rem'
+    minHeight: '18rem',
   },
-  'error': {
+  error: {
     color: '#D32F2F',
     width: '100%',
     textAlign: 'center',
     fontSize: '12px',
     // fontFamily: 'Helvetica Nueue',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-  'title': {
+  title: {
     fontSize: '12px',
     color: '#666666',
     // fontFamily: 'Helvetica Nueue',
     fontWeight: 'bold',
     textAlign: 'center',
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
-export default function GrafanaCustomGaugeChart (props) {
+export default function GrafanaCustomGaugeChart(props) {
   let chartRef = null;
   const configChartData = () => {
     const { panel, data } = props;
@@ -68,7 +60,7 @@ export default function GrafanaCustomGaugeChart (props) {
     }
     let thresholds = [];
     if (panel.thresholds) {
-      thresholds = panel.thresholds.split(',').map(t => parseFloat(t.trim()));
+      thresholds = panel.thresholds.split(',').map((t) => parseFloat(t.trim()));
     }
 
     let gdata = 0; let glabel = '';
@@ -78,7 +70,6 @@ export default function GrafanaCustomGaugeChart (props) {
       glabel = data[0][0];
     }
 
-    let bbChart;
     if (chartRef && chartRef !== null) {
       bbChart = bb.bb.generate({
         // oninit: function(args){
@@ -87,12 +78,12 @@ export default function GrafanaCustomGaugeChart (props) {
         bindto: chartRef,
         data: {
           columns: [
-[
-glabel,
-gdata
-]
+            [
+              glabel,
+              gdata,
+            ],
           ],
-          type: 'gauge'
+          type: 'gauge',
         },
         gauge: {
           min,
@@ -100,14 +91,14 @@ gdata
           // units,
           label: {
             // show: glabel && glabel !== '',
-            format (value, ratio) {
+            format(value) {
               return value + units;
             },
-            extents (value, isMax) {
+            extents() {
               // return (isMax ? "Max:" : "Min:") + value;
               return '';
-            }
-          }
+            },
+          },
           //    width: 39 // for adjusting arc thickness
         },
         color: {
@@ -115,15 +106,15 @@ gdata
           threshold: {
             //            unit: 'value', // percentage is default
             //            max: 200, // 100 is default
-            values: thresholds
-          }
+            values: thresholds,
+          },
         },
         legend: {
-          show: false
+          show: false,
         },
         tooltip: {
-          show: false
-        }
+          show: false,
+        },
         // size: {
         //   height: '100%',
         // }
@@ -134,7 +125,7 @@ gdata
   useEffect(() => {
     configChartData();
   });
-  const { panel, error } = props;
+  const { error } = props;
   const classes = useStyles();
 
   // const {chartData, options} = this.state;
@@ -142,8 +133,7 @@ gdata
     <NoSsr>
       {/* <div className={classes.title}>{panel.title}</div> */}
       <div className={classes.error}>{error && 'There was an error communicating with the server'}</div>
-      <div ref={ch => chartRef = ch} className={classes.root}>
-      </div>
+      <div ref={(ch) => chartRef = ch} className={classes.root} />
     </NoSsr>
   );
 }

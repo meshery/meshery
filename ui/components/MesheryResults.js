@@ -1,24 +1,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, TableRow, TableCell, IconButton } from '@material-ui/core';
-import {connect} from "react-redux";
+import {
+  NoSsr, TableRow, TableCell, IconButton,
+} from '@material-ui/core';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateMeshResults, updateResultsSelection, clearResultsSelection, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
-import MUIDataTable from "mui-datatables";
-import CustomToolbarSelect from './CustomToolbarSelect';
-import CustomTableFooter from './CustomTableFooter';
+import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
-import MesheryChart from './MesheryChart';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import {
+  updateResultsSelection, clearResultsSelection, updateProgress,
+} from '../lib/store';
+import dataFetch from '../lib/data-fetch';
+import CustomToolbarSelect from './CustomToolbarSelect';
+import MesheryChart from './MesheryChart';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
 
 
-const styles = theme => ({
+const styles = (theme) => ({
   grid: {
     padding: theme.spacing(2),
   },
@@ -28,8 +31,7 @@ const styles = theme => ({
 });
 
 class MesheryResults extends Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     // const {results_selection} = props;
     this.state = {
@@ -47,7 +49,7 @@ class MesheryResults extends Component {
       // results_selection,
 
       selectedRowData: null,
-    }
+    };
   }
 
   // static getDerivedStateFromProps(props, state){
@@ -56,12 +58,14 @@ class MesheryResults extends Component {
   // }
 
     componentDidMount = () => {
-      const {page, pageSize, search, sortOrder} = this.state;
+      const {
+        page, pageSize, search, sortOrder,
+      } = this.state;
       this.fetchResults(page, pageSize, search, sortOrder);
     }
 
     fetchResults = (page, pageSize, search, sortOrder) => {
-      let self = this;
+      const self = this;
       let query = '';
       if (typeof search === 'undefined' || search === null) {
         search = '';
@@ -70,19 +74,19 @@ class MesheryResults extends Component {
         sortOrder = '';
       }
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      self.props.updateProgress({showProgress: true});
-      dataFetch(`/api/results${query}`, { 
+      self.props.updateProgress({ showProgress: true });
+      dataFetch(`/api/results${query}`, {
         credentials: 'same-origin',
         method: 'GET',
         credentials: 'include',
-      }, result => {
-        self.props.updateProgress({showProgress: false});
+      }, (result) => {
+        self.props.updateProgress({ showProgress: false });
         // console.log(`received results: ${JSON.stringify(result)}`);
-        if (typeof result !== 'undefined'){
+        if (typeof result !== 'undefined') {
           this.setState({
             results: result.results,
-            search: search,
-            sortOrder: sortOrder,
+            search,
+            sortOrder,
             page: result.page,
             pageSize: result.page_size,
             count: result.total_count,
@@ -91,8 +95,8 @@ class MesheryResults extends Component {
       }, self.handleError);
     }
 
-    handleError = error => {
-      this.props.updateProgress({showProgress: false});
+    handleError = (error) => {
+      this.props.updateProgress({ showProgress: false });
       // console.log(`error fetching results: ${error}`);
       const self = this;
       this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
@@ -102,7 +106,7 @@ class MesheryResults extends Component {
             key="close"
             aria-label="Close"
             color="inherit"
-            onClick={() => self.props.closeSnackbar(key) }
+            onClick={() => self.props.closeSnackbar(key)}
           >
             <CloseIcon />
           </IconButton>
@@ -111,16 +115,18 @@ class MesheryResults extends Component {
       });
     }
 
-    resetSelectedRowData(){
+    resetSelectedRowData() {
       const self = this;
       return () => {
-        self.setState({selectedRowData: null});
-      }
+        self.setState({ selectedRowData: null });
+      };
     }
 
     render() {
       const { classes, results_selection, user } = this.props;
-      const { results, page, count, pageSize, search, selectedRowData, sortOrder } = this.state;
+      const {
+        results, page, count, pageSize, selectedRowData,
+      } = this.state;
       const self = this;
       const resultsForDisplay = [];
       results.forEach((record) => {
@@ -131,149 +137,117 @@ class MesheryResults extends Component {
           qps: record.runner_results.ActualQPS.toFixed(1),
           duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
           threads: record.runner_results.NumThreads,
-        }
+        };
         if (record.runner_results.DurationHistogram && record.runner_results.DurationHistogram.Percentiles) {
-          record.runner_results.DurationHistogram.Percentiles.forEach(({Percentile, Value}) => {
-            row[('p'+Percentile).replace(".","_")] = Value.toFixed(3);
+          record.runner_results.DurationHistogram.Percentiles.forEach(({ Percentile, Value }) => {
+            row[(`p${Percentile}`).replace('.', '_')] = Value.toFixed(3);
           });
         } else {
-          row['p50'] = 0;
-          row['p75'] = 0;
-          row['p90'] = 0;
-          row['p99'] = 0;
-          row['p99_9'] = 0;
+          row.p50 = 0;
+          row.p75 = 0;
+          row.p90 = 0;
+          row.p99 = 0;
+          row.p99_9 = 0;
         }
         resultsForDisplay.push(row);
         // console.log(`adding custom row: ${JSON.stringify(row)}`);
       });
-        
+
       const columns = [
         {
-          name: "name",
-          label: "Name",
+          name: 'name',
+          label: 'Name',
           options: {
             filter: false,
             sort: true,
             searchable: true,
-          }
+          },
         },
         {
-          name: "mesh",
-          label: "Mesh",
+          name: 'mesh',
+          label: 'Mesh',
           options: {
             filter: false,
             sort: true,
             searchable: true,
-          }
+          },
         },
         {
-          name: "test_start_time",
-          label: "StartTime",
+          name: 'test_start_time',
+          label: 'StartTime',
           options: {
             filter: false,
             sort: true,
             searchable: false,
-            customBodyRender: (value, tableMeta, updateValue) => {
-              return (
-                <Moment format="LLLL">{value}</Moment>
-              );
-            }
-          }
+            customBodyRender: (value) => (
+              <Moment format="LLLL">{value}</Moment>
+            ),
+          },
         },
         {
-          name: "qps",
-          label: "QPS",
+          name: 'qps',
+          label: 'QPS',
           options: {
             filter: false,
             sort: false,
             searchable: false,
-          }
+          },
         },
         {
-          name: "duration",
-          label: "Duration",
+          name: 'duration',
+          label: 'Duration',
           options: {
             filter: false,
             sort: false,
             searchable: false,
-          }
+          },
         },
-        //  {
-        //   name: "threads",
-        //   label: "Threads",
-        //   options: {
-        //     filter: false,
-        //     sort: false,
-        //     searchable: false,
-        //    }
-        //  },
+
         {
-          name: "p50",
-          label: "P50",
+          name: 'p50',
+          label: 'P50',
           options: {
             filter: false,
             sort: false,
             searchable: false,
-          }
+          },
         },
-        //  {
-        //   name: "p75",
-        //   label: "P75",
-        //   // options: {
-        //   //   filter: false,
-        //   //   sort: false,
-        //   //   searchable: false,
-        //   //  }
-        //  },
-        //  {
-        //   name: "p90",
-        //   label: "P90",
-        //   // options: {
-        //   //   filter: false,
-        //   //   sort: false,
-        //   //   searchable: false,
-        //   //  }
-        //  },
-        //  {
-        //   name: "p99",
-        //   label: "P99",
-        //   // options: {
-        //   //   filter: false,
-        //   //   sort: false,
-        //   //   searchable: false,
-        //   //  }
-        //  },
+
         {
-          name: "p99_9",
-          label: "P99.9",
+          name: 'p99_9',
+          label: 'P99.9',
           options: {
             filter: false,
             sort: false,
             searchable: false,
-          }
+          },
         },
         {
-          name: "Details",
+          name: 'Details',
           options: {
             filter: false,
             sort: false,
             searchable: false,
-            customBodyRender: (value, tableMeta, updateValue) => {
-              return (
-                <IconButton
-                  aria-label="more"
-                  color="inherit"
-                  onClick={() => self.setState({selectedRowData: self.state.results[tableMeta.rowIndex]})}
-                >
-                  <MoreHorizIcon />
-                </IconButton>
-              );
-            }
-          }
+            customBodyRender: (value, tableMeta) => (
+              <IconButton
+                aria-label="more"
+                color="inherit"
+                onClick={() => self.setState({ selectedRowData: self.state.results[tableMeta.rowIndex] })}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+            ),
+          },
         },
       ];
+      
+      columns.forEach((column, idx) => {
+        if(column.name === this.state.sortOrder.split(' ')[0]) {
+          columns[idx].options.sortDirection = this.state.sortOrder.split(' ')[1];
+        }
+      })
 
-      let rowsSelected = [];
+      const rowsSelected = [];
       Object.keys(results_selection).forEach((pg) => {
         if (parseInt(pg) !== page) {
           Object.keys(results_selection[parseInt(pg)]).forEach((ind) => {
@@ -289,120 +263,105 @@ class MesheryResults extends Component {
       // console.log(`selected rows after adjustments: ${JSON.stringify(rowsSelected)}`);
       const options = {
         filter: false,
-        sort: user && user.user_id === 'meshery'?false:true,
-        search: user && user.user_id === 'meshery'?false:true,
+        sort: !(user && user.user_id === 'meshery'),
+        search: !(user && user.user_id === 'meshery'),
         filterType: 'textField',
         responsive: 'scrollFullHeight',
         // resizableColumns: true,
         // selectableRows: true,
         serverSide: true,
-        count: count,
+        count,
         rowsPerPage: pageSize,
         rowsPerPageOptions: [10, 20, 25],
         fixedHeader: true,
-        page: page,
+        page,
         rowsSelected,
         print: false,
         download: false,
         onRowsSelect: (currentRowsSelected, allRowsSelected) => {
           // const rs = self.props.results_selection;
-            
-          let res = {};
-          allRowsSelected.forEach(({dataIndex}) => {
+          const res = {};
+          allRowsSelected.forEach(({ dataIndex }) => {
             if (dataIndex < self.state.pageSize) {
-              if (typeof res[dataIndex] !== 'undefined'){
+              if (typeof res[dataIndex] !== 'undefined') {
                 delete res[dataIndex];
               } else {
                 res[dataIndex] = self.state.results[dataIndex];
-              }  
-            } 
-});
+              }
+            }
+          });
 
-          // let rsk = 0;
-          // Object.keys(rs).forEach((k1) => {
-          //     const pg = parseInt(k1);
-          //     if(pg !== page){ // skipping count for this page
-          //       Object.keys(rs[k1]).forEach((k2) => {
-          //         rsk++;
-          //       });
-          //     }
-          // })
-
-          // if (rsk + Object.keys(res).length > 4) { // count from other pages + this page
-          //   return null;
-          // }
-
-          self.props.updateResultsSelection({page, results: res});
+          self.props.updateResultsSelection({ page, results: res });
         },
-        // onCellClick: function(colData, { colIndex, rowIndex, dataIndex }){
-        //   // console.log(`row - col ind: ${colIndex}, data ind: ${dataIndex}, row ind: ${rowIndex}`);
-        //   self.setState({selectedRowData: self.state.results[dataIndex]});
-        // },
+
         onTableChange: (action, tableState) => {
-
-          // console.log(action, tableState);
-          
-          switch (action) {
-          case 'changePage':
-            self.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
-            break;
-          case 'changeRowsPerPage':
-            self.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
-            break;
-          case 'search':
-            if (self.searchTimeout) {
-              clearTimeout(self.searchTimeout);
-            }
-            self.searchTimeout = setTimeout(function(){
-              if (self.state.search !== tableState.searchText){
-                self.fetchResults(self.state.page, self.state.pageSize, tableState.searchText !== null?tableState.searchText:'', self.state.sortOrder);
-              }
-            }, 500);
-            break;
-          case 'sort':
-            const sortInfo = tableState.announceText.split(' : ');
-            let order = 'asc';
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'descending'){
-                order = 'desc';
-              }
-            }
-            if (order !== sortOrder){
-              self.fetchResults(self.state.page, self.state.pageSize, self.state.search, columns[tableState.activeColumn].name+ ' ' + order);
-            }
-            break;
+          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[]; 
+          let order='';
+          if(tableState.activeColumn){
+            order = `${columns[tableState.activeColumn].name} desc`;
           }
-        }, 
-        customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
-          return (
-            <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={self.state.results} />
-          );
+
+          switch (action) {
+            case 'changePage':
+              self.fetchResults(tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
+              break;
+            case 'changeRowsPerPage':
+              self.fetchResults(self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
+              break;
+            case 'search':
+              if (self.searchTimeout) {
+                clearTimeout(self.searchTimeout);
+              }
+              self.searchTimeout = setTimeout(() => {
+                if (self.state.search !== tableState.searchText) {
+                  self.fetchResults(self.state.page, self.state.pageSize, tableState.searchText !== null ? tableState.searchText : '', self.state.sortOrder);
+                }
+              }, 500);
+              break;
+            case 'sort':
+              if (sortInfo.length == 2) {
+                if (sortInfo[1] === 'ascending') {
+                  order = `${columns[tableState.activeColumn].name} asc`;
+                } else {
+                  order = `${columns[tableState.activeColumn].name} desc`;
+                }
+              }
+              if (order !== this.state.sortOrder) {
+                self.fetchResults(self.state.page, self.state.pageSize, self.state.search, order);
+              }
+              break;
+          }
         },
+        customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
+          <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} results={self.state.results} />
+        ),
         expandableRows: true,
         renderExpandableRow: (rowData, rowMeta) => {
           const row = self.state.results[rowMeta.dataIndex].runner_results;
           const boardConfig = self.state.results[rowMeta.dataIndex].server_board_config;
           const serverMetrics = self.state.results[rowMeta.dataIndex].server_metrics;
           const startTime = new Date(row.StartTime);
-          const endTime = new Date(startTime.getTime() + row.ActualDuration/1000000);
+          const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
           const colSpan = rowData.length + 1;
           return (
             <TableRow>
               <TableCell colSpan={colSpan}>
                 <div className={classes.chartContent}>
-                  <MesheryChart data={[row]} hideTitle={true} />
+                  <MesheryChart data={[row]} hideTitle />
                 </div>
-                {boardConfig && boardConfig !==null && Object.keys(boardConfig).length > 0 && <div>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={[boardConfig]} 
-                    boardPanelData={[serverMetrics]}
-                    startDate={startTime}
-                    from={startTime.getTime().toString()} 
-                    endDate={endTime}
-                    to={endTime.getTime().toString()} 
-                    liveTail={false}
-                  />
-                </div>}
+                {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+                  <div>
+                    <GrafanaCustomCharts
+                      boardPanelConfigs={[boardConfig]}
+                      boardPanelData={[serverMetrics]}
+                      startDate={startTime}
+                      from={startTime.getTime().toString()}
+                      endDate={endTime}
+                      to={endTime.getTime().toString()}
+                      liveTail={false}
+                    />
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           );
@@ -411,13 +370,14 @@ class MesheryResults extends Component {
 
       return (
         <NoSsr>
-          {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 &&
-              <MesheryResultDialog
-                rowData={selectedRowData}
-                close={self.resetSelectedRowData()}
-              />
-          }
-          <MUIDataTable title={"Performance Test Results"} data={resultsForDisplay} columns={columns} options={options} />
+          {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0
+              && (
+                <MesheryResultDialog
+                  rowData={selectedRowData}
+                  close={self.resetSelectedRowData()}
+                />
+              )}
+          <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
         </NoSsr>
       );
     }
@@ -426,27 +386,26 @@ MesheryResults.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    // updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
-    updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
-    clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-    updateProgress: bindActionCreators(updateProgress, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  // updateMeshResults: bindActionCreators(updateMeshResults, dispatch),
+  updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
+  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+const mapStateToProps = (state) => {
+  const startKey = state.get('results').get('startKey');
+  const results = state.get('results').get('results').toArray();
+  const results_selection = state.get('results_selection').toObject();
+  const user = state.get('user').toObject();
+  if (typeof results !== 'undefined') {
+    return {
+      startKey, results, results_selection, user,
+    };
   }
-}
-const mapStateToProps = state => {
-  const startKey = state.get("results").get('startKey');
-  const results =  state.get("results").get('results').toArray();
-  const results_selection = state.get("results_selection").toObject();
-  const user = state.get("user").toObject();
-  if (typeof results !== 'undefined'){
-    return {startKey: startKey, results: results, results_selection, user};
-  }
-  return {results_selection, user};
-}
-  
+  return { results_selection, user };
+};
+
 export default withStyles(styles)(connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withSnackbar(MesheryResults)));
-  

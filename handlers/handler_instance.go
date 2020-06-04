@@ -1,8 +1,9 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
 	"github.com/layer5io/meshery/models"
-	"github.com/vmihailenco/taskq"
+	"github.com/vmihailenco/taskq/v3"
 )
 
 // Handler type is the bucket for configs and http handlers
@@ -19,7 +20,8 @@ func NewHandlerInstance(
 		config: handlerConfig,
 	}
 
-	h.task = handlerConfig.Queue.NewTask(&taskq.TaskOptions{
+
+	h.task = taskq.RegisterTask(&taskq.TaskOptions{
 		Name:    "submitMetrics",
 		Handler: h.CollectStaticMetrics,
 	})

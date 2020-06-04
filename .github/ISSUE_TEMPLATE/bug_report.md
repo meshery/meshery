@@ -1,6 +1,6 @@
 ---
 name: Bug/issue report
-about: Report an issue to help us improve
+about: Report an issue to help improve the project.
 title: ''
 labels: 'bug'
 assignees: ''
@@ -14,7 +14,7 @@ assignees: ''
 **Screenshots**
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
-**Enviroment:**
+**Environment:**
  - OS: [e.g. Ubuntu]
  - Browser: [e.g. Chrome, Safari]
  - Version: [e.g. 22]

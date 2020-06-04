@@ -1,8 +1,7 @@
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
-import {connect} from "react-redux";
-import { bindActionCreators } from 'redux'
-import { updateUser } from '../lib/store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
@@ -11,28 +10,41 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NoSsr from '@material-ui/core/NoSsr';
-import dataFetch from '../lib/data-fetch';
 import { withRouter } from 'next/router';
+import dataFetch from '../lib/data-fetch';
+import { updateUser } from '../lib/store';
 
 
-const styles = theme => ({
+const styles = () => ({
   popover: {
     color: 'black',
   },
 });
 
-class User extends React.Component {
+function exportToJsonFile(jsonData, filename) {
+  let dataStr = JSON.stringify(jsonData);
+  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
+  let exportFileDefaultName = filename;
+
+  let linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  linkElement.remove()
+}
+
+class User extends React.Component {
   state = {
     user: null,
     open: false,
   }
 
   handleToggle = () => {
-    this.setState(state => ({ open: !state.open }));
+    this.setState((state) => ({ open: !state.open }));
   };
 
-  handleClose = event => {
+  handleClose = (event) => {
     if (this.anchorEl.contains(event.target)) {
       return;
     }
@@ -40,49 +52,56 @@ class User extends React.Component {
   };
 
   handleLogout = () => {
-    window.location = "/logout";
+    window.location = '/logout';
   };
 
   handlePreference = () => {
     this.props.router.push('/userpreference');
   };
 
+  handleGetToken = () => {
+    dataFetch('/api/gettoken', { credentials: 'same-origin' }, (data) => {
+      exportToJsonFile(data, "auth.json");
+    }, (error) => ({
+      error,
+    }));
+  };
+
   componentDidMount() {
     // console.log("fetching user data");
-    dataFetch('/api/user', { credentials: 'same-origin' }, user => {
-      this.setState({user})
-      this.props.updateUser({user})
-    }, error => {
-      return {
-        error
-      };
-    });
+    dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
+      this.setState({ user });
+      this.props.updateUser({ user });
+    }, (error) => ({
+      error,
+    }));
   }
 
   render() {
-    const {color, iconButtonClassName, avatarClassName, classes, ...other} = this.props;
-    let avatar_url, user_id;
-    if (this.state.user && this.state.user !== null){
+    const {
+      color, iconButtonClassName, avatarClassName, classes,
+    } = this.props;
+    let avatar_url; 
+    if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
-      user_id = this.state.user.user_id;
     }
     const { open } = this.state;
-    // if (user_id === 'meshery') { // indicating a local user
-    //   return null;
-    // }
     return (
       <div>
         <NoSsr>
-          <IconButton color={color} className={iconButtonClassName} 
-            buttonRef={node => {
+          <IconButton
+            color={color}
+            className={iconButtonClassName}
+            buttonRef={(node) => {
               this.anchorEl = node;
             }}
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
-            onClick={this.handleToggle}>
-            <Avatar className={avatarClassName}  src={avatar_url} />
+            onClick={this.handleToggle}
+          >
+            <Avatar className={avatarClassName} src={avatar_url} />
           </IconButton>
-          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement='top-end'>
+          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
@@ -92,6 +111,7 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
+                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>
@@ -102,17 +122,15 @@ class User extends React.Component {
           </Popper>
         </NoSsr>
       </div>
-    )
+    );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updateUser: bindActionCreators(updateUser, dispatch)
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: bindActionCreators(updateUser, dispatch),
+});
 
 export default withStyles(styles)(connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withRouter(User)));

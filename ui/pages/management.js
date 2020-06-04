@@ -1,33 +1,43 @@
 import React from 'react';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
 import { NoSsr } from "@material-ui/core";
+import Head from 'next/head';
 import { updatepagepath } from "../lib/store";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import { getPath } from "../lib/path";
 
 class Manage extends React.Component {
-  static getInitialProps = ({query}) => {
-    return {query};
+  static getInitialProps = ({ query }) => {
+    return { query };
   }
-
-  componentDidMount () {
+  constructor(props) {
+    super(props);
+    if (!props.query.adapter) {
+      const urlParams = new URLSearchParams(window.location.search);
+      this.props.query.adapter = urlParams.get("adapter");
+    }
+  }
+  componentDidMount() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({path: getPath()});
+    this.props.updatepagepath({ path: getPath() });
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({path: getPath()});
+    this.props.updatepagepath({ path: getPath() });
   }
 
-  render () {
+  render() {
     return (
-        <NoSsr>
+      <NoSsr>
+        <Head>
+          <title>Management | Meshery</title>
+        </Head>
         <React.Fragment>
-            <MesheryPlayComponent adapter={this.props.query.adapter} />
+          <MesheryPlayComponent adapter={this.props.query.adapter} />
         </React.Fragment>
-        </NoSsr>
+      </NoSsr>
     );
   }
 }
@@ -39,6 +49,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(
-    null,
-    mapDispatchToProps
-  )(Manage);
+  null,
+  mapDispatchToProps
+)(Manage);

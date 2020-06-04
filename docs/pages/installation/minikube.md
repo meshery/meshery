@@ -25,6 +25,13 @@ minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 
 <i>Note: minimum memory required is --memory=4096 (for Istio deployments only)</i>
 
+<i>Note: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server.
+</i>
+
+```   
+docker network connect bridge meshery_meshery_1 
+```
+
 ### 2. Generate config file
 This configuration file will be used by Meshery.
 
@@ -53,6 +60,7 @@ users:
     client-key-data: < key shortcutted >
 ```
 Note: Make sure "current-context" is set to "minikube".
+
 
 ### 3. Finish up
 

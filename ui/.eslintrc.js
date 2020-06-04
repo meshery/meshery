@@ -39,8 +39,28 @@ module.exports = {
             "error",
             "1tbs"
         ],
+        'indent': [
+            'error', 2, {
+            "FunctionExpression": {"parameters": "first"},
+            "FunctionDeclaration": {"parameters": "first"},
+            "MemberExpression": 1,
+            "SwitchCase": 1,
+            "outerIIFEBody": 0,
+            "VariableDeclarator": { "var": 2, "let": 2, "const": 3 }
+          }
+        ],
         "react/react-in-jsx-scope": "off",
         "no-undef": "off",
+        "react/prop-types": 0,
+        "react/jsx-uses-vars": [
+            2
+        ],
+        "react/jsx-no-undef": "error",
+        "no-console": 0,
+        "no-unused-vars": "error",
+        "react/jsx-key": "off",
+        "no-dupe-keys": "off",
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "react/prop-types": "off"
     }
 };

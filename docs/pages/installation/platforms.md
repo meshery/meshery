@@ -4,10 +4,10 @@ title: Supported Platforms
 permalink: installation/platforms
 ---
 # Getting Started with other Platforms<a name="compatibility-matrix"></a>
-The table below provides installation instructions for each platform that Meshery is compatibile with:
+The table below provides installation instructions for each platform that Meshery is compatible with:
 
 | Platform      | Version       |
-| -------------:|:-------------|   
+|  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;||   
 | [Docker Engine](/docs/installation/docker) | 19.x and above |
 | [Docker Desktop](/docs/installation/docker) | 2.0.x and above |
 | [EKS](/docs/installation/eks) | 1.12.x and above |
@@ -15,3 +15,4 @@ The table below provides installation instructions for each platform that Mesher
 | [Kubernetes](/docs/installation/kubernetes) | 1.12.x and above |
 | [Minikube](/docs/installation/minikube) | 1.2.x and above |
 | [WSL2](/docs/installation/wsl2) | Build 18917 and above |
+| [KinD](/docs/installation/kinD) | v0.7.0|

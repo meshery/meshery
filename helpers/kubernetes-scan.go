@@ -32,6 +32,10 @@ var meshesMeta = map[string][]string{
 		"docker.io/networkservicemesh/nsmd",
 		"docker.io/networkservicemesh/nsmd-k8s",
 	},
+	"Citrix": []string{
+		"quay.io/citrix/citrix-istio-adaptor",
+		"quay.io/citrix/citrix-k8s-cpx-ingress",
+	},
 }
 
 // ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed
@@ -82,6 +86,20 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]v1.Depl
 // ScanPromGrafana - Runs a quick scan for Prometheus & Grafanas
 func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
 	imageNames := []string{"prometheus", "grafana"}
+
+	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+}
+
+// ScanPromotheus - Runs a quick scan for Prometheus
+func ScanPromotheus(kubeconfig []byte, contextName string) (map[string][]string, error) {
+	imageNames := []string{"prometheus"}
+
+	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+}
+
+// ScanGrafana - Runs a quick scan for Grafanas
+func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
+	imageNames := []string{"grafana"}
 
 	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
 }

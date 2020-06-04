@@ -1,7 +1,7 @@
 ---
 name: Documentation issue
-about: Issues related to documenation.
-title: ''
+about: Issues related to documentation.
+title: '[Docs]'
 labels: 'docs'
 assignees: ''
 ---
@@ -9,6 +9,7 @@ assignees: ''
 
 
 **Desired State:**
+
 
 ---
 **Contributor Resources**

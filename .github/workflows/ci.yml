@@ -22,7 +22,14 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
-    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config revive-lint.toml -formatter friendly ./...
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
     runs-on: ubuntu-latest
@@ -35,64 +42,17 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
-#   static_check:
-#     name: Static check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all ./... # https://staticcheck.io/docs/checks
-#   vet:
-#     name: Vet
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
-#   sec_check:
-#     name: Security check
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/securego/gosec/cmd/gosec; /home/runner/go/bin/gosec ./... # https://github.com/securego/gosec
-#   tests:
-#     # needs: [lint, error_check, static_check, vet, sec_check]
-#     name: Tests
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Check out code
-#       uses: actions/checkout@master
-#       with:
-#         fetch-depth: 1
-#     - name: Setup Go
-#       uses: actions/setup-go@v1
-#       with:
-#         go-version: ${{ secrets.GO_VERSION }}
-#     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
-  build-backend:
-    name: Meshery backend build check
+  static_check:
+    name: Static check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -102,11 +62,107 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
+  vet_check:
+    name: Go Vet Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
+  security_check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      GOPROXY: direct
+      GOSUMDB: off
+    steps:
+    - name: Checkout code 
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - name: Run Gosec Security Scanner
+      uses: securego/gosec@master
+      with:
+        args: ./... -exclude=G301,G304,G107
+  tests:
+    needs: [lint, error_check, static_check, vet_check, security_check, lint-UI, lint-Provider-UI]
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
+  build-backend:
+    name: Meshery backend build check
+    runs-on: ubuntu-latest
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
   build-ui:
     name: Meshery UI build check
     runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -115,15 +171,84 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - run: |
         cd ui
         npm i
         npm run build && npm run export
+  build-provider-ui:
+    name: Meshery Provider-UI build check
+    runs-on: ubuntu-latest
+    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: |
+        cd provider-ui
+        npm i
+        npm run build && npm run export
+  lint-UI:
+    name: Meshery UI Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: |
+        cd ui
+        npm i
+        npm test
+  lint-Provider-UI:
+    name: Meshery Provider UI Lint check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ secrets.NODE_VERSION }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: |
+        cd provider-ui
+        npm i
+        npm test
   build_release:
-    name: MesheryCTL Build & Release
-    runs-on: macOS-latest
-    # runs-on: ubuntu-latest
-    # needs: [lint, error_check, static_check, vet, sec_check, tests]
+    name: Mesheryctl Build & Release
+    runs-on: macos-latest
+    needs: [lint, error_check, static_check, vet_check, security_check, tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -133,6 +258,13 @@ jobs:
       uses: actions/setup-go@v1
       with:
         go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
     - name: goreleaser with tag
       uses: goreleaser/goreleaser-action@v1
       if: success() && startsWith(github.ref, 'refs/tags/')
@@ -150,7 +282,7 @@ jobs:
   docker:
     name: Docker build and push
     runs-on: ubuntu-latest
-    # needs: [build, build_release]
+    needs: [build_release]
     steps:
     - name: Check out code
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
@@ -163,6 +295,20 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Set properties file with release tag
+      if: success() && startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo git-sha:${GITHUB_SHA::8} >> properties.yml
+        echo release-tag:${GITHUB_REF/refs\/tags\//} >> properties.yml
+    - name: Get Previous tag
+      id: previoustag
+      if: success() && (github.ref == 'refs/heads/master')
+      run: echo "::set-output name=releasetag::$(git describe --abbrev=0 --tags)"
+    - name: Set properties file with previous release tag
+      if: success() && (github.ref == 'refs/heads/master')
+      run: |
+        echo git-sha:${GITHUB_SHA::8} >> properties.yml
+        echo release-tag:${{ steps.previoustag.outputs.releasetag }}-${GITHUB_SHA::6} >> properties.yml
     - name: Docker build & push
       if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
       run: |
@@ -182,4 +328,3 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-    

@@ -37,6 +37,11 @@ type LoadTestOptions struct {
 
 	HTTPNumThreads int
 
+	Headers     *map[string]string
+	Cookies     *map[string]string
+	Body        []byte
+	ContentType string
+
 	IsInsecure bool
 	Duration   time.Duration
 
@@ -87,8 +92,8 @@ type MesheryResult struct {
 }
 
 // ConvertToSpec - converts meshery result to SMP
-func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
-	b := &BenchmarkSpec{
+func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
+	b := &PerformanceSpec{
 		Env:     &Environment{},
 		Client:  &MeshClientConfig{},
 		Metrics: &Metrics{},
@@ -125,8 +130,6 @@ func (m *MesheryResult) ConvertToSpec() (*BenchmarkSpec, error) {
 		results = httpResults
 		logrus.Debugf("httpresults: %+v", httpResults)
 		b.EndpointURL = httpResults.URL
-	} else {
-		// TODO: GRPC
 	}
 
 	result := results.Result()

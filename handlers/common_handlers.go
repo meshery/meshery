@@ -1,3 +1,4 @@
+//Package handlers : collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -30,4 +31,13 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		HttpOnly: true,
 	})
 	p.Logout(w, req)
+}
+
+// TokenHandler Recieves token from the actual provider
+func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
+	// if r.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
+	p.TokenHandler(w, r, fromMiddleWare)
 }

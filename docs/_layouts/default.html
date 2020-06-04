@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   {% include head.html %}
-  {% include google-analytics.html %}
   <body class="td-section">
     {% include header.html %}
     <div class="container-fluid td-outer">
@@ -24,14 +23,15 @@
             <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
 	      <ol class="breadcrumb spb-1">
                 <li class="breadcrumb-item active" aria-current="page">
-		  <!-- meshery-custom-begin -->
-	          <a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a>
+      <!-- meshery-custom-begin -->
+        {% include breadcrumbs.html %}
+	      <!-- <a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a> -->
 		  <!-- meshery-custom-end -->
                 </li>
 	      </ol>
            </nav>
            <div class="td-content">
-	      {{ content }}	
+	           {{ content }}	
               {% if section.links %}<div class="section-index">
                <hr class="panel-line">{% for child in section.links %}
                  <div class="entry">
@@ -49,5 +49,6 @@
       {% include footer.html %}
     </div>
     {% include scripts.html %}
+    {% include google-analytics.html %}
   </body>
 </html>

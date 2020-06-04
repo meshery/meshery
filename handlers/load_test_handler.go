@@ -1,3 +1,4 @@
+//Package handlers :  collection of handlers (aka "HTTP middleware")
 package handlers
 
 import (
@@ -13,7 +14,6 @@ import (
 
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
@@ -23,7 +23,7 @@ import (
 )
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
-func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -39,7 +39,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	benchMark := &models.BenchmarkSpec{}
+	benchMark := &models.PerformanceSpec{}
 	if err := yaml.Unmarshal(body, benchMark); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
@@ -99,13 +99,23 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
 	// default:
 	loadTestOptions.LoadGenerator = models.FortioLG
+	loadTestOptions.AllowInitialErrors = true
 	// }
 
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
+func (h *Handler) jsonToMap(headersString string) *map[string]string {
+	headers := make(map[string]string)
+	err := json.Unmarshal([]byte(headersString), &headers)
+	if err != nil {
+		return nil
+	}
+	return &headers
+}
+
 // LoadTestHandler runs the load test with the given parameters
-func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, session *sessions.Session, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -128,7 +138,21 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
 
+	headersString := q.Get("headers")
+	cookiesString := q.Get("cookies")
+	contentType := q.Get("contentType")
+	bodyString := q.Get("reqBody")
+
+	headers := h.jsonToMap(headersString)
+	cookies := h.jsonToMap(cookiesString)
+	body := []byte(bodyString)
+	logrus.Debugf("Headers : %v", headers)
+
 	loadTestOptions := &models.LoadTestOptions{}
+	loadTestOptions.Headers = headers
+	loadTestOptions.Cookies = cookies
+	loadTestOptions.Body = body
+	loadTestOptions.ContentType = contentType
 
 	tt, _ := strconv.Atoi(q.Get("t"))
 	if tt < 1 {
@@ -168,6 +192,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, sess
 	}
 	loadTestOptions.URL = loadTestURL
 	loadTestOptions.Name = testName
+	loadTestOptions.AllowInitialErrors = true
 
 	qps, _ := strconv.ParseFloat(q.Get("qps"), 64)
 	if qps < 0 {
@@ -214,7 +239,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	notify := w.(http.CloseNotifier).CloseNotify()
+	notify := req.Context()
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 	defer close(endChan)
@@ -244,11 +270,12 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		log.Debug("response channel closed")
 	}()
 	go func() {
-		h.executeLoadTest(req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
+		ctx := context.Background()
+		h.executeLoadTest(ctx, req, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
 		close(respChan)
 	}()
 	select {
-	case <-notify:
+	case <-notify.Done():
 		log.Debugf("received signal to close connection and channels")
 		break
 	case <-endChan:
@@ -256,7 +283,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
+func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
 	respChan <- &models.LoadTestResponse{
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
@@ -393,7 +420,7 @@ func (h *Handler) executeLoadTest(req *http.Request, testName, meshName, testUUI
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(provider.GetProviderType() == models.RemoteProviderType ||
 			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
-		_ = h.task.Call(&models.SubmitMetricsConfig{
+		_ = h.task.WithArgs(ctx, &models.SubmitMetricsConfig{
 			TestUUID:  testUUID,
 			ResultID:  resultID,
 			PromURL:   promURL,

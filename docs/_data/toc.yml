@@ -1,5 +1,5 @@
 - title: Documentation
-  url: '#'
+  url: ''
   links:
     - title: Overview
       url: 'overview'
@@ -25,18 +25,31 @@
           url: installation/minikube
         - title: WSL2
           url: installation/wsl2
+        - title: KinD
+          url: installation/kind
     - title: Architecture
       url: architecture
-    #- title: Service Mesh Performance
-    #  url: performance-management
     - title: Service Mesh Management
       url: mesh-management
-    - title: Releases
-      url: releases
-- title: Guides
-  url: guides
-  links:
-  - title: Multiple Adapters
-    url: guides/multiple-adapters
-  - title: Using mesheryctl
-    url: guides/mesheryctl
+    - title: Extensibility
+      url: extensibility
+    - title: Guides
+      url: guides
+      children:
+        - title: Multiple Adapters
+          url: guides/multiple-adapters
+        - title: Using mesheryctl
+          url: guides/mesheryctl
+        - title: Upgrading Meshery
+          url: guides/upgrade
+        - title: Integrating Prometheus and Grafana
+          url: guides/meshery-metrics
+    - title: Project
+      url: project
+      children:
+        - title: Contributing
+          url: project/contributing
+        - title: Releases
+          url: project/releases
+        - title: Vulnerabilities
+          url: project/security-vulnerabilities
