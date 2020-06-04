@@ -261,11 +261,11 @@ const categories = [
         show: true,
       },
       {
-        id: 'Citrix',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: '/management/citrix',
-        title: 'Citrix',
-        link: false,
+        id: 'Citrix Service Mesh',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/citrix", 
+        title: 'Citrix Service Mesh',
+        link: false, 
         show: true,
       },
     ],
@@ -378,32 +378,31 @@ class Navigator extends React.Component {
     const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let logoIcon = (<img src={image} className={classes.icon} />);
-    switch (aName) {
-      case 'istio':
-        image = '/static/img/istio-white.svg';
-        logoIcon = (<img src={image} className={classes.istioIcon} />);
-        break;
-      case 'linkerd':
-        image = '/static/img/linkerd-white.svg';
-        logoIcon = (<img src={image} className={classes.icon} />);
-        break;
-      case 'consul':
-        image = '/static/img/consul-white.svg';
-        logoIcon = (<img src={image} className={classes.icon} />);
-        break;
-      case 'network service mesh':
-        image = '/static/img/nsm-white.svg';
-        logoIcon = (<img src={image} className={classes.icon} />);
-        break;
-      case 'octarine':
-        image = '/static/img/octarine-white.svg';
-        logoIcon = (<img src={image} className={classes.icon} />);
-        break;
-      case 'citrix':
-        image = '/static/img/citrix-light-gray.svg';
-        logoIcon = (<img src={image} className={classes.icon} />);
-        break;
-        // default:
+    switch (aName){
+    case 'istio':
+      image = "/static/img/istio-white.svg";
+      logoIcon = (<img src={image} className={classes.istioIcon} />);
+      break;
+    case 'linkerd':
+      image = "/static/img/linkerd-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'consul':
+      image = "/static/img/consul-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'network service mesh':
+      image = "/static/img/nsm-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'octarine':
+      image = "/static/img/octarine-white.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
+    case 'citrix service mesh':
+      image = "/static/img/citrix-light-gray.svg";
+      logoIcon = (<img src={image} className={classes.icon} />);
+      break;
     }
     return logoIcon;
   }
