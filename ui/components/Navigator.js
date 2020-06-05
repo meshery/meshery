@@ -379,30 +379,30 @@ class Navigator extends React.Component {
     let image = '/static/img/meshery-logo.png';
     let logoIcon = (<img src={image} className={classes.icon} />);
     switch (aName){
-    case 'istio':
-      image = "/static/img/istio-white.svg";
-      logoIcon = (<img src={image} className={classes.istioIcon} />);
-      break;
-    case 'linkerd':
-      image = "/static/img/linkerd-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'consul':
-      image = "/static/img/consul-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'network service mesh':
-      image = "/static/img/nsm-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'octarine':
-      image = "/static/img/octarine-white.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
-    case 'citrix service mesh':
-      image = "/static/img/citrix-light-gray.svg";
-      logoIcon = (<img src={image} className={classes.icon} />);
-      break;
+      case 'istio':
+        image = "/static/img/istio-white.svg";
+        logoIcon = (<img src={image} className={classes.istioIcon} />);
+        break;
+      case 'linkerd':
+        image = "/static/img/linkerd-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'consul':
+        image = "/static/img/consul-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'network service mesh':
+        image = "/static/img/nsm-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'octarine':
+        image = "/static/img/octarine-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'citrix service mesh':
+        image = "/static/img/citrix-light-gray.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
     }
     return logoIcon;
   }
