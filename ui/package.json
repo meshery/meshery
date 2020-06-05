@@ -13,9 +13,9 @@
     "cy:run": "cypress run",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint ."
   },
-  "pre-commit": [
-    "lint"
-  ],
+  "pre-commit": {
+     "run": "lint",
+  },
   "keywords": [],
   "author": "",
   "license": "Apache 2.0",
