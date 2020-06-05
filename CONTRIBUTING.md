@@ -160,6 +160,15 @@ update /etc/hosts
 127.0.0.1 mesherylocal.layer5.io
 ```
 
+### UI Lint Rules 
+
+We are using ES-Lint to maintain code quality & consistency in our UI Code. To make sure your PR passes all the UI & ES-Lint Tests, please see below :
+
+- Remember to run `make run-ui-lint` & `make run-provider-ui-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
+- The above commands will only fix some basic indenting rules for you, you will have to manually check your code to ensure there is no duplications, un-used variables or un-declared constants.
+- We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
+- In case you are unable to fix your lint errors, ping us on our [Slack](layer5.slack.io).
+
 # <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).
 
