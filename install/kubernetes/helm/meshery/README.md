@@ -18,12 +18,12 @@ The chart bootstraps a single nodes Meshery deployment on Kubernetes cluster usi
 
 ```
 $ kubectl create namespace meshery
-$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+$ helm repo add meshery https://meshery.io/charts/
+$ helm install meshery --namespace meshery meshery/meshery
 ```
 
 
-<details>
-<summary>Check the resource.</summary>
+## Check the resource
 
 ```
 # Check the resource
@@ -61,8 +61,6 @@ $ helm ls -n meshery
 NAME   	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART        	APP VERSION
 meshery	meshery  	1       	2020-01-22 11:53:20.407751 +0800 CST	deployed	meshery-0.1.0	latest
 ```
-
-</details>
 
 
 
