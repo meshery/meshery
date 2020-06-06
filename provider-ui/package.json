@@ -66,7 +66,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^2.5.1",
-    "http-proxy": "^1.17.0",
+    "http-proxy": "^1.18.1",
     "nodemon": "^1.19.4"
   }
 }
