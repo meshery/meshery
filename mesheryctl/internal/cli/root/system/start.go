@@ -17,9 +17,12 @@ package system
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
+
+	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -39,19 +42,20 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		utils.PreReqCheck()
-
+		return utils.PreReqCheck()
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				log.Fatal(err)
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.MesheryFolder)))
 			}
 		}
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				log.Fatal("start cmd: ", err)
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 			}
 		}
 
@@ -60,12 +64,18 @@ var startCmd = &cobra.Command{
 		if skipUpdateFlag {
 			log.Info("Skipping Meshery update...")
 		} else {
-			updateMesheryContainers()
+			err := updateMesheryContainers()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+			}
 		}
 
 		// Reset Meshery config file to default settings
 		if utils.ResetFlag {
-			resetMesheryConfig()
+			err := resetMesheryConfig()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+			}
 		}
 
 		log.Info("Starting Meshery...")
@@ -74,20 +84,19 @@ var startCmd = &cobra.Command{
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			log.Fatal("Error starting meshery:", err)
-			return
+			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
 		cli, err := client.NewEnvClient()
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, utils.SystemError("failed to create new env client"))
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
 		}
 
 		//check for container meshery_meshery_1 running status
@@ -100,19 +109,19 @@ var startCmd = &cobra.Command{
 					// Meshery running on Windows host
 					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 					if err != nil {
-						log.Fatal(err)
+						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
 				} else if runtime.GOOS == "linux" {
 					// Meshery running on Linux host
 					err = exec.Command("xdg-open", url).Start()
 					if err != nil {
-						log.Fatal(err)
+						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
 				} else {
 					// Assume Meshery running on MacOS host
 					err = exec.Command("open", url).Start()
 					if err != nil {
-						log.Fatal(err)
+						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
 				}
 
@@ -131,7 +140,7 @@ var startCmd = &cobra.Command{
 			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
-				log.Fatal(err)
+				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
 			}
 			scanner := bufio.NewScanner(cmdReader)
 			go func() {
@@ -140,13 +149,13 @@ var startCmd = &cobra.Command{
 				}
 			}()
 			if err := cmdlog.Start(); err != nil {
-				log.Fatal(err)
+				return errors.Wrap(err, utils.SystemError("failed to start logging"))
 			}
 			if err := cmdlog.Wait(); err != nil {
-				log.Fatal(err)
+				return errors.Wrap(err, utils.SystemError("failed to wait for command to execute"))
 			}
 		}
-
+		return nil
 	},
 }
 

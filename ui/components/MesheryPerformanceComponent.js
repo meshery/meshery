@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider, TextareaAutosize,
+  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
@@ -81,7 +81,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig
     } = props;
 
     this.state = {
@@ -135,7 +135,7 @@ class MesheryPerformanceComponent extends React.Component {
   handleSubmit = () => {
     
     const {
-      url, t, testName, meshName
+      url, t
     } = this.state;
 
     if (url === '') {
@@ -199,7 +199,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     return (result) => {
       const {
-        testName, meshName, url, qps, c, t, loadGenerator, testUUID,
+        testName, meshName, url, qps, c, t, loadGenerator,
       } = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         self.props.enqueueSnackbar('Successfully fetched the data.', {
@@ -327,8 +327,6 @@ class MesheryPerformanceComponent extends React.Component {
 
   scanForMeshes = () => {
     const self = this;
-    const { selectedMesh } = this.state;
-    const { availableAdapters } = this.state;
 
     if (typeof self.props.k8sConfig === 'undefined' || !self.props.k8sConfig.clusterConfigured) {
       return;

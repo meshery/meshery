@@ -1,7 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 import {
-  NoSsr, Grow, Paper, Button, Popper, TextField, MenuItem, Grid, Popover, Dialog, DialogContent, DialogContentText, DialogActions, FormControl, FormLabel, FormGroup, DialogTitle, Divider, FormControlLabel, Switch,
+  NoSsr, Button, TextField, MenuItem, Grid, Dialog, DialogContent, DialogContentText, DialogActions, DialogTitle, Divider, FormControlLabel, Switch,
 } from '@material-ui/core';
 import Moment from 'react-moment';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -93,7 +93,7 @@ class GrafanaDateRangePicker extends Component {
     };
   }
 
-    handleClick = (event) => {
+    handleClick = () => {
       this.setState({
         open: true,
       });
@@ -468,7 +468,7 @@ class GrafanaDateRangePicker extends Component {
     //     this.setState(state => ({ open: !state.open }));
     // };
 
-    handleClose = (event) => {
+    handleClose = () => {
       // if (this.anchorEl.contains(event.target)) {
       //     return;
       // }

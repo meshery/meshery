@@ -332,8 +332,7 @@ class PrometheusSelectionComponent extends Component {
                         self.boardChange(value);
                       }, 1000);
                     }}
-                    onChange={(editor, data, value) => {
-
+                    onChange={() => {
                     }}
                   />
                 </Grid>
@@ -444,7 +443,7 @@ PrometheusSelectionComponent.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
 
 export default withStyles(promStyles)(connect(
   mapStateToProps,

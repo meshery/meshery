@@ -2,15 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
-  withStyles, Typography, Button, Divider, ExpansionPanelDetails, MenuItem, TextField, Grid, ListItemIcon,
+  withStyles, Button, Divider, MenuItem, TextField, Grid,
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
-import { ExpansionPanel, ExpansionPanelSummary } from './ExpansionPanels';
 
 const styles = (theme) => ({
   icon: {
@@ -139,33 +137,32 @@ class MesheryPlayComponent extends React.Component {
     const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-    if (adapter && adapter.name) {
-      switch (adapter.name.toLowerCase()) {
+    if(adapter && adapter.name){
+      switch (adapter.name.toLowerCase()){
         case 'istio':
-          image = '/static/img/istio-blue.svg';
+          image = "/static/img/istio-blue.svg";
           imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
           break;
         case 'linkerd':
-          image = '/static/img/linkerd.svg';
+          image = "/static/img/linkerd.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'consul':
-          image = '/static/img/consul.svg';
+          image = "/static/img/consul.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'network service mesh':
-          image = '/static/img/nsm.svg';
+          image = "/static/img/nsm.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
         case 'octarine':
-          image = '/static/img/octarine.svg';
+          image = "/static/img/octarine.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
-        case 'citrix':
-          image = '/static/img/citrix.svg';
+        case 'citrix service mesh':
+          image = "/static/img/citrix.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
-        // default:
       }
     }
     return imageIcon;
@@ -185,7 +182,7 @@ class MesheryPlayComponent extends React.Component {
   }
 
   renderIndividualAdapter() {
-    const { meshAdapters, classes } = this.props;
+    const { meshAdapters } = this.props;
     let adapCount = 0;
     let adapter;
     meshAdapters.forEach((adap) => {
@@ -209,7 +206,7 @@ class MesheryPlayComponent extends React.Component {
 
   render() {
     const {
-      classes, color, iconButtonClassName, avatarClassName, k8sconfig, meshAdapters,
+      classes, k8sconfig, meshAdapters,
     } = this.props;
     let { adapter } = this.state;
 
@@ -258,7 +255,7 @@ class MesheryPlayComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleAdapterChange()}
                 >
-                  {meshAdapters.map((ada, ind) => (
+                  {meshAdapters.map((ada) => (
                     <MenuItem key={`${ada.adapter_location}_${new Date().getTime()}`} value={ada.adapter_location}>
                       {/* <ListItemIcon> */}
                       {self.pickImage(ada)}
@@ -293,9 +290,7 @@ MesheryPlayComponent.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  // updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-});
+const mapDispatchToProps = () => ({});
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig').toJS();

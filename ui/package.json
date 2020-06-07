@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ui_dev_server.js",
+    "dev": "eslint . && nodemon ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",

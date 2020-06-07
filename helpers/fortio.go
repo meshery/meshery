@@ -35,18 +35,21 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error)
 	// }
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
-	for key, val := range *opts.Headers {
-		err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
-		if err != nil {
-			return nil, err
+
+	if opts.Headers != nil {
+		for key, val := range *opts.Headers {
+			err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	cookies := ""
-	for key, val := range *opts.Cookies {
-		cookies += fmt.Sprintf(" %s=%s;", key, val)
-	}
-	if len(*opts.Cookies) > 0 {
+	if opts.Cookies != nil {
+		cookies := ""
+		for key, val := range *opts.Cookies {
+			cookies += fmt.Sprintf(" %s=%s;", key, val)
+		}
 		err := httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
 		if err != nil {
 			return nil, err

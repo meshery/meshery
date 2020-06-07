@@ -8,7 +8,6 @@ import blue from '@material-ui/core/colors/blue';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import CreatableSelect from 'react-select/lib/Creatable';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import ReactSelectWrapper from './ReactSelectWrapper';
@@ -125,7 +124,7 @@ class MeshAdapterConfigComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleMeshLocURLChange = (newValue, actionMeta) => {
+  handleMeshLocURLChange = (newValue) => {
     // console.log(newValue);
     // console.log(`action: ${actionMeta.action}`);
     // console.groupEnd();
@@ -133,17 +132,6 @@ class MeshAdapterConfigComponent extends React.Component {
       this.setState({ meshLocationURL: newValue, meshLocationURLError: false });
     }
   };
-
-  handleInputChange = (inputValue, actionMeta) => {
-    // console.log(inputValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-
-    // TODO: try to submit it and get
-    // if (typeof inputValue !== 'undefined'){
-    //   this.setState({meshLocationURL: inputValue});
-    // }
-  }
 
   handleSubmit = () => {
     const { meshLocationURL } = this.state;
@@ -286,36 +274,34 @@ class MeshAdapterConfigComponent extends React.Component {
     if (meshAdapters.length > 0) {
       showAdapters = (
         <div className={classes.alignRight}>
-          {meshAdapters.map((adapter, ind) => {
+          {meshAdapters.map((adapter) => {
             let image = '/static/img/meshery-logo.png';
             let logoIcon = (<img src={image} className={classes.icon} />);
-            switch (adapter.name.toLowerCase()) {
+            switch (adapter.name.toLowerCase()){
               case 'istio':
-                image = '/static/img/istio-blue.svg';
+                image = "/static/img/istio-blue.svg";
                 logoIcon = (<img src={image} className={classes.istioIcon} />);
                 break;
               case 'linkerd':
-                image = '/static/img/linkerd.svg';
+                image = "/static/img/linkerd.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'consul':
-                image = '/static/img/consul.svg';
-                logoIcon = (<img src={image} className={classes.icon} />);
+                image = "/static/img/consul.svg";
+                logoIcon = (<img src={image} className={classes.icon} />)
                 break;
               case 'network service mesh':
-                image = '/static/img/nsm.svg';
+                image = "/static/img/nsm.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
                 break;
               case 'octarine':
-                image = '/static/img/octarine.svg';
+                image = "/static/img/octarine.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-                break;
-              case 'citrix':
-                image = '/static/img/citrix.svg';
+                break;  
+              case 'citrix service mesh':
+                image = "/static/img/citrix.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-                break;
-
-              // default:
+                break;                
             }
 
             return (
@@ -343,36 +329,14 @@ class MeshAdapterConfigComponent extends React.Component {
           <Grid container spacing={1} alignItems="flex-end">
             <Grid item xs={12}>
 
-              {/* <CreatableSelect
-          isClearable
-          onChange={this.handleMeshLocURLChange}
-          onInputChange={this.handleInputChange}
-          options={availableAdapters}
-        /> */}
-
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
-                onInputChange={this.handleInputChange}
                 options={availableAdapters}
                 value={meshLocationURL}
                 // placeholder={'Mesh Adapter URL'}
                 label="Mesh Adapter URL"
                 error={meshLocationURLError}
               />
-
-              {/* <TextField
-          required
-          id="meshLocationURL"
-          name="meshLocationURL"
-          label="Mesh Adapter Location"
-          type="url"
-          fullWidth
-          value={meshLocationURL}
-          error={meshLocationURLError}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('meshLocationURL')}
-        /> */}
             </Grid>
           </Grid>
           <React.Fragment>
@@ -390,27 +354,12 @@ class MeshAdapterConfigComponent extends React.Component {
             </div>
           </React.Fragment>
         </div>
-
-        {/* <LoadTestTimerDialog open={timerDialogOpen}
-    t={t}
-    onClose={this.handleTimerDialogClose}
-    countDownComplete={this.handleTimerDialogClose} />
-
-  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-      Results
-    </Typography>
-  <MesheryChart data={result} />     */}
-
       </NoSsr>
     );
   }
 
   render() {
-    const { reconfigureCluster } = this.state;
-    // if (reconfigureCluster) {
     return this.configureTemplate();
-    // }
-    // return this.alreadyConfiguredTemplate();
   }
 }
 

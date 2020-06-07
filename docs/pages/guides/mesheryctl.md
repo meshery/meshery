@@ -7,12 +7,12 @@ type: guide
 ---
 ### Global Commands and Flags
 
-| command           | flag      | function                                                     | Usage                     |
-|:------------------|:---------:|:-------------------------------------------------------------|:--------------------------|
-|mesheryctl         |           | Displays help about any command.                             | `mesheryctl system version` |
-|                   | version   | Displays the version of the Meshery Client (`mesheryctl`) and the SHA of the release binary.     | `mesheryctl system version` |
-|                   | help      | Displays help about any command. | `mesheryctl --help` |
-
+| command           | flag                | function                                                     | Usage                     |
+|:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
+|mesheryctl         |                     | Displays help about any command.                             | `mesheryctl` |
+|                   | version             | Displays the version of the Meshery Client (`mesheryctl`) and the SHA of the release binary. | `mesheryctl system version` |
+|                   | help                | Displays help about any command. | `mesheryctl --help` |
+|                   | --mesheryctl-config | (optional) path to Meshery Client (`mesheryctl`) configuration file (`~/.meshery/mesheryctl.yaml`) to overrides defaults. | `mesheryctl perf <args> --mesheryctl-config=~/.meshery/mesheryctl.yaml` |
 
 ### Meshery Lifecycle Management
 

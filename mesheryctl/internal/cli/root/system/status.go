@@ -18,6 +18,8 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/pkg/errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -30,7 +32,7 @@ var statusCmd = &cobra.Command{
 	Short: "Check Meshery status",
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Meshery status...")
 
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
@@ -38,7 +40,8 @@ var statusCmd = &cobra.Command{
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, utils.SystemError("failed to start meshery"))
 		}
+		return nil
 	},
 }
