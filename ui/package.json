@@ -46,7 +46,7 @@
     "notistack": "^0.8.2",
     "prop-types": "latest",
     "react": "^16.12.0",
-    "react-codemirror2": "^5.1.0",
+    "react-codemirror2": "^7.2.1",
     "react-countdown-clock": "^2.6.0",
     "react-dom": "^16.12.0",
     "react-jss": "^8.1.0",
