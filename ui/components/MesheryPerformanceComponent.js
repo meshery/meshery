@@ -19,11 +19,6 @@ import MesheryChart from './MesheryChart';
 import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 
-let uuid;
-if (typeof window !== 'undefined') {
-  uuid = require('uuid/v4');
-}
-
 
 const meshes = [
   'Istio',
@@ -339,6 +334,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   generateUUID() {
+    const { v4: uuid } = require('uuid');
     return uuid();
   }
 
