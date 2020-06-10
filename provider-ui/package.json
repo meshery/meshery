@@ -21,7 +21,7 @@
     "@material-ui/pickers": "^3.2.8",
     "@zeit/next-css": "^1.0.1",
     "babel-eslint": "^10.1.0",
-    "caniuse-lite": "^1.0.30001048",
+    "caniuse-lite": "^1.0.30001079",
     "isomorphic-unfetch": "^3.0.0",
     "js-yaml": "^3.13.1",
     "jsonlint-mod": "^1.7.4",
