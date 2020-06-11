@@ -1,5 +1,5 @@
 import React from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import Head from 'next/head';
 import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -29,7 +29,7 @@ import 'codemirror/addon/lint/lint.css';
 // import 'billboard.js/dist/theme/graph.min.css';
 import 'billboard.js/dist/billboard.min.css';
 
-import { blueGrey, grey } from '@material-ui/core/colors';
+import { blueGrey } from '@material-ui/core/colors';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import dataFetch from '../lib/data-fetch';
 
@@ -258,7 +258,6 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    const self = this;
     dataFetch('/api/config/sync', { 
       credentials: 'same-origin',
       method: 'GET',

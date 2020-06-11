@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ui_dev_server.js",
+    "dev": "eslint . && nodemon ui_dev_server.js",
     "lint": "eslint --fix .",
     "next": "next",
     "build": "next build",
@@ -31,7 +31,7 @@
     "caniuse-lite": "^1.0.30001048",
     "classnames": "^2.2.6",
     "codemirror": "^5.53.2",
-    "eslint-loader": "^3.0.3",
+    "eslint-loader": "^4.0.2",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
     "js-yaml": "^3.13.1",
@@ -58,7 +58,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-jsx": "latest",
-    "uuid": "^3.3.2"
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "@babel/traverse": "^7.9.6",

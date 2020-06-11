@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider, TextareaAutosize,
+  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
@@ -18,11 +18,6 @@ import dataFetch from '../lib/data-fetch';
 import MesheryChart from './MesheryChart';
 import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
-
-let uuid;
-if (typeof window !== 'undefined') {
-  uuid = require('uuid/v4');
-}
 
 
 const meshes = [
@@ -135,7 +130,7 @@ class MesheryPerformanceComponent extends React.Component {
   handleSubmit = () => {
     
     const {
-      url, t, testName, meshName
+      url, t
     } = this.state;
 
     if (url === '') {
@@ -199,7 +194,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     return (result) => {
       const {
-        testName, meshName, url, qps, c, t, loadGenerator, testUUID,
+        testName, meshName, url, qps, c, t, loadGenerator,
       } = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         self.props.enqueueSnackbar('Successfully fetched the data.', {
@@ -327,8 +322,6 @@ class MesheryPerformanceComponent extends React.Component {
 
   scanForMeshes = () => {
     const self = this;
-    const { selectedMesh } = this.state;
-    const { availableAdapters } = this.state;
 
     if (typeof self.props.k8sConfig === 'undefined' || !self.props.k8sConfig.clusterConfigured) {
       return;
@@ -352,6 +345,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   generateUUID() {
+    const { v4: uuid } = require('uuid');
     return uuid();
   }
 

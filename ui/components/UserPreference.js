@@ -11,7 +11,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateUser, updateProgress } from '../lib/store';
 
 
-const styles = (theme) => ({
+const styles = () => ({
   formContainer: {
     margin: 50,
   },
@@ -40,7 +40,7 @@ class UserPreference extends React.Component {
     this.handleChange(name);
   };
 
-  handleError = (msg) => (error) => {
+  handleError = (msg) => () => {
     const self = this;
     this.props.updateProgress({ showProgress: false });
     this.props.enqueueSnackbar(msg, {

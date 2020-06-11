@@ -7,7 +7,7 @@ import StepButton from '@material-ui/core/StepButton';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { Divider, StepLabel, Icon } from '@material-ui/core';
+import { Divider, StepLabel } from '@material-ui/core';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';

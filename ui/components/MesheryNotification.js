@@ -1,9 +1,8 @@
 import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
-  Badge, Drawer, Tooltip, Divider, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Icon,
+  Badge, Drawer, Tooltip, Divider, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
 } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
@@ -129,15 +128,15 @@ class MesheryNotification extends React.Component {
 
   handleError() {
     const self = this;
-    return (e) => {
+    return () => {
       self.closeEventStream();
       // check if server is available
-      dataFetch('/api/user', { credentials: 'same-origin' }, (user) => {
+      dataFetch('/api/user', { credentials: 'same-origin' }, () => {
         // attempting to reestablish connection
         // setTimeout(() => function() {
         self.startEventStream();
         // }, 2000);
-      }, (error) => {
+      }, () => {
         // do nothing here
       });
     };
@@ -172,7 +171,7 @@ class MesheryNotification extends React.Component {
     }
   }
 
-  handleDialogClose = (event) => {
+  handleDialogClose = () => {
     this.setState({ dialogShow: false });
   };
 

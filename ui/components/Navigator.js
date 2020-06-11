@@ -8,10 +8,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import CollectionsIcon from '@material-ui/icons/Collections';
-import LaptopIcon from '@material-ui/icons/Laptop';
-import TimerIcon from '@material-ui/icons/Timer';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Link from 'next/link';
 import { connect } from 'react-redux';
@@ -21,7 +17,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTerminal, faTachometerAlt, faSignal, faExternalLinkAlt, faChevronCircleLeft, faPollH,
+  faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 
@@ -265,11 +261,11 @@ const categories = [
         show: true,
       },
       {
-        id: 'Citrix',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: '/management/citrix',
-        title: 'Citrix',
-        link: false,
+        id: 'Citrix Service Mesh',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/citrix", 
+        title: 'Citrix Service Mesh',
+        link: false, 
         show: true,
       },
     ],
@@ -279,7 +275,7 @@ const categories = [
 class Navigator extends React.Component {
   constructor(props) {
     super(props);
-    const { meshAdapters, meshAdaptersts } = props;
+    const { meshAdapters } = props;
     this.state = {
       path: '',
       meshAdapters,
@@ -302,7 +298,6 @@ class Navigator extends React.Component {
   }
 
   updateAdaptersLink() {
-    const self = this;
     categories.forEach((cat, ind) => {
       if (cat.id === 'Management') {
         cat.children.forEach((catc, ind1) => {
@@ -383,37 +378,36 @@ class Navigator extends React.Component {
     const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let logoIcon = (<img src={image} className={classes.icon} />);
-    switch (aName) {
+    switch (aName){
       case 'istio':
-        image = '/static/img/istio-white.svg';
+        image = "/static/img/istio-white.svg";
         logoIcon = (<img src={image} className={classes.istioIcon} />);
         break;
       case 'linkerd':
-        image = '/static/img/linkerd-white.svg';
+        image = "/static/img/linkerd-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'consul':
-        image = '/static/img/consul-white.svg';
+        image = "/static/img/consul-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'network service mesh':
-        image = '/static/img/nsm-white.svg';
+        image = "/static/img/nsm-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'octarine':
-        image = '/static/img/octarine-white.svg';
+        image = "/static/img/octarine-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
-      case 'citrix':
-        image = '/static/img/citrix-light-gray.svg';
+      case 'citrix service mesh':
+        image = "/static/img/citrix-light-gray.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
-        // default:
     }
     return logoIcon;
   }
 
-    handleTitleClick = (event) => {
+    handleTitleClick = () => {
       this.props.router.push('/');
     }
 

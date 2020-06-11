@@ -5,3 +5,6 @@ static
 package.json
 package-lock.json
 nodemon.json
+lib/
+cypress/
+pages/_document.js
