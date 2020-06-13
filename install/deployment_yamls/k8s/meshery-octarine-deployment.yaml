@@ -1,5 +1,5 @@
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -10,6 +10,9 @@ metadata:
     io.kompose.service: meshery-octarine
   name: meshery-octarine
 spec:
+  selector:
+    matchLabels:
+      io.kompose.service: meshery-octarine
   replicas: 1
   strategy: {}
   template:
