@@ -18,32 +18,18 @@
   "dependencies": {
     "@material-ui/core": "^4.10.1",
     "@material-ui/icons": "^4.5.1",
-    "@material-ui/pickers": "^3.2.8",
-    "@zeit/next-css": "^1.0.1",
-    "babel-eslint": "^10.1.0",
-    "caniuse-lite": "^1.0.30001079",
     "isomorphic-unfetch": "^3.0.0",
-    "js-yaml": "^3.14.0",
-    "jsonlint-mod": "^1.7.4",
     "jss": "latest",
-    "minimist": ">=1.2.2",
     "next": "9.3.6",
-    "next-compose": "0.0.2",
-    "next-redux-wrapper": "^3.0.0-alpha.3",
     "prop-types": "latest",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-jss": "^8.1.0",
-    "react-select": "^2.4.3",
     "styled-jsx": "latest"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.21.1",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.20.0",
-    "eslint-plugin-react-hooks": "^2.5.1",
+    "babel-eslint": "^10.1.0",
     "http-proxy": "^1.18.1",
     "nodemon": "^1.19.4"
   }
