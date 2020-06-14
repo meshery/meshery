@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -44,7 +45,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      qps, c, t,
+      qps, c, t, loadTestPrefs,
     } = props;
 
     this.state = {
@@ -88,14 +89,12 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
     this.submitLoadTest();
   }
-
-  submitLoadTest = () => {
+    submitLoadTest = () => {
     const {
       qps, c, t, loadGenerator,
     } = this.state;
 
     const data = {
-
       qps,
       c,
       t,
@@ -142,53 +141,57 @@ class MesherySettingsPerformanceComponent extends React.Component {
       }
     }, this.handleError('There was an error sending your preference'));
   }
-
-
-  
-
-
-  closeEventStream() {
-    if (this.eventStream && this.eventStream.close) {
-      this.eventStream.close();
-      this.eventStream = null;
-    }
+    componentDidMount() {
+    this.getLoadTestPrefs();
   }
+      getLoadTestPrefs = () => {
+      const {
+        qps, c, t, loadGenerator
+      } = this.props;
+      const self = this;
+      dataFetch('/api/load-test-prefs', {
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, (result) => {
+        if (typeof result !== 'undefined') {
+          console.log(result.loadTestPrefs.qps);
+          self.props.updateLoadTestPref({
+            loadTestPref: {
+              qps: result.loadTestPrefs.qps,
+              c: result.loadTestPrefs.c,
+              t: result.loadTestPrefs.t,
+              loadGenerator: result.loadTestPrefs.gen,
+            },
+          });
+          self.setState({               
+            qps: result.loadTestPrefs.qps,
+            c: result.loadTestPrefs.c,
+            t: result.loadTestPrefs.t,
+            loadGenerator: result.loadTestPrefs.gen,
+          });
+        }
+      }, self.handleError('There was an error sending your preference'));
+      console.log(this.props.qps);
+    }
 
   handleError(msg) {
     const self = this;
     return (error) => {
       self.setState({ blockRunTest: false, timerDialogOpen: false });
-      self.closeEventStream();
       let finalMsg = msg;
       if (typeof error === 'string') {
         finalMsg = `${msg}: ${error}`;
       }
-      self.props.enqueueSnackbar(finalMsg, {
-        variant: 'error',
-        action: (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration: 8000,
-      });
     };
   }
 
-  handleTimerDialogClose = () => {
-    this.setState({ timerDialogOpen: false });
-  }
-
   render() {
+     const { classes } = this.props;
     const {
       timerDialogOpen, blockRunTest, qps, t, c, loadGenerator,
-      tError, classes
-    } = this.props;
+      tError,
+    } = this.state;
 
     return (
       <NoSsr>
@@ -299,8 +302,15 @@ const mapDispatchToProps = (dispatch) => ({
 
 });
 
+const mapStateToProps = (state) => {
 
+  const loadTestPref = state.get('loadTestPref').toJS();
+  return {
+    ...loadTestPref,
+  };
+};
 
 
 export default withStyles(styles)(connect(
+    mapStateToProps,
 )(withSnackbar(MesherySettingsPerformanceComponent)));
