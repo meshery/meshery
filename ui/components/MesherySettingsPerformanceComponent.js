@@ -45,14 +45,14 @@ class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      qps, c, t, loadTestPrefs,
+      qps, c, t, loadTestPrefs, gen,
     } = props;
 
     this.state = {
       qps,
       c,
       t,
-      loadGenerator: 'fortio',
+      gen,
 
       timerDialogOpen: false,
       blockRunTest: false,
@@ -91,14 +91,14 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
     submitLoadTest = () => {
     const {
-      qps, c, t, loadGenerator,
+      qps, c, t, gen,
     } = this.state;
 
     const data = {
       qps,
       c,
       t,
-      loadGenerator,
+      gen,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
     // this.startEventStream(`/api/load-test-prefs?${params}`);
@@ -161,18 +161,17 @@ class MesherySettingsPerformanceComponent extends React.Component {
               qps: result.loadTestPrefs.qps,
               c: result.loadTestPrefs.c,
               t: result.loadTestPrefs.t,
-              loadGenerator: result.loadTestPrefs.gen,
+              gen: result.loadTestPrefs.gen,
             },
           });
           self.setState({               
             qps: result.loadTestPrefs.qps,
             c: result.loadTestPrefs.c,
             t: result.loadTestPrefs.t,
-            loadGenerator: result.loadTestPrefs.gen,
+            gen: result.loadTestPrefs.gen,
           });
         }
       }, self.handleError('There was an error sending your preference'));
-      console.log(this.props.qps);
     }
 
   handleError(msg) {
@@ -187,13 +186,15 @@ class MesherySettingsPerformanceComponent extends React.Component {
   }
 
   render() {
-     const { classes } = this.props;
+    const { classes } = this.props;
     const {
-      timerDialogOpen, blockRunTest, qps, t, c, loadGenerator,
+      timerDialogOpen, blockRunTest, qps, t, c, gen,
       tError,
     } = this.state;
+    console.log(gen);
 
     return (
+
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
@@ -248,7 +249,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
               <Grid item xs={12} sm={4}>
                 <FormControl component="loadGenerator" className={classes.formControl}>
                   <label><strong>Default Load Generator</strong></label>
-                  <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
+                  <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={gen} onChange={this.handleChange('gen')} row>
                     {loadGenerators.map((lg) => (
                       <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
                     ))}

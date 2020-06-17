@@ -59,7 +59,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "please provide a valid value for c", http.StatusBadRequest)
 		return
 	}
-	gen := req.FormValue("loadGenerator")
+	gen := req.FormValue("gen")
 	genTrack := false
 	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
 	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG} {
