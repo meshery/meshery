@@ -8,6 +8,7 @@ import (
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -93,6 +94,8 @@ type MesheryResult struct {
 
 // ConvertToSpec - converts meshery result to SMP
 func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
+	a := &SMPS.PerformanceTestConfig{}
+	logrus.Debugf("%v", a)
 	b := &PerformanceSpec{
 		Env:     &Environment{},
 		Client:  &MeshClientConfig{},
