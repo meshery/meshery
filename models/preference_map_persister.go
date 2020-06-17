@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/copier"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -26,6 +27,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	data := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
+		LoadTestPreferences:  map[string]*SMPS.PerformanceTestConfig{},
 	}
 
 	if s.db == nil {

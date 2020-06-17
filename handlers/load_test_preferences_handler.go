@@ -8,6 +8,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/gofrs/uuid"
 	duration "github.com/golang/protobuf/ptypes/duration"
 	"github.com/layer5io/meshery/models"
 	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
@@ -124,12 +125,9 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		Nanos:   int32(durT.Nanoseconds()),
 	}
 
-	prefObj.LoadTestPreferences = &models.LoadTestPreferences{
-		ConcurrentRequests: c,
-		Duration:           dur,
-		QueriesPerSecond:   qps,
-		LoadGenerator:      gen,
-	}
+	newUid, _ := uuid.NewV4()
+	prefObj.LoadTestPreferences[newUid.String()] = testConfig
+
 	if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
 		logrus.Errorf("unable to save user preferences: %v", err)
 		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
