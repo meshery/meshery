@@ -55,6 +55,13 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 			return
 		}
 
+		endpoint := req.FormValue("endpoint")
+		if endpoint == "" {
+			logrus.Error("unable to find endpoint")
+			http.Error(w, "please provide a value for endpoint", http.StatusBadRequest)
+			return
+		}
+
 		cu := req.FormValue("c")
 		c, err := strconv.Atoi(cu)
 		if err != nil {
@@ -99,14 +106,17 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 
 		headersString := req.FormValue("headers")
 		cookiesString := req.FormValue("cookies")
+		labelsString := req.FormValue("labels")
 		contentType := req.FormValue("contentType")
 		bodyString := req.FormValue("reqBody")
 
 		headersPtr := h.jsonToMap(headersString)
 		cookiesPtr := h.jsonToMap(cookiesString)
+		labelsPtr := h.jsonToMap(labelsString)
 
 		headers := make(map[string]string)
 		cookies := make(map[string]string)
+		labels := make(map[string]string)
 
 		if headersPtr != nil {
 			headers = *headersPtr
@@ -114,8 +124,12 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		if cookiesPtr != nil {
 			cookies = *cookiesPtr
 		}
+		if labelsPtr != nil {
+			labels = *labelsPtr
+		}
 
 		testConfig := &SMPS.PerformanceTestConfig{}
+		testConfig.Labels = labels
 		testConfig.Clients = []*SMPS.PerformanceTestConfig_Client{}
 		testConfig.Clients = append(testConfig.Clients, &SMPS.PerformanceTestConfig_Client{
 			Protocol:      protocol,
@@ -126,6 +140,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 			Headers:       headers,
 			Cookies:       cookies,
 			LoadGenerator: loadGen,
+			EndpointUrl:   endpoint,
 		})
 		testConfig.Duration = &duration.Duration{
 			Seconds: int64(durT.Seconds()),
