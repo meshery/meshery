@@ -7,12 +7,26 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/golang/protobuf/jsonpb"
+
 	duration "github.com/golang/protobuf/ptypes/duration"
 	"github.com/layer5io/meshery/models"
 	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+
+type custTestConf struct {
+	Val *SMPS.PerformanceTestConfig
+}
+
+func (c *custTestConf) MarshalJSON() ([]byte, error) {
+	m := jsonpb.Marshaler{
+		EmitDefaults: true,
+	}
+	val, err := m.MarshalToString(c.Val)
+	return []byte(val), err
+}
 
 // LoadTestPrefencesHandler is used for persisting load test preferences
 func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -115,7 +129,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		})
 		testConfig.Duration = &duration.Duration{
 			Seconds: int64(durT.Seconds()),
-			Nanos:   int32(durT.Nanoseconds()),
+			// Nanos:   int32(durT.Nanoseconds()),
 		}
 
 		tid, err := prefObj.CreateUpdateLoadTestConfig(testConfig)
@@ -143,7 +157,13 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		testUUID := req.URL.Query().Get("uuid")
 		if testUUID == "" {
 			testObj := prefObj.ReadAllLoadTestConfig()
-			body, err := json.Marshal(testObj)
+			custTestObjs := []*custTestConf{}
+			for _, tst := range testObj {
+				custTestObjs = append(custTestObjs, &custTestConf{
+					Val: tst,
+				})
+			}
+			body, err := json.Marshal(&custTestObjs)
 			if err != nil {
 				logrus.Error("error reading database")
 				http.Error(w, "error reading database", http.StatusInternalServerError)
@@ -152,16 +172,18 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 			_, _ = w.Write(body)
 		} else {
 			testObj := prefObj.ReadLoadTestConfig(testUUID)
-			body, err := json.Marshal(testObj)
-			if err != nil {
-				logrus.Error("error reading database")
+			if testObj == nil {
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+			m := jsonpb.Marshaler{
+				EmitDefaults: true,
+			}
+			if err := m.Marshal(w, testObj); err != nil {
+				logrus.Error("error reading database: %v", err)
 				http.Error(w, "error reading database", http.StatusInternalServerError)
 				return
 			}
-			if testObj == nil {
-				w.WriteHeader(http.StatusNotFound)
-			}
-			_, _ = w.Write(body)
 		}
 	} else {
 		w.WriteHeader(http.StatusNotFound)
