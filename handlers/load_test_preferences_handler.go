@@ -104,6 +104,8 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 			return
 		}
 
+		testUUID := req.FormValue("uuid")
+
 		headersString := req.FormValue("headers")
 		cookiesString := req.FormValue("cookies")
 		labelsString := req.FormValue("labels")
@@ -129,6 +131,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 		}
 
 		testConfig := &SMPS.PerformanceTestConfig{}
+		testConfig.Id = testUUID
 		testConfig.Labels = labels
 		testConfig.Clients = []*SMPS.PerformanceTestConfig_Client{}
 		testConfig.Clients = append(testConfig.Clients, &SMPS.PerformanceTestConfig_Client{
