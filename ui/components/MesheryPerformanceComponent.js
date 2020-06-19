@@ -454,7 +454,6 @@ class MesheryPerformanceComponent extends React.Component {
                     id="testName"
                     name="testName"
                     label="Test Name"
-                    autoFocus
                     fullWidth
                     value={testName}
                     margin="normal"
@@ -494,7 +493,6 @@ class MesheryPerformanceComponent extends React.Component {
                   name="url"
                   label="URL to test"
                   type="url"
-                  autoFocus
                   fullWidth
                   value={url}
                   error={urlError}
@@ -561,7 +559,6 @@ class MesheryPerformanceComponent extends React.Component {
                           id="headers"
                           name="headers"
                           label="Request Headers"
-                          autoFocus
                           fullWidth
                           value={headers}
                           multiline
@@ -576,7 +573,6 @@ class MesheryPerformanceComponent extends React.Component {
                           id="cookies"
                           name="cookies"
                           label="Request Cookies"
-                          autoFocus
                           fullWidth
                           value={cookies}
                           multiline
@@ -591,7 +587,6 @@ class MesheryPerformanceComponent extends React.Component {
                           id="contentType"
                           name="contentType"
                           label="Content Type"
-                          autoFocus
                           fullWidth
                           value={contentType}
                           multiline
@@ -606,7 +601,6 @@ class MesheryPerformanceComponent extends React.Component {
                           id="cookies"
                           name="cookies"
                           label="Request Body"
-                          autoFocus
                           fullWidth
                           value={reqBody}
                           multiline
