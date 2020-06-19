@@ -620,7 +620,7 @@ class MesheryPerformanceComponent extends React.Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               </Grid>
-                <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>
                   <FormLabel component="loadGenerator">Load generator</FormLabel>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
