@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider,
+  NoSsr, Tooltip, MenuItem, IconButton, CircularProgress, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Divider, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
@@ -53,6 +53,10 @@ const styles = (theme) => ({
   button: {
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
+  },
+  expansionPanel: {
+    boxShadow:'none',
+    border: '1px solid rgb(196,196,196)',
   },
   margin: {
     margin: theme.spacing(1),
@@ -113,6 +117,7 @@ class MesheryPerformanceComponent extends React.Component {
       || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
       this.setState({ tError: false });
     }
+
     this.setState({ [name]: event.target.value });
   };
 
@@ -497,66 +502,6 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('url')}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="headers"
-                  name="headers"
-                  label="Request Headers"
-                  autoFocus
-                  fullWidth
-                  value={headers}
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('headers')}
-                >
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="cookies"
-                  name="cookies"
-                  label="Request Cookies"
-                  autoFocus
-                  fullWidth
-                  value={cookies}
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('cookies')}
-                >
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="contentType"
-                  name="contentType"
-                  label="Content Type"
-                  autoFocus
-                  fullWidth
-                  value={contentType}
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('contentType')}
-                >
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="cookies"
-                  name="cookies"
-                  label="Request Body"
-                  autoFocus
-                  fullWidth
-                  value={reqBody}
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('reqBody')}
-                >
-                </TextField>
-              </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
                   required
@@ -612,6 +557,77 @@ class MesheryPerformanceComponent extends React.Component {
                     ))}
                   </RadioGroup>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} gutterBottom>
+                <ExpansionPanel className={classes.expansionPanel}>
+                  <ExpansionPanelSummary expanded={true}>
+                    <Typography align="center" color="textSecondary" varient="h6">More Options</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="headers"
+                          name="headers"
+                          label="Request Headers"
+                          autoFocus
+                          fullWidth
+                          value={headers}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange('headers')}
+                        >
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="cookies"
+                          name="cookies"
+                          label="Request Cookies"
+                          autoFocus
+                          fullWidth
+                          value={cookies}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange('cookies')}
+                        >
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="contentType"
+                          name="contentType"
+                          label="Content Type"
+                          autoFocus
+                          fullWidth
+                          value={contentType}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange('contentType')}
+                        >
+                        </TextField>
+                      </Grid>
+                      <Grid item xs={12} sm={12}>
+                        <TextField
+                          id="cookies"
+                          name="cookies"
+                          label="Request Body"
+                          autoFocus
+                          fullWidth
+                          value={reqBody}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange('reqBody')}
+                        >
+                        </TextField>
+                      </Grid>
+                    </Grid>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
               </Grid>
             </Grid>
             <React.Fragment>
