@@ -140,6 +140,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
         });
       }
     }, this.handleError('There was an error sending your preference'));
+        window.location.reload(true);
   }
     componentDidMount() {
     this.getLoadTestPrefs();
@@ -172,6 +173,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
           });
         }
       }, self.handleError('There was an error sending your preference'));
+
     }
 
   handleError(msg) {

@@ -77,6 +77,9 @@ class MesherySettings extends React.Component {
         case 'metrics': 
           tabVal = 2;
           break;
+        case 3:
+          newRoute+='#performance'
+          break;
       }
     }
     this.state = {
