@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MesheryChart from './MesheryChart';
@@ -55,8 +56,8 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(1),
   },
   expansionPanel: {
-    boxShadow:'none',
-    border: '1px solid rgb(196,196,196)',
+    // boxShadow:'none',
+    // border: '1px solid rgb(196,196,196)',
   },
   margin: {
     margin: theme.spacing(1),
@@ -548,20 +549,10 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl component="loadGenerator" className={classes.formControl}>
-                  <FormLabel component="loadGenerator">Load generator</FormLabel>
-                  <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
-                    {loadGenerators.map((lg) => (
-                      <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
               <Grid item xs={12} sm={12} gutterBottom>
                 <ExpansionPanel className={classes.expansionPanel}>
-                  <ExpansionPanelSummary expanded={true}>
-                    <Typography align="center" color="textSecondary" varient="h6">More Options</Typography>
+                  <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon/>}>
+                    <Typography align="center" color="textSecondary" varient="h6">Advanced Options</Typography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <Grid container spacing={1}>
@@ -628,6 +619,16 @@ class MesheryPerformanceComponent extends React.Component {
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
+              </Grid>
+                <Grid item xs={12} sm={4}>
+                <FormControl component="loadGenerator" className={classes.margin}>
+                  <FormLabel component="loadGenerator">Load generator</FormLabel>
+                  <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
+                    {loadGenerators.map((lg) => (
+                      <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
               </Grid>
             </Grid>
             <React.Fragment>
