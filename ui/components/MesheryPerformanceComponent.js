@@ -56,8 +56,8 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(1),
   },
   expansionPanel: {
-    // boxShadow:'none',
-    // border: '1px solid rgb(196,196,196)',
+    boxShadow:'none',
+    border: '1px solid rgb(196,196,196)',
   },
   margin: {
     margin: theme.spacing(1),
