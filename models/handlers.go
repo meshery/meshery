@@ -60,6 +60,7 @@ type HandlerInterface interface {
 
 	LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }

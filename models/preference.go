@@ -4,7 +4,9 @@ import (
 	"encoding/gob"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/grafana-tools/sdk"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 )
 
 // K8SConfig represents all the k8s session config
@@ -76,14 +78,15 @@ type LoadTestPreferences struct {
 
 // Preference represents the data stored in session / local DB
 type Preference struct {
-	K8SConfig            *K8SConfig           `json:"k8sConfig,omitempty"`
-	MeshAdapters         []*Adapter           `json:"meshAdapters,omitempty"`
-	Grafana              *Grafana             `json:"grafana,omitempty"`
-	Prometheus           *Prometheus          `json:"prometheus,omitempty"`
-	LoadTestPreferences  *LoadTestPreferences `json:"loadTestPrefs,omitempty"`
-	AnonymousUsageStats  bool                 `json:"anonymousUsageStats"`
-	AnonymousPerfResults bool                 `json:"anonymousPerfResults"`
-	UpdatedAt            time.Time            `json:"updated_at,omitempty"`
+	K8SConfig            *K8SConfig                             `json:"k8sConfig,omitempty"`
+	MeshAdapters         []*Adapter                             `json:"meshAdapters,omitempty"`
+	Grafana              *Grafana                               `json:"grafana,omitempty"`
+	Prometheus           *Prometheus                            `json:"prometheus,omitempty"`
+	LoadTestPreferences  *LoadTestPreferences                   `json:"loadTestPrefs,omitempty"`
+	UserTestPreferences  map[string]*SMPS.PerformanceTestConfig `json:"loadTestPrefs,omitempty"`
+	AnonymousUsageStats  bool                                   `json:"anonymousUsageStats"`
+	AnonymousPerfResults bool                                   `json:"anonymousPerfResults"`
+	UpdatedAt            time.Time                              `json:"updated_at,omitempty"`
 }
 
 func init() {
@@ -100,4 +103,35 @@ type PreferencePersister interface {
 	// Lock(userID string)
 	// Unlock(userID string)
 	ClosePersister()
+}
+
+// TODO: locking and other safety mechanism
+func (prefObj *Preference) CreateUpdateLoadTestConfig(testConfig *SMPS.PerformanceTestConfig) (string, error) {
+	testUID := testConfig.Id
+	if testUID == "" {
+		newUid, err := uuid.NewV4()
+		if err != nil {
+			return "", err
+		}
+		testUID = newUid.String()
+	}
+	testConfig.Id = testUID
+	prefObj.UserTestPreferences[testUID] = testConfig
+	return testUID, nil
+}
+
+func (prefObj *Preference) DeleteLoadTestConfig(testId string) {
+	delete(prefObj.UserTestPreferences, testId)
+}
+
+func (prefObj *Preference) ReadLoadTestConfig(testId string) *SMPS.PerformanceTestConfig {
+	return prefObj.UserTestPreferences[testId]
+}
+
+func (prefObj *Preference) ReadAllLoadTestConfig() []*SMPS.PerformanceTestConfig {
+	tests := []*SMPS.PerformanceTestConfig{}
+	for _, tcfg := range prefObj.UserTestPreferences {
+		tests = append(tests, &*tcfg)
+	}
+	return tests
 }

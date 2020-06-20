@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // Environment - represents a kubernetes environment
 type Environment struct {
