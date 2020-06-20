@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"os/exec"
@@ -224,4 +226,49 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		}
 	}
 	return false
+}
+
+// UploadFileWithParams returns a request configured to upload files with other values
+func UploadFileWithParams(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	fileContents, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	fi, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if err = file.Close(); err != nil {
+		return nil, err
+	}
+
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, fi.Name())
+	if err != nil {
+		return nil, err
+	}
+	_, err = part.Write(fileContents)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest("POST", uri, body)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+	return request, nil
 }
