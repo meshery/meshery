@@ -103,7 +103,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-kuma">
-            <img src='https://pbs.twimg.com/profile_images/1171109603158843392/bV2M7l39_400x400.jpg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
           </td>
         </tr><tr>
         </tr>
