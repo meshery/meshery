@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -14,7 +15,7 @@ import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { updateLoadTestData, updateStaticPrometheusBoardConfig } from '../lib/store';
+import { updateLoadTestData, updateStaticPrometheusBoardConfig, updateLoadTestPref, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MesheryChart from './MesheryChart';
 import LoadTestTimerDialog from './load-test-timer-dialog';
@@ -81,7 +82,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
     } = props;
 
     this.state = {
@@ -121,6 +122,8 @@ class MesheryPerformanceComponent extends React.Component {
 
     this.setState({ [name]: event.target.value });
   };
+
+
 
   handleSubmit = () => {
     
@@ -292,7 +295,39 @@ class MesheryPerformanceComponent extends React.Component {
   componentDidMount() {
     this.getStaticPrometheusBoardConfig();
     this.scanForMeshes();
+    this.getLoadTestPrefs();
   }
+
+    getLoadTestPrefs = () => {
+      const {
+        qps, c, t, loadGenerator
+      } = this.props;
+      const self = this;
+      dataFetch('/api/load-test-prefs', {
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, (result) => {
+        if (typeof result !== 'undefined') {
+          console.log(result.loadTestPrefs.qps);
+          self.props.updateLoadTestPref({
+            loadTestPref: {
+              qps: result.loadTestPrefs.qps,
+              c: result.loadTestPrefs.c,
+              t: result.loadTestPrefs.t,
+              loadGenerator: result.loadTestPrefs.gen,
+            },
+          });
+          self.setState({               
+            qps: result.loadTestPrefs.qps,
+            c: result.loadTestPrefs.c,
+            t: result.loadTestPrefs.t,
+            loadGenerator: result.loadTestPrefs.gen,
+          });
+        }
+      }, self.handleError('There was an error fetching your preferences'));
+      console.log(this.props.qps);
+    }
 
   getStaticPrometheusBoardConfig = () => {
     const self = this;
@@ -693,23 +728,15 @@ MesheryPerformanceComponent.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
   updateStaticPrometheusBoardConfig: bindActionCreators(updateStaticPrometheusBoardConfig, dispatch),
+  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
 });
 const mapStateToProps = (state) => {
   const loadTest = state.get('loadTest').toJS();
-  // let newprops = {};
-  // if (typeof loadTest !== 'undefined'){
-  //   newprops = {
-  //     url: loadTest.get('url'),
-  //     qps: loadTest.get('qps'),
-  //     c: loadTest.get('c'),
-  //     t: loadTest.get('t'),
-  //     result: loadTest.get('result'),
-  //   }
-  // }
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
   const k8sConfig = state.get('k8sConfig').toJS();
   const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
+  const loadTestPref = state.get('loadTestPref').toJS();
   return {
     ...loadTest, grafana, prometheus, staticPrometheusBoardConfig, k8sConfig,
   };
