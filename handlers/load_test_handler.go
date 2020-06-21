@@ -49,8 +49,8 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	benchMark := &SMPS.PerformanceTestConfig{}
-	if err := jsonpb.UnmarshalString(string(jsonBody), benchMark); err != nil {
+	perfTest := &SMPS.PerformanceTestConfig{}
+	if err := jsonpb.UnmarshalString(string(jsonBody), perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
@@ -59,20 +59,20 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
-	testName := benchMark.Name
+	testName := perfTest.Name
 	if testName == "" {
 		logrus.Errorf("Error: name field is blank")
 		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
 		return
 	}
 	// meshName := q.Get("mesh")
-	testUUID := benchMark.Id
+	testUUID := perfTest.Id
 
 	loadTestOptions := &models.LoadTestOptions{}
 
-	testDuration, err := time.ParseDuration(benchMark.Duration)
+	testDuration, err := time.ParseDuration(perfTest.Duration)
 	if err != nil {
-		msg := "error parsing test duration"
+		msg := "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
 		http.Error(w, msg, http.StatusBadRequest)
@@ -87,7 +87,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	loadTestOptions.IsGRPC = false
 
 	// TODO: check multiple clients in case of distributed perf test
-	testClient := benchMark.Clients[0]
+	testClient := perfTest.Clients[0]
 
 	// TODO: consider the multiple endpoints
 	loadTestOptions.URL = testClient.EndpointUrl[0]

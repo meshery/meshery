@@ -137,7 +137,7 @@ var PerfCmd = &cobra.Command{
 
 			req, err = http.NewRequest("POST", mctlCfg.GetPerf().LoadTestSmpsURI, bytes.NewBuffer(smpsConfig))
 			if err != nil {
-				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mctlCfg.GetBaseMesheryURL())))
+				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("Failed to invoke performance test")))
 			}
 		} else {
 
@@ -179,7 +179,7 @@ var PerfCmd = &cobra.Command{
 
 			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL(), bytes.NewBuffer([]byte(postData)))
 			if err != nil {
-				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mctlCfg.GetBaseMesheryURL())))
+				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("Failed to invoke performance test")))
 			}
 
 			q := req.URL.Query()
