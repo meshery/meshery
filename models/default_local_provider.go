@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -251,4 +252,17 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
 	}
+}
+
+func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) error {
+	return nil
+}
+func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, testUUID string) error {
+	return nil
+}
+func (l *DefaultLocalProvider) SMPSTestConfigFetchAll(req *http.Request) error {
+	return nil
+}
+func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
+	return nil
 }

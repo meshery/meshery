@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 )
 
 // ProviderType - for representing provider types
@@ -58,4 +59,9 @@ type Provider interface {
 	PublishMetrics(tokenVal string, data *MesheryResult) error
 	GetResult(*http.Request, uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
+
+	SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) error
+	SMPSTestConfigFetch(req *http.Request, testUUID string) error
+	SMPSTestConfigFetchAll(req *http.Request) error
+	SMPSTestConfigDelete(req *http.Request, testUUID string) error
 }
