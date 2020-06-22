@@ -219,8 +219,6 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
-github.com/kanishkarj/service-mesh-performance-specification v0.0.0-20200620172814-ca391dc349b7 h1:OYdNU5FEO5K7Hef8sscUmC4VpNIpMq4QYjY9OLcvKZI=
-github.com/kanishkarj/service-mesh-performance-specification v0.0.0-20200620172814-ca391dc349b7/go.mod h1:fE/Fs8rr4PWy+vI2RVEqppSjXAyHwrbn0YCh2By97/c=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
@@ -239,6 +237,8 @@ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRrvEz6JCoq+81rNJZMjblqyRwywLns=
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
+github.com/layer5io/service-mesh-performance-specification v0.0.0-20200622030323-136a17f58ad9 h1:SecD1TMgxQ/XemMFWFcbl09f4sXtiGWFgaq0Saj5v+4=
+github.com/layer5io/service-mesh-performance-specification v0.0.0-20200622030323-136a17f58ad9/go.mod h1:fE/Fs8rr4PWy+vI2RVEqppSjXAyHwrbn0YCh2By97/c=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1 h1:ZC2Vc7/ZFkGmsVC9KvOjumD+G5lXy2RtTKyzRKO2BQ4=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
