@@ -257,11 +257,11 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) error {
 	return nil
 }
-func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, testUUID string) error {
-	return nil
+func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+	return nil, nil
 }
-func (l *DefaultLocalProvider) SMPSTestConfigFetchAll(req *http.Request) error {
-	return nil
+func (l *DefaultLocalProvider) SMPSTestConfigFetchAll(req *http.Request) ([]*SMPS.PerformanceTestConfig, error) {
+	return nil, nil
 }
 func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
 	return nil

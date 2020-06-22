@@ -61,7 +61,7 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) error
-	SMPSTestConfigFetch(req *http.Request, testUUID string) error
-	SMPSTestConfigFetchAll(req *http.Request) error
+	SMPSTestConfigFetch(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error)
+	SMPSTestConfigFetchAll(req *http.Request) ([]*SMPS.PerformanceTestConfig, error)
 	SMPSTestConfigDelete(req *http.Request, testUUID string) error
 }
