@@ -113,7 +113,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	loadGenerator := testClient.LoadGenerator
 
 	switch loadGenerator {
-	case SMPS.PerformanceTestConfig_Client_wrk2:
+	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG

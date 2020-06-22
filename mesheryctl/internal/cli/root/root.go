@@ -152,6 +152,7 @@ func initConfig() {
 			"perf": map[string]interface{}{
 				"authTokenURI":    "/gettoken",
 				"loadTestSmpsURI": "/load-test-smps",
+				"loadTestURI":     "/load-test",
 			},
 		})
 	}

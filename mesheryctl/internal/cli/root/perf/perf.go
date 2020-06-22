@@ -33,6 +33,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -122,6 +123,11 @@ var PerfCmd = &cobra.Command{
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		var err error
+		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalf("error processing config: %s", err.Error())
+		}
 		//Check prerequisite
 		return utils.PreReqCheck()
 	},
@@ -135,7 +141,7 @@ var PerfCmd = &cobra.Command{
 				return err
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetPerf().LoadTestSmpsURI, bytes.NewBuffer(smpsConfig))
+			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestSmpsURL(), bytes.NewBuffer(smpsConfig))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("Failed to invoke performance test")))
 			}
@@ -177,7 +183,7 @@ var PerfCmd = &cobra.Command{
 			postData = postData + "\n connections: " + concurrentRequests
 			postData = postData + "\n rps: " + qps
 
-			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL(), bytes.NewBuffer([]byte(postData)))
+			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestURL(), bytes.NewBuffer([]byte(postData)))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("Failed to invoke performance test")))
 			}
@@ -221,6 +227,7 @@ var PerfCmd = &cobra.Command{
 }
 
 func init() {
+
 	PerfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
 	PerfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
 	PerfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
