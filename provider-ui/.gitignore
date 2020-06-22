@@ -1,3 +1,7 @@
 # Cypress Tests Files
 cypress/videos
+<<<<<<< HEAD
 cypress/screenshots 
+=======
+cypress/screenshots
+>>>>>>> Update test script and incorporate review comments
