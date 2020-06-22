@@ -60,7 +60,7 @@ type Provider interface {
 	GetResult(*http.Request, uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) error
+	SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error)
 	SMPSTestConfigFetch(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error)
 	SMPSTestConfigFetchAll(req *http.Request) ([]*SMPS.PerformanceTestConfig, error)
 	SMPSTestConfigDelete(req *http.Request, testUUID string) error
