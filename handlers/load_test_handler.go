@@ -15,12 +15,12 @@ import (
 	"fortio.org/fortio/periodic"
 	yamlj "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/encoding/protojson"
 	v1 "k8s.io/api/apps/v1"
 )
 
@@ -50,7 +50,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	perfTest := &SMPS.PerformanceTestConfig{}
-	if err := jsonpb.UnmarshalString(string(jsonBody), perfTest); err != nil {
+	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
