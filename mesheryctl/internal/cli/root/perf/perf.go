@@ -16,12 +16,9 @@ package perf
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
@@ -50,71 +47,6 @@ var (
 
 	mctlCfg *cfg.MesheryCtl
 )
-
-const tokenName = "token"
-const providerName = "meshery-provider"
-
-var seededRand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
-
-// StringWithCharset generates a random string with a given length
-func StringWithCharset(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-	return string(b)
-}
-
-// AddAuthDetails Adds authentication cookies to the request
-func AddAuthDetails(req *http.Request, filepath string) error {
-	file, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		return errors.Wrapf(err, utils.PerfError("failed to read file %s"), filepath)
-	}
-	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to json unmarshal file into token object"))
-	}
-	req.AddCookie(&http.Cookie{
-		Name:     tokenName,
-		Value:    tokenObj[tokenName],
-		HttpOnly: true,
-	})
-	req.AddCookie(&http.Cookie{
-		Name:     providerName,
-		Value:    tokenObj[providerName],
-		HttpOnly: true,
-	})
-	return nil
-}
-
-// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
-func UpdateAuthDetails(filepath string) error {
-	req, err := http.NewRequest("GET", mctlCfg.GetPerf().GetAuthTokenURL(), bytes.NewBuffer([]byte("")))
-	if err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to create new auth token request"))
-	}
-	if err := AddAuthDetails(req, filepath); err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to add auth details"))
-	}
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	defer utils.SafeClose(resp.Body)
-	if err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to sent auth token request"))
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Wrap(err, utils.PerfError("failed to read response body"))
-	}
-
-	return ioutil.WriteFile(filepath, data, os.ModePerm)
-}
 
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
@@ -151,7 +83,7 @@ var PerfCmd = &cobra.Command{
 
 		if testName == "" {
 			log.Debug("Test Name not provided")
-			testName = StringWithCharset(8)
+			testName = utils.StringWithCharset(8)
 			log.Debug("Using random test name: ", testName)
 		}
 
@@ -190,7 +122,7 @@ var PerfCmd = &cobra.Command{
 			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to create new request to %s", mctlCfg.GetBaseMesheryURL())))
 		}
 
-		if err := AddAuthDetails(req, tokenPath); err != nil {
+		if err := utils.AddAuthDetails(req, tokenPath); err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to add auth details to request"))
 		}
 
@@ -217,7 +149,7 @@ var PerfCmd = &cobra.Command{
 		}
 		log.Debug(string(data))
 
-		if err := UpdateAuthDetails(tokenPath); err != nil {
+		if err := utils.UpdateAuthDetails(tokenPath); err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to update auth details"))
 		}
 
@@ -236,5 +168,4 @@ func init() {
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-
 }

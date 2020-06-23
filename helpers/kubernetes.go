@@ -39,7 +39,7 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 			return nil, err
 		}
 	}
-	clientConfig.Timeout = 2 * time.Second
+	clientConfig.Timeout = 2 * time.Minute
 	clientset, err := kubernetes.NewForConfig(clientConfig)
 	if err != nil {
 		err = errors.Wrap(err, "unable to create client set")
