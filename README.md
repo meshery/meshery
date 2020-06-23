@@ -96,6 +96,11 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
             <img src='https://github.com/containous/maesh/raw/master/docs/content/assets/img/maesh.png' alt='Maesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Maesh</a>
           </td>
         </tr>
+         <tr>
+          <td><a href="https://github.com/layer5io/meshery-tanzu-sm">
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/tanzu.png' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
+          </td>
+        </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
             <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh </a>
