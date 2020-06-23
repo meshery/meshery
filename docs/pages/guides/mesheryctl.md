@@ -13,6 +13,7 @@ type: guide
 |                   | version             | Displays the version of the Meshery Client (`mesheryctl`) and the SHA of the release binary. | `mesheryctl system version` |
 |                   | help                | Displays help about any command. | `mesheryctl --help` |
 |                   | --mesheryctl-config | (optional) path to Meshery Client (`mesheryctl`) configuration file (`~/.meshery/mesheryctl.yaml`) to overrides defaults. | `mesheryctl perf <args> --mesheryctl-config=~/.meshery/mesheryctl.yaml` |
+|                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE/EKS). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
 
 ### Meshery Lifecycle Management
 
