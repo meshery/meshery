@@ -2,7 +2,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import {
-  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, InputAdornment,
+  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
@@ -40,6 +40,13 @@ const styles = (theme) => ({
   alreadyConfigured: {
     textAlign: 'center',
     padding: theme.spacing(20),
+  },
+  chip: {
+    height: '40px',
+    marginRight: theme.spacing(5),
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(-5),
+    fontSize: '15px',
   },
   colorSwitchBase: {
     color: blue[300],
@@ -98,6 +105,9 @@ const styles = (theme) => ({
   expTitle: {
     display: 'inline',
     verticalAlign: 'middle',
+  },
+  icon: {
+    width: theme.spacing(2.5),
   },
 });
 
@@ -265,6 +275,33 @@ class MesheryAdapterPlayComponent extends React.Component {
         });
       }
     }, self.handleError(cat, deleteOp));
+  }
+
+  handleAdapterClick = (adapterLoc) => () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, (result) => {
+      this.props.updateProgress({ showProgress: false });
+      if (typeof result !== 'undefined') {
+        this.props.enqueueSnackbar('Adapter successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError('Could not ping adapter.'));
   }
 
   handleError = (cat, deleteOp) => {
@@ -492,12 +529,24 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   render() {
     const {
-      classes, adapter, adapter_icon,
+      classes, adapter,
     } = this.props;
     const {
       namespace,
       namespaceError,
     } = this.state;
+
+    let adapterName = (adapter.name).split(" ").join("").toLowerCase();
+    let imageSrc = "/static/img/" + adapterName + ".svg";
+    let adapterChip = (
+      <Chip
+        label={adapter.adapter_location}
+        onClick={this.handleAdapterClick(adapter.adapter_location)}
+        icon={<img src={imageSrc} className={classes.icon} />}
+        className={classes.chip}
+        variant="outlined"
+      />
+    );
 
     const filteredOps = [];
     if (adapter && adapter.ops && adapter.ops.length > 0) {
@@ -512,60 +561,12 @@ class MesheryAdapterPlayComponent extends React.Component {
       filteredOps.sort();
     }
 
-    if (this.props.adapCount > 1) {
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <div className={classes.root}>
-              <Grid container spacing={5}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    disabled
-                    id="ap"
-                    name="ap"
-                    label="Adapter URL"
-                    fullWidth
-                    value={adapter.adapter_location}
-                    margin="normal"
-                    variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          {adapter_icon}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="namespace"
-                    name="namespace"
-                    label="Namespace"
-                    fullWidth
-                    value={namespace}
-                    error={namespaceError}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('namespace')}
-                  />
-                </Grid>
-                {filteredOps.map((val) => (
-                  <Grid item xs={12} sm={4}>
-                    {this.generateCardForCategory(val)}
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
-          </React.Fragment>
-        </NoSsr>
-      );
-    }
-
     return (
       <NoSsr>
         <React.Fragment>
+          <div className={classes.alignRight}>
+            {adapterChip}
+          </div>
           <div className={classes.root}>
             <Grid container spacing={5}>
               <Grid item xs={12}>
