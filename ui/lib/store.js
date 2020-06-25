@@ -23,7 +23,7 @@ const initialState = fromJS({
     url: '',
     qps: 0,
     c: 0,
-    t: '',
+    t: '30s',
     result: {},
   },
   loadTestPref: {

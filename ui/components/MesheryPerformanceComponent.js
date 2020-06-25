@@ -298,36 +298,34 @@ class MesheryPerformanceComponent extends React.Component {
     this.getLoadTestPrefs();
   }
 
-    getLoadTestPrefs = () => {
-      const {
-        qps, c, t, loadGenerator
-      } = this.props;
-      const self = this;
-      dataFetch('/api/load-test-prefs', {
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, (result) => {
-        if (typeof result !== 'undefined') {
-          console.log(result.loadTestPrefs.qps);
-          self.props.updateLoadTestPref({
-            loadTestPref: {
-              qps: result.loadTestPrefs.qps,
-              c: result.loadTestPrefs.c,
-              t: result.loadTestPrefs.t,
-              loadGenerator: result.loadTestPrefs.gen,
-            },
-          });
-          self.setState({               
-            qps: result.loadTestPrefs.qps,
-            c: result.loadTestPrefs.c,
-            t: result.loadTestPrefs.t,
-            loadGenerator: result.loadTestPrefs.gen,
-          });
-        }
-      }, self.handleError('There was an error fetching your preferences'));
-      console.log(this.props.qps);
-    }
+  getLoadTestPrefs = () => {
+  	const {
+  		qps, c, t, loadGenerator
+  	} = this.props;
+  	const self = this;
+  	dataFetch('/api/load-test-prefs', {
+  		credentials: 'same-origin',
+  		method: 'GET',
+  		credentials: 'include',
+  	}, (result) => {
+  		if (typeof result !== 'undefined') {
+  			self.props.updateLoadTestPref({
+  				loadTestPref: {
+  					qps: result.loadTestPrefs.qps,
+  					c: result.loadTestPrefs.c,
+  					t: result.loadTestPrefs.t,
+  					loadGenerator: result.loadTestPrefs.gen,
+  				},
+  			});
+  			self.setState({               
+  				qps: result.loadTestPrefs.qps,
+  				c: result.loadTestPrefs.c,
+  				t: result.loadTestPrefs.t,
+  				loadGenerator: result.loadTestPrefs.gen,
+  			});
+  		}
+  	}, () => {}); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+  }
 
   getStaticPrometheusBoardConfig = () => {
     const self = this;
@@ -412,8 +410,8 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const {
-      timerDialogOpen, blockRunTest, qps, url, testName, meshName, t, c, result, loadGenerator,
-      urlError, tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
+      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError, 
+      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
