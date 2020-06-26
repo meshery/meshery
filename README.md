@@ -161,6 +161,17 @@ Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's
 <a name="contributing"></a><a name="community"></a>
 Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
 
+<p style="clear:both;">
+<a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/images/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
+<h3>Find your MeshMate</h3>
+
+MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects and expand your community network. 
+<p>Become a <b>Meshtee</b> today!</p>
+
+Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
+<br /><br /><br /><br />
+</p>
+
 <a href="https://meshery.io/community"><img alt="Layer5 Service Mesh Community" src="docs/assets/img/readme/slack-128.png" style="margin-left:10px;padding-top:5px;" width="110px" align="right" /></a>
 
 <a href="http://slack.layer5.io"><img alt="Layer5 Service Mesh Community" src="docs/assets/img/readme/community.png" style="margin-right:8px;padding-top:5px;" width="140px" align="left" /></a>
