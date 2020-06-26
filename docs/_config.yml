@@ -56,6 +56,7 @@ color: "#3C494F" #"#647881" # "#30638e"
 # Build settings
 markdown: kramdown
 
+gems: ["jemoji"]
 
 # If you add tags to pages, you can link them to some external search
 # If you want to disable this, comment the URL.

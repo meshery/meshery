@@ -29,7 +29,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
+    - run: GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
   static_check:
     name: Static check
     runs-on: ubuntu-latest
@@ -69,7 +69,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
   vet_check:
     name: Go Vet Check
     runs-on: ubuntu-latest
