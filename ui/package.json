@@ -49,7 +49,7 @@
     "react-codemirror2": "^5.1.0",
     "react-countdown-clock": "^2.6.0",
     "react-dom": "^16.12.0",
-    "react-jss": "^8.1.0",
+    "react-jss": "^10.3.0",
     "react-lazyload": "^2.6.5",
     "react-moment": "^0.8.4",
     "react-redux": "^6.0.1",
