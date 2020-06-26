@@ -163,7 +163,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects and expand your community network. 
 <p>Become a <b>Meshtee</b> today!</p>
 
-Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community page</a>. <br />
+Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
 <br /><br /><br /><br />
 </p>
 
