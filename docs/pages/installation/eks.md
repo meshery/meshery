@@ -6,7 +6,18 @@ permalink: installation/eks
 
 # Quick Start with Amazon Elastic Kubernetes Service (EKS)
 
-## Managed Kubernetes
+Make your way to Meshery and download the token by clicking the "Get Token" option in the dropdown menu. Utilize the token to run the following command:
+
+| command           | flag                | function                                                     | Usage                     |
+|:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
+|                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(EKS). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
+
+## **Manual Configuration**
+
+
+Follow the below mentioned steps to set up manually:
+
+### **Managed Kubernetes**
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
 Note: Make sure you are able to access EKS with kubectl by following the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide</a>
@@ -38,13 +49,13 @@ default-token-fnfjp            kubernetes.io/service-account-token   3      95d
 meshery-token-5z9xj               kubernetes.io/service-account-token   3      66m
 
 ```
-Note: Here the secret name is **meshery-token-5z9xj** 
+Note: Here the secret name is **meshery-token-5z9xj**
 
 &nbsp;&nbsp;&nbsp; b. Get secret/token
 
 ```
 
-$ kubectl describe secret  sa-1-token-5z9xj 
+$ kubectl describe secret  sa-1-token-5z9xj
 Name:         meshery-token-5z9xj
 Namespace:    default
 Labels:       <none>
@@ -84,5 +95,5 @@ Context "aws" modified.
  &nbsp;&nbsp;&nbsp; c. Generate kubeconfig yaml file to use as input to Meshery.
 
  ```
- kubectl config view --minify --flatten >  config_aws_eks.yaml 
+ kubectl config view --minify --flatten >  config_aws_eks.yaml
  ```
