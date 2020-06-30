@@ -6,14 +6,16 @@ permalink: installation/eks
 
 # Quick Start with Amazon Elastic Kubernetes Service (EKS)
 
-Make your way to Meshery and download the token by clicking the "Get Token" option in the dropdown menu. Utilize the token to run the following command:
+Make your way to Meshery and download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
+<br>Utilize the token to run the following command:
 
 | command           | flag                | function                                                     | Usage                     |
 |:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
 |                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(EKS). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
 
-## **Manual Configuration**
+Once configured, head over to the Quick Start Guide and continue with the steps outlined for <a href = "https://github.com/layer5io/meshery/blob/d75b6eec23021a1d8d3a38ec890fb10d44af3a35/docs/pages/installation/eks.md#managed-kubernetes"> EKS </a>.
 
+## **Manual Configuration**
 
 Follow the below mentioned steps to set up manually:
 
