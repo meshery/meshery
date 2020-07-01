@@ -73,7 +73,21 @@ run-local: git
 	./meshery; \
 	cd ..
 
+run-tests:
+	# -----Linting Check-----
+	# GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive
+	$(GOPATH)/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./... \
 
+	# ------Error Check------
+	# GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/kisielk/errcheck
+	$(GOPATH)/bin/errcheck -tags draft ./... \
+
+	# ------Static Check------
+	# GOPROXY=direct GOSUMDB=off GO111MODULE=on go get honnef.co/go/tools/cmd/staticcheck
+	$(GOPATH)/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./... \
+
+	# -------Vet Check-------
+	GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./...
 proto:
 	# go get -u google.golang.org/grpc
 	# go get -u github.com/golang/protobuf/protoc-gen-go
