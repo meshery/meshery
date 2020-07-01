@@ -90,15 +90,8 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		loadTestOptions.HTTPQPS = 0
 	}
 
-	// loadGenerator := q.Get("loadGenerator")
-
-	// switch loadGenerator {
-	// case "wrk2":
-	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
-	// default:
 	loadTestOptions.LoadGenerator = models.FortioLG
 	loadTestOptions.AllowInitialErrors = true
-	// }
 
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
@@ -204,7 +197,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
-
 
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
