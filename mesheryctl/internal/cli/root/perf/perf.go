@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/pkg/errors"
@@ -78,29 +77,15 @@ var PerfCmd = &cobra.Command{
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
 		} else {
+			var err error
 
 			if testName == "" {
 				log.Debug("Test Name not provided")
-				testName = StringWithCharset(8)
+				testName = utils.StringWithCharset(8)
 				log.Debug("Using random test name: ", testName)
 			}
 
-			postData := ""
-
-			startTime := time.Now()
-			duration, err := time.ParseDuration(testDuration)
-			if err != nil {
-				return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to parse test duration %s", testDuration)))
-			}
-
-			endTime := startTime.Add(duration)
-
-			postData = postData + "start_time: " + startTime.Format(time.RFC3339)
-			postData = postData + "\nend_time: " + endTime.Format(time.RFC3339)
-
-			if testURL != "" {
-				postData = postData + "\nendpoint_url: " + testURL
-			} else {
+			if testURL == "" {
 				return errors.New(utils.PerfError("please enter a test URL"))
 			}
 
@@ -110,19 +95,24 @@ var PerfCmd = &cobra.Command{
 			if !validURL {
 				return errors.New(utils.PerfError("please enter a valid test URL"))
 			}
-
-			postData = postData + "\nclient:"
-			postData = postData + "\n connections: " + concurrentRequests
-			postData = postData + "\n rps: " + qps
-
-			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestURL(), bytes.NewBuffer([]byte(postData)))
+			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestURL(), nil)
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
 
 			q := req.URL.Query()
+
 			q.Add("name", testName)
 			q.Add("loadGenerator", loadGenerator)
+			q.Add("c", concurrentRequests)
+			q.Add("url", testURL)
+			q.Add("qps", qps)
+
+			dur_len := len(testDuration)
+
+			q.Add("dur", string(testDuration[dur_len-1]))
+			q.Add("t", string(testDuration[:dur_len-1]))
+
 			if testMesh != "" {
 				q.Add("mesh", testMesh)
 			}

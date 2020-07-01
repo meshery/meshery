@@ -79,7 +79,6 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	loadTestOptions.Duration = testDuration
-
 	if loadTestOptions.Duration.Seconds() <= 0 {
 		loadTestOptions.Duration = time.Second
 	}
@@ -226,7 +225,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
-
+	logrus.Infof("perf test with config: %v", loadTestOptions)
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
