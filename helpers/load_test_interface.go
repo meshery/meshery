@@ -102,7 +102,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	return resultsMap, result, nil
 }
 
-// WRK2 is the actual code which invokes Wrk2 to run the load test
+// WRK2LoadTest is the actual code which invokes Wrk2 to run the load test
 func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	if qps <= 0 {
@@ -168,7 +168,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	return resultsMap, result, nil
 }
 
-// SharedHTTPOptions is the flag->httpoptions transfer code shared between
+// sharedHTTPOptions is the flag->httpoptions transfer code shared between
 // fortio_main and fcurl.
 func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error) {
 	url := strings.TrimLeft(opts.URL, " \t\r\n")
