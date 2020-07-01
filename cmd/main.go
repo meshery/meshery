@@ -62,7 +62,7 @@ func main() {
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
 	queryTracker := helpers.NewUUIDQueryTracker()
 
-	// Uncomment line below to generate a new UID and force the user to login every time Meshery is started.
+	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte("Meshery"))
 	// fileSessionStore.MaxLength(0)
@@ -73,8 +73,6 @@ func main() {
 	})
 
 	provs := map[string]models.Provider{}
-
-	// var cookieSessionStore *sessions.CookieStore
 
 	preferencePersister, err := models.NewMapPreferencePersister()
 	if err != nil {
@@ -88,17 +86,9 @@ func main() {
 	}
 	defer resultPersister.CloseResultPersister()
 
-	// randID, _ := uuid.NewV4()
-	// cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
-	// if saasBaseURL == "" {
-	// 	logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
-	// }
 	lProv := &models.DefaultLocalProvider{
-		// SessionName: "meshery",
 		SaaSBaseURL: saasBaseURL,
-		// SessionStore: fileSessionStore,
-		// SessionStore:           cookieSessionStore,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 	}
@@ -110,8 +100,6 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	// cookieSessionStore = sessions.NewCookieStore([]byte("Meshery"))
-	// saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	if saasBaseURL == "" {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 	}
@@ -120,9 +108,6 @@ func main() {
 		RefCookieName: "meshery_ref",
 		SessionName:   "meshery",
 		TokenStore:    make(map[string]string),
-		// SessionStore: fileSessionStore,
-		// SessionStore: cookieSessionStore,
-		// SaaSTokenName:              "meshery_saas",
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
 		ProviderVersion:            "v0.3.14",
