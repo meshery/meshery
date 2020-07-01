@@ -26,6 +26,7 @@ require (
 	github.com/prologic/bitcask v0.3.5
 	github.com/prometheus/client_golang v1.6.0
 	github.com/prometheus/common v0.10.0
+	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.7.0
