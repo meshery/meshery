@@ -101,6 +101,8 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
 }
+
+// WRK2 is the actual code which invokes Wrk2 to run the load test
 func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	if qps <= 0 {
