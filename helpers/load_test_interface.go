@@ -43,7 +43,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		Exactly:     0,
 	}
 	var res periodic.HasRunnerResult
-	if opts.IsGRPC {
+	if ( opts.SupportedLoadTestMethods == 2 ) {
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
 			Destination:        rURL,
@@ -76,7 +76,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 
 	var result *periodic.RunnerResults
 	var bd []byte
-	if opts.IsGRPC {
+	if ( opts.SupportedLoadTestMethods == 2 ) {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
@@ -119,7 +119,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	}
 	var res periodic.HasRunnerResult
 	var err error
-	if opts.IsGRPC {
+	if ( opts.SupportedLoadTestMethods == 2 ) {
 		err := errors.New("wrk2 does not support gRPC at the moment")
 		logrus.Error(err)
 		return nil, nil, err
@@ -140,7 +140,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 
 	var result *periodic.RunnerResults
 	var bd []byte
-	if opts.IsGRPC {
+	if ( opts.SupportedLoadTestMethods == 2 ) {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
