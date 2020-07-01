@@ -28,6 +28,20 @@ func (l LoadGenerator) Name() string {
 	return string(l)
 }
 
+// SupportedLoadTestMethods - represents the load test method type
+type SupportedLoadTestMethods int
+
+const (
+	// HTTP Load Test
+	HTTP SupportedLoadTestMethods = 1
+
+	// gRPC Load Test
+	gRPC SupportedLoadTestMethods = 2
+
+	// TCP Load Test
+	TCP SupportedLoadTestMethods = 3
+)
+
 // LoadTestOptions represents the load test options
 type LoadTestOptions struct {
 	Name string
@@ -47,11 +61,13 @@ type LoadTestOptions struct {
 
 	LoadGenerator LoadGenerator
 
+	SupportedLoadTestMethods SupportedLoadTestMethods
+
 	Cert, Key, CACert string
 
 	AllowInitialErrors bool
 
-	IsGRPC           bool
+    // Values required for fortio gRPC health & ping test
 	GRPCStreamsCount int
 	GRPCDoHealth     bool
 	GRPCHealthSvc    string
