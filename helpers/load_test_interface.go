@@ -6,61 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"fortio.org/fortio/fgrpc"
-	"fortio.org/fortio/fhttp"
-	"fortio.org/fortio/periodic"
 	"github.com/layer5io/gowrk2/api"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"fortio.org/fortio/fgrpc"
+	"fortio.org/fortio/fhttp"
+	"fortio.org/fortio/periodic"
 )
-
-// SharedHTTPOptions is the flag->httpoptions transfer code shared between
-// fortio_main and fcurl.
-func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error) {
-	url := strings.TrimLeft(opts.URL, " \t\r\n")
-	httpOpts := fhttp.HTTPOptions{}
-	httpOpts.URL = url
-	httpOpts.HTTP10 = false
-	httpOpts.DisableFastClient = false
-	httpOpts.DisableKeepAlive = false
-	httpOpts.AllowHalfClose = false
-	httpOpts.Compression = false
-	httpOpts.HTTPReqTimeOut = fhttp.HTTPReqTimeOutDefaultValue
-	httpOpts.Insecure = opts.IsInsecure
-	httpOpts.UserCredentials = ""
-	httpOpts.ContentType = ""
-	httpOpts.FollowRedirects = true
-	httpOpts.DisableFastClient = true
-
-	if opts.Headers != nil {
-		for key, val := range *opts.Headers {
-			err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if opts.Cookies != nil {
-		cookies := ""
-		for key, val := range *opts.Cookies {
-			cookies += fmt.Sprintf(" %s=%s;", key, val)
-		}
-		err := httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(opts.Body) > 0 {
-		httpOpts.Payload = opts.Body
-	}
-	if len(opts.ContentType) > 0 {
-		httpOpts.ContentType = opts.ContentType
-	}
-
-	return &httpOpts, nil
-}
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
 func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
@@ -211,5 +164,52 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
+}
+
+// SharedHTTPOptions is the flag->httpoptions transfer code shared between
+// fortio_main and fcurl.
+func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error) {
+	url := strings.TrimLeft(opts.URL, " \t\r\n")
+	httpOpts := fhttp.HTTPOptions{}
+	httpOpts.URL = url
+	httpOpts.HTTP10 = false
+	httpOpts.DisableFastClient = false
+	httpOpts.DisableKeepAlive = false
+	httpOpts.AllowHalfClose = false
+	httpOpts.Compression = false
+	httpOpts.HTTPReqTimeOut = fhttp.HTTPReqTimeOutDefaultValue
+	httpOpts.Insecure = opts.IsInsecure
+	httpOpts.UserCredentials = ""
+	httpOpts.ContentType = ""
+	httpOpts.FollowRedirects = true
+	httpOpts.DisableFastClient = true
+
+	if opts.Headers != nil {
+		for key, val := range *opts.Headers {
+			err := httpOpts.AddAndValidateExtraHeader(key + ":" + val)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	if opts.Cookies != nil {
+		cookies := ""
+		for key, val := range *opts.Cookies {
+			cookies += fmt.Sprintf(" %s=%s;", key, val)
+		}
+		err := httpOpts.AddAndValidateExtraHeader("Cookie" + ":" + cookies)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if len(opts.Body) > 0 {
+		httpOpts.Payload = opts.Body
+	}
+	if len(opts.ContentType) > 0 {
+		httpOpts.ContentType = opts.ContentType
+	}
+
+	return &httpOpts, nil
 }
 
