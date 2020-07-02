@@ -108,10 +108,10 @@ var PerfCmd = &cobra.Command{
 			q.Add("url", testURL)
 			q.Add("qps", qps)
 
-			dur_len := len(testDuration)
+			durLen := len(testDuration)
 
-			q.Add("dur", string(testDuration[dur_len-1]))
-			q.Add("t", string(testDuration[:dur_len-1]))
+			q.Add("dur", string(testDuration[durLen-1]))
+			q.Add("t", string(testDuration[:durLen-1]))
 
 			if testMesh != "" {
 				q.Add("mesh", testMesh)
