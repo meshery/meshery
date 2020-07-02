@@ -292,36 +292,23 @@ class MesheryPerformanceComponent extends React.Component {
     this.getLoadTestPrefs();
   }
 
-    getLoadTestPrefs = () => {
-      const {
-        qps, c, t, loadGenerator
-      } = this.props;
-      const self = this;
-      dataFetch('/api/load-test-prefs', {
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, (result) => {
-        if (typeof result !== 'undefined') {
-          console.log(result.loadTestPrefs.qps);
-          self.props.updateLoadTestPref({
-            loadTestPref: {
-              qps: result.loadTestPrefs.qps,
-              c: result.loadTestPrefs.c,
-              t: result.loadTestPrefs.t,
-              loadGenerator: result.loadTestPrefs.gen,
-            },
-          });
-          self.setState({               
-            qps: result.loadTestPrefs.qps,
-            c: result.loadTestPrefs.c,
-            t: result.loadTestPrefs.t,
-            loadGenerator: result.loadTestPrefs.gen,
-          });
-        }
-      }, self.handleError('There was an error sending your preference'));
-      console.log(this.props.qps);
-    }
+  getLoadTestPrefs = () => {
+    const self = this;
+    dataFetch('/api/load-test-prefs', {
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, (result) => {
+      if (typeof result !== 'undefined') {
+        this.setState({               
+          qps: result.loadTestPrefs.qps,
+          c: result.loadTestPrefs.c,
+          t: result.loadTestPrefs.t,
+          loadGenerator: result.loadTestPrefs.gen,
+        });
+      }
+    }, self.handleError('There was an error fetching your preference'));
+  }
 
   getStaticPrometheusBoardConfig = () => {
     const self = this;
@@ -394,7 +381,7 @@ class MesheryPerformanceComponent extends React.Component {
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration: 8000,
+        autoHideDuration: 4000,
       });
     };
   }
