@@ -74,22 +74,17 @@ run-local: git
 	cd ..
 
 run-tests:
-	# -----Linting Check----- #
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive;
 	$(GOPATH)/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./... \
 
-	# ------Error Check------ #
 	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get github.com/kisielk/errcheck;
 	$(GOPATH)/bin/errcheck -tags draft ./... \
 
-	# ------Static Check------ #
 	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get honnef.co/go/tools/cmd/staticcheck;
 	$(GOPATH)/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./... \
 
-	# -------Vet Check------- #
 	GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./... \
 
-	# ----Security Check----- #
 	GO111MODULE=off go get github.com/securego/gosec/cmd/gosec;
 	$(GOPATH)/bin/gosec -exclude=G301,G304,G107 ./...
 
