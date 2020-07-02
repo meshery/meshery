@@ -26,7 +26,6 @@ require (
 	github.com/prologic/bitcask v0.3.5
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.10.0
-	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.7.0
@@ -34,6 +33,7 @@ require (
 	golang.org/x/net v0.0.0-20200519113804-d87ec0cfa476
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
+	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
 	google.golang.org/grpc v1.30.0
 	google.golang.org/protobuf v1.24.0
 	gopkg.in/yaml.v2 v2.3.0
