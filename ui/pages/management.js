@@ -32,7 +32,7 @@ class Manage extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Management | Meshery</title>
+          <title>Management | Meshery </title>
         </Head>
         <React.Fragment>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
