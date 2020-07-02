@@ -209,18 +209,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
 
-	// q.Set("json", "on")
 
-	// client := &http.Client{}
-	// fortioURL, err := url.Parse(h.config.FortioURL)
-	// if err != nil {
-	// 	logrus.Errorf("unable to parse the provided fortio url: %v", err)
-	// 	http.Error(w, "error while running load test", http.StatusInternalServerError)
-	// 	return
-	// }
-	// fortioURL.RawQuery = q.Encode()
-	// logrus.Infof("load test constructed url: %s", fortioURL.String())
-	// fortioResp, err := client.Get(fortioURL.String())
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 

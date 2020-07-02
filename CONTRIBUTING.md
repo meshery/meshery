@@ -1,7 +1,7 @@
 # <a name="contributing">Contributing Overview</a>
 Please do! Thanks for your help improving the project! :balloon:
 
-All contributors are welcome. Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+All contributors are welcome. Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](.CODE_OF_CONDUCT.md).
 
 Not sure where to start? First, see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit). Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join the [Slack account](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed.  All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
@@ -16,7 +16,7 @@ Not sure where to start? First, see the [newcomers welcome guide](https://docs.g
 Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 # <a name="contributing">General Contribution Flow</a>
 
-In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./git-workflow.md).
+In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -56,7 +56,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 ## <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./git-workflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](./CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
 `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -159,6 +159,15 @@ update /etc/hosts
 ```shell
 127.0.0.1 mesherylocal.layer5.io
 ```
+
+### UI Lint Rules 
+
+We are using ES-Lint to maintain code quality & consistency in our UI Code. To make sure your PR passes all the UI & ES-Lint Tests, please see below :
+
+- Remember to run `make run-ui-lint` & `make run-provider-ui-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
+- The above commands will only fix some basic indenting rules for you, you will have to manually check your code to ensure there is no duplications, un-used variables or un-declared constants.
+- We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
+- In case you are unable to fix your lint errors, ping us on our [Slack](layer5.slack.io).
 
 # <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).

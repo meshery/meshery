@@ -139,30 +139,30 @@ class MesheryPlayComponent extends React.Component {
     let imageIcon = (<img src={image} className={classes.expTitleIcon} />);
     if(adapter && adapter.name){
       switch (adapter.name.toLowerCase()){
-      case 'istio':
-        image = "/static/img/istio-blue.svg";
-        imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
-        break;
-      case 'linkerd':
-        image = "/static/img/linkerd.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'consul':
-        image = "/static/img/consul.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'network service mesh':
-        image = "/static/img/nsm.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'octarine':
-        image = "/static/img/octarine.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
-      case 'citrix service mesh':
-        image = "/static/img/citrix.svg";
-        imageIcon = (<img src={image} className={classes.expTitleIcon} />);
-        break;
+        case 'istio':
+          image = "/static/img/istio-blue.svg";
+          imageIcon = (<img src={image} className={classes.expIstioTitleIcon} />);
+          break;
+        case 'linkerd':
+          image = "/static/img/linkerd.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'consul':
+          image = "/static/img/consul.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'network service mesh':
+          image = "/static/img/nsm.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'octarine':
+          image = "/static/img/octarine.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'citrix service mesh':
+          image = "/static/img/citrix.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
       }
     }
     return imageIcon;

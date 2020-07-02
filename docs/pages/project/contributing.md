@@ -3,17 +3,29 @@ layout: page
 title: Contributing
 permalink: project/contributing
 ---
-
 # <a name="contributing">Contributing Overview</a>
-Please do! Thanks for your help improving the project! :balloon:
 
-All contributors are welcome. Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Please do! Thanks for your help! :balloon:
 
-Not sure where to start? First, see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit). Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join the [Slack account](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed.  All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md). 
+
+Not sure where to start? 
+
+Follow these steps and you'll be right at home.
+
+1. See the [*Newcomers Welcome Guide*](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute.
+
+2. Sign up for a [*MeshMate*](https://layer5.io/community#meshmate) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
+  - **Familiarize** yourself with all the Layer5 projects (Take a look at the [Community Drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) and the [Layer5 Repository Overview](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#heading=h.uwtb5xf7b5hw): Spend time understanding each of the Layer5 initiatives through high level overviews available in the community drive and in discussions with your MeshMate.
+  - **Identify** your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.
+  - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
+  - **Build** Meshery: Confirm that you have a usable development environment.
+  - **Communicate** with the Layer5 community by joining the [Slack account](http://slack.layer5.io).
+  - **Contribute** by grabbing any open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. If needed, create a [new issue](/../../issues/new/choose). All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
 **Sections**
-- General Contribution Flow<
-  - <a href="#commit-signing">Developer Certificate of Origin</a>
+- General Contribution Flow
+- <a href="#commit-signing">Developer Certificate of Origin</a>
 - Meshery Contribution Flow
   - <a href="#contributing-docs">Meshery Documentation</a>
   - <a href="#contributing-meshery">Meshery Backend</a>
