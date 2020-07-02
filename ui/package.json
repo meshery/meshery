@@ -15,7 +15,7 @@
   },
   "pre-commit": [
     "lint",
-    "test",
+    "test"
   ],
   "keywords": [],
   "author": "",
