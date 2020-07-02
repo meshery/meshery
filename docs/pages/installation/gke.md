@@ -6,8 +6,9 @@ permalink: installation/gke
 
 # Quick Start with Google Kubernetes Engine (GKE)
 
-Make your way to Meshery and download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
-<br>Utilize the token to run the following command:
+- Make your way to meshery.ui, login with your user details and head over to the local port, found at <code>localhost:3000</code>.
+- Download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
+- Utilize the token to run the following command:
 
 | command           | flag                | function                                                     | Usage                     |
 |:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
@@ -23,8 +24,8 @@ You may perform the steps outlined under [Managed Kubernetes](#managedk8s), foll
 
 `./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
 
-Having run this script, supply the generated file config-cluster-admin-sa-gke-default.yaml in your Meshery settings page.
-This is where you configure your settings on the adaptor(Istio etc.) and other things.
+Having run this script, fire up the meshery server and head over to the local port, usually found at <code>localhost:3000/settings</code> or <code>localhost:9081/settings</code>. This is where you configure your settings on the adaptor(Istio etc).
+<br>Supply the generated file <code><b> config-cluster-admin-sa-gke-default.yaml </b></code> under kube-config.
 
 ### **Managed Kubernetes**
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:

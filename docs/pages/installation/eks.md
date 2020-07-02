@@ -6,8 +6,9 @@ permalink: installation/eks
 
 # Quick Start with Amazon Elastic Kubernetes Service (EKS)
 
-Make your way to Meshery and download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
-<br>Utilize the token to run the following command:
+- Make your way to meshery.ui, login with your user details and head over to the local port, found at <code>localhost:3000</code>.
+- Download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
+- Utilize the token to run the following command:
 
 | command           | flag                | function                                                     | Usage                     |
 |:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
@@ -22,7 +23,7 @@ Follow the below mentioned steps to set up manually:
 ### **Managed Kubernetes**
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
-Note: Make sure you are able to access EKS with kubectl by following the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide</a>
+Note: Make sure you are able to access EKS with kubectl by following the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide </a>
 
 
 ### 1. Create a `ServiceAccount` with `cluster-admin` role
