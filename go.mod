@@ -24,7 +24,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.5
-	github.com/prometheus/client_golang v1.6.0
+	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.10.0
 	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/sirupsen/logrus v1.6.0
@@ -34,7 +34,8 @@ require (
 	golang.org/x/net v0.0.0-20200519113804-d87ec0cfa476
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
-	google.golang.org/grpc v1.29.1
+	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
+	google.golang.org/grpc v1.30.0
 	gopkg.in/yaml.v2 v2.3.0
 	honnef.co/go/tools v0.0.1-2020.1.4 // indirect
 	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
