@@ -6,15 +6,15 @@ permalink: installation/gke
 
 # Quick Start with Google Kubernetes Engine (GKE)
 
-- Navigate to the Meshery UI, login with your user details and head over to the local port, found at `localhost:9081.`
-- Download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
+- Navigate to the Meshery UI, login with your user details and head over to the local port (e.g. `http://localhost:9081`).
+- Download the authentication token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
 - Utilize the token to run the following command:
 
 | command           | flag                | function                                                     | Usage                     |
 |:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
 |                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
 
-Once configured, head over to the Quick Start Guide and continue with the steps outlined for [GKE](/docs/installation/gke#manual-configuration).
+Once configured, you can proceed to the Quick Start Guide and continue with the steps outlined for [GKE](/docs/installation/gke#manual-configuration).
 
 ## **Manual Configuration**
 
@@ -24,8 +24,8 @@ You may perform the steps outlined under [Managed Kubernetes](#managedk8s), foll
 
 `./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
 
-Having run this script, fire up the meshery server and head over to the local port, usually found at `localhost:9081/settings`. This is where you configure your settings on the adaptor(Istio etc).
-<br>Supply the generated file `**config-cluster-admin-sa-gke-default.yaml**` under kube-config.
+- Once the script is complete, you may proceed to start the Meshery server and navigate to the local port (e.g. `http://localhost:9081/settings`).
+- Start with the GKE-compatible configuration by executing `mesheryctl system start` and supply the generated file `**config-cluster-admin-sa-gke-default.yaml**` under kube-config.
 
 ### **Managed Kubernetes**
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
