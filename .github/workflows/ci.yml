@@ -29,7 +29,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off go get -u github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
+    - run: GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive; /home/runner/go/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./...
   error_check:
     name: Error check
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get github.com/kisielk/errcheck; /home/runner/go/bin/errcheck -tags draft ./...
   static_check:
     name: Static check
     runs-on: ubuntu-latest
@@ -69,7 +69,7 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get -u honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
+    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go get honnef.co/go/tools/cmd/staticcheck; /home/runner/go/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./...
   vet_check:
     name: Go Vet Check
     runs-on: ubuntu-latest
@@ -285,44 +285,35 @@ jobs:
     needs: [build_release]
     steps:
     - name: Check out code
-      if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: actions/checkout@master
       with:
         fetch-depth: 1
     - name: Docker login
-      if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: azure/docker-login@v1
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Set properties file with release tag
-      if: success() && startsWith(github.ref, 'refs/tags/')
-      run: |
-        echo git-sha:${GITHUB_SHA::8} >> properties.yml
-        echo release-tag:${GITHUB_REF/refs\/tags\//} >> properties.yml
-    - name: Get Previous tag
-      id: previoustag
-      if: success() && (github.ref == 'refs/heads/master')
-      run: echo "::set-output name=releasetag::$(git describe --abbrev=0 --tags)"
-    - name: Set properties file with previous release tag
-      if: success() && (github.ref == 'refs/heads/master')
-      run: |
-        echo git-sha:${GITHUB_SHA::8} >> properties.yml
-        echo release-tag:${{ steps.previoustag.outputs.releasetag }}-${GITHUB_SHA::6} >> properties.yml
-    - name: Docker build & push
-      if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
-      run: |
-        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }} --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} .
-        docker tag ${{ secrets.IMAGE_NAME }}:latest ${{ secrets.IMAGE_NAME }}:$GITHUB_SHA
-        docker push ${{ secrets.IMAGE_NAME }}:$GITHUB_SHA
-        docker push ${{ secrets.IMAGE_NAME }}:latest
-    - name: Docker tag release & push
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       run: |
-        docker tag ${{ secrets.IMAGE_NAME }}:latest ${{ secrets.IMAGE_NAME }}:${GITHUB_REF:10} # stripping refs/tags/
-        docker push ${{ secrets.IMAGE_NAME }}:${GITHUB_REF:10}
+        echo git-sha:${GITHUB_SHA::7} >> properties.yml
+        echo release-tag:${GITHUB_REF/refs\/tags\//} >> properties.yml
+    - name: Docker build & tag
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} .
+        docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+        docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::7}
+    - name: Docker push
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        docker push ${{ secrets.IMAGE_NAME }}:stable-latest
+        docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+        docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::7}
     - name: Docker Hub Description
-      if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master') && success()
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: peter-evans/dockerhub-description@v2.0.0
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}

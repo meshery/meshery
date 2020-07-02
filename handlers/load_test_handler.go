@@ -13,12 +13,14 @@ import (
 	"time"
 
 	"fortio.org/fortio/periodic"
+	yamlj "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"google.golang.org/protobuf/encoding/protojson"
 	v1 "k8s.io/api/apps/v1"
 )
 
@@ -39,42 +41,57 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	benchMark := &models.PerformanceSpec{}
-	if err := yaml.Unmarshal(body, benchMark); err != nil {
+	jsonBody, err := yamlj.YAMLToJSON(body)
+	if err != nil {
+		msg := "unable to convert YAML to JSON"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	perfTest := &SMPS.PerformanceTestConfig{}
+	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	q := req.URL.Query()
 
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
-	testName := q.Get("name")
+	testName := perfTest.Name
 	if testName == "" {
 		logrus.Errorf("Error: name field is blank")
 		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
 		return
 	}
-	meshName := q.Get("mesh")
-	testUUID := uuid.Must(uuid.NewV4()).String()
+	// meshName := q.Get("mesh")
+	testUUID := perfTest.Id
 
 	loadTestOptions := &models.LoadTestOptions{}
 
-	loadTestOptions.Duration = benchMark.EndTime.Sub(benchMark.StartTime)
-
+	testDuration, err := time.ParseDuration(perfTest.Duration)
+	if err != nil {
+		msg := "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	loadTestOptions.Duration = testDuration
 	if loadTestOptions.Duration.Seconds() <= 0 {
 		loadTestOptions.Duration = time.Second
 	}
 
 	loadTestOptions.IsGRPC = false
 
-	loadTestOptions.URL = benchMark.EndpointURL
-	if benchMark.Client != nil {
-		loadTestOptions.HTTPNumThreads = benchMark.Client.Connections
-		loadTestOptions.HTTPQPS = benchMark.Client.Rps
+	// TODO: check multiple clients in case of distributed perf test
+	testClient := perfTest.Clients[0]
 
-	}
+	// TODO: consider the multiple endpoints
+	loadTestOptions.URL = testClient.EndpointUrl[0]
+	loadTestOptions.HTTPNumThreads = int(testClient.Connections)
+	loadTestOptions.HTTPQPS = float64(testClient.Rps)
 
 	if loadTestOptions.HTTPNumThreads < 1 {
 		loadTestOptions.HTTPNumThreads = 1
@@ -92,17 +109,17 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		loadTestOptions.HTTPQPS = 0
 	}
 
-	// loadGenerator := q.Get("loadGenerator")
+	loadGenerator := testClient.LoadGenerator
 
-	// switch loadGenerator {
-	// case "wrk2":
-	// 	loadTestOptions.LoadGenerator = models.Wrk2LG
-	// default:
-	loadTestOptions.LoadGenerator = models.FortioLG
+	switch loadGenerator {
+	case models.Wrk2LG.Name():
+		loadTestOptions.LoadGenerator = models.Wrk2LG
+	default:
+		loadTestOptions.LoadGenerator = models.FortioLG
+	}
 	loadTestOptions.AllowInitialErrors = true
-	// }
 
-	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, testName, "", testUUID, prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
@@ -208,8 +225,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
-
-
+	logrus.Infof("perf test with config: %v", loadTestOptions)
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 

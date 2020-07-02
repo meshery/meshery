@@ -1,16 +1,20 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -52,6 +56,23 @@ var (
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 )
+
+const tokenName = "token"
+const providerName = "meshery-provider"
+
+var seededRand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+// StringWithCharset generates a random string with a given length
+func StringWithCharset(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyz"
+	// + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
 
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer) {
@@ -177,6 +198,110 @@ func IsMesheryRunning() bool {
 	return strings.Contains(string(op), "meshery")
 }
 
+// AddAuthDetails Adds authentication cookies to the request
+func AddAuthDetails(req *http.Request, filepath string) error {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "file read failed :")
+		return err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid :")
+		return err
+	}
+	req.AddCookie(&http.Cookie{
+		Name:     tokenName,
+		Value:    tokenObj[tokenName],
+		HttpOnly: true,
+	})
+	req.AddCookie(&http.Cookie{
+		Name:     providerName,
+		Value:    tokenObj[providerName],
+		HttpOnly: true,
+	})
+	return nil
+}
+
+// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
+func UpdateAuthDetails(filepath string) error {
+	// TODO: get this from the global config
+	req, err := http.NewRequest("GET", "http://localhost:9081/api/gettoken", bytes.NewBuffer([]byte("")))
+	if err != nil {
+		err = errors.Wrap(err, "error Creating the request :")
+		return err
+	}
+	if err := AddAuthDetails(req, filepath); err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	defer SafeClose(resp.Body)
+
+	if err != nil {
+		err = errors.Wrap(err, "error dispatching there request :")
+		return err
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errors.Wrap(err, "error reading body :")
+		return err
+	}
+
+	if ContentTypeIsHTML(resp) {
+		return errors.New("invalid body")
+	}
+
+	return ioutil.WriteFile(filepath, data, os.ModePerm)
+}
+
+// UploadFileWithParams returns a request configured to upload files with other values
+func UploadFileWithParams(uri string, params map[string]string, paramName, path string) (*http.Request, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	fileContents, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	fi, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if err = file.Close(); err != nil {
+		return nil, err
+	}
+
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, fi.Name())
+	if err != nil {
+		return nil, err
+	}
+	_, err = part.Write(fileContents)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest("POST", uri, body)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+	return request, nil
+}
+
 // RootError returns a formatted error message with a link to 'root' command usage page at
 // in addition to the error message
 func RootError(msg string) string {
@@ -222,6 +347,18 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		if sub == s.CalledAs() {
 			return true
 		}
+	}
+	return false
+}
+
+// ContentTypeIsHTML Checks if the response is an HTML resposnse
+func ContentTypeIsHTML(resp *http.Response) bool {
+	ctString := strings.Split(resp.Header.Get("Content-Type"), ";")
+	if len(ctString) < 1 {
+		return false
+	}
+	if ctString[0] == "text/html" {
+		return true
 	}
 	return false
 }
