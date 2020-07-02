@@ -6,15 +6,15 @@ permalink: installation/eks
 
 # Quick Start with Amazon Elastic Kubernetes Service (EKS)
 
-- Navigate to the Meshery UI, login with your user details and head over to the local port, found at `localhost:9081.`
-- Download the token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
+- Navigate to the Meshery UI, login with your user details and head over to the local port (e.g. `http://localhost:9081`)
+- Download the authentication token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
 - Utilize the token to run the following command:
 
 | command           | flag                | function                                                     | Usage                     |
 |:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
 |                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(EKS). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
 
-Once configured, head over to the Quick Start Guide and continue with the steps outlined for [EKS](/docs/installation/eks#manual-configuration).
+Once configured, you may proceed to the Quick Start Guide and continue with the steps outlined for [EKS](/docs/installation/eks#manual-configuration).
 
 ## **Manual Configuration**
 
@@ -23,7 +23,7 @@ Follow the below mentioned steps to set up manually:
 ### **Managed Kubernetes**
 In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
 
-Note: Make sure you are able to access EKS with `kubectl` by following the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank"> EKS guide </a>
+Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank")
 
 
 ### 1. Create a `ServiceAccount` with `cluster-admin` role
