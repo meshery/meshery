@@ -64,6 +64,20 @@ run-local:
 	./meshery; \
 	cd ..
 
+run-tests:
+	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive;
+	$(GOPATH)/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get github.com/kisielk/errcheck;
+	$(GOPATH)/bin/errcheck -tags draft ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get honnef.co/go/tools/cmd/staticcheck;
+	$(GOPATH)/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./... \
+
+	GO111MODULE=off go get github.com/securego/gosec/cmd/gosec;
+	$(GOPATH)/bin/gosec -exclude=G301,G304,G107 ./...
 
 proto:
 	# go get -u google.golang.org/grpc
