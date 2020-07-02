@@ -8,19 +8,19 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import { AppBar, Paper, Tooltip } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCloud, faPoll, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
+import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 
 const styles = (theme) => ({
   root: {
     flexGrow: 1,
     width: '100%',
-    // backgroundColor: theme.palette.background.paper,
   },
   icon: {
     display: 'inline',
@@ -45,9 +45,6 @@ function TabContainer(props) {
     <Typography
       component="div"
       style={{
-        // paddingLeft: 8*3,
-        // paddingRight: 8*3,
-        // paddingBottom: 8*3,
         paddingTop: 2,
       }}
     >
@@ -79,6 +76,9 @@ class MesherySettings extends React.Component {
           break;
         case 'metrics': 
           tabVal = 2;
+          break;
+        case 3:
+          newRoute+='#performance'
           break;
       }
     }
@@ -120,6 +120,9 @@ class MesherySettings extends React.Component {
             break;
           case 2:
             newRoute+='#metrics'
+            break;
+          case 3:
+            newRoute+='#performance'
             break;
         }
         if(this.props.router.route != newRoute) this.props.router.push(newRoute)
@@ -183,6 +186,14 @@ class MesherySettings extends React.Component {
                   <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
                 }
                 label="Metrics"
+              />
+            </Tooltip>
+            <Tooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                icon={
+                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                }
+                label="Performance"
               />
             </Tooltip>
           </Tabs>
@@ -255,6 +266,12 @@ class MesherySettings extends React.Component {
                 <PrometheusComponent />
               </TabContainer>
             )}
+          </TabContainer>
+        )}
+        {tabVal === 3 && (
+          <TabContainer>
+            <MesherySettingsPerformanceComponent />
+
           </TabContainer>
         )}
 

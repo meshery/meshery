@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/protobuf/encoding/protojson"
+	"encoding/json"
 
 	"github.com/layer5io/meshery/models"
 	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
@@ -19,12 +20,21 @@ import (
 
 // LoadTestPrefencesHandler is used for persisting load test preferences
 func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method == http.MethodGet {
+		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
+			logrus.Errorf("Error encoding LoadTest preference object: %v", err)
+			http.Error(w, "Error encoding LoadTest preference object", http.StatusInternalServerError)
+		}
+		return
+	}
 	if req.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	q := req.FormValue("qps")
-	qps, err := strconv.Atoi(q)
+
+	// qps, _ := strconv.ParseInt(q.Get("qps"), 32)
+	qs := req.FormValue("qps")
+	qps, err := strconv.Atoi(qs)
 	if err != nil {
 		err = errors.Wrap(err, "unable to parse qps")
 		logrus.Error(err)

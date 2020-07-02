@@ -9,6 +9,7 @@ type PerfCfg struct {
 	AuthTokenURI string `json:"AuthtokenURI"`
 	// LoadTestSmpsURI stores the URI for the load test SMPS endpoint
 	LoadTestSmpsURI string `json:"loadTestSmpsURI"`
+	LoadTestURI     string `json:"loadTestURI"`
 }
 
 // MesheryCtl stores the configurations used by mesheryctl CLI
@@ -17,6 +18,7 @@ type PerfCfg struct {
 //  perf:
 //	  authTokenURI:    "/gettoken",
 //	  loadTestSmpsURI: "/load-test-smps",
+//	  loadTestURI: "/load-test",
 type MesheryCtl struct {
 	// BaseMesheryURL is the base URL of the meshery server
 	BaseMesheryURL string `json:"baseMesheryURL"`
@@ -54,4 +56,9 @@ func (pc *PerfCfg) GetAuthTokenURL() string {
 // GetLoadTestSmpsURL returns a fully qualified URL to the Load Test SMPS endpoint
 func (pc *PerfCfg) GetLoadTestSmpsURL() string {
 	return pc.baseURL + pc.LoadTestSmpsURI
+}
+
+// GetLoadTestURL returns a fully qualified URL to the Load Test endpoint
+func (pc *PerfCfg) GetLoadTestURL() string {
+	return pc.baseURL + pc.LoadTestURI
 }
