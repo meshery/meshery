@@ -202,12 +202,12 @@ func IsMesheryRunning() bool {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		log.Errorf("File read failed : %v", err.Error())
+		err = errors.Wrap(err, "file read failed :")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		log.Errorf("Token file invalid : %v", err.Error())
+		err = errors.Wrap(err, "token file invalid :")
 		return err
 	}
 	req.AddCookie(&http.Cookie{
@@ -226,8 +226,9 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
 	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", "http://localhost:9081/api/user", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", "http://localhost:9081/api/gettoken", bytes.NewBuffer([]byte("")))
 	if err != nil {
+		err = errors.Wrap(err, "error Creating the request :")
 		return err
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
@@ -239,18 +240,18 @@ func UpdateAuthDetails(filepath string) error {
 	defer SafeClose(resp.Body)
 
 	if err != nil {
+		err = errors.Wrap(err, "error dispatching there request :")
 		return err
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		err = errors.Wrap(err, "error reading body :")
 		return err
 	}
 
-	var tmap map[string]interface{}
-
-	if err := json.Unmarshal([]byte(data), &tmap); err != nil {
-		return err
+	if ContentTypeIsHTML(resp) {
+		return errors.New("invalid body")
 	}
 
 	return ioutil.WriteFile(filepath, data, os.ModePerm)
@@ -346,6 +347,18 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		if sub == s.CalledAs() {
 			return true
 		}
+	}
+	return false
+}
+
+// ContentTypeIsHTML Checks if the response is an HTML resposnse
+func ContentTypeIsHTML(resp *http.Response) bool {
+	ctString := strings.Split(resp.Header.Get("Content-Type"), ";")
+	if len(ctString) < 1 {
+		return false
+	}
+	if ctString[0] == "text/html" {
+		return true
 	}
 	return false
 }

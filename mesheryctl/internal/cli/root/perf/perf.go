@@ -57,7 +57,7 @@ var PerfCmd = &cobra.Command{
 		var err error
 		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalf("error processing config: %s", err.Error())
+			return errors.Wrap(err, "error processing config")
 		}
 		//Check prerequisite
 		return utils.PreReqCheck()
@@ -128,6 +128,9 @@ var PerfCmd = &cobra.Command{
 		resp, err := client.Do(req)
 		if err != nil {
 			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to make request to %s", testURL)))
+		}
+		if utils.ContentTypeIsHTML(resp) {
+			return errors.New("Failed to run test")
 		}
 		log.Debug("Initiating Performance test ...")
 		log.Debug(resp.Status)
