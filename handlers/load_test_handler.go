@@ -83,7 +83,6 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		loadTestOptions.Duration = time.Second
 	}
 
-	loadTestOptions.IsGRPC = false
 
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Clients[0]
@@ -192,8 +191,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	loadTestOptions.IsGRPC = false
-
 	cc, _ := strconv.Atoi(q.Get("c"))
 	if cc < 1 {
 		cc = 1
@@ -293,7 +290,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Status:  models.LoadTestInfo,
 		Message: "Initiating load test . . . ",
 	}
-	// resultsMap, resultInst, err := helpers.FortioLoadTest(loadTestOptions)
 	var (
 		resultsMap map[string]interface{}
 		resultInst *periodic.RunnerResults
@@ -346,9 +342,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
 					err = errors.Wrap(err, "unable to ping kubernetes")
-					// logrus.Error(err)
-					logrus.Warn(err)
-					// return
+					logrus.Error(err)
 				}
 			}
 			versionChan <- serverVersion
@@ -380,14 +374,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Status:  models.LoadTestInfo,
 		Message: "Obtained the needed metadatas, attempting to persist the result",
 	}
-	// // defer fortioResp.Body.Close()
-	// // bd, err := ioutil.ReadAll(fortioResp.Body)
-	// bd, err := json.Marshal(resp)
-	// if err != nil {
-	// 	logrus.Errorf("Error: unable to parse response from fortio: %v", err)
-	// 	http.Error(w, "error while running load test", http.StatusInternalServerError)
-	// 	return
-	// }
 
 	result := &models.MesheryResult{
 		Name:   testName,
@@ -397,12 +383,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 	resultID, err := provider.PublishResults(req, result)
 	if err != nil {
-		// http.Error(w, "error while getting load test results", http.StatusInternalServerError)
-		// return
 		msg := "error: unable to persist the load test results"
 		err = errors.Wrap(err, msg)
 		logrus.Error(err)
-		// http.Error(w, "error while running load test", http.StatusInternalServerError)
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
 			Message: msg,
@@ -441,7 +424,6 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		key, _ = uuid.NewV4()
 	}
 	result.ID = key
-	// w.Write(bd)
 	respChan <- &models.LoadTestResponse{
 		Status: models.LoadTestSuccess,
 		Result: result,
@@ -468,9 +450,6 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 					"result":     seriesData,
 				},
 			}
-			// sd, _ := json.Marshal(seriesData)
-			// sd, _ := json.Marshal(queryResponse)
-			// logrus.Debugf("Retrieved series data: %s", sd)
 			h.config.QueryTracker.AddOrFlagQuery(ctx, config.TestUUID, query, true)
 		}
 	}
