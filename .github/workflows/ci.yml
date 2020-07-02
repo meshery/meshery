@@ -25,7 +25,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -45,7 +45,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -65,7 +65,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -85,7 +85,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -109,7 +109,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -133,7 +133,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -154,7 +154,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
@@ -261,7 +261,7 @@ jobs:
     - name: Setup Cache
       uses: actions/cache@v1
       with:
-        path: ~/go/pkg/mod
+        path: /home/runner/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
