@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
+<<<<<<< HEAD
 var (
 	version   = "Unavailable"
 	commitsha = "Unavailable"
@@ -26,5 +27,16 @@ var (
 func main() {
 	root.Build = version
 	root.CommitSHA = commitsha
+=======
+var version = "dev"
+var clientcommitsha = "SHA-Client"
+var servercommitsha = "SHA-Server"
+
+func main() {
+	root.BuildClient = version
+	root.BuildServer = version
+	root.ClientCommitSHA = clientcommitsha
+	root.ServerCommitSHA = servercommitsha
+>>>>>>> This PR fixes #603
 	root.Execute()
 }
