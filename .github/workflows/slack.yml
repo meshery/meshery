@@ -1,8 +1,8 @@
-name: Notify slack
+name: Slack Notify on Star
 on: watch
 jobs:
   star-notify:
-    name: Notify slack on star
+    name: Notify Slack on star
     runs-on: ubuntu-latest
     steps:
     - name: Get current star count
@@ -13,5 +13,4 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: pullreminders/slack-action@master
       with:
-        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone just starred Meshery! (https://github.com/layer5io/meshery/stargazers) Total stars: ${{env.STARS}}\"}'
-        command: echo "Now at ${{env.STARS}} stars."
+        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone just starred Meshery! (https://github.com/layer5io/meshery/stargazers) Total ⭐️: ${{env.STARS}}\"}'
