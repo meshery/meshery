@@ -19,11 +19,13 @@ import (
 )
 
 var version = "dev"
-var commitsha = "SHA"
+var clientcommitsha = "SHA-Client"
+var servercommitsha = "SHA-Server"
 
 func main() {
 	root.BuildClient = version
 	root.BuildServer = version
-	root.CommitSHA = commitsha
+	root.ClientCommitSHA = clientcommitsha
+	root.ServerCommitSHA = servercommitsha
 	root.Execute()
 }

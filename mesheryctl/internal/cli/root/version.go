@@ -26,8 +26,11 @@ var BuildClient string
 // BuildServer - holds the build info of server
 var BuildServer string
 
-// CommitSHA - holds the Git-SHA info
-var CommitSHA string
+// ClientCommitSHA - holds the Git-SHA info
+var ClientCommitSHA string
+
+// ServerCommitSHA - holds the Git-SHA info
+var ServerCommitSHA string
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
@@ -35,7 +38,7 @@ var versionCmd = &cobra.Command{
 	Short: "Version of mesheryctl",
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Infof("Client Version: %v \t  GitSHA: %v", BuildClient, CommitSHA)
-		log.Info("Server Version: ", BuildServer)
+		log.Infof("Client Version: %v \t  GitSHA: %v", BuildClient, ClientCommitSHA)
+		log.Infof("Server Version: %v \t  GitSHA: %v", BuildServer, ServerCommitSHA)
 	},
 }
