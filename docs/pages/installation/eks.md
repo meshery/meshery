@@ -17,7 +17,7 @@ _Note: Make sure you are able to access EKS with `kubectl` by following the [EKS
 1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
 1. Use this authentication token to execute the following command:
     ```
-    $ mesheryctl system config gke --token <PATH TO TOKEN>
+    $ mesheryctl system config eks --token <PATH TO TOKEN>
     ```
 
 This command updates your kubeconfig to provide Meshery with access to your managed Kubernetes instance.
