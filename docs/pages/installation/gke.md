@@ -4,7 +4,7 @@ title: GKE
 permalink: installation/gke
 ---
 
-# Getting Started with Google Kubernetes Engine (GKE)
+# Quick Start with Google Kubernetes Engine (GKE)
 
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount` can be used or a new one created. Ensure that the `ServiceAccount` you use has the `cluster-admin` role assigned.
@@ -25,7 +25,7 @@ Once configured, proceed with using Meshery (`mesheryctl system start`).
 
 ## Manual Configuration (Optional)
 
-If the [Automatic Configuration](#automatic-configuration) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
+If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 
 1. Download the [generate_kubeconfig_gke.sh](./generate_kubeconfig_gke.sh) shell script.
 1. Execute this shell script identifying ServiceAccount name and Namespace arguments, like so:
