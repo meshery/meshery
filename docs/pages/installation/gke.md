@@ -4,33 +4,39 @@ title: GKE
 permalink: installation/gke
 ---
 
-# Quick Start with Google Kubernetes Engine (GKE)
+# Getting Started with Google Kubernetes Engine (GKE)
 
-- Navigate to the Meshery UI, login with your user details and head over to the local port (e.g. `http://localhost:9081`).
-- Download the authentication token by clicking the "Get Token" option in the dropdown menu under your User Account avatar.
-- Utilize the token to run the following command:
+In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
+Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount` can be used or a new one created. Ensure that the `ServiceAccount` you use has the `cluster-admin` role assigned.
 
-| command           | flag                | function                                                     | Usage                     |
-|:------------------|:-------------------:|:-------------------------------------------------------------|:--------------------------|
-|                   | --system config     | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE). | `mesheryctl system config gke --token "PATH TO TOKEN"` |
+Meshery will use this `ServiceAccount` to interact with your managed Kubernetes instance. Use either of the following two methods to prepare a compatible kubeconfig file.
 
-Once configured, you can proceed to the Quick Start Guide and continue with the steps outlined for [GKE](/docs/installation/gke#manual-configuration).
+## Automatic Configuration (Recommended)
 
-## **Manual Configuration**
+1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
+1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
+1. Use this authentication token to execute the following command:
+    ```
+    $ mesheryctl system config gke --token <PATH TO TOKEN>
+    ```
 
-Follow the below mentioned steps to set up manually:
+This command updates your kubeconfig to provide Meshery with access to your managed Kubernetes instance.
+Once configured, proceed with using Meshery (`mesheryctl system start`).
 
-You may perform the steps outlined under [Managed Kubernetes](#managedk8s), following by hand or run the [generate_kubeconfig_gke.sh](./generate_kubeconfig_gke.sh) shell script using the desired ServiceAccount name and Namespace arguments, like so:
+## Manual Configuration (Optional)
 
-`./generate_kubeconfig_gke.sh cluster-admin-sa-gke default`
+If the [Automatic Configuration](#automatic-configuration) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 
-- Once the script is complete, you may proceed to start the Meshery server and navigate to the local port (e.g. `http://localhost:9081/settings`).
-- Start with the GKE-compatible configuration by executing `mesheryctl system start` and supply the generated file `**config-cluster-admin-sa-gke-default.yaml**` under kube-config.
+1. Download the [generate_kubeconfig_gke.sh](./generate_kubeconfig_gke.sh) shell script.
+1. Execute this shell script identifying ServiceAccount name and Namespace arguments, like so:
+    ```
+    ./generate_kubeconfig_gke.sh cluster-admin-sa-gke default
+    ```
+1. Once the script is complete, you may proceed to start Meshery with the GKE-compatible configuration by executing:
+    ```
+    $ mesheryctl system start
+    ```
+1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
+1. Under Settings-->Environment, provide the generated file (`config-cluster-admin-sa-gke-default.yaml`)as the kubeconfig file.
 
-### **Managed Kubernetes**
-In order to run Meshery in a managed Kubernetes environment, you will need to assign an existing `ServiceAccount` or create a new `ServiceAccount`:
-
-1. Create a `ServiceAccount` with `cluster-admin` role.
-2. Get secret name from `ServiceAccount`.
-3. Extract CA certificate and user token from the secret.
-4. Generate new kubeconfig yaml file to use as input to Meshery.
+Meshery should now connect with your managed Kubernetes instance. Proceed with using Meshery.
