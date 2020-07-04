@@ -1,6 +1,6 @@
 apiVersion: v2
 name: mesheryistio
-description: Mesheryistio chart for deploying mesheryistio.
+description: Meshery Adapter for Istio chart.
 source: 
   - https://github.com/layer5io/meshery-istio
 
@@ -18,7 +18,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.1.0
+version: 0.2.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -28,3 +28,5 @@ appVersion: latest
 maintainers:
   - name: aisuko
     email: urakiny@gmail.com
+  - name: leecalcote
+    email: leecalcote@gmail.com
