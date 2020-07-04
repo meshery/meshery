@@ -5,6 +5,11 @@ MESHERY_CLOUD_DEV=http://localhost:9876
 MESHERY_CLOUD_PROD=https://meshery.layer5.io
 MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
 
+# Configure git variables as an environment variable
+git:
+	GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+	GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
@@ -55,7 +60,7 @@ run-local-cloud:
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local:
+run-local: git
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \

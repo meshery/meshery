@@ -18,14 +18,13 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
-var version = "dev"
-var clientcommitsha = "SHA-Client"
-var servercommitsha = "SHA-Server"
+var (
+	version   = "dev"
+	commitsha = "SHA"
+)
 
 func main() {
-	root.BuildClient = version
-	root.BuildServer = version
-	root.ClientCommitSHA = clientcommitsha
-	root.ServerCommitSHA = servercommitsha
+	root.Build = version
+	root.CommitSHA = commitsha
 	root.Execute()
 }
