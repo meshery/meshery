@@ -17,8 +17,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Default values incase any errors
 	version := &Version{
-		Build:     "dev",
-		CommitSHA: "SHA",
+		Build:     "Unavailable",
+		CommitSHA: "Unavailable",
 	}
 
 	if r.Method != http.MethodGet {
