@@ -26,6 +26,7 @@ RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 FROM ubuntu
 RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
 COPY --from=meshery-server /meshery /app/cmd/
+COPY --from=meshery-server /properties.yml /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out

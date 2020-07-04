@@ -18,6 +18,8 @@ type Router struct {
 // NewRouter returns a new ServeMux with app routes.
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	mux := http.NewServeMux()
+	mux.HandleFunc("/api/server/version", h.ServerVersionHandler)
+
 	mux.HandleFunc("/api/provider", h.ProviderHandler)
 	mux.HandleFunc("/api/providers", h.ProvidersHandler)
 	mux.HandleFunc("/provider/", h.ProviderUIHandler)
