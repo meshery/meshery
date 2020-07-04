@@ -6,13 +6,13 @@ import (
 	"os"
 )
 
-// Json payload structure for version api
+// Version defines the Json payload structure for version api
 type Version struct {
 	Build     string `json:"build,omitempty"`
 	CommitSHA string `json:"commitsha,omitempty"`
 }
 
-// LoginHandler redirects user for auth or issues session
+// ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Default values incase any errors
