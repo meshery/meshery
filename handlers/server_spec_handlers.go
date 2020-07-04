@@ -4,23 +4,38 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+<<<<<<< HEAD
 
 	"github.com/sirupsen/logrus"
 )
 
 // Version defines the Json payload structure for version api
+=======
+)
+
+// Json payload structure for version api
+>>>>>>> This PR fixes #603
 type Version struct {
 	Build     string `json:"build,omitempty"`
 	CommitSHA string `json:"commitsha,omitempty"`
 }
 
+<<<<<<< HEAD
 // ServerVersionHandler handles the version api request for the server
+=======
+// LoginHandler redirects user for auth or issues session
+>>>>>>> This PR fixes #603
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Default values incase any errors
 	version := &Version{
+<<<<<<< HEAD
 		Build:     "Not Set",
 		CommitSHA: "Not Set",
+=======
+		Build:     "dev",
+		CommitSHA: "SHA",
+>>>>>>> This PR fixes #603
 	}
 
 	if r.Method != http.MethodGet {
@@ -38,8 +53,12 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 		version.CommitSHA = os.Getenv("GIT_COMMITSHA")
 	}
 
+<<<<<<< HEAD
 	err := json.NewEncoder(w).Encode(version)
 	if err != nil {
 		logrus.Errorf("unable to send data: %v", err)
 	}
+=======
+	json.NewEncoder(w).Encode(version)
+>>>>>>> This PR fixes #603
 }
