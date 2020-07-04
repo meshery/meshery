@@ -23,10 +23,12 @@ docker:
 
 # Runs Meshery in a container locally and points to locally-running 
 #  Meshery Cloud for user authentication.
-docker-run-local-cloud:
+docker-run-local-cloud: git
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
+	-e GIT_VERSION=${GIT_VERSION} \
+	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -38,6 +40,8 @@ docker-run-local-cloud:
 docker-run-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
+	-e GIT_VERSION=${GIT_VERSION} \
+	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -49,7 +53,7 @@ docker-run-cloud:
 # Runs Meshery on your local machine and points to locally-running  
 #  Meshery Cloud for user authentication.
 
-run-local-cloud:
+run-local-cloud: git
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
