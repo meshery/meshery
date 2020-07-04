@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -59,33 +58,45 @@ var versionCmd = &cobra.Command{
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", Build, CommitSHA)
+		version := &Version{
+			Build:     "Unavailable",
+			CommitSHA: "Unavailable",
+		}
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", mctlCfg.GetBaseMesheryURL()), nil)
 		if err != nil {
-			return errors.Wrapf(err, "error getting server version/hash")
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\nCould not communicate with Meshery at $BASE_URL\n")
+			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n\n")
+			return
 		}
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			return errors.Wrapf(err, "error getting server version/hash")
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\nCould not communicate with Meshery at $BASE_URL\n")
+			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n\n")
+			return
 		}
-		defer utils.SafeClose(resp.Body)
 
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrapf(err, "error getting server version/hash")
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\nCould not communicate with Meshery at $BASE_URL\n")
+			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n\n")
+			return
 		}
 
-		version := &Version{}
 		err = json.Unmarshal(data, version)
 		if err != nil {
-			return errors.Wrapf(err, "error getting server version/hash")
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\nCould not communicate with Meshery at $BASE_URL\n")
+			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n\n")
+			return
 		}
-
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-		return nil
 	},
 }

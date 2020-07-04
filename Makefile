@@ -37,7 +37,7 @@ docker-run-local-cloud: git
 
 # Runs Meshery in a container locally and points to remote 
 #  Meshery Cloud for user authentication.
-docker-run-cloud:
+docker-run-cloud: git
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	-e GIT_VERSION=${GIT_VERSION} \

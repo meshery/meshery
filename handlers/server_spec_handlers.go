@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Version defines the Json payload structure for version api
@@ -36,5 +38,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 		version.CommitSHA = os.Getenv("GIT_COMMITSHA")
 	}
 
-	json.NewEncoder(w).Encode(version)
+	err := json.NewEncoder(w).Encode(version)
+	if err != nil {
+		logrus.Errorf("unable to send data: %v", err)
+	}
 }
