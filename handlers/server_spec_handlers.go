@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Version defines the Json payload structure for version api
+// Json payload structure for version api
 type Version struct {
 	Build     string `json:"build,omitempty"`
 	CommitSHA string `json:"commitsha,omitempty"`
