@@ -299,32 +299,22 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   getLoadTestPrefs = () => {
-  	const {
-  		qps, c, t, loadGenerator
-  	} = this.props;
-  	const self = this;
-  	dataFetch('/api/load-test-prefs', {
-  		credentials: 'same-origin',
-  		method: 'GET',
-  		credentials: 'include',
-  	}, (result) => {
-  		if (typeof result !== 'undefined') {
-  			self.props.updateLoadTestPref({
-  				loadTestPref: {
-  					qps: result.loadTestPrefs.qps,
-  					c: result.loadTestPrefs.c,
-  					t: result.loadTestPrefs.t,
-  					loadGenerator: result.loadTestPrefs.gen,
-  				},
-  			});
-  			self.setState({               
-  				qps: result.loadTestPrefs.qps,
-  				c: result.loadTestPrefs.c,
-  				t: result.loadTestPrefs.t,
-  				loadGenerator: result.loadTestPrefs.gen,
-  			});
-  		}
-  	}, () => {}); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+    const self = this;
+    dataFetch('/api/load-test-prefs', {
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, (result) => {
+      if (typeof result !== 'undefined') {
+        this.setState({               
+          qps: result.loadTestPrefs.qps,
+          c: result.loadTestPrefs.c,
+          t: result.loadTestPrefs.t,
+          loadGenerator: result.loadTestPrefs.gen,
+        });
+      }
+    }, () => {}); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+
   }
 
   getStaticPrometheusBoardConfig = () => {
@@ -398,7 +388,7 @@ class MesheryPerformanceComponent extends React.Component {
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration: 8000,
+        autoHideDuration: 4000,
       });
     };
   }
