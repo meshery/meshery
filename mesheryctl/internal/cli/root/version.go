@@ -30,7 +30,11 @@ import (
 
 var (
 
+<<<<<<< HEAD
 	// Build - holds the build info of Client
+=======
+	// BuildClient - holds the build info of Client
+>>>>>>> This PR fixes #603
 	Build string
 
 	// CommitSHA - holds the Git-SHA info
@@ -40,7 +44,10 @@ var (
 	mctlCfg *cfg.MesheryCtl
 )
 
+<<<<<<< HEAD
 // Version unmarshals the json response from the server's version api
+=======
+>>>>>>> This PR fixes #603
 type Version struct {
 	Build     string `json:"build,omitempty"`
 	CommitSHA string `json:"commitsha,omitempty"`
