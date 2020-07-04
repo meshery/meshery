@@ -29,7 +29,7 @@ import (
 
 var (
 
-	// Build - holds the build info of Client
+	// BuildClient - holds the build info of Client
 	Build string
 
 	// CommitSHA - holds the Git-SHA info
@@ -39,7 +39,6 @@ var (
 	mctlCfg *cfg.MesheryCtl
 )
 
-// Version unmarshals the json response from the server's version api
 type Version struct {
 	Build     string `json:"build,omitempty"`
 	CommitSHA string `json:"commitsha,omitempty"`
