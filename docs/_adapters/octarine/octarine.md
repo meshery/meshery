@@ -7,11 +7,11 @@ port: 10003/tcp
 project_status: stable
 image: /docs/assets/img/service-meshes/octarine.svg
 ---
+# Meshery Adapter for {{ page.name }}
+
 | Adapter Status |
 | :------------: |
 | [{{ page.project_status }}]({{ page.github_link }})|
-
-# {{ page.title }}
 
 ## Configuration
 In order to connect to the Octarine Control Plane the adapter requires the follwing environment variables to be set:

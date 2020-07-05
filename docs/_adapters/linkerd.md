@@ -7,11 +7,11 @@ port: 10001/tcp
 project_status: stable
 image: /docs/assets/img/service-meshes/linkerd.svg
 ---
+# Meshery Adapter for {{ page.name }}
+
 | Adapter Status |
 | :------------: |
 | [{{ page.project_status }}]({{ page.github_link }})|
-
-# {{ page.title }}
 
 ## Sample Applications
 

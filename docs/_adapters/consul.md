@@ -7,6 +7,8 @@ port: 10002/tcp
 project_status: stable
 image: /docs/assets/img/service-meshes/consul.svg
 ---
+# Meshery Adapter for {{ page.name }}
+
 | Adapter Status |
 | :------------: |
 | [{{ page.project_status }}]({{ page.github_link }})|
