@@ -7,7 +7,7 @@ permalink: service-meshes
 As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
 
 | Service Mesh  | Service Mesh Version  |
-| :------------ | :------------ |
+| :------------ | :------------: |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.version }} |
