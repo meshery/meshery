@@ -6,8 +6,26 @@
     - title: Service Meshes
       url: service-meshes
       children:
-        - title: Adapters
-          url: service-meshes/adapters
+        - title: App Mesh
+          url: service-meshes/adapters/app-mesh
+        - title: Citrix Service Mesh
+          url: service-meshes/adapters/cpx
+        - title: Consul
+          url: service-meshes/adapters/consul
+        - title: Istio
+          url: service-meshes/adapters/istio
+        - title: Kuma
+          url: service-meshes/adapters/kuma
+        - title: Linkerd
+          url: service-meshes/adapters/linkerd
+        - title: Maesh
+          url: service-meshes/adapters/maesh
+        - title: Network Service Mesh
+          url: service-meshes/adapters/nsm/nsm
+        - title: Octarine
+          url: service-meshes/adapters/octarine/octarine
+        - title: Tanzu
+          url: service-meshes/adapters/tanzu-sm
     - title: Quick Start
       url: installation
     - title: Supported Platforms
@@ -29,6 +47,9 @@
           url: installation/kind
     - title: Architecture
       url: architecture
+      children:
+        - title: Adapters
+          url: architecture/adapters
     - title: Service Mesh Management
       url: mesh-management
     - title: Extensibility
