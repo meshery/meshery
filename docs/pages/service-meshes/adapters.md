@@ -6,7 +6,7 @@ permalink: architecture/adapters
 
 # Service Mesh Adapters
 As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
-Meshery uses adapters for managing the its various service meshes.
+Meshery uses adapters for managing the various service meshes.
 
 ## What are Meshery Adapters?
 
