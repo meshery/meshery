@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery
       containers:
-      - image: layer5/meshery-cpx
+      - image: layer5/meshery-cpx:stable-latest
         name: meshery-cpx
         ports:
         - containerPort: 10008
