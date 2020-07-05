@@ -8,15 +8,15 @@ permalink: service-meshes/adapters
 
 ### What are Meshery Adapters?
 
-Adapters allow Meshery to interface with the different service meshes. 
+Adapters allow Meshery to interface with the different service meshes.
 
 Meshery has adapters for managing the following service meshes.
 
-| Service Mesh  |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Status        |
-| :------------ | :------------ |
+| Service Mesh  |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Status        |Port          |
+| :------------ | :------------ | :------------ |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status -%}
-| [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{{ adapter.project_status }} |
+| [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{{ adapter.project_status }} | {{ adapter.port }}
 {% endif -%}
 {% endfor %}
 
