@@ -21,7 +21,7 @@ mesheryctl:
 docker:
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) .
 
-# Runs Meshery in a container locally and points to locally-running 
+# Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
 docker-run-local-cloud: git
 	(docker rm -f meshery) || true
@@ -35,7 +35,7 @@ docker-run-local-cloud: git
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
-# Runs Meshery in a container locally and points to remote 
+# Runs Meshery in a container locally and points to remote
 #  Meshery Cloud for user authentication.
 docker-run-cloud: git
 	(docker rm -f meshery) || true
@@ -50,7 +50,7 @@ docker-run-cloud: git
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
-# Runs Meshery on your local machine and points to locally-running  
+# Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
 run-local-cloud: git
@@ -116,17 +116,21 @@ run-ui-lint:
 run-provider-ui-lint:
 	cd provider-ui; npm run lint; cd ..
 
+# Runs the test on Provider UI interface on your local machine.
+run-provider-ui-test:
+	cd provider-ui; npm run test; cd ..
+
 # Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
-# setup wrk2 for local dev 
+# setup wrk2 for local dev
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:
 	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd wrk2; make; cd ..
 
-#Incorporating Make docs commands from the Docs Makefile	
+#Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll
 
 docs:
@@ -136,6 +140,6 @@ build-docs:
 	$(jekyll) build --drafts --livereload
 
 docker-docs:
-	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"	
+	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 
