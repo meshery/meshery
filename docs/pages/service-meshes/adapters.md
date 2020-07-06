@@ -15,11 +15,11 @@ Adapters allow Meshery to interface with the different service meshes, exposing 
 Meshery has adapters for managing the following service meshes.
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
-| Adapter Status |  Service Mesh  | Service Mesh Version |
-| :------------: | :------------ | :------------: |
+| Adapter Status |  Service Mesh  | Service Mesh Version | Port          |
+| :------------: | :------------ | :------------: | :------------ |
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
-| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" /> [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.version }} |
+| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" /> [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.version }} | {{ adapter.port }} |
 {% endif -%}
 {% endfor %}
 
