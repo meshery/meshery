@@ -68,8 +68,8 @@ var versionCmd = &cobra.Command{
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", mctlCfg.GetBaseMesheryURL()), nil)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL())
-			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n")
+			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
+			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
 			return
 		}
 
@@ -77,24 +77,24 @@ var versionCmd = &cobra.Command{
 		resp, err := client.Do(req)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL())
-			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n")
+			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
+			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
 			return
 		}
 
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL())
-			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n")
+			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
+			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
 			return
 		}
 
 		err = json.Unmarshal(data, version)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL())
-			logrus.Errorf("Ensure that Meshery is available. See (https://docs.meshery.io)\n")
+			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
+			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
 			return
 		}
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
