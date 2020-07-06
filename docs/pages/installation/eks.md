@@ -9,7 +9,7 @@ permalink: installation/eks
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount` can be used or a new one created. Ensure that the `ServiceAccount` you use has the `cluster-admin` role assigned.
 
-_Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html" target="_blank")_
+_Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="_blank"}_
 
 ## Automatic Configuration (Recommended)
 
