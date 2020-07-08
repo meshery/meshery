@@ -104,7 +104,7 @@ func (c *custTestConf) MarshalJSON() ([]byte, error) {
 	return []byte(val), err
 }
 
-// UserTestPreferenceHandler is used for persisting load test preferences
+// UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
