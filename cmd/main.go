@@ -88,6 +88,12 @@ func main() {
 	}
 	defer resultPersister.CloseResultPersister()
 
+	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer testConfigPersister.CloseTestConfigsPersister()
+
 	// randID, _ := uuid.NewV4()
 	// cookieSessionStore = sessions.NewCookieStore(randID.Bytes())
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
@@ -101,6 +107,7 @@ func main() {
 		// SessionStore:           cookieSessionStore,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
+		TestProfilesPersister:  testConfigPersister,
 	}
 	provs[lProv.Name()] = lProv
 

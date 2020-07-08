@@ -494,10 +494,10 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
 	return "", nil
 }
-func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
 	return nil, nil
 }
-func (l *MesheryRemoteProvider) SMPSTestConfigFetchAll(req *http.Request) ([]*SMPS.PerformanceTestConfig, error) {
+func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	return nil, nil
 }
 func (l *MesheryRemoteProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {

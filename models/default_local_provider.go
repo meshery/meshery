@@ -18,8 +18,9 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
-	SaaSBaseURL     string
-	ResultPersister *BitCaskResultsPersister
+	SaaSBaseURL           string
+	ResultPersister       *BitCaskResultsPersister
+	TestProfilesPersister *BitCaskTestProfilesPersister
 }
 
 // Name - Returns Provider's friendly name
@@ -255,14 +256,48 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 }
 
 func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
-	return "", nil
+	uid, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return "", err
+	}
+	perfConfig.Id = uid.String()
+	data, err := json.Marshal(perfConfig)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal test config for persisting"))
+		return "", err
+	}
+	l.TestProfilesPersister.WriteTestConfig(uid, data)
+	return uid.String(), nil
 }
-func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
-	return nil, nil
+func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+	uid, err := uuid.FromString(testUUID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return nil, err
+	}
+	return l.TestProfilesPersister.GetTestConfig(uid)
 }
-func (l *DefaultLocalProvider) SMPSTestConfigFetchAll(req *http.Request) ([]*SMPS.PerformanceTestConfig, error) {
-	return nil, nil
+func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+	return l.TestProfilesPersister.GetTestConfigs(pg, pgs)
 }
 func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
-	return nil
+	uid, err := uuid.FromString(testUUID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return err
+	}
+	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }

@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/protobuf/encoding/protojson"
-	"encoding/json"
 
 	"github.com/layer5io/meshery/models"
 	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
@@ -137,29 +137,22 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 }
 
 func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	testUUID := req.URL.Query().Get("uuid")
+	q := req.URL.Query()
+	testUUID := q.Get("uuid")
 	if testUUID == "" {
-		testObj, err := provider.SMPSTestConfigFetchAll(req)
+		testPage := q.Get("page")
+		testPageSize := q.Get("pageSize")
+		testSearch := q.Get("search")
+		testOrder := q.Get("order")
+		testObjJson, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
 			logrus.Error("error fetching test configs")
 			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
 			return
 		}
-		custTestObjs := []*custTestConf{}
-		for _, tst := range testObj {
-			custTestObjs = append(custTestObjs, &custTestConf{
-				Val: tst,
-			})
-		}
-		body, err := json.Marshal(&custTestObjs)
-		if err != nil {
-			logrus.Error("error reading database")
-			http.Error(w, "error reading database", http.StatusInternalServerError)
-			return
-		}
-		_, _ = w.Write(body)
+		_, _ = w.Write(testObjJson)
 	} else {
-		testObj, err := provider.SMPSTestConfigFetch(req, testUUID)
+		testObj, err := provider.SMPSTestConfigGet(req, testUUID)
 		if err != nil {
 			logrus.Error("error fetching test configs")
 			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
@@ -169,6 +162,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
+		fmt.Printf("%v", testObj)
 		m := jsonpb.Marshaler{
 			EmitDefaults: true,
 		}
