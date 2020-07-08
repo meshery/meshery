@@ -19,11 +19,12 @@ import { SnackbarProvider } from 'notistack';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
-// codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs 
+// codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/addon/lint/lint.css';
+import './../public/static/style/index.css';
 
 // import 'billboard.js/dist/theme/insight.min.css';
 // import 'billboard.js/dist/theme/graph.min.css';
@@ -33,9 +34,9 @@ import { blueGrey } from '@material-ui/core/colors';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import dataFetch from '../lib/data-fetch';
 
-if (typeof window !== 'undefined') { 
-  require('codemirror/mode/yaml/yaml'); 
-  require('codemirror/mode/javascript/javascript'); 
+if (typeof window !== 'undefined') {
+  require('codemirror/mode/yaml/yaml');
+  require('codemirror/mode/javascript/javascript');
   require('codemirror/addon/lint/lint');
   require('codemirror/addon/lint/yaml-lint');
   require('codemirror/addon/lint/json-lint');
@@ -44,7 +45,7 @@ if (typeof window !== 'undefined') {
   }
   if (typeof window.jsonlint === 'undefined'){
     // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
-    window.jsonlint = require('jsonlint-mod'); 
+    window.jsonlint = require('jsonlint-mod');
   }
 }
 
@@ -72,7 +73,7 @@ let theme = createMuiTheme({
     borderRadius: 8,
   },
 });
-  
+
 theme = {
   ...theme,
   overrides: {
@@ -166,7 +167,7 @@ theme = {
     },
   },
 };
-  
+
 const drawerWidth = 256;
 
 const styles = {
@@ -258,7 +259,7 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-    dataFetch('/api/config/sync', { 
+    dataFetch('/api/config/sync', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
@@ -415,7 +416,7 @@ class MesheryApp extends App {
 MesheryApp.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-  
+
 export default withStyles(styles)(withRedux(makeStore, {
   serializeState: state => state.toJS(),
   deserializeState: state => fromJS(state)
