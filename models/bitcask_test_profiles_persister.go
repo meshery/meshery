@@ -169,7 +169,7 @@ RETRY:
 	return testConfig, nil
 }
 
-// GetTestConfig - gets result for a specific key
+// DeleteTestConfig - delete result for a specific key
 func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 	if s.db == nil {
 		return errors.New("Connection to DB does not exist")
