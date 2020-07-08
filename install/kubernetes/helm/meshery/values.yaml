@@ -6,7 +6,7 @@ replicaCount: 1
 restartPolicy: Always
 
 image:
-  repository: layer5/meshery
+  repository: layer5/meshery:stable-latest
   pullPolicy: IfNotPresent
 
 env:

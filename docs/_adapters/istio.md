@@ -7,6 +7,8 @@ port: 10000/tcp
 project_status: stable
 image: /docs/assets/img/service-meshes/istio.svg
 ---
+# Meshery Adapter for {{ page.name }}
+
 | Adapter Status |
 | :------------: |
 | [{{ page.project_status }}]({{ page.github_link }})|

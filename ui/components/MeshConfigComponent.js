@@ -143,6 +143,7 @@ const styles = (theme) => ({
 
 class MeshConfigComponent extends React.Component {
   constructor(props) {
+    const homedir = require('os').homedir();
     super(props);
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer,
@@ -151,7 +152,7 @@ class MeshConfigComponent extends React.Component {
       inClusterConfig, // read from store
       inClusterConfigForm: inClusterConfig,
       k8sfile, // read from store
-      k8sfileElementVal: '',
+      k8sfileElementVal: homedir+'/.kube/config',
       contextName, // read from store
       contextNameForForm: '',
       contextsFromFile: [],
@@ -160,6 +161,9 @@ class MeshConfigComponent extends React.Component {
       k8sfileError: false,
       ts: new Date(),
     };
+    // Pre-initialize from the values inside $HOME/.kube/config
+    this.fetchContexts();
+    this.submitConfig();
   }
 
   static getDerivedStateFromProps(props, state) {

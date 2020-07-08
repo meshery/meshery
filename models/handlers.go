@@ -10,6 +10,8 @@ import (
 
 // HandlerInterface defines the methods a Handler should define
 type HandlerInterface interface {
+	ServerVersionHandler(w http.ResponseWriter, r *http.Request)
+
 	ProviderMiddleware(http.Handler) http.Handler
 	AuthMiddleware(http.Handler) http.Handler
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler

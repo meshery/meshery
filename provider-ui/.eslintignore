@@ -4,5 +4,6 @@ out
 static
 package.json
 package-lock.json
-nodemon.json 
+nodemon.json
 next.config.js
+cypress/

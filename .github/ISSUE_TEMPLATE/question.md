@@ -2,7 +2,7 @@
 name: General question
 about: Request information about the project; clarify behavior of the software
 title: '[Question]'
-labels: 'question'
+labels: 'kind/question'
 assignees: ''
 ---
 

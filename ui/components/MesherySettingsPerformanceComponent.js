@@ -11,8 +11,8 @@ import dataFetch from '../lib/data-fetch';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
-import LoadTestTimerDialog from './load-test-timer-dialog';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 
 
@@ -36,25 +36,16 @@ const styles = (theme) => ({
   margin: {
     margin: theme.spacing(1),
   },
-  centerTimer: {
-    width: '100%',
-  },
 });
 
 class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      qps, c, t, loadTestPrefs, gen,
-    } = props;
-
     this.state = {
-      qps,
-      c,
-      t,
-      gen,
-
-      timerDialogOpen: false,
+      qps: '',
+      c: '',
+      t: '',
+      gen: '',
       blockRunTest: false,
       tError: false,
     };
@@ -89,7 +80,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
     this.submitLoadTest();
   }
-    submitLoadTest = () => {
+
+  submitLoadTest = () => {
     const {
       qps, c, t, gen,
     } = this.state;
@@ -101,10 +93,10 @@ class MesherySettingsPerformanceComponent extends React.Component {
       gen,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    // this.startEventStream(`/api/load-test-prefs?${params}`);
-    this.setState({ blockRunTest: true }); // to block the button
 
-    // let self = this;
+    this.setState({ blockRunTest: true }); // to block the button
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
     dataFetch('/api/load-test-prefs', {
       credentials: 'same-origin',
       method: 'POST',
@@ -114,7 +106,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
       },
       body: params,
     }, (result) => {
-
+      this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Preference was successfully updated!', {
           variant: 'success',
@@ -132,65 +124,68 @@ class MesherySettingsPerformanceComponent extends React.Component {
         });
         this.props.updateLoadTestPref({
           loadTestPref: {
-            qps,
-            c,
-            t,
-            loadGenerator,
-          },
+            qps: self.state.qps,
+            c: self.state.c,
+            t: self.state.t,
+            gen: self.state.gen,
+          }
         });
+        this.setState({ blockRunTest: false });
       }
-    }, this.handleError('There was an error sending your preference'));
-        window.location.reload(true);
+    }, self.handleError('There was an error saving your preferences'));
   }
-    componentDidMount() {
+
+  componentDidMount() {
     this.getLoadTestPrefs();
   }
-      getLoadTestPrefs = () => {
-      const {
-        qps, c, t, loadGenerator
-      } = this.props;
-      const self = this;
-      dataFetch('/api/load-test-prefs', {
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, (result) => {
-        if (typeof result !== 'undefined') {
-          console.log(result.loadTestPrefs.qps);
-          self.props.updateLoadTestPref({
-            loadTestPref: {
-              qps: result.loadTestPrefs.qps,
-              c: result.loadTestPrefs.c,
-              t: result.loadTestPrefs.t,
-              gen: result.loadTestPrefs.gen,
-            },
-          });
-          self.setState({               
+
+  getLoadTestPrefs = () => {
+    const self = this;
+    dataFetch('/api/load-test-prefs', {
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, (result) => {
+      if (typeof result !== 'undefined') {
+        this.setState({               
             qps: result.loadTestPrefs.qps,
             c: result.loadTestPrefs.c,
             t: result.loadTestPrefs.t,
             gen: result.loadTestPrefs.gen,
           });
-        }
-      }, self.handleError('There was an error sending your preference'));
+      }
+    }, self.handleError('There was an error fetching your preferences'));
+  }
 
-    }
-
-  handleError(msg) {
+  handleError = (msg) => {
     const self = this;
     return (error) => {
-      self.setState({ blockRunTest: false, timerDialogOpen: false });
+      self.setState({ blockRunTest: false });
       let finalMsg = msg;
       if (typeof error === 'string') {
         finalMsg = `${msg}: ${error}`;
       }
+      self.props.enqueueSnackbar(finalMsg, {
+        variant: 'error',
+        action: (key) => (
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration: 4000,
+      });
     };
   }
 
   render() {
     const { classes } = this.props;
     const {
-      timerDialogOpen, blockRunTest, qps, t, c, gen,
+      blockRunTest, qps, t, c, gen,
       tError,
     } = this.state;
     console.log(gen);
@@ -259,7 +254,6 @@ class MesherySettingsPerformanceComponent extends React.Component {
                 </FormControl>
               </Grid>
             </Grid>
-            <React.Fragment>
               <div className={classes.buttons}>
                 <Button
                   type="submit"
@@ -273,18 +267,6 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   {blockRunTest ? <CircularProgress size={30} /> : 'Submit Preferences'}
                 </Button>
               </div>
-            </React.Fragment>
-
-            <div className={classes.centerTimer}>
-              <LoadTestTimerDialog
-                open={timerDialogOpen}
-                t={t}
-                onClose={this.handleTimerDialogClose}
-                countDownComplete={this.handleTimerDialogClose}
-              />
-            </div>
-
-
           </div>
         </React.Fragment>
       </NoSsr>
@@ -294,15 +276,11 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
 MesherySettingsPerformanceComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  qps: PropTypes.string.isRequired,
-  loadGenerator: PropTypes.string.isRequired,
-  t: PropTypes.string.isRequired,
-  c: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-
+  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -316,4 +294,5 @@ const mapStateToProps = (state) => {
 
 export default withStyles(styles)(connect(
     mapStateToProps,
+    mapDispatchToProps,
 )(withSnackbar(MesherySettingsPerformanceComponent)));

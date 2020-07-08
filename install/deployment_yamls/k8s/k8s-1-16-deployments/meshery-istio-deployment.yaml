@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery
       containers:
-      - image: layer5/meshery-istio
+      - image: layer5/meshery-istio:stable-latest
         name: meshery-istio
         ports:
         - containerPort: 10000

@@ -61,12 +61,29 @@ permalink: project/releases
 
 # Meshery Releases
 
+### [v0.3.17](https://github.com/layer5io/meshery/releases/tag/v0.3.17)
+Released on 1 July 2020
+
+**What's new ?**
+- Meshery
+    + Feature: New "stable" release channel established.
+    + Feature: Enhanced UX for advanced performance test HTTP headers.
+
+### [v0.3.16](https://github.com/layer5io/meshery/releases/tag/v0.3.16)
+Released on 22 June 2020
+
+**What's new ?**
+- Mesheryctl
+    + Feature: Addition of mesheryctl system as the new command for lifecycle management of Meshery.
+        + All Meshery lifecycle management commands like start, stop, reset, logs and so on are now found under system.
+    + Feature: Addition of mesheryctl system config as a new subcommand to assist with configuring Meshery to communicate with Kubernetes deployments in GKE, AKS, and EKS.
+
 ### [v0.3.15](https://github.com/layer5io/meshery/releases/tag/v0.3.15)
 Released on 1 May 2020
 
 **What's new ?**
 - Mesheryctl
-    + Feature: Addition of mesheryctl perf --file <smps.yaml> support for SMPS formatted performance test profiles.
+    + Feature: Addition of mesheryctl perf --file '<smps.yaml>' support for SMPS formatted performance test profiles.
     + Feature: Behavior changemesheryctl perf for using tokens and supporting JWT.
 
 ### [v0.3.14](https://github.com/layer5io/meshery/releases/tag/v0.3.14) 
