@@ -490,16 +490,21 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
 	}
 }
-
+// SMPSTestConfigStore - persist test profile details to provider
 func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
 	return "", nil
 }
+// SMPSTestConfigGet - retreive a single test profile details
 func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
 	return nil, nil
 }
+
+// SMPSTestConfigFetch - retreive list of test profiles
 func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	return nil, nil
 }
+
+// SMPSTestConfigDelete - tombstone a given test profile
 func (l *MesheryRemoteProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
 	return nil
 }
