@@ -21,7 +21,7 @@ Meshery is not just an application. It is a set of microservices where the centr
 1. REST API
 
 ## Providers
-![Providers](https://github.com/layer5io/meshery/blob/master/docs/assets/img/providers/provider_screenshot.png)
+![Providers](/docs/assets/img/providers/provider_screenshot.png)
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
 Eventually, we will be looking to keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
