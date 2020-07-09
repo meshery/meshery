@@ -10,7 +10,7 @@ Meshery uses adapters for managing the various service meshes.
 
 ## What are Meshery Adapters?
 
-Adapters allow Meshery to interface with the different service meshes, exposing their differientiated value to users.
+Adapters allow Meshery to interface with the different service meshes, exposing their differentiated value to users.
 
 Meshery has adapters for managing the following service meshes.
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
