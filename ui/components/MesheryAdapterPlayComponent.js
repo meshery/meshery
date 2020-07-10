@@ -377,7 +377,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         <Divider variant="fullWidth" light />
         <DialogContent>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid item sm={12}>
               <TextField
                 required
                 id="namespace"
@@ -391,7 +391,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 onChange={this.handleChange('namespace')}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item sm={12}>
               <CodeMirror
                 editorDidMount={(editor) => {
                   if (isDelete) {
@@ -569,7 +569,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           </div>
           <div className={classes.root}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid item sm={12}>
                 <TextField
                   required
                   id="namespace"
@@ -584,7 +584,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 />
               </Grid>
               {filteredOps.map((val) => (
-                <Grid item xs={12} sm={4}>
+                <Grid item sm={12} md={4}>
                   {this.generateCardForCategory(val)}
                 </Grid>
               ))}

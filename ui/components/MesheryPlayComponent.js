@@ -243,7 +243,7 @@ class MesheryPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
+              <Grid item sm={12}>
                 <TextField
                   select
                   id="adapter_id"

@@ -33,6 +33,8 @@ const styles = (theme) => ({
   },
   logo: {
     width: theme.spacing(50),
+    maxWidth: "100%",
+    height:"auto",
   },
   modalHeading: {
     margin: 0,
@@ -198,7 +200,7 @@ class ProviderComponent extends React.Component {
             </DialogActions>
           </Dialog>
           <div className={classes.container}>
-              <Grid item xs={12} justify="center">
+              <Grid item sm={12} justify="center">
                 {availableProviders !== ''
                 && (
                 <>

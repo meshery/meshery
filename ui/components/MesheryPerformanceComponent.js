@@ -471,7 +471,7 @@ class MesheryPerformanceComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             <Grid container spacing={1}>
-              <Grid item xs={12} sm={6}>
+              <Grid item sm={12} md={6}>
                 <Tooltip title="If a test name is not provided, a random one will be generated for you.">
                   <TextField
                     id="testName"
@@ -486,7 +486,7 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item sm={12} md={6}>
                 <TextField
                   select
                   id="meshName"
@@ -509,7 +509,7 @@ class MesheryPerformanceComponent extends React.Component {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item sm={12}>
                 <TextField
                   required
                   id="url"
@@ -524,7 +524,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('url')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item sm={12} md={4}>
                 <TextField
                   required
                   id="c"
@@ -539,7 +539,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('c')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item sm={12} md={4}>
                 <TextField
                   required
                   id="qps"
@@ -554,7 +554,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('qps')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item sm={12} md={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
                   <TextField
                     required
@@ -570,14 +570,14 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} sm={12} gutterBottom>
+              <Grid item sm={12} md={12} gutterBottom>
                 <ExpansionPanel className={classes.expansionPanel}>
                   <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon/>}>
                     <Typography align="center" color="textSecondary" varient="h6">Advanced Options</Typography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <Grid container spacing={1}>
-                      <Grid item xs={12}>
+                      <Grid item sm={12}>
                         <TextField
                           id="headers"
                           name="headers"
@@ -591,7 +591,7 @@ class MesheryPerformanceComponent extends React.Component {
                         >
                         </TextField>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item sm={12}>
                         <TextField
                           id="cookies"
                           name="cookies"
@@ -605,7 +605,7 @@ class MesheryPerformanceComponent extends React.Component {
                         >
                         </TextField>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item sm={12}>
                         <TextField
                           id="contentType"
                           name="contentType"
@@ -619,7 +619,7 @@ class MesheryPerformanceComponent extends React.Component {
                         >
                         </TextField>
                       </Grid>
-                      <Grid item xs={12} sm={12}>
+                      <Grid item sm={12} md={12}>
                         <TextField
                           id="cookies"
                           name="cookies"
@@ -637,7 +637,7 @@ class MesheryPerformanceComponent extends React.Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item sm={12} md={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>
                   <FormLabel component="loadGenerator">Load generator</FormLabel>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
