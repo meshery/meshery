@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -126,7 +126,7 @@ class MesheryPerformanceComponent extends React.Component {
 
 
   handleSubmit = () => {
-    
+
     const {
       url, t
     } = this.state;
@@ -136,7 +136,7 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
 
-    let err = false; 
+    let err = false;
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
@@ -184,7 +184,7 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    this.startEventStream(`/api/load-test?${params}`);
+    this.startEventStream(`/api/perf/load-test?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }
 
@@ -300,13 +300,13 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, (result) => {
       if (typeof result !== 'undefined') {
-        this.setState({               
+        this.setState({
           qps: result.loadTestPrefs.qps,
           c: result.loadTestPrefs.c,
           t: result.loadTestPrefs.t,
@@ -400,7 +400,7 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const {
-      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError, 
+      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
       tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
     } = this.state;
     let staticPrometheusBoardConfig;
@@ -683,7 +683,7 @@ class MesheryPerformanceComponent extends React.Component {
                 aria-label="download"
                 color="inherit"
                 // onClick={() => self.props.closeSnackbar(key) }
-                href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
+                href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
               >
                 <GetAppIcon />
               </IconButton>
