@@ -21,6 +21,7 @@ Meshery is not just an application. It is a set of microservices where the centr
 1. REST API
 
 ## Providers
+![Providers](/docs/assets/img/providers/provider_screenshot.png)
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
 Eventually, we will be looking to keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
@@ -83,6 +84,8 @@ Different use cases and different opinions call for different approaches to stat
 ### Which are currently supported?
 1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
 1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
+1. [nighthawk](https://github.com/envoyproxy/nighthawk) (coming soon!) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
+
 
 
 ## Service Mesh Adapters

@@ -207,8 +207,8 @@ class DashboardComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
-    handleConfigure = () => {
-      this.props.router.push('/settings#metrics');
+    handleConfigure = (val) => {
+      this.props.router.push(`/settings#metrics/${val}`);
     }
 
   handleKubernetesClick = () => {
@@ -417,7 +417,7 @@ class DashboardComponent extends React.Component {
     if(grafanaUrl === '') {
       showGrafana = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('grafana')}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Grafana
           </Button>
@@ -441,7 +441,7 @@ class DashboardComponent extends React.Component {
     if(prometheusUrl === '') {
       showPrometheus = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('prometheus')}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Prometheus
           </Button>
