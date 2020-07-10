@@ -139,11 +139,13 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
+	logrus.Debugf("%v", testUUID)
 	if testUUID == "" {
 		testPage := q.Get("page")
 		testPageSize := q.Get("pageSize")
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
+		logrus.Debugf("page %v, pageSize: %v", testPage, testPageSize)
 		testObjJson, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
 			logrus.Error("error fetching test configs")
