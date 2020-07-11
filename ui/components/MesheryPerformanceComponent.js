@@ -123,19 +123,19 @@ class MesheryPerformanceComponent extends React.Component {
   };
 
   handleDurationChange = (event, newValue) => {
-    this.setState({t: newValue})
+    this.setState({tValue: newValue})
     if (newValue !== null) {
       this.setState({ tError: '' })
     }
   };
 
   handleInputDurationChange = (event, newValue) => {
-    this.setState({tValue: newValue})
+    this.setState({t: newValue})
   };
 
   handleSubmit = () => {
     const {
-      url, tValue: t
+      url, t
     } = this.state;
 
     if (url === '') {
@@ -162,7 +162,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitLoadTest = () => {
     const {
-      testName, meshName, url, qps, c, tValue: t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
+      testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
     } = this.state;
 
     let computedTestName = testName;
@@ -199,7 +199,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     return (result) => {
       const {
-        testName, meshName, url, qps, c, tValue: t, loadGenerator,
+        testName, meshName, url, qps, c, t, loadGenerator,
       } = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         self.props.enqueueSnackbar('Successfully fetched the data.', {
@@ -573,8 +573,8 @@ class MesheryPerformanceComponent extends React.Component {
                     variant="outlined"
                     className={classes.errorValue}
                     classes={{ root: tError }}
-                    value={t}
-                    inputValue={tValue}
+                    value={tValue}
+                    inputValue={t}
                     onChange={this.handleDurationChange}
                     onInputChange={this.handleInputDurationChange}
                     options={prePopulatedOptions}
