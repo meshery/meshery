@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -64,7 +64,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
       t
     } = this.state;
 
-    let err = false; 
+    let err = false;
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
@@ -97,7 +97,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
@@ -141,13 +141,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, (result) => {
       if (typeof result !== 'undefined') {
-        this.setState({               
+        this.setState({
             qps: result.loadTestPrefs.qps,
             c: result.loadTestPrefs.c,
             t: result.loadTestPrefs.t,
