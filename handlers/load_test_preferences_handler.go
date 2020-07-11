@@ -177,7 +177,7 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	if err := provider.SMPSTestConfigDelete(req, testUUID); err != nil {
-		logrus.Error("error deleting testConfig: %v", err)
+		logrus.Errorf("error deleting testConfig: %v", err)
 		http.Error(w, "error deleting testConfig", http.StatusBadRequest)
 		return
 	}
