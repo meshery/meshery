@@ -129,8 +129,6 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
-	} else {
-		log.Fatal(err)
 	}
 
 	// Read in mesheryctl config or use defaults

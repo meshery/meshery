@@ -166,8 +166,6 @@ class MeshConfigComponent extends React.Component {
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer,
     } = props;
-    // if(inClusterConfig !== state.inClusterConfig || clusterConfigured !== state.clusterConfigured || k8sfile !== state.k8sfile
-    // || configuredServer !== state.configuredServer){
     if (props.ts > state.ts) {
       return {
         inClusterConfig,
