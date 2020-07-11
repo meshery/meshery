@@ -135,7 +135,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleSubmit = () => {
     const {
-      url, t
+      url, tValue: t
     } = this.state;
 
     if (url === '') {
@@ -162,7 +162,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitLoadTest = () => {
     const {
-      testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
+      testName, meshName, url, qps, c, tValue: t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
     } = this.state;
 
     let computedTestName = testName;
@@ -199,7 +199,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     return (result) => {
       const {
-        testName, meshName, url, qps, c, t, loadGenerator,
+        testName, meshName, url, qps, c, tValue: t, loadGenerator,
       } = this.state;
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         self.props.enqueueSnackbar('Successfully fetched the data.', {
@@ -562,23 +562,26 @@ class MesheryPerformanceComponent extends React.Component {
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <Autocomplete
-                  required
-                  id="t"
-                  name="t"
-                  label="Duration*"
-                  fullWidth
-                  variant="outlined"
-                  className={classes.errorValue}
-                  classes={{ root: tError }}
-                  value={t}
-                  inputValue={tValue}
-                  onChange={this.handleDurationChange}
-                  onInputChange={this.handleInputDurationChange}
-                  options={prePopulatedOptions}
-                  style={{ marginTop: '16px', marginBottom: '8px' }}
-                  renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
-                />
+                <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
+                  <Autocomplete
+                    required
+                    id="t"
+                    name="t"
+                    freeSolo
+                    label="Duration*"
+                    fullWidth
+                    variant="outlined"
+                    className={classes.errorValue}
+                    classes={{ root: tError }}
+                    value={t}
+                    inputValue={tValue}
+                    onChange={this.handleDurationChange}
+                    onInputChange={this.handleInputDurationChange}
+                    options={prePopulatedOptions}
+                    style={{ marginTop: '16px', marginBottom: '8px' }}
+                    renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                  />
+                </Tooltip>
               </Grid>
               <Grid item xs={12} sm={12} gutterBottom>
                 <ExpansionPanel className={classes.expansionPanel}>
