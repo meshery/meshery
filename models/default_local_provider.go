@@ -255,6 +255,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// SMPSTestConfigStore Stores the given PerformanceTestConfig into local datastore
 func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
@@ -267,9 +268,10 @@ func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig
 		logrus.Error(errors.Wrap(err, "error - unable to marshal test config for persisting"))
 		return "", err
 	}
-	l.TestProfilesPersister.WriteTestConfig(uid, data)
-	return uid.String(), nil
+	return uid.String(), l.TestProfilesPersister.WriteTestConfig(uid, data)
 }
+
+// SMPSTestConfigGet gets the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
@@ -278,6 +280,8 @@ func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID str
 	}
 	return l.TestProfilesPersister.GetTestConfig(uid)
 }
+
+// SMPSTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
 func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
@@ -293,6 +297,8 @@ func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, page
 	}
 	return l.TestProfilesPersister.GetTestConfigs(pg, pgs)
 }
+
+// SMPSTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {

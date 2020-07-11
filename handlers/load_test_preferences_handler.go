@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/layer5io/meshery/models"
@@ -92,18 +91,6 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 	_, _ = w.Write([]byte("{}"))
 }
 
-type custTestConf struct {
-	Val *SMPS.PerformanceTestConfig
-}
-
-func (c *custTestConf) MarshalJSON() ([]byte, error) {
-	m := jsonpb.Marshaler{
-		EmitDefaults: true,
-	}
-	val, err := m.MarshalToString(c.Val)
-	return []byte(val), err
-}
-
 // UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	body, err := ioutil.ReadAll(req.Body)
@@ -136,6 +123,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 	_, _ = w.Write([]byte(tid))
 }
 
+// UserTestPreferenceGet gets the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
@@ -146,13 +134,13 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
 		logrus.Debugf("page %v, pageSize: %v", testPage, testPageSize)
-		testObjJson, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
+		testObjJSON, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
 			logrus.Error("error fetching test configs")
 			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
 			return
 		}
-		_, _ = w.Write(testObjJson)
+		_, _ = w.Write(testObjJSON)
 	} else {
 		testObj, err := provider.SMPSTestConfigGet(req, testUUID)
 		if err != nil {
@@ -165,17 +153,22 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 			return
 		}
 		fmt.Printf("%v", testObj)
-		m := jsonpb.Marshaler{
-			EmitDefaults: true,
-		}
-		if err := m.Marshal(w, testObj); err != nil {
-			logrus.Error("error reading database: %v", err)
+		data, err := protojson.Marshal(testObj)
+		if err != nil {
+			logrus.Errorf("error reading database: %v", err)
 			http.Error(w, "error reading database", http.StatusInternalServerError)
+			return
+		}
+		_, err = w.Write(data)
+		if err != nil {
+			logrus.Errorf("error writing response: %v", err)
+			http.Error(w, "error writing response", http.StatusInternalServerError)
 			return
 		}
 	}
 }
 
+// UserTestPreferenceDelete deletes the PerformanceTestConfig object
 func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	testUUID := req.URL.Query().Get("uuid")
 	if testUUID == "" {
@@ -183,5 +176,9 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "field uuid not found", http.StatusBadRequest)
 		return
 	}
-	provider.SMPSTestConfigDelete(req, testUUID)
+	if err := provider.SMPSTestConfigDelete(req, testUUID); err != nil {
+		logrus.Error("error deleting testConfig: %v", err)
+		http.Error(w, "error deleting testConfig", http.StatusBadRequest)
+		return
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// SMPSPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
 func SMPSPerformanceTestConfigValidator(perfTest *SMPS.PerformanceTestConfig) error {
 	if perfTest.Name == "" {
 		return errors.Errorf("Error: name field is blank")

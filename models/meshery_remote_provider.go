@@ -518,8 +518,8 @@ func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfi
 	}()
 
 	bdr, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode == http.StatusCreated {
-		return string(bdr), nil
+	if resp.StatusCode == http.StatusCreated || err != nil {
+		return string(bdr), err
 	}
 	logrus.Errorf("error while sending testConfig: %s", bdr)
 	return "", fmt.Errorf("error while sending testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
@@ -548,6 +548,10 @@ func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID st
 	}()
 
 	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("error sending the request: %v", err)
+		return nil, err
+	}
 	logrus.Debugf("%v", string(bdr))
 	if resp.StatusCode == http.StatusOK {
 		testConfig := SMPS.PerformanceTestConfig{}
@@ -585,8 +589,8 @@ func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pag
 	}()
 
 	bdr, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode == http.StatusOK {
-		return bdr, nil
+	if resp.StatusCode == http.StatusOK || err != nil {
+		return bdr, err
 	}
 	logrus.Errorf("error while getting testConfigs: %s", bdr)
 	return nil, fmt.Errorf("error while getting testConfigs - Status code: %d, Body: %s", resp.StatusCode, bdr)
