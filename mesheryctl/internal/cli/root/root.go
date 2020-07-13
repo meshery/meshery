@@ -129,8 +129,6 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
-	} else {
-		log.Fatal(err)
 	}
 
 	// Read in mesheryctl config or use defaults
@@ -138,7 +136,7 @@ func initConfig() {
 	//  baseMesheryURL: "http://localhost:9081/api",
 	//  perf:
 	//	  authTokenURI:    "/gettoken",
-	//	  loadTestSmpsURI: "/load-test-smps",
+	//	  loadTestSmpsURI: "/perf/load-test-smps",
 	if mctlCfgFile != "" {
 		viper.SetConfigFile(mctlCfgFile)
 		if err := viper.ReadInConfig(); err == nil {
@@ -151,8 +149,8 @@ func initConfig() {
 			"baseMesheryURL": "http://localhost:9081/api",
 			"perf": map[string]interface{}{
 				"authTokenURI":    "/gettoken",
-				"loadTestSmpsURI": "/load-test-smps",
-				"loadTestURI":     "/load-test",
+				"loadTestSmpsURI": "/perf/load-test-smps",
+				"loadTestURI":     "/perf/load-test",
 			},
 		})
 	}

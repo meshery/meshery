@@ -191,7 +191,7 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    this.startEventStream(`/api/load-test?${params}`);
+    this.startEventStream(`/api/perf/load-test?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }
 
@@ -307,7 +307,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
@@ -696,7 +696,7 @@ class MesheryPerformanceComponent extends React.Component {
                 aria-label="download"
                 color="inherit"
                 // onClick={() => self.props.closeSnackbar(key) }
-                href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
+                href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
               >
                 <GetAppIcon />
               </IconButton>

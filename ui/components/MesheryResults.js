@@ -75,7 +75,7 @@ class MesheryResults extends Component {
       }
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
       self.props.updateProgress({ showProgress: true });
-      dataFetch(`/api/results${query}`, {
+      dataFetch(`/api/perf/results${query}`, {
         credentials: 'same-origin',
         method: 'GET',
         credentials: 'include',
@@ -240,7 +240,7 @@ class MesheryResults extends Component {
           },
         },
       ];
-      
+
       columns.forEach((column, idx) => {
         if(column.name === this.state.sortOrder.split(' ')[0]) {
           columns[idx].options.sortDirection = this.state.sortOrder.split(' ')[1];
@@ -295,7 +295,7 @@ class MesheryResults extends Component {
         },
 
         onTableChange: (action, tableState) => {
-          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[]; 
+          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[];
           let order='';
           if(tableState.activeColumn){
             order = `${columns[tableState.activeColumn].name} desc`;

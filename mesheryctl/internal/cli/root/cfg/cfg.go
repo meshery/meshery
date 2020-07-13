@@ -17,8 +17,8 @@ type PerfCfg struct {
 //  baseMesheryURL: "http://localhost:9081/api",
 //  perf:
 //	  authTokenURI:    "/gettoken",
-//	  loadTestSmpsURI: "/load-test-smps",
-//	  loadTestURI: "/load-test",
+//	  loadTestSmpsURI: "/perf/load-test-smps",
+//	  loadTestURI: "/perf/load-test",
 type MesheryCtl struct {
 	// BaseMesheryURL is the base URL of the meshery server
 	BaseMesheryURL string `json:"baseMesheryURL"`
