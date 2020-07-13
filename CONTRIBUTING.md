@@ -95,9 +95,9 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
 ### Tests
-We now have ability to test some of the CI checks on your local machine using `make run-tests`.
+Users can now test their code on their local machine against the CI checks implemented using `make run-tests`.
  
-To test some of the CI checks on your local machine:
+To test code changes on your local machine, run the following command:
 ```
 make run-tests
 ```
