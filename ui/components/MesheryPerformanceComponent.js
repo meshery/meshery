@@ -111,19 +111,6 @@ class MesheryPerformanceComponent extends React.Component {
     };
   }
 
-  // handleChange = (name) => (event) => {
-
-  //   if (name === 'url' && event.target.value !== '') {
-  //     this.setState({ urlError: false });
-  //   }
-  //   if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
-  //     || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
-  //     this.setState({ tError: false });
-  //   }
-
-  //   this.setState({ [name]: event.target.value });
-  // };
-
   handleChange = (name) => (event) => {
     const value = event.target.value;
    if(name === 'url' ){
