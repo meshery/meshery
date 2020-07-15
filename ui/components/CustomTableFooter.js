@@ -10,7 +10,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
 const actionsStyles = (theme) => ({
   root: {
-    flexShrink: 0,
+    flexShrink: 2,
     color: theme.palette.text.secondary,
     marginLeft: theme.spacing(2.5),
   },
