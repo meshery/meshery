@@ -200,7 +200,7 @@ class ProviderComponent extends React.Component {
             </DialogActions>
           </Dialog>
           <div className={classes.container}>
-              <Grid item sm={12} justify="center">
+              <Grid item xs={12} justify="center">
                 {availableProviders !== ''
                 && (
                 <>
