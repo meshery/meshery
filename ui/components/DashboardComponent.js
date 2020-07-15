@@ -470,16 +470,16 @@ class DashboardComponent extends React.Component {
           </Typography>
 
           <Grid container spacing={1}>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Kubernetes', showConfigured)}
             </Grid>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Adapters', showAdapters)}
             </Grid>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Grafana', showGrafana)}
             </Grid>
-            <Grid item sm={12} md={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Prometheus', showPrometheus)}
             </Grid>
 

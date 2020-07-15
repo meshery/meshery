@@ -20,7 +20,13 @@ import MesherySettingsPerformanceComponent from "../components/MesherySettingsPe
 const styles = (theme) => ({
   root: {
     flexGrow: 1,
-    width: '100%',
+    maxWidth: '100%',
+    height:'auto',
+  },
+  tab: {
+    minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   icon: {
     display: 'inline',
@@ -201,22 +207,25 @@ class MesherySettings extends React.Component {
           >
             <Tooltip title="Identify your cluster" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
                 }
                 label="Environment"
               />
             </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
                 }
                 label="Service Meshes"
               />
             </Tooltip>
             <Tooltip title="Configure Metrics backends" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
                 }
@@ -225,6 +234,7 @@ class MesherySettings extends React.Component {
             </Tooltip>
             <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
@@ -243,8 +253,8 @@ class MesherySettings extends React.Component {
                 textColor="primary"
                 variant="fullWidth"
               >
-                <Tab label="Out of Cluster Deployment" />
-                <Tab label="In Cluster Deployment" />
+                <Tab className={classes.tab} label="Out of Cluster Deployment" />
+                <Tab className={classes.tab} label="In Cluster Deployment" />
               </Tabs>
             </AppBar>
             {subTabVal === 0 && (
@@ -270,6 +280,7 @@ class MesherySettings extends React.Component {
             <AppBar position="static" color="default">
               <Tabs
                 value={subTabVal}
+                className={classes.tab}
                 onChange={this.handleChange('subTabVal')}
                 indicatorColor="primary"
                 textColor="primary"
