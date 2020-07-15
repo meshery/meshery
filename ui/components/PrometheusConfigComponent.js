@@ -29,7 +29,7 @@ class PrometheusConfigComponent extends Component {
           <React.Fragment>
             <div className={classes.root}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
                     required
                     id="prometheusURL"

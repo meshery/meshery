@@ -197,7 +197,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
           <div className={classes.root}>
             <label><strong>Performance Load Test Defaults</strong></label>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <TextField
                   required
                   id="c"
@@ -212,7 +212,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   onChange={this.handleChange('c')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <TextField
                   required
                   id="qps"
@@ -227,7 +227,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   onChange={this.handleChange('qps')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
                   <TextField
                     required
@@ -243,7 +243,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <FormControl component="loadGenerator" className={classes.formControl}>
                   <label><strong>Default Load Generator</strong></label>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={gen} onChange={this.handleChange('gen')} row>

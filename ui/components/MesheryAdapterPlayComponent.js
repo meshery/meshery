@@ -584,7 +584,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 />
               </Grid>
               {filteredOps.map((val) => (
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} md={4}>
                   {this.generateCardForCategory(val)}
                 </Grid>
               ))}
