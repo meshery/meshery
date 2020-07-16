@@ -113,28 +113,22 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     const value = event.target.value;
-   if(name === 'url' ){
-       if (value){
-           if (value.substring(0,4) === "http" && value.substring(0,7) === "http://"){
-               this.setState({ urlError: false });
-           }
-           else if (value.substring(0,5) === "https" && value.substring(0,8) === "https://"){
-               this.setState({ urlError: false });
-           }
-           else{
-               this.setState({ urlError: true });
-           }
-       }
-       else{
-           this.setState({ urlError: true });
-       }
-   }
-   else if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
-     || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
-     this.setState({ tError: false });
-   }
-   this.setState({ [name]: event.target.value });
- };
+    const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
+
+    if (name === 'url' && value != '') {
+      if (!!pattern.test(value)) {
+        this.setState({ urlError: false });
+      }
+      else {
+        this.setState({ urlError: true });
+      }
+    }
+    if (name === 't' && (value.toLowerCase().endsWith('h')
+      || value.toLowerCase().endsWith('m') || value.toLowerCase().endsWith('s'))) {
+      this.setState({ tError: false });
+    }
+    this.setState({ [name]: value });
+  };
 
 
 
