@@ -42,6 +42,8 @@ The {{page.name}} will parse all of Istio's configuration and compare the runnin
 
 Meshery allows you to paste (or type in) any Kubernetes manifest that you would like to have applied to the cluster. This configuraiton may be new VirtualServices or new DestinationRules or other.
 
+ ![Custom Istio Configuration in Meshery]({{ relative_url }}istio-adapter-custom-configuration.png)
+
 ## Prometheus and Grafana connections
 
 The {{page.name}} will connect to Istio's Prometheus and Grafana instances running in the control plane (typically found in the `istio-system` namespace). You can also connect Meshery to Prometheus and Grafana instances not running in the service mesh's control plane.

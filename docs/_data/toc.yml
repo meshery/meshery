@@ -13,7 +13,7 @@
         - title: Consul
           url: service-meshes/adapters/consul
         - title: Istio
-          url: service-meshes/adapters/istio
+          url: service-meshes/adapters/istio/istio
         - title: Kuma
           url: service-meshes/adapters/kuma
         - title: Linkerd
