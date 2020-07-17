@@ -48,4 +48,7 @@ Meshery allows you to paste (or type in) any Kubernetes manifest that you would 
 
 The {{page.name}} will connect to Istio's Prometheus and Grafana instances running in the control plane (typically found in the `istio-system` namespace). You can also connect Meshery to Prometheus and Grafana instances not running in the service mesh's control plane.
 
-Learn more about [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+### Suggested Next Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
