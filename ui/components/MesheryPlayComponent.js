@@ -130,7 +130,7 @@ class MesheryPlayComponent extends React.Component {
   }
 
   handleConfigure = () => {
-    this.props.router.push('/settings');
+    this.props.router.push('/settings#service-mesh');
   }
 
   pickImage(adapter) {
@@ -215,10 +215,6 @@ class MesheryPlayComponent extends React.Component {
         <NoSsr>
           <React.Fragment>
             <div className={classes.alreadyConfigured}>
-              {/* <Typography variant="subtitle1" gutterBottom>
-            Configure service meshes
-            </Typography> */}
-
               <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
                 <SettingsIcon className={classes.icon} />
                 Configure Settings
