@@ -80,7 +80,9 @@ const styles = (theme) => ({
     height: '100%',
   },
   redirectButton: {
-    marginLeft: '-10px',
+    marginLeft: '-.5em',
+    backgroundColor: '#ccc',
+    color: '#000'
   }
 });
 
@@ -182,7 +184,7 @@ class DashboardComponent extends React.Component {
     const { classes } = this.props;
     this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: To configure an adapter, Click`, {
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
       variant: 'error',
       action: (key) => (
         <Button
@@ -193,7 +195,7 @@ class DashboardComponent extends React.Component {
             self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
           }}
         >
-          HERE!
+          Settings
         </Button>
       ),
       autoHideDuration: 200000,
