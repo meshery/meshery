@@ -79,6 +79,11 @@ const styles = (theme) => ({
   cardContent: {
     height: '100%',
   },
+  redirectButton: {
+    marginLeft: '-.5em',
+    backgroundColor: '#ccc',
+    color: '#000'
+  }
 });
 
 class DashboardComponent extends React.Component {
@@ -175,6 +180,28 @@ class DashboardComponent extends React.Component {
     });
   }
 
+  handleAdapterPingError = (msg) => {
+    const { classes } = this.props;
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
+      variant: 'error',
+      action: (key) => (
+        <Button
+          key="configure-close"
+          aria-label="Close"
+          className={classes.redirectButton}
+          onClick={() => {
+            self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
+          }}
+        >
+          Settings
+        </Button>
+      ),
+      autoHideDuration: 200000,
+    });
+  }
+
   handleDelete() {
     return false;
   }
@@ -204,7 +231,7 @@ class DashboardComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError('Could not ping adapter.'));
+    }, self.handleAdapterPingError('Could not ping adapter'));
   }
 
     handleConfigure = (val) => {
