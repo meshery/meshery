@@ -86,11 +86,18 @@ func main() {
 	}
 	defer resultPersister.CloseResultPersister()
 
+	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer testConfigPersister.CloseTestConfigsPersister()
+
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	lProv := &models.DefaultLocalProvider{
 		SaaSBaseURL: saasBaseURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
+		TestProfilesPersister:  testConfigPersister,
 	}
 	provs[lProv.Name()] = lProv
 
