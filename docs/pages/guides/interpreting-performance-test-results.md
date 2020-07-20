@@ -7,18 +7,18 @@ type: guide
 ---
 
 
-### Analysis
+## Analysis
 
 Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Service Mesh Performance Specification](https://github.com/layer5io/service-mesh-performance-specification) (SMPS) format.
 
 
-### Graphical view
+## Graphical view
 
-<a href="{{site.baseurl}}/assets/img/dashboard.png"><img src="{{site.baseurl}}/assets/img/dashboard.png" /></a>
+![assets/img/performance-management/dashboard.png](assets/img/performance-management/dashboard.png)
 
-<a href="{{site.baseurl}}/assets/img/chart.png"><img src="{{site.baseurl}}/assets/img/chart.png" /></a>
+![assets/img/performance-management/chart.png](assets/img/performance-management/chart.png)
 
-### Tests
+## Tests
 
 For the best experience, you should compare between two or more tests of similar configuration. Tests that are configured with a high degree of variance (e.g., one test ran for a duration of 5 minutes, while another test ran for a duration of 1 hour) will produce comparisons that are more difficult to extrapolate insights from.
 
