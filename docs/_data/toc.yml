@@ -65,6 +65,8 @@
           url: guides/upgrade
         - title: Integrating Prometheus and Grafana
           url: guides/meshery-metrics
+        - title: Interpreting Performance Test Results
+          url: guides/interpreting-performance-test-results
     - title: Project
       url: project
       children:
