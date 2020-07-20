@@ -39,7 +39,7 @@
     "jsonlint-mod": "^1.7.4",
     "jss": "latest",
     "minimist": ">=1.2.2",
-    "moment": "^2.25.1",
+    "moment": "^2.27.0",
     "mui-datatables": "^3.1.5",
     "next": "^9.1.5",
     "next-compose": "0.0.2",
