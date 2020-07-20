@@ -18056,8 +18056,9 @@ html body .md-typeset .headerlink {
 
 .td-sidebar-nav {
     padding-right: .5rem;
-    margin-right: -15px;
-    margin-left: -15px
+    margin-right: -35px;
+    margin-left: -18px;
+    
 }
 
 @media(min-width:768px) {
@@ -18156,8 +18157,8 @@ html body .md-typeset .headerlink {
 
 .td-sidebar__search {
     padding: 1rem 15px;
-    margin-right: -15px;
-    margin-left: -15px
+    margin-right: -18px;
+    margin-left: -18px
 }
 
 .td-sidebar__inner {

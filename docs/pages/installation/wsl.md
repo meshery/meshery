@@ -1,7 +1,7 @@
 ---
 layout: page
 title: WSL2
-permalink: installation/wsl2
+permalink: installation/platforms/wsl2
 ---
 
 # Quick Start with WSL2
