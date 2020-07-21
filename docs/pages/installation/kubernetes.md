@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Kubernetes
-permalink: installation/kubernetes
+permalink: installation/platforms/kubernetes
 ---
 
 # Quick Start with Kubernetes

@@ -3,6 +3,7 @@ layout: guide
 title: Operation Guides
 permalink: guides
 ---
+Guides to using Meshery's various features and components. 
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
@@ -14,7 +15,6 @@ permalink: guides
     {% endfor %}
 </ul>
 
-    
 {% include toc.html page=guide %}
 
 {:toc}

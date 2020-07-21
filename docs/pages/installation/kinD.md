@@ -1,7 +1,7 @@
 ---
 layout: page
 title: KinD
-permalink: installation/kind
+permalink: installation/platforms/kind
 ---
 
 # Quick Start with KinD
