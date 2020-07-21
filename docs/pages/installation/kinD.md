@@ -20,9 +20,41 @@ chmod +x ./kind
 mv ./kind /some-dir-in-your-PATH/kind
 ```
 
-Create cluster using KinD
+Next we will demonstrate how to install Meshery with KinD on WSL2 
+
+### Create cluster using KinD
+
+First, we will get the ip address of WSL by:
 ```
-kind create cluster --name kind --wait 300s
+ip addr | grep eth0
+```
+
+You will see the output like:
+```
+4: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 172.1.1.1/20 brd 172.1.1.255 scope global eth0
+```
+
+Copy the ip address, we will use that in the next step.
+
+
+Then, create a file called `kind_cluster.yaml` and put the ip address under `apiServerAddress`:
+```
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "172.1.1.1"
+```
+
+Now create the KinD cluster with the config file `kind_cluster.yaml`:
+
+```
+kind create cluster --config kind_cluster.yaml --name kind --wait 300s
+```
+
+You will see
+
+```
 Creating cluster "kind" ...
  • Ensuring node image (kindest/node:v1.17.0) 🖼  ...
  ✓ Ensuring node image (kindest/node:v1.17.0) 🖼
@@ -60,6 +92,7 @@ To delete your cluster use:
 ```
 kind delete cluster --name kind
 ```
+
 
 <a name="helm"></a>
 ## Using Helm
