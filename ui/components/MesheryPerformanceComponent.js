@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -78,6 +79,8 @@ const styles = (theme) => ({
   },
 });
 
+const prePopulatedOptions = ['15s', '30s', '1m', '3m', '5m', '10m', '30m', '1h', '2h', '5h', '10h', '1d']
+
 class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -92,6 +95,7 @@ class MesheryPerformanceComponent extends React.Component {
       qps,
       c,
       t,
+      tValue: t,
       loadGenerator: 'fortio',
       result,
       headers: "",
@@ -102,7 +106,7 @@ class MesheryPerformanceComponent extends React.Component {
       timerDialogOpen: false,
       blockRunTest: false,
       urlError: false,
-      tError: false,
+      tError: '',
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -115,18 +119,21 @@ class MesheryPerformanceComponent extends React.Component {
     if (name === 'url' && event.target.value !== '') {
       this.setState({ urlError: false });
     }
-    if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
-      || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
-      this.setState({ tError: false });
-    }
-
     this.setState({ [name]: event.target.value });
   };
 
+  handleDurationChange = (event, newValue) => {
+    this.setState({tValue: newValue})
+    if (newValue !== null) {
+      this.setState({ tError: '' })
+    }
+  };
 
+  handleInputDurationChange = (event, newValue) => {
+    this.setState({t: newValue})
+  };
 
   handleSubmit = () => {
-
     const {
       url, t
     } = this.state;
@@ -144,9 +151,9 @@ class MesheryPerformanceComponent extends React.Component {
       err = true;
     }
 
-    if (t === '' || !(t.toLowerCase().endsWith('h')
+    if (t === '' || t === null || !(t.toLowerCase().endsWith('h')
       || t.toLowerCase().endsWith('m') || t.toLowerCase().endsWith('s')) || err || tNum <= 0) {
-      this.setState({ tError: true });
+      this.setState({ tError: 'error-autocomplete-value' });
       return;
     }
 
@@ -401,7 +408,7 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana, prometheus } = this.props;
     const {
       timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
-      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
+      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -556,17 +563,23 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-                  <TextField
+                  <Autocomplete
                     required
                     id="t"
                     name="t"
-                    label="Duration"
+                    freeSolo
+                    label="Duration*"
                     fullWidth
-                    value={t}
-                    error={tError}
-                    margin="normal"
                     variant="outlined"
-                    onChange={this.handleChange('t')}
+                    className={classes.errorValue}
+                    classes={{ root: tError }}
+                    value={tValue}
+                    inputValue={t}
+                    onChange={this.handleDurationChange}
+                    onInputChange={this.handleInputDurationChange}
+                    options={prePopulatedOptions}
+                    style={{ marginTop: '16px', marginBottom: '8px' }}
+                    renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
                   />
                 </Tooltip>
               </Grid>
