@@ -19,12 +19,16 @@ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64
 chmod +x ./kind
 mv ./kind /some-dir-in-your-PATH/kind
 ```
-
-Next we will demonstrate how to install Meshery with KinD on WSL2 
+If you are running Ubuntu on WSL2, use `Docker Ubuntu` distro to install `Docker`. 
 
 ### Create cluster using KinD
 
-First, we will get the ip address of WSL by:
+In order to let you successfully access Meshery server from your localhost, you need to follow the specific instructions
+according to your Operating System to complete the creation of KinD cluster.
+
+#### KinD on WSL2
+
+First, we will get the ip address of your WSL2 distro by:
 ```
 ip addr | grep eth0
 ```
@@ -78,6 +82,15 @@ kubectl cluster-info --context kind-kind
 
 Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
+
+#### KinD on other systems
+
+Creating a Kubernetes cluster is as simple as `kind create cluster`.
+
+For more configuration of installtion, please refer to KinD official documentation.
+
+
+### Access the KinD cluster
 
 By default, the cluster access configuration is stored in ${HOME}/.kube/config if $KUBECONFIG environment variable is not set. You can set the `KIUBECONFIG` environment command below:
 ```
