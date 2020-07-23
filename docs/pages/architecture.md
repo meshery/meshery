@@ -29,7 +29,6 @@ Meshery uses the following list of network ports to interface with its various c
 
 See the [Adapters](service-meshes/adapters) section for more information on the function of an adapter.
 
-## Statefulness in Meshery components
 Some components within Meshery's architecture are concerned with persisting data while others are only
 concerned with a long-lived configuration, while others have no state at all.
 
