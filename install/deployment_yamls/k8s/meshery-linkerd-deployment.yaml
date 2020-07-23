@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery
       containers:
-      - image: layer5/meshery-linkerd
+      - image: layer5/meshery-linkerd:stable-latest
         name: meshery-linkerd
         ports:
         - containerPort: 10001

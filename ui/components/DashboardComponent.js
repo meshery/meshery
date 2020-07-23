@@ -79,6 +79,11 @@ const styles = (theme) => ({
   cardContent: {
     height: '100%',
   },
+  redirectButton: {
+    marginLeft: '-.5em',
+    backgroundColor: '#ccc',
+    color: '#000'
+  }
 });
 
 class DashboardComponent extends React.Component {
@@ -175,6 +180,28 @@ class DashboardComponent extends React.Component {
     });
   }
 
+  handleAdapterPingError = (msg) => {
+    const { classes } = this.props;
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
+      variant: 'error',
+      action: (key) => (
+        <Button
+          key="configure-close"
+          aria-label="Close"
+          className={classes.redirectButton}
+          onClick={() => {
+            self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
+          }}
+        >
+          Settings
+        </Button>
+      ),
+      autoHideDuration: 200000,
+    });
+  }
+
   handleDelete() {
     return false;
   }
@@ -204,11 +231,11 @@ class DashboardComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError('Could not ping adapter.'));
+    }, self.handleAdapterPingError('Could not ping adapter'));
   }
 
-    handleConfigure = () => {
-      this.props.router.push('/settings#metrics');
+    handleConfigure = (val) => {
+      this.props.router.push(`/settings#metrics/${val}`);
     }
 
   handleKubernetesClick = () => {
@@ -417,7 +444,7 @@ class DashboardComponent extends React.Component {
     if(grafanaUrl === '') {
       showGrafana = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('grafana')}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Grafana
           </Button>
@@ -441,7 +468,7 @@ class DashboardComponent extends React.Component {
     if(prometheusUrl === '') {
       showPrometheus = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={this.handleConfigure}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('prometheus')}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Prometheus
           </Button>
@@ -470,16 +497,16 @@ class DashboardComponent extends React.Component {
           </Typography>
 
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Kubernetes', showConfigured)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Adapters', showAdapters)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Grafana', showGrafana)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Prometheus', showPrometheus)}
             </Grid>
 

@@ -33,6 +33,8 @@ const styles = (theme) => ({
   },
   logo: {
     width: theme.spacing(50),
+    maxWidth: "100%",
+    height:"auto",
   },
   modalHeading: {
     margin: 0,

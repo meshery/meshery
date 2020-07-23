@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Minikube
-permalink: installation/minikube
+permalink: installation/platforms/minikube
 ---
 
 # Quick Start with Minikube

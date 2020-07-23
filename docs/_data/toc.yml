@@ -2,35 +2,61 @@
   url: ''
   links:
     - title: Overview
-      url: 'overview'
-    - title: Service Meshes
-      url: service-meshes
-      children:
-        - title: Adapters
-          url: service-meshes/adapters
+      url: overview      
     - title: Quick Start
       url: installation
     - title: Supported Platforms
       url: installation/platforms
       children:
         - title: Docker
-          url: installation/docker
+          url: installation/platforms/docker
         - title: EKS
-          url: installation/eks
+          url: installation/platforms/eks
         - title: GKE
-          url: installation/gke
+          url: installation/platforms/gke
         - title: Kubernetes
-          url: installation/kubernetes
+          url: installation/platforms/kubernetes
         - title: Minikube
-          url: installation/minikube
+          url: installation/platforms/minikube
         - title: WSL2
-          url: installation/wsl2
+          url: installation/platforms/wsl2
         - title: KinD
-          url: installation/kind
+          url: installation/platforms/kind
     - title: Architecture
       url: architecture
-    - title: Service Mesh Management
-      url: mesh-management
+      children:
+        - title: Adapters
+          url: architecture/adapters
+    - title: Functionality
+      url: functionality
+      children:
+        - title: Lifecycle Management
+          url: functionality/lifecycle-management
+        - title: Performance Management
+          url: functionality/performance-management
+    - title: Service Meshes
+      url: service-meshes
+      children:
+        - title: App Mesh
+          url: service-meshes/adapters/app-mesh
+        - title: Citrix Service Mesh
+          url: service-meshes/adapters/cpx
+        - title: Consul
+          url: service-meshes/adapters/consul
+        - title: Istio
+          url: service-meshes/adapters/istio/istio
+        - title: Kuma
+          url: service-meshes/adapters/kuma
+        - title: Linkerd
+          url: service-meshes/adapters/linkerd
+        - title: Maesh
+          url: service-meshes/adapters/maesh
+        - title: Network Service Mesh
+          url: service-meshes/adapters/nsm/nsm
+        - title: Octarine
+          url: service-meshes/adapters/octarine/octarine
+        - title: Tanzu
+          url: service-meshes/adapters/tanzu-sm    
     - title: Extensibility
       url: extensibility
     - title: Guides

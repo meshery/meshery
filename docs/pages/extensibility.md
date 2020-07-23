@@ -4,16 +4,22 @@ title: Extensibility
 permalink: extensibility
 ---
 
-# Preface
+# Extending Meshery
+
 Meshery provides several extension points for working with different service meshes, load generators and providers. Meshery also offers a REST API.
 
-## Guiding Principles for Extensibility
+**Guiding Principles for Extensibility**
+
+The following principles are upheld in the design of Meshery's extensibility.
 
 1. Recognize that different deployment environments have different systems to integrate with.
 1. Offer a default experience that provides the optimal user experience.
 
-# Extension Points
-Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. The following points of extension are currently incorporated into Meshery:
+## Extension Points
+
+Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. The following points of extension are currently incorporated into Meshery.
+
+**Types of Extension Points:**
 
 1. Providers
 1. Load Generators
@@ -21,9 +27,12 @@ Meshery is not just an application. It is a set of microservices where the centr
 1. REST API
 
 ## Providers
+
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
-Eventually, we will be looking to keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
+![Providers](/docs/assets/img/providers/provider_screenshot.png)
+
+Eventually, Meshery will keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
 
 Providers as an object have the following attributes:
 
@@ -72,7 +81,7 @@ Name: “None”
 Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.
 
 ## Load Generators
-So, that the load generator can be chosen at runtime based on user preference. Users may prefer to use one load generator over the next given the difference of capabilities between load generators.
+Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a `load generator interface` (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure their own preference of load generator different that the default load generator. 
 
 ### What function do load generators in Meshery provide? 
 Load generators will provide the capability to run load tests from Meshery. As of today the load generators are embedded as libraries in Meshery and Meshery invokes the load generators APIs with the right load test options to run the load test. At the moment, Meshery has support for HTTP load generators. Support for GRPC and TCP load testing is on the roadmap. Meshery has functional integration with fortio and wrk2. 
@@ -83,6 +92,8 @@ Different use cases and different opinions call for different approaches to stat
 ### Which are currently supported?
 1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
 1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
+1. [nighthawk](https://github.com/envoyproxy/nighthawk) (coming soon!) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
+
 
 
 ## Service Mesh Adapters

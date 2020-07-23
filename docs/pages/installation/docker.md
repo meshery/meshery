@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Docker
-permalink: installation/docker
+permalink: installation/platforms/docker
 ---
 
 # Quick Start with Docker

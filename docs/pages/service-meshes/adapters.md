@@ -1,26 +1,28 @@
 ---
 layout: page
 title: Adapters
-permalink: service-meshes/adapters
+permalink: architecture/adapters
 ---
 
 # Service Mesh Adapters
+As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
+Meshery uses adapters for managing the various service meshes.
 
-### What are Meshery Adapters?
+## What are Meshery Adapters?
 
-Adapters allow Meshery to interface with the different service meshes. 
+Adapters allow Meshery to interface with the different service meshes, exposing their differentiated value to users.
 
 Meshery has adapters for managing the following service meshes.
+{% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
-| Service Mesh  |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Status        |
-| :------------ | :------------ |
-{% for adapter in site.adapters -%}
+| Adapter Status |  Service Mesh  | Service Mesh Version | Port          |
+| :------------: | :------------ | :------------: | :------------ |
+{% for adapter in sorted -%}
 {% if adapter.project_status -%}
-| [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{{ adapter.project_status }} |
+| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" /> [Meshery Adapter for {{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.version }} | {{ adapter.port }} |
 {% endif -%}
 {% endfor %}
 
-<br>
 ### Adapter FAQs
 
 #### Is each service mesh adapter made equal?

@@ -20,7 +20,13 @@ import MesherySettingsPerformanceComponent from "../components/MesherySettingsPe
 const styles = (theme) => ({
   root: {
     flexGrow: 1,
-    width: '100%',
+    maxWidth: '100%',
+    height:'auto',
+  },
+  tab: {
+    minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   icon: {
     display: 'inline',
@@ -64,10 +70,11 @@ class MesherySettings extends React.Component {
       k8sconfig, meshAdapters, grafana, prometheus, router: {asPath}
     } = props;
 
-    let tabVal = 0;
+    let tabVal = 0, subTabVal = 0;
     const splittedPath = asPath.split('#');
     if(splittedPath.length >= 2 && splittedPath[1]) {
-      switch (splittedPath[1]) {
+      const subTabPath = splittedPath[1].split('/');
+      switch (subTabPath[0]) {
         case 'environment': 
           tabVal = 0;
           break;
@@ -77,9 +84,25 @@ class MesherySettings extends React.Component {
         case 'metrics': 
           tabVal = 2;
           break;
-        case 3:
-          newRoute+='#performance'
+        case 'performance':
+          tabVal = 3;
           break;
+      }
+      if (subTabPath.length >= 2 && subTabPath[1]) {
+        switch(subTabPath[1]) {
+          case 'inclusterconfig':
+            subTabVal = 0;
+            break;
+          case 'outclusterconfig':
+            subTabVal = 1;
+            break;
+          case 'grafana':
+            subTabVal = 0;
+            break;
+          case 'prometheus':
+            subTabVal = 1;
+            break;
+        }
       }
     }
     this.state = {
@@ -89,7 +112,7 @@ class MesherySettings extends React.Component {
       grafana,
       prometheus,
       tabVal,
-      subTabVal: 0,
+      subTabVal,
     };
   }
 
@@ -106,7 +129,7 @@ class MesherySettings extends React.Component {
     return null;
   }
 
-  handleChange(val) {
+  handleChange = (val) => {
     const self = this;
     return (event, newVal) => {
       if (val === 'tabVal') {
@@ -125,9 +148,27 @@ class MesherySettings extends React.Component {
             newRoute+='#performance'
             break;
         }
-        if(this.props.router.route != newRoute) this.props.router.push(newRoute)
+        if(this.props.router.route != newRoute)
+          this.props.router.push(newRoute)
         self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
+        let newRoute = this.props.router.route;
+        switch(newVal) {
+          case 0:
+            if ( self.state.tabVal == 0 )
+              newRoute+='#environment/outclusterconfig'
+            else if ( self.state.tabVal == 2 )
+              newRoute+='#metrics/grafana'
+            break;
+          case 1:
+            if ( self.state.tabVal == 0 )
+              newRoute+='#environment/inclusterconfig'
+            else if ( self.state.tabVal == 2 )
+              newRoute+='#metrics/prometheus'
+            break;
+        }
+        if(this.props.router.route != newRoute)
+          this.props.router.push(newRoute)
         self.setState({ subTabVal: newVal });
       }
     };
@@ -166,22 +207,25 @@ class MesherySettings extends React.Component {
           >
             <Tooltip title="Identify your cluster" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
                 }
                 label="Environment"
               />
             </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
-                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} fixedWidth />
+                  <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
                 }
                 label="Service Meshes"
               />
             </Tooltip>
             <Tooltip title="Configure Metrics backends" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
                 }
@@ -190,6 +234,7 @@ class MesherySettings extends React.Component {
             </Tooltip>
             <Tooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
+                className={classes.tab}
                 icon={
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
@@ -208,8 +253,8 @@ class MesherySettings extends React.Component {
                 textColor="primary"
                 variant="fullWidth"
               >
-                <Tab label="Out of Cluster Deployment" />
-                <Tab label="In Cluster Deployment" />
+                <Tab className={classes.tab} label="Out of Cluster Deployment" />
+                <Tab className={classes.tab} label="In Cluster Deployment" />
               </Tabs>
             </AppBar>
             {subTabVal === 0 && (
@@ -235,6 +280,7 @@ class MesherySettings extends React.Component {
             <AppBar position="static" color="default">
               <Tabs
                 value={subTabVal}
+                className={classes.tab}
                 onChange={this.handleChange('subTabVal')}
                 indicatorColor="primary"
                 textColor="primary"

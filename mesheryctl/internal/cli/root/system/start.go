@@ -113,6 +113,10 @@ var startCmd = &cobra.Command{
 					}
 				} else if runtime.GOOS == "linux" {
 					// Meshery running on Linux host
+					_, err := exec.LookPath("xdg-open")
+					if err != nil {
+						break
+					}
 					err = exec.Command("xdg-open", url).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))

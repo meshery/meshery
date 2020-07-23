@@ -5,6 +5,11 @@ MESHERY_CLOUD_DEV=http://localhost:9876
 MESHERY_CLOUD_PROD=https://meshery.layer5.io
 MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
 
+# Configure git variables as an environment variable
+git:
+	GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+	GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
 mesheryctl:
@@ -16,23 +21,27 @@ mesheryctl:
 docker:
 	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) .
 
-# Runs Meshery in a container locally and points to locally-running 
+# Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
-docker-run-local-cloud:
+docker-run-local-cloud: git
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
+	-e GIT_VERSION=${GIT_VERSION} \
+	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
-# Runs Meshery in a container locally and points to remote 
+# Runs Meshery in a container locally and points to remote
 #  Meshery Cloud for user authentication.
-docker-run-cloud:
+docker-run-cloud: git
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
+	-e GIT_VERSION=${GIT_VERSION} \
+	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -41,10 +50,10 @@ docker-run-cloud:
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
-# Runs Meshery on your local machine and points to locally-running  
+# Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
-run-local-cloud:
+run-local-cloud: git
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
@@ -55,7 +64,7 @@ run-local-cloud:
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local:
+run-local: git
 	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
@@ -64,6 +73,20 @@ run-local:
 	./meshery; \
 	cd ..
 
+run-tests:
+	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive;
+	$(GOPATH)/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get github.com/kisielk/errcheck;
+	$(GOPATH)/bin/errcheck -tags draft ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get honnef.co/go/tools/cmd/staticcheck;
+	$(GOPATH)/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./... \
+
+	GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./... \
+
+	GO111MODULE=off go get github.com/securego/gosec/cmd/gosec;
+	$(GOPATH)/bin/gosec -exclude=G301,G304,G107 ./...
 
 proto:
 	# go get -u google.golang.org/grpc
@@ -93,17 +116,21 @@ run-ui-lint:
 run-provider-ui-lint:
 	cd provider-ui; npm run lint; cd ..
 
+# Runs the test on Provider UI interface on your local machine.
+run-provider-ui-test:
+	cd provider-ui; npm run test; cd ..
+
 # Builds all user interfaces on your local machine.
 build-ui:
 	cd ui; npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
-# setup wrk2 for local dev 
+# setup wrk2 for local dev
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:
 	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd wrk2; make; cd ..
 
-#Incorporating Make docs commands from the Docs Makefile	
+#Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll
 
 docs:
@@ -113,6 +140,6 @@ build-docs:
 	$(jekyll) build --drafts --livereload
 
 docker-docs:
-	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"	
+	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 

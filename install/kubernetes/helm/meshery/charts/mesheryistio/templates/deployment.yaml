@@ -29,7 +29,7 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           # TODO: Need to confirm the mesheryistio image version
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

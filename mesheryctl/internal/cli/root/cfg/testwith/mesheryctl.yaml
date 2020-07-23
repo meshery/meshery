@@ -1,4 +1,5 @@
 baseMesheryURL: "http://localhost:9081/api"
 perf:
   authTokenURI:    "/gettoken"
-  loadTestSmpsURI: "/load-test-smps"
+  loadTestSmpsURI: "/perf/load-test-smps"
+  loadTestURI: "/perf/load-test"
