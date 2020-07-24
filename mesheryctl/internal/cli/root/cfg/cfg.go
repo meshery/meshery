@@ -78,12 +78,12 @@ func (mc *MesheryCtl) GetVersion() *Version {
 	return mc.CtlVersion
 }
 
-// Build returns the build number for the binary
+// GetBuild returns the build number for the binary
 func (v *Version) GetBuild() string {
 	return v.Build
 }
 
-// CommitSHA returns the commit sha for the binary
+// GetCommitSHA returns the commit sha for the binary
 func (v *Version) GetCommitSHA() string {
 	return v.CommitSHA
 }
