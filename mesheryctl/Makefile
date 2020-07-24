@@ -1,7 +1,13 @@
+# envs
+GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+LDFLAGS="-w -s -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version=${GIT_VERSION} -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha=${GIT_COMMITSHA}"
+
 make:
-	go build -o mesheryctl cmd/mesheryctl/main.go
+	go build -ldflags=${LDFLAGS} -o mesheryctl cmd/mesheryctl/main.go
 forwin:
-	go build -o mesheryctl.exe cmd/mesheryctl/main.go
+	go build -ldflags=${LDFLAGS} -o mesheryctl.exe cmd/mesheryctl/main.go
+
 OUTDIR := bin
 
 ARCH := amd64
@@ -9,15 +15,6 @@ ARCH := amd64
 BINNAME_DARWIN ?= mesheryctl-darwin-$(ARCH)
 BINNAME_LINUX ?= mesheryctl-linux-$(ARCH)
 BINNAME_WINDOWS ?= mesheryctl-windows-$(ARCH).exe
-
-# go options
-
-# Need to remove the DWARF debug information and the symbol information
-LDFLAGS := -w -s
-
-# Load the parameters to go compiler and print optimization decisions
-GCFLAGS := 
-
 
 # CLI
 
