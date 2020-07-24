@@ -23,7 +23,7 @@ If you are running Ubuntu on WSL2, use `Docker Ubuntu` distro to install `Docker
 
 ### Create cluster using KinD
 
-In order to let you successfully access Meshery server from your localhost, you need to follow the specific instructions
+In order to successfully build the meshery server on your local machine, you will need to follow these specific instructions
 according to your Operating System to complete the creation of KinD cluster.
 
 #### KinD on WSL2
