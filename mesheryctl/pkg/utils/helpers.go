@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math/rand"
+	crand "crypto/rand"
+	rand "math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"encoding/binary"
 	"os/exec"
 	"path"
 	"runtime"
@@ -56,6 +58,22 @@ var (
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 )
+
+type cryptoSource struct{}
+
+func (s cryptoSource) Seed(seed int64) {}
+
+func (s cryptoSource) Int63() int64 {
+    return int64(s.Uint64() & ^uint64(1<<63))
+}
+
+func (s cryptoSource) Uint64() (v uint64) {
+    err := binary.Read(crand.Reader, binary.BigEndian, &v)
+    if err != nil {
+        log.Fatal(err)
+    }
+    return v
+}
 
 const tokenName = "token"
 const providerName = "meshery-provider"
