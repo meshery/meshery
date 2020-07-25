@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // Version defines the Json payload structure for version api\
@@ -19,8 +19,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Default values incase any errors
 	version := &Version{
-		Build:     "Not Set",
-		CommitSHA: "Not Set",
+		Build:     viper.GetString("BUILD"),
+		CommitSHA: viper.GetString("COMMITSHA"),
 	}
 
 	if r.Method != http.MethodGet {
@@ -29,14 +29,6 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
-	if len(os.Getenv("GIT_VERSION")) > 0 {
-		version.Build = os.Getenv("GIT_VERSION")
-	}
-
-	if len(os.Getenv("GIT_COMMITSHA")) > 0 {
-		version.CommitSHA = os.Getenv("GIT_COMMITSHA")
-	}
 
 	err := json.NewEncoder(w).Encode(version)
 	if err != nil {
