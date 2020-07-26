@@ -95,17 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
-      GOPROXY: direct
-      GOSUMDB: off
     steps:
     - name: Checkout code 
       uses: actions/checkout@master
       with:
         fetch-depth: 1
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ secrets.GO_VERSION }}
     - name: Setup Cache
       uses: actions/cache@v1
       with:
