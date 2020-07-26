@@ -21,7 +21,11 @@ import (
 	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
-var globalTokenForAnonymousResults string
+var (
+	globalTokenForAnonymousResults string
+	version                        = "Not Set"
+	commitsha                      = "Not Set"
+)
 
 func main() {
 	if globalTokenForAnonymousResults != "" {
@@ -34,6 +38,8 @@ func main() {
 
 	viper.SetDefault("PORT", 8080)
 	viper.SetDefault("ADAPTER_URLS", "")
+	viper.SetDefault("BUILD", version)
+	viper.SetDefault("COMMITSHA", commitsha)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -88,7 +94,7 @@ func main() {
 
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	lProv := &models.DefaultLocalProvider{
-		SaaSBaseURL: saasBaseURL,
+		SaaSBaseURL:            saasBaseURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 	}
@@ -104,10 +110,10 @@ func main() {
 		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
 	}
 	cp := &models.MesheryRemoteProvider{
-		SaaSBaseURL:   saasBaseURL,
-		RefCookieName: "meshery_ref",
-		SessionName:   "meshery",
-		TokenStore:    make(map[string]string),
+		SaaSBaseURL:                saasBaseURL,
+		RefCookieName:              "meshery_ref",
+		SessionName:                "meshery",
+		TokenStore:                 make(map[string]string),
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
 		ProviderVersion:            "v0.3.14",

@@ -33,6 +33,8 @@ type TerminalFormatter struct{}
 var (
 	cfgFile     string
 	mctlCfgFile string
+	version     = "Not Set"
+	commitsha   = "Not Set"
 )
 
 //Format is exported
@@ -151,6 +153,10 @@ func initConfig() {
 				"authTokenURI":    "/gettoken",
 				"loadTestSmpsURI": "/perf/load-test-smps",
 				"loadTestURI":     "/perf/load-test",
+			},
+			"ctlversion": map[string]interface{}{
+				"build":     version,
+				"commitsha": commitsha,
 			},
 		})
 	}
