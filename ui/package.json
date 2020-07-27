@@ -54,7 +54,7 @@
     "react-jss": "^10.3.0",
     "react-lazyload": "^2.6.5",
     "react-moment": "^0.8.4",
-    "react-redux": "^6.0.1",
+    "react-redux": "^7.2.1",
     "react-select": "^2.4.3",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.8",
