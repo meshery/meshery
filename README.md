@@ -22,7 +22,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | --- | :---: |
 | [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
 | - [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
+| [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
 | - [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/aks) | ✔️ |
 | - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
