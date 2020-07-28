@@ -273,6 +273,105 @@ Released on 1 May 2020
     + Ability to run performance tests asynchronously.
     + Collect & persist node metrics.
 
+## [v0.1.6](https://github.com/layer5io/meshery/releases/tag/v0.1.6)
+
+**What's new?**
+- Changelog
+ + New UI for managing Meshery's connection to Kubernetes cluster.
+ + New `mesheryctl` compatibility for Windows for opening default browser upon `start`.
+ + New sample app added to the istio adapter - Hipster app (Google's Microservices demo application).
+
+## [v0.1.5](https://github.com/layer5io/meshery/releases/tag/v0.1.5)
+
+**What's new?**
+- Changelog
+- UX Improvements
+ + `mesheryctl start` now waits for meshery application containers to be up before launching the user's browser.
+ + `mesheryctl stop` now shows command progress akin to the experience when using `meshery` bash script.
+
+## [v0.1.4](https://github.com/layer5io/meshery/releases/tag/v0.1.4)
+
+**What's new?**
+- Changelog
+
+## [v0.1.3](https://github.com/layer5io/meshery/releases/tag/v0.1.3)
+
+**What's new?**
+- Migrate from Configure Meshery to Settings page.
+
+## [v0.1.2](https://github.com/layer5io/meshery/releases/tag/v0.1.2)
+
+**What's new?**
+- Synchronization of browser local storage
+ + Meshery in-memory session storage.
+
+## [v0.1.1](https://github.com/layer5io/meshery/releases/tag/v0.1.1)
+
+**What's new?**
+- Patch for Alpine bug.
+
+## [v0.1.0](https://github.com/layer5io/meshery/releases/tag/v0.1.0)
+
+**What's new**
+- Initial fully functional Istio.
+
+## [v0.0.9](https://github.com/layer5io/meshery/releases/tag/v0.0.9)
+
+**What's new?**
+- Documentation site segragated
+ + content laid out.
+
+## [v0.0.8](https://github.com/layer5io/meshery/releases/tag/v0.0.8)
+
+**What's new?**
+- Ability to import Grafana board json
+ + Integrating with Prometheus directly for metrics.
+
+## [v0.0.7](https://github.com/layer5io/meshery/releases/tag/v0.0.7)
+
+**What's new?**
+- Migrated away from embedded iframe grafana charts
+ + Now using Chartjs for charting.
+ + Now using C3 for charting.
+
+## [v0.0.6](https://github.com/layer5io/meshery/releases/tag/v0.0.6)
+
+**What's new?**
+- Pre-alpha Consul adapter.
+ + Support for deploying SMI Istio adapter.
+ + Ensuring compatibility to apply SMI manifests through Meshery.
+
+## [v0.0.5](https://github.com/layer5io/meshery/releases/tag/v0.0.5)
+
+**What's new?**
+- Pre-alpha Linkerd adapter.
+ + Ability to filter results.
+
+## [v0.0.4](https://github.com/layer5io/meshery/releases/tag/v0.0.4)
+
+**What's new?**
+-Ability to view persisted results.
+ + Integration and support for Grafana charts.
+ + Embedding panels in iframe.
+
+## [v0.0.3](https://github.com/layer5io/meshery/releases/tag/v0.0.3)
+
+**What's new?**
+-  Initial version with support of Meshery adapters.
+ + Release of a pre-alpha version of Istio adapter.
+
+## [v0.0.2](https://github.com/layer5io/meshery/releases/tag/v0.0.2)
+
+**What's new?**
+- Ability to support running custom yaml on Kubernetes with Istio.
+
+## [v0.0.1](https://github.com/layer5io/meshery/releases/tag/v0.0.1)
+
+**New release**
+- Initial version of Meshery
+  + Connect to Kubernetes.
+  + Run preconfigured commands on Kubernetes with Istio.
+
 <!-- <table class="responsive-table hover striped">
   <thead>
     <th class="centered">Version</th>
