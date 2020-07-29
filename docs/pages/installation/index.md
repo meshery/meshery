@@ -76,7 +76,7 @@ curl -L https://git.io/meshery | bash -
 Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
 ```bash
-./mesheryctl start
+./mesheryctl system start
 ```
 
 #### Scoop
