@@ -38,7 +38,7 @@ require (
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
 	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
 	google.golang.org/grpc v1.30.0
-	google.golang.org/protobuf v1.24.0
+	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
