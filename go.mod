@@ -3,7 +3,7 @@ module github.com/layer5io/meshery
 go 1.13
 
 require (
-	fortio.org/fortio v1.3.1
+	fortio.org/fortio v1.6.4
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/aspenmesh/istio-client-go v0.0.0-20191010215625-4de6e89009c4
@@ -33,7 +33,7 @@ require (
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
-	golang.org/x/net v0.0.0-20200519113804-d87ec0cfa476
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect
 	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
