@@ -91,7 +91,7 @@ class MesheryResultDialog extends React.Component {
 
     renderMeshesInfo(detectedMeshes) {
       const { classes } = this.props;
-      const meshes = Object.keys(detectedMeshes);
+      const meshes = Object.entries(detectedMeshes);
       return (
         <NoSsr>
           <Typography className={classes.title} variant="h6" id="tableTitle">
@@ -100,7 +100,7 @@ class MesheryResultDialog extends React.Component {
           </Typography>
           <Table className={classes.table} size="small" aria-label="Service Mesh">
             <TableBody>
-              {meshes.map((mesh, ind) => (
+              {meshes.map(([mesh, version], ind) => (
                 <NoSsr>
                   {meshes.length > 1
                     ? (
@@ -114,7 +114,7 @@ class MesheryResultDialog extends React.Component {
                       </TableRow>
                     ) : ''}
                   {this.createTableRow('Name', mesh)}
-                  {this.createTableRow('Version', detectedMeshes[mesh])}
+                  {this.createTableRow('Version', version)}
                 </NoSsr>
               ))}
             </TableBody>
