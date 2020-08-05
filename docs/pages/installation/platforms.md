@@ -20,5 +20,5 @@ The table below provides installation instructions for each platform that Mesher
 | [Mac - Homebrew](/docs/installation#mac-or-linux) ||
 | [Scoop](/docs/installation#windows) ||
 | [WSL2](/docs/installation/platforms/wsl2) | Build 18917 and above |
-| [KinD](/docs/installation/platforms/kinD) | v0.7.0|
+| [KinD](/docs/installation/platforms/kind) | v0.7.0|
 | Raspberry Pi | In Progress |
