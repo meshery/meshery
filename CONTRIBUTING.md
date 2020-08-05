@@ -1,9 +1,9 @@
 # <a name="contributing">Contributing Overview</a>
-Please do! Thanks for your help improving the project! :balloon:
+Please do! Thanks for your help in improving the project! :balloon:
 
-All contributors are welcome. Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](.CODE_OF_CONDUCT.md).
+All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Not sure where to start? First, see the [newcomers welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit). Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join the [Slack account](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed.  All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join the [Slack account](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed.  All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
 **Sections**
 - <a name="contributing">General Contribution Flow</a>
@@ -16,13 +16,13 @@ Not sure where to start? First, see the [newcomers welcome guide](https://docs.g
 Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 # <a name="contributing">General Contribution Flow</a>
 
-In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
 
 ## <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
-as a contributor, have the legal right to make the contribution.
+as a contributor, have the legal right to contribute.
 
 See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
 and how it works [here](https://github.com/probot/dco#how-it-works).
@@ -81,8 +81,8 @@ __Please note__: All `make` commands should be run in a terminal from within the
 ### Prerequisites for building Meshery in your development environment:
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. `npm` and `node` should be installed in your machine, preferably the latest versions.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` before version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
@@ -97,7 +97,7 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 ### Common Issues
 
 #### Invalid C headers ( Mac OS )
-When running `make run-local` on MacOS platform. Some may face error with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing gcc with Clang by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
+When running `make run-local` on the macOS platform. Some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing gcc with Clang by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
 Users can now test their code on their local machine against the CI checks implemented using `make run-tests`.
@@ -153,7 +153,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 make run-ui-dev
 ```
 
-Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
+Make sure to have Meshery server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
 ### Running Meshery from IDE
@@ -178,7 +178,7 @@ update /etc/hosts
 We are using ES-Lint to maintain code quality & consistency in our UI Code. To make sure your PR passes all the UI & ES-Lint Tests, please see below :
 
 - Remember to run `make run-ui-lint` & `make run-provider-ui-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
-- The above commands will only fix some basic indenting rules for you, you will have to manually check your code to ensure there is no duplications, un-used variables or un-declared constants.
+- The above commands will only fix some basic indenting rules, you will have to manually check your code to ensure there are no duplications, un-used variables or un-declared constants.
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](layer5.slack.io).
 
@@ -190,4 +190,4 @@ Resources: https://lab.github.com and https://try.github.com/
 
 ### License
 
-This repository and site are available as open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
