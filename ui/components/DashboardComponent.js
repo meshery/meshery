@@ -185,7 +185,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
       variant: 'error',
-      autoHideDuration: 5000,
+      autoHideDuration: 2000,
       action: (key) => (
         <>
           <Button
