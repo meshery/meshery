@@ -82,7 +82,7 @@ __Please note__: All `make` commands should be run in a terminal from within the
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed in your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` before version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
