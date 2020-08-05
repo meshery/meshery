@@ -29,7 +29,7 @@ git fetch upstream
 ```
 git branch -va
 ```
-Now, check out your master branch and merge the upstream repo's master branch:
+Now, checkout your master branch and merge the upstream repo's master branch:
 
 ## Checkout your master branch and merge upstream
 ```
