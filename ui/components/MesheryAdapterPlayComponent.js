@@ -4,7 +4,6 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import {
   withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip
 } from '@material-ui/core';
-import Modal from '@material-ui/core/Modal';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
@@ -24,13 +23,13 @@ const styles = (theme) => ({
     padding: theme.spacing(10),
     width: '100%',
   },
-  buttons: {
-    // display: 'flex',
-    // justifyContent: 'flex-end',
+  chipGrid: {
+    padding: theme.spacing(10),
     width: '100%',
+    paddingBottom: '0',
   },
-  custom: {
-    // float: 'right',
+  buttons: {
+    width: '100%',
   },
   button: {
     marginTop: theme.spacing(3),
@@ -65,14 +64,8 @@ const styles = (theme) => ({
     margin: theme.spacing(1),
     marginTop: theme.spacing(3),
   },
-  rightIcon: {
-    // marginLeft: theme.spacing(1),
-  },
   fileLabel: {
     width: '100%',
-  },
-  fileLabelText: {
-    // width: '79%',
   },
   editorContainer: {
     width: '100%',
@@ -416,42 +409,33 @@ class MesheryAdapterPlayComponent extends React.Component {
 
 
   generateSMIResult() {
-    const columns = ["S.No", "Mesh Name", "SMI Version", "Test State"];
+    const {
+      customDialogAdd, customDialogDel,
+    } = this.state;
+    const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
 
     const data = [
-      ["1", "Linkerd", "0.5.0", "Passed"],
-      ["2", "Linkerd", "0.5.0", "Passed"],,
-      ["3", "Linkerd", "0.5.0", "Passed"],,
-      ["4", "Linkerd", "0.5.0", "Passed"],,
+      ["TA-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Passed"],
+      ["TA-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Failed"],
+      ["TM-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "Half", "Passed"],
+      ["TM-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "None", "Passed"],
+      ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
+      ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
     ];
-
-    const options = {
-      filterType: 'checkbox',
-    };
-    const self = this;
+    let isDelete = false;
     return (
       <Dialog
-        onClose={this.handleModalClose(false)}
+        onClose={this.handleModalClose(isDelete)}
         aria-labelledby="adapter-dialog-title"
+        open={isDelete ? customDialogDel : customDialogAdd}
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle id="adapter-dialog-title" onClose={this.handleModalClose(false)}>
-          {adapter.name}
-          {' '}
-          SMI Results Conformance
-          {isDelete ? '(delete)' : ''}
-        </DialogTitle>
-        <Divider variant="fullWidth" light />
-        <DialogContent>
-          <MUIDataTable
-            title={"SMI Result"}
-            data={data}
-            columns={columns}
-            options={options}
-          />
-        </DialogContent>
-        <Divider variant="fullWidth" light />
+        <MUIDataTable
+          title={"SMI Conformance Result"}
+          data={data}
+          columns={columns}
+        />
       </Dialog>
     );
   }
@@ -566,8 +550,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     // const expanded = false;
 
     const selectedAdapterOps = adapter && adapter.ops ? adapter.ops.filter(({ category }) => typeof category === 'undefined' && cat === 0 || category === cat) : [];
-    let content; let
-        description;
+    let content;
+    let description;
     switch (cat) {
       case 0:
         content = 'Manage Service Mesh Lifecycle';
@@ -592,6 +576,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       case 4:
         content = 'Apply Custom Configuration';
         description = 'Customize the configuration of your service mesh.';
+        break;
+
+      case 5:
+        content = 'SMI Conformance Tool';
+        description = 'Run SMI Conformance Tool';
         break;
     }
     return (
@@ -668,12 +657,19 @@ class MesheryAdapterPlayComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-
-          <div className={classes.alignLeft}>
-            {adapterChip}
-          </div>
-          <div className={classes.alignRight}>
-            {smiChip}
+          <div className={classes.chipGrid}>
+            <Grid container spacing={3}>
+              <Grid item xs={3}>
+                {adapterChip}
+              </Grid>
+              <Grid item xs={3}>
+              </Grid>
+              <Grid item xs={3}>
+              </Grid>
+              <Grid item xs={3}>
+                {smiChip}
+              </Grid>
+            </Grid>
           </div>
           <div className={classes.root}>
             <Grid container spacing={5}>
