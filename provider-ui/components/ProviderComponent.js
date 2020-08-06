@@ -198,7 +198,7 @@ class ProviderComponent extends React.Component {
         <li>Provides provenence of test results and their persistence</li>
       </ul>
       <ListItem
-      key="SMI Conformance"
+      key="SMI"
       className={classes.providerDesc}
       >
       </ListItem>
@@ -269,10 +269,12 @@ class ProviderComponent extends React.Component {
 
             ))}
           <Divider />
-          <MenuItem disabled={true}>
+          <MenuItem disabled={true}
+            key="SMI">
           SMI Conformance
           </MenuItem>
-          <MenuItem disabled={true}>
+          <MenuItem disabled={true}
+            key="UT Austin">
           The University of Texas at Austin
           </MenuItem>
           </MenuList>
