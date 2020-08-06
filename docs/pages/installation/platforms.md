@@ -13,7 +13,7 @@ The table below provides installation instructions for each platform that Mesher
 | [AKS](/docs/installation/platforms/aks) ||
 | [EKS](/docs/installation/platforms/eks) | 1.12.x and above |
 | [GKE](/docs/installation/platforms/gke) | 1.14.x and above |
-| [Helm](/docs/installation/kubernetes#helm) ||
+| [Helm](/docs/installation/platforms/kubernetes#using-helm) ||
 | [Kubernetes](/docs/installation/platforms/kubernetes) | 1.12.x and above |
 | [Minikube](/docs/installation/platforms/minikube) | 1.2.x and above |
 | OpenShift | In Progress |
