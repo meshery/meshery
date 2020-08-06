@@ -19,6 +19,8 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import dataFetch from '../lib/data-fetch';
+import Divider from '@material-ui/core/Divider';
+
 
 const styles = (theme) => ({
   root: {
@@ -190,26 +192,28 @@ class ProviderComponent extends React.Component {
           </React.Fragment>
           );                  
       })}
+      <p>Provider: SMI Conformance</p>
+      <ul>
+        <li>Remote provider for SMI Conformance Testing</li>
+        <li>Provides provenence of test results and their persistence</li>
+      </ul>
       <ListItem
-      key="SMI Tool"
+      key="SMI Conformance"
       className={classes.providerDesc}
       >
-      Provider: SMI Tool<br />
-      <ul><li>Provider for SMI Conformance Testing</li>
-      <li>Specially create for W/G SMI Tool</li>
-      </ul>
       </ListItem>
 
-
+      </List>
+      <p>Provider: The University of Texas at Austin</p>
+      <ul>
+        <li>Academic research and advanced studies by Ph.D. researchers</li>
+        <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+      </ul>
+      <List>
       <ListItem
       key="UT Austin"
       className={classes.providerDesc}
-      >
-      Provider: UT Austin<br />
-      <ul><li>Curated for academic research</li>
-      <li>Provider created for students</li>
-      <li>Provides limited storage with each university domain</li>
-      </ul>
+      >         
       </ListItem>
       </List>
       </Typography>
@@ -264,11 +268,12 @@ class ProviderComponent extends React.Component {
             </MenuItem>
 
             ))}
+          <Divider />
           <MenuItem disabled={true}>
-          SMI Tool
+          SMI Conformance
           </MenuItem>
           <MenuItem disabled={true}>
-          UT Austin
+          The University of Texas at Austin
           </MenuItem>
           </MenuList>
           </ClickAwayListener>
