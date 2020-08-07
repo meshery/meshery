@@ -152,6 +152,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       customDialogAdd: false,
       customDialogDel: false,
+      customDialogSMI: false,
 
       open : false,
 
@@ -192,12 +193,26 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
+  handleSMIClose() {
+    const self = this;
+    return () => {
+      self.setState({['customDialogSMI']: false });
+    }
+  }
+
   handleModalOpen(isDelete) {
     const self = this;
     return () => {
       const item = isDelete ? 'customDialogDel' : 'customDialogAdd';
       self.setState({ [item]: true });
     };
+  }
+
+  handleSMIOpen() {
+    const self = this;
+    return () => {
+      self.setState({['customDialogSMI']: true });
+    }
   }
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
@@ -310,6 +325,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleSMIClick = (adapterLoc) => () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
+    const { customDialogSMI } = self.state;
     dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
       credentials: 'same-origin',
       credentials: 'include',
@@ -344,8 +360,8 @@ class MesheryAdapterPlayComponent extends React.Component {
             </IconButton>
           ),
         });
+        self.setState({ ['customDialogSMI']: true })
       }
-      this.generateSMIResult();
     }, self.handleError('Could not ping adapter.'));
   }
 
@@ -410,7 +426,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   generateSMIResult() {
     const {
-      customDialogAdd, customDialogDel,
+      customDialogSMI,
     } = this.state;
     const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
 
@@ -422,12 +438,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
       ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
     ];
-    let isDelete = false;
     return (
       <Dialog
-        onClose={this.handleModalClose(isDelete)}
+        onClose={this.handleSMIClose()}
         aria-labelledby="adapter-dialog-title"
-        open={isDelete ? customDialogDel : customDialogAdd}
+        open={customDialogSMI}
         fullWidth
         maxWidth="md"
       >
@@ -632,6 +647,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     let imageSMISrc = "/static/img/smi.png";
     let smiChip = (
+      <React.Fragment>
       <Chip
         label="Run SMI Conformance"
         onClick={this.handleSMIClick(adapter.adapter_location)}
@@ -639,6 +655,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         className={classes.chip}
         variant="outlined"
       />
+      {this.generateSMIResult()}
+      </React.Fragment>
     );
 
     const filteredOps = [];
