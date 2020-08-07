@@ -81,7 +81,6 @@ const styles = (theme) => ({
   },
   redirectButton: {
     marginLeft: '-.5em',
-    backgroundColor: '#ccc',
     color: '#000'
   }
 });
@@ -180,25 +179,36 @@ class DashboardComponent extends React.Component {
     });
   }
 
-  handleAdapterPingError = (msg) => {
+  handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;
     this.props.updateProgress({ showProgress: false });
     const self = this;
     this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
       variant: 'error',
+      autoHideDuration: 2000,
       action: (key) => (
-        <Button
-          key="configure-close"
-          aria-label="Close"
-          className={classes.redirectButton}
-          onClick={() => {
-            self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
-          }}
-        >
-          Settings
-        </Button>
+        <>
+          <Button
+            key="configure-close"
+            aria-label="Configure"
+            className={classes.redirectButton}
+            onClick={() => {
+              self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
+            }}
+          >
+            Settings
+          </Button>
+
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </>
       ),
-      autoHideDuration: 200000,
     });
   }
 
@@ -231,7 +241,7 @@ class DashboardComponent extends React.Component {
           ),
         });
       }
-    }, self.handleAdapterPingError('Could not ping adapter'));
+    }, self.handleAdapterPingError('Could not ping adapter.'));
   }
 
     handleConfigure = (val) => {
