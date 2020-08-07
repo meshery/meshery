@@ -22,7 +22,7 @@ To contribute to Meshery, please follow the fork-and-pull request workflow descr
 
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
-as a contributor, have the legal right to contribute.
+as a contributor, have the legal right to make the contribution.
 
 See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
 and how it works [here](https://github.com/probot/dco#how-it-works).
