@@ -112,22 +112,17 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
-    const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
 
-    if (name === 'url' && pattern.test(event.target.value)) {
+    if (name === 'url' && event.target.value !== '') {
       this.setState({ urlError: false });
     }
-    if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
-      || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
-      this.setState({ tError: false });
-    }
-    
     this.setState({ [name]: event.target.value });
   };
 
 
 
   handleSubmit = () => {
+    const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
     
     const {
       url, t
@@ -136,6 +131,11 @@ class MesheryPerformanceComponent extends React.Component {
     if (url === '') {
       this.setState({ urlError: true });
       return;
+    }
+
+    if(!pattern.test(url)) {
+      this.setState({urlError: true});
+      return this.handleError("Please check if the url contains the valid protocol!")();
     }
 
     let err = false; 
@@ -154,6 +154,7 @@ class MesheryPerformanceComponent extends React.Component {
 
     this.submitLoadTest();
   }
+  
 
   submitLoadTest = () => {
     const {
@@ -370,6 +371,7 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleError(msg) {
+
     const self = this;
     return (error) => {
       self.setState({ blockRunTest: false, timerDialogOpen: false });
