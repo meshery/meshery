@@ -208,12 +208,12 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
-  handleSMIOpen() {
-    const self = this;
-    return () => {
-      self.setState({['customDialogSMI']: true });
-    }
-  }
+  // handleSMIOpen() {
+  //   const self = this;
+  //   return () => {
+  //     self.setState({['customDialogSMI']: true });
+  //   }
+  // }
 
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
@@ -590,11 +590,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       case 4:
         content = 'Apply Custom Configuration';
         description = 'Customize the configuration of your service mesh.';
-        break;
-
-      case 5:
-        content = 'SMI Conformance Tool';
-        description = 'Run SMI Conformance Tool';
         break;
     }
     return (
