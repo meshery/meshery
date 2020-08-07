@@ -208,13 +208,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     };
   }
 
-  // handleSMIOpen() {
-  //   const self = this;
-  //   return () => {
-  //     self.setState({['customDialogSMI']: true });
-  //   }
-  // }
-
   handleSubmit = (cat, selectedOp, deleteOp = false) => {
     const self = this;
     return () => {
