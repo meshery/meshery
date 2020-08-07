@@ -325,7 +325,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleSMIClick = (adapterLoc) => () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    const { customDialogSMI } = self.state;
     dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
       credentials: 'same-origin',
       credentials: 'include',
@@ -648,14 +647,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     let imageSMISrc = "/static/img/smi.png";
     let smiChip = (
       <React.Fragment>
-      <Chip
-        label="Run SMI Conformance"
-        onClick={this.handleSMIClick(adapter.adapter_location)}
-        icon={<img src={imageSMISrc} className={classes.icon} />}
-        className={classes.chip}
-        variant="outlined"
-      />
-      {this.generateSMIResult()}
+        <Chip
+          label="Run SMI Conformance"
+          onClick={this.handleSMIClick(adapter.adapter_location)}
+          icon={<img src={imageSMISrc} className={classes.icon} />}
+          className={classes.chip}
+          variant="outlined"
+        />
+        {this.generateSMIResult()}
       </React.Fragment>
     );
 
