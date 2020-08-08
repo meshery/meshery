@@ -2,12 +2,12 @@ name: Meshery
 on:
   push:
     branches:
-      - '*'
+      - 'master'
     tags:
       - 'v*'
   pull_request:
     branches:
-      - master
+      - 'master'
 
 jobs:
   lint:
