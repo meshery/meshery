@@ -1,9 +1,8 @@
-/* eslint-disable */
+/* eslint-disable */ 
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { Autocomplete } from '@material-ui/lab'
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -79,8 +78,6 @@ const styles = (theme) => ({
   },
 });
 
-const prePopulatedOptions = ['15s', '30s', '1m', '3m', '5m', '10m', '30m', '1h', '2h', '5h', '10h', '1d']
-
 class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -95,7 +92,6 @@ class MesheryPerformanceComponent extends React.Component {
       qps,
       c,
       t,
-      tValue: t,
       loadGenerator: 'fortio',
       result,
       headers: "",
@@ -106,7 +102,7 @@ class MesheryPerformanceComponent extends React.Component {
       timerDialogOpen: false,
       blockRunTest: false,
       urlError: false,
-      tError: '',
+      tError: false,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -123,17 +119,6 @@ class MesheryPerformanceComponent extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleDurationChange = (event, newValue) => {
-    this.setState({tValue: newValue})
-    if (newValue !== null) {
-      this.setState({ tError: '' })
-    }
-  };
-
-  handleInputDurationChange = (event, newValue) => {
-    this.setState({t: newValue})
-  };
-
   handleSubmit = () => {
     const {
       url, t
@@ -144,7 +129,6 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
 
-<<<<<<< HEAD
     const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
 
     if(!pattern.test(url)) {
@@ -153,9 +137,6 @@ class MesheryPerformanceComponent extends React.Component {
     }
 
     let err = false; 
-=======
-    let err = false;
->>>>>>> b88546293f7fd1d90da37cdbca5e47333c9c6b4c
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
@@ -163,9 +144,9 @@ class MesheryPerformanceComponent extends React.Component {
       err = true;
     }
 
-    if (t === '' || t === null || !(t.toLowerCase().endsWith('h')
+    if (t === '' || !(t.toLowerCase().endsWith('h')
       || t.toLowerCase().endsWith('m') || t.toLowerCase().endsWith('s')) || err || tNum <= 0) {
-      this.setState({ tError: 'error-autocomplete-value' });
+      this.setState({ tError: true });
       return;
     }
 
@@ -204,7 +185,7 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    this.startEventStream(`/api/perf/load-test?${params}`);
+    this.startEventStream(`/api/load-test?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }
 
@@ -320,13 +301,13 @@ class MesheryPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/perf/load-test-prefs', {
+    dataFetch('/api/load-test-prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, (result) => {
       if (typeof result !== 'undefined') {
-        this.setState({
+        this.setState({               
           qps: result.loadTestPrefs.qps,
           c: result.loadTestPrefs.c,
           t: result.loadTestPrefs.t,
@@ -421,8 +402,8 @@ class MesheryPerformanceComponent extends React.Component {
   render() {
     const { classes, grafana, prometheus } = this.props;
     const {
-      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
-      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue
+      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError, 
+      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -492,7 +473,7 @@ class MesheryPerformanceComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             <Grid container spacing={1}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <Tooltip title="If a test name is not provided, a random one will be generated for you.">
                   <TextField
                     id="testName"
@@ -507,7 +488,7 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   select
                   id="meshName"
@@ -545,7 +526,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('url')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   required
                   id="c"
@@ -560,7 +541,7 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('c')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   required
                   id="qps"
@@ -575,29 +556,23 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange('qps')}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-                  <Autocomplete
+                  <TextField
                     required
                     id="t"
                     name="t"
-                    freeSolo
-                    label="Duration*"
+                    label="Duration"
                     fullWidth
+                    value={t}
+                    error={tError}
+                    margin="normal"
                     variant="outlined"
-                    className={classes.errorValue}
-                    classes={{ root: tError }}
-                    value={tValue}
-                    inputValue={t}
-                    onChange={this.handleDurationChange}
-                    onInputChange={this.handleInputDurationChange}
-                    options={prePopulatedOptions}
-                    style={{ marginTop: '16px', marginBottom: '8px' }}
-                    renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                    onChange={this.handleChange('t')}
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} md={12} gutterBottom>
+              <Grid item xs={12} sm={12} gutterBottom>
                 <ExpansionPanel className={classes.expansionPanel}>
                   <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon/>}>
                     <Typography align="center" color="textSecondary" varient="h6">Advanced Options</Typography>
@@ -646,7 +621,7 @@ class MesheryPerformanceComponent extends React.Component {
                         >
                         </TextField>
                       </Grid>
-                      <Grid item xs={12} md={12}>
+                      <Grid item xs={12} sm={12}>
                         <TextField
                           id="cookies"
                           name="cookies"
@@ -664,7 +639,7 @@ class MesheryPerformanceComponent extends React.Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={4}>
                 <FormControl component="loadGenerator" className={classes.margin}>
                   <FormLabel component="loadGenerator">Load generator</FormLabel>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
@@ -710,7 +685,7 @@ class MesheryPerformanceComponent extends React.Component {
                 aria-label="download"
                 color="inherit"
                 // onClick={() => self.props.closeSnackbar(key) }
-                href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
+                href={`/api/result?id=${encodeURIComponent(result.meshery_id)}`}
               >
                 <GetAppIcon />
               </IconButton>
