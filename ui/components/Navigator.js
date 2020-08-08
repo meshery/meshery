@@ -197,6 +197,14 @@ const categories = [
     link: true,
     children: [
       {
+        id: 'Profiles',
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        href: '/performance/profiles',
+        title: 'Performance Test Profiles',
+        show: true,
+        link: true,
+      },
+      {
         id: 'Results',
         icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
         href: '/results',

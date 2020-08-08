@@ -12,6 +12,7 @@ module.exports = compose([
         '/configure': { page: '/configure' },
         '/playground': { page: '/playground' },
         '/results': { page: '/results' },
+        '/performance/profiles': { page: '/performance/profiles'},
         // '/about': { page: '/about' },
         '/404': { page: '/_error' },
       }
