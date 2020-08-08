@@ -1,7 +1,7 @@
 ---
 layout: page
 title: EKS
-permalink: installation/eks
+permalink: installation/platforms/eks
 ---
 
 # Quick Start with Amazon Elastic Kubernetes Service (EKS)

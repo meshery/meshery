@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GKE
-permalink: installation/gke
+permalink: installation/platforms/gke
 ---
 
 # Quick Start with Google Kubernetes Engine (GKE)

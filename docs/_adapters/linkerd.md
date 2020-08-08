@@ -2,7 +2,7 @@
 layout: page
 title: Linkerd Adapter
 name: Linkerd
-version: v.2.5.0
+version: v2.5.0
 port: 10001/tcp
 project_status: stable
 image: /docs/assets/img/service-meshes/linkerd.svg

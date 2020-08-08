@@ -95,17 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
-      GOPROXY: direct
-      GOSUMDB: off
     steps:
     - name: Checkout code 
       uses: actions/checkout@master
       with:
         fetch-depth: 1
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ secrets.GO_VERSION }}
     - name: Setup Cache
       uses: actions/cache@v1
       with:
@@ -116,7 +110,7 @@ jobs:
     - name: Run Gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./... -exclude=G301,G304,G107
+        args: -exclude=G301,G304,G107,G204,G404,G601 ./...
   tests:
     needs: [lint, error_check, static_check, vet_check, security_check, lint-UI, lint-Provider-UI]
     name: Tests
@@ -303,7 +297,7 @@ jobs:
     - name: Docker build & tag
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       run: |
-        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} .
+        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} .
         docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
         docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::7}
     - name: Docker push

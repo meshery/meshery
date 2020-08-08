@@ -29,7 +29,7 @@ class GrafanaConfigComponent extends Component {
           <React.Fragment>
             <div className={classes.root}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     required
                     id="grafanaURL"
@@ -50,7 +50,7 @@ class GrafanaConfigComponent extends Component {
                     onChange={handleChange('grafanaURL')}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     id="grafanaAPIKey"
                     name="grafanaAPIKey"

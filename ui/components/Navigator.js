@@ -411,6 +411,14 @@ class Navigator extends React.Component {
       this.props.router.push('/');
     }
 
+    handleAdapterClick = (id, link) => {
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh"];
+      let index = allowedId.indexOf(id);
+      if ( index != -1 && !link) {
+        this.props.router.push('/management');
+      }
+    }
+
     toggleMiniDrawer = () => {
       const { onCollapseDrawer } = this.props;
       onCollapseDrawer();
@@ -473,6 +481,7 @@ class Navigator extends React.Component {
                         path === hrefc && classes.itemActiveItem,
                         isDrawerCollapsed && classes.noPadding,
                       )}
+                      onClick={() => this.handleAdapterClick(idc, linkc)}
                     >
                       {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>

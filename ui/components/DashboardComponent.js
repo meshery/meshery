@@ -79,6 +79,10 @@ const styles = (theme) => ({
   cardContent: {
     height: '100%',
   },
+  redirectButton: {
+    marginLeft: '-.5em',
+    color: '#000'
+  }
 });
 
 class DashboardComponent extends React.Component {
@@ -175,6 +179,39 @@ class DashboardComponent extends React.Component {
     });
   }
 
+  handleAdapterPingError = (msg) => () => {
+    const { classes } = this.props;
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
+      variant: 'error',
+      autoHideDuration: 2000,
+      action: (key) => (
+        <>
+          <Button
+            key="configure-close"
+            aria-label="Configure"
+            className={classes.redirectButton}
+            onClick={() => {
+              self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
+            }}
+          >
+            Settings
+          </Button>
+
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </>
+      ),
+    });
+  }
+
   handleDelete() {
     return false;
   }
@@ -204,7 +241,7 @@ class DashboardComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError('Could not ping adapter.'));
+    }, self.handleAdapterPingError('Could not ping adapter.'));
   }
 
     handleConfigure = (val) => {
@@ -470,16 +507,16 @@ class DashboardComponent extends React.Component {
           </Typography>
 
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Kubernetes', showConfigured)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Adapters', showAdapters)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Grafana', showGrafana)}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               {self.showCard('Prometheus', showPrometheus)}
             </Grid>
 

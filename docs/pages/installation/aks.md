@@ -1,7 +1,7 @@
 ---
 layout: page
 title: AKS
-permalink: installation/aks
+permalink: installation/platforms/aks
 ---
 
 # Quick Start with Azure Kubernetes Service (AKS)

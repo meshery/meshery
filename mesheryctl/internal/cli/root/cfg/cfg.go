@@ -1,6 +1,8 @@
 package cfg
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 // PerfCfg stores the perf subcommand configurations
 type PerfCfg struct {
@@ -12,18 +14,26 @@ type PerfCfg struct {
 	LoadTestURI     string `json:"loadTestURI"`
 }
 
+// Version unmarshals the json response from the server's version api
+type Version struct {
+	Build     string `json:"build,omitempty"`
+	CommitSHA string `json:"commitsha,omitempty"`
+}
+
 // MesheryCtl stores the configurations used by mesheryctl CLI
 // Default config:
 //  baseMesheryURL: "http://localhost:9081/api",
 //  perf:
 //	  authTokenURI:    "/gettoken",
-//	  loadTestSmpsURI: "/load-test-smps",
-//	  loadTestURI: "/load-test",
+//	  loadTestSmpsURI: "/perf/load-test-smps",
+//	  loadTestURI: "/perf/load-test",
 type MesheryCtl struct {
 	// BaseMesheryURL is the base URL of the meshery server
 	BaseMesheryURL string `json:"baseMesheryURL"`
 	// Perf stores the perf subcommand configurations
 	Perf *PerfCfg `json:"perf"`
+
+	CtlVersion *Version `json:"ctl_version"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object.
@@ -61,4 +71,19 @@ func (pc *PerfCfg) GetLoadTestSmpsURL() string {
 // GetLoadTestURL returns a fully qualified URL to the Load Test endpoint
 func (pc *PerfCfg) GetLoadTestURL() string {
 	return pc.baseURL + pc.LoadTestURI
+}
+
+// GetVersion returns the version details of this binary
+func (mc *MesheryCtl) GetVersion() *Version {
+	return mc.CtlVersion
+}
+
+// GetBuild returns the build number for the binary
+func (v *Version) GetBuild() string {
+	return v.Build
+}
+
+// GetCommitSHA returns the commit sha for the binary
+func (v *Version) GetCommitSHA() string {
+	return v.CommitSHA
 }

@@ -2,7 +2,40 @@
   url: ''
   links:
     - title: Overview
-      url: 'overview'
+      url: overview      
+    - title: Quick Start
+      url: installation
+    - title: Supported Platforms
+      url: installation/platforms
+      children:
+        - title: Docker
+          url: installation/platforms/docker
+        - title: EKS
+          url: installation/platforms/eks
+        - title: GKE
+          url: installation/platforms/gke
+        - title: KinD
+          url: installation/platforms/kind
+        - title: Kubernetes
+          url: installation/platforms/kubernetes
+        - title: Minikube
+          url: installation/platforms/minikube
+        - title: Windows
+          url: intallation/platforms/windows
+        - title: WSL2
+          url: installation/platforms/wsl2
+    - title: Architecture
+      url: architecture
+      children:
+        - title: Adapters
+          url: architecture/adapters
+    - title: Functionality
+      url: functionality
+      children:
+        - title: Lifecycle Management
+          url: functionality/lifecycle-management
+        - title: Performance Management
+          url: functionality/performance-management
     - title: Service Meshes
       url: service-meshes
       children:
@@ -13,7 +46,7 @@
         - title: Consul
           url: service-meshes/adapters/consul
         - title: Istio
-          url: service-meshes/adapters/istio
+          url: service-meshes/adapters/istio/istio
         - title: Kuma
           url: service-meshes/adapters/kuma
         - title: Linkerd
@@ -25,33 +58,7 @@
         - title: Octarine
           url: service-meshes/adapters/octarine/octarine
         - title: Tanzu
-          url: service-meshes/adapters/tanzu-sm
-    - title: Quick Start
-      url: installation
-    - title: Supported Platforms
-      url: installation/platforms
-      children:
-        - title: Docker
-          url: installation/docker
-        - title: EKS
-          url: installation/eks
-        - title: GKE
-          url: installation/gke
-        - title: Kubernetes
-          url: installation/kubernetes
-        - title: Minikube
-          url: installation/minikube
-        - title: WSL2
-          url: installation/wsl2
-        - title: KinD
-          url: installation/kind
-    - title: Architecture
-      url: architecture
-      children:
-        - title: Adapters
-          url: architecture/adapters
-    - title: Service Mesh Management
-      url: mesh-management
+          url: service-meshes/adapters/tanzu-sm    
     - title: Extensibility
       url: extensibility
     - title: Guides

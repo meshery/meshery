@@ -6,7 +6,7 @@ Just head over to the GitHub page and click the "Fork" button. It's just that si
 git clone git@github.com:USERNAME/FORKED-PROJECT.git
 ```
 Keeping Your Fork Up to Date
-While this isn't a necessary step, if you plan on doing anything more than a tiny quick fix, you'll want to make sure you keep your fork up to date by tracking the original "upstream" repo that you forked earlier. To do this, you'll need to add a remote:
+While this isn't a necessary step, if you plan on doing anything more than just a tiny quick fix, you'll want to make sure you keep your fork up to date by tracking the original "upstream" repo that you forked. To do this, you'll need to add a remote:
 
 ## Add 'upstream' repo to list of remotes
 ```
@@ -29,7 +29,7 @@ git fetch upstream
 ```
 git branch -va
 ```
-Now, checkout your master branch and merge the upstream repo's master branch:
+Now, check out your master branch and merge the upstream repo's master branch:
 
 ## Checkout your master branch and merge upstream
 ```
