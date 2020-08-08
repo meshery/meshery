@@ -107,7 +107,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
       gen,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-
+    console.log(params);
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
