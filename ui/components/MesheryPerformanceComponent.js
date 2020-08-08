@@ -122,7 +122,6 @@ class MesheryPerformanceComponent extends React.Component {
 
 
   handleSubmit = () => {
-    const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
     
     const {
       url, t
@@ -133,9 +132,11 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
 
+    const pattern = new RegExp('^https?:\\/\\/' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i');
+
     if(!pattern.test(url)) {
       this.setState({urlError: true});
-      return this.handleError("Please check if the url contains the valid protocol!")();
+      return this.handleError("Please check if the url contains a valid protocol.")();
     }
 
     let err = false; 
