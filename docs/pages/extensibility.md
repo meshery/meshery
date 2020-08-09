@@ -8,6 +8,8 @@ permalink: extensibility
 
 Meshery provides several extension points for working with different service meshes, load generators and providers. Meshery also offers a REST API.
 
+As of this writing there is no high level extension developer documentation. The existing extensions are a good way to learn what is possible.
+
 **Guiding Principles for Extensibility**
 
 The following principles are upheld in the design of Meshery's extensibility.
