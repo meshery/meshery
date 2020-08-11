@@ -1,12 +1,12 @@
 ---
 layout: page
-title: Kuma Adapter
-name: Kuma
-version: v1.0
-port: 10007/tcp
+title: Open Service Mesh (OSM) Adapter
+name: Open Service Mesh
+version: v0.2.0
+port: 10010/tcp
 project_status: alpha
-github_link: https://github.com/layer5io/meshery-kuma
-image: /docs/assets/img/service-meshes/kuma.svg
+github_link: https://github.com/layer5io/meshery-osm
+image: /docs/assets/img/service-meshes/osm.svg
 ---
 # Meshery Adapter for {{ page.name }}
 
