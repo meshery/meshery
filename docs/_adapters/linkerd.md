@@ -5,22 +5,23 @@ name: Linkerd
 version: v2.5.0
 port: 10001/tcp
 project_status: stable
+github_link: https://github.com/layer5io/meshery-linkerd
 image: /docs/assets/img/service-meshes/linkerd.svg
 ---
-# Meshery Adapter for {{ page.name }}
+# {{ page.name }}
 
-| Adapter Status |
-| :------------: |
-| [{{ page.project_status }}]({{ page.github_link }})|
+| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
+| :------------: | :------------:   | :------------:              |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
-## Sample Applications
-
-The Meshery adapter for ({{ page.title }}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
-
-## Features
+### Features
 1. Lifecycle management of Linkerd
 1. Lifecycle management of sample applications
 1. Performance testing
+
+### Sample Applications
+
+The Meshery adapter for ({{ page.title }}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
 Identify overhead involved in running Linkerd, various Linkerd configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 
