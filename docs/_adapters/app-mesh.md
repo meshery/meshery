@@ -8,6 +8,7 @@ project_status: alpha
 github_link: https://github.com/layer5io/meshery-app-mesh
 image: /docs/assets/img/service-meshes/aws-app-mesh.png
 ---
+
 # {{ page.name }}
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |

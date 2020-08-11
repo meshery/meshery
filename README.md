@@ -20,23 +20,23 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 
 | Platform | Supported? |
 | --- | :---: |
-| [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| - [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
-| - [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/aks) | ✔️ |
+| [Docker](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| - [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes) | ✔️ |
+| - [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks) | ✔️ |
 | - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
-| - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
-| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
-| - [Kubernetes - kind](https://meshery.layer5.io/docs/installation/kind) | ✔️ |
-| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
+| - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks) | ✔️ |
+| - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke) | ✔️ |
+| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) | ✔️ |
+| - [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind) | ✔️ |
+| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
 | - Kubernetes - OpenShift | In Progress |
 | [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
 | [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
 | - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
+| - [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
 | Raspberry Pi | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
@@ -144,7 +144,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/img/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <h3>Service Performance Management</h3>
 
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
 <br /><br />
 </p>
 <div>&nbsp;</div>
@@ -191,7 +191,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 </p>
 
 <div>&nbsp;</div>

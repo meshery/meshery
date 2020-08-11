@@ -45,7 +45,7 @@ In-Flight Features
 
 The Meshery team is currently working on the following feature improvements:
 
--   Exporting load test results to a common accepted Service Mesh Performance Specification (SMPS)
+-   Exporting load test results to a common accepted Service Mesh Performance (SMP)
 
 The direction of the project has generally been guided by our open source community and users. There are a plethora of GitHub issues requesting various features that we prioritize based on popularity of user requests and engineering capacity.
 
