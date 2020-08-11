@@ -6,7 +6,9 @@ permalink: extensibility
 
 # Extending Meshery
 
-Meshery provides several extension points for working with different service meshes, load generators and providers. Meshery also offers a REST API.
+Meshery's architecture makes it fairly easily extensible via a variety of different extension points. Meshery provides several extension points for working with different service meshes via [adapters](#adapters), [load generators](#load-generators) and [providers](#providers). Meshery also offers a REST API.
+
+As of this writing there is no high level extension developer documentation. The existing extensions are a good way to learn what is possible.
 
 **Guiding Principles for Extensibility**
 
@@ -95,9 +97,9 @@ Different use cases and different opinions call for different approaches to stat
 1. [nighthawk](https://github.com/envoyproxy/nighthawk) (coming soon!) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
 
 
+## Adapters
 
-## Service Mesh Adapters
-### What are Meshery adapters?
+**What are Meshery adapters?**
 Adapters allow Meshery to interface with the different service meshes. See a list of all available [service mesh adapters](service-meshes/adapters).
 
 ### Adapter Capabilities
