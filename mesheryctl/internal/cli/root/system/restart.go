@@ -25,18 +25,18 @@ import (
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
-	Short: "Restarting Meshery",
+	Short: "Stop, then start Meshery",
 	Long:  `Restart all Meshery containers, their instances and their connected volumes.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to restart Meshery"))
+			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
 
 		if err := start(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to restart Meshery"))
+			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
 		return nil
 	},
