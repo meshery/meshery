@@ -14,6 +14,7 @@ image: /docs/assets/img/service-meshes/cpx.png
 | :------------: | :------------:   | :------------:              |
 | {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
+
 ### Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
