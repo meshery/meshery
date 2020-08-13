@@ -42,13 +42,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      qps, c, t
+      qps, c, t, gen
     } = props;
     this.state = {
       qps,
       c,
       t,
-      gen: '',
+      gen,
       blockRunTest: false,
       tError: false,
     };
