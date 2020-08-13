@@ -117,8 +117,15 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     if (name === 'url' && event.target.value !== '') {
-      this.setState({ urlError: false });
+      let urlPattern = event.target.value;
+      let val = urlPattern.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+      if ( !val )
+        this.setState({ urlError: true });
+      else
+        this.setState({ urlError: false });
     }
+    else
+      this.setState({ urlError: false });
     this.setState({ [name]: event.target.value });
   };
 
@@ -526,6 +533,7 @@ class MesheryPerformanceComponent extends React.Component {
                   fullWidth
                   value={url}
                   error={urlError}
+                  helperText={urlError ? "Please enter a valid URL along with protocol" : ""}
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('url')}
