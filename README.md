@@ -20,24 +20,24 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 
 | Platform | Supported? |
 | --- | :---: |
-| [Docker](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
-| - [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
-| [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes) | ✔️ |
-| - [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks) | ✔️ |
-| - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks) | ✔️ |
-| - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke) | ✔️ |
-| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) | ✔️ |
-| - [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind) | ✔️ |
-| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
-| - Kubernetes - OpenShift | In Progress |
-| [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
-| Raspberry Pi | In Progress |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" />  [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| <img src="docs/assets/img/platforms/kubernetes.svg" width="20" height="20" /> [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes) | ✔️ |
+| <img src="docs/assets/img/platforms/aks.svg" width="20" height="20" /> [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks) | ✔️ |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" /> [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| <img src="docs/assets/img/platforms/eks.png" width="20" height="20" />  [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks) | ✔️ |
+| <img src="docs/assets/img/platforms/gke.png" width="20" height="20" /> [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke) | ✔️ |
+| <img src="docs/assets/img/platforms/helm.svg" width="20" height="20" />  [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) | ✔️ |
+| <img src="docs/assets/img/platforms/kind.png" width="20" height="20" />  [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind) | ✔️ |
+| <img src="docs/assets/img/platforms/minikube.png" width="20" height="20" />  [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
+|  <img src="docs/assets/img/platforms/openshift.svg" width="20" height="20" /> Kubernetes - OpenShift | In Progress |
+|<img src="docs/assets/img/platforms/linux.svg" width="20" height="20" /> [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+|<img src="docs/assets/img/platforms/apple.svg" width="20" height="20" /> [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+|<img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
+| [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
+|<img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" />  [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
+| <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
@@ -82,14 +82,19 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr><td class="stable-adapters"></td></tr>
         <tr>
-          <td rowspan="2" class="beta-adapters">beta</td>
+          <td rowspan="3" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
             <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
+         <tr>
+           <td><a href="https://github.com/layer5io/meshery-kuma">
+             <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+           </td>
+        </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="6" class="alpha-adapters">alpha</td>
+          <td rowspan="5" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
@@ -103,15 +108,15 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh </a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-kuma">
-            <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+          <td><a href="https://github.com/layer5io/meshery-osm">
+            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
-        </tr><tr>
         </tr>
+        <tr>
         <tr><td class="alpha-adapters"></td></tr>
         </tbody>
     </table>
