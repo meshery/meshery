@@ -13,7 +13,6 @@ const defaultToolbarSelectStyles = {
     top: '50%',
     display: 'inline-block',
     position: 'relative',
-    // transform: "translateY(-50%)",
   },
   icon: {
     color: '#000',
@@ -91,7 +90,6 @@ class MesheryResultDialog extends React.Component {
 
     renderMeshesInfo(detectedMeshes) {
       const { classes } = this.props;
-      //const meshes = Object.entries(detectedMeshes);
       const meshes = Object.keys(detectedMeshes);
       return (
         <NoSsr>
@@ -101,10 +99,9 @@ class MesheryResultDialog extends React.Component {
           </Typography>
           <Table className={classes.table} size="small" aria-label="Service Mesh">
             <TableBody>
-              {//meshes.map(([mesh, version], ind) => (
+              {
                 <NoSsr>
-                  {//meshes.length > 1
-                    //? (
+                  {
                     <TableRow>
                       <TableCell colSpan={2} className={classes.row} align="center">
                         <strong>
@@ -113,12 +110,9 @@ class MesheryResultDialog extends React.Component {
                         </strong>
                       </TableCell>
                     </TableRow>
-                    //) : ''}
                   }
                   {this.createTableRow('Name', meshes)}
-                  {/*this.createTableRow('Version', version)*/}
                 </NoSsr>
-              //))}
               }
             </TableBody>
           </Table>
