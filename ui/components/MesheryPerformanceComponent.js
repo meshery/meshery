@@ -107,6 +107,7 @@ class MesheryPerformanceComponent extends React.Component {
       blockRunTest: false,
       urlError: false,
       tError: '',
+      disableTest : true,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -119,10 +120,14 @@ class MesheryPerformanceComponent extends React.Component {
     if (name === 'url' && event.target.value !== '') {
       let urlPattern = event.target.value;
       let val = urlPattern.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-      if ( !val )
+      if ( !val ){
+        this.setState({ disableTest: true });
         this.setState({ urlError: true });
-      else
+      }
+      else{
+        this.setState({ disableTest: false });
         this.setState({ urlError: false });
+      }
     }
     else
       this.setState({ urlError: false });
@@ -415,7 +420,7 @@ class MesheryPerformanceComponent extends React.Component {
     const { classes, grafana, prometheus } = this.props;
     const {
       timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
-      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue
+      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue, disableTest
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -678,7 +683,7 @@ class MesheryPerformanceComponent extends React.Component {
                   size="large"
                   onClick={this.handleSubmit}
                   className={classes.button}
-                  disabled={blockRunTest}
+                  disabled={blockRunTest || disableTest}
                 >
                   {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
                 </Button>
