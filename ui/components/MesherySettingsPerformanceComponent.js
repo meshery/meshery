@@ -41,10 +41,13 @@ const styles = (theme) => ({
 class MesherySettingsPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
+    const {
+      qps, c, t
+    } = props;
     this.state = {
-      qps: '',
-      c: '',
-      t: '',
+      qps,
+      c,
+      t,
       gen: '',
       blockRunTest: false,
       tError: false,
@@ -78,10 +81,10 @@ class MesherySettingsPerformanceComponent extends React.Component {
       return;
     }
 
-    this.submitLoadTest();
+    this.submitPerfPreference();
   }
 
-  submitLoadTest = () => {
+  submitPerfPreference = () => {
     const {
       qps, c, t, gen,
     } = this.state;
@@ -154,7 +157,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
             gen: result.loadTestPrefs.gen,
           });
       }
-    }, self.handleError('There was an error fetching your preferences'));
+    }, () => { (!qps || !t || !c) ? self.handleError('There was an error fetching your preferences') : {} });
   }
 
   handleError = (msg) => {
@@ -188,7 +191,6 @@ class MesherySettingsPerformanceComponent extends React.Component {
       blockRunTest, qps, t, c, gen,
       tError,
     } = this.state;
-    console.log(gen);
 
     return (
 
