@@ -4,7 +4,7 @@ title: Kuma Adapter
 name: Kuma
 version: v1.0
 port: 10007/tcp
-project_status: alpha
+project_status: beta
 github_link: https://github.com/layer5io/meshery-kuma
 image: /docs/assets/img/service-meshes/kuma.svg
 ---
