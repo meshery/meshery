@@ -21,7 +21,7 @@ Follow these steps and you'll be right at home.
   - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
   - **Build** Meshery: Confirm that you have a usable development environment.
   - **Communicate** with the Layer5 community by joining the [Slack account](http://slack.layer5.io).
-  - **Contribute** by grabbing any open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. If needed, create a [new issue](/../../issues/new/choose). All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+  - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/layer5io/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/layer5io/meshery/issues/new/choose). All [pull requests](https://github.com/layer5io/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
 **Sections**
 - General Contribution Flow
@@ -35,7 +35,7 @@ Relevant coding style guidelines are the Go Code Review Comments and the Formatt
 
 ## <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here](./CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](CONTRIBUTING-gitflow.md).
 
 ### <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -75,7 +75,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 ### <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./git-workflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
 `cd docs`
 1. Create and checkout a new branch to make changes within
