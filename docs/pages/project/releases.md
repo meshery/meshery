@@ -139,7 +139,7 @@ Released on 1 May 2020
 
 **What's new ?**
 - Mesheryctl
-    + Feature: Addition of `mesheryctl perf --file <smp.yaml>' support for [SMP formatted](https://github.com/layer5io/service-mesh-performance-specification) performance test profiles.
+    + Feature: Addition of `mesheryctl perf --file <smp.yaml>' support for [SMP formatted](https://github.com/layer5io/service-mesh-performance) performance test profiles.
     + Feature: Behavior change `mesheryctl perf` for using tokens and supporting JWT.
 
 ### [v0.3.14](https://github.com/layer5io/meshery/releases/tag/v0.3.14) 

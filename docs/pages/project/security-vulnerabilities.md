@@ -13,7 +13,7 @@ To make a report, send an email to the private
 [meshery-security-vulns-reports@layer5.io](mailto:meshery-security-vulns-reports@layer5.io)
 mailing list with the vulnerability details. For normal product bugs
 unrelated to latent security vulnerabilities, please head to
-the appropriate repository and submit a [new issue](https://github.com/layer5io/meshery/issues).
+the appropriate repository and submit a [new issue](https://github.com/layer5io/meshery/issues/new/choose).
 
 ### When to report a security vulnerability?
 
@@ -65,8 +65,8 @@ branches.
 
 - Once the binaries are available, an announcement is sent out on the following channels:
 
-    - The [Meshery blog](/blog)
-    - The [Meshery Twitter feed](https://twitter.com/mesherio)
+    - The [Meshery blog](https://meshery.io/blog/)
+    - The [Meshery Twitter feed](https://twitter.com/mesheryio)
     - The #announcements channel on Slack
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to
