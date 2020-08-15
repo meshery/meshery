@@ -1,5 +1,6 @@
 import MesherySettings from "../components/MesherySettings";
 import { NoSsr } from "@material-ui/core";
+import Paper from '@material-ui/core/Paper';
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import Head from 'next/head';
@@ -19,7 +20,9 @@ class Settings extends React.Component {
         <Head>
           <title>Settings | Meshery</title>
         </Head>
-        <MesherySettings />
+        <Paper>
+          <MesherySettings />
+        </Paper>
       </NoSsr>
     );
   }

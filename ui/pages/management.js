@@ -1,6 +1,6 @@
 import React from 'react';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
-import { NoSsr } from "@material-ui/core";
+import { NoSsr, Paper } from "@material-ui/core";
 import Head from 'next/head';
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -34,9 +34,9 @@ class Manage extends React.Component {
         <Head>
           <title>Management | Meshery</title>
         </Head>
-        <React.Fragment>
+        <Paper>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
-        </React.Fragment>
+        </Paper>
       </NoSsr>
     );
   }

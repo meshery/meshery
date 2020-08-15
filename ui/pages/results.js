@@ -1,4 +1,5 @@
 import { NoSsr } from "@material-ui/core";
+import Paper from '@material-ui/core/Paper';
 import MesheryResults from "../components/MesheryResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -18,7 +19,9 @@ class Results extends React.Component {
         <Head>
           <title>Results | Meshery</title>
         </Head>
-        <MesheryResults />
+        <Paper>
+          <MesheryResults />
+        </Paper>
       </NoSsr>
     );
   }

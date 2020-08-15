@@ -1,4 +1,4 @@
-import { NoSsr } from "@material-ui/core";
+import { NoSsr, Paper } from "@material-ui/core";
 import MesheryPerformanceComponent from "../components/MesheryPerformanceComponent";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -18,7 +18,9 @@ class Performance extends React.Component {
         <Head>
           <title>Performance | Meshery</title>
         </Head>
-        <MesheryPerformanceComponent />
+        <Paper>
+          <MesheryPerformanceComponent />
+        </Paper>
       </NoSsr>
     );
   }
