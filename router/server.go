@@ -5,20 +5,19 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
 )
 
 // Router represents Meshery router
 type Router struct {
-	s    *mux.Router
+	s    *http.ServeMux
 	port int
 }
 
 // NewRouter returns a new ServeMux with app routes.
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
-	mux := mux.NewRouter()
+	mux := http.NewServeMux()
 
 	mux.HandleFunc("/api/server/version", h.ServerVersionHandler)
 
@@ -30,10 +29,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	mux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler))))
 	mux.Handle("/api/user/stats", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AnonymousStatsHandler))))
+	mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceHandler))))
 
-	mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceStore)))).Methods(http.MethodPost)
-	mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceGet)))).Methods(http.MethodGet)
-	mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceDelete)))).Methods(http.MethodDelete)
+	// mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceStore)))).Methods(http.MethodPost)
+	// mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceGet)))).Methods(http.MethodGet)
+	// mux.Handle("/api/user/test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserTestPreferenceDelete)))).Methods(http.MethodDelete)
 
 	mux.Handle("/api/k8sconfig", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.K8SConfigHandler))))
 	mux.Handle("/api/k8sconfig/contexts", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig))))
