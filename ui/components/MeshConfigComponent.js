@@ -79,7 +79,7 @@ const styles = (theme) => ({
     display: 'inline-block',
     width: '48%',
     wordWrap: 'break-word',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       width: '100%',
     },
   },
@@ -87,23 +87,23 @@ const styles = (theme) => ({
     display: 'inline-block',
     height: 150,
     marginBottom: -60,
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       display: 'none',
     },
   },
   horizontal: {
     display: 'none',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       display: 'block',
     },
   },
   formconfig: {
     display: 'inline-block',
     marginLeft: 30,
-    [theme.breakpoints.up(600)]: {
+    [theme.breakpoints.up(946)]: {
       width: '45%',
     },
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       width: '100%',
       marginLeft: 0,
     },
@@ -112,7 +112,7 @@ const styles = (theme) => ({
     display: 'inline-block',
     width: '48%',
     textAlign: 'center',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       width: '100%',
     },
   },
@@ -120,13 +120,13 @@ const styles = (theme) => ({
     display: 'inline-block',
     width: '48%',
     textAlign: 'center',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       display: 'none',
     },
   },
   changeConfigHeadingOne: {
     display: 'none',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       display: 'inline-block',
       width: '100%',
       textAlign: 'center',
@@ -135,7 +135,7 @@ const styles = (theme) => ({
   buttonconfig: {
     display: 'inline-block',
     width: '48%',
-    [theme.breakpoints.down(599)]: {
+    [theme.breakpoints.down(945)]: {
       width: '100%',
     },
   },
@@ -143,7 +143,6 @@ const styles = (theme) => ({
 
 class MeshConfigComponent extends React.Component {
   constructor(props) {
-    const homedir = require('os').homedir();
     super(props);
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer,
@@ -152,7 +151,7 @@ class MeshConfigComponent extends React.Component {
       inClusterConfig, // read from store
       inClusterConfigForm: inClusterConfig,
       k8sfile, // read from store
-      k8sfileElementVal: homedir+'/.kube/config',
+      k8sfileElementVal: '',
       contextName, // read from store
       contextNameForForm: '',
       contextsFromFile: [],
@@ -161,17 +160,12 @@ class MeshConfigComponent extends React.Component {
       k8sfileError: false,
       ts: new Date(),
     };
-    // Pre-initialize from the values inside $HOME/.kube/config
-    this.fetchContexts();
-    this.submitConfig();
   }
 
   static getDerivedStateFromProps(props, state) {
     const {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer,
     } = props;
-    // if(inClusterConfig !== state.inClusterConfig || clusterConfigured !== state.clusterConfigured || k8sfile !== state.k8sfile
-    // || configuredServer !== state.configuredServer){
     if (props.ts > state.ts) {
       return {
         inClusterConfig,

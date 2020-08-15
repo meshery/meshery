@@ -8,11 +8,18 @@ project_status: alpha
 github_link: https://github.com/layer5io/meshery-app-mesh
 image: /docs/assets/img/service-meshes/aws-app-mesh.png
 ---
-# Meshery Adapter for {{ page.name }}
 
-| Adapter Status |
-| :------------: |
-| [{{ page.project_status }}]({{ page.github_link }})|
+# {{ page.name }}
 
-## {{ page.title }}
-This adapter is currently in an alpha state. Please see this [adapter's code repository]({{ page.github_link }}) for more details or ask abou this adapter in the [#meshery channel](https://layer5io.slack.com/archives/CFGG6U10E_).
+| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
+| :------------: | :------------:   | :------------:              |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+
+### Lifecycle management
+
+The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+
+### Suggested Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).

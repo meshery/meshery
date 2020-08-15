@@ -20,24 +20,24 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 
 | Platform | Supported? |
 | --- | :---: |
-| [Docker](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| - [Docker - Docker App](https://meshery.layer5.io/docs/installation/docker) | ✔️ |
-| [Kubernetes](https://meshery.layer5.io/docs/installation/kubernetes) | ✔️ |
-| - [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/aks) | ✔️ |
-| - [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/eks) | ✔️ |
-| - [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/gke) | ✔️ |
-| - [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/kubernetes#helm) | ✔️ |
-| - [Kubernetes - kind](https://meshery.layer5.io/docs/installation/kind) | ✔️ |
-| - [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/minikube) | ✔️ |
-| - Kubernetes - OpenShift | In Progress |
-| [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| - [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| - [WSL2](https://meshery.layer5.io/docs/installation/wsl2) | ✔️ |
-| Raspberry Pi | In Progress |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" /> [Docker](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" />  [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
+| <img src="docs/assets/img/platforms/kubernetes.svg" width="20" height="20" /> [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes) | ✔️ |
+| <img src="docs/assets/img/platforms/aks.svg" width="20" height="20" /> [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks) | ✔️ |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" /> [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| <img src="docs/assets/img/platforms/eks.png" width="20" height="20" />  [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks) | ✔️ |
+| <img src="docs/assets/img/platforms/gke.png" width="20" height="20" /> [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke) | ✔️ |
+| <img src="docs/assets/img/platforms/helm.svg" width="20" height="20" />  [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) | ✔️ |
+| <img src="docs/assets/img/platforms/kind.png" width="20" height="20" />  [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind) | ✔️ |
+| <img src="docs/assets/img/platforms/minikube.png" width="20" height="20" />  [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
+|  <img src="docs/assets/img/platforms/openshift.svg" width="20" height="20" /> Kubernetes - OpenShift | In Progress |
+|<img src="docs/assets/img/platforms/linux.svg" width="20" height="20" /> [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+|<img src="docs/assets/img/platforms/apple.svg" width="20" height="20" /> [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+| <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
+|<img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
+| [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
+|<img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" />  [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
+| <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
 
@@ -82,14 +82,19 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr><td class="stable-adapters"></td></tr>
         <tr>
-          <td rowspan="2" class="beta-adapters">beta</td>
+          <td rowspan="3" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
             <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
+         <tr>
+           <td><a href="https://github.com/layer5io/meshery-kuma">
+             <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+           </td>
+        </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="6" class="alpha-adapters">alpha</td>
+          <td rowspan="5" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
@@ -103,15 +108,15 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh </a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-kuma">
-            <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+          <td><a href="https://github.com/layer5io/meshery-osm">
+            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
-        </tr><tr>
         </tr>
+        <tr>
         <tr><td class="alpha-adapters"></td></tr>
         </tbody>
     </table>
@@ -144,7 +149,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/img/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <h3>Service Performance Management</h3>
 
-Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance Specification ([SMPS](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
+Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
 <br /><br />
 </p>
 <div>&nbsp;</div>
@@ -159,7 +164,7 @@ Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Contributors Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/images/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
@@ -191,7 +196,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
 <h2>Service Mesh Standards</h2>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 </p>
 
 <div>&nbsp;</div>

@@ -114,7 +114,7 @@ class UserPreference extends React.Component {
               <Switch
                 checked={anonymousStats}
                 onChange={this.handleToggle('anonymousUsageStats')}
-                color="default"
+                color="primary"
               />
             )}
             labelPlacement="end"
@@ -128,7 +128,7 @@ class UserPreference extends React.Component {
               <Switch
                 checked={perfResultStats}
                 onChange={this.handleToggle('anonymousPerfResults')}
-                color="default"
+                color="primary"
               />
             )}
             labelPlacement="end"

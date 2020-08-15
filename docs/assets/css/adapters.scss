@@ -14,29 +14,29 @@ table.adapters {
     }
 
     td.no-adapters {
-        width: auto;  
-        text-align: center; 
+        width: auto;
+        text-align: center;
         color: #aaa;
         font-style: italic;
     }
 
     td.alpha-adapters {
-        width: auto; 
+        width: auto;
         background-color: lightgray;
-        text-align: center; 
+        text-align: center;
     }
 
     td.beta-adapters {
-        width: auto;  
+        width: auto;
         background-color: $lightgreen;
-        text-align: center; 
+        text-align: center;
         color: #fff;
     }
 
     td.stable-adapters {
-        width: auto; 
+        width: auto;
         background-color: $coolgray;
-        text-align: center; 
+        text-align: center;
         color: #fff;
     }
 

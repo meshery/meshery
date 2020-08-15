@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -64,7 +64,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
       t
     } = this.state;
 
-    let err = false; 
+    let err = false;
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
@@ -97,7 +97,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
     this.setState({ blockRunTest: true }); // to block the button
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'POST',
       credentials: 'include',
@@ -141,13 +141,13 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
   getLoadTestPrefs = () => {
     const self = this;
-    dataFetch('/api/load-test-prefs', {
+    dataFetch('/api/perf/load-test-prefs', {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, (result) => {
       if (typeof result !== 'undefined') {
-        this.setState({               
+        this.setState({
             qps: result.loadTestPrefs.qps,
             c: result.loadTestPrefs.c,
             t: result.loadTestPrefs.t,
@@ -197,7 +197,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
           <div className={classes.root}>
             <label><strong>Performance Load Test Defaults</strong></label>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <TextField
                   required
                   id="c"
@@ -212,7 +212,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   onChange={this.handleChange('c')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <TextField
                   required
                   id="qps"
@@ -227,7 +227,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   onChange={this.handleChange('qps')}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
                   <TextField
                     required
@@ -243,7 +243,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} lg={4}>
                 <FormControl component="loadGenerator" className={classes.formControl}>
                   <label><strong>Default Load Generator</strong></label>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={gen} onChange={this.handleChange('gen')} row>

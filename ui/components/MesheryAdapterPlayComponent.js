@@ -16,19 +16,20 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
+import MUIDataTable from "mui-datatables";
 
 const styles = (theme) => ({
   root: {
     padding: theme.spacing(10),
     width: '100%',
   },
-  buttons: {
-    // display: 'flex',
-    // justifyContent: 'flex-end',
+  chipGrid: {
+    padding: theme.spacing(10),
     width: '100%',
+    paddingBottom: '0',
   },
-  custom: {
-    // float: 'right',
+  buttons: {
+    width: '100%',
   },
   button: {
     marginTop: theme.spacing(3),
@@ -63,14 +64,8 @@ const styles = (theme) => ({
     margin: theme.spacing(1),
     marginTop: theme.spacing(3),
   },
-  rightIcon: {
-    // marginLeft: theme.spacing(1),
-  },
   fileLabel: {
     width: '100%',
-  },
-  fileLabelText: {
-    // width: '79%',
   },
   editorContainer: {
     width: '100%',
@@ -80,6 +75,10 @@ const styles = (theme) => ({
   },
   alignRight: {
     textAlign: 'right',
+  },
+  alignLeft: {
+    textAlign: 'left',
+    marginLeft: theme.spacing(1),
   },
   padLeft: {
     paddingLeft: theme.spacing(0.25),
@@ -113,6 +112,8 @@ const styles = (theme) => ({
 
 
 class MesheryAdapterPlayComponent extends React.Component {
+
+  
   constructor(props) {
     super(props);
 
@@ -151,6 +152,9 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       customDialogAdd: false,
       customDialogDel: false,
+      customDialogSMI: false,
+
+      open : false,
 
       menuState, // category: {add: 1, delete: 0}
     };
@@ -187,6 +191,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       const item = isDelete ? 'customDialogDel' : 'customDialogAdd';
       self.setState({ [item]: false });
     };
+  }
+
+  handleSMIClose() {
+    const self = this;
+    return () => {
+      self.setState({['customDialogSMI']: false });
+    }
   }
 
   handleModalOpen(isDelete) {
@@ -304,6 +315,48 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
+  handleSMIClick = (adapterLoc) => () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, (result) => {
+      this.props.updateProgress({ showProgress: false });
+      if (typeof result !== 'undefined') {
+        this.props.enqueueSnackbar('SMI Test started !', {
+          variant: 'info',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        this.props.enqueueSnackbar('SMI Conformance Finished !', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        self.setState({ ['customDialogSMI']: true })
+      }
+    }, self.handleError('Could not ping adapter.'));
+  }
+
   handleError = (cat, deleteOp) => {
     const self = this;
     return (error) => {
@@ -351,6 +404,46 @@ class MesheryAdapterPlayComponent extends React.Component {
           </MenuItem>
         ))}
       </Menu>
+    );
+  }
+
+  handleOpen = () => {
+    setOpen(true);
+  }
+
+  handleClose = () => {
+    setOpen(false);
+  }
+
+
+  generateSMIResult() {
+    const {
+      customDialogSMI,
+    } = this.state;
+    const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
+
+    const data = [
+      ["TA-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Passed"],
+      ["TA-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Failed"],
+      ["TM-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "Half", "Passed"],
+      ["TM-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "None", "Passed"],
+      ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
+      ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
+    ];
+    return (
+      <Dialog
+        onClose={this.handleSMIClose()}
+        aria-labelledby="adapter-dialog-title"
+        open={customDialogSMI}
+        fullWidth
+        maxWidth="md"
+      >
+        <MUIDataTable
+          title={"SMI Conformance Result"}
+          data={data}
+          columns={columns}
+        />
+      </Dialog>
     );
   }
 
@@ -440,6 +533,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
+
   addDelHandleClick = (cat, isDelete) => {
     const self = this;
     return () => {
@@ -463,8 +557,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     // const expanded = false;
 
     const selectedAdapterOps = adapter && adapter.ops ? adapter.ops.filter(({ category }) => typeof category === 'undefined' && cat === 0 || category === cat) : [];
-    let content; let
-        description;
+    let content;
+    let description;
     switch (cat) {
       case 0:
         content = 'Manage Service Mesh Lifecycle';
@@ -499,7 +593,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         />
         <CardActions disableSpacing>
           <IconButton aria-label="install" ref={(ch) => this.addIconEles[cat] = ch} onClick={this.addDelHandleClick(cat, false)}>
-            {cat !== 3 && cat !== 4 ? <AddIcon /> : <PlayIcon />}
+            {cat !== 4 ? <AddIcon /> : <PlayIcon />}
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
@@ -512,16 +606,6 @@ class MesheryAdapterPlayComponent extends React.Component {
               {cat === 4 && this.generateYAMLEditor(cat, true)}
             </div>
           )}
-          {/* <IconButton
-            // className={clsx(classes.expand, {
-            //   [classes.expandOpen]: expanded,
-            // })}
-            onClick={this.handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton> */}
         </CardActions>
       </Card>
     );
@@ -548,6 +632,20 @@ class MesheryAdapterPlayComponent extends React.Component {
       />
     );
 
+    let imageSMISrc = "/static/img/smi.png";
+    let smiChip = (
+      <React.Fragment>
+        <Chip
+          label="Run SMI Conformance"
+          onClick={this.handleSMIClick(adapter.adapter_location)}
+          icon={<img src={imageSMISrc} className={classes.icon} />}
+          className={classes.chip}
+          variant="outlined"
+        />
+        {this.generateSMIResult()}
+      </React.Fragment>
+    );
+
     const filteredOps = [];
     if (adapter && adapter.ops && adapter.ops.length > 0) {
       adapter.ops.forEach(({ category }) => {
@@ -564,8 +662,19 @@ class MesheryAdapterPlayComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.alignRight}>
-            {adapterChip}
+          <div className={classes.chipGrid}>
+            <Grid container spacing={3}>
+              <Grid item xs={3}>
+                {adapterChip}
+              </Grid>
+              <Grid item xs={3}>
+              </Grid>
+              <Grid item xs={3}>
+              </Grid>
+              <Grid item xs={3}>
+                {smiChip}
+              </Grid>
+            </Grid>
           </div>
           <div className={classes.root}>
             <Grid container spacing={5}>
@@ -584,7 +693,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 />
               </Grid>
               {filteredOps.map((val) => (
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} md={4}>
                   {this.generateCardForCategory(val)}
                 </Grid>
               ))}
