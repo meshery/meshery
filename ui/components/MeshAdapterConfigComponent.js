@@ -301,7 +301,11 @@ class MeshAdapterConfigComponent extends React.Component {
               case 'citrix service mesh':
                 image = "/static/img/citrix.svg";
                 logoIcon = (<img src={image} className={classes.icon} />);
-                break;                
+                break;   
+                case 'osm':
+                  image = "/static/img/osm.svg";
+                  logoIcon = (<img src={image} className={classes.icon} />);
+                  break;                
             }
 
             return (
