@@ -94,7 +94,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="5" class="alpha-adapters">alpha</td>
+          <td rowspan="8" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
