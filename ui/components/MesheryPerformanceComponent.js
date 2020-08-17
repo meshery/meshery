@@ -37,7 +37,7 @@ const meshes = [
   'Octarine',
   'Rotor',
   'SOFAMesh',
-  'Osm',
+  'OSM',
   'Zuul',
 ];
 

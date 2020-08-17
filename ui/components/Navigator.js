@@ -269,7 +269,7 @@ const categories = [
         show: true,
       },
       {
-        id: 'Osm',
+        id: 'OSM',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/osm", 
         title: 'Open Service Mesh',
@@ -402,7 +402,7 @@ class Navigator extends React.Component {
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
       case 'osm':
-        image = "/static/img/osm.svg";
+        image = "/static/img/osm-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
     }
