@@ -11,7 +11,7 @@ import (
 
 // Router represents Meshery router
 type Router struct {
-	s    *mux.Router
+	s    *http.ServeMux
 	port int
 }
 
