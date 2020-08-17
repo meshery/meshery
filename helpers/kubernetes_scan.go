@@ -36,6 +36,10 @@ var meshesMeta = map[string][]string{
 		"quay.io/citrix/citrix-istio-adaptor",
 		"quay.io/citrix/citrix-k8s-cpx-ingress",
 	},
+	"osm": []string{
+		"docker.io/openservicemesh/osm-controller",
+		"docker.io/openservicemesh/init",
+	},
 }
 
 // ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed

@@ -91,6 +91,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 	_, _ = w.Write([]byte("{}"))
 }
 
+
 // UserTestPreferenceHandler is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodPost && req.Method != http.MethodGet && req.Method != http.MethodDelete {
