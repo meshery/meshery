@@ -11,7 +11,7 @@ The Meshery project is maintained by Layer5 community. We are a healthy open sou
 
 ## Getting involved in the Community
 
-Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you.
+Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you.If this is your first time making open source contribution, you are in the right place! Check out our [First timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit)
 
 Please see our [contributing guide](/docs/project/contributing) for more details.
 
