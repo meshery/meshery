@@ -63,6 +63,7 @@ type HandlerInterface interface {
 	LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
