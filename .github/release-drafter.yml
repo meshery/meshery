@@ -1,28 +1,28 @@
-name-template: 'v$NEXT_PATCH_VERSION'
-tag-template: 'v$NEXT_PATCH_VERSION'
+name-template: "v$NEXT_PATCH_VERSION"
+tag-template: "v$NEXT_PATCH_VERSION"
 categories:
-  - title: '🚀 Features'
+  - title: "🚀 Features"
     labels:
-      - 'kind/feature'
-      - 'kind/enhancement'
-  - title: '🐛 Bug Fixes'
+      - "kind/feature"
+      - "kind/enhancement"
+  - title: "🐛 Bug Fixes"
     labels:
-      - 'kind/fix'
-      - 'kind/bugfix'
-      - 'kind/bug'
-  - title: '🧰 Maintenance'
-    labels: 
-      - 'kind/chore'
-      - 'area/ci'
-      - 'area/tests'
+      - "kind/fix"
+      - "kind/bugfix"
+      - "kind/bug"
+  - title: "🧰 Maintenance"
+    labels:
+      - "kind/chore"
+      - "area/ci"
+      - "area/tests"
   - title: 📖 Documentation
-    label: area/docs 
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+    label: area/docs
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 template: |
   ## What's New
   $CHANGES
-  
+
   ## Contributors
-  
+
   Thank you to our contributors for making this release possible:
   $CONTRIBUTORS
