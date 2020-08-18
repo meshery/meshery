@@ -1,8 +1,8 @@
 ---
-layout page
-title SMI Conformance Capability
-permalink functionalitysmi-conformance-capability
-type functionality
+layout: page
+title: SMI Conformance Capability
+permalink: functionality/smi-conformance
+type: functionality
 ---
 
 # SMI Conformance Capability
