@@ -87,6 +87,6 @@ var versionCmd = &cobra.Command{
 			return
 		}
 
-		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+		logrus.Infof("Server Version: %v \t\t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
 	},
 }
