@@ -1,25 +1,70 @@
 import React from 'react';
 import NoSsr from '@material-ui/core/NoSsr';
 import CytoscapeComponent from 'react-cytoscapejs';
-import DefaultGraph from './styles/styleContainer'
+import DefaultGraph from './styles/styleContainer';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { withStyles } from '@material-ui/core/styles';
 
+const style = (theme) => ({
+  
+  zoomButton: {
+    position: 'absolute',
+    top: 'auto',
+    bottom: theme.spacing(2),
+    left: theme.spacing(2),
+    right: 'auto'
+  },
+
+  saveButton: {
+    position: 'absolute',
+    top:'auto',
+    bottom: theme.spacing(2),
+    left: 'auto',
+    right:theme.spacing(2),
+  },
+
+  div: {
+    width: '100%',
+    height:'100%',
+    borderRadius: '5px',
+    background: '#fff',
+  }
+});
 
 class MesheryVisualizeComponent extends React.Component {
   
   constructor(props) {
     super(props)
-    //cy is a ref to the core object of cytoscope
-    this.myCy = React.createRef()
   }
 
+  zoomIn() {
+    this.cy.zoom(0.5 + this.cy.zoom())
+    if(this.cy.$(':selected').size())
+      this.cy.center(this.cy.$(':selected'))
+    else
+      this.cy.center()
+  }
 
-  componentDidMount() {
-    console.log(this.myCy)
-    // this.myCy.style()
-    // this.myCy.current.zoom(100)
+  zoomOut() {
+    this.cy.zoom(-0.5 + this.cy.zoom())
+    if(this.cy.$(':selected').size())
+      this.cy.center(this.cy.$(':selected'))
+    else
+      this.cy.center()
+  }
+
+  fit() {
+    this.cy.fit()
+  }
+
+  saveGraph() {
+    let image = this.cy.png()
+    window.location.href=image.replace("image/png", "image/octet-stream")
   }
 
   render() {
+    const {classes} = this.props
 
     const elements = {// get node j and the edges coming out from it
 
@@ -92,18 +137,28 @@ class MesheryVisualizeComponent extends React.Component {
 
     return (
       <NoSsr>
-        <div style={DefaultGraph.getStyleContainer()}>
-          <CytoscapeComponent 
-            elements={CytoscapeComponent.normalizeElements(elements)}
-            style={ {width: '100%', height: '100%'} }
-            layout={{ name: 'cose' }}
-            cy={(cy) => {
-              this.myCy = cy 
-            }} />
+        <div style={{position: 'relative', width:'100%', height:'80%'}}>
+          <div className={classes.div}>
+            <CytoscapeComponent 
+              elements={CytoscapeComponent.normalizeElements(elements)}
+              style={ {width: '100%', height: '100%'} }
+              layout={{ name: 'cose' }}
+              stylesheet={DefaultGraph.getStylesheetContainer()}
+              cy={cy => this.cy = cy}
+            />
+          </div>
+          <ButtonGroup className={classes.zoomButton} color="primary" aria-label="outlined primary button group">
+            <Button onClick={this.zoomIn.bind(this)}>+</Button>
+            <Button onClick={this.zoomOut.bind(this)}>-</Button>
+            <Button onClick={this.fit.bind(this)}>fit</Button>
+          </ButtonGroup>
+          <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
+            <Button onClick={this.saveGraph.bind(this)}>Save</Button>
+          </ButtonGroup>
         </div>
       </NoSsr>
     )
   }
 }
 
-export default MesheryVisualizeComponent;
+export default withStyles(style)(MesheryVisualizeComponent);
