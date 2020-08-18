@@ -20,6 +20,7 @@ import {
   faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
+import { Tooltip } from '@material-ui/core';
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -504,9 +505,17 @@ class Navigator extends React.Component {
 
       let linkContent = (
         <div className={classNames(classes.link)}>
-          <ListItemIcon className={classes.listIcon}>
-            {iconc}
-          </ListItemIcon>
+          <Tooltip 
+            title={idc} 
+            placement="right" 
+            disableFocusListener={!drawerCollapsed} 
+            disableHoverListener={!drawerCollapsed} 
+            disableTouchListener={!drawerCollapsed}
+          >
+            <ListItemIcon className={classes.listIcon}>
+              {iconc}
+            </ListItemIcon>
+          </Tooltip>
           <ListItemText
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
@@ -583,7 +592,15 @@ class Navigator extends React.Component {
                     >
                       <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          <Tooltip 
+                            title={childId} 
+                            placement="right" 
+                            disableFocusListener={!isDrawerCollapsed} 
+                            disableHoverListener={!isDrawerCollapsed} 
+                            disableTouchListener={!isDrawerCollapsed}
+                          > 
+                            <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          </Tooltip>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
@@ -613,7 +630,15 @@ class Navigator extends React.Component {
                 )}
               >
                 <div className={classNames(classes.link)}>
-                  <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  <Tooltip 
+                    title="Community" 
+                    placement="right" 
+                    disableFocusListener={!isDrawerCollapsed} 
+                    disableHoverListener={!isDrawerCollapsed} 
+                    disableTouchListener={!isDrawerCollapsed}
+                  >
+                    <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  </Tooltip>
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{
