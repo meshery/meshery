@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from '@material-ui/lab'
 import Grid from '@material-ui/core/Grid';
 import {
   NoSsr, Tooltip, IconButton, CircularProgress, FormControl, RadioGroup, FormControlLabel, Radio,
@@ -14,6 +15,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
+import { durationOptions } from '../lib/prePopulatedOptions';
 
 
 const loadGenerators = [
@@ -48,18 +50,26 @@ class MesherySettingsPerformanceComponent extends React.Component {
       qps,
       c,
       t,
+      tValue: t,
       gen,
       blockRunTest: false,
-      tError: false,
+      tError: '',
     };
   }
 
   handleChange = (name) => (event) => {
-    if (name === 't' && (event.target.value.toLowerCase().endsWith('h')
-      || event.target.value.toLowerCase().endsWith('m') || event.target.value.toLowerCase().endsWith('s'))) {
-      this.setState({ tError: false });
-    }
     this.setState({ [name]: event.target.value });
+  };
+
+  handleDurationChange = (event, newValue) => {
+    this.setState({tValue: newValue})
+    if (newValue !== null) {
+      this.setState({ tError: '' })
+    }
+  };
+
+  handleInputDurationChange = (event, newValue) => {
+    this.setState({t: newValue})
   };
 
   handleSubmit = () => {
@@ -77,7 +87,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
 
     if (t === '' || !(t.toLowerCase().endsWith('h')
       || t.toLowerCase().endsWith('m') || t.toLowerCase().endsWith('s')) || err || tNum <= 0) {
-      this.setState({ tError: true });
+      this.setState({ tError: 'error-autocomplete-value' });
       return;
     }
 
@@ -188,7 +198,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
   render() {
     const { classes } = this.props;
     const {
-      blockRunTest, qps, t, c, gen,
+      blockRunTest, qps, t, c, gen, tValue,
       tError,
     } = this.state;
 
@@ -231,17 +241,23 @@ class MesherySettingsPerformanceComponent extends React.Component {
               </Grid>
               <Grid item xs={12} lg={4}>
                 <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-                  <TextField
+                  <Autocomplete
                     required
                     id="t"
                     name="t"
-                    label="Duration"
+                    freeSolo
+                    label="Duration*"
                     fullWidth
-                    value={t}
-                    error={tError}
-                    margin="normal"
                     variant="outlined"
-                    onChange={this.handleChange('t')}
+                    className={classes.errorValue}
+                    classes={{ root: tError }}
+                    value={tValue}
+                    inputValue={t}
+                    onChange={this.handleDurationChange}
+                    onInputChange={this.handleInputDurationChange}
+                    options={durationOptions}
+                    style={{ marginTop: '16px', marginBottom: '8px' }}
+                    renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
                   />
                 </Tooltip>
               </Grid>

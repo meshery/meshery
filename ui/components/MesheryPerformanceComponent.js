@@ -21,7 +21,7 @@ import dataFetch from '../lib/data-fetch';
 import MesheryChart from './MesheryChart';
 import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
-
+import { durationOptions } from '../lib/prePopulatedOptions';
 
 const meshes = [
   'Istio',
@@ -79,8 +79,6 @@ const styles = (theme) => ({
     width: '100%',
   },
 });
-
-const prePopulatedOptions = ['15s', '30s', '1m', '3m', '5m', '10m', '30m', '1h', '2h', '5h', '10h', '1d']
 
 class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
@@ -591,7 +589,7 @@ class MesheryPerformanceComponent extends React.Component {
                     inputValue={t}
                     onChange={this.handleDurationChange}
                     onInputChange={this.handleInputDurationChange}
-                    options={prePopulatedOptions}
+                    options={durationOptions}
                     style={{ marginTop: '16px', marginBottom: '8px' }}
                     renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
                   />
