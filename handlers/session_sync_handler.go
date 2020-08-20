@@ -12,10 +12,10 @@ import (
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
 func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	// To get fresh copy of User
 	_, _ = provider.GetUserDetails(req)
