@@ -10,13 +10,13 @@
 [![Slack](http://slack.layer5.io/badge.svg)](http://slack.layer5.io)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3564/badge)](https://bestpractices.coreinfrastructure.org/projects/3564)
 
-<p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/layer5io/meshery/stargazers">★</a> star this repository to show your support! 🤩</i></p>
+<h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/layer5io/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration and performance management of service meshes and their workloads.
 
 ## <a name="running"></a>Run Meshery
 
-See [getting started](https://meshery.io/#getting-started) to quickly deploy Meshery on any of these supported platforms: 
+See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
 | Platform | Supported? |
 | --- | :---: |
@@ -39,7 +39,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
 | - <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" />  [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
 | <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi | In Progress |
 
-[Meshery documentation](https://meshery.layer5.io/docs/installation) offers full installation procedures for your platform of choice.
+[Meshery documentation](https://meshery.layer5.io/docs/installation) offers thorough installation guides for your platform of choice.
 
 ## <a name="service-meshes"></a>Supported Service Meshes
 
@@ -57,12 +57,12 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-istio">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/istio.png' alt='Istio Service Mesh adapter' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a> 
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/istio.png' alt='Istio Service Mesh adapter' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-linkerd">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/linkerd.png' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a> 
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/linkerd.png' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
           </td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@ See [getting started](https://meshery.io/#getting-started) to quickly deploy Mes
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-octarine">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/octarine.png' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a> 
+            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/octarine.png' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
           </td>
         </tr>
         <tr>
@@ -154,6 +154,25 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 </p>
 <div>&nbsp;</div>
 
+## Meshery is SMI conformant!
+
+Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
+
+- An easy-to-use SMI-specific tool to give service mesh projects and users a suite of conformance tests.
+- Repeatable, versioned and verifiable conformance tests.
+- A compatibility matrix identifying the SMI features that are supported per service mesh.
+- Effortless addition of the SMI tool as an operation to all Meshery supported adapters, which will consecutively allow users to ceaselessly invoke the SMI conformance tests.
+
+<p style="clear:both;">
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
+<h3> Service Mesh Standards </h3>
+
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+</p>
+
+<div>&nbsp;</div>
+
+
 ## Meshery Architecture
 You may deploy Meshery internal to your cluster or external to your cluster.
 <p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/architecture/meshery-architecture.svg"><img src="docs/assets/img/architecture/meshery-architecture.svg" width="90%" align="center" /></a></p>
@@ -170,7 +189,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/images/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
-<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects and expand your community network. 
+<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects and expand your community network.
 Become a <b>Meshtee</b> today!</p>
 
 Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
@@ -188,15 +207,6 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 </p>
 <p align="center">
 <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
-</p>
-
-<div>&nbsp;</div>
-
-<p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
-<h2>Service Mesh Standards</h2>
-
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 </p>
 
 <div>&nbsp;</div>
