@@ -22,10 +22,10 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 		CommitSHA: viper.GetString("COMMITSHA"),
 	}
 
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	w.Header().Set("Content-Type", "application/json")
 
