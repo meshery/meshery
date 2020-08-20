@@ -23,7 +23,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/provider", http.HandlerFunc(h.ProviderHandler))
 	gMux.Handle("/api/providers", http.HandlerFunc(h.ProvidersHandler))
-	gMux.Handle("/provider/", http.HandlerFunc(h.ProviderUIHandler))
+	// gMux.Handle("/provider/", http.HandlerFunc(h.ProviderUIHandler))
+	gMux.Methods("GET").PathPrefix("/provider/").Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/"))))
 
 	gMux.Handle("/api/config/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler))))
 
