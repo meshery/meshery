@@ -19,6 +19,8 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import dataFetch from '../lib/data-fetch';
+import Divider from '@material-ui/core/Divider';
+
 
 const styles = (theme) => ({
   root: {
@@ -59,14 +61,14 @@ const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.modalHeading} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+    <Typography variant="h6">{children}</Typography>
+    {onClose ? (
+      <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+      <CloseIcon />
+      </IconButton>
       ) : null}
     </MuiDialogTitle>
-  );
+    );
 });
 
 const DialogContent = withStyles(theme => ({
@@ -85,21 +87,21 @@ class ProviderComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        availableProviders: {},
-        selectedProvider: '',
-        open: false,
-        modalOpen: false,
-      };
+      availableProviders: {},
+      selectedProvider: '',
+      open: false,
+      modalOpen: false,
+    };
     this.anchorRef = null;
   }
 
-   loadProvidersFromServer() {
+  loadProvidersFromServer() {
     const self = this;
-      dataFetch('/api/providers', { 
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, result => {
+    dataFetch('/api/providers', { 
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, result => {
       if (typeof result !== 'undefined'){
         let selectedProvider = '';
         Object.keys(result).forEach(key => {
@@ -108,14 +110,14 @@ class ProviderComponent extends React.Component {
           } 
         })
         self.setState({availableProviders: result, selectedProvider});
-        }
-      }, error => {
-        console.log(`there was an error fetching providers: ${error}`);
-      });
-  }
-      componentDidMount = () => {
-        this.loadProvidersFromServer();
       }
+    }, error => {
+      console.log(`there was an error fetching providers: ${error}`);
+    });
+  }
+  componentDidMount = () => {
+    this.loadProvidersFromServer();
+  }
 
   handleMenuItemClick = (index) => {
     this.setState({ selectedProvider: index });
@@ -158,108 +160,141 @@ class ProviderComponent extends React.Component {
     const self = this;
     return (
       <NoSsr>
-        <div className={classes.root}>
-          <img className={classes.logo} src="/provider/static/img/meshery-logo/meshery-logo-light-text.png" alt="logo" />
-          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-            Please choose a  
-              <Tooltip title="Learn more about providers" placement="bottom">
-                <a className={classes.providerLink} onClick={self.handleModalOpen()}> provider </a>
-              </Tooltip>
-            to continue
-          </Typography>
-          <Dialog onClose={self.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
-            <DialogTitle id="customized-dialogs-title" onClose={self.handleModalClose()}>
-              <b>Choosing a provider</b>
-            </DialogTitle>
-            <DialogContent dividers>
-              <Typography gutterBottom>
-                <p>
-                  Login to Meshery by choosing from the available providers. Providers offer authentication,
-                  session management and long-term persistence of user preferences, performance tests, service mesh adapter configurations and so on.
-                </p>
-                <List>
-                {Object.keys(availableProviders).map((key) => {
-                  return (
-                    <React.Fragment>
-                      <ListItem
-                        key={availableProviders[key]['DisplayName']}
-                        className={classes.providerDesc}
-                      >
-                        {availableProviders[key]['Description']}
-                      </ListItem>
-                    </React.Fragment>
-                  );                  
-                })}
-                </List>
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={self.handleModalClose()} color="primary">
-                OK
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <div className={classes.container}>
-              <Grid item xs={12} justify="center">
-                {availableProviders !== ''
-                && (
-                <>
-                <ButtonGroup variant="contained" color="primary" ref={(ref) => self.anchorRef = ref} aria-label="split button">
-                  <Button
-                    size="large"
-                    href={selectedProvider == '' ? '' : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`}
-                  >
-                    {selectedProvider !== '' ? selectedProvider : 'Select Your Provider'}
-                  </Button>
-                  <Button
-                    color="primary"
-                    size="small"
-                    aria-controls={open ? 'split-button-menu' : undefined}
-                    aria-expanded={open ? 'true' : undefined}
-                    aria-label="Select Provider"
-                    aria-haspopup="menu"
-                    onClick={self.handleToggle()}
-                  >
-                    <ArrowDropDownIcon />
-                  </Button>
-                </ButtonGroup>
-                <Popper open={open} anchorEl={self.anchorRef} role={undefined} transition disablePortal>
-                  {({ TransitionProps, placement }) => (
-                    <Grow
-                      {...TransitionProps}
-                      style={{
-                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                      }}
-                    >
-                      <Paper>
-                        <ClickAwayListener onClickAway={self.handleClose()}>
-                          <MenuList id="split-button-menu">
-                            {Object.keys(availableProviders).map((key) => (
-                              <MenuItem
-                                key={key}
-                                onClick={() => self.handleMenuItemClick(key)}
-                              >
-                                {key}
-                              </MenuItem>
-                            ))}
-                          </MenuList>
-                        </ClickAwayListener>
-                      </Paper>
-                    </Grow>
-                  )}
-                </Popper>
-                </>
-                )}
-              </Grid>
-          </div>
+      <div className={classes.root}>
+      <img className={classes.logo} src="/provider/static/img/meshery-logo/meshery-logo-light-text.png" alt="logo" />
+      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+      Please choose a  
+      <Tooltip title="Learn more about providers" placement="bottom">
+      <a className={classes.providerLink} onClick={self.handleModalOpen()}> provider </a>
+      </Tooltip>
+      to continue
+      </Typography>
+      <Dialog onClose={self.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
+      <DialogTitle id="customized-dialogs-title" onClose={self.handleModalClose()}>
+      <b>Choosing a provider</b>
+      </DialogTitle>
+      <DialogContent dividers>
+      <Typography gutterBottom>
+      <p>
+      Login to Meshery by choosing from the available providers. Providers offer authentication,
+      session management and long-term persistence of user preferences, performance tests, service mesh adapter configurations and so on.
+      </p>
+      <List>
+      {Object.keys(availableProviders).map((key) => {
+        return (
+          <React.Fragment>
+          <ListItem
+          key={availableProviders[key]['DisplayName']}
+          className={classes.providerDesc}
+          >
+          {availableProviders[key]['Description']}
+          </ListItem>
+          </React.Fragment>
+          );                  
+      })}
+      <p>Provider: SMI Conformance</p>
+      <ul>
+        <li>Remote provider for SMI Conformance Testing</li>
+        <li>Provides provenence of test results and their persistence</li>
+      </ul>
+      <ListItem
+      key="SMI"
+      className={classes.providerDesc}
+      >
+      </ListItem>
+
+      </List>
+      <p>Provider: The University of Texas at Austin</p>
+      <ul>
+        <li>Academic research and advanced studies by Ph.D. researchers</li>
+        <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+      </ul>
+      <List>
+      <ListItem
+      key="UT Austin"
+      className={classes.providerDesc}
+      >         
+      </ListItem>
+      </List>
+      </Typography>
+      </DialogContent>
+      <DialogActions>
+      <Button autoFocus onClick={self.handleModalClose()} color="primary">
+      OK
+      </Button>
+      </DialogActions>
+      </Dialog>
+      <div className={classes.container}>
+      <Grid item xs={12} justify="center">
+      {availableProviders !== ''
+      && (
+        <>
+        <ButtonGroup variant="contained" color="primary" ref={(ref) => self.anchorRef = ref} aria-label="split button">
+        <Button
+        size="large"
+        href={selectedProvider == '' ? '' : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`}
+        >
+        {selectedProvider !== '' ? selectedProvider : 'Select Your Provider'}
+        </Button>
+        <Button
+        color="primary"
+        size="small"
+        aria-controls={open ? 'split-button-menu' : undefined}
+        aria-expanded={open ? 'true' : undefined}
+        aria-label="Select Provider"
+        aria-haspopup="menu"
+        onClick={self.handleToggle()}
+        >
+        <ArrowDropDownIcon />
+        </Button>
+        </ButtonGroup>
+        <Popper open={open} anchorEl={self.anchorRef} role={undefined} transition disablePortal>
+        {({ TransitionProps, placement }) => (
+          <Grow
+          {...TransitionProps}
+          style={{
+            transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+          }}
+          >
+          <Paper>
+          <ClickAwayListener onClickAway={self.handleClose()}>
+          <MenuList id="split-button-menu">
+          {Object.keys(availableProviders).map((key) => (
+            <MenuItem
+            key={key}
+            onClick={() => self.handleMenuItemClick(key)}
+            >
+            {key}
+            </MenuItem>
+
+            ))}
+          <Divider />
+          <MenuItem disabled={true}
+            key="SMI">
+          SMI Conformance
+          </MenuItem>
+          <MenuItem disabled={true}
+            key="UT Austin">
+          The University of Texas at Austin
+          </MenuItem>
+          </MenuList>
+          </ClickAwayListener>
+          </Paper>
+          </Grow>
+          )}
+        </Popper>
+        </>
+        )}
+        </Grid>
         </div>
-      </NoSsr>
-    );
-  }
-}
+        </div>
+        </NoSsr>
+        );
+      }
+    }
 
-ProviderComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+    ProviderComponent.propTypes = {
+      classes: PropTypes.object.isRequired,
+    };
 
-export default withStyles(styles)(ProviderComponent);
+    export default withStyles(styles)(ProviderComponent);

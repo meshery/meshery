@@ -20,6 +20,7 @@ import {
   faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
+import { Tooltip } from '@material-ui/core';
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -268,6 +269,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'OSM',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/osm", 
+        title: 'Open Service Mesh',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ];
@@ -312,14 +321,6 @@ class Navigator extends React.Component {
     });
   }
 
-  // componentDidMount(){
-  //   console.log("navigator mounted")
-  // }
-
-  // componentDidUpdate(){
-  //   console.log("navigator mounted")
-  // }
-
   static getDerivedStateFromProps(props, state) {
     const { meshAdapters, meshAdaptersts, path } = props;
     const st = {};
@@ -330,7 +331,6 @@ class Navigator extends React.Component {
 
     const fetchNestedPathAndTitle = (path, title, href, children) => {
       if (href === path) {
-        // console.log(`updating path: ${path} and title: ${title}`);
         props.updatepagetitle({ title });
         return;
       }
@@ -354,7 +354,6 @@ class Navigator extends React.Component {
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
       const aName = adapter.name.toLowerCase();
-      // const imageIcon = this.pickIcon(aName);
       if (category !== aName) {
         return;
       }
@@ -403,6 +402,10 @@ class Navigator extends React.Component {
         image = "/static/img/citrix-light-gray.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
+      case 'osm':
+        image = "/static/img/osm-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
     }
     return logoIcon;
   }
@@ -412,7 +415,7 @@ class Navigator extends React.Component {
     }
 
     handleAdapterClick = (id, link) => {
-      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh"];
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Osm"];
       let index = allowedId.indexOf(id);
       if ( index != -1 && !link) {
         this.props.router.push('/management');
@@ -422,7 +425,6 @@ class Navigator extends React.Component {
     toggleMiniDrawer = () => {
       const { onCollapseDrawer } = this.props;
       onCollapseDrawer();
-      // this.setState({ isDrawerCollapsed: !isDrawerCollapsed })
     }
 
     renderChildren(idname, children, depth) {
@@ -503,9 +505,17 @@ class Navigator extends React.Component {
 
       let linkContent = (
         <div className={classNames(classes.link)}>
-          <ListItemIcon className={classes.listIcon}>
-            {iconc}
-          </ListItemIcon>
+          <Tooltip 
+            title={idc} 
+            placement="right" 
+            disableFocusListener={!drawerCollapsed} 
+            disableHoverListener={!drawerCollapsed} 
+            disableTouchListener={!drawerCollapsed}
+          >
+            <ListItemIcon className={classes.listIcon}>
+              {iconc}
+            </ListItemIcon>
+          </Tooltip>
           <ListItemText
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
@@ -538,8 +548,6 @@ class Navigator extends React.Component {
       } else {
         classname = classes.collapseButtonWrapper;
       }
-      // const path = this.updateTitle();
-      // console.log("current page:" + path);
       return (
         <NoSsr>
           <Drawer
@@ -584,7 +592,15 @@ class Navigator extends React.Component {
                     >
                       <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          <Tooltip 
+                            title={childId} 
+                            placement="right" 
+                            disableFocusListener={!isDrawerCollapsed} 
+                            disableHoverListener={!isDrawerCollapsed} 
+                            disableTouchListener={!isDrawerCollapsed}
+                          > 
+                            <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          </Tooltip>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
@@ -614,7 +630,15 @@ class Navigator extends React.Component {
                 )}
               >
                 <div className={classNames(classes.link)}>
-                  <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  <Tooltip 
+                    title="Community" 
+                    placement="right" 
+                    disableFocusListener={!isDrawerCollapsed} 
+                    disableHoverListener={!isDrawerCollapsed} 
+                    disableTouchListener={!isDrawerCollapsed}
+                  >
+                    <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  </Tooltip>
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{
@@ -649,13 +673,9 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  // const k8sconfig = state.get("k8sConfig").toJS();
   const meshAdapters = state.get('meshAdapters').toJS();
   const meshAdaptersts = state.get('meshAdaptersts');
   const path = state.get('page').get('path');
-  // const grafana = state.get("grafana").toJS();
-  // const prometheus = state.get("prometheus").toJS();
-  // return {meshAdapters, meshAdaptersts, k8sconfig, grafana, prometheus};
   return { meshAdapters, meshAdaptersts, path };
 };
 

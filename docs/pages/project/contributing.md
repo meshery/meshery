@@ -13,15 +13,15 @@ Not sure where to start?
 
 Follow these steps and you'll be right at home.
 
-1. See the [*Newcomers Welcome Guide*](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where and why to contribute.
+1. See the [*Community Welcome Guide*](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for how, where, and why to contribute.
 
 2. Sign up for a [*MeshMate*](https://layer5.io/community#meshmate) to find the perfect Mentor to help you explore the Layer5 projects and find your place in the community:
-  - **Familiarize** yourself with all the Layer5 projects (Take a look at the [Community Drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) and the [Layer5 Repository Overview](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#heading=h.uwtb5xf7b5hw): Spend time understanding each of the Layer5 initiatives through high level overviews available in the community drive and in discussions with your MeshMate.
+  - **Familiarize** yourself with all the Layer5 projects (Take a look at the [Community Drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) and the [Layer5 Repository Overview](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#heading=h.uwtb5xf7b5hw): Spend time understanding each of the Layer5 initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.
   - **Identify** your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.
   - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
   - **Build** Meshery: Confirm that you have a usable development environment.
   - **Communicate** with the Layer5 community by joining the [Slack account](http://slack.layer5.io).
-  - **Contribute** by grabbing any open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. If needed, create a [new issue](/../../issues/new/choose). All [pull requests](/../../pulls) should reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+  - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/layer5io/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/layer5io/meshery/issues/new/choose). All [pull requests](https://github.com/layer5io/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
 **Sections**
 - General Contribution Flow
@@ -35,7 +35,7 @@ Relevant coding style guidelines are the Go Code Review Comments and the Formatt
 
 ## <a name="contributing">General Contribution Flow</a>
 
-In order to contribute to Meshery, please follow the fork-and-pull request workflow described [here](./git-workflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here](CONTRIBUTING-gitflow.md).
 
 ### <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -75,7 +75,7 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 ### <a name="contributing-docs">Documentation Contribution Flow</a>
 Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
 
-1. Create a fork, if you have not already, by following the steps described [here](./git-workflow.md)
+1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
 1. In the local copy of your fork, navigate to the docs folder.
 `cd docs`
 1. Create and checkout a new branch to make changes within
@@ -100,8 +100,8 @@ __Please note__: All `make` commands should be run in a terminal from within the
 #### Prerequisites for building Meshery in your development environment:
 1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. `npm` and `node` should be installed on your machine, preferably the latest versions.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
 #### Build and run Meshery server
 To build & run the Meshery server code, run the following command:
@@ -159,7 +159,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 make run-ui-dev
 ```
 
-Once you have the server up and running, you will be able to access the Meshery UI at `http://localhost:3000`. One thing to note is that for the UI dev server to work, you need Meshery server running on the default port of `9081`.
+Make sure to have Meshery server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
 #### Running Meshery from IDE

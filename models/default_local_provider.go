@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -17,8 +18,9 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
-	SaaSBaseURL     string
-	ResultPersister *BitCaskResultsPersister
+	SaaSBaseURL           string
+	ResultPersister       *BitCaskResultsPersister
+	TestProfilesPersister *BitCaskTestProfilesPersister
 }
 
 // Name - Returns Provider's friendly name
@@ -251,4 +253,57 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
 	}
+}
+
+// SMPSTestConfigStore Stores the given PerformanceTestConfig into local datastore
+func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
+	uid, err := uuid.NewV4()
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return "", err
+	}
+	perfConfig.Id = uid.String()
+	data, err := json.Marshal(perfConfig)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal test config for persisting"))
+		return "", err
+	}
+	return uid.String(), l.TestProfilesPersister.WriteTestConfig(uid, data)
+}
+
+// SMPSTestConfigGet gets the given PerformanceTestConfig from the local datastore
+func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+	uid, err := uuid.FromString(testUUID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return nil, err
+	}
+	return l.TestProfilesPersister.GetTestConfig(uid)
+}
+
+// SMPSTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
+func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+	return l.TestProfilesPersister.GetTestConfigs(pg, pgs)
+}
+
+// SMPSTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
+func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
+	uid, err := uuid.FromString(testUUID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return err
+	}
+	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
