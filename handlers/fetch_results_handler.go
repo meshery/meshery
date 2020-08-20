@@ -13,10 +13,10 @@ import (
 
 // FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	// TODO: may be force login if token not found?????
 
 	err := req.ParseForm()
@@ -38,10 +38,10 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 // GetResultHandler gets an individual result from provider
 func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	// TODO: may be force login if token not found?????
 	id := req.URL.Query().Get("id")
 	if id == "" {
