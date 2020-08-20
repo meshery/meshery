@@ -1,14 +1,11 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008"
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10010"
 
 MESHERY_CLOUD_LOCAL=http://mesherylocal.layer5.io:9876
 MESHERY_CLOUD_DEV=http://localhost:9876
 MESHERY_CLOUD_PROD=https://meshery.layer5.io
 MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
-
-# Configure git variables as an environment variable
-git:
-	GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
-	GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
 
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
@@ -19,16 +16,14 @@ mesheryctl:
 # `make docker` builds Meshery inside of a multi-stage Docker container.
 # This method does NOT require that you have Go, NPM, etc. installed locally.
 docker:
-	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) .
 
 # Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
-docker-run-local-cloud: git
+docker-run-local-cloud: 
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
-	-e GIT_VERSION=${GIT_VERSION} \
-	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -37,11 +32,9 @@ docker-run-local-cloud: git
 
 # Runs Meshery in a container locally and points to remote
 #  Meshery Cloud for user authentication.
-docker-run-cloud: git
+docker-run-cloud: 
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e GIT_VERSION=${GIT_VERSION} \
-	-e GIT_COMMITSHA=${GIT_COMMITSHA} \
 	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -53,8 +46,9 @@ docker-run-cloud: git
 # Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
-run-local-cloud: git
-	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
+run-local-cloud: 
+	cd cmd; go clean; rm meshery; go mod tidy; \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
@@ -64,8 +58,9 @@ run-local-cloud: git
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local: git
-	cd cmd; go clean; rm meshery; go mod tidy; go build -tags draft -a -o meshery; \
+run-local: 
+	cd cmd; go clean; rm meshery; go mod tidy; \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
 	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \

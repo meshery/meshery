@@ -2,16 +2,24 @@
 layout: page
 title: Citrix Service Mesh (CPX) Adapter
 name: Citrix Service Mesh
-version: "-"
+version: "1.0"
 port: 10008/tcp
 project_status: beta
+github_link: https://github.com/layer5io/meshery-cpx
 image: /docs/assets/img/service-meshes/cpx.png
 ---
-# Meshery Adapter for {{ page.name }}
+# {{ page.name }}
 
-| Adapter Status |
-| :------------: |
-| [{{ page.project_status }}]({{ page.github_link }})|
+| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
+| :------------: | :------------:   | :------------:              |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
-## {{ page.title }}
-This adapter is currently in a {{ page.project_status }} state. Please see this [adapter's code repository]({{ page.github_link }}) for more details or ask abou this adapter in the [#meshery channel](https://layer5io.slack.com/archives/CFGG6U10E_).
+
+### Lifecycle management
+
+The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+
+### Suggested Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
