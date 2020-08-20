@@ -28,21 +28,20 @@ import (
 )
 
 var (
-
-	// Build - holds the build info of Client
-	Build string
-
-	// CommitSHA - holds the Git-SHA info
-	CommitSHA string
-
 	// Mesheryctl config - holds config handler
 	mctlCfg *cfg.MesheryCtl
 )
 
-// Version unmarshals the json response from the server's version api
-type Version struct {
-	Build     string `json:"build,omitempty"`
-	CommitSHA string `json:"commitsha,omitempty"`
+// RequestErr is the error handler for the request
+func requestErr(err error, url string) bool {
+	if err != nil {
+		logrus.Infof("Server Version: Unavailable \t  GitSHA: Unavailable")
+		logrus.Errorf("\nError Occured: %v", err)
+		logrus.Errorf("\nCould not communicate with Meshery at %s", url+"/server/version")
+		logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
+		return true
+	}
+	return false
 }
 
 // versionCmd represents the version command
@@ -59,44 +58,35 @@ var versionCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.Infof("Client Version: %v \t  GitSHA: %v", Build, CommitSHA)
-		version := &Version{
-			Build:     "Unavailable",
-			CommitSHA: "Unavailable",
-		}
 
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", mctlCfg.GetBaseMesheryURL()), nil)
-		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
-			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
+		url := mctlCfg.GetBaseMesheryURL()
+		build := mctlCfg.GetVersion().GetBuild()
+		commitsha := mctlCfg.GetVersion().GetCommitSHA()
+
+		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
+
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", url), nil)
+		if requestErr(err, url) {
 			return
 		}
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
-		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
-			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
+		if requestErr(err, url) {
 			return
 		}
 
 		data, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
-			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
+		if requestErr(err, url) {
 			return
 		}
 
-		err = json.Unmarshal(data, version)
-		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
-			logrus.Errorf("\nCould not communicate with Meshery at %s", mctlCfg.GetBaseMesheryURL()+"/server/version")
-			logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
+		version := cfg.Version{}
+		err = json.Unmarshal(data, &version)
+		if requestErr(err, url) {
 			return
 		}
-		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+
+		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
 	},
 }

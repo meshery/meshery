@@ -47,14 +47,8 @@ const styles = (theme) => ({
     margin: theme.spacing(1),
     marginTop: theme.spacing(3),
   },
-  rightIcon: {
-    // marginLeft: theme.spacing(1),
-  },
   fileLabel: {
     width: '100%',
-  },
-  fileLabelText: {
-    // width: '79%',
   },
   editorContainer: {
     width: '100%',
@@ -64,9 +58,6 @@ const styles = (theme) => ({
   },
   alignRight: {
     textAlign: 'right',
-  },
-  column: {
-    // flexBasis: '33.33%',
   },
   expTitleIcon: {
     width: theme.spacing(3),
@@ -161,6 +152,10 @@ class MesheryPlayComponent extends React.Component {
           break;
         case 'citrix service mesh':
           image = "/static/img/citrix.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
+        case 'osm':
+          image = "/static/img/osm.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
       }

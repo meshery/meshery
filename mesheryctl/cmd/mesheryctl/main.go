@@ -18,13 +18,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
-var (
-	version   = "Unavailable"
-	commitsha = "Unavailable"
-)
-
 func main() {
-	root.Build = version
-	root.CommitSHA = commitsha
 	root.Execute()
 }

@@ -14,4 +14,4 @@ As the multi-mesh manager, Meshery offers support for more adapters than any oth
 {% endif -%}
 {% endfor %}
 
-Meshery supports the following service meshes. Meshery uses both abstraction APIs and service mesh-specific adapters to interface with and manage service meshes. You may review the full list of Meshery [adapters](/docs/architecture/adapters).
+Meshery supports the following service meshes. It uses both abstraction APIs and service mesh-specific adapters to interface with and manage service meshes. Review the full list of Meshery [adapters](/docs/architecture/adapters).
