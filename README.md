@@ -156,7 +156,7 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 
 ## Meshery is SMI conformant!
 
-Meshery provides feasible tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI tool](https://layer5.io/projects/service-mesh-interface), it essentially provides:
+Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
 
 - An easy-to-use SMI-specific tool to give service mesh projects and users a suite of conformance tests.
 - Repeatable, versioned and verifiable conformance tests.
@@ -167,7 +167,7 @@ Meshery provides feasible tooling to validate any service mesh that claims to im
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
 <h3> Service Mesh Standards </h3>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance specification](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 </p>
 
 <div>&nbsp;</div>
