@@ -46,6 +46,6 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ProviderUIHandler - serves providers UI
-// func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
-// 	ServeUI(w, r, "/provider", "../provider-ui/out/")
-// }
+func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
+	ServeUI(w, r, "/provider", "../provider-ui/out/")
+}

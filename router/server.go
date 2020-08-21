@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
 )
 
@@ -25,10 +26,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
-	// gMux.Handle("/provider/", http.HandlerFunc(h.ProviderUIHandler))
-	gMux.PathPrefix("/provider/").
-		Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/")))).
+	gMux.Handle("/provider/", http.HandlerFunc(h.ProviderUIHandler)).
 		Methods("GET")
+	// gMux.PathPrefix("/provider/").
+	// 	Handler(http.StripPrefix("/provider/", http.FileServer(http.Dir("../provider-ui/out/")))).
+	// 	Methods("GET")
 
 	gMux.Handle("/api/config/sync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SessionSyncHandler)))).
 		Methods("GET")
@@ -148,7 +150,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	// 	handlers.ServeUI(w, r, "", "../ui/out/")
 	// }))))
 
-	gMux.Methods("GET").PathPrefix("/").Handler(h.ProviderMiddleware(h.AuthMiddleware(http.StripPrefix("/", http.FileServer(http.Dir("../ui/out/"))))))
+	gMux.PathPrefix("/").
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.ServeUI(w, r, "", "../ui/out/")
+		})))).
+		Methods("GET")
 
 	return &Router{
 		s:    gMux,
