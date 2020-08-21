@@ -270,7 +270,7 @@ const categories = [
         show: true,
       },
       {
-        id: 'OSM',
+        id: 'Open Service Mesh',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/osm", 
         title: 'Open Service Mesh',
@@ -402,7 +402,7 @@ class Navigator extends React.Component {
         image = "/static/img/citrix-light-gray.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
-      case 'osm':
+      case 'open service mesh':
         image = "/static/img/osm-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
@@ -415,7 +415,7 @@ class Navigator extends React.Component {
     }
 
     handleAdapterClick = (id, link) => {
-      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Osm"];
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh"];
       let index = allowedId.indexOf(id);
       if ( index != -1 && !link) {
         this.props.router.push('/management');
