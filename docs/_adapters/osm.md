@@ -2,7 +2,7 @@
 layout: page
 title: Open Service Mesh Adapter
 name: Open Service Mesh
-version: "-"
+version: OSM v0.3.0
 port: 10010/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-osm
