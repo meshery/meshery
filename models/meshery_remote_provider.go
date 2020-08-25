@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -488,4 +489,137 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
 	}
+}
+
+// SMPSTestConfigStore - persist test profile details to provider
+func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
+	data, err := json.Marshal(perfConfig)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal testConfig for shipping"))
+		return "", err
+	}
+
+	bf := bytes.NewBuffer(data)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get token: %v", err)
+		return "", err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send testConfig: %v", err)
+		return "", err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode == http.StatusCreated || err != nil {
+		return string(bdr), err
+	}
+	logrus.Errorf("error while sending testConfig: %s", bdr)
+	return "", fmt.Errorf("error while sending testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// SMPSTestConfigGet - retreive a single test profile details
+func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+	q := saasURL.Query()
+	q.Add("test_uuid", testUUID)
+	saasURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", saasURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get token: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get testConfig: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("error sending the request: %v", err)
+		return nil, err
+	}
+	logrus.Debugf("%v", string(bdr))
+	if resp.StatusCode == http.StatusOK {
+		testConfig := SMPS.PerformanceTestConfig{}
+		err := json.Unmarshal(bdr, &testConfig)
+		if err != nil {
+			return nil, err
+		}
+		return &testConfig, nil
+	}
+	logrus.Errorf("error while getting testConfig: %s", bdr)
+	return nil, fmt.Errorf("error while getting testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// SMPSTestConfigFetch - retreive list of test profiles
+func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+	q := saasURL.Query()
+	q.Add("page", page)
+	q.Add("pageSize", pageSize)
+	saasURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", saasURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get token: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get testConfigs: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode == http.StatusOK || err != nil {
+		return bdr, err
+	}
+	logrus.Errorf("error while getting testConfigs: %s", bdr)
+	return nil, fmt.Errorf("error while getting testConfigs - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// SMPSTestConfigDelete - tombstone a given test profile
+func (l *MesheryRemoteProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+	q := saasURL.Query()
+	q.Add("test_uuid", testUUID)
+	saasURL.RawQuery = q.Encode()
+	cReq, _ := http.NewRequest(http.MethodDelete, saasURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get token: %v", err)
+		return err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete testConfig: %v", err)
+		return err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+	logrus.Errorf("error while deleting testConfig: %s", testUUID)
+	return fmt.Errorf("error while deleting testConfig - Status code: %d, Body: %s", resp.StatusCode, testUUID)
 }
