@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - 'master'
+      - 'meshmap'
     tags:
       - 'v*'
   pull_request:
     branches:
       - 'master'
+      - 'meshmap'
 
 jobs:
   lint:
