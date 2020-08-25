@@ -33,7 +33,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 	p.Logout(w, req)
 }
 
-// TokenHandler Recieves token from the actual provider
+// TokenHandler Receives token from the actual provider
 func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
 	// if r.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)

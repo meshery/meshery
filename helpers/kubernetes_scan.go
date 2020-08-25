@@ -94,8 +94,8 @@ func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]string
 	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
 }
 
-// ScanPromotheus - Runs a quick scan for Prometheus
-func ScanPromotheus(kubeconfig []byte, contextName string) (map[string][]string, error) {
+// ScanPrometheus - Runs a quick scan for Prometheus
+func ScanPrometheus(kubeconfig []byte, contextName string) (map[string][]string, error) {
 	imageNames := []string{"prometheus"}
 
 	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)

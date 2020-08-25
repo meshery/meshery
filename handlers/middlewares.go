@@ -28,7 +28,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		//lint:ignore SA1029 we want to make sure that no two results of errors
-		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider)
+		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}

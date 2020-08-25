@@ -190,7 +190,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	var err error
 
 	if opts.SupportedLoadTestMethods == 2 {
-		err := errors.New("Nighthawk does not support gRPC load testing")
+		err := errors.New("nighthawk does not support gRPC load testing")
 		logrus.Error(err)
 		return nil, nil, err
 	}
@@ -234,7 +234,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	err = json.Unmarshal(res, result)
 
 	if err != nil {
-		err = errors.Wrap(err, "Error while unmarshalling  Nighthawk results to the FortioHTTPRunner")
+		err = errors.Wrap(err, "Error while unmarshaling  Nighthawk results to the FortioHTTPRunner")
 		logrus.Error(err)
 		return nil, nil, err
 	}
@@ -243,7 +243,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	err = json.Unmarshal(bd, &resultsMap)
 
 	if err != nil {
-		err = errors.Wrap(err, "Error while unmarshalling Nighthawk results to map")
+		err = errors.Wrap(err, "Error while unmarshaling Nighthawk results to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}

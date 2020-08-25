@@ -117,7 +117,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
-		logrus.Errorf("error marshalling boards: %v", err)
+		logrus.Errorf("error marshaling boards: %v", err)
 		http.Error(w, "unable to marshal boards payload", http.StatusInternalServerError)
 		return
 	}

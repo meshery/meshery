@@ -21,7 +21,7 @@ func init() {
 	gob.Register(&models.PrometheusClient{})
 }
 
-// ScanPromGrafanaHandler - fetches  Promotheus and Grafana
+// ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
@@ -44,22 +44,22 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 	}
 }
 
-// ScanPromotheusHandler - fetches  Promotheus
-func (h *Handler) ScanPromotheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// ScanPrometheusHandler - fetches  Prometheus
+func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
 		return
 	}
 
-	availablePromotheus, err := helpers.ScanPromotheus(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+	availablePrometheus, err := helpers.ScanPrometheus(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to scan Kubernetes")
 		logrus.Error(err)
 		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
 		return
 	}
-	if err = json.NewEncoder(w).Encode(availablePromotheus); err != nil {
+	if err = json.NewEncoder(w).Encode(availablePrometheus); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
 		logrus.Error(err)
 		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
@@ -189,7 +189,7 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
-		logrus.Errorf("error marshalling board: %v", err)
+		logrus.Errorf("error marshaling board: %v", err)
 		http.Error(w, "unable to marshal the board instance", http.StatusInternalServerError)
 		return
 	}
@@ -294,7 +294,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
-		logrus.Errorf("error marshalling board: %v", err)
+		logrus.Errorf("error marshaling board: %v", err)
 		http.Error(w, "unable to marshal board instance", http.StatusInternalServerError)
 		return
 	}

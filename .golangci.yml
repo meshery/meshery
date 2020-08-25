@@ -56,7 +56,7 @@ linters-settings:
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
   lll:
-    line-length: 250
+    line-length: 950
   maligned:
     suggest-new: true
   misspell:

@@ -29,7 +29,7 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
-		logrus.Errorf("Error marshalling data: %v.", err)
+		logrus.Errorf("Error marshaling data: %v.", err)
 		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 		return
 	}
@@ -86,7 +86,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
-		logrus.Errorf("error marshalling data: %v.", err)
+		logrus.Errorf("error marshaling data: %v.", err)
 		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 		return
 	}

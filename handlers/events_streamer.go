@@ -174,7 +174,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		log.Debugf("Received an event.")
 		data, err := json.Marshal(event)
 		if err != nil {
-			err = errors.Wrapf(err, "Error marshalling event to json.")
+			err = errors.Wrapf(err, "Error marshaling event to json.")
 			log.Error(err)
 			// errChan <- err
 			// log.Errorf(

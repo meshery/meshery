@@ -53,11 +53,11 @@ func NewBitCaskPreferencePersister(folderName string) (*BitCaskPreferencePersist
 // ReadFromPersister - reads the session data for the given userID
 func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist")
+		return nil, errors.New("connection to DB does not exist")
 	}
 
 	if userID == "" {
-		return nil, errors.New("User ID is empty")
+		return nil, errors.New("user ID is empty")
 	}
 
 	data := &Preference{
@@ -125,11 +125,11 @@ func (s *BitCaskPreferencePersister) WriteToPersister(userID string, data *Prefe
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty")
+		return errors.New("user ID is empty")
 	}
 
 	if data == nil {
-		return errors.New("Given config data is nil")
+		return errors.New("given config data is nil")
 	}
 
 	data.UpdatedAt = time.Now()
@@ -168,11 +168,11 @@ RETRY:
 // DeleteFromPersister removes the session for the user
 func (s *BitCaskPreferencePersister) DeleteFromPersister(userID string) error {
 	if s.db == nil {
-		return errors.New("Connection to DB does not exist")
+		return errors.New("connection to DB does not exist")
 	}
 
 	if userID == "" {
-		return errors.New("User ID is empty")
+		return errors.New("user ID is empty")
 	}
 
 RETRY:

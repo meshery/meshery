@@ -59,13 +59,13 @@ func NewBitCaskTestProfilesPersister(folderName string) (*BitCaskTestProfilesPer
 // GetTestConfigs - gets result for the page and pageSize
 func (s *BitCaskTestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist")
+		return nil, errors.New("connection to DB does not exist")
 	}
 
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
+		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
 		logrus.Error(err)
 	}
 	if !locked {
@@ -93,14 +93,14 @@ RETRY:
 		if localIndex >= start && localIndex <= end {
 			dd, err := s.db.Get(k)
 			if err != nil {
-				err = errors.Wrapf(err, "Unable to read data from bitcask store")
+				err = errors.Wrapf(err, "unable to read data from bitcask store")
 				logrus.Error(err)
 				return nil, err
 			}
 			if len(dd) > 0 {
 				testConfig := &SMPS.PerformanceTestConfig{}
 				if err := json.Unmarshal(dd, testConfig); err != nil {
-					err = errors.Wrapf(err, "Unable to unmarshal data.")
+					err = errors.Wrapf(err, "unable to unmarshal data.")
 					logrus.Error(err)
 					return nil, err
 				}
@@ -117,7 +117,7 @@ RETRY:
 		TestConfigs: testConfigs,
 	})
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to marshal result data.")
+		err = errors.Wrapf(err, "unable to marshal result data.")
 		logrus.Error(err)
 		return nil, err
 	}
@@ -128,13 +128,13 @@ RETRY:
 // GetTestConfig - gets result for a specific key
 func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMPS.PerformanceTestConfig, error) {
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist")
+		return nil, errors.New("connection to DB does not exist")
 	}
 
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
+		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
 		logrus.Error(err)
 	}
 	if !locked {
@@ -153,7 +153,7 @@ RETRY:
 
 	data, err := s.db.Get(keyb)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to fetch result data")
+		err = errors.Wrapf(err, "unable to fetch result data")
 		logrus.Error(err)
 		return nil, err
 	}
@@ -161,7 +161,7 @@ RETRY:
 	testConfig := &SMPS.PerformanceTestConfig{}
 	err = json.Unmarshal(data, testConfig)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to marshal testConfig data.")
+		err = errors.Wrapf(err, "unable to marshal testConfig data.")
 		logrus.Error(err)
 		return nil, err
 	}
@@ -172,13 +172,13 @@ RETRY:
 // DeleteTestConfig - delete result for a specific key
 func (s *BitCaskTestProfilesPersister) DeleteTestConfig(key uuid.UUID) error {
 	if s.db == nil {
-		return errors.New("Connection to DB does not exist")
+		return errors.New("connection to DB does not exist")
 	}
 
 RETRY:
 	locked, err := s.db.TryRLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
+		err = errors.Wrapf(err, "unable to obtain read lock from bitcask store")
 		logrus.Error(err)
 	}
 	if !locked {
@@ -197,7 +197,7 @@ RETRY:
 
 	err = s.db.Delete(keyb)
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to fetch result data")
+		err = errors.Wrapf(err, "unable to fetch result data")
 		logrus.Error(err)
 		return err
 	}
@@ -212,13 +212,13 @@ func (s *BitCaskTestProfilesPersister) WriteTestConfig(key uuid.UUID, result []b
 	}
 
 	if result == nil {
-		return errors.New("Given result data is nil")
+		return errors.New("given result data is nil")
 	}
 
 RETRY:
 	locked, err := s.db.TryLock()
 	if err != nil {
-		err = errors.Wrapf(err, "Unable to obtain write lock from bitcask store")
+		err = errors.Wrapf(err, "unable to obtain write lock from bitcask store")
 		logrus.Error(err)
 	}
 	if !locked {
@@ -229,7 +229,7 @@ RETRY:
 	}()
 
 	if err := s.db.Put(key.Bytes(), result); err != nil {
-		err = errors.Wrapf(err, "Unable to persist result data.")
+		err = errors.Wrapf(err, "unable to persist result data.")
 		logrus.Error(err)
 		return err
 	}
