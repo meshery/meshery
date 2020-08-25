@@ -53,7 +53,7 @@ jobs:
   build-backend:
     name: Meshery backend build check
     runs-on: ubuntu-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    needs: [tests, lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -74,7 +74,7 @@ jobs:
   build-ui:
     name: Meshery UI build check
     runs-on: ubuntu-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    needs: [lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -96,7 +96,7 @@ jobs:
   build-provider-ui:
     name: Meshery Provider-UI build check
     runs-on: ubuntu-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests, lint-UI, lint-Provider-UI]
+    needs: [lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -160,7 +160,7 @@ jobs:
   build_release:
     name: Mesheryctl Build & Release
     runs-on: macos-latest
-    needs: [lint, error_check, static_check, vet_check, security_check, tests]
+    needs: [tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
