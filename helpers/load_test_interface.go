@@ -234,6 +234,12 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	err = json.Unmarshal(res, result)
 
+	if err != nil {
+		err = errors.Wrap(err, "error while unmarshaling data to the FortioHTTPRunner")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
 	resultsMap := map[string]interface{}{}
 
 	err = json.Unmarshal(bd, &resultsMap)
