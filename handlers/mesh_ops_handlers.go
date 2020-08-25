@@ -152,7 +152,6 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 }
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
-
 	adapterLoc := req.URL.Query().Get("adapter")
 	logrus.Debugf("URL of adapter to be removed: %s.", adapterLoc)
 
@@ -165,7 +164,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Given adapter URL is not valid.", http.StatusBadRequest)
 		return meshAdapters, err
@@ -211,7 +210,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return
@@ -288,7 +287,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return

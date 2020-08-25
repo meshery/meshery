@@ -23,7 +23,6 @@ func init() {
 
 // ScanPromGrafanaHandler - fetches  Promotheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
@@ -47,7 +46,6 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 
 // ScanPromotheusHandler - fetches  Promotheus
 func (h *Handler) ScanPromotheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
@@ -71,7 +69,6 @@ func (h *Handler) ScanPromotheusHandler(w http.ResponseWriter, req *http.Request
 
 // ScanGrafanaHandler - fetches  Grafana
 func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		logrus.Error("No valid kubernetes config found.")
 		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
@@ -158,7 +155,6 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	_, _ = w.Write([]byte("{}"))
-
 }
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels

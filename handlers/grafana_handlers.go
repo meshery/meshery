@@ -84,7 +84,6 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	}
 
 	_, _ = w.Write([]byte("{}"))
-
 }
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels

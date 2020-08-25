@@ -123,7 +123,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	var res periodic.HasRunnerResult
 	var err error
 	if opts.SupportedLoadTestMethods == 2 {
-		err := errors.New("wrk2 does not support gRPC at the moment")
+		err = errors.New("wrk2 does not support gRPC at the moment")
 		logrus.Error(err)
 		return nil, nil, err
 	}

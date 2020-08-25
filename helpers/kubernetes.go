@@ -103,7 +103,6 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string) ([]*models.K8SN
 		node.Architecture = nodeInfo.Architecture
 
 		nodes = append(nodes, node)
-
 	}
 	return nodes, nil
 }

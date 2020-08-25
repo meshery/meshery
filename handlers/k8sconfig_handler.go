@@ -33,7 +33,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 		h.deleteK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
-
 }
 
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {

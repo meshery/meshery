@@ -36,7 +36,7 @@ var (
 func requestErr(err error, url string) bool {
 	if err != nil {
 		logrus.Infof("Server Version: Unavailable \t  GitSHA: Unavailable")
-		logrus.Errorf("\nError Occured: %v", err)
+		logrus.Errorf("\nError Occurred: %v", err)
 		logrus.Errorf("\nCould not communicate with Meshery at %s", url+"/server/version")
 		logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
 		return true

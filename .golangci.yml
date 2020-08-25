@@ -47,7 +47,7 @@ linters-settings:
     settings:
       exclude: -G204
   govet:
-    check-shadowing: true
+    check-shadowing: false
     settings:
       printf:
         funcs:
@@ -56,7 +56,7 @@ linters-settings:
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
   lll:
-    line-length: 140
+    line-length: 250
   maligned:
     suggest-new: true
   misspell:
@@ -72,7 +72,7 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
-    - bodyclose
+    # - bodyclose
     # - deadcode
     - dogsled
     - errcheck
@@ -90,7 +90,7 @@ linters:
     - govet
     # - ineffassign
     # - interfacer
-    # - lll
+    - lll
     - misspell
     # - nakedret
     # - nolintlint
