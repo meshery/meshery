@@ -92,6 +92,11 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
              <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
            </td>
         </tr>
+          <tr>
+          <td><a href="https://github.com/layer5io/meshery-osm">
+            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
+          </td>
+        </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
           <td rowspan="8" class="alpha-adapters">alpha</td>
@@ -109,11 +114,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
             <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
-          </td>
-        </tr>
-        <tr>
-          <td><a href="https://github.com/layer5io/meshery-osm">
-            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
         <tr>
