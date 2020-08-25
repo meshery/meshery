@@ -297,7 +297,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	)
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
-	} else if loadTestOptions.LoadGenerator == models.Wrk2LG {
+	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
 		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
 	} else {
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
