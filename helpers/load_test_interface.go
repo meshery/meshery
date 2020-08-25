@@ -169,7 +169,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	return resultsMap, result, nil
 }
 
-// NighthawkLoadTest is the actual code which invokes Wrk2 to run the load test
+// NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS
 
@@ -241,13 +241,14 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	resultsMap := map[string]interface{}{}
-
 	err = json.Unmarshal(bd, &resultsMap)
+
 	if err != nil {
 		err = errors.Wrap(err, "error while unmarshaling data to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}
+
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
 }
