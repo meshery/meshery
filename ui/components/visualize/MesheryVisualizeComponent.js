@@ -1,7 +1,7 @@
 import React from 'react';
 import NoSsr from '@material-ui/core/NoSsr';
 import CytoscapeComponent from 'react-cytoscapejs';
-import DefaultGraph from './styles/styleContainer';
+import GraphStyle from './styles/styleContainer';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { withStyles } from '@material-ui/core/styles';
@@ -66,10 +66,10 @@ class MesheryVisualizeComponent extends React.Component {
   render() {
     const {classes} = this.props
 
-    const elements = {// get node j and the edges coming out from it
+    //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
+    const elements = {
 
       nodes: [
-        // Namespace > App > Proxy and Service
         {
           data: {
             id: 'ingress_gateway',
@@ -77,15 +77,6 @@ class MesheryVisualizeComponent extends React.Component {
           },
           classes: ['namespace']
 
-          // selected: false, // whether the element is selected (default false)
-
-          // selectable: true, // whether the selection state is mutable (default true)
-
-          // locked: false, // when locked a node's position is immutable (default false)
-
-          // grabbable: true, // whether the node can be grabbed and moved by the user
-
-          // pannable: false, // whether dragging the node causes panning instead of grabbing
         },
         {
           data: {
@@ -94,13 +85,13 @@ class MesheryVisualizeComponent extends React.Component {
             parent: 'ingress_gateway',
 
           },
-          classes: ['app'] // an array (or a space separated string) of class names that the element has
+          classes: ['app']
         },
         {
           data: {
             parent: 'gateway_app'
           },
-          classes: ['proxy'] // an array (or a space separated string) of class names that the element has
+          classes: ['proxy']
         },
         {
           data: {
@@ -142,8 +133,8 @@ class MesheryVisualizeComponent extends React.Component {
             <CytoscapeComponent 
               elements={CytoscapeComponent.normalizeElements(elements)}
               style={ {width: '100%', height: '100%'} }
-              layout={{ name: 'cose' }}
-              stylesheet={DefaultGraph.getStylesheetContainer()}
+              layout={GraphStyle.getLayout()}
+              stylesheet={GraphStyle.getStylesheetContainer()}
               cy={cy => this.cy = cy}
             />
           </div>

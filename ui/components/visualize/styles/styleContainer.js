@@ -1,14 +1,16 @@
-export default class DefaultGraph {
+export default class GraphStyle {
   static getLayout() {
+    //Right now using cose. Adding more options in future
     return {
-      name: 'cose-bilkent',
+      name: 'cose',
       animate: false,
       fit: false,
       nodeDimensionsIncludeLabels: true
     };
   }
 
-  //Stling nodes and edges
+  //Styling nodes and edges
+  //Work needed to be done. Feel free to play around with it
   static getStylesheetContainer() {
     return [
       {
