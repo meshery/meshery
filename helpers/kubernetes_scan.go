@@ -14,29 +14,29 @@ import (
 
 // NOT TO BE UPDATED at runtime
 var meshesMeta = map[string][]string{
-	"Istio": []string{
+	"Istio": {
 		"docker.io/istio/citadel",
 		"docker.io/istio/proxyv2",
 		"docker.io/istio/galley",
 		"docker.io/istio/pilot",
 	},
-	"Linkerd": []string{
+	"Linkerd": {
 		"gcr.io/linkerd-io/controller",
 		"gcr.io/linkerd-io/proxy",
 	},
-	"Consul": []string{
+	"Consul": {
 		"hashicorp/consul-k8s",
 	},
-	"Network Service Mesh": []string{
+	"Network Service Mesh": {
 		"docker.io/networkservicemesh/nsmdp",
 		"docker.io/networkservicemesh/nsmd",
 		"docker.io/networkservicemesh/nsmd-k8s",
 	},
-	"Citrix": []string{
+	"Citrix": {
 		"quay.io/citrix/citrix-istio-adaptor",
 		"quay.io/citrix/citrix-k8s-cpx-ingress",
 	},
-	"osm": []string{
+	"osm": {
 		"docker.io/openservicemesh/osm-controller",
 		"docker.io/openservicemesh/init",
 	},

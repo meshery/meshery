@@ -53,10 +53,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	go func() {
 
 		for mClient := range newAdaptersChan {
-      		log.Debug("received a new mesh client, listening for events")
-      		go func(mClient *meshes.MeshClient) {
-	      		listenForAdapterEvents(req.Context(), mClient, respChan, log)
-	     		_ = mClient.Close()
+			log.Debug("received a new mesh client, listening for events")
+			go func(mClient *meshes.MeshClient) {
+				listenForAdapterEvents(req.Context(), mClient, respChan, log)
+				_ = mClient.Close()
 			}(mClient)
 		}
 

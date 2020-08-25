@@ -48,14 +48,14 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
-			err := errors.New("meshLocationURL cannot be empty to add an adapter")
+			err = errors.New("meshLocationURL cannot be empty to add an adapter")
 			logrus.Error(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-			err := errors.New("no valid kubernetes config found")
+			err = errors.New("no valid kubernetes config found")
 			logrus.Error(err)
 			http.Error(w, "No valid Kubernetes config found.", http.StatusBadRequest)
 			return

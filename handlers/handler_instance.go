@@ -20,7 +20,6 @@ func NewHandlerInstance(
 		config: handlerConfig,
 	}
 
-
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{
 		Name:    "submitMetrics",
 		Handler: h.CollectStaticMetrics,

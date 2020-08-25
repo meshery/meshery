@@ -121,7 +121,7 @@ func start() error {
 				}
 			} else if runtime.GOOS == "linux" {
 				// Meshery running on Linux host
-				_, err := exec.LookPath("xdg-open")
+				_, err = exec.LookPath("xdg-open")
 				if err != nil {
 					break
 				}
