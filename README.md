@@ -145,33 +145,36 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <br /><br /><br /><br />
 </p>
 
+
+<h3>Adhering to Service Mesh Standards</h3>
+In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/img/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
-<h3>Service Performance Management</h3>
+<!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
+<h4>Standardized Service Performance Management</h4>
 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
 <br /><br />
 </p>
-<div>&nbsp;</div>
 
-## Meshery is SMI conformant!
-
-Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
-
-- An easy-to-use SMI-specific tool to give service mesh projects and users a suite of conformance tests.
-- Repeatable, versioned and verifiable conformance tests.
-- A compatibility matrix identifying the SMI features that are supported per service mesh.
-- Effortless addition of the SMI tool as an operation to all Meshery supported adapters, which will consecutively allow users to ceaselessly invoke the SMI conformance tests.
+<h4>Conforming to Service Mesh Interface (SMI)</h4>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
-<h3> Service Mesh Standards </h3>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
+Meshery provides tooling to validate any service mesh that claims to implement and <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="docs/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="45%" align="left" /></a>conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
+
+✔︎ Defines compliant behavior.<br />
+✔︎ Produces compatibility matrix. <br />
+✔︎ Ensures provenance of results. <br />
+✔︎ Runs a set of conformance tests. <br />
+✔︎ Built into participating service mesh’s release pipeline. <br />
+✔︎ Provides [Learn Layer5](https://github.com/layer5io/learn-layer5) sample application used for validating test assertions. <br />
+
+<br /><br />
 </p>
 
 <div>&nbsp;</div>
-
 
 ## Meshery Architecture
 You may deploy Meshery internal to your cluster or external to your cluster.
@@ -183,7 +186,7 @@ Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's
 ## Join the service mesh community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and jump into our <a href="http://slack.layer5.io">Slack</a>!
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit?usp=sharing">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/images/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
