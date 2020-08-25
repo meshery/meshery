@@ -135,7 +135,7 @@ const staticBoardCluster = `
 		"thresholds": "70,80",
 		"timeFrom": null,
 		"timeShift": null,
-		"title": "CPU Utilisation",
+		"title": "CPU Utilization",
 		"tooltip": {
 		  "shared": false,
 		  "sort": 0,
@@ -546,7 +546,7 @@ const staticBoardCluster = `
 		"thresholds": "70,80",
 		"timeFrom": null,
 		"timeShift": null,
-		"title": "Memory Utilisation",
+		"title": "Memory Utilization",
 		"tooltip": {
 		  "shared": false,
 		  "sort": 0,

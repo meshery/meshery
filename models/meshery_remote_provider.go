@@ -525,7 +525,7 @@ func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfi
 	return "", fmt.Errorf("error while sending testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SMPSTestConfigGet - retreive a single test profile details
+// SMPSTestConfigGet - retrieve a single test profile details
 func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
 	q := saasURL.Query()
@@ -565,7 +565,7 @@ func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID st
 	return nil, fmt.Errorf("error while getting testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SMPSTestConfigFetch - retreive list of test profiles
+// SMPSTestConfigFetch - retrieve list of test profiles
 func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
 	q := saasURL.Query()

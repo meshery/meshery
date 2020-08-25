@@ -33,7 +33,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 		h.deleteK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
-
 }
 
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
@@ -120,7 +119,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	kc.Config = nil
 
 	if err = json.NewEncoder(w).Encode(kc); err != nil {
-		logrus.Errorf("error marshalling data: %v", err)
+		logrus.Errorf("error marshaling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return
 	}
@@ -181,7 +180,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Errorf("error marshalling data: %v", err)
+		logrus.Errorf("error marshaling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return
 	}
