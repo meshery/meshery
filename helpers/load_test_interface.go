@@ -227,7 +227,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	bd, err := json.Marshal(res)
 
 	if err != nil {
-		err = errors.Wrap(err, "error while converting results to map")
+		err = errors.Wrap(err, "Error while converting  Nighthawk results to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}
@@ -235,7 +235,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	err = json.Unmarshal(res, result)
 
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to the FortioHTTPRunner")
+		err = errors.Wrap(err, "Error while unmarshalling  Nighthawk results to the FortioHTTPRunner")
 		logrus.Error(err)
 		return nil, nil, err
 	}
@@ -244,7 +244,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	err = json.Unmarshal(bd, &resultsMap)
 
 	if err != nil {
-		err = errors.Wrap(err, "error while unmarshaling data to map")
+		err = errors.Wrap(err, "Error while unmarshalling Nighthawk results to map")
 		logrus.Error(err)
 		return nil, nil, err
 	}
