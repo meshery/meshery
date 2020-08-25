@@ -99,7 +99,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowsApan="5" class="alpha-adapters">alpha</td>
+          <td rowspan="5" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
