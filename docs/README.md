@@ -16,7 +16,6 @@ Note: Windows users can run Jekyll by following the [Windows Installation Guide]
 
 * First [install Ruby](https://jekyllrb.com/docs/installation/), then install Jekyll and Bundler.
 
-
 ### 2. Get the code
 
 * Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
