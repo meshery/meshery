@@ -1,5 +1,6 @@
 import DashboardComponent from "../components/DashboardComponent";
 import { NoSsr } from "@material-ui/core";
+import Paper from '@material-ui/core/Paper';
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
@@ -14,7 +15,9 @@ class Index extends React.Component {
   render () {
     return (
       <NoSsr>
-        <DashboardComponent />
+        <Paper>
+          <DashboardComponent />
+        </Paper>
       </NoSsr>
     );
   }

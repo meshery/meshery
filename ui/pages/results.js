@@ -1,10 +1,22 @@
 import { NoSsr } from "@material-ui/core";
+import Paper from '@material-ui/core/Paper';
 import MesheryResults from "../components/MesheryResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import Head from 'next/head';
 import { getPath } from "../lib/path";
+import { withStyles } from '@material-ui/core/styles';
+
+const style = () => ({
+
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+
+  }
+})
 
 class Results extends React.Component {
   componentDidMount () {
@@ -15,10 +27,12 @@ class Results extends React.Component {
   render () {
     return (
       <NoSsr>
-        <Head>
-          <title>Results | Meshery</title>
-        </Head>
-        <MesheryResults />
+        <Paper className={this.props.classes.paper}>
+          <Head>
+            <title>Results | Meshery</title>
+          </Head>
+          <MesheryResults />
+        </Paper>
       </NoSsr>
     );
   }
@@ -31,4 +45,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   null,
   mapDispatchToProps
-)(Results);
+)(withStyles(style)(Results));

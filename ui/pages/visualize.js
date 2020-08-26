@@ -11,7 +11,7 @@ class Performance extends React.Component {
 
   render () {
     const MesheryVisualizeComponentNoSsr = dynamic(
-      () => import('../components/MesheryVisualizeComponent'),
+      () => import('../components/visualize/MesheryVisualizeComponent'),
       { ssr: false }
     )
 
