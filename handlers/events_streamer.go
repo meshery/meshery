@@ -51,17 +51,15 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	newAdaptersChan := make(chan *meshes.MeshClient)
 
 	go func() {
-
 		for mClient := range newAdaptersChan {
-      		log.Debug("received a new mesh client, listening for events")
-      		go func(mClient *meshes.MeshClient) {
-	      		listenForAdapterEvents(req.Context(), mClient, respChan, log)
-	     		_ = mClient.Close()
+			log.Debug("received a new mesh client, listening for events")
+			go func(mClient *meshes.MeshClient) {
+				listenForAdapterEvents(req.Context(), mClient, respChan, log)
+				_ = mClient.Close()
 			}(mClient)
 		}
 
 		log.Debug("new adapters channel closed")
-
 	}()
 
 	go func() {
@@ -176,7 +174,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		log.Debugf("Received an event.")
 		data, err := json.Marshal(event)
 		if err != nil {
-			err = errors.Wrapf(err, "Error marshalling event to json.")
+			err = errors.Wrapf(err, "Error marshaling event to json.")
 			log.Error(err)
 			// errChan <- err
 			// log.Errorf(

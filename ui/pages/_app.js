@@ -52,7 +52,7 @@ let theme = createMuiTheme({
   typography: {
     useNextVariants: true,
     h5: {
-      fontWeight: 500,
+      fontWeight: 'bolder',
       fontSize: 26,
       letterSpacing: 0.5,
     },

@@ -2,13 +2,17 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
 
-	"encoding/json"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/layer5io/meshery/models"
+	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -85,4 +89,117 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	_, _ = w.Write([]byte("{}"))
+}
+
+// UserTestPreferenceHandler is used for persisting load test preferences
+func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method != http.MethodPost && req.Method != http.MethodGet && req.Method != http.MethodDelete {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if req.Method == http.MethodPost {
+		h.UserTestPreferenceStore(w, req, prefObj, user, provider)
+		return
+	}
+	if req.Method == http.MethodDelete {
+		h.UserTestPreferenceDelete(w, req, prefObj, user, provider)
+		return
+	}
+	if req.Method == http.MethodGet {
+		h.UserTestPreferenceGet(w, req, prefObj, user, provider)
+		return
+	}
+}
+
+// UserTestPreferenceStore is used for persisting load test preferences
+func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		msg := "unable to read request body"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusInternalServerError)
+		return
+	}
+	perfTest := &SMPS.PerformanceTestConfig{}
+	if err = protojson.Unmarshal(body, perfTest); err != nil {
+		msg := "unable to parse the provided input"
+		err = errors.Wrapf(err, msg)
+		logrus.Error(err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	if err = models.SMPSPerformanceTestConfigValidator(perfTest); err != nil {
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	tid, err := provider.SMPSTestConfigStore(req, perfTest)
+	if err != nil {
+		logrus.Errorf("unable to save user preferences: %v", err)
+		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+		return
+	}
+	_, _ = w.Write([]byte(tid))
+}
+
+// UserTestPreferenceGet gets the PerformanceTestConfig object
+func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	q := req.URL.Query()
+	testUUID := q.Get("uuid")
+	logrus.Debugf("%v", testUUID)
+	if testUUID == "" {
+		testPage := q.Get("page")
+		testPageSize := q.Get("pageSize")
+		testSearch := q.Get("search")
+		testOrder := q.Get("order")
+		logrus.Debugf("page %v, pageSize: %v", testPage, testPageSize)
+		testObjJSON, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
+		if err != nil {
+			logrus.Error("error fetching test configs")
+			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
+			return
+		}
+		_, _ = w.Write(testObjJSON)
+	} else {
+		testObj, err := provider.SMPSTestConfigGet(req, testUUID)
+		if err != nil {
+			logrus.Error("error fetching test configs")
+			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
+			return
+		}
+		if testObj == nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		fmt.Printf("%v", testObj)
+		data, err := protojson.Marshal(testObj)
+		if err != nil {
+			logrus.Errorf("error reading database: %v", err)
+			http.Error(w, "error reading database", http.StatusInternalServerError)
+			return
+		}
+		_, err = w.Write(data)
+		if err != nil {
+			logrus.Errorf("error writing response: %v", err)
+			http.Error(w, "error writing response", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+// UserTestPreferenceDelete deletes the PerformanceTestConfig object
+func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	testUUID := req.URL.Query().Get("uuid")
+	if testUUID == "" {
+		logrus.Error("field uuid not found")
+		http.Error(w, "field uuid not found", http.StatusBadRequest)
+		return
+	}
+	if err := provider.SMPSTestConfigDelete(req, testUUID); err != nil {
+		logrus.Errorf("error deleting testConfig: %v", err)
+		http.Error(w, "error deleting testConfig", http.StatusBadRequest)
+		return
+	}
 }

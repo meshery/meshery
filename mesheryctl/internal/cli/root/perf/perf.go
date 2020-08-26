@@ -130,7 +130,7 @@ var PerfCmd = &cobra.Command{
 			return errors.Wrapf(err, utils.PerfError(fmt.Sprintf("failed to make request to %s", testURL)))
 		}
 		if utils.ContentTypeIsHTML(resp) {
-			return errors.New("Failed to run test")
+			return errors.New("failed to run test")
 		}
 		log.Debug("Initiating Performance test ...")
 		log.Debug(resp.Status)
@@ -152,7 +152,6 @@ var PerfCmd = &cobra.Command{
 }
 
 func init() {
-
 	PerfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
 	PerfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
 	PerfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")

@@ -83,7 +83,6 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		loadTestOptions.Duration = time.Second
 	}
 
-
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Clients[0]
 
@@ -297,6 +296,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	)
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
+	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
+		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
 	} else {
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}

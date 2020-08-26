@@ -16,7 +16,6 @@ type Version struct {
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
-
 	// Default values incase any errors
 	version := &Version{
 		Build:     viper.GetString("BUILD"),
