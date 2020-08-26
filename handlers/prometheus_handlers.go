@@ -92,10 +92,10 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
@@ -133,10 +133,10 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 // PrometheusPingHandler - fetches server version to simulate ping
 func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
@@ -159,10 +159,10 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
@@ -197,10 +197,10 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 
 // PrometheusQueryHandler handles prometheus queries
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
@@ -221,10 +221,10 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 // PrometheusQueryRangeHandler handles prometheus range queries
 func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
@@ -251,10 +251,10 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 
 // PrometheusStaticBoardHandler returns the static board
 func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		_, _ = w.Write([]byte("{}"))
@@ -302,10 +302,10 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
 		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)

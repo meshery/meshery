@@ -13,10 +13,10 @@ import (
 
 // UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		logrus.Errorf("error getting user data: %v", err)
@@ -34,10 +34,10 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		}
 		return
 	}
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	var trackStats bool
 	usageStats := req.FormValue("anonymousUsageStats")
 	if usageStats != "" {

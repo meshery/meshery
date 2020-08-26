@@ -8,10 +8,10 @@ import (
 
 // ServeUI - helps serve static files for both meshery ui and provider ui
 func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	// 	return
+	// }
 	reqURL := r.URL.EscapedPath()
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
 	var filePath strings.Builder
