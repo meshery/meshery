@@ -60,8 +60,23 @@ class MesheryVisualizeComponent extends React.Component {
 
   saveGraph() {
     let image = this.cy.png()
-    window.location.href=image.replace("image/png", "image/octet-stream")
+    var lnk = document.createElement('a'), date = new Date(), e
+    lnk.href = image
+    lnk.download = 'MeshMap - '+date.toDateString()+'/' + date.toLocaleTimeString() +'.png'
+    
+    if (document.createEvent) {
+      e = document.createEvent("MouseEvents");
+      e.initMouseEvent("click", true, true, window,
+        0, 0, 0, 0, 0, false, false, false,
+        false, 0, null);
+  
+      lnk.dispatchEvent(e);
+    } else if (lnk.fireEvent) {
+      lnk.fireEvent("onclick");
+    }
+
   }
+
 
   render() {
     const {classes} = this.props
@@ -144,7 +159,7 @@ class MesheryVisualizeComponent extends React.Component {
             <Button onClick={this.fit.bind(this)}>fit</Button>
           </ButtonGroup>
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
-            <Button onClick={this.saveGraph.bind(this)}>Save</Button>
+            <Button id="download" onClick={this.saveGraph.bind(this)} style={{textDecoration:'none'}}>Save</Button>
           </ButtonGroup>
         </div>
       </NoSsr>
