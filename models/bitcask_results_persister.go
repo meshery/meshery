@@ -58,7 +58,7 @@ func NewBitCaskResultsPersister(folderName string) (*BitCaskResultsPersister, er
 // GetResults - gets result for the page and pageSize
 func (s *BitCaskResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist")
+		return nil, errors.New("connection to DB does not exist")
 	}
 
 RETRY:
@@ -127,7 +127,7 @@ RETRY:
 // GetResult - gets result for a specific key
 func (s *BitCaskResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, error) {
 	if s.db == nil {
-		return nil, errors.New("Connection to DB does not exist")
+		return nil, errors.New("connection to DB does not exist")
 	}
 
 RETRY:
@@ -175,7 +175,7 @@ func (s *BitCaskResultsPersister) WriteResult(key uuid.UUID, result []byte) erro
 	}
 
 	if result == nil {
-		return errors.New("Given result data is nil")
+		return errors.New("given result data is nil")
 	}
 
 RETRY:

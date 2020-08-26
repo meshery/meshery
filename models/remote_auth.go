@@ -177,7 +177,6 @@ func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
 
 // GenerateKey - generate the actual key from the JWK
 func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
-
 	// decode the base64 bytes for n
 	nb, err := base64.RawURLEncoding.DecodeString(jwk["n"])
 	if err != nil {

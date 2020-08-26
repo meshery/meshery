@@ -73,4 +73,4 @@ export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
 ### 5. Finish up
 
-Follow the rest of Meshery [installation](../installation) steps.
+Follow the rest of Meshery [installation](/docs/pages/installation/index.md) steps.

@@ -147,8 +147,8 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 		UID:          board.UID,
 		Slug:         slug.Make(board.Title),
 		TemplateVars: []*GrafanaTemplateVars{},
-		Panels: []*sdk.Panel{},
-		OrgID:  orgID,
+		Panels:       []*sdk.Panel{},
+		OrgID:        orgID,
 	}
 	var err error
 	tmpDsName := map[string]string{}

@@ -2,16 +2,16 @@ package utils
 
 import (
 	"bytes"
+	crand "crypto/rand"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
-	crand "crypto/rand"
 	rand "math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
-	"encoding/binary"
 	"os/exec"
 	"path"
 	"runtime"
@@ -65,15 +65,15 @@ func (s cryptoSource) Seed(seed int64) {}
 
 // Int63 to generate high security rand through crypto
 func (s cryptoSource) Int63() int64 {
-    return int64(s.Uint64() & ^uint64(1<<63))
+	return int64(s.Uint64() & ^uint64(1<<63))
 }
 
 func (s cryptoSource) Uint64() (v uint64) {
-    err := binary.Read(crand.Reader, binary.BigEndian, &v)
-    if err != nil {
-        log.Fatal(err)
-    }
-    return v
+	err := binary.Read(crand.Reader, binary.BigEndian, &v)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return v
 }
 
 const tokenName = "token"

@@ -15,8 +15,12 @@ assignees: ''
 
 
 ---
-**Resources**
-<!-- Helpful tools and reference information. -->
+**Implementation**
+<!-- Specifics on the approach to fulfilling the feature request. -->
 
-**Alternatives / Additional Context**
-<!-- A brief description of any alternative solutions or features you've considered or other context that might be helpful. -->
+**Mockups**
+<!-- Any visual diagrams of the desired user interface. -->
+
+**Acceptance Tests**
+<!-- Stipulations of functional behavior or non-functional items that must be in-place in order for the issue to be closed. -->
+

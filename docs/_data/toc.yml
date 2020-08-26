@@ -2,7 +2,7 @@
   url: ''
   links:
     - title: Overview
-      url: overview      
+      url: overview
     - title: Quick Start
       url: installation
     - title: Supported Platforms
@@ -36,6 +36,8 @@
           url: functionality/lifecycle-management
         - title: Performance Management
           url: functionality/performance-management
+        - title: SMI Conformance
+          url: functionality/smi-conformance
     - title: Service Meshes
       url: service-meshes
       children:
@@ -57,8 +59,10 @@
           url: service-meshes/adapters/nsm/nsm
         - title: Octarine
           url: service-meshes/adapters/octarine/octarine
+        - title: Open Service Mesh
+          url: service-meshes/adapters/osm
         - title: Tanzu
-          url: service-meshes/adapters/tanzu-sm    
+          url: service-meshes/adapters/tanzu-sm
     - title: Extensibility
       url: extensibility
     - title: Guides
