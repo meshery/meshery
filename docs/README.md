@@ -11,7 +11,7 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 * *The Meshery Docs site is built using Jekyll - a simple static site generator! You can learn more about Jekyll and setting up your development environment in the [Jekyll Docs](https://jekyllrb.com/docs/).*
 
-Note: Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also install Ruby Version Manager [RVM](https://rvm.io) - a command-line tool which allows you to easily install, manage and work with multiple ruby environments on your local machine. Alternatively, if you're running Windows 10, updated to version 1903 Build 18362 or higher you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+Note: Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
 
 * First [install Ruby](https://jekyllrb.com/docs/installation/), then install Jekyll and Bundler.
 
