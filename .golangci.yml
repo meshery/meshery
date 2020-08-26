@@ -140,6 +140,7 @@ run:
     - internal/cache
     - internal/renameio
     - internal/robustio
+  timeout: 5m
 
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
