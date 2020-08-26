@@ -5,6 +5,17 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../lib/path";
+import { withStyles } from '@material-ui/core/styles';
+
+const style = () => ({
+
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+
+  }
+})
 
 class Performance extends React.Component {
   componentDidMount () {
@@ -15,10 +26,10 @@ class Performance extends React.Component {
   render () {
     return (
       <NoSsr>
-        <Head>
-          <title>Performance | Meshery</title>
-        </Head>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
+          <Head>
+            <title>Performance | Meshery</title>
+          </Head>
           <MesheryPerformanceComponent />
         </Paper>
       </NoSsr>
@@ -33,4 +44,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   null,
   mapDispatchToProps
-)(Performance);
+)(withStyles(style)(Performance));

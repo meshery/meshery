@@ -6,6 +6,17 @@ import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import { getPath } from "../lib/path";
+import { withStyles } from '@material-ui/core/styles';
+
+const style = () => ({
+  
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+
+  }
+})
 
 class Manage extends React.Component {
   static getInitialProps = ({ query }) => {
@@ -31,10 +42,10 @@ class Manage extends React.Component {
   render() {
     return (
       <NoSsr>
-        <Head>
-          <title>Management | Meshery</title>
-        </Head>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
+          <Head>
+            <title>Management | Meshery</title>
+          </Head>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
         </Paper>
       </NoSsr>
@@ -51,4 +62,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   null,
   mapDispatchToProps
-)(Manage);
+)(withStyles(style)(Manage));

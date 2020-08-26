@@ -7,6 +7,17 @@ import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 import Head from 'next/head';
 import dataFetch from '../lib/data-fetch';
+import { withStyles } from '@material-ui/core/styles';
+
+const style = () => ({
+
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+
+  }
+})
 
 
 class UserPref extends React.Component {
@@ -47,10 +58,10 @@ class UserPref extends React.Component {
     }
     return (
       <NoSsr>
-        <Head>
-          <title>Preferences | Meshery</title>
-        </Head>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
+          <Head>
+            <title>Preferences | Meshery</title>
+          </Head>
           <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
         </Paper>
       </NoSsr>
@@ -65,4 +76,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   null,
   mapDispatchToProps
-)(UserPref);
+)(withStyles(style)(UserPref));
