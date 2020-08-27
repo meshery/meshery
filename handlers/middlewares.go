@@ -101,12 +101,11 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}
 
-		if prefObj == nil {
-			prefObj = &models.Preference{
-				AnonymousUsageStats:  true,
-				AnonymousPerfResults: true,
-			}
+		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
+		if err != nil {
+			logrus.Errorf("Unable to load default kubernetes config: %v", err)
 		}
+
 		provider.UpdateToken(w, req)
 		next(w, req, prefObj, user, provider)
 	})
