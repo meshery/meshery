@@ -101,12 +101,13 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}
 
-		if prefObj == nil {
-			prefObj = &models.Preference{
-				AnonymousUsageStats:  true,
-				AnonymousPerfResults: true,
-			}
-		}
+		// if prefObj == nil {
+		// 	prefObj = &models.Preference{
+		// 		AnonymousUsageStats:  true,
+		// 		AnonymousPerfResults: true,
+		// 	}
+		// }
+		h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
 		provider.UpdateToken(w, req)
 		next(w, req, prefObj, user, provider)
 	})
