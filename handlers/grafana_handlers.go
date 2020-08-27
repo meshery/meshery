@@ -21,10 +21,10 @@ func init() {
 
 // GrafanaConfigHandler is used for persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
@@ -62,10 +62,10 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 
 // GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
 		http.Error(w, "Grafana URL is not configured", http.StatusBadRequest)
@@ -88,10 +88,10 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 
 // GrafanaBoardsHandler is used for fetching Grafana boards and panels
 func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet && req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet && req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	if req.Method == http.MethodPost {
 		h.SaveSelectedGrafanaBoardsHandler(w, req, prefObj, user, p)
 		return
@@ -125,10 +125,10 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 
 // GrafanaQueryHandler is used for handling Grafana queries
 func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	reqQuery := req.URL.Query()
 
@@ -149,10 +149,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
 func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	reqQuery := req.URL.Query()
 

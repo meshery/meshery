@@ -20,10 +20,10 @@ import (
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if req.Method == http.MethodPost {
 		h.addK8SConfig(user, prefObj, w, req, provider)
@@ -138,10 +138,10 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
