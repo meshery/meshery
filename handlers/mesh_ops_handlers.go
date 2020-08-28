@@ -190,10 +190,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
@@ -266,10 +266,10 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 
 // AdapterPingHandler is used to ping a given adapter
 func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {

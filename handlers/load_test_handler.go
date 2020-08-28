@@ -26,10 +26,10 @@ import (
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
 func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -131,10 +131,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	err := req.ParseForm()
 	if err != nil {

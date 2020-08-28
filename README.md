@@ -82,7 +82,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr><td class="stable-adapters"></td></tr>
         <tr>
-          <td rowspan="3" class="beta-adapters">beta</td>
+          <td rowspan="4" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
             <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
@@ -92,9 +92,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
              <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
            </td>
         </tr>
+          <tr>
+          <td><a href="https://github.com/layer5io/meshery-osm">
+            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
+          </td>
+        </tr>
         <tr><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="8" class="alpha-adapters">alpha</td>
+          <td rowspan="5" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
@@ -109,11 +114,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
             <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
-          </td>
-        </tr>
-        <tr>
-          <td><a href="https://github.com/layer5io/meshery-osm">
-            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
         <tr>
