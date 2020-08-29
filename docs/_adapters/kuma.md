@@ -28,7 +28,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.name}} service 
 
 ### Conformance
 
-Defining “Conformance” - It’s important to acknowledge that conformance consists of both capabilities and compliance status. We define conformance as a combination of these two concepts.
+Defining "Conformance" - It is important to acknowledge that conformance consists of both capabilities and compliance status. We define conformance as a combination of these two concepts.
 
 1. SMI Conformance acknowledges that
    ...some participating service meshes may conscientiously never fully implement functions (SMI specs)...
