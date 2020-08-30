@@ -68,7 +68,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relys o
 ```bash
 curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 k3d cluster create
-export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
 ```
 
 ### 5. Finish up
