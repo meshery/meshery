@@ -80,6 +80,7 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.4",
+    "pre-commit": "^1.2.2",
     "start-server-and-test": "^1.11.2"
   }
 }
