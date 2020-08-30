@@ -152,14 +152,14 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 Meshery is the service-mesh-neutral utility for uniformly managing the performance of services and the meshes that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by a service mesh in context of the overhead incurred.
 <br /><br />
 </p>
-<div>&#9;</div>
+<div>&nbsp;</div>
 
 ## Meshery Architecture
 You may deploy Meshery internal to your cluster or external to your cluster.
 <p align="center"><a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/architecture/meshery-architecture.svg"><img src="docs/assets/img/architecture/meshery-architecture.svg" width="90%" align="center" /></a></p>
 Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's architecture</a>.
 
-<div>&#9;</div>
+<div>&nbsp;</div>
 
 ## Join the service mesh community!
 
@@ -190,7 +190,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+">help-wanted label</a>.
 </p>
 
-<div>&#9;</div>
+<div>&nbsp;</div>
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a>
@@ -199,7 +199,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://layer5.io/performance) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 </p>
 
-<div>&#9;</div>
+<div>&nbsp;</div>
 
 ## Contributing (yes!)
 We're a warm and welcoming community of open source contributors. Please join. All types of contribution are welcome. Be sure to read the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
@@ -210,7 +210,7 @@ We're a warm and welcoming community of open source contributors. Please join. A
 
 <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="docs/assets/img/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 
-<div>&#9;</div>
+<div>&nbsp;</div>
 
 ## See Meshery in Action
 - [DockerCon 2020](https://docker.events.cube365.net/docker/dockercon/content/Videos/63TCCNpzDC7Xxnm8b) | ([video](https://www.youtube.com/watch?v=5BrbbKZOctw&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=4&t=0s), [deck](https://calcotestudios.com/talks/decks/slides-dockercon-2020-service-meshing-with-docker-desktop-and-webassembly.html))
