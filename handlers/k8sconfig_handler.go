@@ -20,10 +20,10 @@ import (
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
 func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodDelete {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	if req.Method == http.MethodPost {
 		h.addK8SConfig(user, prefObj, w, req, provider)
@@ -33,7 +33,6 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 		h.deleteK8SConfig(user, prefObj, w, req, provider)
 		return
 	}
-
 }
 
 func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
@@ -120,7 +119,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	kc.Config = nil
 
 	if err = json.NewEncoder(w).Encode(kc); err != nil {
-		logrus.Errorf("error marshalling data: %v", err)
+		logrus.Errorf("error marshaling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return
 	}
@@ -139,10 +138,10 @@ func (h *Handler) deleteK8SConfig(user *models.User, prefObj *models.Preference,
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	_ = req.ParseMultipartForm(1 << 20)
 	var k8sConfigBytes []byte
 
@@ -181,7 +180,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Errorf("error marshalling data: %v", err)
+		logrus.Errorf("error marshaling data: %v", err)
 		http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
 		return
 	}

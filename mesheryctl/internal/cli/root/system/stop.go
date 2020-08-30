@@ -38,50 +38,57 @@ var stopCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Stopping Meshery...")
-		if !utils.IsMesheryRunning() {
-			log.Info("Meshery is not running. Nothing to stop.")
-			return nil
-		}
-		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
-			}
-		}
-
-		// Stop all Docker containers
-		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-		stop.Stdout = os.Stdout
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
-		}
-
-		// Remove all Docker containers
-		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
-		}
-
-		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
-		// to start from scratch with a fresh install.
-		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-		// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-		// }
-
-		log.Info("Meshery is stopped.")
-
-		// Reset Meshery config file to default settings
-		if utils.ResetFlag {
-			err := resetMesheryConfig()
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
-			}
+		if err := stop(); err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}
 		return nil
 	},
+}
+
+func stop() error {
+	if !utils.IsMesheryRunning() {
+		log.Info("Meshery is not running. Nothing to stop.")
+		return nil
+	}
+	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
+		}
+	}
+
+	// Stop all Docker containers
+	stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
+	stop.Stdout = os.Stdout
+	stop.Stderr = os.Stderr
+
+	if err := stop.Run(); err != nil {
+		return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+	}
+
+	// Remove all Docker containers
+	stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
+	stop.Stderr = os.Stderr
+
+	if err := stop.Run(); err != nil {
+		return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
+	}
+
+	// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
+	// to start from scratch with a fresh install.
+	// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
+	// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+	// }
+
+	log.Info("Meshery is stopped.")
+
+	// Reset Meshery config file to default settings
+	if utils.ResetFlag {
+		err := resetMesheryConfig()
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+		}
+	}
+	return nil
 }
 
 func init() {

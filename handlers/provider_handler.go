@@ -28,10 +28,10 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 
 // ProvidersHandler returns a list of providers
 func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	// 	return
+	// }
 
 	providers := map[string]models.ProviderProperties{}
 	for _, p := range h.config.Providers {

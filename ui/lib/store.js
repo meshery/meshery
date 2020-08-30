@@ -30,7 +30,7 @@ const initialState = fromJS({
     qps: 0,
     t: '30s',
     c: 0,
-    gen: '',
+    gen: 'fortio',
     ts: new Date(),
   },
   meshAdapters: [],

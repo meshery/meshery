@@ -26,10 +26,10 @@ import (
 
 // LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
 func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -83,7 +83,6 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		loadTestOptions.Duration = time.Second
 	}
 
-
 	// TODO: check multiple clients in case of distributed perf test
 	testClient := perfTest.Clients[0]
 
@@ -132,10 +131,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost && req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	err := req.ParseForm()
 	if err != nil {
@@ -297,6 +296,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	)
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
+	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
+		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
 	} else {
 		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
 	}
