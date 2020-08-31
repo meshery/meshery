@@ -80,7 +80,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nsm.png' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
           </td>
         </tr>
-        <tr><td class="stable-adapters"></td></tr>
+        <tr colspan="2"><td class="stable-adapters"></td></tr>
         <tr>
           <td rowspan="4" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
@@ -97,13 +97,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
-        <tr><td class="beta-adapters"></td></tr>
+        <tr colspan="2"><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="4" class="alpha-adapters">alpha</td>
+          <td rowspan="5" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
-            <img src='https://github.com/containous/maesh/raw/master/docs/content/assets/img/maesh.png' alt='Maesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Mesh</a>
+            <img src='https://github.com/containous/maesh/raw/master/docs/content/assets/img/maesh.png' alt='Maesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Maesh</a>
           </td>
         </tr>
          <tr>
@@ -116,8 +116,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
-        <tr>
-        <tr><td class="alpha-adapters"></td><td></td></tr>
+        <tr colspan="2"><td class="alpha-adapters"></td></tr>
         </tbody>
     </table>
   </p>
