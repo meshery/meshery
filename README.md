@@ -117,7 +117,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           </td>
         </tr>
         <tr>
-        <tr></tr>
+        <tr><td class="alpha-adapters"></td><td></td></tr>
         </tbody>
     </table>
   </p>
