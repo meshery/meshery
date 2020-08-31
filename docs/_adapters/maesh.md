@@ -22,3 +22,8 @@ The {{page.name}} can install **{{page.version}}** of the {{page.name}} service 
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+
+### Sample Applicaion
+
+- installBookInfoCommand : This install a book information application.
+- installHTTPBin : This install a HTTPbin Application.
