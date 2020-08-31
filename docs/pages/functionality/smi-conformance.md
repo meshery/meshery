@@ -27,7 +27,7 @@ Given that some service mesh implementations, never intend to fully implement th
 
 - None - currently service mesh does not have this capability (may or may not have this capability in the future).
 
-## Approach to Confrormance Testing
+## Approach to Conformance Testing
 
 Each Kubernetes version, service mesh version and SMI category will undergo several tests. Each test will be carried out in an automated and concurrent fashion, mostly, by invoking Meshery to execute the conformance tests.
 
