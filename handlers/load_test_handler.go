@@ -112,6 +112,8 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
@@ -218,6 +220,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
@@ -298,9 +302,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
 	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
 		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
-	} else {
-		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
-	}
+	} 
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)
