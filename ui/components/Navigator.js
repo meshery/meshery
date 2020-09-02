@@ -277,6 +277,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Kuma',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/kuma", 
+        title: 'Kuma',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ];
@@ -404,6 +412,10 @@ class Navigator extends React.Component {
         break;
       case 'open service mesh':
         image = "/static/img/osm-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'kuma':
+        image = "/static/img/kuma-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
     }
