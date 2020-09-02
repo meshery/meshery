@@ -63,7 +63,7 @@ var versionCmd = &cobra.Command{
 		build := mctlCfg.GetVersion().GetBuild()
 		commitsha := mctlCfg.GetVersion().GetCommitSHA()
 
-		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
+		logrus.Infof("Client Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", url), nil)
 		if requestErr(err, url) {
