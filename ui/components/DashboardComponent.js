@@ -426,6 +426,10 @@ class DashboardComponent extends React.Component {
                       image = "/static/img/osm.svg";
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
+                    case 'kuma':
+                      image = "/static/img/kuma.svg";
+                      logoIcon = (<img src={image} className={classes.icon} />);
+                      break;
                   }
                 }
               });
