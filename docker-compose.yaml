@@ -42,6 +42,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10004:10004"
+  meshery-kuma:
+    image: layer5/meshery-kuma:stable-latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10007:10007"      
   meshery-cpx:
     image: layer5/meshery-cpx:stable-latest
     labels:

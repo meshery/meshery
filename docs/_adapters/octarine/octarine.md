@@ -60,3 +60,10 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+
+### Sample Applications 
+
+The Meshery adapter for {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
+
+- [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
+    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
