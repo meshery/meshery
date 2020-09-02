@@ -24,3 +24,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.name}} service 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
 
+### SMI Conformance Capabiliy
+
+### Conformance
+
+Defining "Conformance" - Acknowledging that conformance consists of both capabilities and compliance status is important. We define conformance as a combination of these two concepts.
+
+    1. SMI Conformance acknowledge that ...some participating service meshes may conscientiously never fully implement functions (SMI specs)...
+    2. SMI Conformance identifies ...a difference between full implementation of a specification and compliance with the portions that it implements...
+
+You can [Learn more](https://meshery.layer5.io/docs/functionality/smi-conformance) about SMI conformance capabilities here...
+
