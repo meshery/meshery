@@ -98,9 +98,9 @@ In the line with the meshery container image, instead of leaving the implicit :l
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:eeeb528f8c6ac59ff5d435a857ff68d00046cf0e
+    image: layer5/meshery:<specific-image-tag>
     labels:
-      - "com.centurylinklabs.watchtower.enable=true
+      - "com.centurylinklabs.watchtower.enable=true"
 ```
 
 ---
