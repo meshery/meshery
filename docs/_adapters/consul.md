@@ -2,7 +2,7 @@
 layout: page
 title: Consul Adapter
 name: Consul
-version: v1.5
+version: v1.8
 port: 10002/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-consul
@@ -16,7 +16,7 @@ image: /docs/assets/img/service-meshes/consul.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh.
 
 ### Features
 
