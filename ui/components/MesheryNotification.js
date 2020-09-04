@@ -178,7 +178,7 @@ class MesheryNotification extends React.Component {
   handleClearAllNotifications() {
     const self = this;
     return () => {
-      self.setState({ events: [], open: true });
+      self.setState({ events: [], open: false });
     };
   }
 

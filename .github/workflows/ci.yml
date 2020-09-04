@@ -29,9 +29,9 @@ jobs:
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
-  tests:
-    needs: [lint-UI, lint-Provider-UI, golangci]
-    name: Tests
+  server-tests:
+    needs: [tests-ui, golangci, build-backend, build-ui]
+    name: Server tests
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -51,9 +51,8 @@ jobs:
           ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
-    name: Meshery backend build check
+    name: Backend build
     runs-on: ubuntu-latest
-    needs: [tests, lint-UI, lint-Provider-UI, golangci]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -72,9 +71,8 @@ jobs:
           ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
   build-ui:
-    name: Meshery UI build check
+    name: UI build
     runs-on: ubuntu-latest
-    needs: [lint-UI, lint-Provider-UI]
     steps:
     - name: Check out code
       uses: actions/checkout@master
@@ -93,30 +91,12 @@ jobs:
         cd ui
         npm i
         npm run build && npm run export
-  build-provider-ui:
-    name: Meshery Provider-UI build check
-    runs-on: ubuntu-latest
-    needs: [lint-UI, lint-Provider-UI]
-    steps:
-    - name: Check out code
-      uses: actions/checkout@master
-      with:
-        fetch-depth: 1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v1
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - run: |
+        cd ..
         cd provider-ui
         npm i
         npm run build && npm run export
-  lint-UI:
-    name: Meshery UI Tests
+  tests-ui:
+    name: UI tests
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -136,31 +116,15 @@ jobs:
         cd ui
         npm i
         npm test
-  lint-Provider-UI:
-    name: Meshery Provider UI Lint check
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@master
-      with:
-        fetch-depth: 1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v1
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - run: |
+        cd ..
         cd provider-ui
         npm i
         npm test
+        cd ..
   build_release:
-    name: Mesheryctl Build & Release
+    name: Mesheryctl build & release
     runs-on: macos-latest
-    needs: [tests, golangci]
+    needs: [server-tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master

@@ -324,34 +324,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('SMI Test started !', {
-          variant: 'info',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
-        this.props.enqueueSnackbar('SMI Conformance Finished !', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
         self.setState({ ['customDialogSMI']: true })
       }
     }, self.handleError('Could not ping adapter.'));
@@ -636,7 +608,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     let smiChip = (
       <React.Fragment>
         <Chip
-          label="Run SMI Conformance"
+          label="View SMI Conformance results"
           onClick={this.handleSMIClick(adapter.adapter_location)}
           icon={<img src={imageSMISrc} className={classes.icon} />}
           className={classes.chip}

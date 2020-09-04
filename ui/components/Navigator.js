@@ -277,6 +277,14 @@ const categories = [
         link: false, 
         show: true,
       },
+      {
+        id: 'Kuma',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/kuma", 
+        title: 'Kuma',
+        link: false, 
+        show: true,
+      },
     ],
   },
 ];
@@ -406,6 +414,10 @@ class Navigator extends React.Component {
         image = "/static/img/osm-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
+      case 'kuma':
+        image = "/static/img/kuma-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
     }
     return logoIcon;
   }
@@ -415,7 +427,7 @@ class Navigator extends React.Component {
     }
 
     handleAdapterClick = (id, link) => {
-      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh"];
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh", "Kuma"];
       let index = allowedId.indexOf(id);
       if ( index != -1 && !link) {
         this.props.router.push('/management');
