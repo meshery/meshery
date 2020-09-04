@@ -195,14 +195,14 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, err
 	}
 
-	res, err := apinighthawk.NighthawkRun(ro)
+	res1, err := apinighthawk.NighthawkRun(ro)
 	if err != nil {
 		err = errors.Wrap(err, "error while running tests")
 		logrus.Error(err)
 		return nil, nil, err
 	}
 
-	// result := string(res)
+	res := string(res1)
 
 	logrus.Debugf("original version of the test: %+#v", res)
 
@@ -223,15 +223,15 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	// 	return nil, nil, err
 	// }
 
-	bd, err := json.Marshal(res)
+	// bd, err := json.Marshal(res)
 
-	if err != nil {
-		err = errors.Wrap(err, "Error while converting  Nighthawk results to map")
-		logrus.Error(err)
-		return nil, nil, err
-	}
+	// if err != nil {
+	// 	err = errors.Wrap(err, "Error while converting  Nighthawk results to map")
+	// 	logrus.Error(err)
+	// 	return nil, nil, err
+	// }
 
-	err = json.Unmarshal(res, result)
+	err = json.Unmarshal([]byte(res1), result)
 
 	if err != nil {
 		err = errors.Wrap(err, "Error while unmarshaling  Nighthawk results to the FortioHTTPRunner")
@@ -240,7 +240,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	resultsMap := map[string]interface{}{}
-	err = json.Unmarshal(bd, &resultsMap)
+	err = json.Unmarshal([]byte(res1), &resultsMap)
 
 	if err != nil {
 		err = errors.Wrap(err, "Error while unmarshaling Nighthawk results to map")
