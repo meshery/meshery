@@ -18,7 +18,7 @@ image: /docs/assets/img/service-meshes/cpx.png
 
 ## Features
 
-1. Lifecycle Management of {{page.name}}
+1. Lifecycle Management of {{page.mesh_name}}
 2. Lifecycle Management of Sample Applications
 
 ### Lifecycle Management
