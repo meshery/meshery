@@ -17,7 +17,7 @@ image: /docs/assets/img/service-meshes/cpx.png
 
 ### Features
 
-1. Lifecycle Management of Citrix
+1. Lifecycle Management of {{page.name}}
 2. Lifecycle Management of Sample Applications
 
 ### Sample Applications
