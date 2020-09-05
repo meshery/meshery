@@ -21,7 +21,19 @@ image: /docs/assets/img/service-meshes/linkerd.svg
 
 ### Sample Applications
 
-The Meshery adapter for ({{ page.title }}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
+The Meshery adapter for ({{ page.title }}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
+
+- [Emojivoto](https://github.com/BuoyantIO/emojivoto)
+    - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
+
+- [Istio Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) 
+    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+
+- [Linkerd Books](https://github.com/BuoyantIO/booksapp)
+    - Application that helps you manage your bookshelf.
+
+- [HTTPbin](https://httpbin.org/)
+    - A simple HTTP Request & Response Service.
 
 Identify overhead involved in running Linkerd, various Linkerd configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 
