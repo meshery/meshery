@@ -6,11 +6,13 @@ type: functionality
 ---
 
 # Performance Management
+Key to the efficient operation of any service mesh is the measurement and management of it's performance. 
 
 ## Load Generators
-Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator. 
+Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
 
-Meshery also supports the following load generators:
+Meshery supports the following load generators and is [extendible](extensibility) to support others:
+
 - Fortio
 - wrk2
 - NightHawk
@@ -28,15 +30,15 @@ It is a modern HTTP benchmarking tool capable of generating significant load whe
 
 ### NightHawk
 
-NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. 
-It currently offers:
+NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It currently offers:
+
 - A load testing client which supports HTTP/1.1 and HTTP/2 over HTTP and HTTPS. (HTTPS certificates are not yet validated).
 - A simple test server which is capable of generating dynamic response sizes, as well as inject delays.
 - A binary to transform nighthawk output to well-known formats, allowing integration with other systems and dashboards.
 
 ## Node and Service Mesh Metrics
 
- Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
+Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
 
 ## Grafana and Meshery
 
