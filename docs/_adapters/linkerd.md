@@ -2,6 +2,7 @@
 layout: page
 title: Linkerd Adapter
 name: Meshery Adapter for Linkerd
+mesh_name: Linkerd
 version: v2.5.0
 port: 10001/tcp
 project_status: stable
@@ -16,10 +17,10 @@ image: /docs/assets/img/service-meshes/linkerd.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the Linkerd service mesh. The SMI adapter for Linkerd can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
 ### Features
-1. Lifecycle management of Linkerd
+1. Lifecycle management of {{page.mesh_name}}
 1. Lifecycle management of sample applications
 1. Performance testing
 
@@ -39,7 +40,7 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
 - [HTTPbin](https://httpbin.org/)
     - A simple HTTP Request & Response Service.
 
-Identify overhead involved in running Linkerd, various Linkerd configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
+Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 
 1. Prometheus integration
 1. Grafana integration
