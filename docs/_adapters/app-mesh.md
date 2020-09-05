@@ -1,7 +1,7 @@
 ---
 layout: page
 title: App Mesh Adapter
-name: App Mesh
+name: Meshery Adapter for App Mesh
 version: "-"
 port: 10005/tcp
 project_status: alpha
@@ -17,7 +17,7 @@ image: /docs/assets/img/service-meshes/aws-app-mesh.png
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install the App Mesh service mesh. The SMI adapter for App Mesh can also be installed using Meshery.
 
 ### Suggested Topics
 

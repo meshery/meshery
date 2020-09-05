@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Open Service Mesh Adapter
-name: Open Service Mesh
+name: Meshery Adapter for Open Service Mesh
 version: OSM v0.3.0
 port: 10010/tcp
 project_status: alpha
@@ -17,7 +17,7 @@ image: /docs/assets/img/service-meshes/osm.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the OSM service mesh. Using the Meshery adapter for Open Service Mesh, you can run the full suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
 
 ### Suggested Topics
 

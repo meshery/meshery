@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Consul Adapter
-name: Consul
+name: Meshery Adapter for Consul
 version: v1.5
 port: 10002/tcp
 project_status: stable
@@ -16,7 +16,7 @@ image: /docs/assets/img/service-meshes/consul.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Consul service mesh. The SMI adapter for Consul can also be installed using Meshery.
 
 ### Features
 

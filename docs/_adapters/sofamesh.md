@@ -1,7 +1,7 @@
 ---
 layout: page
 title: SOFAmesh Adapter
-name: SOFAmesh
+name: Meshery Adapter for SOFAmesh
 ---
 # {{ page.name }}
 
@@ -11,7 +11,7 @@ name: SOFAmesh
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.title}} service mesh. The SMI adapter for SOFAmesh can also be installed using Meshery.
 
 ### Suggested Topics
 

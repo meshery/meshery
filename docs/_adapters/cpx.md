@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Citrix Service Mesh (CPX) Adapter
-name: Citrix Service Mesh
+name: Meshery Adapter for Citrix
 version: "1.0"
 port: 10008/tcp
 project_status: beta
@@ -21,8 +21,9 @@ image: /docs/assets/img/service-meshes/cpx.png
 
 
 ### Lifecycle management
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Citrix(CPX) service mesh. The SMI adapter for Citrix(CPX) can also be installed using Meshery.
 
+### Sample Applications
 
 The Meshery adapter for {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 

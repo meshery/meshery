@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Maesh Adapter
-name: Maesh
+name: Meshery Adapter for Maesh
 version: v1.0
 port: 10006/tcp
 project_status: alpha
@@ -16,7 +16,7 @@ image: /docs/assets/img/service-meshes/maesh.png
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.title}} service mesh. The SMI adapter for Maesh can also be installed using Meshery.
 
 ### Suggested Topics
 

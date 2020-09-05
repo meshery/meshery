@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Kuma Adapter
-name: Kuma
+name: Meshery Adapter for Kuma
 version: v1.0
 port: 10007/tcp
 project_status: beta
@@ -22,7 +22,7 @@ image: /docs/assets/img/service-meshes/kuma.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Kuma service mesh. The SMI adapter for Kuma can also be installed using Meshery.
 
 ### SMI Conformance Capability
 

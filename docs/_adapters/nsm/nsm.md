@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Network Service Mesh Adapter
-name: Network Service Mesh
+name: Meshery Adapter for Network Service Mesh
 version: v0.2.1
 port: 10004/tcp
 project_status: stable
@@ -17,7 +17,7 @@ image: /docs/assets/img/service-meshes/nsm.svg
 
 ### Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Network Service Mesh can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Network Service Mesh service mesh. The SMI adapter for Network Service Mesh can also be installed using Meshery.
 
 ### Lifecycle management of sample applications
 

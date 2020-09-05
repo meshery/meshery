@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Octarine Adapter
-name: Octarine
+name: Meshery Adapter for Octarine
 version: v1.0
 port: 10003/tcp
 project_status: stable
@@ -16,7 +16,7 @@ image: /docs/assets/img/service-meshes/octarine.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Octarine service mesh. The SMI adapter for Octarine can also be installed using Meshery.
 
 ### Features
 
