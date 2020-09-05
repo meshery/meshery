@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Citrix Service Mesh (CPX) Adapter
-name: Meshery Adapter for Citrix
+name: Meshery Adapter for Citrix Service Mesh
+mesh_name: Citrix Service Mesh
 version: "1.0"
 port: 10008/tcp
 project_status: beta
@@ -21,11 +22,11 @@ image: /docs/assets/img/service-meshes/cpx.png
 
 
 ### Lifecycle management
-The {{page.name}} can install **{{page.version}}** of the Citrix(CPX) service mesh. The SMI adapter for Citrix(CPX) can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the Citrix(CPX) service mesh. A number of sample applications can be installed using the {{page.name}}.
 
 ### Sample Applications
 
-The Meshery adapter for {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
+The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
 - [hipster](https://github.com/GoogleCloudPlatform/microservices-demo)
     - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
