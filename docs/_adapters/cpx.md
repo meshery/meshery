@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Citrix Service Mesh (CPX) Adapter
-name: Meshery adapter for Citrix Service Mesh
+name: Meshery Adapter for Citrix Service Mesh
 mesh_name: Citrix Service Mesh
 version: "1.0"
 port: 10008/tcp
@@ -21,9 +21,8 @@ image: /docs/assets/img/service-meshes/cpx.png
 1. Lifecycle Management of {{page.mesh_name}}
 2. Lifecycle Management of Sample Applications
 
-### Lifecycle Management
-
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+### Lifecycle management
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}. 
 
 ### Sample Applications
 

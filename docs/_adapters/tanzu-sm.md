@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Tanzu Service Mesh Adapter
-name: Tanzu SM
+name: Meshery adapter for Tanzu Service Mesh
+mesh_name: Tanzu Service Mesh
 version: pre-GA
 port: 10009/tcp
 project_status: alpha
@@ -16,7 +17,8 @@ image: /docs/assets/img/service-meshes/tanzu.png
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery. 
+The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+
 
 ### Suggested Topics
 

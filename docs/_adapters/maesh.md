@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Maesh Adapter
-name: Maesh
+name: Meshery Adapter for Maesh
+mesh_name: Maesh
 version: v1.0
 port: 10006/tcp
 project_status: alpha
@@ -16,7 +17,7 @@ image: /docs/assets/img/service-meshes/maesh.png
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
 ### Suggested Topics
 
@@ -25,7 +26,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.name}} service 
 
 ### Sample Applications
 
-The Meshery adapter for {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.  
+The {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.  
 
 - [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
     - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
