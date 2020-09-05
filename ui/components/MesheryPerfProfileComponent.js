@@ -19,7 +19,7 @@ import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import TimerIcon from '@material-ui/icons/Timer';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import EditIcon from '@material-ui/icons/Edit';
 import { bindActionCreators } from 'redux';
 
 const styles = (theme) => ({
@@ -34,8 +34,31 @@ const styles = (theme) => ({
     margin: theme.spacing(1),
   },
   button: {
-    float: 'right',
-    marginRight: '10px'
+    marginRight: '10px',
+    [theme.breakpoints.down(1350)]: {
+      marginTop: '10px',
+      width: '160px',
+    },
+    [theme.breakpoints.down(1070)]: {
+      marginTop: '10px',
+      width:'100px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginTop: 0,
+      width: 'auto',
+    },
+    [theme.breakpoints.down(900)]: {
+      marginTop: '10px',
+      width: '160px',
+    },
+    [theme.breakpoints.down(780)]: {
+      marginTop: '10px',
+      width: '100px',
+    },
+    [theme.breakpoints.down(600)]: {
+      marginTop: '10px',
+      width: 'auto',
+    },
   },
   profileButtons: {
     padding: '15px'
@@ -191,18 +214,13 @@ class MesheryPerfProfileComponent extends React.Component {
                         action={
                           <Tooltip title="View or Edit Profile">
                           <IconButton onClick={self.handleModalOpen()}>
-                            <VisibilityIcon />
+                            <EditIcon />
                           </IconButton>
                           </Tooltip>
                         }
                       />
                       <CardContent className={classes.profileButtons}>
-                        <Tooltip title="Delete Profile">
-                          <IconButton>
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Button
+                      <Button
                             type="submit"
                             variant="contained"
                             color="primary"
@@ -223,6 +241,11 @@ class MesheryPerfProfileComponent extends React.Component {
                         >
                           Schedule Test
                         </Button>
+                        <Tooltip title="Delete Profile">
+                          <IconButton style={{ float: 'right' }}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
                       </CardContent>
                     </Card>
                   </Grid>
