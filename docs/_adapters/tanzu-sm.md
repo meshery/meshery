@@ -16,7 +16,7 @@ image: /docs/assets/img/service-meshes/tanzu.png
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** version of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Suggested Topics
 
