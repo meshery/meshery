@@ -44,4 +44,4 @@ area/tests:
 
 area/ci:
   files: 
-    - any: [".github/**/*"]
+    - ".github/**/*"
