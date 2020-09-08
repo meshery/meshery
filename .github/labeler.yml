@@ -1,34 +1,45 @@
 area/docs:
-  - docs/pages/*
-  - docs/_includes/*
-  - docs/_layouts/*
+  files: 
+    - docs/pages/*
+    - docs/_includes/*
+    - docs/_layouts/*
 
 component/api:
-  - handlers/**/*
+  files: 
+    - handlers/**/*
 
 component/mesheryctl:
-  - mesheryctl/**/*
+  files: 
+    - mesheryctl/**/*
 
 language/go:
-  - ./*.go
+  files: 
+    - ./*.go
 
 language/javascript:
-  - ./*.js
+  files: 
+    - ./*.js
 
 language/markdown:
-  - ./*.md
+  files: 
+    - ./*.md
 
 language/ruby:
-  - ./*.rb
+  files: 
+    - ./*.rb
 
 language/html:
-  - ./*.html
+  files: 
+    - ./*.html
 
 area/ui:
-- any: ['ui/**/*', 'provider-ui/**/*']
+  files: 
+    - any: ['ui/**/*', 'provider-ui/**/*']
 
 area/tests:
-- any: ['ui/cypress/**/*', 'provider-ui/cypress/**/*']
+  files: 
+    - any: ['ui/cypress/**/*', 'provider-ui/cypress/**/*']
 
 area/ci:
-- any: ['.github/**/*']
+  files: 
+    - any: ['.github/**/*']
