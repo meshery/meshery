@@ -150,9 +150,9 @@ func initConfig() {
 		setMesheryctlConfigDefaults(map[string]interface{}{
 			"baseMesheryURL": "http://localhost:9081/api",
 			"perf": map[string]interface{}{
-				"authTokenURI":    "/gettoken",
+				"authTokenURI":   "/gettoken",
 				"loadTestSmpURI": "/perf/load-test-smp]",
-				"loadTestURI":     "/perf/load-test",
+				"loadTestURI":    "/perf/load-test",
 			},
 			"ctlversion": map[string]interface{}{
 				"build":     version,

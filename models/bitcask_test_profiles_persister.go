@@ -21,9 +21,9 @@ type BitCaskTestProfilesPersister struct {
 
 // UserTestProfiles - represents a page of user test configs
 type UserTestProfiles struct {
-	Page        uint64                        `json:"page"`
-	PageSize    uint64                        `json:"page_size"`
-	TotalCount  int                           `json:"total_count"`
+	Page        uint64                       `json:"page"`
+	PageSize    uint64                       `json:"page_size"`
+	TotalCount  int                          `json:"total_count"`
 	TestConfigs []*SMP.PerformanceTestConfig `json:"test_configs"`
 }
 

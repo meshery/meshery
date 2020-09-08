@@ -11,7 +11,7 @@ type PerfCfg struct {
 	AuthTokenURI string `json:"AuthtokenURI"`
 	// LoadTestSmpURI stores the URI for the load test SMP endpoint
 	LoadTestSmpURI string `json:"loadTestSmpURI"`
-	LoadTestURI     string `json:"loadTestURI"`
+	LoadTestURI    string `json:"loadTestURI"`
 }
 
 // Version unmarshals the json response from the server's version api
