@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: srvaroa/labeler@v0.3
         env:
-          GITHUB_TOKEN: "${{ secrets.GH_ACCESS_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GH_ACCESS_TOKEN }}" 
