@@ -1,14 +1,14 @@
-name: PR Labeler
+name: Label PRs
+
 on:
-  pull_request:
-    types: [opened]
+  - pull_request
 
 jobs:
-  pr-labeler:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: TimonVS/pr-labeler-action@v3.1.0
-        with:
-          configuration-path: .github/labeler.yml # optional, .github/pr-labeler.yml is the default value
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build:
+
+	runs-on: ubuntu-latest
+	
+	steps:
+	- uses: srvaroa/labeler@v0.3
+	  env:
+		GITHUB_TOKEN: "${{ secrets.GH_ACCESS_TOKEN }}"
