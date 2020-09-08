@@ -34,11 +34,13 @@ language/html:
 
 area/ui:
   files: 
-    - any: ["ui/**/*", "provider-ui/**/*"]
+    - "ui/**/*"
+    - "provider-ui/**/*"
 
 area/tests:
   files: 
-    - any: ["ui/cypress/**/*', "provider-ui/cypress/**/*"]
+    - "ui/cypress/**/*"
+    - "provider-ui/cypress/**/*"
 
 area/ci:
   files: 
