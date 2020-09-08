@@ -300,8 +300,8 @@ github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRr
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
 github.com/layer5io/nighthawk-go v0.1.0 h1:3JCeMVJ75sdtUq3O9+cYid8lOgo7l3ZnmhNqlS1UmaA=
 github.com/layer5io/nighthawk-go v0.1.0/go.mod h1:+RdFjhQMkRm9HCWP+qnpvwUAm+GYeHqUSIac3dP48uY=
-github.com/layer5io/service-mesh-performance-specification v0.0.0-20200622030323-136a17f58ad9 h1:SecD1TMgxQ/XemMFWFcbl09f4sXtiGWFgaq0Saj5v+4=
-github.com/layer5io/service-mesh-performance-specification v0.0.0-20200622030323-136a17f58ad9/go.mod h1:fE/Fs8rr4PWy+vI2RVEqppSjXAyHwrbn0YCh2By97/c=
+github.com/layer5io/service-mesh-performance v0.2.1 h1:QnaFCpq2fVOjlKgJGz6KFR9zXdtnNysP3A2D0/mTqO8=
+github.com/layer5io/service-mesh-performance v0.2.1/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
 github.com/lightstep/lightstep-tracer-common/golang/gogo v0.0.0-20190605223551-bc2310a04743/go.mod h1:qklhhLq1aX+mtWk9cPHPzaBjWImj5ULL6C7HFJtXQMM=
 github.com/lightstep/lightstep-tracer-go v0.18.1/go.mod h1:jlF1pusYV4pidLvZ+XD0UBX0ZE6WURAspgAczcDHrL4=
 github.com/lyft/protoc-gen-validate v0.0.13/go.mod h1:XbGvPuh87YZc5TdIa2/I4pLk0QoUACkjt2znoq26NVQ=
