@@ -4,12 +4,12 @@ import (
 	"net/url"
 	"time"
 
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 )
 
-// SMPSPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
-func SMPSPerformanceTestConfigValidator(perfTest *SMPS.PerformanceTestConfig) error {
+// SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
+func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
 	if perfTest.Name == "" {
 		return errors.Errorf("Error: name field is blank")
 	}
