@@ -1,0 +1,34 @@
+area/docs:
+  - docs/pages/*
+  - docs/_includes/*
+  - docs/_layouts/*
+
+component/api:
+  - handlers/**/*
+
+component/mesheryctl:
+  - mesheryctl/**/*
+
+language/go:
+  - ./*.go
+
+language/javascript:
+  - ./*.js
+
+language/markdown:
+  - ./*.md
+
+language/ruby:
+  - ./*.rb
+
+language/html:
+  - ./*.html
+
+area/ui:
+- any: ['ui/**/*', 'provider-ui/**/*']
+
+area/tests:
+- any: ['ui/cypress/**/*', 'provider-ui/cypress/**/*']
+
+area/ci:
+- any: ['.github/**/*']

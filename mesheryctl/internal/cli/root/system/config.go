@@ -156,7 +156,7 @@ var configCmd = &cobra.Command{
 			choosenCtx = contexts[choice-1]
 		}
 
-		log.Debugf("Choosen context : %s", choosenCtx)
+		log.Debugf("Chosen context : %s", choosenCtx)
 		err = setContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
 			log.Fatalf("Error setting context : %s", err.Error())

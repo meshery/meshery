@@ -20,6 +20,7 @@ import {
   faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
+import { Tooltip } from '@material-ui/core';
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -269,10 +270,18 @@ const categories = [
         show: true,
       },
       {
-        id: 'OSM',
+        id: 'Open Service Mesh',
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
         href: "/management/osm", 
         title: 'Open Service Mesh',
+        link: false, 
+        show: true,
+      },
+      {
+        id: 'Kuma',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
+        href: "/management/kuma", 
+        title: 'Kuma',
         link: false, 
         show: true,
       },
@@ -401,8 +410,12 @@ class Navigator extends React.Component {
         image = "/static/img/citrix-light-gray.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
-      case 'osm':
+      case 'open service mesh':
         image = "/static/img/osm-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
+      case 'kuma':
+        image = "/static/img/kuma-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
     }
@@ -414,7 +427,7 @@ class Navigator extends React.Component {
     }
 
     handleAdapterClick = (id, link) => {
-      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Osm"];
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh", "Kuma"];
       let index = allowedId.indexOf(id);
       if ( index != -1 && !link) {
         this.props.router.push('/management');
@@ -504,9 +517,17 @@ class Navigator extends React.Component {
 
       let linkContent = (
         <div className={classNames(classes.link)}>
-          <ListItemIcon className={classes.listIcon}>
-            {iconc}
-          </ListItemIcon>
+          <Tooltip 
+            title={idc} 
+            placement="right" 
+            disableFocusListener={!drawerCollapsed} 
+            disableHoverListener={!drawerCollapsed} 
+            disableTouchListener={!drawerCollapsed}
+          >
+            <ListItemIcon className={classes.listIcon}>
+              {iconc}
+            </ListItemIcon>
+          </Tooltip>
           <ListItemText
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
@@ -583,7 +604,15 @@ class Navigator extends React.Component {
                     >
                       <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          <Tooltip 
+                            title={childId} 
+                            placement="right" 
+                            disableFocusListener={!isDrawerCollapsed} 
+                            disableHoverListener={!isDrawerCollapsed} 
+                            disableTouchListener={!isDrawerCollapsed}
+                          > 
+                            <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          </Tooltip>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
@@ -613,7 +642,15 @@ class Navigator extends React.Component {
                 )}
               >
                 <div className={classNames(classes.link)}>
-                  <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  <Tooltip 
+                    title="Community" 
+                    placement="right" 
+                    disableFocusListener={!isDrawerCollapsed} 
+                    disableHoverListener={!isDrawerCollapsed} 
+                    disableTouchListener={!isDrawerCollapsed}
+                  >
+                    <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
+                  </Tooltip>
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{

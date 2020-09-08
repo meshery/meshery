@@ -29,7 +29,7 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
-		logrus.Errorf("Error marshalling data: %v.", err)
+		logrus.Errorf("Error marshaling data: %v.", err)
 		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 		return
 	}
@@ -48,14 +48,14 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
-			err := errors.New("meshLocationURL cannot be empty to add an adapter")
+			err = errors.New("meshLocationURL cannot be empty to add an adapter")
 			logrus.Error(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-			err := errors.New("no valid kubernetes config found")
+			err = errors.New("no valid kubernetes config found")
 			logrus.Error(err)
 			http.Error(w, "No valid Kubernetes config found.", http.StatusBadRequest)
 			return
@@ -86,7 +86,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
-		logrus.Errorf("error marshalling data: %v.", err)
+		logrus.Errorf("error marshaling data: %v.", err)
 		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 		return
 	}
@@ -152,7 +152,6 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 }
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
-
 	adapterLoc := req.URL.Query().Get("adapter")
 	logrus.Debugf("URL of adapter to be removed: %s.", adapterLoc)
 
@@ -165,7 +164,7 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Given adapter URL is not valid.", http.StatusBadRequest)
 		return meshAdapters, err
@@ -191,10 +190,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 
 // MeshOpsHandler is used to send operations to the adapters
 func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodPost {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodPost {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
@@ -211,7 +210,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return
@@ -267,10 +266,10 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 
 // AdapterPingHandler is used to ping a given adapter
 func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {
@@ -288,7 +287,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		}
 	}
 	if aID < 0 {
-		err := errors.New("Unable to find a valid adapter for the given adapter URL.")
+		err := errors.New("unable to find a valid adapter for the given adapter URL")
 		logrus.Error(err)
 		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
 		return

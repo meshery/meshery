@@ -12,7 +12,6 @@ import (
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-
 		var providerName string
 		var provider models.Provider
 		ck, err := req.Cookie(h.config.ProviderCookieName)
@@ -29,7 +28,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		//lint:ignore SA1029 we want to make sure that no two results of errors
-		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider)
+		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 		req1 := req.WithContext(ctx)
 		next.ServeHTTP(w, req1)
 	}
@@ -102,12 +101,11 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			logrus.Warn("unable to read session from the session persister, starting with a new one")
 		}
 
-		if prefObj == nil {
-			prefObj = &models.Preference{
-				AnonymousUsageStats:  true,
-				AnonymousPerfResults: true,
-			}
+		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
+		if err != nil {
+			logrus.Errorf("Unable to load default kubernetes config: %v", err)
 		}
+
 		provider.UpdateToken(w, req)
 		next(w, req, prefObj, user, provider)
 	})

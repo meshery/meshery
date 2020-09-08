@@ -6,13 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/gowrk2/api"
-	"github.com/layer5io/meshery/models"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"fortio.org/fortio/fgrpc"
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
+	"github.com/layer5io/gowrk2/api"
+	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/nighthawk-go/apinighthawk"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
@@ -43,7 +44,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		Exactly:     0,
 	}
 	var res periodic.HasRunnerResult
-	if ( opts.SupportedLoadTestMethods == 2 ) {
+	if opts.SupportedLoadTestMethods == 2 {
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
 			Destination:        rURL,
@@ -76,7 +77,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 
 	var result *periodic.RunnerResults
 	var bd []byte
-	if ( opts.SupportedLoadTestMethods == 2 ) {
+	if opts.SupportedLoadTestMethods == 2 {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
@@ -114,15 +115,15 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	ro := &api.GoWRK2Config{
 		DurationInSeconds: opts.Duration.Seconds(),
 		Thread:            opts.HTTPNumThreads,
-		RQPS:        qps,
-		URL:         rURL,
-		Labels:      labels,
-		Percentiles: []float64{50, 75, 90, 99, 99.99, 99.999},
+		RQPS:              qps,
+		URL:               rURL,
+		Labels:            labels,
+		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
 	var res periodic.HasRunnerResult
 	var err error
-	if ( opts.SupportedLoadTestMethods == 2 ) {
-		err := errors.New("wrk2 does not support gRPC at the moment")
+	if opts.SupportedLoadTestMethods == 2 {
+		err = errors.New("wrk2 does not support gRPC at the moment")
 		logrus.Error(err)
 		return nil, nil, err
 	}
@@ -142,7 +143,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 
 	var result *periodic.RunnerResults
 	var bd []byte
-	if ( opts.SupportedLoadTestMethods == 2 ) {
+	if opts.SupportedLoadTestMethods == 2 {
 		gres, _ := res.(*fgrpc.GRPCRunnerResults)
 		bd, err = json.Marshal(gres)
 		result = gres.Result()
@@ -164,6 +165,89 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		logrus.Error(err)
 		return nil, nil, err
 	}
+	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
+	return resultsMap, result, nil
+}
+
+// NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
+func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
+	qps := opts.HTTPQPS
+
+	if qps <= 0 {
+		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
+	}
+
+	rURL := strings.TrimLeft(opts.URL, " \t\r\n")
+
+	ro := &apinighthawk.NighthawkConfig{
+		DurationInSeconds: opts.Duration.Seconds(),
+		Thread:            opts.HTTPNumThreads,
+		QPS:               qps,
+		URL:               rURL,
+	}
+
+	// var res periodic.HasRunnerResult
+	var err error
+
+	if opts.SupportedLoadTestMethods == 2 {
+		err := errors.New("nighthawk does not support gRPC load testing")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
+	res, err := apinighthawk.NighthawkRun(ro)
+	if err != nil {
+		err = errors.Wrap(err, "error while running tests")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
+	// result := string(res)
+
+	logrus.Debugf("original version of the test: %+#v", res)
+
+	var result *periodic.RunnerResults
+	// var bd []byte
+	// if ( opts.SupportedLoadTestMethods == 2 ) {
+	// 	gres, _ := res.(*fgrpc.GRPCRunnerResults)
+	// 	bd, err = json.Marshal(gres)
+	// 	result = gres.Result()
+	// } else {
+	// 	hres, _ := res.(*fhttp.HTTPRunnerResults)
+	// 	bd, err = json.Marshal(hres)
+	// 	result = hres.Result()
+	// }
+	// if err != nil {
+	// 	err = errors.Wrap(err, "error while converting results to map")
+	// 	logrus.Error(err)
+	// 	return nil, nil, err
+	// }
+
+	bd, err := json.Marshal(res)
+
+	if err != nil {
+		err = errors.Wrap(err, "Error while converting  Nighthawk results to map")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
+	err = json.Unmarshal(res, result)
+
+	if err != nil {
+		err = errors.Wrap(err, "Error while unmarshaling  Nighthawk results to the FortioHTTPRunner")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
+	resultsMap := map[string]interface{}{}
+	err = json.Unmarshal(bd, &resultsMap)
+
+	if err != nil {
+		err = errors.Wrap(err, "Error while unmarshaling Nighthawk results to map")
+		logrus.Error(err)
+		return nil, nil, err
+	}
+
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
 }
@@ -214,4 +298,3 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error)
 
 	return &httpOpts, nil
 }
-

@@ -21,6 +21,9 @@ const (
 
 	// Wrk2LG - represents the wrk2 load generator
 	Wrk2LG LoadGenerator = "wrk2"
+
+	// NighthawkLG - represents the nighthawk load generator
+	NighthawkLG LoadGenerator = "nighthawk"
 )
 
 // Name - retrieves a string value for the generator
@@ -67,7 +70,7 @@ type LoadTestOptions struct {
 
 	AllowInitialErrors bool
 
-    // Values required for fortio gRPC health & ping test
+	// Values required for fortio gRPC health & ping test
 	GRPCStreamsCount int
 	GRPCDoHealth     bool
 	GRPCHealthSvc    string

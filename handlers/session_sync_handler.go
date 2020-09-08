@@ -12,10 +12,10 @@ import (
 
 // SessionSyncHandler is used to send session data to the UI for initial sync
 func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// if req.Method != http.MethodGet {
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	// To get fresh copy of User
 	_, _ = provider.GetUserDetails(req)
@@ -52,7 +52,7 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 
 	err = json.NewEncoder(w).Encode(prefObj)
 	if err != nil {
-		logrus.Errorf("error marshalling user config data: %v", err)
+		logrus.Errorf("error marshaling user config data: %v", err)
 		http.Error(w, "unable to process the request", http.StatusInternalServerError)
 		return
 	}
