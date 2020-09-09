@@ -40,7 +40,7 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
   ```bash
   $ make site
   ```
-  *Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when deploying for production based on differences of the handling of trailing slashes between Jekyll and GitHub Pages.*
+  *Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`.*
 
 ### 4. Create a Pull Request
 
