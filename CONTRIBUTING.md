@@ -65,6 +65,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 `vi <specific page>.md`
 1. Run site locally to preview changes.
 `make site`
+* **Note:** *From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when deploying for production based on differences of the handling of trailing slashes between Jekyll and GitHub Pages.*
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
