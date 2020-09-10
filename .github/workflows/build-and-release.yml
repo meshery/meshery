@@ -1,4 +1,4 @@
-name: Mesheryctl Releaser
+name: Mesheryctl Build and Releaser
 on:
   push:
     branches:
