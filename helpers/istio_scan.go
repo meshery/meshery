@@ -14,7 +14,7 @@ import (
 /*
 func getK8SDynamicClientSet(kubeconfig []byte, contextName string) (dynamic.Interface, error) {
 	var clientConfig *rest.Config
-	var err error
+
 	if len(kubeconfig) == 0 {
 		clientConfig, err = rest.InClusterConfig()
 		if err != nil {
