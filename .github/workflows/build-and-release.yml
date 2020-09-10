@@ -1,4 +1,4 @@
-name: Meshery
+name: Mesheryctl Releaser
 on:
   push:
     branches:
@@ -10,7 +10,6 @@ jobs:
   build_release:
     name: Mesheryctl build & release
     runs-on: macos-latest
-    needs: [server-tests]
     steps:
     - name: Check out code
       uses: actions/checkout@master
