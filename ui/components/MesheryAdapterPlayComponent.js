@@ -392,9 +392,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     const {
       customDialogSMI,
     } = this.state;
+
+    const {
+      smi_result,
+    } = this.props;
+
     const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
 
-    const data = [
+    var data = [
       ["TA-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Passed"],
       ["TA-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Failed"],
       ["TM-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "Half", "Passed"],
@@ -402,6 +407,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
       ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
     ];
+
+    if(smi_result.details.results){
+      data = smi_result.details.results.map((val) => {
+        return [val.name, val.time, val.assertions,];
+      });
+    }
+
     return (
       <Dialog
         onClose={this.handleSMIClose()}
@@ -682,11 +694,16 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state) => {
+  const smi_result = state.get('smi_result').toJS();
+  return { smi_result, };
+};
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 export default withStyles(styles)(connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(withRouter(withSnackbar(MesheryAdapterPlayComponent))));
