@@ -76,3 +76,22 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	}
 	_, _ = w.Write(b)
 }
+
+// GetSmiResultsHandler gets the results of all the smi conformance tests
+func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	err := req.ParseForm()
+	if err != nil {
+		logrus.Errorf("Error: unable to parse form: %v", err)
+		http.Error(w, "unable to process the received data", http.StatusForbidden)
+		return
+	}
+	q := req.Form
+
+	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		http.Error(w, "error while getting smi test results", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("content-type", "application/json")
+	_, _ = w.Write(bdr)
+}
