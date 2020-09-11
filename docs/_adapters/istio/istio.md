@@ -16,6 +16,7 @@ image: /docs/assets/img/service-meshes/istio.svg
 
 ### Features
 1. Lifecycle management of Istio
+1. SMI Conformance Capability
 1. Lifecycle management of sample applications
 1. Configuration best practices
 1. Custom service mesh configuration
@@ -24,6 +25,29 @@ image: /docs/assets/img/service-meshes/istio.svg
 ### Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
+
+### SMI Conformance Capability
+
+### Conformance
+
+Defining “Conformance” - It’s important to acknowledge that conformance consists of both capabilities and compliance status. We define conformance as a combination of these two concepts.
+
+1. SMI Conformance acknowledges that
+   ...some participating service meshes may conscientiously never fully implement functions (SMI specs)...
+
+2. SMI Conformance identifies
+   ...a difference between full implementation of a specification and compliance with the portions that it implements...
+
+### Capability
+
+Given that some service mesh implementations, never intend to fully implement the SMI specifications, for each individual test, three possible capability designations exist
+
+- Full - service mesh has this capability.
+
+- Partial - service mesh has a portion of this capability implemented (may or may not have this full capability in the future).
+
+- None - currently service mesh does not have this capability (may or may not have this capability in the future).
+
 
 ### Sample applications
 
