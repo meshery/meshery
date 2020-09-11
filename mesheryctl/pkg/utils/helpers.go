@@ -31,12 +31,12 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
-	DOCS_BASEURL = "https://meshery.layer5.io/docs/guides/mesheryctl"
-	
-	rootUsageURL   = fmt.Sprintf("%s#%s", DOCS_BASEURL, "global-commands-and-flags")
-	perfUsageURL   = fmt.Sprintf("%s#%s", DOCS_BASEURL, "performance-management")
-	systemUsageURL = fmt.Sprintf("%s#%s", DOCS_BASEURL, "meshery-lifecycle-management")
-	meshUsageURL   = fmt.Sprintf("%s#%s", DOCS_BASEURL, "service-mesh-lifecycle-management")
+	docsBaseURL = "https://meshery.layer5.io/docs/"
+
+	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
+	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
+	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
+	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
 )
 
 type cmdType string
