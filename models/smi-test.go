@@ -5,5 +5,5 @@ import (
 )
 
 type SmiResult struct {
-	ID uuid.UUID `json:"id,omitmepty"`
+	ID uuid.UUID `json:"id,omitempty"`
 }
