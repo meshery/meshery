@@ -25,6 +25,9 @@ const styles = (theme) => ({
   grid: {
     padding: theme.spacing(2),
   },
+  table: {
+    margin: theme.spacing(10),
+  },
   chartContent: {
     // minHeight: window.innerHeight * 0.7,
   },
@@ -49,6 +52,8 @@ class MesheryResults extends Component {
       // results_selection,
 
       selectedRowData: null,
+
+      smi_results: [],
     };
   }
 
@@ -62,6 +67,24 @@ class MesheryResults extends Component {
         page, pageSize, search, sortOrder,
       } = this.state;
       this.fetchResults(page, pageSize, search, sortOrder);
+      this.fetchSMIResults();
+    }
+
+    fetchSMIResults = () => {
+      const self=this;
+      dataFetch(`/api/mesh/result`, {
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, (result) => {
+        if (typeof result !== 'undefined') {
+          const smi_result = JSON.parse(result);
+          const data = smi_result.details.results.map((val) => {
+            return [val.name, val.time, val.assertions,val.serviceMesh];
+          })
+          self.setState({smi_results: data})
+        }
+      }, () => {});
     }
 
     fetchResults = (page, pageSize, search, sortOrder) => {
@@ -125,7 +148,7 @@ class MesheryResults extends Component {
     render() {
       const { classes, results_selection, user } = this.props;
       const {
-        results, page, count, pageSize, selectedRowData,
+        results, page, count, pageSize, selectedRowData, smi_results,
       } = this.state;
       const self = this;
       const resultsForDisplay = [];
@@ -152,6 +175,8 @@ class MesheryResults extends Component {
         resultsForDisplay.push(row);
         // console.log(`adding custom row: ${JSON.stringify(row)}`);
       });
+
+      const smi_columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
 
       const columns = [
         {
@@ -377,7 +402,8 @@ class MesheryResults extends Component {
                   close={self.resetSelectedRowData()}
                 />
               )}
-          <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
+          <MUIDataTable className={classes.table} title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
+          <MUIDataTable className={classes.table} title="SMI Test Results" data={smi_results} columns={smi_columns} />
         </NoSsr>
       );
     }
