@@ -8,13 +8,15 @@ project_status: stable
 github_link: https://github.com/layer5io/meshery-istio
 image: /docs/assets/img/service-meshes/istio.svg
 ---
+
 # {{ page.name }}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
+| :------------: | :-------------------------------------------------: | :---------------------------: |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
 
 ### Features
+
 1. Lifecycle management of Istio
 1. SMI Conformance Capability
 1. Lifecycle management of sample applications
@@ -60,13 +62,14 @@ The ({{ page.name }}) includes a handful of sample applications. Use Meshery to 
 Once BookInfo is deployed, you can use Meshery to apply configuration to control traffic, inject latency, perform context-based routing, and so on.
 
 ### Configuration best practices
+
 The {{page.name}} will parse all of Istio's configuration and compare the running configuration of the service mesh against known best practices for an {{page.title}} deployment.
 
 ### Custom service mesh configuration
 
 Meshery allows you to paste (or type in) any Kubernetes manifest that you would like to have applied to the cluster. This configuraiton may be new VirtualServices or new DestinationRules or other.
 
- ![Custom Istio Configuration in Meshery]({{ relative_url }}istio-adapter-custom-configuration.png)
+![Custom Istio Configuration in Meshery]({{ relative_url }}istio-adapter-custom-configuration.png)
 
 ### Prometheus and Grafana connections
 
