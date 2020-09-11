@@ -79,7 +79,7 @@ export const actionTypes = {
   UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
   UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
-  UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
+  // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 }
 
 // REDUCERS
@@ -159,12 +159,12 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_PROGRESS:
       return state.mergeDeep({showProgress: action.showProgress});
     
-    case actionTypes.UPDATE_SMI_RESULT:
-      console.log(`received an action to update smi result`,action.smi_result);
-      if(action.smi_result!==undefined)
-        return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
-      else
-        return state
+      // case actionTypes.UPDATE_SMI_RESULT:
+      //   console.log(`received an action to update smi result`,action.smi_result);
+      //   if(action.smi_result!==undefined)
+      //     return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
+      //   else
+      //     return state
     
     default:
       return state
@@ -236,10 +236,10 @@ export const updateStaticPrometheusBoardConfig = ({staticPrometheusBoardConfig})
   return dispatch({ type: actionTypes.UPDATE_STATIC_BOARD_CONFIG, staticPrometheusBoardConfig });
 }
 
-export const updateSMIResults = ({smi_result}) => dispatch => {
-  console.log("invoking the updateSMIResults action creator. . .",smi_result);
-  return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });
-}
+// export const updateSMIResults = ({smi_result}) => dispatch => {
+//   console.log("invoking the updateSMIResults action creator. . .",smi_result);
+//   return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });
+// }
 
 // export const startClock = dispatch => {
 //   return setInterval(() => {
