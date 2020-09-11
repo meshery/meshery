@@ -42,9 +42,9 @@ Defining “Conformance” - It’s important to acknowledge that conformance co
 
 Given that some service mesh implementations, never intend to fully implement the SMI specifications, for each individual test, three possible capability designations exist
 
-- Full - service mesh has this capability.
+- Full - service mesh has this capability
 
-- Partial - service mesh has a portion of this capability implemented (may or may not have this full capability in the future).
+- Partial - service mesh has a portion of this capability implemented(may or may not have this full capability in the future)
 
 - None - currently service mesh does not have this capability (may or may not have this capability in the future).
 
