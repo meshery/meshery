@@ -1,5 +1,7 @@
-- title: Get Started
+- title: Quick Start
   url: "installation/#getting-started"
+- title: All Platforms
+  url: "installation/platforms"
 - title: Project
   external_url: https://meshery.io
 - title: Slack
