@@ -14,7 +14,8 @@ import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PlayIcon from '@material-ui/icons/PlayArrow';
-import { updateProgress } from '../lib/store';
+// import { updateProgress, updateSMIResults } from '../lib/store';
+import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
 
@@ -389,19 +390,39 @@ class MesheryAdapterPlayComponent extends React.Component {
 
 
   generateSMIResult() {
+    const self = this;
+    
     const {
       customDialogSMI,
-    } = this.state;
+    } = self.state;
+    
     const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
+    var data;
+    let query = '';
+    let search = '';
+    let sortOrder = '';
+    if (typeof search === 'undefined' || search === null) {
+      search = '';
+    }
+    if (typeof sortOrder === 'undefined' || sortOrder === null) {
+      sortOrder = '';
+    }
+    query = `?page=1&pageSize=1&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    console.log("fetching smi results");
+    dataFetch(`/api/smi/results${query}`, {
+      credentials: 'same-origin',
+      method: 'GET',
+      credentials: 'include',
+    }, (result) => {
+      if (typeof result !== 'undefined') {
+        const smi_result = JSON.parse(result);
+        data = smi_result.details.results.filter((val) => (val.serviceMesh==adapter.name).map((val) => {
+          return [val.name, val.time, val.assertions,val.serviceMesh];
+        }))
+        console.log("data: "+data);
+      }
+    }, () => {});
 
-    const data = [
-      ["TA-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Passed"],
-      ["TA-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Failed"],
-      ["TM-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "Half", "Passed"],
-      ["TM-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "None", "Passed"],
-      ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
-      ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
-    ];
     return (
       <Dialog
         onClose={this.handleSMIClose()}
@@ -682,11 +703,18 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
+// const mapStateToProps = (state) => {
+//   const smi_result = state.get('smi_result').toJS();
+//   return { smi_result, };
+// };
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });
 
 export default withStyles(styles)(connect(
+  // mapStateToProps,
   null,
   mapDispatchToProps,
 )(withRouter(withSnackbar(MesheryAdapterPlayComponent))));

@@ -57,6 +57,8 @@ const initialState = fromJS({
   anonymousUsageStats: true,
   anonymousPerfResults: true,
   showProgress: false,
+
+  smi_result: {summary: "Smi conformance test completed successfully", details: {"tests":"0","failures":"0","results":[{"name":"traffic-access","time":"2m3.179251439s","assertions":"10","failure":{"text":"resource Deployment:kudo-test-loyal-bobcat/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}},{"name":"traffic-split","time":"4m6.388197552s","assertions":"8","failure":{"text":"resource Deployment:kudo-test-knowing-ghost/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}},{"name":"traffic-spec","time":"6m9.604066097s","assertions":"10","failure":{"text":"resource Deployment:kudo-test-genuine-treefrog/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}}]}, operation_id: "48ea6124-a278-42af-bdd8-8a2adc0f3c81"},
 });
 
 export const actionTypes = {
@@ -77,6 +79,7 @@ export const actionTypes = {
   UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
   UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
+  // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 }
 
 // REDUCERS
@@ -155,6 +158,14 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROGRESS:
       return state.mergeDeep({showProgress: action.showProgress});
+    
+      // case actionTypes.UPDATE_SMI_RESULT:
+      //   console.log(`received an action to update smi result`,action.smi_result);
+      //   if(action.smi_result!==undefined)
+      //     return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
+      //   else
+      //     return state
+    
     default:
       return state
   }
@@ -180,6 +191,7 @@ export const updateUser = ({user}) => dispatch => {
 }
 
 export const updateK8SConfig = ({k8sConfig}) => dispatch => {
+  console.log("Update K8s config action");
   return dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
 }
 
@@ -224,6 +236,10 @@ export const updateStaticPrometheusBoardConfig = ({staticPrometheusBoardConfig})
   return dispatch({ type: actionTypes.UPDATE_STATIC_BOARD_CONFIG, staticPrometheusBoardConfig });
 }
 
+// export const updateSMIResults = ({smi_result}) => dispatch => {
+//   console.log("invoking the updateSMIResults action creator. . .",smi_result);
+//   return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });
+// }
 
 // export const startClock = dispatch => {
 //   return setInterval(() => {
