@@ -18,6 +18,7 @@ import PlayIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
+import MesheryResultDialog from './MesheryResultDialog';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 
@@ -162,6 +163,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       menuState, // category: {add: 1, delete: 0}
 
       smi_result: [],
+      selectedRowData: null,
     };
   }
 
@@ -203,6 +205,13 @@ class MesheryAdapterPlayComponent extends React.Component {
     return () => {
       self.setState({['customDialogSMI']: false });
     }
+  }
+
+  resetSelectedRowData() {
+    const self = this;
+    return () => {
+      self.setState({ selectedRowData: null });
+    };
   }
 
   handleModalOpen(isDelete) {
@@ -690,6 +699,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const {
       namespace,
       namespaceError,
+      selectedRowData
     } = this.state;
 
     let adapterName = (adapter.name).split(" ").join("").toLowerCase();
@@ -733,6 +743,13 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     return (
       <NoSsr>
+        {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0
+        && (
+          <MesheryResultDialog
+            rowData={selectedRowData}
+            close={self.resetSelectedRowData()}
+          />
+        )}
         <React.Fragment>
           <div className={classes.chipGrid}>
             <Grid container spacing={3}>
