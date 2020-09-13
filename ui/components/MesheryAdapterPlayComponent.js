@@ -18,6 +18,8 @@ import PlayIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+
 
 const styles = (theme) => ({
   root: {
@@ -158,6 +160,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       open : false,
 
       menuState, // category: {add: 1, delete: 0}
+
+      smi_result: [],
     };
   }
 
@@ -396,8 +400,81 @@ class MesheryAdapterPlayComponent extends React.Component {
       customDialogSMI,
     } = self.state;
     
-    const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
-    var data;
+    const columns = [
+      {
+        name: 'name',
+        label: 'Name',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+        },
+      },
+      {
+        name: 'SMI Specification',
+        label: 'SMI Specification',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+        },
+      },
+      {
+        name: 'SMI Version',
+        label: 'SMI Version',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: false,
+        },
+      },
+      {
+        name: 'Service Mesh',
+        label: 'Service Mesh',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+        },
+      },
+      {
+        name: 'Service Mesh Version',
+        label: 'Service Mesh Version',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+        },
+      },
+
+      {
+        name: 'Passed',
+        label: 'Passed',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+        },
+      },
+
+      {
+        name: 'Details',
+        options: {
+          filter: false,
+          sort: false,
+          searchable: false,
+          customBodyRender: (value, tableMeta) => (
+            <IconButton
+              aria-label="more"
+              color="inherit"
+              onClick={() => self.setState({ selectedRowData: self.state.smi_results[tableMeta.rowIndex] })}
+            >
+              <MoreHorizIcon />
+            </IconButton>
+          ),
+        },
+      },
+    ];
     let query = '';
     let search = '';
     let sortOrder = '';
@@ -407,7 +484,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     if (typeof sortOrder === 'undefined' || sortOrder === null) {
       sortOrder = '';
     }
-    query = `?page=1&pageSize=1&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    query = `?page=0&pageSize=10&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
     console.log("fetching smi results");
     dataFetch(`/api/smi/results${query}`, {
       credentials: 'same-origin',
@@ -416,12 +493,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, (result) => {
       if (typeof result !== 'undefined') {
         const smi_result = JSON.parse(result);
-        data = smi_result.details.results.filter((val) => (val.serviceMesh==adapter.name).map((val) => {
-          return [val.name, val.time, val.assertions,val.serviceMesh];
+        const data = smi_result.details.results.filter((val) => (val.serviceMesh==adapter.name).map((val) => {
+          return [val.name, val.specification, val.assertions,val.serviceMesh];
         }))
-        console.log("data: "+data);
+        this.setState({smi_result: data});
       }
-    }, () => {});
+    }, (err) => {
+      console.log(err)
+    });
 
     return (
       <Dialog
@@ -433,7 +512,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       >
         <MUIDataTable
           title={"SMI Conformance Result"}
-          data={data}
+          data={self.state.smi_result}
           columns={columns}
         />
       </Dialog>

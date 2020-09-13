@@ -73,13 +73,15 @@ class MesheryResults extends Component {
     fetchSMIResults = () => {
       const self=this;
       let query = '';
+      let search = '';
+      let sortOrder='';
       if (typeof search === 'undefined' || search === null) {
         search = '';
       }
       if (typeof sortOrder === 'undefined' || sortOrder === null) {
         sortOrder = '';
       }
-      query = `?page=1&pageSize=1&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+      query = `?page=0&pageSize=10&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
       self.props.updateProgress({ showProgress: true });
       console.log("fetching smi results");
       dataFetch(`/api/smi/results${query}`, {
@@ -93,9 +95,8 @@ class MesheryResults extends Component {
             return [val.name, val.time, val.assertions,val.serviceMesh];
           })
           self.setState({smi_results: data})
-          console.log("data: "+data);
         }
-      }, () => {});
+      }, self.handleError);
     }
 
     fetchResults = (page, pageSize, search, sortOrder) => {
@@ -114,6 +115,7 @@ class MesheryResults extends Component {
         method: 'GET',
         credentials: 'include',
       }, (result) => {
+        console.log("Results API",`/api/perf/results${query}`)
         self.props.updateProgress({ showProgress: false });
         // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
@@ -187,7 +189,81 @@ class MesheryResults extends Component {
         // console.log(`adding custom row: ${JSON.stringify(row)}`);
       });
 
-      const smi_columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
+      const smi_columns = [
+        {
+          name: 'name',
+          label: 'Name',
+          options: {
+            filter: false,
+            sort: true,
+            searchable: true,
+          },
+        },
+        {
+          name: 'SMI Specification',
+          label: 'SMI Specification',
+          options: {
+            filter: false,
+            sort: true,
+            searchable: true,
+          },
+        },
+        {
+          name: 'SMI Version',
+          label: 'SMI Version',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: false,
+          },
+        },
+        {
+          name: 'Service Mesh',
+          label: 'Service Mesh',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+          },
+        },
+        {
+          name: 'Service Mesh Version',
+          label: 'Service Mesh Version',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+          },
+        },
+  
+        {
+          name: 'Passed',
+          label: 'Passed',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+          },
+        },
+  
+        {
+          name: 'Details',
+          options: {
+            filter: false,
+            sort: false,
+            searchable: false,
+            customBodyRender: (value, tableMeta) => (
+              <IconButton
+                aria-label="more"
+                color="inherit"
+                onClick={() => self.setState({ selectedRowData: self.state.smi_results[tableMeta.rowIndex] })}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+            ),
+          },
+        },
+      ];
 
       const columns = [
         {
