@@ -176,32 +176,21 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
-func (l *DefaultLocalProvider) PublishSmiResults(req *http.Request, result *SmiResult) (string, error) {
+func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
 		return "", err
 	}
-	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.UserID)
-	if !pref.AnonymousPerfResults {
-		return "", nil
+
+	key, _ := uuid.NewV4()
+	result.ID = key
+	data, err = json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
+		return "", err
 	}
 
-	logrus.Debugf("Result: %s, size: %d", data, len(data))
-	resultID, _ := l.shipResults(req, data)
-
-	key := uuid.FromStringOrNil(resultID)
-	logrus.Debugf("key: %s, is nil: %t", key.String(), (key == uuid.Nil))
-	if key == uuid.Nil {
-		key, _ = uuid.NewV4()
-		result.ID = key
-		data, err = json.Marshal(result)
-		if err != nil {
-			logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
-			return "", err
-		}
-	}
 	if err := l.SmiResultPersister.WriteResult(key, data); err != nil {
 		return "", err
 	}

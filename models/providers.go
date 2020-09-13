@@ -57,7 +57,7 @@ type Provider interface {
 	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishResults(req *http.Request, result *MesheryResult) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	PublishSmiResults(req *http.Request, result *SmiResult) (string, error)
+	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
 	GetResult(*http.Request, uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error

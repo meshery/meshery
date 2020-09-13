@@ -396,7 +396,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       customDialogSMI,
     } = self.state;
     
-    const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
+    const columns = ["Id", "Mesh name", "Mesh version", "Cases passed", "Conformance capability", "Status", "More details"];
     var data;
     let query = '';
     let search = '';
