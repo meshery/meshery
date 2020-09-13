@@ -429,7 +429,7 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
-func (l *MesheryRemoteProvider) PublishSmiResults(req *http.Request, result *SmiResult) (string, error) {
+func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -442,7 +442,7 @@ func (l *MesheryRemoteProvider) PublishSmiResults(req *http.Request, result *Smi
 
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
-	tokenString, err := l.GetToken(req)
+	tokenString, err := l.GetToken(nil)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return "", err
