@@ -79,6 +79,7 @@ const styles = (theme) => ({
     width: '100%',
   },
 });
+
 class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -116,7 +117,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     if (name === 'url' && event.target.value !== '') {
-      const compulsoryProtocolValidUrlPattern = new RegExp('^(https?:\\/\\/)' // compulsory protocol
+      const compulsoryProtocolValidUrlPattern = new RegExp('(^(http|https|nats|tcp):\\/\\/)' // compulsory protocol
       + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
       + '((\\d{1,3}\.){3}\\d{1,3}))' // OR ip (v4) address
       + '(\\:\\d+)?(\/[-a-z\\d%_.~+]*)*' // port and path
