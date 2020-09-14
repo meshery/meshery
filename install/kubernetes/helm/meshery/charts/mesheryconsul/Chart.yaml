@@ -2,7 +2,7 @@ apiVersion: v2
 name: mesheryconsul
 description: Meshery Adapter for Consul chart.
 source: 
-  - https://github.com/layer5io/meshery-istio
+  - https://github.com/layer5io/meshery-consul
 
 deprecated: false
 
@@ -26,6 +26,8 @@ version: 1.0.0
 appVersion:
 
 maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
   - name: aisuko
     email: urakiny@gmail.com
   - name: leecalcote

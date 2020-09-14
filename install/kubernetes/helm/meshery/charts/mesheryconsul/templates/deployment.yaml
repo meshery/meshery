@@ -28,7 +28,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          # TODO: Need to confirm the mesheryistio image version
+          # TODO: Need to confirm the mesheryconsul image version
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
