@@ -177,15 +177,9 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	data, err := json.Marshal(result)
-	if err != nil {
-		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
-		return "", err
-	}
-
 	key, _ := uuid.NewV4()
 	result.ID = key
-	data, err = json.Marshal(result)
+	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
 		return "", err

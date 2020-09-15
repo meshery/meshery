@@ -408,82 +408,9 @@ class MesheryAdapterPlayComponent extends React.Component {
     const {
       customDialogSMI,
     } = self.state;
-    
-    const columns = [
-      {
-        name: 'name',
-        label: 'Name',
-        options: {
-          filter: false,
-          sort: true,
-          searchable: true,
-        },
-      },
-      {
-        name: 'SMI Specification',
-        label: 'SMI Specification',
-        options: {
-          filter: false,
-          sort: true,
-          searchable: true,
-        },
-      },
-      {
-        name: 'SMI Version',
-        label: 'SMI Version',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: false,
-        },
-      },
-      {
-        name: 'Service Mesh',
-        label: 'Service Mesh',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-        },
-      },
-      {
-        name: 'Service Mesh Version',
-        label: 'Service Mesh Version',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-        },
-      },
-
-      {
-        name: 'Passed',
-        label: 'Passed',
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-        },
-      },
-
-      {
-        name: 'Details',
-        options: {
-          filter: false,
-          sort: false,
-          searchable: false,
-          customBodyRender: (value, tableMeta) => (
-            <IconButton
-              aria-label="more"
-              color="inherit"
-              onClick={() => self.setState({ selectedRowData: self.state.smi_results[tableMeta.rowIndex] })}
-            >
-              <MoreHorizIcon />
-            </IconButton>
-          ),
-        },
-      },
-    ];
+  
+    const columns = ["ID","Date", "Service Mesh", "Service Mesh Version", "% Passed"];
+    var data;
     let query = '';
     let search = '';
     let sortOrder = '';
@@ -502,8 +429,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, (result) => {
       if (typeof result !== 'undefined') {
         const smi_result = JSON.parse(result);
-        const data = smi_result.details.results.filter((val) => (val.serviceMesh==adapter.name).map((val) => {
-          return [val.name, val.specification, val.assertions,val.serviceMesh];
+        data = smi_result.results.map((val) => {
+          return [val.id,val.smi_version,val.mesh_name,val.mesh_version,val.conformance_capability]
         }))
         this.setState({smi_result: data});
       }
