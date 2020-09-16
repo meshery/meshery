@@ -92,12 +92,10 @@ class Header extends React.Component {
                     </IconButton>
                   </Grid>
                 </Hidden>
-                <Grid container xs alignItems="center" className={classes.pageTitleWrapper}>
-                  <Grid item>
-                    <Typography color="inherit" variant="h5" className={classes.pageTitle}>
-                      {title}
-                    </Typography>
-                  </Grid>
+                <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                  <Typography color="inherit" variant="h5" className={classes.pageTitle}>
+                    {title}
+                  </Typography>
                 </Grid>
                 {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
