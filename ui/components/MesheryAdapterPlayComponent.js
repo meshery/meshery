@@ -2,7 +2,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import {
-  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip
+  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip, TableCell, TableRow, TableBody, TableHead,
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
@@ -14,12 +14,11 @@ import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PlayIcon from '@material-ui/icons/PlayArrow';
-// import { updateProgress, updateSMIResults } from '../lib/store';
+// import { updateSMIResults } from '../lib/store';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
 import MesheryResultDialog from './MesheryResultDialog';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 
 const styles = (theme) => ({
@@ -329,18 +328,32 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
-  handleSMIClick = (adapterLoc) => () => {
+  handleSMIClick = (adapterName) => () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
+    let query = '';
+    let search = '';
+    let sortOrder = '';
+    if (typeof search === 'undefined' || search === null) {
+      search = '';
+    }
+    if (typeof sortOrder === 'undefined' || sortOrder === null) {
+      sortOrder = '';
+    }
+    query = `?page=0&pageSize=10&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    dataFetch(`/api/smi/results${query}`, {
       credentials: 'same-origin',
+      method: 'GET',
       credentials: 'include',
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+        const results  = result.results.filter(val => val.mesh_name.toLowerCase()==adapterName.toLowerCase())
+        self.setState({smi_result: {...result, results:results, total_count:results.length}});
         self.setState({ ['customDialogSMI']: true })
       }
-    }, self.handleError('Could not ping adapter.'));
+    }, self.handleError('Could not fetch SMI results.'));
+
   }
 
   handleError = (cat, deleteOp) => {
@@ -406,37 +419,45 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     
     const {
-      customDialogSMI,
+      customDialogSMI, smi_result,
     } = self.state;
   
-    const columns = ["ID","Date", "Service Mesh", "Service Mesh Version", "% Passed"];
-    var data;
-    let query = '';
-    let search = '';
-    let sortOrder = '';
-    if (typeof search === 'undefined' || search === null) {
-      search = '';
+    const columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed"];
+    const options = {
+      expandableRows: true,
+      selectableRows: false,
+      renderExpandableRow: (rowData, rowMeta) => {
+        console.log("Rox Data",rowData,rowMeta)
+        const column = ["Test ID", "SMI Specification", "Time","SMI Version", "Capability", "Status"]
+        const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
+          return [val.assertion, val.smi_specification,val.time,"","",val.result] 
+        })
+        const colSpan = rowData.length + 1
+        return (
+          <TableRow colSpan={colSpan}>
+            <TableHead>
+              <TableRow colSpan={colSpan}>
+                {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+              </TableRow>
+            </TableHead>
+            <TableBody colSpan={colSpan}>
+              {data.map((row) => (
+                <TableRow colSpan={colSpan}>
+                  {row.map(val => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </TableRow>
+        );
+      },
     }
-    if (typeof sortOrder === 'undefined' || sortOrder === null) {
-      sortOrder = '';
+    var data = [];
+    if(smi_result&&smi_result.results) {
+      data = smi_result.results.map((val) => {
+        return [val.id,"",val.mesh_name,val.mesh_version,val.smi_version,val.conformance_capability,]
+      }) 
     }
-    query = `?page=0&pageSize=10&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-    console.log("fetching smi results");
-    dataFetch(`/api/smi/results${query}`, {
-      credentials: 'same-origin',
-      method: 'GET',
-      credentials: 'include',
-    }, (result) => {
-      if (typeof result !== 'undefined') {
-        const smi_result = JSON.parse(result);
-        data = smi_result.results.map((val) => {
-          return [val.id,val.smi_version,val.mesh_name,val.mesh_version,val.conformance_capability]
-        }))
-        this.setState({smi_result: data});
-      }
-    }, (err) => {
-      console.log(err)
-    });
+
 
     return (
       <Dialog
@@ -448,8 +469,9 @@ class MesheryAdapterPlayComponent extends React.Component {
       >
         <MUIDataTable
           title={"SMI Conformance Result"}
-          data={self.state.smi_result}
+          data={data}
           columns={columns}
+          options={options}
         />
       </Dialog>
     );
@@ -646,7 +668,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       <React.Fragment>
         <Chip
           label="View SMI Conformance results"
-          onClick={this.handleSMIClick(adapter.adapter_location)}
+          onClick={this.handleSMIClick(adapter.name)}
           icon={<img src={imageSMISrc} className={classes.icon} />}
           className={classes.chip}
           variant="outlined"
