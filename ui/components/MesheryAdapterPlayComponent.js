@@ -163,6 +163,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       smi_result: [],
       selectedRowData: null,
+      page: 0,
+      search: '',
+      sortOrder: '',
+      pageSize: 10,
     };
   }
 
@@ -328,31 +332,37 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
-  handleSMIClick = (adapterName) => () => {
-    this.props.updateProgress({ showProgress: true });
+  fetchSMIResults= (adapterName, page, pageSize, search, sortOrder) => {
     const self = this;
     let query = '';
-    let search = '';
-    let sortOrder = '';
     if (typeof search === 'undefined' || search === null) {
       search = '';
     }
     if (typeof sortOrder === 'undefined' || sortOrder === null) {
       sortOrder = '';
     }
-    query = `?page=0&pageSize=10&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+
     dataFetch(`/api/smi/results${query}`, {
       credentials: 'same-origin',
       method: 'GET',
       credentials: 'include',
     }, (result) => {
-      this.props.updateProgress({ showProgress: false });
-      if (typeof result !== 'undefined') {
+      if (typeof result !== 'undefined' && result.results) {
         const results  = result.results.filter(val => val.mesh_name.toLowerCase()==adapterName.toLowerCase())
         self.setState({smi_result: {...result, results:results, total_count:results.length}});
-        self.setState({ ['customDialogSMI']: true })
       }
     }, self.handleError('Could not fetch SMI results.'));
+  }
+
+  handleSMIClick = (adapterName) => () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    const {page, pageSize, search, sortOrder} = self.state;
+    self.fetchSMIResults(adapterName, page, pageSize, search, sortOrder);
+    this.props.updateProgress({ showProgress: false });
+    self.setState({ ['customDialogSMI']: true })
+    
 
   }
 
@@ -419,13 +429,17 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     
     const {
-      customDialogSMI, smi_result,
+      customDialogSMI, smi_result, pageSize
     } = self.state;
   
     const columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed"];
     const options = {
+      filterType: 'textField',
       expandableRows: true,
       selectableRows: false,
+      rowsPerPage: pageSize,
+      rowsPerPageOptions: [10, 20, 25],
+      fixedHeader: true,
       renderExpandableRow: (rowData, rowMeta) => {
         console.log("Rox Data",rowData,rowMeta)
         const column = ["Test ID", "SMI Specification", "Time","SMI Version", "Capability", "Status"]
@@ -456,6 +470,46 @@ class MesheryAdapterPlayComponent extends React.Component {
           </TableRow>
         );
       },
+      onTableChange: (action, tableState) => {
+        const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[];
+        let order='';
+        if(tableState.activeColumn){
+          order = `${columns[tableState.activeColumn].name} desc`;
+        }
+
+        switch (action) {
+          case 'changePage':
+            self.fetchSMIResults(self.props.adapter.name,tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
+            break;
+          case 'changeRowsPerPage':
+            self.fetchSMIResults(self.props.adapter.name,self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
+            break;
+          case 'search':
+            if (self.searchTimeout) {
+              clearTimeout(self.searchTimeout);
+            }
+            self.searchTimeout = setTimeout(() => {
+              if (self.state.search !== tableState.searchText) {
+                self.fetchSMIResults(self.props.adapter.name,self.state.page, self.state.pageSize, tableState.searchText !== null ? tableState.searchText : '', self.state.sortOrder);
+              }
+            }, 500);
+            break;
+          case 'sort':
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === 'ascending') {
+                order = `${columns[tableState.activeColumn].name} asc`;
+              } else {
+                order = `${columns[tableState.activeColumn].name} desc`;
+              }
+            }
+            if (order !== this.state.sortOrder) {
+              self.fetchSMIResults(self.props.adapter.name,self.state.page, self.state.pageSize, self.state.search, order);
+            }
+            break;
+        }
+      },
+
+
     }
     var data = [];
     if(smi_result&&smi_result.results) {
