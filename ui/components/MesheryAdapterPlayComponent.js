@@ -2,7 +2,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import {
-  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip, TableCell, TableRow, TableBody, TableHead,
+  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip, TableCell, TableRow, TableBody, TableHead, Table, Paper
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
@@ -434,19 +434,25 @@ class MesheryAdapterPlayComponent extends React.Component {
         })
         const colSpan = rowData.length + 1
         return (
-          <TableRow colSpan={colSpan}>
-            <TableHead>
-              <TableRow colSpan={colSpan}>
-                {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
-              </TableRow>
-            </TableHead>
-            <TableBody colSpan={colSpan}>
-              {data.map((row) => (
-                <TableRow colSpan={colSpan}>
-                  {row.map(val => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
-                </TableRow>
-              ))}
-            </TableBody>
+          <TableRow>
+            <TableCell colSpan={colSpan}>
+              <Paper>
+                <Table aria-label="a dense table">
+                  <TableHead>
+                    <TableRow>
+                      {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.map((row) => (
+                      <TableRow >
+                        {row.map(val => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Paper>
+            </TableCell>
           </TableRow>
         );
       },
