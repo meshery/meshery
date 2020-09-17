@@ -432,7 +432,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       customDialogSMI, smi_result, pageSize
     } = self.state;
   
-    const columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed"];
+    const columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed","Status"];
     const options = {
       filterType: 'textField',
       expandableRows: true,
@@ -442,9 +442,9 @@ class MesheryAdapterPlayComponent extends React.Component {
       fixedHeader: true,
       renderExpandableRow: (rowData, rowMeta) => {
         console.log("Rox Data",rowData,rowMeta)
-        const column = ["Test ID", "SMI Specification", "Time","SMI Version", "Capability", "Status"]
+        const column = ["SMI Specification","Assertions", "Time","SMI Version", "Capability", "Result", "Reason"]
         const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
-          return [val.assertion, val.smi_specification,val.time,"","",val.result] 
+          return [val.smi_specification,val.assertions,val.time,"alpha1/v1",val.capability,val.status,val.reason] 
         })
         const colSpan = rowData.length + 1
         return (
@@ -514,7 +514,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     var data = [];
     if(smi_result&&smi_result.results) {
       data = smi_result.results.map((val) => {
-        return [val.id,"",val.mesh_name,val.mesh_version,val.smi_version,val.conformance_capability,]
+        return [val.id,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status]
       }) 
     }
 

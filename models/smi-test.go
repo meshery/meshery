@@ -5,13 +5,14 @@ import (
 )
 
 type SmiResult struct {
-	ID                    uuid.UUID `json:"id,string,omitempty"`
-	MeshName              string    `json:"mesh_name,omitempty"`
-	MeshVersion           string    `json:"mesh_version,omitempty"`
-	CasesPassed           string    `json:"cases_passed,omitempty"`
-	ConformanceCapability string    `json:"conformance_capability,omitempty"`
-	Status                string    `json:"status,omitempty"`
-	MoreDetails           []*Detail `json:"more_details,omitempty"`
+	ID                uuid.UUID `json:"id,string,omitempty"`
+	Date              string    `json:"date,omitempty"`
+	MeshName          string    `json:"mesh_name,omitempty"`
+	MeshVersion       string    `json:"mesh_version,omitempty"`
+	CasesPassed       string    `json:"cases_passed,omitempty"`
+	PassingPercentage string    `json:"passing_percentage,omitempty"`
+	Status            string    `json:"status,omitempty"`
+	MoreDetails       []*Detail `json:"more_details,omitempty"`
 }
 
 type Detail struct {
@@ -21,4 +22,6 @@ type Detail struct {
 	Assertions       string `json:"assertions,omitemtpy"`
 	Result           string `json:"result,omitempty"`
 	Reason           string `json:"reason,omitempty"`
+	Capability       string `json:"capability,omitempty"`
+	Status           string `json:"status,omitempty"`
 }
