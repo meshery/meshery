@@ -89,20 +89,20 @@ To upgrade `mesheryctl`, execute the following command:
 scoop update mesheryctl
 ```
 
-# Advanced Installation Section
+# Advanced Installation
 
-Users can control the specific container image (version) of Meshery that they would like to run by editing their local ~/.meshery/docker-compose.yaml file.
-In the line with the meshery container image, instead of leaving the implicit :latest tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
+Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local `~/.meshery/meshery.yaml` (a docker compose file).
+Aligned with the Meshery container image, instead of leaving the implicit `:stable-latest` tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
 
 ```bash
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:<specific-image-tag>
+    image: layer5/meshery:v0.5.0
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 ```
 
 ---
 
-Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen.
+When Meshery is up and running, instructions to access Meshery will be printed on the screen and your default browser should be directed to the Meshery login screen.

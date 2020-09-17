@@ -35,7 +35,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10003:10003"      
+      - "10003:10003"
   meshery-nsm:
     image: layer5/meshery-nsm:stable-latest
     labels:
@@ -47,7 +47,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10007:10007"      
+      - "10007:10007"
   meshery-cpx:
     image: layer5/meshery-cpx:stable-latest
     labels:

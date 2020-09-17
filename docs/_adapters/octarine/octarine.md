@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Octarine Adapter
-name: Octarine
+name: Meshery Adapter for Octarine
+mesh_name: Octarine
 version: v1.0
 port: 10003/tcp
 project_status: stable
@@ -14,9 +15,9 @@ image: /docs/assets/img/service-meshes/octarine.svg
 | :------------: | :------------:   | :------------:              |
 | {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
-### Lifecycle management
+### Lifecycle Management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Features
 
@@ -63,7 +64,7 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 ### Sample Applications 
 
-The Meshery adapter for {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
+The {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
 
 - [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
     - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.

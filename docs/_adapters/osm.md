@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Open Service Mesh Adapter
-name: Open Service Mesh
+name: Meshery Adapter for Open Service Mesh
+mesh_name: Open Service Mesh
 version: OSM v0.3.0
 port: 10009/tcp
 project_status: alpha
@@ -11,13 +12,13 @@ image: /docs/assets/img/service-meshes/osm.svg
 
 # {{ page.name }}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
+| :------------: | :-------------------------------------------------: | :---------------------------: |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery. Using the Meshery adapter for Open Service Mesh, you can run the full suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
 
 ### Suggested Topics
 
@@ -34,4 +35,3 @@ Defining "Conformance" - Acknowledging that conformance consists of both capabil
     2. SMI Conformance identifies ...a difference between full implementation of a specification and compliance with the portions that it implements...
 
 You can [Learn more](https://meshery.layer5.io/docs/functionality/smi-conformance) about SMI conformance capabilities here...
-

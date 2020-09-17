@@ -63,16 +63,16 @@ var PerfCmd = &cobra.Command{
 		return utils.PreReqCheck()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Importing SMPS Configuration from the file
+		// Importing SMP Configuration from the file
 		var req *http.Request
 		if filePath != "" {
-			smpsConfig, err := ioutil.ReadFile(filePath)
+			smpConfig, err := ioutil.ReadFile(filePath)
 
 			if err != nil {
 				return err
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestSmpsURL(), bytes.NewBuffer(smpsConfig))
+			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestSmpURL(), bytes.NewBuffer(smpConfig))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
@@ -160,5 +160,5 @@ func init() {
 	PerfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
-	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMPS-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }

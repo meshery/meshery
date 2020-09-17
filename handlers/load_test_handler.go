@@ -17,15 +17,15 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/encoding/protojson"
 	v1 "k8s.io/api/apps/v1"
 )
 
-// LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
-func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
+func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -49,7 +49,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	perfTest := &SMPS.PerformanceTestConfig{}
+	perfTest := &SMP.PerformanceTestConfig{}
 	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)

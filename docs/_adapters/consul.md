@@ -1,8 +1,9 @@
 ---
 layout: page
 title: Consul Adapter
-name: Consul
-version: v1.5
+name: Meshery Adapter for Consul
+mesh_name: Consul
+version: v1.8.2
 port: 10002/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-consul
@@ -16,20 +17,20 @@ image: /docs/assets/img/service-meshes/consul.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Kuma can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Features
 
-1. Lifecycle management of Consul
+1. Lifecycle management of {{page.mesh_name}}
 1. Lifecycle management of sample applications
-1. Performance management of Consul and it workloads
+1. Performance management of {{page.mesh_name}} and it workloads
     - Prometheus and Grafana integration
-1. Configuration management and best practices of Consul
+1. Configuration management and best practices of {{page.mesh_name}}
 1. Custom service mesh configuration
 
 ### Sample Applications
 
-The Meshery adapter for {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
+The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
 - [httpbin](https://httpbin.org)
     - Httpbin is a simple HTTP request and response service.
@@ -45,7 +46,7 @@ The Meshery adapter for {{ page.name }} includes a handful of sample application
 
 #### Prometheus and Grafana integration
 
-The Meshery adapter for {{ page.name }} will connect to {{ page.name }}'s Prometheus and Grafana instances running in the control plane (typically found in a separate namespace) or other instances to which Meshery has network reachability.
+The {{ page.name }} will connect to {{ page.name }}'s Prometheus and Grafana instances running in the control plane (typically found in a separate namespace) or other instances to which Meshery has network reachability.
 
 ### Architecture
 

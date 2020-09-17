@@ -146,6 +146,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 </p>
 
 <h3>Adhering to Service Mesh Standards</h3>
+
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through standardization of APIs.
 
 <p style="clear:both;">

@@ -22,7 +22,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/nighthawk-go v0.1.0
-	github.com/layer5io/service-mesh-performance-specification v0.0.0-20200622030323-136a17f58ad9
+	github.com/layer5io/service-mesh-performance v0.2.1
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
