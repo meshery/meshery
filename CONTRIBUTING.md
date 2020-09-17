@@ -98,11 +98,11 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 __Please note__: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
-Users can now test their code on their local machine against the CI checks implemented using `make run-tests`.
+Users can now test their code changes on their local machine against the CI checks implemented through golang-ci lint.
  
 To test code changes on your local machine, run the following command:
 ```
-make run-tests
+make golangci-run
 ```
 
 #### Building Docker image
