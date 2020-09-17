@@ -105,4 +105,4 @@ services:
 
 ---
 
-When Meshery is up and running, instructions to access Meshery will be printed on the sceen and your default browser should be directed to the Meshery login screen.
+When Meshery is up and running, instructions to access Meshery will be printed on the screen and your default browser should be directed to the Meshery login screen.
