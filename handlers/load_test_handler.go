@@ -302,7 +302,9 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
 	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
 		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
-	} 
+	} else {
+		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
+	}
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)

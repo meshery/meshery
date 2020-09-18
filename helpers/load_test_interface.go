@@ -186,7 +186,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		URL:               rURL,
 	}
 
-	// var res periodic.HasRunnerResult
 	var err error
 
 	if opts.SupportedLoadTestMethods == 2 {
@@ -206,30 +205,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	logrus.Debugf("original version of the test: %+#v", res)
 
-	var result *periodic.RunnerResults
-	// var bd []byte
-	// if ( opts.SupportedLoadTestMethods == 2 ) {
-	// 	gres, _ := res.(*fgrpc.GRPCRunnerResults)
-	// 	bd, err = json.Marshal(gres)
-	// 	result = gres.Result()
-	// } else {
-	// 	hres, _ := res.(*fhttp.HTTPRunnerResults)
-	// 	bd, err = json.Marshal(hres)
-	// 	result = hres.Result()
-	// }
-	// if err != nil {
-	// 	err = errors.Wrap(err, "error while converting results to map")
-	// 	logrus.Error(err)
-	// 	return nil, nil, err
-	// }
-
-	// bd, err := json.Marshal(res)
-
-	// if err != nil {
-	// 	err = errors.Wrap(err, "Error while converting  Nighthawk results to map")
-	// 	logrus.Error(err)
-	// 	return nil, nil, err
-	// }
+	var result *periodic.RunnerResults = &periodic.RunnerResults{}
 
 	err = json.Unmarshal([]byte(res1), result)
 
@@ -240,8 +216,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	resultsMap := map[string]interface{}{}
-	err = json.Unmarshal([]byte(res1), &resultsMap)
-
+	err = json.Unmarshal(res1, &resultsMap)
 	if err != nil {
 		err = errors.Wrap(err, "Error while unmarshaling Nighthawk results to map")
 		logrus.Error(err)
