@@ -1,6 +1,10 @@
+- title: Quick Start
+  url: "installation/#getting-started"
+- title: All Platforms
+  url: "installation/platforms"
 - title: Project
   external_url: https://meshery.io
 - title: Slack
   external_url: http://slack.layer5.io
-- title: Get Started
-  url: "installation/#getting-started"
+- title: GitHub
+  external_url: {{ site.repo }}

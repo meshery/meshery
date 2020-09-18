@@ -4,7 +4,7 @@ title: Open Service Mesh Adapter
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
 version: OSM v0.3.0
-port: 10010/tcp
+port: 10009/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-osm
 image: /docs/assets/img/service-meshes/osm.svg
@@ -12,9 +12,9 @@ image: /docs/assets/img/service-meshes/osm.svg
 
 # {{ page.name }}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
+| :------------: | :-------------------------------------------------: | :---------------------------: |
+| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
 
 ### Lifecycle management
 
@@ -35,4 +35,3 @@ Defining "Conformance" - Acknowledging that conformance consists of both capabil
     2. SMI Conformance identifies ...a difference between full implementation of a specification and compliance with the portions that it implements...
 
 You can [Learn more](https://meshery.layer5.io/docs/functionality/smi-conformance) about SMI conformance capabilities here...
-

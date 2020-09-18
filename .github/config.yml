@@ -16,10 +16,10 @@ newPRWelcomeComment: >
 # Comment to be posted to on pull requests merged by a first time user
 firstPRMergeComment: >
   Thanks for your contribution to the Layer5 community! :tada:
-   
+
   ![Congrats!](https://raw.githubusercontent.com/layer5io/meshery/master/.github/welcome/Layer5-celebration.png)
 
- &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; :star: Please leave a [star on the project](../stargazers). :smile:
+  &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; :star: Please leave a [star on the project](../stargazers). :smile:
 
 #-------------------------------------------------------------------------------
 # Configuration for request-info - https://github.com/behaviorbot/request-info
