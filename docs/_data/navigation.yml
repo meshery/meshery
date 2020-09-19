@@ -7,4 +7,4 @@
 - title: Slack
   external_url: http://slack.layer5.io
 - title: GitHub
-  external_url: {{ site.repo }}
+  external_url: https://github.com/layer5io/meshery
