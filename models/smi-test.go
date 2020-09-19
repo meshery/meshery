@@ -5,7 +5,7 @@ import (
 )
 
 type SmiResult struct {
-	ID                uuid.UUID `json:"id,string,omitempty"`
+	ID                uuid.UUID `json:"id,omitempty"`
 	Date              string    `json:"date,omitempty"`
 	MeshName          string    `json:"mesh_name,omitempty"`
 	MeshVersion       string    `json:"mesh_version,omitempty"`
