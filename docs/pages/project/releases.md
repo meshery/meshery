@@ -65,7 +65,7 @@ permalink: project/releases
 Released on 22 August 2020
 
 **What's new ?**
-- Featured
+- Features
   + Use Open Service Mesh in place of osm
   + Duration field use dropdown + text in performance preference
   + Added tooltips for navigation menu items while in minimised state 
