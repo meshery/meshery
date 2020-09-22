@@ -263,26 +263,26 @@ const categories = [
       },
       {
         id: 'Citrix Service Mesh',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/citrix", 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/citrix",
         title: 'Citrix Service Mesh',
-        link: false, 
+        link: false,
         show: true,
       },
       {
         id: 'Open Service Mesh',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/osm", 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/osm",
         title: 'Open Service Mesh',
-        link: false, 
+        link: false,
         show: true,
       },
       {
         id: 'Kuma',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/kuma", 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/kuma",
         title: 'Kuma',
-        link: false, 
+        link: false,
         show: true,
       },
     ],
@@ -453,7 +453,7 @@ class Navigator extends React.Component {
                 return '';
               }
               return (
-                <React.Fragment>
+                <React.Fragment key={idc}>
                   <ListItem
                     button
                     key={idc}
@@ -484,7 +484,7 @@ class Navigator extends React.Component {
                   return '';
                 }
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={idc}>
                     <ListItem
                       button
                       key={idc}
@@ -517,11 +517,11 @@ class Navigator extends React.Component {
 
       let linkContent = (
         <div className={classNames(classes.link)}>
-          <Tooltip 
-            title={idc} 
-            placement="right" 
-            disableFocusListener={!drawerCollapsed} 
-            disableHoverListener={!drawerCollapsed} 
+          <Tooltip
+            title={idc}
+            placement="right"
+            disableFocusListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
             <ListItemIcon className={classes.listIcon}>
@@ -531,8 +531,7 @@ class Navigator extends React.Component {
           <ListItemText
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
-              primary: classes.itemPrimary,
-              textDense: classes.textDense,
+              primary: classes.itemPrimary
             }}
           >
             {idc}
@@ -591,7 +590,7 @@ class Navigator extends React.Component {
                   return '';
                 }
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={childId}>
                     <ListItem
                       button
                       dense
@@ -604,20 +603,19 @@ class Navigator extends React.Component {
                     >
                       <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
-                          <Tooltip 
-                            title={childId} 
-                            placement="right" 
-                            disableFocusListener={!isDrawerCollapsed} 
-                            disableHoverListener={!isDrawerCollapsed} 
+                          <Tooltip
+                            title={childId}
+                            placement="right"
+                            disableFocusListener={!isDrawerCollapsed}
+                            disableHoverListener={!isDrawerCollapsed}
                             disableTouchListener={!isDrawerCollapsed}
-                          > 
+                          >
                             <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                           </Tooltip>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
-                              primary: classes.itemPrimary,
-                              textDense: classes.textDense,
+                              primary: classes.itemPrimary
                             }}
                           >
                             {childId}
@@ -642,11 +640,11 @@ class Navigator extends React.Component {
                 )}
               >
                 <div className={classNames(classes.link)}>
-                  <Tooltip 
-                    title="Community" 
-                    placement="right" 
-                    disableFocusListener={!isDrawerCollapsed} 
-                    disableHoverListener={!isDrawerCollapsed} 
+                  <Tooltip
+                    title="Community"
+                    placement="right"
+                    disableFocusListener={!isDrawerCollapsed}
+                    disableHoverListener={!isDrawerCollapsed}
                     disableTouchListener={!isDrawerCollapsed}
                   >
                     <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
@@ -654,8 +652,7 @@ class Navigator extends React.Component {
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{
-                      primary: classes.itemPrimary,
-                      textDense: classes.textDense,
+                      primary: classes.itemPrimary
                     }}
                   >
                     Community
