@@ -61,6 +61,16 @@ permalink: project/releases
 
 # Meshery Releases
 
+
+### [v0.4.1](https://github.com/layer5io/meshery/releases/tag/v0.4.1)
+Released on 8 August 
+
+**What's new ?**
+- Documentation
+   + Typo and error fixes
+
+
+
 ### [v0.4.0-beta.4](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.4)
 Released on 9 July 2020
 
