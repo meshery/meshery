@@ -369,11 +369,12 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleError = (cat, deleteOp) => {
     const self = this;
     return (error) => {
-      const { menuState } = self.state;
-      menuState[cat][deleteOp ? 'delete' : 'add'] = false;
-      const dlg = deleteOp ? 'customDialogDel' : 'customDialogAdd';
-      self.setState({ menuState, [dlg]: false });
-
+      if(cat && deleteOp) {
+        const { menuState } = self.state;
+        menuState[cat][deleteOp ? 'delete' : 'add'] = false;
+        const dlg = deleteOp ? 'customDialogDel' : 'customDialogAdd';
+        self.setState({ menuState, [dlg]: false });
+      }
       self.props.updateProgress({ showProgress: false });
       self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
         variant: 'error',
@@ -450,7 +451,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         return (
           <TableRow>
             <TableCell colSpan={colSpan}>
-              <Paper>
+              <Paper elevation={4}>
                 <Table aria-label="a dense table">
                   <TableHead>
                     <TableRow>
