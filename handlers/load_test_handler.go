@@ -112,6 +112,8 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
@@ -218,6 +220,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}

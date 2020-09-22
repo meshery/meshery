@@ -44,6 +44,7 @@ const meshes = [
 const loadGenerators = [
   'fortio',
   'wrk2',
+  'nighthawk',
 ];
 
 const styles = (theme) => ({
@@ -209,6 +210,7 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+    console.log(params);
     this.startEventStream(`/api/perf/load-test?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }

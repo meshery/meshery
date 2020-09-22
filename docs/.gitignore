@@ -27,6 +27,9 @@ Chart.min.js
 
 fortio_chart.js
 
+cmd/wrk2
+cmd/nighthawk-go
+
 **/node_modules/
 
 **/out/
