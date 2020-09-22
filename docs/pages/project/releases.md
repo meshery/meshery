@@ -77,7 +77,7 @@ Released on 22 August 2020
   + Added first timers' and welcome guide link
   + Added "Open Service Mesh" to navigation menu in Meshery docs
 
-- Other fixes
+- Bug fixes
   + smi-conformance - added Colons to front matter
   + Missing bottom row added
 ### [v0.4.1](https://github.com/layer5io/meshery/releases/tag/v0.4.1)
