@@ -62,7 +62,7 @@ permalink: project/releases
 # Meshery Releases
 
 ### [v0.4.3](https://github.com/layer5io/meshery/releases/tag/v0.4.3)
-Released on 22 August
+Released on 22 August 2020
 
 **What's new ?**
 - Featured
@@ -81,7 +81,7 @@ Released on 22 August
   + smi-conformance - added Colons to front matter
   + Missing bottom row added
 ### [v0.4.1](https://github.com/layer5io/meshery/releases/tag/v0.4.1)
-Released on 8 August 
+Released on 8 August 2020
 
 **What's new ?**
 - Documentation
