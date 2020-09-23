@@ -60,6 +60,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10009:10009"
+  nighthawk-lg:
+    image: envoyproxy/nighthawk-dev:latest
   watchtower:
     image: v2tec/watchtower
     labels:
