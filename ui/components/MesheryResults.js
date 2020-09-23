@@ -396,7 +396,7 @@ const mapStateToProps = (state) => {
   const startKey = state.get('results').get('startKey');
   const results = state.get('results').get('results').toArray();
   const results_selection = state.get('results_selection').toObject();
-  let user = state.get('user') ? state.get('user').toObject() : null
+  let user = state.get('user') ? state.get('user').toObject() : null;
 
   if (typeof results !== 'undefined') {
     return {
