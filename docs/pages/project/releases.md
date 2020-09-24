@@ -83,7 +83,7 @@ Released on 27 August 2020
   + Added the current version of osm
 
 - Bug fixes
-  + Auto detecting kube config
+  + Auto detecting kube configuration
   + Fixed the footer social bar
 ### [v0.4.3](https://github.com/layer5io/meshery/releases/tag/v0.4.3)
 Released on 22 August 2020
