@@ -20,6 +20,7 @@ type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	SaaSBaseURL           string
 	ResultPersister       *BitCaskResultsPersister
+	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
 }
 
@@ -151,6 +152,40 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		}
 	}
 	if err := l.ResultPersister.WriteResult(key, data); err != nil {
+		return "", err
+	}
+
+	return key.String(), nil
+}
+
+// FetchSmiResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+	return l.SmiResultPersister.GetResults(pg, pgs)
+}
+
+// PublishSmiResults - publishes results to the provider backend synchronously
+func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
+	key, _ := uuid.NewV4()
+	result.ID = key
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
+		return "", err
+	}
+
+	if err := l.SmiResultPersister.WriteResult(key, data); err != nil {
 		return "", err
 	}
 

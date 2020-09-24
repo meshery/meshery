@@ -288,6 +288,55 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *MesheryRemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	logrus.Infof("attempting to fetch results from cloud")
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
+	q := saasURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	saasURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed results url: %s", saasURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("results successfully retrieved from SaaS")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching results: %s", bdr)
+	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // GetResult - fetches result from provider backend for the given result id
 func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
@@ -344,6 +393,56 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return "", err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send results: %v", err)
+		return "", err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return "", err
+	}
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("results successfully published to SaaS")
+		idMap := map[string]string{}
+		if err = json.Unmarshal(bdr, &idMap); err != nil {
+			logrus.Errorf("unable to unmarshal body: %v", err)
+			return "", err
+		}
+		resultID, ok := idMap["id"]
+		if ok {
+			return resultID, nil
+		}
+		return "", nil
+	}
+	logrus.Errorf("error while sending results: %s", bdr)
+	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// PublishSmiResults - publishes results to the provider backend synchronously
+func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return "", err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to publish results to SaaS")
+	bf := bytes.NewBuffer(data)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
+	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	tokenString, err := l.GetToken(nil)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return "", err
