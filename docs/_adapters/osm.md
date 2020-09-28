@@ -18,20 +18,16 @@ image: /docs/assets/img/service-meshes/osm.svg
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery. Using the Meshery adapter for Open Service Mesh, you can run the full suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. Sample applications for {{page.mesh_name}} can also be installed using Meshery. Using the {{page.name}}, you may also run the complete suite of Service Mesh Interface (SMI) conformance tests to validate OSM’s compliance with the SMI specification.
+
+### SMI Conformance Capabiliy
+
+Meshery allows you to analogize the compliance status and feature capabilities of your service mesh. This allows users to easily compare and contrast functional differences between service meshes and check whether their service mesh is conformant with the SMI specification.
+
+Learn more about the SMI specification and our conformance testing practices [here.](https://meshery.layer5.io/docs/functionality/smi-conformance)
 
 ### Suggested Topics
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
 
-### SMI Conformance Capabiliy
-
-### Conformance
-
-Defining "Conformance" - Acknowledging that conformance consists of both capabilities and compliance status is important. We define conformance as a combination of these two concepts.
-
-    1. SMI Conformance acknowledge that ...some participating service meshes may conscientiously never fully implement functions (SMI specs)...
-    2. SMI Conformance identifies ...a difference between full implementation of a specification and compliance with the portions that it implements...
-
-You can [Learn more](https://meshery.layer5.io/docs/functionality/smi-conformance) about SMI conformance capabilities here...
