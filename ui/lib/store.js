@@ -58,7 +58,6 @@ const initialState = fromJS({
   anonymousPerfResults: true,
   showProgress: false,
 
-  smi_result: {summary: "Smi conformance test completed successfully", details: {"tests":"0","failures":"0","results":[{"name":"traffic-access","time":"2m3.179251439s","assertions":"10","failure":{"text":"resource Deployment:kudo-test-loyal-bobcat/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}},{"name":"traffic-split","time":"4m6.388197552s","assertions":"8","failure":{"text":"resource Deployment:kudo-test-knowing-ghost/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}},{"name":"traffic-spec","time":"6m9.604066097s","assertions":"10","failure":{"text":"resource Deployment:kudo-test-genuine-treefrog/app-c-deployment: .status.readyReplicas: key is missing from map","message":"failed in step 2-install"}}]}, operation_id: "48ea6124-a278-42af-bdd8-8a2adc0f3c81"},
 });
 
 export const actionTypes = {
