@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, TableRow, TableCell, IconButton, Paper, Table, TableBody, TableHead, 
+  TableRow, TableCell, IconButton, Paper, Table, TableBody, TableHead, 
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -21,9 +21,6 @@ const styles = (theme) => ({
   },
   table: {
     margin: theme.spacing(10),
-  },
-  chartContent: {
-    // minHeight: window.innerHeight * 0.7,
   },
 });
 
@@ -56,8 +53,8 @@ class MesherySMIResults extends Component {
       if (typeof sortOrder === 'undefined' || sortOrder === null) {
         sortOrder = '';
       }
+
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      // console.log(`/api/smi/results${query}`)
       dataFetch(`/api/smi/results${query}`, {
         credentials: 'same-origin',
         method: 'GET',
@@ -193,9 +190,7 @@ class MesherySMIResults extends Component {
       }
 
       return (
-        <NoSsr>
-          <MUIDataTable title="SMI Test Results" data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
-        </NoSsr>
+        <MUIDataTable title="SMI Test Results" data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
       );
     }
 }

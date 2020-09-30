@@ -1,4 +1,4 @@
-import { NoSsr } from "@material-ui/core";
+import React from 'react';
 import MesherySMIResults from "../components/MesherySMIResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -14,12 +14,12 @@ class SMIResults extends React.Component {
 
   render () {
     return (
-      <NoSsr>
+      <React.Fragment>
         <Head>
           <title>SMI Results | Meshery</title>
         </Head>
         <MesherySMIResults />
-      </NoSsr>
+      </React.Fragment>
     );
   }
 }
