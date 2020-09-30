@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, TableRow, TableCell, IconButton, Paper, Table, TableBody, TableHead, 
+  NoSsr, TableRow, TableCell, IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -53,11 +53,6 @@ class MesheryResults extends Component {
 
       selectedRowData: null,
 
-      smi_page: 0,
-      smi_pageSize: 10,
-      smi_search: '',
-      smi_sortOrder: '',
-      smi_results: [],
     };
   }
 
@@ -68,33 +63,9 @@ class MesheryResults extends Component {
 
     componentDidMount = () => {
       const {
-        page, pageSize, search, sortOrder, smi_page, smi_pageSize, smi_search, smi_sortOrder,
+        page, pageSize, search, sortOrder, 
       } = this.state;
       this.fetchResults(page, pageSize, search, sortOrder);
-      this.fetchSMIResults(smi_page, smi_pageSize, smi_search, smi_sortOrder);
-    }
-
-    fetchSMIResults= ( page, pageSize, search, sortOrder) => {
-      const self = this;
-      let query = '';
-      if (typeof search === 'undefined' || search === null) {
-        search = '';
-      }
-      if (typeof sortOrder === 'undefined' || sortOrder === null) {
-        sortOrder = '';
-      }
-      query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
-      // console.log(`/api/smi/results${query}`)
-      dataFetch(`/api/smi/results${query}`, {
-        credentials: 'same-origin',
-        method: 'GET',
-        credentials: 'include',
-      }, (result) => {
-        console.log(result)
-        if (typeof result !== 'undefined' && result.results) {
-          self.setState({smi_results: result});
-        }
-      }, self.handleError('Could not fetch SMI results.'));
     }
 
     fetchResults = (page, pageSize, search, sortOrder) => {
@@ -159,11 +130,10 @@ class MesheryResults extends Component {
     render() {
       const { classes, results_selection, user } = this.props;
       const {
-        results, page, count, pageSize, selectedRowData, smi_results,
+        results, page, count, pageSize, selectedRowData,
       } = this.state;
       const self = this;
       const resultsForDisplay = [];
-      const smi_resultsForDisplay = [];
       results.forEach((record) => {
         const row = {
           name: record.name,
@@ -187,89 +157,6 @@ class MesheryResults extends Component {
         resultsForDisplay.push(row);
         // console.log(`adding custom row: ${JSON.stringify(row)}`);
       });
-
-      const smi_columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed","Status"];
-      if(smi_results&&smi_results.results) {
-        smi_results.results.map((val) => {
-          smi_resultsForDisplay.push([val.id,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
-        }) 
-      }
-      const smi_options = {
-        filterType: 'textField',
-        expandableRows: true,
-        selectableRows: false,
-        rowsPerPage: pageSize,
-        rowsPerPageOptions: [10, 20, 25],
-        fixedHeader: true,
-        renderExpandableRow: (rowData, rowMeta) => {
-          console.log("Rox Data",rowData,rowMeta)
-          const column = ["SMI Specification","Assertions", "Time","SMI Version", "Capability", "Result", "Reason"]
-          const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
-            return [val.smi_specification,val.assertions,val.time,"alpha1/v1",val.capability,val.status,val.reason] 
-          })
-          const colSpan = rowData.length + 1
-          return (
-            <TableRow>
-              <TableCell colSpan={colSpan}>
-                <Paper elevation={4} >
-                  <Table aria-label="a dense table">
-                    <TableHead>
-                      <TableRow>
-                        {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data.map((row) => (
-                        <TableRow >
-                          {row.map(val => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </TableCell>
-            </TableRow>
-          );
-        },
-        onTableChange: (action, tableState) => {
-          const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[];
-          let order='';
-          if(tableState.activeColumn){
-            order = `${columns[tableState.activeColumn].name} desc`;
-          }
-
-          switch (action) {
-            case 'changePage':
-              self.fetchSMIResults(tableState.page, self.state.smi_pageSize, self.state.smi_search, self.state.smi_sortOrder);
-              break;
-            case 'changeRowsPerPage':
-              self.fetchSMIResults(self.state.smi_page, tableState.rowsPerPage, self.state.smi_search, self.state.smi_sortOrder);
-              break;
-            case 'search':
-              if (self.searchTimeout) {
-                clearTimeout(self.searchTimeout);
-              }
-              self.searchTimeout = setTimeout(() => {
-                if (self.state.search !== tableState.searchText) {
-                  self.fetchSMIResults(self.state.smi_page, self.state.smi_pageSize, tableState.searchText !== null ? tableState.searchText : '', self.state.smi_sortOrder);
-                }
-              }, 500);
-              break;
-            case 'sort':
-              if (sortInfo.length == 2) {
-                if (sortInfo[1] === 'ascending') {
-                  order = `${columns[tableState.activeColumn].name} asc`;
-                } else {
-                  order = `${columns[tableState.activeColumn].name} desc`;
-                }
-              }
-              if (order !== this.state.sortOrder) {
-                self.fetchSMIResults(self.state.smi_page, self.state.smi_pageSize, self.state.smi_search, order);
-              }
-              break;
-          }
-        },
-      }
 
       const columns = [
         {
@@ -495,8 +382,7 @@ class MesheryResults extends Component {
                   close={self.resetSelectedRowData()}
                 />
               )}
-          <MUIDataTable className={classes.table} title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
-          <MUIDataTable className={classes.table} title="SMI Test Results" data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
+          <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
         </NoSsr>
       );
     }

@@ -17,7 +17,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
+  faTasks, faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 import { Tooltip } from '@material-ui/core';
@@ -213,6 +213,24 @@ const categories = [
     show: false,
     link: true,
   }, // title is used for comparison in the Header.js file as well
+  {
+    id: 'Conformance',
+    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" fixedWidth />,
+    href: '/smi_results', //Temp
+    title: 'Conformance',
+    show: true,
+    link: true,
+    children: [
+      {
+        id: 'SMI Results',
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        href: '/smi_results',
+        title: 'Service Mesh Interface Results',
+        show: true,
+        link: true,
+      },
+    ],
+  },
   {
     id: 'Management',
     icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
