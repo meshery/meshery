@@ -22,9 +22,9 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ### SMI Conformance Capabiliy
 
-Meshery allows you to analogize the compliance status and feature capabilities of your service mesh. This allows users to easily compare and contrast functional differences between service meshes and check whether their service mesh is conformant with the SMI specification.
+Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and our conformance testing practices [here.](https://meshery.layer5.io/docs/functionality/smi-conformance)
+Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
 
 ### Suggested Topics
 

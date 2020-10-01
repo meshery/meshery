@@ -38,9 +38,9 @@ Once BookInfo is deployed, you can use Meshery to apply configuration to control
 
 ### SMI Conformance Capability 
 
-Meshery allows you to analogize the compliance status and feature capabilities of your service mesh. This allows users to easily compare and contrast functional differences between service meshes and check whether their service mesh is conformant with the SMI specification.
+Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and our conformance testing practices [here.](https://meshery.layer5.io/docs/functionality/smi-conformance)
+Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
 
 ### Configuration best practices
 The {{page.name}} will parse all of Istio's configuration and compare the running configuration of the service mesh against known best practices for an {{page.title}} deployment.
