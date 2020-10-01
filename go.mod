@@ -30,7 +30,7 @@ require (
 	github.com/prologic/bitcask v0.3.6
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.14.0
-	github.com/sirupsen/logrus v1.6.0
+	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.7.1
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
