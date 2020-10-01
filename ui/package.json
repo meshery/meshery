@@ -13,6 +13,13 @@
     "cy:run": "cypress run",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint ."
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint",
+      "...": "..."
+    }
+  },
   "keywords": [],
   "author": "Layer5",
   "repository": "https://github.com/layer5io/meshery",
@@ -35,6 +42,7 @@
     "codemirror": "^5.56.0",
     "cytoscape": "^3.15.2",
     "cytoscape-cxtmenu": "^3.1.2",
+    "cytoscape-popper": "^1.0.7",
     "eslint-loader": "^4.0.2",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
@@ -78,6 +86,7 @@
     "eslint-plugin-react": "^7.20.5",
     "eslint-plugin-react-hooks": "^4.0.8",
     "http-proxy": "^1.18.1",
+    "husky": "^4.2.5",
     "nodemon": "^2.0.4",
     "start-server-and-test": "^1.11.2"
   }

@@ -14,61 +14,117 @@ export default class GraphStyle {
   static getStylesheetContainer() {
     return [
       {
-        selector: "node.proxy",
+        selector: "node",
         style: {
-          width: 50,
-          height: 20,
-          shape: 'rectangle',
+          "background-color": "rgb(255,255,255)",
+          "background-image": "fn",
+          "background-width": "80%",
+          "background-height": "80%",
+          "background-position-x": "1px",
+          "background-position-y": "1px",
+          "border-color": "fn",
+          "border-style": "fn",
+          "border-width": "1px",
+          ghost: "yes",
+          "ghost-offset-x": "1px",
+          "ghost-offset-y": "1px",
+          "ghost-opacity": "0.4",
+          height: "25px",
+          shape: "fn",
+          width: "25px",
+          "z-index": "10"
         }
       },
       {
-        selector: "node.service",
+        selector: "node[?isGroup]",
         style: {
-          width: 50,
-          height: 20,
-          shape: 'rectangle',
-        }
-      },
-      {
-        selector: "node.app",
-        style: {
-          shape: 'round-rectangle',
-          label: 'data(label)',
-        }
-      },
-      {
-        selector: "node.namespace",
-        style: {
-          shape: 'round-rectangle',
-          label: 'data(label)',
-        }
-      },
-      {
-        selector: "edge",
-        style: {
-          width: 1,
-          opacity: 0.6,
-          "line-color": '#000',
-          events: "no"
+          "background-color": "rgb(255,255,255)"
         }
       },
       {
         selector: "node:selected",
         style: {
-          'border-width': 2,
-          'border-color': '#F7F0F0'
+          "border-color": "fn",
+          "border-width": "3px"
         }
       },
       {
-        selector: "node[label]",
+        selector: "node.mousehighlight",
         style: {
-          'text-valign': 'bottom',
-          'font-family': ['Helvetica', 'Arial', 'sans-serif'],
-          'text-wrap': 'wrap',
-          'text-max-width': '100',
+          "font-size": "11px"
         }
       },
-
+      {
+        selector: "node.mousehighlight[^isGroup]",
+        style: {
+          "background-color": "fn",
+          "border-color": "fn"
+        }
+      },
+      {
+        selector: "node.mousedim",
+        style: {
+          opacity: "0.6"
+        }
+      },
+      {
+        selector: "edge",
+        style: {
+          "curve-style": "bezier",
+          "font-family": "Verdana,Arial,Helvetica,sans-serif,pficon",
+          "font-size": "6px",
+          label: "fn",
+          "line-color": "fn",
+          "line-style": "solid",
+          "target-arrow-shape": "vee",
+          "target-arrow-color": "fn",
+          "text-events": "yes",
+          "text-outline-color": "rgb(255,255,255)",
+          "text-outline-width": "1px",
+          "text-wrap": "wrap",
+          width: "2px"
+        }
+      },
+      {
+        selector: "edge:selected",
+        style: {
+          width: "4px",
+          label: "fn"
+        }
+      },
+      {
+        selector: "edge[protocol = \"tcp\"]",
+        style: {
+          "target-arrow-shape": "triangle-cross",
+          "line-style": "solid"
+        }
+      },
+      {
+        selector: "edge.mousehighlight",
+        style: {
+          "font-size": "10px"
+        }
+      },
+      {
+        selector: "edge.mousehover",
+        style: {
+          label: "fn"
+        }
+      },
+      {
+        selector: "edge.mousedim",
+        style: {
+          opacity: "0.3"
+        }
+      },
+      {
+        selector: ".find[^isGroup]",
+        style: {
+          "overlay-color": "rgb(240,171,0)",
+          "overlay-padding": "8px",
+          "overlay-opacity": "0.5"
+        }
+      }
     ]
   }
 }
