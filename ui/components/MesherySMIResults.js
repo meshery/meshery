@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  TableRow, TableCell, IconButton, Paper, Table, TableBody, TableHead, 
+  TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip 
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
+import Moment from 'react-moment';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import {
@@ -19,8 +20,13 @@ const styles = (theme) => ({
   grid: {
     padding: theme.spacing(2),
   },
-  table: {
-    margin: theme.spacing(10),
+  secondaryTable: {
+    borderRadius: 10,
+    backgroundColor: "#f7f7f7",
+  },
+  tableHeader: {
+    fontWeight: 'bolder',
+    fontSize: 18,
   },
 });
 
@@ -60,7 +66,6 @@ class MesherySMIResults extends Component {
         method: 'GET',
         credentials: 'include',
       }, (result) => {
-        console.log(result)
         if (typeof result !== 'undefined' && result.results) {
           self.setState({smi_results: result});
         }
@@ -96,17 +101,129 @@ class MesherySMIResults extends Component {
 
     render() {
       const self = this;
-      const { user } = this.props;
+      const { classes ,user } = this.props;
       const { smi_pageSize, smi_results } = this.state;
 
       const smi_resultsForDisplay = [];
       if(smi_results&&smi_results.results) {
         smi_results.results.map((val) => {
-          smi_resultsForDisplay.push([val.id,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
+          smi_resultsForDisplay.push([val.id ,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status])
         }) 
       }
 
-      const smi_columns = ["ID","Date", "Service Mesh","Service Mesh Version", "% Passed","Status"];
+      const smi_columns = [
+        {
+          name: 'ID',
+          label: 'ID',
+          options: {
+            filter: false,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
+            customBodyRender: (value) => (
+              <Tooltip title={value} placement="top">
+                <div>{value.slice(0,5)+ "..."}</div>
+              </Tooltip>
+            )
+          },
+        },
+        {
+          name: 'Date',
+          label: 'Date',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                  
+              )
+            },
+            customBodyRender: (value) => (
+              <Moment format="LLLL">{value}</Moment>
+            ),
+          },
+        },
+        {
+          name: 'Service Mesh',
+          label: 'Service Mesh',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                  
+              )
+            },
+          },
+        },
+        {
+          name: 'Service Mesh Version',
+          label: 'Service Mesh Version',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                  
+              )
+            },
+          },
+        },
+        {
+          name: '% Passed',
+          label: '% Passed',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                  
+              )
+            },
+          },
+        },
+        {
+          name: 'status',
+          label: 'Status',
+          options: {
+            filter: true,
+            sort: true,
+            searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                  
+              )
+            },
+          },
+        }
+
+      ]
 
       const smi_options = {
         sort: !(user && user.user_id === 'meshery'),
@@ -120,8 +237,7 @@ class MesherySMIResults extends Component {
         print: false,
         download: false,
         renderExpandableRow: (rowData, rowMeta) => {
-          console.log("Rox Data",rowData,rowMeta)
-          const column = ["SMI Specification","Assertions", "Time","SMI Version", "Capability", "Result", "Reason"]
+          const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
           const data = smi_results.results[rowMeta.dataIndex].more_details.map((val) => {
             return [val.smi_specification,val.assertions,val.time,"alpha1/v1",val.capability,val.status,val.reason] 
           })
@@ -129,8 +245,8 @@ class MesherySMIResults extends Component {
           return (
             <TableRow>
               <TableCell colSpan={colSpan}>
-                <Paper elevation={4} >
-                  <Table aria-label="a dense table">
+                <div className={classes.secondaryTable}>
+                  <Table  aria-label="a dense table">
                     <TableHead>
                       <TableRow>
                         {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
@@ -139,12 +255,20 @@ class MesherySMIResults extends Component {
                     <TableBody>
                       {data.map((row) => (
                         <TableRow >
-                          {row.map(val => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                          {row.map(val => {
+                            if(val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
+                              const time = val.split(/m|s/)
+                              return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
+                            } else {
+                              return <TableCell colSpan={colSpan}>{val}</TableCell>
+                            }
+                          }
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                </Paper>
+                </div>
               </TableCell>
             </TableRow>
           );
@@ -190,7 +314,7 @@ class MesherySMIResults extends Component {
       }
 
       return (
-        <MUIDataTable title="SMI Test Results" data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
+        <MUIDataTable title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>} data={smi_resultsForDisplay} columns={smi_columns} options={smi_options} />
       );
     }
 }

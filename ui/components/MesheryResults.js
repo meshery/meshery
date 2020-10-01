@@ -25,8 +25,9 @@ const styles = (theme) => ({
   grid: {
     padding: theme.spacing(2),
   },
-  table: {
-    margin: theme.spacing(10),
+  tableHeader: {
+    fontWeight: 'bolder',
+    fontSize: 18,
   },
   chartContent: {
     // minHeight: window.innerHeight * 0.7,
@@ -166,6 +167,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
         {
@@ -175,6 +183,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
         {
@@ -184,6 +199,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
             customBodyRender: (value) => (
               <Moment format="LLLL">{value}</Moment>
             ),
@@ -196,6 +218,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
         {
@@ -205,6 +234,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
 
@@ -215,6 +251,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
           },
         },
 
@@ -225,6 +269,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
           },
         },
         {
@@ -233,6 +285,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
             customBodyRender: (value, tableMeta) => (
               <IconButton
                 aria-label="more"
@@ -272,8 +332,8 @@ class MesheryResults extends Component {
         search: !(user && user.user_id === 'meshery'),
         filterType: 'textField',
         responsive: 'scrollFullHeight',
-        // resizableColumns: true,
-        // selectableRows: true,
+        resizableColumns: true,
+        selectableRows: true,
         serverSide: true,
         count,
         rowsPerPage: pageSize,
@@ -382,7 +442,7 @@ class MesheryResults extends Component {
                   close={self.resetSelectedRowData()}
                 />
               )}
-          <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
+          <MUIDataTable title={<div className={classes.tableHeader}>Performance Test Results</div>} data={resultsForDisplay} columns={columns} options={options} />
         </NoSsr>
       );
     }
