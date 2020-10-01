@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -23,8 +24,7 @@ type Operation struct {
 var spec string
 var adapterURL string
 var namespace string
-var token string
-var mesheryProvider string
+var tokenPath string
 var err error
 
 // validateCmd represents the service mesh validation command
@@ -74,19 +74,17 @@ var validateCmd = &cobra.Command{
 			return err
 		}
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-		req.AddCookie(&http.Cookie{
-			Name:  "meshery-provider",
-			Value: mesheryProvider,
-		})
-		req.AddCookie(&http.Cookie{
-			Name:  "token",
-			Value: token,
-		})
+
+		err = utils.AddAuthDetails(req, tokenPath)
+		if err != nil {
+			return err
+		}
 
 		res, err := client.Do(req)
 		if err != nil {
 			return err
 		}
+
 		defer res.Body.Close()
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
@@ -105,8 +103,6 @@ func init() {
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter url used for Conformance")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the workload")
-	validateCmd.Flags().StringVarP(&token, "token", "t", "", "Token used for authenticating Meshery API")
-	_ = validateCmd.MarkFlagRequired("token")
-	validateCmd.Flags().StringVarP(&mesheryProvider, "provider", "p", "", "Provider used for Meshery")
-	_ = validateCmd.MarkFlagRequired("provider")
+	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating Meshery API")
+	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
