@@ -69,7 +69,7 @@ class MesherySMIResults extends Component {
         if (typeof result !== 'undefined' && result.results) {
           self.setState({smi_results: result});
         }
-      }, self.handleError('Could not fetch SMI results.'));
+      }, console.log('Could not fetch SMI results.'));
     }
 
     handleError = (error) => {
