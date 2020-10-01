@@ -6,15 +6,15 @@ permalink: architecture
 
 # Architecture
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.png"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.png" /></a>
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.svg" /></a>
 
 ## Clients
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.png"><img src="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.png" /></a>
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.svg" /></a>
 
 ## Providers
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.png"><img src="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.png" /></a>
+<a href="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.svg" /></a>
 
 ## Network Ports
 
