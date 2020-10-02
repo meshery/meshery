@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Lifecycle Management
-permalink: functionality/service-mesh-lifecycle-management
+permalink: functionality/lifecycle-management
 type: functionality
 ---
 
