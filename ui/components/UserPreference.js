@@ -48,7 +48,6 @@ class UserPreference extends React.Component {
 
   handleToggle = (name) => () => {
     const self = this;
-    console.log(this.state.anonymousStats, this.state.perfResultStats);
     if (name == 'anonymousUsageStats') {
       self.setState((state) => ({ anonymousStats: !state.anonymousStats }));
     } else {
@@ -79,7 +78,6 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    console.log(this.state.anonymousStats, this.state.perfResultStats);
     const { anonymousStats, perfResultStats } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
