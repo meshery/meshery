@@ -5,7 +5,7 @@ import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-import { IconButton, FormControlLabel, Switch } from '@material-ui/core';
+import { IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import { updateUser, updateProgress } from '../lib/store';
@@ -15,6 +15,26 @@ const styles = () => ({
   formContainer: {
     margin: 50,
   },
+  formGrp: {
+    padding: 20,
+    border: '1.5px solid #969696',
+  },
+  formLegend: {
+    fontSize: 20,
+  },
+  switchBase: {
+    color: '#647881',
+    "&$checked": {
+      color: '#00b39f'
+    },
+    "&$checked + $track": {
+      backgroundColor: 'rgba(0,179,159,0.5)'
+    },
+  },
+  track: {
+    backgroundColor: 'rgba(100,120,129,0.5)',
+  },
+  checked: {},
 });
 
 class UserPreference extends React.Component {
@@ -28,12 +48,10 @@ class UserPreference extends React.Component {
 
   handleToggle = (name) => () => {
     const self = this;
-
+    console.log(this.state.anonymousStats, this.state.perfResultStats);
     if (name == 'anonymousUsageStats') {
-      // val=anonymousStats;
       self.setState((state) => ({ anonymousStats: !state.anonymousStats }));
     } else {
-      // val=perfResultStats;
       self.setState((state) => ({ perfResultStats: !state.perfResultStats }));
     }
 
@@ -61,17 +79,22 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
+    console.log(this.state.anonymousStats, this.state.perfResultStats);
     const { anonymousStats, perfResultStats } = this.state;
-    let val;
+    let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
+      msg = !val ? "Sending anonymous usage statistics was enabled"
+        : "Sending anonymous usage statistics was diabled";
+
     } else {
       val = perfResultStats;
+      msg = !val ? "Sending anonymous performance results was enabled"
+        : "Sending anonymous performance results was diabled";
     }
+
     const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
-    // console.log(`data to be submitted for load test: ${params}`);
     this.props.updateProgress({ showProgress: true });
-    // let self = this;
     dataFetch('/api/user/stats', {
       credentials: 'same-origin',
       method: 'POST',
@@ -83,9 +106,9 @@ class UserPreference extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('Preference was successfully updated!', {
-          variant: 'success',
-          autoHideDuration: 2000,
+        this.props.enqueueSnackbar(msg, {
+          variant: !val ? 'success': 'info',
+          autoHideDuration: 4000,
           action: (key) => (
             <IconButton
               key="close"
@@ -108,32 +131,45 @@ class UserPreference extends React.Component {
     return (
       <NoSsr>
         <div className={classes.formContainer}>
-          <FormControlLabel
-            key="UsageStatsPreference"
-            control={(
-              <Switch
-                checked={anonymousStats}
-                onChange={this.handleToggle('anonymousUsageStats')}
-                color="primary"
+          <FormControl component="fieldset" className={classes.formGrp}>
+            <FormLabel component="legend" className={classes.formLegend}>Analytics and Improvement Program</FormLabel>
+            <FormGroup>
+              <FormControlLabel
+                key="UsageStatsPreference"
+                control={(
+                  <Switch
+                    checked={anonymousStats}
+                    onChange={this.handleToggle('anonymousUsageStats')}
+                    color="primary"
+                    classes={{
+                      switchBase: classes.switchBase,
+                      track: classes.track,
+                      checked: classes.checked,
+                    }}
+                  />
+                )}
+                labelPlacement="end"
+                label="Send Anonymous Usage Statistics"
               />
-            )}
-            labelPlacement="end"
-            label="Send Anonymous Usage Statistics"
-          />
-        </div>
-        <div className={classes.formContainer}>
-          <FormControlLabel
-            key="PerfResultPreference"
-            control={(
-              <Switch
-                checked={perfResultStats}
-                onChange={this.handleToggle('anonymousPerfResults')}
-                color="primary"
+              <FormControlLabel
+                key="PerfResultPreference"
+                control={(
+                  <Switch
+                    checked={perfResultStats}
+                    onChange={this.handleToggle('anonymousPerfResults')}
+                    color="primary"
+                    classes={{
+                      switchBase: classes.switchBase,
+                      track: classes.track,
+                      checked: classes.checked,
+                    }}
+                  />
+                )}
+                labelPlacement="end"
+                label="Send Anonymous Performance Results"
               />
-            )}
-            labelPlacement="end"
-            label="Send Anonymous Performance Results"
-          />
+            </FormGroup>
+          </FormControl>
         </div>
       </NoSsr>
     );
