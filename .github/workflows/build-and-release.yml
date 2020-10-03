@@ -1,0 +1,78 @@
+name: Mesheryctl Build and Releaser
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+
+jobs:
+  build_release:
+    name: Mesheryctl build & release
+    runs-on: macos-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+    - name: Unshallow
+      run: git fetch --prune --unshallow
+    - name: Set up Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Setup Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-        
+    - name: goreleaser with tag
+      uses: goreleaser/goreleaser-action@v1
+      if: success() && startsWith(github.ref, 'refs/tags/')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_PAT }}
+      with:
+        version: latest
+        args: release --rm-dist --skip-validate
+  docker:
+    name: Docker build and push
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Docker login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Docker edge build & tag
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} .
+        docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::7}
+    - name: Docker edge push
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      run: |
+        docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::7}
+    - name: Docker stable build & tag
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} .
+        docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+        docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::7}
+    - name: Docker stable push
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        docker push ${{ secrets.IMAGE_NAME }}:stable-latest
+        docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+        docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::7}
+    - name: Docker Hub Description
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      uses: peter-evans/dockerhub-description@v2.0.0
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}

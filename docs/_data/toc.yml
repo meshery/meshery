@@ -21,7 +21,7 @@
         - title: Minikube
           url: installation/platforms/minikube
         - title: Windows
-          url: installation/platforms/windows
+          url: installation/#windows
         - title: WSL2
           url: installation/platforms/wsl2
     - title: Architecture

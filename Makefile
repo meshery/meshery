@@ -1,4 +1,4 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10010"
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009"
 
 MESHERY_CLOUD_LOCAL=http://mesherylocal.layer5.io:9876
 MESHERY_CLOUD_DEV=http://localhost:9876
@@ -68,20 +68,9 @@ run-local:
 	./meshery; \
 	cd ..
 
-run-tests:
-	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/mgechev/revive;
-	$(GOPATH)/bin/revive -config tools-config/revive-lint.toml -formatter friendly ./... \
-
-	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get github.com/kisielk/errcheck;
-	$(GOPATH)/bin/errcheck -tags draft ./... \
-
-	GOPROXY=direct GOSUMDB=off GO111MODULE=off go get honnef.co/go/tools/cmd/staticcheck;
-	$(GOPATH)/bin/staticcheck -tags draft -checks all,-ST1003,-ST1000,-U1000 ./... \
-
-	GOPROXY=direct GOSUMDB=off GO111MODULE=on go vet -tags draft ./... \
-
-	GO111MODULE=off go get github.com/securego/gosec/cmd/gosec;
-	$(GOPATH)/bin/gosec -exclude=G301,G304,G107 ./...
+golangci-run:
+	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
+	$(GOPATH)/bin/golangci-lint run
 
 proto:
 	# go get -u google.golang.org/grpc
@@ -123,7 +112,10 @@ build-ui:
 # setup wrk2 for local dev
 # NOTE: setup-wrk does not work on Mac Catalina at the moment
 setup-wrk2:
-	cd cmd; git clone git@github.com:layer5io/wrk2.git; cd wrk2; make; cd ..
+	cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
+
+setup-nighthawk:
+	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd wrk2; make setup; cd ..
 
 #Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll

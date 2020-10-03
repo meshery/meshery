@@ -158,6 +158,10 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/osm.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
+        case 'kuma':
+          image = "/static/img/kuma.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
       }
     }
     return imageIcon;

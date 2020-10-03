@@ -2,7 +2,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import {
-  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip
+  withStyles, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Card, CardHeader, CardActions, Menu, MenuItem, Chip, TableCell, TableRow, TableBody, TableHead, Table, Tooltip
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
@@ -14,9 +14,13 @@ import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PlayIcon from '@material-ui/icons/PlayArrow';
-import { updateProgress } from '../lib/store';
+// import { updateSMIResults } from '../lib/store';
+import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MUIDataTable from "mui-datatables";
+import Moment from 'react-moment';
+import MesheryResultDialog from './MesheryResultDialog';
+
 
 const styles = (theme) => ({
   root: {
@@ -108,6 +112,14 @@ const styles = (theme) => ({
   icon: {
     width: theme.spacing(2.5),
   },
+  tableHeader: {
+    fontWeight: 'bolder',
+    fontSize: 18,
+  },
+  secondaryTable: {
+    borderRadius: 10,
+    backgroundColor: "#f7f7f7",
+  },
 });
 
 
@@ -157,6 +169,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       open : false,
 
       menuState, // category: {add: 1, delete: 0}
+
+      smi_result: [],
+      selectedRowData: null,
+      page: 0,
+      search: '',
+      sortOrder: '',
+      pageSize: 10,
     };
   }
 
@@ -198,6 +217,13 @@ class MesheryAdapterPlayComponent extends React.Component {
     return () => {
       self.setState({['customDialogSMI']: false });
     }
+  }
+
+  resetSelectedRowData() {
+    const self = this;
+    return () => {
+      self.setState({ selectedRowData: null });
+    };
   }
 
   handleModalOpen(isDelete) {
@@ -315,56 +341,49 @@ class MesheryAdapterPlayComponent extends React.Component {
     }, self.handleError('Could not ping adapter.'));
   }
 
-  handleSMIClick = (adapterLoc) => () => {
-    this.props.updateProgress({ showProgress: true });
+  fetchSMIResults= (adapterName, page, pageSize, search, sortOrder) => {
     const self = this;
-    dataFetch(`/api/mesh/adapter/ping?adapter=${encodeURIComponent(adapterLoc)}`, {
+    let query = '';
+    if (typeof search === 'undefined' || search === null) {
+      search = '';
+    }
+    if (typeof sortOrder === 'undefined' || sortOrder === null) {
+      sortOrder = '';
+    }
+    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+
+    dataFetch(`/api/smi/results${query}`, {
       credentials: 'same-origin',
+      method: 'GET',
       credentials: 'include',
     }, (result) => {
-      this.props.updateProgress({ showProgress: false });
-      if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('SMI Test started !', {
-          variant: 'info',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
-        this.props.enqueueSnackbar('SMI Conformance Finished !', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
-        self.setState({ ['customDialogSMI']: true })
+      if (typeof result !== 'undefined' && result.results) {
+        const results  = result.results.filter(val => val.mesh_name.toLowerCase()==adapterName.toLowerCase())
+        self.setState({smi_result: {...result, results:results, total_count:results.length}});
       }
-    }, self.handleError('Could not ping adapter.'));
+    }, self.handleError('Could not fetch SMI results.'));
+  }
+
+  handleSMIClick = (adapterName) => () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    const {page, pageSize, search, sortOrder} = self.state;
+    self.fetchSMIResults(adapterName, page, pageSize, search, sortOrder);
+    this.props.updateProgress({ showProgress: false });
+    self.setState({ ['customDialogSMI']: true })
+    
+
   }
 
   handleError = (cat, deleteOp) => {
     const self = this;
     return (error) => {
-      const { menuState } = self.state;
-      menuState[cat][deleteOp ? 'delete' : 'add'] = false;
-      const dlg = deleteOp ? 'customDialogDel' : 'customDialogAdd';
-      self.setState({ menuState, [dlg]: false });
-
+      if(cat && deleteOp) {
+        const { menuState } = self.state;
+        menuState[cat][deleteOp ? 'delete' : 'add'] = false;
+        const dlg = deleteOp ? 'customDialogDel' : 'customDialogAdd';
+        self.setState({ menuState, [dlg]: false });
+      }
       self.props.updateProgress({ showProgress: false });
       self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
         variant: 'error',
@@ -417,19 +436,225 @@ class MesheryAdapterPlayComponent extends React.Component {
 
 
   generateSMIResult() {
+    const self = this;
+    
     const {
-      customDialogSMI,
-    } = this.state;
-    const columns = ["Test", "SMI Version", "Service Mesh", "Service Mesh Version", "SMI Specification", "Capability", "Test Status"];
+      customDialogSMI, smi_result, pageSize
+    } = self.state;
 
-    const data = [
-      ["TA-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Passed"],
-      ["TA-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Access", "Full", "Failed"],
-      ["TM-01", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "Half", "Passed"],
-      ["TM-02", "v1alpha3", "Linkerd", "edge-20.7.5", "Traffic Metrics", "None", "Passed"],
-      ["TM-03", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "None", "Failed"],
-      ["TM-04", "v1alpha3", "Maesh", "v1.3.2", "Traffic Metrics", "Full", "Passed"],
-    ];
+    const {
+      user, classes,
+    } = self.props;
+    
+    
+    const smi_columns = [
+      {
+        name: 'ID',
+        label: 'ID',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+              
+            )
+          },
+          customBodyRender: (value) => (
+            <Tooltip title={value} placement="top">
+              <div>{value.slice(0,5)+ "..."}</div>
+            </Tooltip>
+          )
+        },
+      },
+      {
+        name: 'Date',
+        label: 'Date',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+                
+            )
+          },
+          customBodyRender: (value) => (
+            <Moment format="LLLL">{value}</Moment>
+          ),
+        },
+      },
+      {
+        name: 'Service Mesh',
+        label: 'Service Mesh',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+                
+            )
+          },
+        },
+      },
+      {
+        name: 'Service Mesh Version',
+        label: 'Service Mesh Version',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+                
+            )
+          },
+        },
+      },
+      {
+        name: '% Passed',
+        label: '% Passed',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+                
+            )
+          },
+        },
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        options: {
+          filter: true,
+          sort: true,
+          searchable: true,
+          customHeadRender: ({index, ...column}) => {
+            return (
+              <TableCell key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+            )
+          },
+        },
+      }
+    ]
+
+    const smi_options = {
+      sort: !(user && user.user_id === 'meshery'),
+      search: !(user && user.user_id === 'meshery'),
+      filterType: 'textField',
+      expandableRows: true,
+      selectableRows: false,
+      rowsPerPage: pageSize,
+      rowsPerPageOptions: [10, 20, 25],
+      fixedHeader: true,
+      print: false,
+      download: false,
+      renderExpandableRow: (rowData, rowMeta) => {
+        const column = ["Specification","Assertions", "Time","Version", "Capability", "Result", "Reason"]
+        const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
+          return [val.smi_specification,val.assertions,val.time,"alpha1/v1",val.capability,val.status,val.reason] 
+        })
+        const colSpan = rowData.length + 1
+        return (
+          <TableRow>
+            <TableCell colSpan={colSpan}>
+              <div className={classes.secondaryTable}>
+                <Table  aria-label="a dense table">
+                  <TableHead>
+                    <TableRow>
+                      {column.map((val) => (<TableCell colSpan={colSpan}>{val}</TableCell>))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data.map((row) => (
+                      <TableRow >
+                        {row.map(val => {
+                          if(val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i)!=null) {
+                            const time = val.split(/m|s/)
+                            return <TableCell colSpan={colSpan}>{time[0]+"m " + parseFloat(time[1]).toFixed(1) + "s"}</TableCell>
+                          } else {
+                            return <TableCell colSpan={colSpan}>{val}</TableCell>
+                          }
+                        }
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TableCell>
+          </TableRow>
+        );
+      },
+      onTableChange: (action, tableState) => {
+        const sortInfo = tableState.announceText? tableState.announceText.split(' : '):[];
+        let order='';
+        if(tableState.activeColumn){
+          order = `${columns[tableState.activeColumn].name} desc`;
+        }
+
+        switch (action) {
+          case 'changePage':
+            self.fetchSMIResults(self.props.adapter.name,tableState.page, self.state.pageSize, self.state.search, self.state.sortOrder);
+            break;
+          case 'changeRowsPerPage':
+            self.fetchSMIResults(self.props.adapter.name,self.state.page, tableState.rowsPerPage, self.state.search, self.state.sortOrder);
+            break;
+          case 'search':
+            if (self.searchTimeout) {
+              clearTimeout(self.searchTimeout);
+            }
+            self.searchTimeout = setTimeout(() => {
+              if (self.state.search !== tableState.searchText) {
+                self.fetchSMIResults(self.props.adapter.name,self.state.page, self.state.pageSize, tableState.searchText !== null ? tableState.searchText : '', self.state.sortOrder);
+              }
+            }, 500);
+            break;
+          case 'sort':
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === 'ascending') {
+                order = `${columns[tableState.activeColumn].name} asc`;
+              } else {
+                order = `${columns[tableState.activeColumn].name} desc`;
+              }
+            }
+            if (order !== this.state.sortOrder) {
+              self.fetchSMIResults(self.props.adapter.name,self.state.page, self.state.pageSize, self.state.search, order);
+            }
+            break;
+        }
+      },
+    }
+
+    var data = [];
+    if(smi_result&&smi_result.results) {
+      data = smi_result.results.map((val) => {
+        return [val.id,val.date,val.mesh_name,val.mesh_version,val.passing_percentage,val.status]
+      }) 
+    }
+
+
     return (
       <Dialog
         onClose={this.handleSMIClose()}
@@ -439,9 +664,10 @@ class MesheryAdapterPlayComponent extends React.Component {
         maxWidth="md"
       >
         <MUIDataTable
-          title={"SMI Conformance Result"}
+          title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>}
           data={data}
-          columns={columns}
+          columns={smi_columns}
+          options={smi_options}
         />
       </Dialog>
     );
@@ -618,6 +844,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const {
       namespace,
       namespaceError,
+      selectedRowData
     } = this.state;
 
     let adapterName = (adapter.name).split(" ").join("").toLowerCase();
@@ -636,8 +863,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     let smiChip = (
       <React.Fragment>
         <Chip
-          label="Run SMI Conformance"
-          onClick={this.handleSMIClick(adapter.adapter_location)}
+          label="View SMI Conformance results"
+          onClick={this.handleSMIClick(adapter.name)}
           icon={<img src={imageSMISrc} className={classes.icon} />}
           className={classes.chip}
           variant="outlined"
@@ -661,6 +888,13 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     return (
       <NoSsr>
+        {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0
+        && (
+          <MesheryResultDialog
+            rowData={selectedRowData}
+            close={self.resetSelectedRowData()}
+          />
+        )}
         <React.Fragment>
           <div className={classes.chipGrid}>
             <Grid container spacing={3}>
@@ -710,11 +944,18 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
+// const mapStateToProps = (state) => {
+//   const smi_result = state.get('smi_result').toJS();
+//   return { smi_result, };
+// };
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });
 
 export default withStyles(styles)(connect(
+  // mapStateToProps,
   null,
   mapDispatchToProps,
 )(withRouter(withSnackbar(MesheryAdapterPlayComponent))));
