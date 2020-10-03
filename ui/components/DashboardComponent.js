@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import {
   NoSsr, Chip, IconButton, Button, Card, CardContent, Typography, CardHeader, Tooltip,
 } from '@material-ui/core';
@@ -506,6 +511,17 @@ class DashboardComponent extends React.Component {
       );
     }
 
+    const showRelease = (
+      //Add Release Version Text
+      <FormControl component="fieldset">
+        <FormLabel component="legend" style={{fontWeight: 'bold'}}>Release Channel</FormLabel>
+        <RadioGroup aria-label="release_channel_option" name="release_channel">
+          <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
+          <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
+        </RadioGroup>
+      </FormControl>
+    );
+
 
     return (
       <NoSsr>
@@ -527,7 +543,9 @@ class DashboardComponent extends React.Component {
             <Grid item xs={12} md={6}>
               {self.showCard('Prometheus', showPrometheus)}
             </Grid>
-
+            <Grid item xs={12} md={6}>
+              {self.showCard('Release', showRelease)}
+            </Grid>
           </Grid>
         </div>
       </NoSsr>
