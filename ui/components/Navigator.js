@@ -184,7 +184,7 @@ const categories = [
   {
     id: 'Dashboard',
     href: '/',
-    title: 'Dashboard',
+    title: 'System Dashboard',
     show: false,
     link: true,
   },

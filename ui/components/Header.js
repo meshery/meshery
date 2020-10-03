@@ -94,7 +94,7 @@ class Header extends React.Component {
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
                   <Typography color="inherit" variant="h5" className={classes.pageTitle}>
-                    {title === 'Dashboard' ? 'System Dashboard' : title}
+                    {title}
                   </Typography>
                 </Grid>
                 {/* <Grid item className={classes.notifications}>
