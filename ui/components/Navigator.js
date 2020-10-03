@@ -17,7 +17,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faEye, faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH,
+  faEye, faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH, faTasks
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 import { Tooltip } from '@material-ui/core';
@@ -222,6 +222,24 @@ const categories = [
     link: true,
   }, // title is used for comparison in the Header.js file as well
   {
+    id: 'Conformance',
+    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" fixedWidth />,
+    href: '/smi_results', //Temp
+    title: 'Conformance',
+    show: true,
+    link: true,
+    children: [
+      {
+        id: 'SMI Results',
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        href: '/smi_results',
+        title: 'Service Mesh Interface Results',
+        show: true,
+        link: true,
+      },
+    ],
+  },
+  {
     id: 'Management',
     icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
     href: '/management',
@@ -271,18 +289,26 @@ const categories = [
       },
       {
         id: 'Citrix Service Mesh',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/citrix", 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/citrix",
         title: 'Citrix Service Mesh',
-        link: false, 
+        link: false,
         show: true,
       },
       {
         id: 'Open Service Mesh',
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />, 
-        href: "/management/osm", 
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/osm",
         title: 'Open Service Mesh',
-        link: false, 
+        link: false,
+        show: true,
+      },
+      {
+        id: 'Kuma',
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/kuma",
+        title: 'Kuma',
+        link: false,
         show: true,
       },
     ],
@@ -414,6 +440,10 @@ class Navigator extends React.Component {
         image = "/static/img/osm-white.svg";
         logoIcon = (<img src={image} className={classes.icon} />);
         break;
+      case 'kuma':
+        image = "/static/img/kuma-white.svg";
+        logoIcon = (<img src={image} className={classes.icon} />);
+        break;
     }
     return logoIcon;
   }
@@ -423,7 +453,7 @@ class Navigator extends React.Component {
     }
 
     handleAdapterClick = (id, link) => {
-      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh"];
+      let allowedId = ["Consul", "Istio", "Linkerd", "Network Service Mesh", "Octarine", "Citrix Service Mesh", "Open Service Mesh", "Kuma"];
       let index = allowedId.indexOf(id);
       if ( index != -1 && !link) {
         this.props.router.push('/management');
@@ -449,7 +479,7 @@ class Navigator extends React.Component {
                 return '';
               }
               return (
-                <React.Fragment>
+                <React.Fragment key={idc}>
                   <ListItem
                     button
                     key={idc}
@@ -480,7 +510,7 @@ class Navigator extends React.Component {
                   return '';
                 }
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={idc}>
                     <ListItem
                       button
                       key={idc}
@@ -513,11 +543,11 @@ class Navigator extends React.Component {
 
       let linkContent = (
         <div className={classNames(classes.link)}>
-          <Tooltip 
-            title={idc} 
-            placement="right" 
-            disableFocusListener={!drawerCollapsed} 
-            disableHoverListener={!drawerCollapsed} 
+          <Tooltip
+            title={idc}
+            placement="right"
+            disableFocusListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
             <ListItemIcon className={classes.listIcon}>
@@ -527,8 +557,7 @@ class Navigator extends React.Component {
           <ListItemText
             className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
             classes={{
-              primary: classes.itemPrimary,
-              textDense: classes.textDense,
+              primary: classes.itemPrimary
             }}
           >
             {idc}
@@ -587,7 +616,7 @@ class Navigator extends React.Component {
                   return '';
                 }
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={childId}>
                     <ListItem
                       button
                       dense
@@ -600,20 +629,19 @@ class Navigator extends React.Component {
                     >
                       <Link href={link ? href : ''}>
                         <div className={classNames(classes.link)}>
-                          <Tooltip 
-                            title={childId} 
-                            placement="right" 
-                            disableFocusListener={!isDrawerCollapsed} 
-                            disableHoverListener={!isDrawerCollapsed} 
+                          <Tooltip
+                            title={childId}
+                            placement="right"
+                            disableFocusListener={!isDrawerCollapsed}
+                            disableHoverListener={!isDrawerCollapsed}
                             disableTouchListener={!isDrawerCollapsed}
-                          > 
+                          >
                             <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                           </Tooltip>
                           <ListItemText
                             className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                             classes={{
-                              primary: classes.itemPrimary,
-                              textDense: classes.textDense,
+                              primary: classes.itemPrimary
                             }}
                           >
                             {childId}
@@ -638,11 +666,11 @@ class Navigator extends React.Component {
                 )}
               >
                 <div className={classNames(classes.link)}>
-                  <Tooltip 
-                    title="Community" 
-                    placement="right" 
-                    disableFocusListener={!isDrawerCollapsed} 
-                    disableHoverListener={!isDrawerCollapsed} 
+                  <Tooltip
+                    title="Community"
+                    placement="right"
+                    disableFocusListener={!isDrawerCollapsed}
+                    disableHoverListener={!isDrawerCollapsed}
                     disableTouchListener={!isDrawerCollapsed}
                   >
                     <ListItemIcon className={classes.listIcon}><FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth /></ListItemIcon>
@@ -650,8 +678,7 @@ class Navigator extends React.Component {
                   <ListItemText
                     className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                     classes={{
-                      primary: classes.itemPrimary,
-                      textDense: classes.textDense,
+                      primary: classes.itemPrimary
                     }}
                   >
                     Community

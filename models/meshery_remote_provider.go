@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -288,6 +288,55 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *MesheryRemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	logrus.Infof("attempting to fetch results from cloud")
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
+	q := saasURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	saasURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed results url: %s", saasURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("results successfully retrieved from SaaS")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching results: %s", bdr)
+	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // GetResult - fetches result from provider backend for the given result id
 func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
@@ -344,6 +393,56 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return "", err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send results: %v", err)
+		return "", err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return "", err
+	}
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("results successfully published to SaaS")
+		idMap := map[string]string{}
+		if err = json.Unmarshal(bdr, &idMap); err != nil {
+			logrus.Errorf("unable to unmarshal body: %v", err)
+			return "", err
+		}
+		resultID, ok := idMap["id"]
+		if ok {
+			return resultID, nil
+		}
+		return "", nil
+	}
+	logrus.Errorf("error while sending results: %s", bdr)
+	return "", fmt.Errorf("error while sending results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// PublishSmiResults - publishes results to the provider backend synchronously
+func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return "", err
+	}
+
+	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to publish results to SaaS")
+	bf := bytes.NewBuffer(data)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
+	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	tokenString, err := l.GetToken(nil)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
 		return "", err
@@ -491,8 +590,8 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-// SMPSTestConfigStore - persist test profile details to provider
-func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
+// SMPTestConfigStore - persist test profile details to provider
+func (l *MesheryRemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal testConfig for shipping"))
@@ -525,8 +624,8 @@ func (l *MesheryRemoteProvider) SMPSTestConfigStore(req *http.Request, perfConfi
 	return "", fmt.Errorf("error while sending testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SMPSTestConfigGet - retrieve a single test profile details
-func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+// SMPTestConfigGet - retrieve a single test profile details
+func (l *MesheryRemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
 	q := saasURL.Query()
 	q.Add("test_uuid", testUUID)
@@ -554,7 +653,7 @@ func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID st
 	}
 	logrus.Debugf("%v", string(bdr))
 	if resp.StatusCode == http.StatusOK {
-		testConfig := SMPS.PerformanceTestConfig{}
+		testConfig := SMP.PerformanceTestConfig{}
 		err := json.Unmarshal(bdr, &testConfig)
 		if err != nil {
 			return nil, err
@@ -565,8 +664,8 @@ func (l *MesheryRemoteProvider) SMPSTestConfigGet(req *http.Request, testUUID st
 	return nil, fmt.Errorf("error while getting testConfig - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SMPSTestConfigFetch - retrieve list of test profiles
-func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+// SMPTestConfigFetch - retrieve list of test profiles
+func (l *MesheryRemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
 	q := saasURL.Query()
 	q.Add("page", page)
@@ -596,8 +695,8 @@ func (l *MesheryRemoteProvider) SMPSTestConfigFetch(req *http.Request, page, pag
 	return nil, fmt.Errorf("error while getting testConfigs - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SMPSTestConfigDelete - tombstone a given test profile
-func (l *MesheryRemoteProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
+// SMPTestConfigDelete - tombstone a given test profile
+func (l *MesheryRemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
 	q := saasURL.Query()
 	q.Add("test_uuid", testUUID)

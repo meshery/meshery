@@ -41,6 +41,9 @@ dependencies:
 - name: mesherylinkerd
   version: 0.1.0
   condition: mesherylinkerd.enabled
+- name: mesheryconsul
+  version: 0.1.0
+  condition: mesheryconsul.enabled
 
 maintainers:
   - name: aisuko

@@ -17,6 +17,7 @@ image: /docs/assets/img/service-meshes/istio.svg
 ### Features
 1. Lifecycle management of Istio
 1. Lifecycle management of sample applications
+1. SMI Conformance Capability of Istio
 1. Configuration best practices
 1. Custom service mesh configuration
 1. Prometheus and Grafana connections
@@ -34,6 +35,12 @@ The ({{ page.name }}) includes a handful of sample applications. Use Meshery to 
 - [Hipster](https://github.com/GoogleCloudPlatform/microservices-demo)
 
 Once BookInfo is deployed, you can use Meshery to apply configuration to control traffic, inject latency, perform context-based routing, and so on.
+
+### SMI Conformance Capability 
+
+Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
+
+Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
 
 ### Configuration best practices
 The {{page.name}} will parse all of Istio's configuration and compare the running configuration of the service mesh against known best practices for an {{page.title}} deployment.

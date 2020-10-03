@@ -27,6 +27,9 @@ Chart.min.js
 
 fortio_chart.js
 
+cmd/wrk2
+cmd/nighthawk-go
+
 **/node_modules/
 
 **/out/
@@ -46,7 +49,5 @@ dist/
 
 */npm-debug.log
 
-Gemfile.lock
 
 **/.idea
-docs/Gemfile.lock

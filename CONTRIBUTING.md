@@ -65,6 +65,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 `vi <specific page>.md`
 1. Run site locally to preview changes.
 `make site`
+* **Note:** *From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artefacts for production.*
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
 `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
@@ -94,17 +95,14 @@ Any time changes are made to the GO code, you will have to stop the server and r
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
-### Common Issues
-
-#### Invalid C headers ( Mac OS )
-When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing `gcc` with Clang by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
+__Please note__: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
 #### Tests
-Users can now test their code on their local machine against the CI checks implemented using `make run-tests`.
+Users can now test their code changes on their local machine against the CI checks implemented through golang-ci lint.
  
 To test code changes on your local machine, run the following command:
 ```
-make run-tests
+make golangci-run
 ```
 
 #### Building Docker image
@@ -162,7 +160,7 @@ If you want to run Meshery from IDE like Goland, VSCode. set below environment v
 SAAS_BASE_URL=https://meshery.layer5.io
 PORT=9081
 DEBUG=true
-ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004
+ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009
 ```
 go tool argument
 ```shell
@@ -180,7 +178,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - Remember to run `make run-ui-lint` & `make run-provider-ui-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
 - The above commands will only fix some basic indenting rules. You will have to manually check your code to ensure there are no duplications, un-used variables or un-declared constants.
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
-- In case you are unable to fix your lint errors, ping us on our [Slack](layer5.slack.io).
+- In case you are unable to fix your lint errors, ping us on our [Slack](http://slack.layer5.io).
 
 # <a name="maintaining"> Reviews</a>
 All contributors are invited to review pull requests. See this short video on [how to review a pull request](https://www.youtube.com/watch?v=isLfo7jfE6g&feature=youtu.be).

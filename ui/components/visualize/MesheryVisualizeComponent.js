@@ -7,8 +7,33 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { withStyles } from '@material-ui/core/styles';
 import cytoscape from 'cytoscape';
 import cxtmenu from 'cytoscape-cxtmenu';
+import popper from 'cytoscape-popper';
+import ReactDOM from 'react-dom';
+import Drawer from './Drawer'
+import elementsJson from './Elements';
 
+cytoscape.use(popper)
 cytoscape.use(cxtmenu)
+
+const DummyTooltip = (props) => {
+  return <p>{props.data.data('app')}</p>;
+};
+
+const removeTooltip = () => {
+  var el = document.getElementById('ccfc');
+  if ( el ) {
+    el.remove();
+  }
+}
+
+const createContentFromComponent = (component) => {
+  removeTooltip();
+  var dummyDomEle = document.createElement('div');
+  dummyDomEle.id = 'ccfc';
+  ReactDOM.render(component, dummyDomEle);
+  document.body.appendChild(dummyDomEle);
+  return dummyDomEle;
+};
 
 const style = (theme) => ({
   
@@ -18,6 +43,14 @@ const style = (theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(2),
     right: 'auto'
+  },
+
+  layoutButton: {
+    position: 'absolute',
+    top:'auto',
+    bottom: theme.spacing(2),
+    left: '45%',
+    right: '55%',
   },
 
   saveButton: {
@@ -86,7 +119,8 @@ let cxtMenuSettings = {
 class MesheryVisualizeComponent extends React.Component {
   
   constructor(props) {
-    super(props)
+    super(props);
+    this.cyPopperRef = React.createRef();
   }
 
   zoomIn() {
@@ -128,79 +162,22 @@ class MesheryVisualizeComponent extends React.Component {
 
   }
 
+  changeLayout(type){
+    var layout = this.cy.layout({
+      name: type
+    })
+    layout.run();
+  }
 
   render() {
     const {classes} = this.props
 
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
-    const elements = {
-
-      nodes: [
-        {
-          data: {
-            id: 'ingress_gateway',
-            label: 'Ingress Gateway'
-          },
-          classes: ['namespace']
-
-        },
-        {
-          data: {
-            id: 'gateway_app',
-            label: 'Istio Ingress Gateway',
-            parent: 'ingress_gateway',
-
-          },
-          classes: ['app']
-        },
-        {
-          data: {
-            parent: 'gateway_app'
-          },
-          classes: ['proxy']
-        },
-        {
-          data: {
-            id: 'product_namespace',
-            label: 'Product',
-          },
-          classes: ['namespace']
-        },
-        {
-          data: {
-            id: 'app_2',
-            label: 'Product',
-            parent: 'product_namespace'
-          },
-          classes: ['app']
-        },
-        {
-          data: {
-            id: 'proxy_2',
-            parent: 'app_2'
-          },
-          classes: ['proxy']
-        },
-        {
-          data: {
-            id: 'service_1',
-            parent: 'app_2'
-          },
-          classes: ['service']
-        },
-        {
-          data: {
-            source: 'product_namespace',
-            target: 'ingress_gateway',
-            label: 'traffic'
-          }
-        }
-      ],
-    };
+    const elements = elementsJson.elements;
 
     return (
       <NoSsr>
-        <div style={{position: 'relative', width:'100%', height:'80%'}}>
+        <div style={{position: 'relative', width:'100%', height:'90%'}}>
           <div className={classes.div}>
             <CytoscapeComponent 
               elements={CytoscapeComponent.normalizeElements(elements)}
@@ -208,8 +185,50 @@ class MesheryVisualizeComponent extends React.Component {
               layout={GraphStyle.getLayout()}
               stylesheet={GraphStyle.getStylesheetContainer()}
               cy={cy => {
-                this.cy = cy
+                this.cy = cy;
                 this.cy.cxtmenu( cxtMenuSettings );
+                this.cy.elements().on('mouseover', (event) => {
+                  this.cyPopperRef.current = event.target.popper({
+                    content: createContentFromComponent(<DummyTooltip data={event.target}/>),
+                    popper: {
+                      placement: 'right',
+                      removeOnDestroy: true, 
+                    },
+                  });
+                });
+                this.cy.elements().on('mouseout', () => {
+                  if (this.cyPopperRef) {
+                    removeTooltip();
+                  }
+                });
+                this.cy.nodes().on('click', (event) => {
+                  var el = document.getElementById('ndc');
+                  if (el) {
+                    el.remove();
+                  }
+                  el = document.getElementById('edc');
+                  if (el) {
+                    el.remove();
+                  }
+                  var dummyDomEle = document.createElement('div');
+                  dummyDomEle.id = 'ndc';
+                  ReactDOM.render(<Drawer data={event.target}/>, dummyDomEle);
+                  document.body.appendChild(dummyDomEle);
+                });
+                this.cy.edges().on('click', (event) => {
+                  var el = document.getElementById('edc');
+                  if (el) {
+                    el.remove();
+                  }
+                  el = document.getElementById('ndc');
+                  if (el) {
+                    el.remove();
+                  }
+                  var dummyDomEle = document.createElement('div');
+                  dummyDomEle.id = 'edc';
+                  ReactDOM.render(<Drawer data={event.target}/>, dummyDomEle);
+                  document.body.appendChild(dummyDomEle);
+                });
               }}
             />
           </div>
@@ -217,6 +236,11 @@ class MesheryVisualizeComponent extends React.Component {
             <Button onClick={this.zoomIn.bind(this)}>+</Button>
             <Button onClick={this.zoomOut.bind(this)}>-</Button>
             <Button onClick={this.fit.bind(this)}>fit</Button>
+          </ButtonGroup>
+          <ButtonGroup className={classes.layoutButton} color="primary" aria-label="outlined primary button group">
+            <Button onClick={this.changeLayout.bind(this, 'cose')}>Cose</Button>
+            <Button onClick={this.changeLayout.bind(this, 'breadthfirst')}>BFS</Button>
+            <Button onClick={this.changeLayout.bind(this, 'circle')}>Circle</Button>
           </ButtonGroup>
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{textDecoration:'none'}}>Save</Button>

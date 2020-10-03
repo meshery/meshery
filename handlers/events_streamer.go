@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 )
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, _ models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -54,7 +55,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log)
+				listenForAdapterEvents(req.Context(), mClient, respChan, log, p)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -141,7 +142,7 @@ STOP:
 	defer log.Debug("events handler closed")
 }
 
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider) {
 	log.Debugf("Received a stream client...")
 
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
@@ -172,6 +173,20 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 		// log.Debugf("received an event: %+#v", event)
 		log.Debugf("Received an event.")
+		if strings.Contains(event.Summary, "Smi conformance test") {
+			result := &models.SmiResult{}
+			err := json.Unmarshal([]byte(event.Details), result)
+			if err != nil {
+				return
+			}
+
+			id, err := p.PublishSmiResults(result)
+			if err != nil {
+				return
+			}
+			event.Details = fmt.Sprintf("Result-Id: %s", id)
+		}
+
 		data, err := json.Marshal(event)
 		if err != nil {
 			err = errors.Wrapf(err, "Error marshaling event to json.")

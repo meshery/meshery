@@ -138,7 +138,7 @@ func initConfig() {
 	//  baseMesheryURL: "http://localhost:9081/api",
 	//  perf:
 	//	  authTokenURI:    "/gettoken",
-	//	  loadTestSmpsURI: "/perf/load-test-smps",
+	//	  loadTestSmpURI: "/perf/load-test-smp",
 	if mctlCfgFile != "" {
 		viper.SetConfigFile(mctlCfgFile)
 		if err := viper.ReadInConfig(); err == nil {
@@ -150,9 +150,9 @@ func initConfig() {
 		setMesheryctlConfigDefaults(map[string]interface{}{
 			"baseMesheryURL": "http://localhost:9081/api",
 			"perf": map[string]interface{}{
-				"authTokenURI":    "/gettoken",
-				"loadTestSmpsURI": "/perf/load-test-smps",
-				"loadTestURI":     "/perf/load-test",
+				"authTokenURI":   "/gettoken",
+				"loadTestSmpURI": "/perf/load-test-smp]",
+				"loadTestURI":    "/perf/load-test",
 			},
 			"ctlversion": map[string]interface{}{
 				"build":     version,

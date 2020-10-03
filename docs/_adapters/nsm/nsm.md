@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Network Service Mesh Adapter
-name: Network Service Mesh
+name: Meshery Adapter for Network Service Mesh
+mesh_name: Network Service Mesh
 version: v0.2.1
 port: 10004/tcp
 project_status: stable
@@ -11,22 +12,23 @@ image: /docs/assets/img/service-meshes/nsm.svg
 
 # {{ page.name }}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> | {{page.version}}  |
+|  Service Mesh  |                                 Adapter Status                                  | Latest Supported Mesh Version |
+| :------------: | :-----------------------------------------------------------------------------: | :---------------------------: |
+| {{page.title}} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
 
 ### Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install **{{page.version}}** of the {{page.name}} service mesh. The SMI adapter for Network Service Mesh can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
 ### Lifecycle management of sample applications
 
-The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by Network Service Mesh. Use Meshery to deploy any of these sample applications:
+The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by {{page.mesh_name}}. Use Meshery to deploy any of these sample applications:
 
 #### 1. **Hello NSM Application**
 
 Watch this presentation to see the Hello NSM Application in-action:
-<iframe class="container" width="370" height="315" src="https://www.youtube.com/embed/4xKixsDTtdM" frameborder="0" allow="accelerometer; autoplay; align="left"; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4xKixsDTtdM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 See on YouTube: [Adopting Network Service Mesh with Meshery](https://www.youtube.com/watch?v=4xKixsDTtdM&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)
 
@@ -34,10 +36,10 @@ See on YouTube: [Adopting Network Service Mesh with Meshery](https://www.youtube
 
 _A simple example that connects a vpp based Pod to a Network Service using memif._
 
-The simplest possible case for Network Service Mesh is to have is connecting a Client via a vWire to another Pod that is providing a Network Service.
+The simplest possible case for {{page.mesh_name}} is to have is connecting a Client via a vWire to another Pod that is providing a Network Service.
 Network Service Mesh allows flexibility in the choice of mechanisms used to provide that vWire to a workload.
 
-The icmp responder example does this with kernel interfaces.  The vpp-icmp-responder provides and consumes the same 'icmp-responder' Network Service, but has Client's and Endpoint's that use a [memif](https://www.youtube.com/watch?v=6aVr32WgY0Q) high speed memory interfaces to achieve performance unavailable via kernel interfaces.
+The icmp responder example does this with kernel interfaces. The vpp-icmp-responder provides and consumes the same 'icmp-responder' Network Service, but has Client's and Endpoint's that use a [memif](https://www.youtube.com/watch?v=6aVr32WgY0Q) high speed memory interfaces to achieve performance unavailable via kernel interfaces.
 
 ![vpp-icmp-responder-example](./vpp-icmp-responder-example.svg)
 
@@ -45,12 +47,12 @@ The icmp responder example does this with kernel interfaces.  The vpp-icmp-respo
 
 This will install two Deployments:
 
-Name | Description
-:--------|:--------
-**vpp-icmp-responder-nsc** | The Clients (four replicas)
-**vpp-icmp-responder-nse** | The Endpoints (two replicas)
+| Name                       | Description                  |
+| :------------------------- | :--------------------------- |
+| **vpp-icmp-responder-nsc** | The Clients (four replicas)  |
+| **vpp-icmp-responder-nse** | The Endpoints (two replicas) |
 
-And cause each Client to get a vWire connecting it to one of the Endpoints.  Network Service Mesh handles the Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
+And cause each Client to get a vWire connecting it to one of the Endpoints. Network Service Mesh handles the Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
 
 ![vpp-icmp-responder-example-2](./vpp-icmp-responder-example-2.svg)
 
@@ -80,12 +82,12 @@ The simplest possible case for Network Service Mesh is to have is connecting a C
 
 This will install two Deployments:
 
-Name | Description |
-:--------|:--------
-**icmp-responder-nsc** | The Clients, four replicas |
-**icmp-responder-nse** | The Endpoints, two replicas |
+| Name                   | Description                 |
+| :--------------------- | :-------------------------- |
+| **icmp-responder-nsc** | The Clients, four replicas  |
+| **icmp-responder-nse** | The Endpoints, two replicas |
 
-And cause each Client to get a vWire connecting it to one of the Endpoints.  Network Service Mesh handles the
+And cause each Client to get a vWire connecting it to one of the Endpoints. Network Service Mesh handles the
 Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
 
 ![icmp-responder-example-2](./icmp-responder-example-2.svg)

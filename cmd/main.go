@@ -86,6 +86,12 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
+	smiResultPersister, err := models.NewBitCaskSmiResultsPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer smiResultPersister.CloseResultPersister()
+
 	resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
@@ -103,6 +109,7 @@ func main() {
 		SaaSBaseURL:            saasBaseURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
+		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
 	}
 	provs[lProv.Name()] = lProv

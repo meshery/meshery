@@ -6,7 +6,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - "SAAS_BASE_URL=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004 meshery-cpx:10008 meshery-osm:10010"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004 meshery-kuma:10007 meshery-cpx:10008 meshery-osm:10009"
       - "EVENT=mesheryLocal"
     volumes:
       - $HOME/.kube:/home/appuser/.kube:ro
@@ -35,13 +35,19 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10003:10003"      
+      - "10003:10003"
   meshery-nsm:
     image: layer5/meshery-nsm:stable-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10004:10004"
+  meshery-kuma:
+    image: layer5/meshery-kuma:stable-latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10007:10007"
   meshery-cpx:
     image: layer5/meshery-cpx:stable-latest
     labels:
@@ -53,7 +59,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
-      - "10010:10010"
+      - "10009:10009"
+  # TODO(Kush) : Revamp the nighthawk image inclusion approach
+  # nighthawk-lg:
+  #   image: envoyproxy/nighthawk-dev:latest
   watchtower:
     image: v2tec/watchtower
     labels:
