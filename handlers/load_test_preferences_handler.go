@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/layer5io/meshery/models"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -66,7 +66,7 @@ func (h *Handler) LoadTestPrefencesHandler(w http.ResponseWriter, req *http.Requ
 	gen := req.FormValue("gen")
 	genTrack := false
 	// TODO: after we have interfaces for load generators in place, we need to make a generic check, for now using a hard coded one
-	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG} {
+	for _, lg := range []models.LoadGenerator{models.FortioLG, models.Wrk2LG, models.NighthawkLG} {
 		if lg.Name() == gen {
 			genTrack = true
 		}
@@ -122,7 +122,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	perfTest := &SMPS.PerformanceTestConfig{}
+	perfTest := &SMP.PerformanceTestConfig{}
 	if err = protojson.Unmarshal(body, perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
@@ -130,12 +130,12 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	if err = models.SMPSPerformanceTestConfigValidator(perfTest); err != nil {
+	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	tid, err := provider.SMPSTestConfigStore(req, perfTest)
+	tid, err := provider.SMPTestConfigStore(req, perfTest)
 	if err != nil {
 		logrus.Errorf("unable to save user preferences: %v", err)
 		http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
@@ -155,7 +155,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
 		logrus.Debugf("page %v, pageSize: %v", testPage, testPageSize)
-		testObjJSON, err := provider.SMPSTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
+		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
 			logrus.Error("error fetching test configs")
 			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
@@ -163,7 +163,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		}
 		_, _ = w.Write(testObjJSON)
 	} else {
-		testObj, err := provider.SMPSTestConfigGet(req, testUUID)
+		testObj, err := provider.SMPTestConfigGet(req, testUUID)
 		if err != nil {
 			logrus.Error("error fetching test configs")
 			http.Error(w, "error fetching test configs", http.StatusInternalServerError)
@@ -197,7 +197,7 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "field uuid not found", http.StatusBadRequest)
 		return
 	}
-	if err := provider.SMPSTestConfigDelete(req, testUUID); err != nil {
+	if err := provider.SMPTestConfigDelete(req, testUUID); err != nil {
 		logrus.Errorf("error deleting testConfig: %v", err)
 		http.Error(w, "error deleting testConfig", http.StatusBadRequest)
 		return

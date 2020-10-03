@@ -11,6 +11,8 @@ import classNames from 'classnames';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
+// import { bindActionCreators } from 'redux';
+// import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 
 
@@ -122,6 +124,11 @@ class MesheryNotification extends React.Component {
       const { events } = this.state;
       const data = JSON.parse(e.data);
       events.push(data);
+      //Temperory Hack
+      // if(data.summary==="Smi conformance test completed successfully"){
+      //   self.props.updateSMIResults({smi_result: data,});
+      //   console.log("HandleEvents",{smi_result: data,});
+      // }
       self.setState({ events });
     };
   }
@@ -178,7 +185,7 @@ class MesheryNotification extends React.Component {
   handleClearAllNotifications() {
     const self = this;
     return () => {
-      self.setState({ events: [], open: true });
+      self.setState({ events: [], open: false });
     };
   }
 
@@ -314,6 +321,9 @@ class MesheryNotification extends React.Component {
   }
 }
 
+// const mapDispatchToProps = (dispatch) => ({
+//   updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
+// });
 
 const mapStateToProps = (state) => {
   const k8sConfig = state.get('k8sConfig').toJS();
@@ -323,4 +333,6 @@ const mapStateToProps = (state) => {
 
 export default withStyles(styles)(connect(
   mapStateToProps,
+  null,
+  // mapDispatchToProps,
 )(MesheryNotification));

@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/gofrs/uuid"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"
@@ -21,10 +21,10 @@ type BitCaskTestProfilesPersister struct {
 
 // UserTestProfiles - represents a page of user test configs
 type UserTestProfiles struct {
-	Page        uint64                        `json:"page"`
-	PageSize    uint64                        `json:"page_size"`
-	TotalCount  int                           `json:"total_count"`
-	TestConfigs []*SMPS.PerformanceTestConfig `json:"test_configs"`
+	Page        uint64                       `json:"page"`
+	PageSize    uint64                       `json:"page_size"`
+	TotalCount  int                          `json:"total_count"`
+	TestConfigs []*SMP.PerformanceTestConfig `json:"test_configs"`
 }
 
 // NewBitCaskTestProfilesPersister creates a new BitCaskTestProfilesPersister instance
@@ -77,7 +77,7 @@ RETRY:
 
 	total := s.db.Len()
 
-	testConfigs := []*SMPS.PerformanceTestConfig{}
+	testConfigs := []*SMP.PerformanceTestConfig{}
 
 	start := page * pageSize
 	end := (page+1)*pageSize - 1
@@ -98,7 +98,7 @@ RETRY:
 				return nil, err
 			}
 			if len(dd) > 0 {
-				testConfig := &SMPS.PerformanceTestConfig{}
+				testConfig := &SMP.PerformanceTestConfig{}
 				if err := json.Unmarshal(dd, testConfig); err != nil {
 					err = errors.Wrapf(err, "unable to unmarshal data.")
 					logrus.Error(err)
@@ -126,7 +126,7 @@ RETRY:
 }
 
 // GetTestConfig - gets result for a specific key
-func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMPS.PerformanceTestConfig, error) {
+func (s *BitCaskTestProfilesPersister) GetTestConfig(key uuid.UUID) (*SMP.PerformanceTestConfig, error) {
 	if s.db == nil {
 		return nil, errors.New("connection to DB does not exist")
 	}
@@ -158,7 +158,7 @@ RETRY:
 		return nil, err
 	}
 
-	testConfig := &SMPS.PerformanceTestConfig{}
+	testConfig := &SMP.PerformanceTestConfig{}
 	err = json.Unmarshal(data, testConfig)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to marshal testConfig data.")

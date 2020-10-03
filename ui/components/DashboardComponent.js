@@ -193,7 +193,7 @@ class DashboardComponent extends React.Component {
             aria-label="Configure"
             className={classes.redirectButton}
             onClick={() => {
-              self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key) 
+              self.props.router.push('/settings#service-mesh'); self.props.closeSnackbar(key)
             }}
           >
             Settings
@@ -426,13 +426,17 @@ class DashboardComponent extends React.Component {
                       image = "/static/img/osm.svg";
                       logoIcon = (<img src={image} className={classes.icon} />);
                       break;
+                    case 'kuma':
+                      image = "/static/img/kuma.svg";
+                      logoIcon = (<img src={image} className={classes.icon} />);
+                      break;
                   }
                 }
               });
 
 
               return (
-                <Tooltip title={isDisabled ? 'This adapter is inactive'
+                <Tooltip key={`adapters-${ia}`} title={isDisabled ? 'This adapter is inactive'
                   : `${adapterType
                     .toLowerCase()
                     .split(' ')

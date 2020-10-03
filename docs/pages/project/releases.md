@@ -61,316 +61,478 @@ permalink: project/releases
 
 # Meshery Releases
 
+### [v0.4.4](https://github.com/layer5io/meshery/releases/tag/v0.4.4)
+
+Released on 27 August 2020
+
+**What's new ?**
+
+- Features
+
+  - Added timeout in golang-ci lint
+  - Moved to Gorilla/mux for server routing
+  - Migrated to golangci-lint
+  - Initialised nighthawk load generator interface
+
+- Maintenance
+
+  - Updated meshmap branch to latest on master branch
+  - Made page heading title bold
+  - Moved meshery adapter for osm
+
+- Documentation
+
+  - Added extra RVM notes for Windows Users
+  - Added SMI screenshot and description
+  - Added the current version of osm
+
+- Bug fixes
+  - Auto detecting kube configuration
+  - Fixed the footer social bar
+
+### [v0.4.3](https://github.com/layer5io/meshery/releases/tag/v0.4.3)
+
+Released on 22 August 2020
+
+**What's new ?**
+
+- Features
+
+  - Use Open Service Mesh in place of osm
+  - Duration field use dropdown + text in performance preference
+  - Added tooltips for navigation menu items while in minimised state
+  - Added community calendar button
+
+- Documentation
+
+  - Doc pages fixed
+  - Updated README.md
+  - Added first timers' and welcome guide link
+  - Added "Open Service Mesh" to navigation menu in Meshery docs
+
+- Bug fixes
+  - smi-conformance - added Colons to front matter
+  - Missing bottom row added
+
+### [v0.4.2](https://github.com/layer5io/meshery/releases/tag/v0.4.2)
+
+Released on 17 August 2020
+
+**What's new?**
+
+- Features
+
+  - Update CRUD operations on test config
+  - Fix for unwanted snackbar in perf preferences tab
+  - Add validation for protocol in URL
+  - Initialize OSM adapter for Meshery
+  - Add new command restart to mesheryctl
+
+- Maintenance
+
+  - Fix broken ci for ui tests
+  - Optimize images
+  - Remove redundant step from docker push
+
+- Documentation
+
+  - Remove broken links from table of supported platforms
+  - Remove example of brew upgrade mesheryctl output
+  - Create smi-conformance-capability.md file
+  - Fix documentation site broken links
+  - Fix broken link to SMP in release.md
+  - Upgrade Meshery Kuma Adapter to beta
+  - Update adapter docs
+  - Add logos to assets folder
+  - Add Open Service Mesh to list
+  - Fix typo error in App Mesh Adapter description
+
+- Bug Fixes
+  - Create/Delete/Read on user test profiles
+  - Fix for the results page
+  - Fix releaseDrafter configuration file
+
+### [v0.4.1](https://github.com/layer5io/meshery/releases/tag/v0.4.1)
+
+Released on 8 August 2020
+
+**What's new ?**
+
+- Documentation
+  - Typo and error fixes
+
 ### [v0.4.0-beta.4](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.4)
+
 Released on 9 July 2020
 
 **What's new ?**
+
 - Bug Fixes
-    + hotfix: Meshery settings page not building
+  - hotfix: Meshery settings page not building
 
 ### [v0.4.0-beta.3](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.3)
+
 Released on 8 July 2020
 
 **What's new ?**
+
 - Bug Fixes
-    + Hotfix of bug introduced in Release v0.4.0-beta.2
+  - Hotfix of bug introduced in Release v0.4.0-beta.2
 
 ### [v0.4.0-beta.2](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.2)
+
 Released on 8 July 2020
 
 **What's new ?**
+
 - Meshery
-    + Added initial kubeconfig.
+  - Added initial kubeconfig.
 - Mesheryctl
-    + Removed fatal error due to missing `meshery.yaml`.
+  - Removed fatal error due to missing `meshery.yaml`.
 - Documentation
-    + Updated Kuma adapter logo in Meshery Docs.
-    + Added network ports to the adapters table.
-    + Added providers screenshot.
-    + Added all supported platforms to list.
-    + Added nighthawk as a load generator.
-    + Fixed broken link in EKS page.
+  - Updated Kuma adapter logo in Meshery Docs.
+  - Added network ports to the adapters table.
+  - Added providers screenshot.
+  - Added all supported platforms to list.
+  - Added nighthawk as a load generator.
+  - Fixed broken link in EKS page.
 
 ### [v0.3.19](https://github.com/layer5io/meshery/releases/tag/v0.3.19)
+
 Released on 7 July 2020
 
 **What's new ?**
+
 - Mesheryctl
-    + Important bug fix for failure to initialize app folder (`~/meshery`) and app config file (`meshery.yaml`).
+  - Important bug fix for failure to initialize app folder (`~/meshery`) and app config file (`meshery.yaml`).
 
 ### [v0.4.0-beta.1](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.1)
+
 Released on 5 July 2020
 
 **What's new ?**
+
 - Meshery
-    + "stable-latest" tag for new release channel.
+  - "stable-latest" tag for new release channel.
 
 ### [v0.3.18](https://github.com/layer5io/meshery/releases/tag/v0.3.18)
+
 Released on 4 July 2020
 
 **What's new ?**
+
 - Mesheryctl
-    + `mesheryctl version` now retrieves server version information, including release tag and git sha.
-    + `meshery perf` now supports SPMS as a package through the `--file` flag.
+  - `mesheryctl version` now retrieves server version information, including release tag and git sha.
+  - `meshery perf` now supports SPMS as a package through the `--file` flag.
 - Meshery
-    + Extensibility enhancement: an abstract interface, Load Generator Interface, is now provided for ease of extending Meshery to support other load generators, like Nighthawk.
+  - Extensibility enhancement: an abstract interface, Load Generator Interface, is now provided for ease of extending Meshery to support other load generators, like Nighthawk.
 - Docs
-    + uplifted EKS and GKE instructions
+  - uplifted EKS and GKE instructions
 
 ### [v0.3.17](https://github.com/layer5io/meshery/releases/tag/v0.3.17)
+
 Released on 1 July 2020
 
 **What's new ?**
+
 - Meshery
-    + Feature: New "stable" release channel established.
-    + Feature: Enhanced UX for advanced performance test HTTP headers.
+  - Feature: New "stable" release channel established.
+  - Feature: Enhanced UX for advanced performance test HTTP headers.
 
 ### [v0.3.16](https://github.com/layer5io/meshery/releases/tag/v0.3.16)
+
 Released on 22 June 2020
 
 **What's new ?**
+
 - Mesheryctl
-    + Feature: Addition of `mesheryctl system` as the new command for lifecycle management of Meshery.
-        + All Meshery lifecycle management commands like `start`, `stop`, `reset`, `logs` and so on are now found under `system`.
-    + Feature: Addition of `mesheryctl system config` as a new subcommand to assist with configuring Meshery to communicate with Kubernetes deployments in GKE, AKS, and EKS.
+  - Feature: Addition of `mesheryctl system` as the new command for lifecycle management of Meshery.
+    - All Meshery lifecycle management commands like `start`, `stop`, `reset`, `logs` and so on are now found under `system`.
+  - Feature: Addition of `mesheryctl system config` as a new subcommand to assist with configuring Meshery to communicate with Kubernetes deployments in GKE, AKS, and EKS.
 
 ### [v0.3.15](https://github.com/layer5io/meshery/releases/tag/v0.3.15)
+
 Released on 1 May 2020
 
 **What's new ?**
-- Mesheryctl
-    + Feature: Addition of `mesheryctl perf --file <smp.yaml>' support for [SMP formatted](https://github.com/layer5io/service-mesh-performance) performance test profiles.
-    + Feature: Behavior change `mesheryctl perf` for using tokens and supporting JWT.
 
-### [v0.3.14](https://github.com/layer5io/meshery/releases/tag/v0.3.14) 
+- Mesheryctl
+  - Feature: Addition of `mesheryctl perf --file <smp.yaml>' support for [SMP formatted](https://github.com/layer5io/service-mesh-performance) performance test profiles.
+  - Feature: Behavior change `mesheryctl perf` for using tokens and supporting JWT.
+
+### [v0.3.14](https://github.com/layer5io/meshery/releases/tag/v0.3.14)
 
 **What's new ?**
+
 - Mesheryctl
-    + Behavior change in `mesheryctl start` to check for new Meshery server images by default.
+  - Behavior change in `mesheryctl start` to check for new Meshery server images by default.
 
 ### [v0.3.13](https://github.com/layer5io/meshery/releases/tag/v0.3.13)
 
 **What's new ?**
+
 - Mesheryctl
-    + Point release for mesheryctl's initial ARM support.
+  - Point release for mesheryctl's initial ARM support.
 
 ### [v0.3.12](https://github.com/layer5io/meshery/releases/tag/v0.3.12)
+
 **What's new ?**
+
 - Mesheryctl
-    + Initial Scoop Bucket and Scoop package for `mesheryctl`.
+  - Initial Scoop Bucket and Scoop package for `mesheryctl`.
 
 ### [v0.3.11](https://github.com/layer5io/meshery/releases/tag/v0.3.11)
 
 **What's new ?**
+
 - Mesheryctl
-    + Fixes minor user experience issues on `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
+  - Fixes minor user experience issues on `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
 
 ### [v0.3.10](https://github.com/layer5io/meshery/releases/tag/v0.3.10)
 
 **What's new ?**
-- Mesheryctl
-    + Introduces `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
 
+- Mesheryctl
+  - Introduces `mesheryctl perf` command. See [Meshery CLI Commands & Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#) for reference.
 
 ### [v0.3.9](https://github.com/layer5io/meshery/releases/tag/v0.3.12)
 
 **What's new ?**
+
 - Mesheryctl
-    + Addition of `mesheryctl version` to provide server-side version number.
-    + Improvement of `mesheryctl logs | stop | start` to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
+  - Addition of `mesheryctl version` to provide server-side version number.
+  - Improvement of `mesheryctl logs | stop | start` to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
 - Meshery Server
-    + Strip off extraneous information beyond IP address and port in Grafana and Prometheus endpoints ([#612](https://github.com/layer5io/meshery/issues/612))
+  - Strip off extraneous information beyond IP address and port in Grafana and Prometheus endpoints ([#612](https://github.com/layer5io/meshery/issues/612))
 
 ### [v0.3.8](https://github.com/layer5io/meshery/releases/tag/v0.3.8)
 
 **What's new ?**
+
 - Mesheryctl
-    + Extraneous command line output removed. Clarity of CLI interaction with `mesheryctl` is improved in this release.
+  - Extraneous command line output removed. Clarity of CLI interaction with `mesheryctl` is improved in this release.
 
 ### [v0.3.7](https://github.com/layer5io/meshery/releases/tag/v0.3.7)
 
 **What's new ?**
+
 - Meshery Server
-    + Ad-hoc connectivity tests for Prometheus is now supported. Users can click the Prometheus chip and have Meshery verify its ability to connect to the configured Prometheus instance.
+  - Ad-hoc connectivity tests for Prometheus is now supported. Users can click the Prometheus chip and have Meshery verify its ability to connect to the configured Prometheus instance.
 
 ### [v0.3.6](https://github.com/layer5io/meshery/releases/tag/v0.3.6)
 
 **What's new ?**
+
 - Mesheryctl
-    + Ad-hoc connectivity tests for Grafana is now supported. Users can click the Grafana chip and have Meshery verify its ability to connect to the configured Grafana instance.
+  - Ad-hoc connectivity tests for Grafana is now supported. Users can click the Grafana chip and have Meshery verify its ability to connect to the configured Grafana instance.
 
 ### [v0.3.5](https://github.com/layer5io/meshery/releases/tag/v0.3.5)
 
 **What's new ?**
+
 - Mesheryctl
-    + Removal of `init` as a command exposed to users. This command's functionality is used internal to `mesheryctl start`. A new `start --check` command will provide preflight check functionality in `init`'s place.
+  - Removal of `init` as a command exposed to users. This command's functionality is used internal to `mesheryctl start`. A new `start --check` command will provide preflight check functionality in `init`'s place.
 
 ### [v0.3.4](https://github.com/layer5io/meshery/releases/tag/v0.3.4)
 
 **What's new ?**
+
 - Mesheryctl
-    + `mesheryctl version` is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release.
+  - `mesheryctl version` is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release.
 
 ### [v0.3.3](https://github.com/layer5io/meshery/releases/tag/v0.3.3)
 
 **What's new ?**
+
 - Meshery Server
-    + Providers - a new project construct that allows users to select authentication, long-term storage, and so on provider.
+  - Providers - a new project construct that allows users to select authentication, long-term storage, and so on provider.
 
 ### [v0.3.2](https://github.com/layer5io/meshery/releases/tag/v0.3.2)
 
 **What's new ?**
+
 - Mesheryctl
-    + Addition of `mesheryctl version` as a new subcommand.
+  - Addition of `mesheryctl version` as a new subcommand.
 
 ### [v0.3.1](https://github.com/layer5io/meshery/releases/tag/v0.3.1)
 
 **What's new ?**
+
 - Meshery Server
-    + Support for wrk2 as an alternative load generator.
+  - Support for wrk2 as an alternative load generator.
 
 ### [v0.2.4](https://github.com/layer5io/meshery/releases/tag/v0.2.4)
 
 **What's new ?**
+
 - Mesheryctl
-    + Homebrew support available for mesheryctl.
+  - Homebrew support available for mesheryctl.
 - Meshery Server
-    + Meshery adapter for Octarine released as stable.
+  - Meshery adapter for Octarine released as stable.
 - Documentation
-    + Revised quick start guide for Mac, Linux and Windows.
-    + WSL2 support published.
-    + GKE kubeconfig generation script switched to `--decode`.
+  - Revised quick start guide for Mac, Linux and Windows.
+  - WSL2 support published.
+  - GKE kubeconfig generation script switched to `--decode`.
 
 ### [v0.2.3](https://github.com/layer5io/meshery/releases/tag/v0.2.3)
 
 **What's new ?**
+
 - Mesheryctl
-    + Improved `status` command output on Windows.
+  - Improved `status` command output on Windows.
 - Meshery Server
-    + Ability to deploy Meshery on Istio.
-    + Adapter Chips: Move adapter port number into tooltip.
+  - Ability to deploy Meshery on Istio.
+  - Adapter Chips: Move adapter port number into tooltip.
 
 ### [v0.2.2](https://github.com/layer5io/meshery/releases/tag/v0.2.2)
 
 **What's new ?**
+
 - Mesheryctl
-    + Improved `update` command, no overwriting in local configuration while `start` command.
+  - Improved `update` command, no overwriting in local configuration while `start` command.
 - Meshery UI
-    + A new modal view to organize and display performance results in a tabular format.
+  - A new modal view to organize and display performance results in a tabular format.
 
 ### [v0.2.1](https://github.com/layer5io/meshery/releases/tag/v0.2.1)
 
 **What's new ?**
+
 - Mesheryctl
-    + Overhaul of in-cluster vs out-of-cluster Kubernetes setup.
+  - Overhaul of in-cluster vs out-of-cluster Kubernetes setup.
 
 ## [v0.2.0](https://github.com/layer5io/meshery/releases/tag/v0.2.1)
 
 **What's new?**
+
 - Meshery Adapters
-    + Adapter introduced for Network Service Mesh.
+  - Adapter introduced for Network Service Mesh.
 - Meshery Server
-    + Ability to run performance tests asynchronously.
-    + Collect & persist node metrics.
+  - Ability to run performance tests asynchronously.
+  - Collect & persist node metrics.
 
 ## [v0.1.6](https://github.com/layer5io/meshery/releases/tag/v0.1.6)
 
 **What's new?**
+
 - Changelog
- + New UI for managing Meshery's connection to Kubernetes cluster.
- + New `mesheryctl` compatibility for Windows for opening default browser upon `start`.
- + New sample app added to the istio adapter - Hipster app (Google's Microservices demo application).
+
+* New UI for managing Meshery's connection to Kubernetes cluster.
+* New `mesheryctl` compatibility for Windows for opening default browser upon `start`.
+* New sample app added to the istio adapter - Hipster app (Google's Microservices demo application).
 
 ## [v0.1.5](https://github.com/layer5io/meshery/releases/tag/v0.1.5)
 
 **What's new?**
+
 - Changelog
 - UX Improvements
- + `mesheryctl start` now waits for meshery application containers to be up before launching the user's browser.
- + `mesheryctl stop` now shows command progress akin to the experience when using `meshery` bash script.
+
+* `mesheryctl start` now waits for meshery application containers to be up before launching the user's browser.
+* `mesheryctl stop` now shows command progress akin to the experience when using `meshery` bash script.
 
 ## [v0.1.4](https://github.com/layer5io/meshery/releases/tag/v0.1.4)
 
 **What's new?**
+
 - Changelog
 
 ## [v0.1.3](https://github.com/layer5io/meshery/releases/tag/v0.1.3)
 
 **What's new?**
+
 - Migrate from Configure Meshery to Settings page.
 
 ## [v0.1.2](https://github.com/layer5io/meshery/releases/tag/v0.1.2)
 
 **What's new?**
+
 - Synchronization of browser local storage
- + Meshery in-memory session storage.
+
+* Meshery in-memory session storage.
 
 ## [v0.1.1](https://github.com/layer5io/meshery/releases/tag/v0.1.1)
 
 **What's new?**
+
 - Patch for Alpine bug.
 
 ## [v0.1.0](https://github.com/layer5io/meshery/releases/tag/v0.1.0)
 
 **What's new**
+
 - Initial fully functional Istio.
 
 ## [v0.0.9](https://github.com/layer5io/meshery/releases/tag/v0.0.9)
 
 **What's new?**
+
 - Documentation site segragated
- + content laid out.
+
+* content laid out.
 
 ## [v0.0.8](https://github.com/layer5io/meshery/releases/tag/v0.0.8)
 
 **What's new?**
+
 - Ability to import Grafana board json
- + Integrating with Prometheus directly for metrics.
+
+* Integrating with Prometheus directly for metrics.
 
 ## [v0.0.7](https://github.com/layer5io/meshery/releases/tag/v0.0.7)
 
 **What's new?**
+
 - Migrated away from embedded iframe grafana charts
- + Now using Chartjs for charting.
- + Now using C3 for charting.
+
+* Now using Chartjs for charting.
+* Now using C3 for charting.
 
 ## [v0.0.6](https://github.com/layer5io/meshery/releases/tag/v0.0.6)
 
 **What's new?**
+
 - Pre-alpha Consul adapter.
- + Support for deploying SMI Istio adapter.
- + Ensuring compatibility to apply SMI manifests through Meshery.
+
+* Support for deploying SMI Istio adapter.
+* Ensuring compatibility to apply SMI manifests through Meshery.
 
 ## [v0.0.5](https://github.com/layer5io/meshery/releases/tag/v0.0.5)
 
 **What's new?**
+
 - Pre-alpha Linkerd adapter.
- + Ability to filter results.
+
+* Ability to filter results.
 
 ## [v0.0.4](https://github.com/layer5io/meshery/releases/tag/v0.0.4)
 
 **What's new?**
 -Ability to view persisted results.
- + Integration and support for Grafana charts.
- + Embedding panels in iframe.
+
+- Integration and support for Grafana charts.
+- Embedding panels in iframe.
 
 ## [v0.0.3](https://github.com/layer5io/meshery/releases/tag/v0.0.3)
 
 **What's new?**
--  Initial version with support of Meshery adapters.
- + Release of a pre-alpha version of Istio adapter.
+
+- Initial version with support of Meshery adapters.
+
+* Release of a pre-alpha version of Istio adapter.
 
 ## [v0.0.2](https://github.com/layer5io/meshery/releases/tag/v0.0.2)
 
 **What's new?**
+
 - Ability to support running custom yaml on Kubernetes with Istio.
 
 ## [v0.0.1](https://github.com/layer5io/meshery/releases/tag/v0.0.1)
 
 **New release**
+
 - Initial version of Meshery
-  + Connect to Kubernetes.
-  + Run preconfigured commands on Kubernetes with Istio.
+  - Connect to Kubernetes.
+  - Run preconfigured commands on Kubernetes with Istio.
 
 <!-- <table class="responsive-table hover striped">
   <thead>
@@ -425,7 +587,7 @@ Released on 1 May 2020
       <td class="centered">0.3.9</td>
       <td>
         <em>Mesheryctl</em> - Addition of mesheryctl version to provide server-side version number, Improvement of mesheryctl logs | stop | start to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
-        <em>Meshery</em> - Striped off extraneous information beyond IP address and port in Grafana and Prometheus endpoints. 
+        <em>Meshery</em> - Striped off extraneous information beyond IP address and port in Grafana and Prometheus endpoints.
       </td>
       <td>Feb 3, 2020</td>
     </tr>
@@ -460,21 +622,21 @@ Released on 1 May 2020
      <tr>
       <td class="centered">0.3.4</td>
       <td>
-        <em>Mesheryctl</em> - mesheryctl version is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release. 
+        <em>Mesheryctl</em> - mesheryctl version is now enhanced with the addition of displaying the git commit (sha) of the mesheryctl release.
       </td>
       <td>Dec 30, 2019</td>
     </tr>
      <tr>
       <td class="centered">0.3.3</td>
       <td>
-        <em>Meshery</em> - Providers (a new project construct that allows users to select authentication, long-term storage, and so on provider). 
+        <em>Meshery</em> - Providers (a new project construct that allows users to select authentication, long-term storage, and so on provider).
       </td>
       <td>Dec 20, 2019</td>
     </tr>
     <tr>
       <td class="centered">0.3.2</td>
       <td>
-        <em>Mesheryctl</em> - adds mesheryctl version as a new subcommand. 
+        <em>Mesheryctl</em> - adds mesheryctl version as a new subcommand.
       </td>
       <td>Nov 29, 2019</td>
     </tr>
@@ -509,7 +671,7 @@ Released on 1 May 2020
           - improved `status` output on Windows
         <br />
         <em>Meshery</em>
-          - Ability to deploy Meshery on Istio. 
+          - Ability to deploy Meshery on Istio.
           - Adapter Chips: Move adapter port number into tooltip
         <br />
         <em>Docs</em>

@@ -44,6 +44,7 @@ const meshes = [
 const loadGenerators = [
   'fortio',
   'wrk2',
+  'nighthawk',
 ];
 
 const styles = (theme) => ({
@@ -117,8 +118,16 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleChange = (name) => (event) => {
     if (name === 'url' && event.target.value !== '') {
+      const compulsoryProtocolValidUrlPattern = new RegExp('(^(http|https|nats|tcp):\\/\\/)' // compulsory protocol
+      + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
+      + 'localhost|'
+      + '((\\d{1,3}\.){3}\\d{1,3}))' // OR ip (v4) address
+      + '(\\:\\d+)?(\/[-a-z\\d%_.~+]*)*' // port and path
+      + '(\\?[;&a-z\\d%_.~+=-]*)?' // query string
+      + '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
       let urlPattern = event.target.value;
-      let val = urlPattern.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+      let val = urlPattern.match(compulsoryProtocolValidUrlPattern);
       if ( !val ){
         this.setState({ disableTest: true });
         this.setState({ urlError: true });
@@ -202,6 +211,7 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType,
     };
     const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+    console.log(params);
     this.startEventStream(`/api/perf/load-test?${params}`);
     this.setState({ blockRunTest: true }); // to block the button
   }

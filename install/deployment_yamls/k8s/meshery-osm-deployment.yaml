@@ -22,10 +22,10 @@ spec:
     spec:
       serviceAccount: meshery
       containers:
-      - image: layer5/osm-consul:stable-latest
+      - image: layer5/meshery-osm:stable-latest
         name: meshery-osm
         ports:
-        - containerPort: 10010
+        - containerPort: 10009
         resources: {}
       restartPolicy: Always
 status: {}
