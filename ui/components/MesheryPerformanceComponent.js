@@ -15,10 +15,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { updateLoadTestData, updateStaticPrometheusBoardConfig, updateLoadTestPref, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
 import MesheryChart from './MesheryChart';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
 import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import { durationOptions } from '../lib/prePopulatedOptions';
@@ -51,7 +56,7 @@ const styles = (theme) => ({
   root: {
     padding: theme.spacing(10),
   },
-  buttons: {
+  buttonGrp: {
     display: 'flex',
     justifyContent: 'flex-end',
   },
@@ -79,7 +84,43 @@ const styles = (theme) => ({
   centerTimer: {
     width: '100%',
   },
+  icon:{
+    fontSize: 25,
+    marginRight: '8px',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
 });
+
+const DialogTitle = withStyles(styles)(props => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.modalHeading} {...other}>
+    <Typography variant="h6">{children}</Typography>
+    {onClose ? (
+      <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+      <CloseIcon />
+      </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+    );
+});
+
+const DialogContent = withStyles(theme => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
+const DialogActions = withStyles(theme => ({
+  root: {
+    padding: theme.spacing(1),
+  },
+}))(MuiDialogActions);
 
 class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
@@ -108,6 +149,7 @@ class MesheryPerformanceComponent extends React.Component {
       urlError: false,
       tError: '',
       disableTest : true,
+      modalOpen: false,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -425,11 +467,29 @@ class MesheryPerformanceComponent extends React.Component {
     this.setState({ timerDialogOpen: false });
   }
 
+  handleModalOpen = () => {
+    const self = this;
+    return () => {
+      self.setState({ modalOpen : true });
+    };
+  }
+
+  handleModalClose = () => {
+    const self=this;
+    return () => {
+      self.setState({ modalOpen : false });
+    };
+  }
+
+  handleTestProfileAdd = () => {
+
+  }
+
   render() {
     const { classes, grafana, prometheus } = this.props;
     const {
       timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
-      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue, disableTest
+      tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue, disableTest, modalOpen
     } = this.state;
     let staticPrometheusBoardConfig;
     if (this.props.staticPrometheusBoardConfig && this.props.staticPrometheusBoardConfig != null && Object.keys(this.props.staticPrometheusBoardConfig).length > 0) {
@@ -497,6 +557,31 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
+          <Dialog onClose={this.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
+            <DialogTitle id="customized-dialogs-title" onClose={this.handleModalClose()}>
+              <b>New Test Profile</b>
+            </DialogTitle>
+            <DialogContent dividers>
+              <TextField
+                required
+                id="profileName"
+                name="profileName"
+                label="Enter Profile Name"
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('profileName')}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={this.handleTestProfileAdd()} color="primary">
+                Confirm
+              </Button>
+              <Button autoFocus onClick={this.handleModalClose()} color="primary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
           <div className={classes.root}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
@@ -684,18 +769,34 @@ class MesheryPerformanceComponent extends React.Component {
               </Grid>
             </Grid>
             <React.Fragment>
-              <div className={classes.buttons}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={this.handleSubmit}
-                  className={classes.button}
-                  disabled={blockRunTest || disableTest}
-                >
-                  {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
-                </Button>
+              <div className={classes.buttonGrp}>
+                <div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={this.handleModalOpen()}
+                    className={classes.button}
+                    disabled={blockRunTest || disableTest}
+                  >
+                    <AddCircleIcon className={classes.icon} />
+                    Add Test Profile
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={this.handleSubmit}
+                    className={classes.button}
+                    disabled={blockRunTest || disableTest}
+                  >
+                    {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
+                  </Button>
+                </div>
               </div>
             </React.Fragment>
 

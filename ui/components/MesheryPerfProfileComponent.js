@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import { withRouter } from 'next/router';
 import {
   NoSsr, Card, CardHeader, CardContent, Grid, IconButton, Tooltip,
 } from '@material-ui/core';
@@ -20,6 +21,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import CreateIcon from '@material-ui/icons/Create';
 import { bindActionCreators } from 'redux';
 
 const styles = (theme) => ({
@@ -68,6 +70,14 @@ const styles = (theme) => ({
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.grey[500],
+  },
+  createProfile: {
+    textAlign: 'center',
+    padding: theme.spacing(20),
+  },
+  icon:{
+    fontSize: 20,
+    marginRight: '8px',
   },
 });
 
@@ -180,6 +190,10 @@ class MesheryPerfProfileComponent extends React.Component {
     };
   }
 
+  handleCreateProfile = () => {
+    this.props.router.push('/performance');
+  }
+
   render() {
     const { classes } = this.props;
     const self = this;
@@ -198,6 +212,21 @@ class MesheryPerfProfileComponent extends React.Component {
         id: '1002'
       },
     ]
+
+    if(profiles.length <= 0){
+      return (
+        <NoSsr>
+          <React.Fragment>
+          <div className={classes.createProfile}>
+              <Button variant="contained" color="primary" size="large" onClick={this.handleCreateProfile}>
+                <CreateIcon className={classes.icon} />
+                  Create a Test Profile
+              </Button>
+            </div>
+          </React.Fragment>
+        </NoSsr>
+      )
+    }
     return (
       <NoSsr>
         <React.Fragment>
@@ -277,11 +306,19 @@ class MesheryPerfProfileComponent extends React.Component {
                         name="meshName"
                         label="Service Mesh"
                         fullWidth
-                        value="Service Mesh"
+                        //value={meshName === '' && selectedMesh !== '' ? selectedMesh : meshName}
                         margin="normal"
                         variant="outlined"
                         onChange={this.handleChange('meshName')}
-                      >
+                      > 
+                        {/*availableAdapters && availableAdapters.map((mesh) => (
+                          <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>{mesh}</MenuItem>
+                        ))}
+                        {availableAdapters && (availableAdapters.length > 0) && <Divider />}
+                        <MenuItem key="mh_-_none" value="None">None</MenuItem>
+                        {/*meshes && meshes.map((mesh) => (
+                          <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>{mesh}</MenuItem>
+                        ))*/}
                       </TextField>
                     </Grid>
                     <Grid item xs={12}>
@@ -329,79 +366,86 @@ class MesheryPerfProfileComponent extends React.Component {
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-                        <TextField
-                          required
-                          id="t"
-                          name="t"
-                          label="Duration"
-                          fullWidth
-                          value="Duration"
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange('t')}
-                        />
-                      </Tooltip>
+                    {/*<Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
+                      <Autocomplete
+                        required
+                        id="t"
+                        name="t"
+                        freeSolo
+                        label="Duration*"
+                        fullWidth
+                        variant="outlined"
+                        className={classes.errorValue}
+                        classes={{ root: tError }}
+                        value={tValue}
+                        inputValue={t}
+                        //onChange={this.handleDurationChange}
+                        //onInputChange={this.handleInputDurationChange}
+                        options={durationOptions}
+                        style={{ marginTop: '16px', marginBottom: '8px' }}
+                        renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                      />
+                      </Tooltip>*/}
                     </Grid>
                     <Grid item xs={12} md={12} gutterBottom>
-                          <Grid container spacing={1}>
-                            <Grid item xs={12}>
-                              <TextField
-                                id="headers"
-                                name="headers"
-                                label="Request Headers"
-                                fullWidth
-                                value="Req Headers"
-                                multiline
-                                margin="normal"
-                                variant="outlined"
-                                onChange={this.handleChange('headers')}
-                              >
-                              </TextField>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                id="cookies"
-                                name="cookies"
-                                label="Request Cookies"
-                                fullWidth
-                                value=""
-                                multiline
-                                margin="normal"
-                                variant="outlined"
-                                onChange={this.handleChange('cookies')}
-                              >
-                              </TextField>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                id="contentType"
-                                name="contentType"
-                                label="Content Type"
-                                fullWidth
-                                value="Content Type"
-                                multiline
-                                margin="normal"
-                                variant="outlined"
-                                onChange={this.handleChange('contentType')}
-                              >
-                              </TextField>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                              <TextField
-                                id="cookies"
-                                name="cookies"
-                                label="Request Body"
-                                fullWidth
-                                value="Req Body"
-                                multiline
-                                margin="normal"
-                                variant="outlined"
-                                onChange={this.handleChange('reqBody')}
-                              >
-                              </TextField>
-                            </Grid>
-                          </Grid>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="headers"
+                            name="headers"
+                            label="Request Headers"
+                            fullWidth
+                            value="Req Headers"
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange('headers')}
+                          >
+                          </TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="cookies"
+                            name="cookies"
+                            label="Request Cookies"
+                            fullWidth
+                            value=""
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange('cookies')}
+                          >
+                          </TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            id="contentType"
+                            name="contentType"
+                            label="Content Type"
+                            fullWidth
+                            value="Content Type"
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange('contentType')}
+                          >
+                          </TextField>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <TextField
+                            id="cookies"
+                            name="cookies"
+                            label="Request Body"
+                            fullWidth
+                            value="Req Body"
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange('reqBody')}
+                          >
+                          </TextField>
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </DialogContent>
@@ -434,4 +478,4 @@ export default withStyles(styles)(connect(
   //mapDispatchToProps,
   null,
   null
-)(MesheryPerfProfileComponent));
+)(withRouter(MesheryPerfProfileComponent)));
