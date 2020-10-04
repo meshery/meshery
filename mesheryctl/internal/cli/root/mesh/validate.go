@@ -32,7 +32,7 @@ var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate conformance to service mesh standards",
 	Args:  cobra.NoArgs,
-	Long:  `Validate Service Meshes based on specified specification`,
+	Long:  `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
@@ -41,7 +41,7 @@ var validateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		log.Infof("Mesh Validation check started")
+		log.Infof("Starting service mesh validation...")
 
 		path := "http://localhost:9081/api/mesh/ops"
 		method := "POST"
@@ -104,9 +104,9 @@ var validateCmd = &cobra.Command{
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter url used for Conformance")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the workload")
-	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating Meshery API")
+	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
+	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
