@@ -16,6 +16,8 @@ require (
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
+	github.com/google/go-github v17.0.0+incompatible // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/gosimple/slug v1.9.0
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
@@ -33,6 +35,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.7.1
+	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
