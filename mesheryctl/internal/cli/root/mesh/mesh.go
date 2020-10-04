@@ -16,7 +16,7 @@ var (
 var MeshCmd = &cobra.Command{
 	Use:   "mesh",
 	Short: "Service Mesh Lifecycle Management",
-	Long:  `Provisioning, configuration, and on-going operational maangement of service meshes`,
+	Long:  `Provisioning, configuration, and on-going operational management of service meshes`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
