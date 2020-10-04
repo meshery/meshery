@@ -13,6 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'next/router';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -27,6 +28,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import { durationOptions } from '../lib/prePopulatedOptions';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 
 const meshes = [
   'Istio',
@@ -94,6 +96,14 @@ const styles = (theme) => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  perfForm: {
+    padding: theme.spacing(2),
+  },
+  clearBtn: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+    float: 'right',
+  }
 });
 
 const DialogTitle = withStyles(styles)(props => {
@@ -126,7 +136,7 @@ class MesheryPerformanceComponent extends React.Component {
   constructor(props) {
     super(props);
     const {
-      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs,
+      testName, meshName, url, qps, c, t, result, staticPrometheusBoardConfig, k8sConfig, loadTestPrefs, editProfile,
     } = props;
 
     this.state = {
@@ -150,6 +160,7 @@ class MesheryPerformanceComponent extends React.Component {
       tError: '',
       disableTest : true,
       modalOpen: false,
+      disableClear: true,
 
       testUUID: this.generateUUID(),
       staticPrometheusBoardConfig,
@@ -159,6 +170,13 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+    const {testName, meshName, url, qps, c, t, loadGenerator, headers, cookies, reqBody, contentType} = this.state;
+    if (testName.length || meshName.length || url.length || qps || c || t.length || loadGenerator.length 
+        || headers.length || cookies.length || reqBody.length || contentType.length)
+      this.setState({ disableClear: false });
+    else
+      this.setState({ disableClear: true });
+    console.log(meshName);
     if (name === 'url' && event.target.value !== '') {
       const compulsoryProtocolValidUrlPattern = new RegExp('(^(http|https|nats|tcp):\\/\\/)' // compulsory protocol
       + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' // domain name
@@ -485,10 +503,27 @@ class MesheryPerformanceComponent extends React.Component {
 
   }
 
+  handleClearFields = () => {
+    this.setState({
+      testName:'',
+      meshName:'',
+      url:'',
+      qps:'',
+      c:'',
+      t:'',
+      loadGenerator:'',
+      headers:'',
+      cookies:'',
+      reqBody:'',
+      contentType:'',
+      disableClear: true,
+    });
+  }
+
   render() {
-    const { classes, grafana, prometheus } = this.props;
+    const { classes, grafana, prometheus, editProfile } = this.props;
     const {
-      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError,
+      timerDialogOpen, blockRunTest, url, qps, c, t, loadGenerator, testName, meshName, result, urlError, disableClear,
       tError, testUUID, selectedMesh, availableAdapters, headers, cookies, reqBody, contentType, tValue, disableTest, modalOpen
     } = this.state;
     let staticPrometheusBoardConfig;
@@ -557,32 +592,35 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <Dialog onClose={this.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
-            <DialogTitle id="customized-dialogs-title" onClose={this.handleModalClose()}>
-              <b>New Test Profile</b>
-            </DialogTitle>
-            <DialogContent dividers>
-              <TextField
-                required
-                id="profileName"
-                name="profileName"
-                label="Enter Profile Name"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange('profileName')}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={this.handleTestProfileAdd()} color="primary">
-                Confirm
-              </Button>
-              <Button autoFocus onClick={this.handleModalClose()} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <div className={classes.root}>
+        <div className={(editProfile && editProfile.length) ? classes.perfForm : classes.root}>
+          { ( (editProfile && editProfile.length) || this.props.router.route === '/performance') && (
+            <React.Fragment>
+            <Dialog onClose={this.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
+              <DialogTitle id="customized-dialogs-title" onClose={this.handleModalClose()}>
+                <b>New Test Profile</b>
+              </DialogTitle>
+              <DialogContent dividers>
+                <TextField
+                  required
+                  id="profileName"
+                  name="profileName"
+                  label="Enter Profile Name"
+                  value={testName}
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('profileName')}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button autoFocus onClick={this.handleTestProfileAdd()} color="primary">
+                  Confirm
+                </Button>
+                <Button autoFocus onClick={this.handleModalClose()} color="primary">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <Tooltip title="If a test name is not provided, a random one will be generated for you.">
@@ -690,7 +728,7 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} md={12} gutterBottom>
+              <Grid item xs={12} md={12}>
                 <ExpansionPanel className={classes.expansionPanel}>
                   <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon/>}>
                     <Typography align="center" color="textSecondary" varient="h6">Advanced Options</Typography>
@@ -757,88 +795,110 @@ class MesheryPerformanceComponent extends React.Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl component="loadGenerator" className={classes.margin}>
-                  <FormLabel component="loadGenerator">Load generator</FormLabel>
+              <Grid item xs={12} md={12}>
+                <FormControl component="div" className={classes.margin}>
+                  <FormLabel component="div">Load generator</FormLabel>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={loadGenerator} onChange={this.handleChange('loadGenerator')} row>
                     {loadGenerators.map((lg) => (
                       <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>
+                <Tooltip title="Clear the form">
+                  <Button
+                      type="button"
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={this.handleClearFields}
+                      className={classes.clearBtn}
+                      disabled={blockRunTest || disableClear }
+                    >
+                      Clear <RotateLeftIcon />
+                  </Button>
+                </Tooltip>
               </Grid>
             </Grid>
-            <React.Fragment>
-              <div className={classes.buttonGrp}>
-                <div>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={this.handleModalOpen()}
-                    className={classes.button}
-                    disabled={blockRunTest || disableTest}
-                  >
-                    <AddCircleIcon className={classes.icon} />
-                    Add Test Profile
-                  </Button>
+            </React.Fragment> )}
+
+            { this.props.router.route === '/performance' &&
+              (<React.Fragment>
+                <React.Fragment>
+                <div className={classes.buttonGrp}>
+                  <div>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={this.handleModalOpen()}
+                      className={classes.button}
+                      disabled={blockRunTest || disableTest}
+                    >
+                      <AddCircleIcon className={classes.icon} />
+                      Add Test Profile
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={this.handleSubmit}
+                      className={classes.button}
+                      disabled={blockRunTest || disableTest}
+                    >
+                      {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={this.handleSubmit}
-                    className={classes.button}
-                    disabled={blockRunTest || disableTest}
-                  >
-                    {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}
-                  </Button>
-                </div>
+              </React.Fragment>
+
+              <div className={classes.centerTimer}>
+                <LoadTestTimerDialog
+                  open={timerDialogOpen}
+                  t={t}
+                  onClose={this.handleTimerDialogClose}
+                  countDownComplete={this.handleTimerDialogClose}
+                />
               </div>
-            </React.Fragment>
 
-            <div className={classes.centerTimer}>
-              <LoadTestTimerDialog
-                open={timerDialogOpen}
-                t={t}
-                onClose={this.handleTimerDialogClose}
-                countDownComplete={this.handleTimerDialogClose}
-              />
-            </div>
-
-            {result && result.runner_results
-        && (
-          <div>
-            <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
-            Test Results
-              <IconButton
-                key="download"
-                aria-label="download"
-                color="inherit"
-                // onClick={() => self.props.closeSnackbar(key) }
-                href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
-              >
-                <GetAppIcon />
-              </IconButton>
-            </Typography>
-            <div className={classes.chartContent} style={chartStyle}>
-              <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
-            </div>
-          </div>
-        )}
-
+              { result && result.runner_results &&
+              (
+                <div>
+                  <Typography variant="h6" className={classes.chartTitle} id="timerAnchor">
+                  Test Results
+                    <IconButton
+                      key="download"
+                      aria-label="download"
+                      color="inherit"
+                      // onClick={() => self.props.closeSnackbar(key) }
+                      href={`/api/perf/result?id=${encodeURIComponent(result.meshery_id)}`}
+                    >
+                      <GetAppIcon />
+                    </IconButton>
+                  </Typography>
+                  <div className={classes.chartContent} style={chartStyle}>
+                    <MesheryChart data={[result && result.runner_results ? result.runner_results : {}]} />
+                  </div>
+                </div>
+              )}
+              </React.Fragment>
+            )}
 
           </div>
         </React.Fragment>
 
-        {displayStaticCharts}
+        { this.props.router.route &&
+          <React.Fragment>
+            { displayStaticCharts}
 
-        {displayPromCharts}
+            {displayPromCharts}
 
-        {displayGCharts}
+            {displayGCharts}
+          </React.Fragment>
+        }
 
       </NoSsr>
     );
@@ -870,4 +930,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withSnackbar(MesheryPerformanceComponent)));
+)(withRouter(withSnackbar(MesheryPerformanceComponent))));

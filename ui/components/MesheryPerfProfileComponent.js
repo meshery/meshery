@@ -23,6 +23,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CreateIcon from '@material-ui/icons/Create';
 import { bindActionCreators } from 'redux';
+import MesheryPerformanceComponent from './MesheryPerformanceComponent';
 
 const styles = (theme) => ({
   root: {
@@ -114,57 +115,6 @@ class MesheryPerfProfileComponent extends React.Component {
       modalOpen : false,
       updatedProfile : true,
     }
-  }
-
-  handleSubmit = () => {
-    const data = {
-      rps:'10',
-      t:'10s',
-      c:'10',
-      gen:'fortio',
-      protocol:'TCP',
-      headers:{"h1":"v1"},
-      cookies: {"h1":"v1"},
-      reqBody: 'reqBody',
-      contentType: 'type',
-      endpoint:"https://google.com",
-      labels:{"h1":"v1"}
-    };
-
-    const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
-    dataFetch('/api/user/test-prefs', {
-      credentials: 'same-origin',
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': 'meshery-provider=None',
-      },
-      body: params,
-    }, (result) => {
-      console.log(result);
-      alert(result);
-    }, console.error("Fetch Fail"));
-  }
-  async startEventStream(url) {
-    this.closeEventStream();
-    this.eventStream = new EventSource(url);
-    this.eventStream.onmessage = this.handleEvents();
-    this.eventStream.onerror = this.handleError('Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.');
-    this.props.enqueueSnackbar('Load test has been successfully submitted', {
-      variant: 'info',
-      autoHideDuration: 1000,
-      action: (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => this.props.closeSnackbar(key)}
-        >
-          <CloseIcon />
-        </IconButton>
-      ),
-    });
   }
 
   handleChange = (val) => {
@@ -283,182 +233,18 @@ class MesheryPerfProfileComponent extends React.Component {
                     <b>Profile Details</b>
                   </DialogTitle>
                   <DialogContent dividers>
-                    <Grid container spacing={1}>
-                    <Grid item xs={12} md={6}>
-                      <Tooltip title="If a test name is not provided, a random one will be generated for you.">
-                        <TextField
-                          id="testName"
-                          name="testName"
-                          label="Test Name"
-                          fullWidth
-                          value={name}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange('testName')}
-                          inputProps={{ maxLength: 300 }}
-                        />
-                      </Tooltip>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        select
-                        id="meshName"
-                        name="meshName"
-                        label="Service Mesh"
-                        fullWidth
-                        //value={meshName === '' && selectedMesh !== '' ? selectedMesh : meshName}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('meshName')}
-                      > 
-                        {/*availableAdapters && availableAdapters.map((mesh) => (
-                          <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>{mesh}</MenuItem>
-                        ))}
-                        {availableAdapters && (availableAdapters.length > 0) && <Divider />}
-                        <MenuItem key="mh_-_none" value="None">None</MenuItem>
-                        {/*meshes && meshes.map((mesh) => (
-                          <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>{mesh}</MenuItem>
-                        ))*/}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        required
-                        id="url"
-                        name="url"
-                        label="URL to test"
-                        type="url"
-                        fullWidth
-                        value="URL"
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('url')}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        required
-                        id="c"
-                        name="c"
-                        label="Concurrent requests"
-                        type="number"
-                        fullWidth
-                        value="Concurrent Req"
-                        inputProps={{ min: '0', step: '1' }}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('c')}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        required
-                        id="qps"
-                        name="qps"
-                        label="Queries per second"
-                        type="number"
-                        fullWidth
-                        value="QPS"
-                        inputProps={{ min: '0', step: '1' }}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('qps')}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                    {/*<Tooltip title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}>
-                      <Autocomplete
-                        required
-                        id="t"
-                        name="t"
-                        freeSolo
-                        label="Duration*"
-                        fullWidth
-                        variant="outlined"
-                        className={classes.errorValue}
-                        classes={{ root: tError }}
-                        value={tValue}
-                        inputValue={t}
-                        //onChange={this.handleDurationChange}
-                        //onInputChange={this.handleInputDurationChange}
-                        options={durationOptions}
-                        style={{ marginTop: '16px', marginBottom: '8px' }}
-                        renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
-                      />
-                      </Tooltip>*/}
-                    </Grid>
-                    <Grid item xs={12} md={12} gutterBottom>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12}>
-                          <TextField
-                            id="headers"
-                            name="headers"
-                            label="Request Headers"
-                            fullWidth
-                            value="Req Headers"
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('headers')}
-                          >
-                          </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <TextField
-                            id="cookies"
-                            name="cookies"
-                            label="Request Cookies"
-                            fullWidth
-                            value=""
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('cookies')}
-                          >
-                          </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <TextField
-                            id="contentType"
-                            name="contentType"
-                            label="Content Type"
-                            fullWidth
-                            value="Content Type"
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('contentType')}
-                          >
-                          </TextField>
-                        </Grid>
-                        <Grid item xs={12} md={12}>
-                          <TextField
-                            id="cookies"
-                            name="cookies"
-                            label="Request Body"
-                            fullWidth
-                            value="Req Body"
-                            multiline
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange('reqBody')}
-                          >
-                          </TextField>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </DialogContent>
-                <DialogActions>
-                  <Button color="primary" disabled={updatedProfile}>
-                    Update Profile
-                  </Button>
-                  <Button autoFocus onClick={self.handleModalClose()} color="primary">
-                    OK
-                  </Button>
-                </DialogActions>
-              </Dialog>
-              </>
+                    <MesheryPerformanceComponent editProfile={"editProfile"}/>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" disabled={updatedProfile}>
+                      Update Profile
+                    </Button>
+                    <Button autoFocus onClick={self.handleModalClose()} color="primary">
+                      OK
+                    </Button>
+                  </DialogActions>
+                  </Dialog>
+                </>
             )
             })}
             </Grid>
