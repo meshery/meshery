@@ -15,8 +15,8 @@ var (
 // MeshCmd represents the Performance Management CLI command
 var MeshCmd = &cobra.Command{
 	Use:   "mesh",
-	Short: "Service Mesh Management",
-	Long:  `Managing service mesh's lifecycle`,
+	Short: "Service Mesh Lifecycle Management",
+	Long:  `Provisioning, configuration, and on-going operational maangement of service meshes`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
