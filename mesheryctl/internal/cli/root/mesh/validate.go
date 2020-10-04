@@ -61,11 +61,13 @@ var validateCmd = &cobra.Command{
 			}
 		case "smp":
 			{
-				return errors.New("support for SMP coming in a future release")
-			}			
+				return errors.New("support for SMP coming in a future 
+				release")
+			}
 		default:
 			{
-				return errors.New("specified specification not found or not yet supported")
+				return errors.New("specified specification not found 
+				or not yet supported")
 			}
 		}
 
