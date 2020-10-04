@@ -11,7 +11,7 @@ Various components of Meshery will need to be upgraded as new releases become av
 All three of these components are released as part of the same set of artifacts. In order to upgrade Meshery server, UI and adapters, you may execute the following command:
 
 ```
-mesheryctl upgrade
+mesheryctl system upgrade
 ```
 
 ## Upgrade Meshery Client (mesheryctl)
