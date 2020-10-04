@@ -30,7 +30,7 @@ var err error
 // validateCmd represents the service mesh validation command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
-	Short: "Validate Service Mesh",
+	Short: "Validate conformance to service mesh standards",
 	Args:  cobra.NoArgs,
 	Long:  `Validate Service Meshes based on specified specification`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -59,9 +59,13 @@ var validateCmd = &cobra.Command{
 				data.Set("query", "smiConformanceTest")
 				break
 			}
+		case "smp":
+			{
+				return errors.New("support for SMP coming in a future release")
+			}			
 		default:
 			{
-				return errors.New("specification not found")
+				return errors.New("specified specification not found or not yet supported")
 			}
 		}
 
