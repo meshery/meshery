@@ -39,6 +39,13 @@ const (
 	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
 )
 
+const (
+
+	// Repo Details
+	mesheryGitHubOrg  string = "layer5io"
+	mesheryGitHubRepo string = "meshery"
+)
+
 type cmdType string
 
 const (
@@ -127,6 +134,15 @@ func DownloadFile(filepath string, url string) error {
 	}
 
 	return nil
+}
+
+func GetMesheryGitHubOrg() string {
+	return mesheryGitHubOrg
+}
+
+// Get Meshery GitHub Details
+func GetMesheryGitHubRepo() string {
+	return mesheryGitHubRepo
 }
 
 func prereq() ([]byte, []byte, error) {
