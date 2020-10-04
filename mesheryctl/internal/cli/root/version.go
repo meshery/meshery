@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 20202 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/tcnksm/go-latest"
 )
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg *cfg.MesheryCtl
+	mctlCfg    *cfg.MesheryCtl
+	mesheryCfg *cfg.Version
 )
 
 // RequestErr is the error handler for the request
@@ -42,6 +44,29 @@ func requestErr(err error, url string) bool {
 		return true
 	}
 	return false
+}
+
+func checkLatestVersion(serverVersion string) error {
+
+	githubTag := &latest.GithubTag{
+		Owner:      "layer5io",
+		Repository: "meshery",
+	}
+
+	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
+	res, _ := latest.Check(githubTag, serverVersion)
+
+	// If user is running an outdated release, let them know.
+	if res.Outdated {
+		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Upgrade to v", res.Current, ". Run `mesheryctl system upgrade`")
+	}
+
+	// If user is running the latest release, let them know.
+	if res.Latest {
+		logrus.Info("\n", serverVersion, " is the latest Meshery release.")
+	}
+
+	return nil
 }
 
 // versionCmd represents the version command
@@ -88,5 +113,8 @@ var versionCmd = &cobra.Command{
 		}
 
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+
+		// Inform user of the latest release version
+		checkLatestVersion(version.GetBuild())
 	},
 }
