@@ -136,10 +136,10 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="docs/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
+  <br /><br /><br /><br />
 <h3>Service Mesh Configuration Management</h3>
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
-
 Onboard your workload onto the service mesh with confidence. Check your service mesh configuration for anti-patterns and avoid common pitfalls.
 <br /><br /><br /><br />
 
@@ -147,11 +147,9 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 
 
 <h3>Adhering to Service Mesh Standards</h3>
-
+<img alt="Meshery" src="https://layer5.io/assets/images/meshery/meshery-logo-light-text-side.png" style="margin-left:10px;" width="20%" align="left" />
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io/) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
-<br /><br/><br />
-<img alt="Meshery" src="https://layer5.io/assets/images/meshery/meshery-logo-light-text-side.png" style="margin:10px;margin-bottom:10px;" width="15%" align="right" />
-<br /><br /><br />
+
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_benchmark_screen.png"><img alt="Layer5 Service Mesh Performance Management" src="docs/assets/img/readme/meshery_benchmark_screen.png" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="docs/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
