@@ -25,6 +25,7 @@ var spec string
 var adapterURL string
 var namespace string
 var tokenPath string
+var serverURL string
 var err error
 
 // validateCmd represents the service mesh validation command
@@ -43,7 +44,8 @@ var validateCmd = &cobra.Command{
 
 		log.Infof("Starting service mesh validation...")
 
-		path := "http://localhost:9081/api/mesh/ops"
+		// Used basic string concatenation to prevent importing entire fmt to use Sprintf
+		path := "http://" + serverURL + "/api/mesh/ops"
 		method := "POST"
 
 		data := url.Values{}
@@ -61,13 +63,11 @@ var validateCmd = &cobra.Command{
 			}
 		case "smp":
 			{
-				return errors.New("support for SMP coming in a future 
-				release")
+				return errors.New("support for SMP coming in a future release")
 			}
 		default:
 			{
-				return errors.New("specified specification not found 
-				or not yet supported")
+				return errors.New("specified specification not found or not yet supported")
 			}
 		}
 
@@ -108,6 +108,8 @@ func init() {
 	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
+	validateCmd.Flags().StringVarP(&serverURL, "serverURL", "u", "localhost:9081", "Server address where meshery is hosted")
+	_ = validateCmd.MarkFlagRequired("serverUrl")
 	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
 	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
 	_ = validateCmd.MarkFlagRequired("tokenPath")
