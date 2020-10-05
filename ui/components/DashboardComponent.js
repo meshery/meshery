@@ -82,6 +82,9 @@ const styles = (theme) => ({
   redirectButton: {
     marginLeft: '-.5em',
     color: '#000'
+  },
+  metricButtons:{
+    minWidth: '230px'
   }
 });
 
@@ -462,7 +465,7 @@ class DashboardComponent extends React.Component {
     if(grafanaUrl === '') {
       showGrafana = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('grafana')}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('grafana')} className={classes.metricButtons}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Grafana
           </Button>
@@ -486,7 +489,7 @@ class DashboardComponent extends React.Component {
     if(prometheusUrl === '') {
       showPrometheus = (
         <div className={classes.alreadyConfigured}>
-          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('prometheus')}>
+          <Button variant="contained" color="primary" size="large" onClick={() => this.handleConfigure('prometheus')} className={classes.metricButtons}>
             <SettingsIcon className={classes.settingsIcon} />
                 Configure Prometheus
           </Button>
@@ -505,7 +508,7 @@ class DashboardComponent extends React.Component {
         />
       );
     }
-
+    const getMetricsContent = () => <>{showPrometheus} {showGrafana}</>
 
     return (
       <NoSsr>
@@ -522,10 +525,7 @@ class DashboardComponent extends React.Component {
               {self.showCard('Adapters', showAdapters)}
             </Grid>
             <Grid item xs={12} md={6}>
-              {self.showCard('Grafana', showGrafana)}
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {self.showCard('Prometheus', showPrometheus)}
+              {self.showCard('Metrics', getMetricsContent())}
             </Grid>
 
           </Grid>
