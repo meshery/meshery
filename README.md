@@ -18,26 +18,26 @@
 
 See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
-| Platform | Supported? |
-| --- | :---: |
-|<img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" />  [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker) | ✔️ |
-|<img src="docs/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/eks.png" width="20" height="20" vertical-align="middle" />  [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" />  [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" />  [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" />  [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift | In Progress |
-|<img src="docs/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-|<img src="docs/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux) | ✔️ |
-|<img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| &nbsp;&nbsp;&nbsp; [Scoop](https://meshery.layer5.io/docs/installation#windows) | ✔️ |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" />  [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2) | ✔️ |
-|<img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi | In Progress |
+| Platform                                                                                                                                                                                                            | Supported?  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
+| <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://meshery.layer5.io/docs/installation/platforms/docker)                                            |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://meshery.layer5.io/docs/installation/platforms/docker)            |     ✔️      |
+| <img src="docs/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://meshery.layer5.io/docs/installation/platforms/kubernetes)                                |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://meshery.layer5.io/docs/installation/platforms/aks)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://meshery.layer5.io/docs/installation#mac-or-linux)        |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://meshery.layer5.io/docs/installation/platforms/eks)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://meshery.layer5.io/docs/installation/platforms/gke)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://meshery.layer5.io/docs/installation/platforms/kubernetes#using-helm) |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://meshery.layer5.io/docs/installation/platforms/kind)                  |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://meshery.layer5.io/docs/installation/platforms/minikube)      |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                                      | In Progress |
+| <img src="docs/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://meshery.layer5.io/docs/installation#mac-or-linux)                                                  |     ✔️      |
+| <img src="docs/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://meshery.layer5.io/docs/installation#mac-or-linux)                                                    |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)                   |     ✔️      |
+| <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://meshery.layer5.io/docs/installation#windows)                                                      |     ✔️      |
+| &nbsp;&nbsp;&nbsp; [Scoop](https://meshery.layer5.io/docs/installation#windows)                                                                                                                                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2)                               |     ✔️      |
+| <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                                | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers thorough installation guides for your platform of choice.
 
@@ -193,7 +193,7 @@ Learn more about <a href="https://meshery.layer5.io/docs/architecture">Meshery's
 Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Layer5 Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit?usp=sharing">Layer5 Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.layer5.io">Slack</a> to engage!
 
 <p style="clear:both;">
-<a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/images/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
+<a href ="https://layer5.io/community"><img alt="MeshMates" src="docs/assets/img/readme/Layer5-MeshMentors.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
 <p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network.
