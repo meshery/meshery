@@ -91,7 +91,7 @@ If you still wish to continue, follow the instructions for <button onclick="Hide
 
 <div id="hiddendiv">
 <p>
-1. The default versio of WSL is set to WSL1 by default. You can move forward to <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice">install the distro</a> of your choice. <br /><br />
+1. The default version of WSL is set to WSL1 by default. You can move forward to <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice">install the distro</a> of your choice. <br /><br />
 
 2.<b><a href="https://docs.docker.com/toolbox/toolbox_install_windows/">Docker Toolbox</a></b> <br />
 
