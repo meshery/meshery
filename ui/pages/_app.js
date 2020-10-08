@@ -101,6 +101,12 @@ theme = {
         },
       },
     },
+    MuiToggleButton: {
+      label: {
+        textTransform: 'initial',
+        color: '#607d8b',
+      },
+    },
     MuiTabs: {
       root: {
         marginLeft: theme.spacing(1),
@@ -217,7 +223,6 @@ const styles = {
     maxWidth: '90%',
     margin: 'auto',
     overflow: 'hidden',
-
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
