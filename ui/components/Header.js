@@ -65,7 +65,7 @@ const styles = (theme) => ({
   },
   appBar: {
     padding: theme.spacing(1.4),
-    zIndex: theme.zIndex.drawer+1
+    zIndex: theme.zIndex.drawer+1,
   },
   itemActiveItem: {
     color: '#4fc3f7',

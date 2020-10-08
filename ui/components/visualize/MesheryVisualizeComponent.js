@@ -10,6 +10,8 @@ import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
 import ReactDOM from 'react-dom';
 import Drawer from './Drawer'
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import elementsJson from './Elements';
 
 cytoscape.use(popper)
@@ -121,6 +123,9 @@ class MesheryVisualizeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.cyPopperRef = React.createRef();
+    this.state = {
+      layout: 'cose'
+    }
   }
 
   zoomIn() {
@@ -162,16 +167,21 @@ class MesheryVisualizeComponent extends React.Component {
 
   }
 
-  changeLayout(type){
-    var layout = this.cy.layout({
-      name: type
-    })
-    layout.run();
+  handleLayoutChange = (e, value) => {
+    if( value ) {
+      this.setState({
+        layout: value
+      })
+      var layout = this.cy.layout({
+        name: value
+      });
+      layout.run();
+    }
   }
 
   render() {
     const {classes} = this.props
-
+    const {layout} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
@@ -237,11 +247,17 @@ class MesheryVisualizeComponent extends React.Component {
             <Button onClick={this.zoomOut.bind(this)}>-</Button>
             <Button onClick={this.fit.bind(this)}>fit</Button>
           </ButtonGroup>
-          <ButtonGroup className={classes.layoutButton} color="primary" aria-label="outlined primary button group">
-            <Button onClick={this.changeLayout.bind(this, 'cose')}>Cose</Button>
-            <Button onClick={this.changeLayout.bind(this, 'breadthfirst')}>BFS</Button>
-            <Button onClick={this.changeLayout.bind(this, 'circle')}>Circle</Button>
-          </ButtonGroup>
+          <ToggleButtonGroup
+            value={layout}
+            exclusive
+            onChange={this.handleLayoutChange}
+            className={classes.layoutButton}
+            size="small"
+          >
+            <ToggleButton value="cose" >Cose</ToggleButton>
+            <ToggleButton value="breadthfirst" >BFS</ToggleButton>
+            <ToggleButton value="circle" >Circle</ToggleButton>
+          </ToggleButtonGroup>
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{textDecoration:'none'}}>Save</Button>
           </ButtonGroup>

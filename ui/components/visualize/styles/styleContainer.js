@@ -17,20 +17,16 @@ export default class GraphStyle {
         selector: "node",
         style: {
           "background-color": "rgb(255,255,255)",
-          "background-image": "fn",
           "background-width": "80%",
           "background-height": "80%",
           "background-position-x": "1px",
           "background-position-y": "1px",
-          "border-color": "fn",
-          "border-style": "fn",
           "border-width": "1px",
           ghost: "yes",
           "ghost-offset-x": "1px",
           "ghost-offset-y": "1px",
           "ghost-opacity": "0.4",
           height: "25px",
-          shape: "fn",
           width: "25px",
           "z-index": "10"
         }
@@ -44,7 +40,6 @@ export default class GraphStyle {
       {
         selector: "node:selected",
         style: {
-          "border-color": "fn",
           "border-width": "3px"
         }
       },
@@ -57,8 +52,6 @@ export default class GraphStyle {
       {
         selector: "node.mousehighlight[^isGroup]",
         style: {
-          "background-color": "fn",
-          "border-color": "fn"
         }
       },
       {
@@ -74,10 +67,8 @@ export default class GraphStyle {
           "font-family": "Verdana,Arial,Helvetica,sans-serif,pficon",
           "font-size": "6px",
           label: "fn",
-          "line-color": "fn",
           "line-style": "solid",
           "target-arrow-shape": "vee",
-          "target-arrow-color": "fn",
           "text-events": "yes",
           "text-outline-color": "rgb(255,255,255)",
           "text-outline-width": "1px",
