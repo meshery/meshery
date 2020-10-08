@@ -361,7 +361,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         const results  = result.results.filter(val => val.mesh_name.toLowerCase()==adapterName.toLowerCase())
         self.setState({smi_result: {...result, results:results, total_count:results.length}});
       }
-    }, self.handleError('Could not fetch SMI results.'));
+    }, (error) => console.log('Could not fetch SMI results.', error));
   }
 
   handleSMIClick = (adapterName) => () => {
