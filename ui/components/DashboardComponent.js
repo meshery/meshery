@@ -435,10 +435,10 @@ class DashboardComponent extends React.Component {
                   isDisabled
                     ? "This adapter is inactive"
                     : `${adapterType
-                        .toLowerCase()
-                        .split(" ")
-                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                        .join(" ")} adapter on port ${aa.label.split(":")[1]}`
+                      .toLowerCase()
+                      .split(" ")
+                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                      .join(" ")} adapter on port ${aa.label.split(":")[1]}`
                 }
               >
                 <Chip
