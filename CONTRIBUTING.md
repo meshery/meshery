@@ -118,9 +118,7 @@ make run-local
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`.
 
-**NOTE**: You might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
-
-To access the Meshery UI Development Server port on `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
+To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
 **Please note**: When running `make run-local` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
 
