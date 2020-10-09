@@ -103,7 +103,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/maesh.png' alt='Maesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Maesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/traefik.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
           </td>
         </tr>
          <tr>
