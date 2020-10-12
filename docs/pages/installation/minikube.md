@@ -4,22 +4,43 @@ title: Minikube
 permalink: installation/platforms/minikube
 ---
 
-# Quick Start with Minikube
-Below are instructions to generate config file for Minikube cluster which will be used in Meshery configuration.
+## Quick Start with Minikube
+To set up and run Meshery on Minikube:
 
-## Compatibility
+1. <a href="#step1">Start Minikube </a>
+2. <a href="#step2">Install a Kubernetes cluster on top </a>
+3. <a href="#step3">Run Meshery</a>
+
+### Compatibility
 The following minimum component versions are required:
 
-| Name   | Version |
-|:------ |:-------:|
-| [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) | 1.0.0 |
-| [Kubernetes](https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/) | 1.14.1 |
-| [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) | 1.14.1 |
+<table id="compatibility-table">
+  <tr>
+    <th id="model">Name</th>
+    <th id="model">Version</th> 
+  </tr>
+  <tr>
+    <td><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a></td>
+    <td>1.0.0 </td>
+  </tr>
+  <tr>
+    <td><a href="https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/">Kubernetes</a></td>
+    <td>1.14.1</td>
+  </tr>
+  <tr>
+    <td><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a></td>
+    <td>1.14.1</td>
+  </tr>
+</table>
 
-## Steps
-Perform the following steps in order.
-### 1. Start minikube
-```
+### Steps
+Perform the following steps in order:
+
+<a name="step1">
+
+#### 1. <b>Start minikube</b>
+
+```bash
 minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
@@ -31,8 +52,9 @@ minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```   
 docker network connect bridge meshery_meshery_1 
 ```
+<a name="step2">  
 
-### 2. Generate config file
+#### 2.<b> Generate config file</b>
 This configuration file will be used by Meshery.
 
 ```
@@ -61,7 +83,11 @@ users:
 ```
 Note: Make sure "current-context" is set to "minikube".
 
+<a name="step3">
 
-### 3. Finish up
+#### 3.<b> Set up Meshery</b>
 
-Follow the rest of Meshery [installation](/docs/pages/installation/index.md) steps.
+Follow the [installation steps](/docs/installation) to install the mesheryctl CLI. 
+
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
+
