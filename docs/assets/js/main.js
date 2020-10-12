@@ -60,11 +60,11 @@ layout: null
 }(jQuery));
 
 function HideToggleFunction() {
-    var y = document.getElementById("hiddendiv");
-    if (y.style.display === "block") {
-      y.style.display = "none";
+    var hide = document.getElementById("hiddendiv");
+    if (hide.style.display === "block") {
+      hide.style.display = "none";
     } else {
-      y.style.display = "block";
+      hide.style.display = "block";
     }
   }
 
