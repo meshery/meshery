@@ -6,22 +6,29 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs';
+import TrafficIcon from '@material-ui/icons/Traffic';
+import SecurityIcon from '@material-ui/icons/Security';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import { NetworkIcon } from '@patternfly/react-icons';
 // import clsx from 'clsx';
-
 
 const useStyles = makeStyles(() => ({
   root: {
     position: 'relative',
     flexGrow: 1,
   },
+  tabroot: {
+    minWidth: '20%',
+  },
   paper: {
-    background: "white",
+    background: 'white',
+    width: '25%'
   },
   flex: {
     flex: 1,
   },
   list: {
-    width: 750,
     paddingTop: 70,
   },
   hide: {
@@ -32,9 +39,10 @@ const useStyles = makeStyles(() => ({
 function PersistentDrawerRight(props) {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
   const [value, setValue] = React.useState(0);
-  console.log(props.data.data('id'));
+  const [open, setOpen] = React.useState(props.open);
+  console.log(props.open);
+  console.log(props.data.data('app'));
   
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -42,6 +50,7 @@ function PersistentDrawerRight(props) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+    props.toggle();
   };
 
   return (
@@ -64,11 +73,11 @@ function PersistentDrawerRight(props) {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example"
           >
-            <Tab label="Overview" />
-            <Tab label="Traffic Management" />
-            <Tab label="Security" />
-            <Tab label="Circuit Breaker" />
-            <Tab label="Gateway" />
+            <Tab icon={<InfoIcon />} className={classes.tabroot} />
+            <Tab icon={<TrafficIcon />} className={classes.tabroot} />
+            <Tab icon={<SecurityIcon />} className={classes.tabroot}/>
+            <Tab icon={<CloseIcon />} className={classes.tabroot}/>
+            <Tab icon={<NetworkIcon />} className={classes.tabroot}/>
           </Tabs>
         </div>
       </Drawer>
