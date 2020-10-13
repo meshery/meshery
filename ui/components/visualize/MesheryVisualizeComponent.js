@@ -13,7 +13,13 @@ import Drawer from './Drawer'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import elementsJson from './Elements';
+import dagre from 'cytoscape-dagre';
+import clsx from 'clsx';
+import {
+  TopologyIcon
+} from '@patternfly/react-icons';
 
+cytoscape.use(dagre)
 cytoscape.use(popper)
 cytoscape.use(cxtmenu)
 
@@ -36,6 +42,17 @@ const createContentFromComponent = (component) => {
   document.body.appendChild(dummyDomEle);
   return dummyDomEle;
 };
+
+const formalities = () => {
+  var el = document.getElementById('edc');
+  if (el) {
+    el.remove();
+  }
+  el = document.getElementById('ndc');
+  if (el) {
+    el.remove();
+  }
+}
 
 const style = (theme) => ({
   
@@ -60,7 +77,7 @@ const style = (theme) => ({
     top:'auto',
     bottom: theme.spacing(2),
     left: 'auto',
-    right:theme.spacing(2),
+    right: theme.spacing(2),
   },
 
   div: {
@@ -68,6 +85,18 @@ const style = (theme) => ({
     height:'100%',
     borderRadius: '5px',
     background: '#fff',
+  },
+
+  wrapper: {
+    position: 'relative',
+    width: '100%',
+    height:'90%'
+  },
+
+  wrapper2: {
+    position: 'relative',
+    width: '70%',
+    height:'90%'
   }
 });
 
@@ -124,8 +153,15 @@ class MesheryVisualizeComponent extends React.Component {
     super(props);
     this.cyPopperRef = React.createRef();
     this.state = {
-      layout: 'cose'
+      layout: 'cose',
+      open: false,
     }
+  }
+
+  toggleChildMenu() {
+    this.setState(state => ({
+      open: !state.open
+    }));
   }
 
   zoomIn() {
@@ -169,25 +205,25 @@ class MesheryVisualizeComponent extends React.Component {
 
   handleLayoutChange = (e, value) => {
     if( value ) {
-      this.setState({
-        layout: value
-      })
       var layout = this.cy.layout({
         name: value
       });
       layout.run();
+      this.setState({layout: value});
     }
   }
 
   render() {
     const {classes} = this.props
-    const {layout} = this.state;
+    const {layout, open} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
     return (
       <NoSsr>
-        <div style={{position: 'relative', width:'100%', height:'90%'}}>
+        <div className={clsx({[classes.wrapper]: !open}, {
+          [classes.wrapper2]: open,
+        })} >
           <div className={classes.div}>
             <CytoscapeComponent 
               elements={CytoscapeComponent.normalizeElements(elements)}
@@ -211,33 +247,18 @@ class MesheryVisualizeComponent extends React.Component {
                     removeTooltip();
                   }
                 });
-                this.cy.nodes().on('click', (event) => {
-                  var el = document.getElementById('ndc');
-                  if (el) {
-                    el.remove();
-                  }
-                  el = document.getElementById('edc');
-                  if (el) {
-                    el.remove();
-                  }
+                this.cy.elements().on('click', (event) => {
+                  formalities();
                   var dummyDomEle = document.createElement('div');
                   dummyDomEle.id = 'ndc';
-                  ReactDOM.render(<Drawer data={event.target}/>, dummyDomEle);
+                  this.toggleChildMenu();
+                  ReactDOM.render(<Drawer data={event.target} open={this.state.open} 
+                    toggle={() => {
+                      this.toggleChildMenu();
+                    }}
+                  />, dummyDomEle);
                   document.body.appendChild(dummyDomEle);
-                });
-                this.cy.edges().on('click', (event) => {
-                  var el = document.getElementById('edc');
-                  if (el) {
-                    el.remove();
-                  }
-                  el = document.getElementById('ndc');
-                  if (el) {
-                    el.remove();
-                  }
-                  var dummyDomEle = document.createElement('div');
-                  dummyDomEle.id = 'edc';
-                  ReactDOM.render(<Drawer data={event.target}/>, dummyDomEle);
-                  document.body.appendChild(dummyDomEle);
+                  // this.cy.fit();
                 });
               }}
             />
@@ -254,9 +275,21 @@ class MesheryVisualizeComponent extends React.Component {
             className={classes.layoutButton}
             size="small"
           >
-            <ToggleButton value="cose" >Cose</ToggleButton>
-            <ToggleButton value="breadthfirst" >BFS</ToggleButton>
-            <ToggleButton value="circle" >Circle</ToggleButton>
+            <ToggleButton value="cose" >
+              <TopologyIcon /> 1
+            </ToggleButton>
+            <ToggleButton value="breadthfirst" >
+              <TopologyIcon /> 2
+            </ToggleButton>
+            <ToggleButton value="circle" >
+              <TopologyIcon /> 3
+            </ToggleButton>
+            <ToggleButton value="dagre" >
+              <TopologyIcon /> 4
+            </ToggleButton>
+            <ToggleButton value="concentric" >
+              <TopologyIcon /> 5
+            </ToggleButton>
           </ToggleButtonGroup>
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{textDecoration:'none'}}>Save</Button>
