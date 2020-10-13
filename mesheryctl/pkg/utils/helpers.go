@@ -239,12 +239,12 @@ func IsMesheryRunning() bool {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "file read failed :")
+		err = errors.Wrap(err, "could not read token:")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid :")
+		err = errors.Wrap(err, "token file invalid:")
 		return err
 	}
 	req.AddCookie(&http.Cookie{

@@ -1,4 +1,4 @@
-// Copyright 2020 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ func setContext(configFile, cname, tokenPath string) error {
 	return nil
 }
 
-// resetCmd represents the config command
+// configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
@@ -114,6 +114,10 @@ var configCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if len(tokenPath) < 0 {
+			log.Fatal("fetch me a token path invalid")
+
+		}
 		if tokenPath == "" {
 			log.Fatal("Token path invalid")
 		}
@@ -136,6 +140,7 @@ var configCmd = &cobra.Command{
 
 		configPath := "/tmp/meshery/kubeconfig.yaml"
 
+		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
 			log.Fatalf("Error getting contexts : %s", err.Error())
@@ -165,5 +170,6 @@ var configCmd = &cobra.Command{
 }
 
 func init() {
-	configCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
+	configCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+	_ = configCmd.MarkFlagRequired("tokenPath")
 }
