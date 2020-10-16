@@ -8,13 +8,11 @@ permalink: installation/platforms/kubernetes
 
 To set up and run Meshery on Kubernetes:
 
-- <a href="#helm">Use Helm and set up a Kubernetes cluster</a>
+- [ Use Helm and set up a Kubernetes cluster](#using-helm)
 
-- <a href="#k8s">Run Meshery on existing Kubernetes cluster</a>
-  
-<a name="helm">
+- [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
 
-#### <b> Using Helm</b>
+#### **Using Helm**
 
 ##### 1. **Helm v3**
 Run the following:
@@ -34,9 +32,7 @@ Run the following:
  $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | kubectl apply -f -
  ```
 
-<a name="k8s">
-
-#### <b>Using Kubernetes Manifests</b>
+#### **Using Kubernetes Manifests**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
 
 ```sh

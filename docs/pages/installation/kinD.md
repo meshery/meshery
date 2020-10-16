@@ -7,14 +7,13 @@ permalink: installation/platforms/kind
 ## Quick Start with KinD
 To set up and run Meshery on KinD:
 
-* <a href="#step1">Install kinD</a>          
-* <a href="#step2">Create a Kubernetes cluster with kinD</a>     
-      - <a href="#step3">Access the kinD cluster</a>
-* <a href="#helm">Alternatively, Run Helm</a>
+* [Install kinD](#installation)      
+* [Create a Kubernetes cluster with kinD](#create-cluster-using-kind)    
+      - [Access the kinD cluster](#access-the-kind-cluster)
+* [Alternatively, Run Helm](#using-helm)
 
-<a name="step1">
 
-### <b>Installation</b>
+### **Installation**
 
 * On Mac / Linux via Homebrew (Recommended):
 
@@ -32,13 +31,11 @@ mv ./kind /some-dir-in-your-PATH/kind
 
 If you are running Ubuntu on WSL2, use `Docker Ubuntu` distro to install `Docker`. 
 
-<a name="step2">
-
-#### <b>Create cluster using KinD</b>
+#### **Create cluster using KinD**
 
 In order to successfully build the Meshery server on your local server, follow the instructions specific to your Operating System to complete the creation of a KinD cluster.
 
-<h6>1. <b>KinD on WSL2</b></h6>
+###### 1. **KinD on WSL2**
 
 First, we will get the ip address of your WSL2 distro by:
 
@@ -98,15 +95,14 @@ kubectl cluster-info --context kind-kind
 Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
 
-<h6>2. <b>KinD on other systems</b></h6>
+###### 2. **KinD on other systems**
 
 Creating a Kubernetes cluster is as simple as `kind create cluster`.
 
 For more configuration of installation, please refer to KinD official documentation.
 
-<a name="step3">
 
-#### <b>Access the KinD cluster</b>
+#### **Access the KinD cluster**
 
 By default, the cluster access configuration is stored in ${HOME}/.kube/config if $KUBECONFIG environment variable is not set. You can set the `KIUBECONFIG` environment command below:
 
@@ -126,11 +122,9 @@ To delete your cluster use:
 kind delete cluster --name kind
 ```
 
-<a name="helm"></a>
+#### **Using Helm**
 
-#### <b>Using Helm</b>
-
-##### <b>Helm v3</b>
+##### **Helm v3**
 
 We strongly recommend to use Helm v3, because of the version not included the Tiller(https://helm.sh/blog/helm-3-preview-pt2/#helm) component anymore. It’s lighter and safer.
 

@@ -7,11 +7,11 @@ permalink: installation/platforms/minikube
 ## Quick Start with Minikube
 To set up and run Meshery on Minikube:
 
-1. <a href="#step1">Start Minikube </a>
-2. <a href="#step2">Install a Kubernetes cluster on top </a>
-3. <a href="#step3">Run Meshery</a>
+1. [Start Minikube](#1-start-minikube)
+1. [Install a Kubernetes cluster on top](#2-generate-config-file)
+1. [Run Meshery](#3-set-up-meshery)
 
-### Compatibility
+### **Compatibility**
 The following minimum component versions are required:
 
 <table id="compatibility-table">
@@ -33,28 +33,25 @@ The following minimum component versions are required:
   </tr>
 </table>
 
-### Steps
+### **Steps**
 Perform the following steps in order:
 
-<a name="step1">
-
-#### 1. <b>Start minikube</b>
+#### 1. **Start minikube**
 
 ```bash
 minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 ```
 
-<i>Note: minimum memory required is --memory=4096 (for Istio deployments only)</i>
+*Note: minimum memory required is --memory=4096 (for Istio deployments only)*
 
-<i>Note: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server.
-</i>
+*Note: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server.*
 
 ```   
 docker network connect bridge meshery_meshery_1 
 ```
-<a name="step2">  
 
-#### 2.<b> Generate config file</b>
+#### 2. **Generate config file**
+
 This configuration file will be used by Meshery.
 
 ```
@@ -83,9 +80,7 @@ users:
 ```
 Note: Make sure "current-context" is set to "minikube".
 
-<a name="step3">
-
-#### 3.<b> Set up Meshery</b>
+#### 3. **Set up Meshery**
 
 Follow the [installation steps](/docs/installation) to install the mesheryctl CLI. 
 
