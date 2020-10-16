@@ -8,23 +8,18 @@ permalink: architecture
 
 #### The Meshery architecture can be observed in two perspectives:
  
-##### 1. [**Clients**](#clients)
-##### 2. [**Providers**](#providers)
+##### 1. [**Clients**](#1-client-architecture)
+##### 2. [**Providers**](#2-provider-architecture)
 
 
 ![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.png)
 
 
-<a name="clients">
-
-### 1. **Clients**
+### 1. **Client Architecture**
 
 ![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)
 
-
-<a name="providers">
-
-### 2. **Providers**
+### 2. **Provider Architecture**
 
 ![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
 
