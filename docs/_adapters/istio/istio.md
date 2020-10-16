@@ -26,7 +26,7 @@ image: /docs/assets/img/service-meshes/istio.svg
 
 ### Lifecycle management
 
-The Meshery Adapter for Istio can install **v1.7.3** of the Istio service mesh. The SMI adapter for Istio can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.title}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
 
 ### Sample applications
 
