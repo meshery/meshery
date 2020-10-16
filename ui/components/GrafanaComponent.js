@@ -165,6 +165,7 @@ class GrafanaComponent extends Component {
                 selectedBoardsConfigs,
               },
             });
+            this.getGrafanaBoards();
           }
         }, self.handleError('There was an error communicating with Grafana'));
       }
