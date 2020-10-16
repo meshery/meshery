@@ -6,27 +6,29 @@ permalink: architecture
 
 ## Architecture
 
-<h4>The Meshery architecture can be observed in two perspectives:</h4> 
+#### The Meshery architecture can be observed in two perspectives:
  
-##### 1. <a href="#clients"><b>Clients</b></a>
-##### 2. <a href="#providers"><b>Providers</b></a> 
+##### 1. [**Clients**](#clients)
+##### 2. [**Providers**](#providers)
 
-<br /><a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.svg"><img src="{{site.baseurl}}/assets/img/architecture/Meshery-architecture-diagram.png" /></a>
+
+![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.png)
 
 
 <a name="clients">
 
-### 1. <b>Clients</b>
+### 1. **Clients**
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/Meshery-client-architecture.svg" /></a>
+![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)
+
 
 <a name="providers">
 
-### 2. <b>Providers</b>
+### 2. **Providers**
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/Meshery-provider-architecture.svg" /></a>
+![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
 
-#### <b>Network Ports</b>
+#### **Network Ports**
 
 Meshery uses the following list of network ports to interface with its various components:
 
@@ -35,7 +37,7 @@ Meshery uses the following list of network ports to interface with its various c
 | Meshery REST API                               | 9081/tcp         |
 | Learn Layer5 Application                       | 10011            |
 
-#### <b>Adapter Ports</b>
+#### **Adapter Ports**
 
 | Service Mesh  | Port          |
 | :------------ | ------------: |
@@ -47,7 +49,7 @@ Meshery uses the following list of network ports to interface with its various c
 
 See the [**Adapters**](/docs/architecture/adapters) section for more information on the function of an adapter.
 
-#### <b>Statefulness in Meshery components</b>
+#### **Statefulness in Meshery components**
 
 Some components within Meshery's architecture are concerned with persisting data while others are only
 concerned with a long-lived configuration, while others have no state at all.
