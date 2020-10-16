@@ -18706,3 +18706,13 @@ footer {
     background-color: #477E96;
     color: white;
   }
+
+  #hiddendiv {
+    width: 85%;
+    padding: 25px 0;
+    padding-left: 15px;
+    text-align: left;
+    font-weight: bold;
+    background-color: lightblue;
+    margin-top: 10px;
+  }

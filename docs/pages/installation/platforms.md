@@ -23,7 +23,6 @@ The table below provides installation instructions for each platform that Mesher
 | &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/openshift.svg" width="20" height="20" /> OpenShift                                             |      In Progress      |
 | <img src="/docs/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](/docs/installation#mac-or-linux)              |                       |
 | &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew](/docs/installation#mac-or-linux)      |                       |
-| <img src="/docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](/docs/installation#windows)                |                       |
 | &nbsp;&nbsp;&nbsp; [Scoop](/docs/installation#windows)                                                                                                |                       |
-| &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/wsl2.png" width="20" height="20" /> [WSL2](/docs/installation/platforms/wsl2)                  | Build 18917 and above |
+| &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows](/docs/installation/platforms/windows)                  | Build 18917 and above |
 | <img src="/docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                         |      In Progress      |
