@@ -11,10 +11,9 @@ Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount
 
 Meshery will use this `ServiceAccount` to interact with your managed Kubernetes instance. Use either of the following two methods to prepare a compatible kubeconfig file:
 
-1. <a href="#step1">Automatic Configuration </a>
-2. <a href="#step2">Manual configuration</a>
+- [Automatic Configuration](#automatic-configuration-recommended)
+- [Manual configuration](#manual-configuration-optional)
 
-<a name="step1">
 
 #### Automatic Configuration (Recommended)
 

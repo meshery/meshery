@@ -9,16 +9,14 @@ permalink: installation/platforms/eks
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount` can be used or a new one created. 
 1. Ensure that the `ServiceAccount` you use has the `cluster-admin` role assigned.
-2. Configure Meshery to run on EKS:
-    - <a href="#step1">Automatic Configuration </a>
-    - <a href="#step2">Manual Configuration </a>
+1. Configure Meshery to run on EKS:
+    - [Automatic Configuration](#automatic-configuration-recommended)
+    - [Manual Configuration](#manual-configuration-optional)
 
 
 _Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="_blank"}_
 
-<a name="step1">
-
-#### <b>Automatic Configuration (Recommended)</b>
+#### **Automatic Configuration (Recommended)**
 
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
 1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
@@ -30,9 +28,7 @@ _Note: Make sure you are able to access EKS with `kubectl` by following the [EKS
 This command updates your kubeconfig to provide Meshery with access to your managed Kubernetes instance.
 Once configured, proceed with using Meshery (`mesheryctl system start`).
 
-<a name="step2>
-
-#### <b>Manual Configuration (Optional)</b>
+#### **Manual Configuration (Optional)**
 
 If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 
