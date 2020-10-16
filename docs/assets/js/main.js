@@ -58,3 +58,14 @@ layout: null
     };
     Search.init();
 }(jQuery));
+
+function HideToggleFunction() {
+    var hide = document.getElementById("hiddendiv");
+    if (hide.style.display === "block") {
+      hide.style.display = "none";
+    } else {
+      hide.style.display = "block";
+    }
+  }
+
+ 
