@@ -8,7 +8,7 @@ permalink: installation/platforms/minikube
 To set up and run Meshery on Minikube:
 
 1. [Start Minikube](#1-start-minikube)
-1. [Install a Kubernetes cluster on top](#2-generate-config-file)
+1. [Configure Meshery to use minkube](#2-configure-meshery-to-use-minikube)
 1. [Run Meshery](#3-set-up-meshery)
 
 ### **Compatibility**
@@ -46,17 +46,27 @@ minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1
 
 *Note: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server.*
 
-```   
-docker network connect bridge meshery_meshery_1 
+```
+docker network connect bridge meshery_meshery_1
 ```
 
-#### 2. **Generate config file**
+#### 2. **Configure Meshery to use minikube**
+
+1. Login to Meshery. Under your user profile, click `Get Token`.
+2. Use `mesheryctl` to configure Meshery to use minikube. Execute:
+
+```sh
+mesheryctl system config minikube -t ~/Downloads/auth.json
+```
+
+**You may also manually generate and load kubeconfig file for Meshery to use:**
 
 This configuration file will be used by Meshery.
 
 ```
 kubectl config view --minify --flatten > config_minikube.yaml
 ```
+
 ```
 apiVersion: v1
 clusters:
@@ -78,7 +88,8 @@ users:
     client-certificate-data: <cert shortcutted >
     client-key-data: < key shortcutted >
 ```
-Note: Make sure "current-context" is set to "minikube".
+
+Note: Make sure *current-context* is set to `minikube`.
 
 #### 3. **Set up Meshery**
 

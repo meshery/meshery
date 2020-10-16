@@ -31,7 +31,7 @@ const meshes = [
   'Citrix Service Mesh',
   'Consul Connect',
   'Grey Matter',
-  'Kong',
+  'Kuma',
   'Mesher',
   'Network Service Mesh',
   'Octarine',
