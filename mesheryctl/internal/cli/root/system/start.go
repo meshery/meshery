@@ -34,6 +34,7 @@ import (
 
 var (
 	skipUpdateFlag bool
+	adapter string
 )
 
 // startCmd represents the start command
@@ -87,7 +88,11 @@ func start() error {
 	}
 
 	log.Info("Starting Meshery...")
+	log.Info("Adapter chosen: " + adapter)
 	start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
+	if adapter != "" {
+		start = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d", "meshery", adapter)
+	}
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr
 
@@ -173,4 +178,5 @@ func start() error {
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.Flags().StringVarP(&adapter, "adapter", "a", "", "name of adapter to be downloaded and run")
 }
