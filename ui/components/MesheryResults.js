@@ -223,7 +223,7 @@ class MesheryResults extends Component {
           label: 'QPS',
           options: {
             filter: true,
-            sort: true,
+            sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
               return (
@@ -239,7 +239,7 @@ class MesheryResults extends Component {
           label: 'Duration',
           options: {
             filter: true,
-            sort: true,
+            sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
               return (
@@ -256,7 +256,7 @@ class MesheryResults extends Component {
           label: 'P50',
           options: {
             filter: true,
-            sort: true,
+            sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
               return (
@@ -274,7 +274,7 @@ class MesheryResults extends Component {
           label: 'P99.9',
           options: {
             filter: true,
-            sort: true,
+            sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
               return (
