@@ -165,7 +165,7 @@ class MesheryResults extends Component {
           name: 'name',
           label: 'Name',
           options: {
-            filter: true,
+            filter: false,
             sort: true,
             searchable: true,
             customHeadRender: ({index, ...column}, sortColumn) => {
@@ -183,7 +183,7 @@ class MesheryResults extends Component {
           name: 'mesh',
           label: 'Mesh',
           options: {
-            filter: true,
+            filter: false,
             sort: true,
             searchable: true,
             customHeadRender: ({index, ...column}, sortColumn) => {
@@ -201,7 +201,7 @@ class MesheryResults extends Component {
           name: 'test_start_time',
           label: 'Start Time',
           options: {
-            filter: true,
+            filter: false,
             sort: true,
             searchable: true,
             customHeadRender: ({index, ...column}, sortColumn) => {
@@ -222,7 +222,7 @@ class MesheryResults extends Component {
           name: 'qps',
           label: 'QPS',
           options: {
-            filter: true,
+            filter: false,
             sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
@@ -238,7 +238,7 @@ class MesheryResults extends Component {
           name: 'duration',
           label: 'Duration',
           options: {
-            filter: true,
+            filter: false,
             sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
@@ -255,7 +255,7 @@ class MesheryResults extends Component {
           name: 'p50',
           label: 'P50',
           options: {
-            filter: true,
+            filter: false,
             sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
@@ -273,7 +273,7 @@ class MesheryResults extends Component {
           name: 'p99_9',
           label: 'P99.9',
           options: {
-            filter: true,
+            filter: false,
             sort: false,
             searchable: false,
             customHeadRender: ({index, ...column}) => {
@@ -334,7 +334,7 @@ class MesheryResults extends Component {
       });
       // console.log(`selected rows after adjustments: ${JSON.stringify(rowsSelected)}`);
       const options = {
-        filter: true,
+        filter: false,
         sort: !(user && user.user_id === 'meshery'),
         search: !(user && user.user_id === 'meshery'),
         filterType: 'textField',
