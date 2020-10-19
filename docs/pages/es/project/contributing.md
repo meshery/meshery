@@ -14,7 +14,6 @@ Este proyecto está construido por la comunidad y la colaboración es bienvenida
 Sigue estos pasos y te sentirás como en casa.
 
 1. Consulte la [*Guía de bienvenida de la comunidad*](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) para saber cómo, dónde y por qué contribuir.
-
 2. Regístrate para un [*MeshMate*](https://layer5.io/community#meshmate) y encontrar el Mentor (o Mentora) perfecto que te ayude a explorar los proyectos de Layer5 y encontrar tu lugar en la comunidad:
 - **Familiarízate** con todos los proyectos de Layer5 (echale un vistazo al [Drive de la Comunidad](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) y la [lista de repositorios de Layer5](https://docs.google.com/document/d/1brtiJhdzal_O6NBZU_JQXiBff2InNtmgL_G1JgAiZtk/edit#header=h.uwtb5xf7b5hw): Dedicale tiempo a comprender cada una de las iniciativas de Layer5 a través de descripciones de alto nivel disponibles en el drive de comunidad y a través de discusiones con tu Mesh Mate.
 - **Identifica** tu área de interés: Usa el tiempo con tu MeshMate para familiarizarte con la arquitectura y las tecnologías utilizadas en los proyectos. Informa a tu MeshMate de tus habilidades actuales y las habilidades que pretendes desarrollar.
