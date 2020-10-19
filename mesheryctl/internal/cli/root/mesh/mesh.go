@@ -28,5 +28,9 @@ var MeshCmd = &cobra.Command{
 
 func init() {
 	availableSubcommands = []*cobra.Command{validateCmd}
+	MeshCmd.PersistentFlags().StringVarP(&serverURL, "serverURL", "u", "localhost:9081", "Server address where meshery is hosted. default 'localhost:9081'")
+	_ = MeshCmd.MarkFlagRequired("serverURL")
+	MeshCmd.PersistentFlags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
+	_ = MeshCmd.MarkFlagRequired("tokenPath")
 	MeshCmd.AddCommand(availableSubcommands...)
 }

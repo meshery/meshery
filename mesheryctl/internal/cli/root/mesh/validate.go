@@ -41,8 +41,10 @@ var validateCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		log.Infof("Starting service mesh validation...")
+
+		serverURL = cmd.Flag("serverURL").Value.String()
+		tokenPath = cmd.Flag("tokenPath").Value.String()
 
 		// Used basic string concatenation to prevent importing entire fmt to use Sprintf
 		path := "http://" + serverURL + "/api/mesh/ops"
@@ -105,12 +107,7 @@ var validateCmd = &cobra.Command{
 
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "specification to be used for conformance test")
-	_ = validateCmd.MarkFlagRequired("spec")
 	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm:10010", "Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
-	validateCmd.Flags().StringVarP(&serverURL, "serverURL", "u", "localhost:9081", "Server address where meshery is hosted")
-	_ = validateCmd.MarkFlagRequired("serverUrl")
 	validateCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace to be used for deploying the validation tests and sample workload")
-	validateCmd.Flags().StringVarP(&tokenPath, "tokenPath", "t", "", "Path to token for authenticating to Meshery API")
-	_ = validateCmd.MarkFlagRequired("tokenPath")
 }
