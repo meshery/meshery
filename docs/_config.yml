@@ -83,6 +83,9 @@ collections:
   guides:
     output: true
     permalink: /:collection/:path
+  es:
+    output: true
+    permalink: /:collection/:path
 
 
 # Defaults
@@ -107,6 +110,11 @@ defaults:
       type: "guide"
     values:
       layout: guide
+  - scope:
+      path: "es"
+      type: "es"
+    values:
+      layout: page
   - scope:
       path: "adapters"
       type: "adapters"
