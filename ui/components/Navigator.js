@@ -308,6 +308,14 @@ const categories = [
         link: false,
         show: true,
       },
+      {
+        id: "Nginx Service Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/nginx",
+        title: "Nginx",
+        link: false,
+        show: true,
+      },
     ],
   },
 ];
@@ -442,6 +450,10 @@ class Navigator extends React.Component {
         image = "/static/img/kuma-white.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
+      case "nginx service mesh":
+        image = "/static/img/nginx-sm-white.svg";
+        logoIcon = <img src={image} className={classes.icon} />;
+        break;
     }
     return logoIcon;
   }
@@ -460,6 +472,7 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
+      "Nginx Service Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {

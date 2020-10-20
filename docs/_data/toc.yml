@@ -63,6 +63,8 @@
           url: service-meshes/adapters/osm
         - title: Tanzu
           url: service-meshes/adapters/tanzu-sm
+        - title: Nginx Service Mesh
+          url: service-meshes/adapters/nginx-sm
     - title: Extensibility
       url: extensibility
     - title: Guides

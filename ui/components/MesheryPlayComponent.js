@@ -162,6 +162,10 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/kuma.svg";
           imageIcon = (<img src={image} className={classes.expTitleIcon} />);
           break;
+        case 'nginx service mesh':
+          image = "/static/img/nginx-sm.svg";
+          imageIcon = (<img src={image} className={classes.expTitleIcon} />);
+          break;
       }
     }
     return imageIcon;
