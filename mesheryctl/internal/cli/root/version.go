@@ -87,6 +87,8 @@ var versionCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
+		logrus.Infof("Checking for latest version of Meshery....")
+
 		url := mctlCfg.GetBaseMesheryURL()
 		build := mctlCfg.GetVersion().GetBuild()
 		commitsha := mctlCfg.GetVersion().GetCommitSHA()
