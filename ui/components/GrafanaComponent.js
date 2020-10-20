@@ -66,7 +66,6 @@ class GrafanaComponent extends Component {
     if (grafanaURL !== '') {
       grafanaConfigSuccess = true;
     }
-
     this.state = {
       urlError: false,
 
@@ -76,15 +75,15 @@ class GrafanaComponent extends Component {
       grafanaAPIKey,
       grafanaBoards,
       selectedBoardsConfigs,
-      ts: new Date(),
+      ts: null,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
-    if (props.ts > state.ts) {
+    if ( state.ts == null || props.ts > state.ts) {
       return {
-        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
+        grafanaURL:grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
       };
     }
     return {};
@@ -345,6 +344,7 @@ class GrafanaComponent extends Component {
       }, self.handleError('There was an error persisting the board selection'));
     }
 
+    
     render() {
       const { classes } = this.props;
       const {
