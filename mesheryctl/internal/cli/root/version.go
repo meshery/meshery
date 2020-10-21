@@ -116,6 +116,7 @@ var versionCmd = &cobra.Command{
 		}
 
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+		logrus.Infof("Checking for latest version of Meshery....")
 
 		// Inform user of the latest release version
 		err = checkLatestVersion(err, version.GetBuild())
