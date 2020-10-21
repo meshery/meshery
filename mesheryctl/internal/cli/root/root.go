@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -111,6 +112,7 @@ func init() {
 		system.SystemCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
+		experimental.ExpCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
