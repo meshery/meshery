@@ -308,6 +308,14 @@ const categories = [
         link: false,
         show: true,
       },
+      {
+        id: "NGINX Service Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/nginx",
+        title: "NGINX Service Mesh",
+        link: false,
+        show: true,
+      },
     ],
   },
 ];
@@ -411,19 +419,19 @@ class Navigator extends React.Component {
     let logoIcon = <img src={image} className={classes.icon} />;
     switch (aName) {
       case "istio":
-        image = "/static/img/istio-white.svg";
+        image = "/static/img/istio-light.svg";
         logoIcon = <img src={image} className={classes.istioIcon} />;
         break;
       case "linkerd":
-        image = "/static/img/linkerd-white.svg";
+        image = "/static/img/linkerd-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "consul":
-        image = "/static/img/consul-white.svg";
+        image = "/static/img/consul-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "network service mesh":
-        image = "/static/img/nsm-white.svg";
+        image = "/static/img/nsm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "octarine":
@@ -431,7 +439,7 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "citrix service mesh":
-        image = "/static/img/citrix-light-gray.svg";
+        image = "/static/img/citrix-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "open service mesh":
@@ -439,7 +447,11 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "kuma":
-        image = "/static/img/kuma-white.svg";
+        image = "/static/img/kuma-light.svg";
+        logoIcon = <img src={image} className={classes.icon} />;
+        break;
+      case "nginx service mesh":
+        image = "/static/img/nginx-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
     }
@@ -460,6 +472,7 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
+      "NGINX Service Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {
