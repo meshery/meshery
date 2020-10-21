@@ -78,7 +78,7 @@ class GrafanaComponent extends Component {
     if ( props.grafana.ts > state.ts) {
       console.log("Inside Derived State")
       return {
-        grafanaURL:grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
+        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
       };
     }
     return {};
