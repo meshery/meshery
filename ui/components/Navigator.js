@@ -312,7 +312,7 @@ const categories = [
         id: "NGINX Service Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/nginx",
-        title: "Nginx",
+        title: "NGINX Service Mesh",
         link: false,
         show: true,
       },
