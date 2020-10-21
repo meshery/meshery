@@ -62,7 +62,7 @@ func checkLatestVersion(err error, serverVersion string) error {
 	}
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
-		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Upgrade to v", res.Current, ". Run `mesheryctl system upgrade`")
+		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
 	}
 
 	// If user is running the latest release, let them know.

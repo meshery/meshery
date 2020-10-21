@@ -18686,4 +18686,33 @@ footer {
     color: #2496ed;
 }
 
+#compatibility-table{
+    border-collapse: collapse;
+}
 
+#compatibility-table td, #compatibility-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #compatibility-table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #compatibility-table tr:hover {background-color: #ddd;}
+  
+  #compatibility-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #477E96;
+    color: white;
+  }
+
+  #hiddendiv {
+    width: 85%;
+    padding: 25px 0;
+    padding-left: 15px;
+    text-align: left;
+    font-weight: bold;
+    background-color: lightblue;
+    margin-top: 10px;
+  }
