@@ -73,12 +73,13 @@ class GrafanaComponent extends Component {
 
   }  
 
-  static getDerivedStateFromProps(props, state) {
-    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
-    if ( props.grafana.ts > state.ts) {
-      return {
-        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
-      };
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = nextProps.grafana;
+    if ( nextProps.grafana.ts > this.state.ts) {
+      this.setState( {
+        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: nextProps.ts,
+      }, () => this.getGrafanaBoards());
+      
     }
     return {};
   }
@@ -87,8 +88,6 @@ class GrafanaComponent extends Component {
     this.getGrafanaBoards();
   }
 
-  componentDidUpdate() {
-  }
 
       handleChange = (name) => (event) => {
         if (name === 'grafanaURL' && event.target.value !== '') {
