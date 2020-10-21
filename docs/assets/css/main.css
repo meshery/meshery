@@ -275,14 +275,15 @@ sup {
 }
 
 a {
-    color: #3176d9;
+    color: #696969;
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
 }
 
 a:hover {
-    color: #1e53a0;
+    color: #00b39f;
+    font-weight: bold;
     text-decoration: none
 }
 
@@ -18110,17 +18111,20 @@ html body .md-typeset .headerlink {
 }
 
 .td-sidebar-nav .td-sidebar-link {
+    color: #696969;
+    font-weight: 500;
     display: block;
     padding-bottom: .375rem
 }
 
 .td-sidebar-nav .td-sidebar-link__page {
-    color: #495057;
-    font-weight: 300
+    color: #696969;
+    font-weight: 370
 }
 
 .td-sidebar-nav a:hover {
-    color: #72a1e5;
+    color: #00b39f;
+    font-weight: bold;
     text-decoration: none
 }
 
@@ -18713,6 +18717,6 @@ footer {
     padding-left: 15px;
     text-align: left;
     font-weight: bold;
-    background-color: lightblue;
+    background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
   }
