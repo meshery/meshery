@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Nginx Servce Mesh Adapter
+title: NGINX Service Mesh Adapter
 name: Meshery Adapter for Nginx Servce Mesh
 mesh_name: Nginx Servce Mesh
 version: v2.5.0
