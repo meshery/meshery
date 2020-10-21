@@ -275,7 +275,7 @@ sup {
 }
 
 a {
-    color: #808080;
+    color: #696969;
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
@@ -18111,14 +18111,14 @@ html body .md-typeset .headerlink {
 }
 
 .td-sidebar-nav .td-sidebar-link {
-    color: #828c8c;
+    color: #696969;
     font-weight: 500;
     display: block;
     padding-bottom: .375rem
 }
 
 .td-sidebar-nav .td-sidebar-link__page {
-    color: #828c8c;
+    color: #696969;
     font-weight: 370
 }
 
