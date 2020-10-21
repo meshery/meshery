@@ -76,7 +76,6 @@ class GrafanaComponent extends Component {
   static getDerivedStateFromProps(props, state) {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
     if ( props.grafana.ts > state.ts) {
-      console.log("Inside Derived State")
       return {
         grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
       };
