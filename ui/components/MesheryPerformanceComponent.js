@@ -39,7 +39,7 @@ const meshes = [
   'SOFAMesh',
   'Open Service Mesh',
   'Zuul',
-  'Nginx Service Mesh'
+  'NGINX Service Mesh'
 ];
 
 const loadGenerators = [
