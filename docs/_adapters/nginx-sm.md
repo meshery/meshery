@@ -45,4 +45,4 @@ Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_na
 1. Prometheus integration
 1. Grafana integration
 
-The [Meshery adapter for Nginx Servce Mesh]({{ page.github_link }}) will connect to Nginx Servce Mesh's Prometheus and Grafana instances running in the control plane.
+The [{{page.name}}]({{ page.github_link }}) will connect to NGINX Service Mesh's Prometheus and Grafana instances running in the control plane.
