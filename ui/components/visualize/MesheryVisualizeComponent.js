@@ -29,7 +29,7 @@ const DummyTooltip = (props) => {
 
 const removeTooltip = () => {
   var el = document.getElementById('ccfc');
-  if ( el ) {
+  if (el) {
     el.remove();
   }
 }
@@ -55,7 +55,7 @@ const formalities = () => {
 }
 
 const style = (theme) => ({
-  
+
   zoomButton: {
     position: 'absolute',
     top: 'auto',
@@ -66,7 +66,7 @@ const style = (theme) => ({
 
   layoutButton: {
     position: 'absolute',
-    top:'auto',
+    top: 'auto',
     bottom: theme.spacing(2),
     left: '45%',
     right: '55%',
@@ -74,7 +74,7 @@ const style = (theme) => ({
 
   saveButton: {
     position: 'absolute',
-    top:'auto',
+    top: 'auto',
     bottom: theme.spacing(2),
     left: 'auto',
     right: theme.spacing(2),
@@ -82,7 +82,7 @@ const style = (theme) => ({
 
   div: {
     width: '100%',
-    height:'100%',
+    height: '100%',
     borderRadius: '5px',
     background: '#fff',
   },
@@ -90,13 +90,13 @@ const style = (theme) => ({
   wrapper: {
     position: 'relative',
     width: '100%',
-    height:'90%'
+    height: '90%'
   },
 
   wrapper2: {
     position: 'relative',
     width: '70%',
-    height:'90%'
+    height: '90%'
   }
 });
 
@@ -108,8 +108,8 @@ let cxtMenuSettings = {
       fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
       content: 'cmd1', // html/text content to be displayed in the menu
       contentStyle: {}, // css key:value pairs to set the command's css in js if you want
-      select: function(ele){ // a function to execute when the command is selected
-        console.log( ele.id() ) // `ele` holds the reference to the active element
+      select: function (ele) { // a function to execute when the command is selected
+        console.log(ele.id()) // `ele` holds the reference to the active element
       },
       enabled: true // whether the command is selectable
     },
@@ -117,8 +117,8 @@ let cxtMenuSettings = {
       fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
       content: 'cmd2', // html/text content to be displayed in the menu
       contentStyle: {}, // css key:value pairs to set the command's css in js if you want
-      select: function(ele){ // a function to execute when the command is selected
-        console.log( ele.id() ) // `ele` holds the reference to the active element
+      select: function (ele) { // a function to execute when the command is selected
+        console.log(ele.id()) // `ele` holds the reference to the active element
       },
       enabled: true // whether the command is selectable
     },
@@ -126,8 +126,8 @@ let cxtMenuSettings = {
       fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
       content: 'cmd3', // html/text content to be displayed in the menu
       contentStyle: {}, // css key:value pairs to set the command's css in js if you want
-      select: function(ele){ // a function to execute when the command is selected
-        console.log( ele.id() ) // `ele` holds the reference to the active element
+      select: function (ele) { // a function to execute when the command is selected
+        console.log(ele.id()) // `ele` holds the reference to the active element
       },
       enabled: true // whether the command is selectable
     }
@@ -148,7 +148,7 @@ let cxtMenuSettings = {
 };
 
 class MesheryVisualizeComponent extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.cyPopperRef = React.createRef();
@@ -166,7 +166,7 @@ class MesheryVisualizeComponent extends React.Component {
 
   zoomIn() {
     this.cy.zoom(0.5 + this.cy.zoom())
-    if(this.cy.$(':selected').size())
+    if (this.cy.$(':selected').size())
       this.cy.center(this.cy.$(':selected'))
     else
       this.cy.center()
@@ -174,7 +174,7 @@ class MesheryVisualizeComponent extends React.Component {
 
   zoomOut() {
     this.cy.zoom(-0.5 + this.cy.zoom())
-    if(this.cy.$(':selected').size())
+    if (this.cy.$(':selected').size())
       this.cy.center(this.cy.$(':selected'))
     else
       this.cy.center()
@@ -188,14 +188,14 @@ class MesheryVisualizeComponent extends React.Component {
     let image = this.cy.png()
     var lnk = document.createElement('a'), date = new Date(), e
     lnk.href = image
-    lnk.download = 'MeshMap - '+date.toDateString()+'/' + date.toLocaleTimeString() +'.png'
-    
+    lnk.download = 'MeshMap - ' + date.toDateString() + '/' + date.toLocaleTimeString() + '.png'
+
     if (document.createEvent) {
       e = document.createEvent("MouseEvents");
       e.initMouseEvent("click", true, true, window,
         0, 0, 0, 0, 0, false, false, false,
         false, 0, null);
-  
+
       lnk.dispatchEvent(e);
     } else if (lnk.fireEvent) {
       lnk.fireEvent("onclick");
@@ -204,41 +204,41 @@ class MesheryVisualizeComponent extends React.Component {
   }
 
   handleLayoutChange = (e, value) => {
-    if( value ) {
+    if (value) {
       var layout = this.cy.layout({
         name: value
       });
       layout.run();
-      this.setState({layout: value});
+      this.setState({ layout: value });
     }
   }
 
   render() {
-    const {classes} = this.props
-    const {layout, open} = this.state;
+    const { classes } = this.props
+    const { layout, open } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
     return (
       <NoSsr>
-        <div className={clsx({[classes.wrapper]: !open}, {
+        <div className={clsx({ [classes.wrapper]: !open }, {
           [classes.wrapper2]: open,
         })} >
           <div className={classes.div}>
-            <CytoscapeComponent 
+            <CytoscapeComponent
               elements={CytoscapeComponent.normalizeElements(elements)}
-              style={ {width: '100%', height: '100%'} }
+              style={{ width: '100%', height: '100%' }}
               layout={GraphStyle.getLayout()}
               stylesheet={GraphStyle.getStylesheetContainer()}
               cy={cy => {
                 this.cy = cy;
-                this.cy.cxtmenu( cxtMenuSettings );
+                this.cy.cxtmenu(cxtMenuSettings);
                 this.cy.elements().on('mouseover', (event) => {
                   this.cyPopperRef.current = event.target.popper({
-                    content: createContentFromComponent(<DummyTooltip data={event.target}/>),
+                    content: createContentFromComponent(<DummyTooltip data={event.target} />),
                     popper: {
                       placement: 'right',
-                      removeOnDestroy: true, 
+                      removeOnDestroy: true,
                     },
                   });
                 });
@@ -247,18 +247,27 @@ class MesheryVisualizeComponent extends React.Component {
                     removeTooltip();
                   }
                 });
-                this.cy.elements().on('click', (event) => {
+                this.cy.elements().on('click', (event) => { 
                   formalities();
+                  var sel = event.target;
                   var dummyDomEle = document.createElement('div');
                   dummyDomEle.id = 'ndc';
                   this.toggleChildMenu();
-                  ReactDOM.render(<Drawer data={event.target} open={this.state.open} 
+                  ReactDOM.render(<Drawer data={sel} open={this.state.open}
                     toggle={() => {
                       this.toggleChildMenu();
                     }}
                   />, dummyDomEle);
                   document.body.appendChild(dummyDomEle);
-                  // this.cy.fit();
+                  this.cy.startBatch();
+                  {
+                    this.cy.elements().removeClass('semitransp','highlight');
+                    this.cy.elements().difference(sel.outgoers().union(sel.incomers())).not(sel).addClass('semitransp');
+                    sel.addClass('highlight').outgoers().union(sel.incomers()).addClass('highlight');
+                    this.cy.resize();
+                    this.cy.fit(sel.outgoers().union(sel.incomers()),200);
+                  }
+                  this.cy.endBatch();
                 });
               }}
             />
@@ -292,7 +301,7 @@ class MesheryVisualizeComponent extends React.Component {
             </ToggleButton>
           </ToggleButtonGroup>
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
-            <Button id="download" onClick={this.saveGraph.bind(this)} style={{textDecoration:'none'}}>Save</Button>
+            <Button id="download" onClick={this.saveGraph.bind(this)} style={{ textDecoration: 'none' }}>Save</Button>
           </ButtonGroup>
         </div>
       </NoSsr>
