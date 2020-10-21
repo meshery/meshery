@@ -66,7 +66,7 @@ export default class GraphStyle {
           "curve-style": "bezier",
           "font-family": "Verdana,Arial,Helvetica,sans-serif,pficon",
           "font-size": "6px",
-          label: "fn",
+          label: "edge",
           "line-style": "solid",
           "target-arrow-shape": "vee",
           "text-events": "yes",
@@ -80,7 +80,7 @@ export default class GraphStyle {
         selector: "edge:selected",
         style: {
           width: "4px",
-          label: "fn"
+          label: "edge"
         }
       },
       {
@@ -99,7 +99,7 @@ export default class GraphStyle {
       {
         selector: "edge.mousehover",
         style: {
-          label: "fn"
+          label: "edge"
         }
       },
       {
@@ -115,6 +115,25 @@ export default class GraphStyle {
           "overlay-padding": "8px",
           "overlay-opacity": "0.5"
         }
+      },
+      {
+        selector: 'node.highlight',
+        style: {
+            'border-color': '#123',
+            'border-width': '2px'
+        }
+      },
+      {
+          selector: 'node.semitransp',
+          style:{ 'opacity': '0.5' }
+      },
+      {
+          selector: 'edge.highlight',
+          style: { 'mid-target-arrow-color': '#FFF' }
+      },
+      {
+          selector: 'edge.semitransp',
+          style:{ 'opacity': '0.2' }
       }
     ]
   }
