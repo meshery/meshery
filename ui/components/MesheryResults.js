@@ -14,6 +14,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
   updateResultsSelection, clearResultsSelection, updateProgress,
 } from '../lib/store';
+import TableSortLabel from '@material-ui/core/TableSortLabel'
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
@@ -167,10 +168,12 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
-            customHeadRender: ({index, ...column}) => {
+            customHeadRender: ({index, ...column}, sortColumn) => {
               return (
-                <TableCell key={index}>
-                  <b>{column.label}</b>
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
                 </TableCell>
               )
             },
@@ -183,10 +186,12 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
-            customHeadRender: ({index, ...column}) => {
+            customHeadRender: ({index, ...column}, sortColumn) => {
               return (
-                <TableCell key={index}>
-                  <b>{column.label}</b>
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
                 </TableCell>
               )
             },
@@ -194,15 +199,17 @@ class MesheryResults extends Component {
         },
         {
           name: 'test_start_time',
-          label: 'StartTime',
+          label: 'Start Time',
           options: {
             filter: false,
             sort: true,
-            searchable: false,
-            customHeadRender: ({index, ...column}) => {
+            searchable: true,
+            customHeadRender: ({index, ...column}, sortColumn) => {
               return (
-                <TableCell key={index}>
-                  <b>{column.label}</b>
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
                 </TableCell>
               )
             },
