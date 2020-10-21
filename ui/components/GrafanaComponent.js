@@ -59,30 +59,23 @@ class GrafanaComponent extends Component {
   constructor(props) {
     super(props);
 
-    const {
-      grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs,
-    } = props.grafana;
-    let grafanaConfigSuccess = false;
-    if (grafanaURL !== '') {
-      grafanaConfigSuccess = true;
-    }
-
     this.state = {
       urlError: false,
-
-      grafanaConfigSuccess,
+  
+      grafanaConfigSuccess: (props.grafana.grafanaURL !== ''),
       grafanaBoardSearch: '',
-      grafanaURL,
-      grafanaAPIKey,
-      grafanaBoards,
-      selectedBoardsConfigs,
-      ts: new Date(),
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
     };
-  }
+
+  }  
 
   static getDerivedStateFromProps(props, state) {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
-    if (props.ts > state.ts) {
+    if ( props.grafana.ts > state.ts) {
       return {
         grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
       };
@@ -345,6 +338,7 @@ class GrafanaComponent extends Component {
       }, self.handleError('There was an error persisting the board selection'));
     }
 
+    
     render() {
       const { classes } = this.props;
       const {
@@ -418,7 +412,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
-  return { grafana };
+  return { grafana: {...grafana, ts: new Date(grafana.ts)} };
 };
 
 export default withStyles(grafanaStyles)(connect(
