@@ -472,7 +472,7 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
-      "Nginx Service Mesh"
+      "NGINX Service Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {
