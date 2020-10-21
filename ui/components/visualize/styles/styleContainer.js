@@ -119,21 +119,21 @@ export default class GraphStyle {
       {
         selector: 'node.highlight',
         style: {
-            'border-color': '#123',
-            'border-width': '2px'
+          'border-color': '#123',
+          'border-width': '2px'
         }
       },
       {
-          selector: 'node.semitransp',
-          style:{ 'opacity': '0.5' }
+        selector: 'node.semitransp',
+        style:{ 'opacity': '0.5' }
       },
       {
-          selector: 'edge.highlight',
-          style: { 'mid-target-arrow-color': '#FFF' }
+        selector: 'edge.highlight',
+        style: { 'mid-target-arrow-color': '#FFF' }
       },
       {
-          selector: 'edge.semitransp',
-          style:{ 'opacity': '0.2' }
+        selector: 'edge.semitransp',
+        style:{ 'opacity': '0.2' }
       }
     ]
   }
