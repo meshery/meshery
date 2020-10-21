@@ -4,7 +4,7 @@ title: NGINX Service Mesh Adapter
 name: Meshery Adapter for Nginx Servce Mesh
 mesh_name: Nginx Servce Mesh
 version: v2.5.0
-port: 10001/tcp
+port: 10010/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-nginx-sm
 image: /docs/assets/img/service-meshes/nginx-sm.svg
