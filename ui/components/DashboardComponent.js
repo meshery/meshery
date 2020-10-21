@@ -393,7 +393,7 @@ class DashboardComponent extends React.Component {
                 adapterType = adapter.name;
                 switch (adapter.name.toLowerCase()) {
                   case "istio":
-                    image = "/static/img/istio-blue.svg";
+                    image = "/static/img/istio.svg";
                     logoIcon = <img src={image} className={classes.istioIcon} />;
                     break;
                   case "linkerd":
@@ -425,7 +425,7 @@ class DashboardComponent extends React.Component {
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
                   case "nginx service mesh":
-                    image = "/static/img/nginx-sm.svg";
+                    image = "/static/img/nginx.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
                 }

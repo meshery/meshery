@@ -419,19 +419,19 @@ class Navigator extends React.Component {
     let logoIcon = <img src={image} className={classes.icon} />;
     switch (aName) {
       case "istio":
-        image = "/static/img/istio-white.svg";
+        image = "/static/img/istio-light.svg";
         logoIcon = <img src={image} className={classes.istioIcon} />;
         break;
       case "linkerd":
-        image = "/static/img/linkerd-white.svg";
+        image = "/static/img/linkerd-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "consul":
-        image = "/static/img/consul-white.svg";
+        image = "/static/img/consul-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "network service mesh":
-        image = "/static/img/nsm-white.svg";
+        image = "/static/img/nsm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "octarine":
@@ -439,7 +439,7 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "citrix service mesh":
-        image = "/static/img/citrix-light-gray.svg";
+        image = "/static/img/citrix-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "open service mesh":
@@ -447,11 +447,11 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "kuma":
-        image = "/static/img/kuma-white.svg";
+        image = "/static/img/kuma-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "nginx service mesh":
-        image = "/static/img/nginx-sm-white.svg";
+        image = "/static/img/nginx-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
     }
