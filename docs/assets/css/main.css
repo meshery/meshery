@@ -18711,6 +18711,8 @@ footer {
     color: white;
   }
 
+  /*pop-out hidden div*/
+
   #hiddendiv {
     width: 85%;
     padding: 25px 0;
@@ -18720,3 +18722,34 @@ footer {
     background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
   }
+
+/*image-thumbnail-grid*/
+  
+.row {
+    display: flex;
+  }
+  
+.column {
+    flex: 25.00%;
+    padding: 5px;
+  }
+
+.img-thumbnail {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    max-width:calc(25.00% - 20px); 
+    min-height: 150px;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+  }
+  
+.img-thumbnail:hover {
+    box-shadow: 0 0 2px 1px rgba(71, 126, 150, 0.5);
+  }
+
+.caption {
+    display: block;
+    font-weight: bold;
+}

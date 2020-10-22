@@ -83,5 +83,9 @@
           url: project/contributing
         - title: Releases
           url: project/releases
+        - title: Resources
+          url: project/resources 
+        - title: FAQ
+          url: project/faq
         - title: Vulnerabilities
           url: project/security-vulnerabilities
