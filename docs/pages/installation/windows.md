@@ -83,7 +83,7 @@ If you still wish to continue, follow the instructions for <button onclick="Hide
 <p>
 1. The default version of WSL is set to WSL1 by default. You can move forward to <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice">install the distro</a> of your choice. <br /><br />
 
-2.<b><a href="https://docs.docker.com/toolbox/toolbox_install_windows/">Docker Toolbox</a></b> <br />
+2. <b><a href="https://docs.docker.com/toolbox/toolbox_install_windows/">Docker Toolbox</a></b> <br />
 
 <b>Warning</b>: Docker Toolbox is a deprecated version. It is recommended to update your system and install the Docker Desktop application with WSL2. <br/><br />
 
