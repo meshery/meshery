@@ -118,7 +118,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nginx-sm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nginx-service-mesh.png' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
+            <img src='https://layer5.io/assets/images/service-mesh-icons/nginx-service-mesh.svg' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="alpha-adapters"></td></tr>
@@ -149,7 +149,6 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <br /><br /><br /><br />
 
 </p>
-
 
 <h3>Adhering to Service Mesh Standards</h3>
 <img alt="Service Mesh Performance (SMP)" src="docs/assets/img/readme/smp-dark-text.svg" style="margin-left:10px;" width="18%" align="left" />
