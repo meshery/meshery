@@ -118,7 +118,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nginx-sm">
-            <img src='https://layer5.io/assets/images/service-mesh-icons/nginx-service-mesh.svg' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/nginx.svg' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="alpha-adapters"></td></tr>
