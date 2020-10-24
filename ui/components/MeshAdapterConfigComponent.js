@@ -310,7 +310,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
               case "nginx service mesh":
-                image = "/static/img/nginx.svg";
+                image = "/static/img/nginx-sm.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
             }
