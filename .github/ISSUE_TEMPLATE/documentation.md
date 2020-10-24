@@ -7,9 +7,7 @@ assignees: ''
 ---
 **Current State:**
 
-
 **Desired State:**
-
 
 ---
 **Contributor Resources**
