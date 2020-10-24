@@ -451,7 +451,7 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "nginx service mesh":
-        image = "/static/img/nginx-light.svg";
+        image = "/static/img/nginx-sm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
     }

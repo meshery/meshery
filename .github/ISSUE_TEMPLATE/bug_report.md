@@ -1,5 +1,5 @@
 ---
-name: Bug/issue report
+name: 🐛 Bug Report
 about: Report an issue to help improve the project.
 title: ''
 labels: 'kind/bug'
@@ -15,10 +15,10 @@ assignees: ''
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
 **Environment:**
- - OS: [e.g. Ubuntu]
- - Browser: [e.g. Chrome, Safari]
- - Version: [e.g. 22]
- - Device: [e.g. laptop, iPhone 8]
+ - Host OS: 
+ - Meshery Version: 
+ - Kubernetes Version:
+ - Browser: 
 
 ---
 [Optional] **To Reproduce**
