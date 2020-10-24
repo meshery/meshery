@@ -6,21 +6,21 @@ Simplemente dirígete a la página de GitHub y haz clic en el botón "Fork". Es 
 git clone git@github.com:USERNAME/FORKED-PROJECT.git
 ```
 Mantener Tu Fork Actualizado
-Si bien este no es un paso necesario, si planeas hacer algo más que una pequeña solución rápida, querrás asegurarte de mantener tu fork actualizado rastreando el repositorio "upstream" original que bifurcaste. Para hacer esto, deberás agregar un "remote":
+Si bien este no es un paso necesario, si planeas hacer algo más que una pequeña solución rápida, querrás asegurarte de mantener tu fork actualizado rastreando el repositorio "upstream" original al que hiciste "fork". Para hacer esto, deberás agregar un remoto:
 
-## Agregar repositorio 'upstream' a la lista de "remotes"
+## Agregar repositorio 'upstream' a la lista de remotos
 ```
 git remote add upstream https://github.com/layer5io/meshery.git
 ```
 ("meshery" se usa como repositorio de ejemplo. Asegúrate de hacer referencia al repositorio _actual_ al que está contribuyendo, por ejemplo, "meshery-linkerd").
 
-## Verifica el nuevo "remote" llamado 'upstream'
+## Verifica el nuevo repositorio remoto llamado 'upstream'
 ```
 git remote -v
 ```
 Siempre que quieras actualizar tu fork con los últimos cambios de 'upstream', primero deberás buscar las ramas del repositorio 'upstream' y los últimos "commits" para llevarlos a tu repositorio:
 
-## Obtener desde el "remote" 'upstream'
+## Obtener desde el remoto 'upstream'
 ```
 git fetch upstream
 ```
@@ -36,7 +36,7 @@ Ahora, revisa tu rama "master" y combina la rama "master" del repositorio 'upstr
 git checkout master
 git merge upstream/master
 ```
-Si no hay "commits" únicos en la rama "master" local, git simplemente realizará un avance rápido. Sin embargo, si has realizado cambios en "master" (en la gran mayoría de los casos, probablemente no deberías hacerlo; consulta la siguiente sección, es posible que tengas que lidiar con conflictos. Al hacerlo, ten cuidado de respetar los cambios realizados anteriormente.
+Si no hay "commits" únicos en la rama "master" local, git simplemente realizará un "fast-forward". Sin embargo, si has realizado cambios en "master" (en la gran mayoría de los casos, probablemente no deberías hacerlo), consulta la siguiente sección, es posible que tengas que lidiar con conflictos. Al hacerlo, ten cuidado de respetar los cambios realizados anteriormente.
 
 Ahora, tu rama "master" local está actualizada con todo lo modificado en 'upstream'.
 
@@ -68,7 +68,7 @@ Ahora, ve a la ciudad hackeando y haciendo los cambios que quieras.
 ## Enviar tus cambios (un "Pull Request")
 Antes de enviar tu "pull request", es posible que quieras hacer algunas cosas para limpiar tu rama y hacer que sea lo más simple posible para que el "maintainer" del repositorio original pruebe, acepte y haga "merge" de tu trabajo.
 
-En el tiempo que has estado trabajando en tus cambios, si se han hecho "commits" en la rama "master" 'upstream', deberás hacer "rebase" a tu rama de desarrollo para que al hacerle "merge" sea un avance rápido simple que no requiera ninguna trabajo de resolución de conflictos.
+En el tiempo que has estado trabajando en tus cambios, si se han hecho "commits" en la rama "master" 'upstream', deberás hacer "rebase" a tu rama de desarrollo para que al hacerle "merge" sea un "fast-forward" simple que no requiera ninguna trabajo de resolución de conflictos.
 
 ## Obten los cambios de "master" 'upstream' y haz "merge" con la rama "master" de tu repositorio
 ```

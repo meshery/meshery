@@ -6,8 +6,8 @@ description: Cómo el equipo de Meshery maneja las vulnerabilidades de seguridad
 ---
 
 # Informar una vulnerabilidad
-Estamos muy agradecidos con los investigadores de seguridad y los usuarios
-que informan sobre las vulnerabilidades de seguridad de Meshery. Investigamos cada informe a fondo.
+Estamos muy agradecidos con quienes investigan temas de seguridad y quienes informan
+sobre las vulnerabilidades de seguridad de Meshery. Investigamos cada informe a fondo.
 
 Para realizar un informe, envía un correo electrónico
 a la lista de correo privada [meshery-security-vulns-reports@layer5.io](mailto:meshery-security-vulns-reports@layer5.io) con los detalles de la vulnerabilidad.
