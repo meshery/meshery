@@ -15,10 +15,10 @@ assignees: ''
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
 **Environment:**
- - Host OS: 
- - Meshery Version: 
- - Kubernetes Version:
- - Browser: 
+- Host OS: 
+- Meshery Version: 
+- Kubernetes Version: 
+- Browser: 
 
 ---
 [Optional] **To Reproduce**
