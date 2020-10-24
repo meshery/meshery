@@ -250,8 +250,7 @@ class MesheryVisualizeComponent extends React.Component {
                 this.cy.elements().on('click', (event) => { 
                   if(!this.prev){
                     this.prev = event.target;
-                  }
-                  else {
+                  } else {
                     if(event.target === this.prev && open) return;
                     else this.prev = event.target;
                   }
@@ -273,10 +272,10 @@ class MesheryVisualizeComponent extends React.Component {
           </div>
           {
             open && data && <Drawer data={data} open={open}
-                    toggle={(data, val) => {
-                      this.toggleChildMenu(data, val);
-                    }}
-                  />
+              toggle={(data, val) => {
+                this.toggleChildMenu(data, val);
+              }}
+            />
           }
           <ButtonGroup className={classes.zoomButton} color="primary" aria-label="outlined primary button group">
             <Button onClick={this.zoomIn.bind(this)}>+</Button>

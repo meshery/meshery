@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = (theme) => ({
+const useStyles = () => ({
   root: {
     position: 'relative',
     flexGrow: 1,
@@ -104,9 +104,9 @@ class PersistentDrawerRight extends Component {
           open={open}
         >
           <div className={classes.list}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
             <Tabs
               value={value}
               onChange={handleChange}
