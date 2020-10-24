@@ -44,7 +44,7 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return utils.PreReqCheck()
+		return utils.PreReqCheck(cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
