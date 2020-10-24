@@ -161,6 +161,7 @@ class MesheryVisualizeComponent extends React.Component {
   }
 
   toggleChildMenu(data, val) {
+    if(!val) this.prev = null;
     this.setState({open: val, data: data});
   }
 
@@ -248,14 +249,14 @@ class MesheryVisualizeComponent extends React.Component {
                   }
                 });
                 this.cy.elements().on('click', (event) => { 
+                  var sel = event.target;
                   if(!this.prev){
                     this.prev = event.target;
                   } else {
-                    if(event.target === this.prev && open) return;
+                    if(event.target === this.prev) return;
                     else this.prev = event.target;
                   }
                   formalities();
-                  var sel = event.target;
                   this.toggleChildMenu(sel, true);
                   this.cy.startBatch();
                   {
@@ -263,7 +264,16 @@ class MesheryVisualizeComponent extends React.Component {
                     this.cy.elements().difference(sel.outgoers().union(sel.incomers())).not(sel).addClass('semitransp');
                     sel.addClass('highlight').outgoers().union(sel.incomers()).addClass('highlight');
                     this.cy.resize();
-                    this.cy.fit(sel.outgoers().union(sel.incomers()),200);
+                    this.cy.animate({
+                      fit: {
+                        eles: sel.outgoers().union(sel.incomers()),
+                        padding: 200
+                      }
+                    },
+                    {
+                      duration: 500
+                    }
+                    )
                   }
                   this.cy.endBatch();
                 });
