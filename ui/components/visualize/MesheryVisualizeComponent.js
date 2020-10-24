@@ -155,13 +155,13 @@ class MesheryVisualizeComponent extends React.Component {
     this.state = {
       layout: 'cose',
       open: false,
+      data: null
     }
+    this.prev = null;
   }
 
-  toggleChildMenu() {
-    this.setState(state => ({
-      open: !state.open
-    }));
+  toggleChildMenu(data, val) {
+    this.setState({open: val, data: data});
   }
 
   zoomIn() {
@@ -215,7 +215,7 @@ class MesheryVisualizeComponent extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { layout, open } = this.state;
+    const { layout, open, data } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
@@ -248,17 +248,15 @@ class MesheryVisualizeComponent extends React.Component {
                   }
                 });
                 this.cy.elements().on('click', (event) => { 
+                  if(!this.prev){
+                    this.prev = event.target;
+                  } else {
+                    if(event.target === this.prev && open) return;
+                    else this.prev = event.target;
+                  }
                   formalities();
                   var sel = event.target;
-                  var dummyDomEle = document.createElement('div');
-                  dummyDomEle.id = 'ndc';
-                  this.toggleChildMenu();
-                  ReactDOM.render(<Drawer data={sel} open={this.state.open}
-                    toggle={() => {
-                      this.toggleChildMenu();
-                    }}
-                  />, dummyDomEle);
-                  document.body.appendChild(dummyDomEle);
+                  this.toggleChildMenu(sel, true);
                   this.cy.startBatch();
                   {
                     this.cy.elements().removeClass('semitransp','highlight');
@@ -272,6 +270,13 @@ class MesheryVisualizeComponent extends React.Component {
               }}
             />
           </div>
+          {
+            open && data && <Drawer data={data} open={open}
+              toggle={(data, val) => {
+                this.toggleChildMenu(data, val);
+              }}
+            />
+          }
           <ButtonGroup className={classes.zoomButton} color="primary" aria-label="outlined primary button group">
             <Button onClick={this.zoomIn.bind(this)}>+</Button>
             <Button onClick={this.zoomOut.bind(this)}>-</Button>

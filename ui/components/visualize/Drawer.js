@@ -1,5 +1,5 @@
-import React from 'react';
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
+import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = () => ({
   root: {
     position: 'relative',
     flexGrow: 1,
@@ -70,70 +70,77 @@ const useStyles = makeStyles(() => ({
   hide: {
     display: 'none',
   },
-}));
+});
 
-function PersistentDrawerRight(props) {
-  const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-  const [open, setOpen] = React.useState(props.open);
-  console.log(props.open);
-  console.log(props.data.data('app'));
+class PersistentDrawerRight extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      value: 0,
+    };
+  }
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  render(){
+    const { classes, open, data, theme } = this.props;
+    const {
+      value,
+    } = this.state;
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-    props.toggle();
-  };
+    const handleChange = (event, newValue) => {
+      this.setState({ value: newValue});
+    };
 
-  return (
-    <div className={classes.root}>
-      <Drawer
-        classes={{ paper: classes.paper }}
-        variant="persistent"
-        anchor="right"
-        open={open}
-      >
-        <div className={classes.list}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example"
-          >
-            <Tab icon={<InfoIcon />} className={classes.tabroot} {...a11yProps(0)} />
-            <Tab icon={<TrafficIcon />} className={classes.tabroot} {...a11yProps(1)} />
-            <Tab icon={<SecurityIcon />} className={classes.tabroot} {...a11yProps(2)} />
-            <Tab icon={<CloseIcon />} className={classes.tabroot} {...a11yProps(3)} />
-            <Tab icon={<NetworkIcon />} className={classes.tabroot} {...a11yProps(4)} />
-          </Tabs>
-          <TabPanel value={value} index={0}>
-            Item One
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            Item Two    
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            Item Three
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            Item Four    
-          </TabPanel>
-          <TabPanel value={value} index={4}>
-            Item Five
-          </TabPanel>
-        </div>
-      </Drawer>
-    </div>
-  );
+    const handleDrawerClose = () => {
+      const { toggle } = this.props;
+      toggle(null, false);
+    };
+
+    return (
+      <div className={classes.root}>
+        <Drawer
+          classes={{ paper: classes.paper }}
+          variant="persistent"
+          anchor="right"
+          open={open}
+        >
+          <div className={classes.list}>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="scrollable auto tabs example"
+            >
+              <Tab icon={<InfoIcon />} className={classes.tabroot} {...a11yProps(0)} />
+              <Tab icon={<TrafficIcon />} className={classes.tabroot} {...a11yProps(1)} />
+              <Tab icon={<SecurityIcon />} className={classes.tabroot} {...a11yProps(2)} />
+              <Tab icon={<CloseIcon />} className={classes.tabroot} {...a11yProps(3)} />
+              <Tab icon={<NetworkIcon />} className={classes.tabroot} {...a11yProps(4)} />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              {data.data('app')}
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              Item Two
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              Item Three
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              Item Four
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+              Item Five
+            </TabPanel>
+          </div>
+        </Drawer>
+      </div>
+    );
+  }
 }
 
-export default withStyles(useStyles)(PersistentDrawerRight);
+export default withStyles(useStyles, {withTheme: true})(PersistentDrawerRight);
