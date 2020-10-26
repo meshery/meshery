@@ -10,7 +10,7 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
  
 ### Deployments
 
-![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.png)
+![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.svg)
 
 ### Clients
 
