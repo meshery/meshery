@@ -36,7 +36,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)                   |     ✔️      |
 | <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://meshery.layer5.io/docs/installation#windows)                                                      |     ✔️      |
 | &nbsp;&nbsp;&nbsp; [Scoop](https://meshery.layer5.io/docs/installation#windows)                                                                                                                                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2)                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/windows#wsl2)                               |     ✔️      |
 | <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                                | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers thorough installation guides for your platform of choice.
