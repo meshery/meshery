@@ -27,6 +27,16 @@ Meshery has been presented, encouraged and demonstrated in the following events:
 - [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
 - Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/),[video](https://www.youtube.com/watch?v=Q1zSWbO0RmI&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=2&t=0s))
 
+## Presented Meshery?
+
+or want to present Meshery? We'd love you to 🤍
+
+<div class="wrapper">
+    <a href="https://github.com/layer5io/meshery/issues/new?assignees=&labels=area/docs&template=documentation.md&title=[Docs]"><div class="overview">Submit your event!</div></a>
+    <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">I want to talk about Meshery!</div></a>
+</div>
+
+
 ## Other Resources
 
 <div class="row">
@@ -35,15 +45,15 @@ Meshery has been presented, encouraged and demonstrated in the following events:
   <img class="img-thumbnail" src="/docs/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
 </div>
 <div class="column">
-<a href="https://layer5.io/landscape#tools">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/administrative-tools.png" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
+<a target="_blank" href="https://layer5.io/landscape#tools">
+  <img class="img-thumbnail" src="/docs/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
 </div>
 <div class="column">
-<a href="https://layer5.io/books">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/book.png" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
+<a target="_blank" href="https://layer5.io/books">
+  <img  class="img-thumbnail" src="/docs/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
 </div>
 <div class="column">
-<a href="https://layer5.io/workshops">
+<a target="_blank" href="https://layer5.io/workshops">
   <img  class="img-thumbnail" src="/docs/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
 </div>
 </div>

@@ -18736,7 +18736,6 @@ footer {
 
 .img-thumbnail {
     border: 1px solid #ddd;
-    border-radius: 4px;
     padding: 5px;
     max-width:calc(25.00% - 20px); 
     min-height: 150px;
@@ -18752,4 +18751,32 @@ footer {
 .caption {
     display: block;
     font-weight: bold;
+}
+
+/*page styling will be extracted out to another file*/
+/*button style*/
+div.overview {
+    text-align: center; position:relative;float:left;background-color:#3C494F;
+    font-size: 1.75em;
+    padding: 20px;
+    color:aliceblue;
+    margin: 10px;
+    min-width: 205px;
+    width: calc(100% / 3.4);
+    overflow-wrap: break-word;
+    border-radius: 25px;
+}
+
+div.wrapper {
+    width: 100%;
+    text-align: justify;
+    display: inline-block;
+}
+@media (max-width: 715px) {
+    div.wrapper {
+      display: block;
+    }
+    div.overview {
+      float: none;
+    }
 }
