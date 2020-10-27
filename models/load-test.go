@@ -141,7 +141,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		}
 		err = json.Unmarshal(resJ, httpResults)
 		if err != nil {
-			err = errors.Wrap(err, "unable while converting meshery result to benchmark spec")
+			err = errors.Wrap(err, "could not extract Meshery performance results from SMP")
 			logrus.Error(err)
 			return nil, err
 		}
