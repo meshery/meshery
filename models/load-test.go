@@ -128,20 +128,20 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		k1, _ := strconv.Atoi(k)
 		retcodes[k1], _ = v.(int64)
 	}
-	// retcodes[200] = 10
 	m.Result["RetCodes"] = retcodes
+	loadGenerator := m.Result["load-generator"].(string)
 	logrus.Debugf("result to be converted: %+v", m)
 	if m.Result["RunType"].(string) == "HTTP" {
 		httpResults := &fhttp.HTTPRunnerResults{}
 		resJ, err := json.Marshal(m.Result)
 		if err != nil {
-			err = errors.Wrap(err, "unable while converting Meshery result to Benchmark Spec")
+			err = errors.Wrap(err, "unable while converting meshery result to benchmark spec")
 			logrus.Error(err)
 			return nil, err
 		}
 		err = json.Unmarshal(resJ, httpResults)
 		if err != nil {
-			err = errors.Wrap(err, "unable while converting Meshery result to Benchmark Spec")
+			err = errors.Wrap(err, "unable while converting meshery result to benchmark spec")
 			logrus.Error(err)
 			return nil, err
 		}
@@ -153,6 +153,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 
 	result := results.Result()
 	b.StartTime = result.StartTime
+	b.LoadGenerator = loadGenerator
 	b.EndTime = result.StartTime.Add(result.ActualDuration)
 	b.Client.Connections = result.NumThreads
 	b.Client.Rps = result.ActualQPS
