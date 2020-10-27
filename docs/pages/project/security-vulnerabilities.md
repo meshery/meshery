@@ -32,6 +32,8 @@ Don't send a vulnerability report if:
 - You need help applying security related updates.
 - Your issue is not security related.
 
+Instead, join the [Layer5 Slack community](http://slack.layer5.io/) and ask questions.
+
 ## Evaluation
 
 The Meshery team acknowledges and analyzes each vulnerability report within 10 working days.
@@ -48,13 +50,13 @@ Once a security vulnerability has been fully characterized, a fix is developed b
 The development and testing for the fix happens in a private GitHub repository in order to prevent
 premature disclosure of the vulnerability.
 
-## Early disclosure
+## Early disclosures
 
 The Meshery project maintains a mailing list for private early disclosure of security vulnerabilities. 
 The list is used to provide actionable information to close Meshery partners. The list is not intended 
 for individuals to find out about security issues.
 
-## Public disclosure
+## Public disclosures
 
 On the day chosen for public disclosure, a sequence of activities takes place as quickly as possible:
 
@@ -67,7 +69,6 @@ branches.
 
     - The [Meshery blog](https://meshery.io/blog/)
     - The [Meshery Twitter feed](https://twitter.com/mesheryio)
-    - The #announcements channel on Slack
+    - The [#announcements](https://layer5io.slack.com/archives/CSF3PSZT9) channel on [Layer5 Slack](http://slack.layer5.io/)
 
-As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to
-upgrading to a fixed version. 
+As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version. 
