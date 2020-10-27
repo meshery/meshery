@@ -37,10 +37,9 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
-	golang.org/x/net v0.0.0-20200625001655-4c5254603344
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/sys v0.0.0-20200803210538-64077c9b5642 // indirect
-	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
+	golang.org/x/tools v0.0.0-20201027213030-631220838841 // indirect
 	google.golang.org/grpc v1.32.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0

@@ -17,10 +17,10 @@ package root
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layer5io/meshery/handlers"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
