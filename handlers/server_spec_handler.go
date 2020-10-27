@@ -33,7 +33,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// compare the server build with the target build
-	res, err := h.checkLatestVersion(version.Build)
+	res, err := CheckLatestVersion(version.Build)
 	if err != nil {
 		logrus.Errorln(err)
 	} else {
@@ -50,9 +50,9 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// checkLatestVersion takes in the current server version compares it with the target
+// CheckLatestVersion takes in the current server version compares it with the target
 // and returns the result (latest.CheckResponse)
-func (h *Handler) checkLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
+func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	githubTag := &latest.GithubTag{
 		Owner:      mesheryGitHubOrg,
 		Repository: mesheryGitHubRepo,
@@ -62,6 +62,15 @@ func (h *Handler) checkLatestVersion(serverVersion string) (*latest.CheckRespons
 	res, err := latest.Check(githubTag, serverVersion)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to compare latest and current version of Meshery")
+	}
+	// If user is running an outdated release, let them know.
+	if res.Outdated {
+		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
+	}
+
+	// If user is running the latest release, let them know.
+	if res.Latest {
+		logrus.Info("\n", serverVersion, " is the latest Meshery release.")
 	}
 
 	// Add "v" to the "Current" property of the CheckResponse
