@@ -2,6 +2,23 @@
 $coolgray: #3C494F;
 $lightgreen: #00D3A9;
 $darkgreen: #00B39F;
+$darkyellow: #ebc017;
+$lightyellow: #e9c46a;
+
+.l5-dark-yellow {
+    background-color: $darkyellow !important;
+}
+  
+.l5-dark-yellow-text {
+   color: $darkyellow !important;
+}
+  
+.l5-light-yellow {
+  background-color: $lightyellow !important;
+  
+.l5-light-yellow-text {
+  color: $lightyellow !important;
+}
 
 table.adapters {
     box-shadow: 1px 1px 2px grey;

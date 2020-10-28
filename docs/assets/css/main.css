@@ -18756,27 +18756,39 @@ footer {
 /*page styling will be extracted out to another file*/
 /*button style*/
 div.overview {
-    text-align: center; position:relative;float:left;background-color:#3C494F;
+    display:flex;
+    text-align: center; 
+    /* position:relative;float:left; */
+    background-color:#ebc017;
+    color: #111;
     font-size: 1.75em;
     padding: 20px;
-    color:aliceblue;
     margin: 10px;
     min-width: 205px;
-    width: calc(100% / 3.4);
+    /* width: calc(100% / 3.4); */
     overflow-wrap: break-word;
     border-radius: 25px;
+    justify-content:space-evenly;
+    align-content: stretch;
+
 }
 
 div.wrapper {
     width: 100%;
     text-align: justify;
-    display: inline-block;
+    display: flex;
+    -ms-flex-align: center;
+    justify-content:space-evenly;
+    align-content: stretch;
+    margin: auto;  
 }
-@media (max-width: 715px) {
+
+@media (max-width: 720px) {
     div.wrapper {
       display: block;
     }
     div.overview {
-      float: none;
+      margin-left:20%;
+      margin-right:20%;
     }
 }
