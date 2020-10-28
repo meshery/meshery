@@ -113,6 +113,8 @@ class DashboardComponent extends React.Component {
 
       grafana,
       prometheus,
+
+      versionDetail: { build: "", latest: "", outdated: false },
     };
   }
 
@@ -140,6 +142,7 @@ class DashboardComponent extends React.Component {
 
   componentDidMount = () => {
     this.fetchAvailableAdapters();
+    this.fetchVersionDetails();
   };
 
   fetchAvailableAdapters = () => {
@@ -163,6 +166,32 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError("Unable to fetch list of adapters.")
+    );
+  };
+
+  fetchVersionDetails = () => {
+    const self = this
+    this.props.updateProgress({ showProgress: true });
+    dataFetch(
+      "/api/server/version",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail: result });
+        } else {
+          this.setState({versionDetail: {
+            build: "Unknown",
+            latest: "Unknown",
+            outdated: false
+          }});
+        }
+      },
+      self.handleError("Unable to fetch meshery version.")
     );
   };
 
@@ -526,17 +555,49 @@ class DashboardComponent extends React.Component {
       </div>
     );
 
+    /**
+     * getMesheryVersionText returs a well formatted version text
+     * @param {string} type type of version could be "latest" or "current"
+     */
+    const getMesheryVersionText = (type) => {
+      const {build, latest, outdated} = this.state.versionDetail
+      if (type === "current") {
+        if (outdated) return `Running Meshery: stable-${build}`
+        if (build === "Unknown") return "Unknown"
+
+        return `Meshery is up to date: stable-${build}`
+      }
+
+      if (type === "latest") {
+        if (outdated) return `Latest Available: stable-${latest}`
+      }
+
+      return ``
+    };
+
     const showRelease = (
-      //Add Release Version Text
-      <FormControl component="fieldset">
-        <FormLabel component="legend" style={{ fontWeight: "bold" }}>
-          Release Channel
-        </FormLabel>
-        <RadioGroup aria-label="release_channel_option" name="release_channel">
-          <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
-          <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
-        </RadioGroup>
-      </FormControl>
+      <Grid container justify="space-between" spacing={1}>
+        <Grid item xs={12} md={6}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend" style={{ fontWeight: "bold" }}>
+            Channel
+            </FormLabel>
+            <RadioGroup aria-label="release_channel_option" name="release_channel">
+              <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
+              <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={6} style={{padding: "0"}}>
+          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>
+          <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+            {getMesheryVersionText("current")}
+          </Typography>
+          <Typography style={{paddingTop: "8px"}}>
+            {getMesheryVersionText("latest")}
+          </Typography>
+        </Grid>
+      </ Grid>
     );
 
     return (

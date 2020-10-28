@@ -321,6 +321,8 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Message: "Load test completed, fetching metadata now",
 	}
 
+	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
+
 	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
