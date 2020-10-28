@@ -29,7 +29,7 @@ Meshery has been presented, encouraged and demonstrated in the following events:
 
 ## Presented Meshery?
 
-or want to present Meshery? 
+Giving a talk or hosting a meetup about Meshery? Leverage existing slides or request swag to support your talk.
 
 <div class="wrapper">
     <a href="https://github.com/layer5io/meshery/issues/new?assignees=&labels=area/docs&template=documentation.md&title=[Docs]"><div class="overview">Submit your event!</div></a>
