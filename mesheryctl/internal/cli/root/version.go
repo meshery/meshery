@@ -56,12 +56,6 @@ var versionCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-
-		url := mctlCfg.GetBaseMesheryURL()
-		build := mctlCfg.GetVersion().GetBuild()
-		commitsha := mctlCfg.GetVersion().GetCommitSHA()
 
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
 
@@ -88,5 +82,12 @@ var versionCmd = &cobra.Command{
 		}
 
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+		logrus.Infof("Checking for latest version of Meshery....")
+
+		// Inform user of the latest release version
+		_, err = handlers.CheckLatestVersion(version.GetBuild())
+		if err != nil {
+			logrus.Warn("\nMeshery server unreachable. Please confirm that Meshery is running and available")
+		}
 	},
 }
