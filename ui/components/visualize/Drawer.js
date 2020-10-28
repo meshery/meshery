@@ -14,6 +14,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import { NetworkIcon } from '@patternfly/react-icons';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import { Divider, Link, Paper } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import MesheryPerformanceComponent from '../MesheryPerformanceComponent';
+let bb = require('billboard.js');
 // import clsx from 'clsx';
 
 function TabPanel(props) {
@@ -28,8 +37,8 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
+        <Box padding={1}>
+          {children}
         </Box>
       )}
     </div>
@@ -59,7 +68,7 @@ const useStyles = () => ({
   },
   paper: {
     background: 'white',
-    width: '25%'
+    width: '25%',
   },
   flex: {
     flex: 1,
@@ -70,13 +79,74 @@ const useStyles = () => ({
   hide: {
     display: 'none',
   },
+  metrics: {
+    marginTop: 20,
+  },
+  actions: {
+    marginTop: 20,
+  },
+  smp: {
+    padding: '10px',
+    'text-align': 'center'
+  },
+  button: {
+    minWidth: '100%',
+    display: 'block',
+  },
+  icon: {
+    maxWidth: '80%'
+  },
+  modal: {
+    maxWidth: '60%',
+    maxHeight: '60%',
+    margin: 'auto',
+  },
+  modalPaper: {
+    backgroundColor: 'white',
+  }
 });
+
+class Chart extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  componentDidMount() {
+    this._renderChart();
+  }
+
+  _renderChart() {
+    bb.bb.generate({
+      bindto: `#chart-${this.props.id}`,
+      data: {
+        columns: [
+          ["data1", 30, 200, 100, 170, 150, 250],
+          ["data2", 130, 100, 140, 35, 110, 50]
+        ],
+        types: {
+          data1: "bar",
+          data2: "area-spline"
+        },
+        colors: {
+          data1: "red",
+          data2: "green"
+        }
+      }
+    });
+  }
+
+  render() {
+    const { id } = this.props;
+    return <div id={`chart-${id}`} />;
+  }
+}
 
 class PersistentDrawerRight extends Component {
   constructor(props){
     super(props);
     this.state = {
       value: 0,
+      modalOpen: false
     };
   }
 
@@ -84,6 +154,7 @@ class PersistentDrawerRight extends Component {
     const { classes, open, data, theme } = this.props;
     const {
       value,
+      modalOpen
     } = this.state;
 
     const handleChange = (event, newValue) => {
@@ -95,6 +166,14 @@ class PersistentDrawerRight extends Component {
       toggle(null, false);
     };
 
+    const handleModalOpen = () => {
+      this.setState({ modalOpen: true });
+    }
+
+    const handleModalClose = () => {
+      this.setState({ modalOpen: false });
+    }
+
     return (
       <div className={classes.root}>
         <Drawer
@@ -102,6 +181,7 @@ class PersistentDrawerRight extends Component {
           variant="persistent"
           anchor="right"
           open={open}
+          PaperProps={{ elevation: 10}}
         >
           <div className={classes.list}>
             <IconButton onClick={handleDrawerClose}>
@@ -122,7 +202,75 @@ class PersistentDrawerRight extends Component {
               <Tab icon={<NetworkIcon />} className={classes.tabroot} {...a11yProps(4)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-              {data.data('app')}
+              <Typography variant="h6">
+                {data.data('app')}
+              </Typography>
+              <Paper className={classes.actions}>
+                <AppBar style={{position: 'relative'}}>
+                  <Toolbar>
+                    <Typography component={'div'} variant="h6">
+                      Actions
+                    </Typography>
+                  </Toolbar>
+                </AppBar>
+                <Typography style={{padding: '5px', textAlign: 'center'}} variant="h6">
+                  Performance
+                </Typography>
+                <Grid className={classes.smp} container spacing={2}>
+                  <Grid item xs={4}>
+                    <Button className={classes.button} onClick={handleModalOpen}>
+                      <img className={classes.icon} src="/static/img/smp-dark.svg"/>
+                        Adhoc Performance Test
+                    </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button className={classes.button}>
+                      <img className={classes.icon} src="/static/img/smp-dark.svg"/>
+                        Select Performance Profile
+                    </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button className={classes.button}>
+                      <img className={classes.icon} src="/static/img/smp-dark.svg"/>
+                        Some Performance Test
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Divider variant="middle"/>
+                <Typography style={{padding: '5px', textAlign: 'center'}} variant="h6">
+                  Conformance
+                </Typography>
+                <Grid className={classes.smp} container spacing={2}>
+                  <Grid item xs={4}>
+                    <Button className={classes.button}>
+                      <img className={classes.icon} src="/static/img/smc-checklist.svg"/>
+                      Start Conformance Test
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Paper>
+              <Paper className={classes.metrics}>
+                <AppBar style={{position: 'relative'}}>
+                  <Toolbar>
+                    <Typography component={'div'} variant="h6">
+                      Metrics
+                    </Typography>
+                    <Link href="http://localhost:3000" target="_blank">
+                      <IconButton>
+                        <OpenInNewIcon />  
+                      </IconButton>
+                    </Link>
+                  </Toolbar>
+                </AppBar>
+                <Grid container spacing={1}>
+                  <Grid item xs={6}>
+                    <Chart id={1}/>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Chart id={2}/>
+                  </Grid>
+                </Grid>
+              </Paper>
             </TabPanel>
             <TabPanel value={value} index={1}>
               Item Two
@@ -138,6 +286,15 @@ class PersistentDrawerRight extends Component {
             </TabPanel>
           </div>
         </Drawer>
+        <Modal 
+          open={modalOpen}
+          onClose={handleModalClose}
+          className={classes.modal}
+        >
+          <Paper className={classes.modalPaper}>
+            <MesheryPerformanceComponent />
+          </Paper>
+        </Modal>
       </div>
     );
   }

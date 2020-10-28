@@ -18,6 +18,8 @@ import clsx from 'clsx';
 import {
   TopologyIcon
 } from '@patternfly/react-icons';
+import { Paper } from '@material-ui/core';
+import logsJson from './logs';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -90,13 +92,30 @@ const style = (theme) => ({
   wrapper: {
     position: 'relative',
     width: '100%',
-    height: '90%'
+    height: '80%',
+    marginTop: '-20px',
+    marginLeft: '-15px'
   },
 
   wrapper2: {
     position: 'relative',
     width: '70%',
-    height: '90%'
+    height: '80%',
+    marginTop: '-20px',
+    marginLeft: '-15px'
+  },
+
+  logsContainer: {
+    marginTop: '20px',
+  },
+
+  logs: {
+    width: '100%',
+    minHeight: '15vh',
+    overflow: 'auto',
+    resize: 'vertical',
+    color: '#fff',
+    backgroundColor: '#253137'
   }
 });
 
@@ -155,7 +174,8 @@ class MesheryVisualizeComponent extends React.Component {
     this.state = {
       layout: 'cose',
       open: false,
-      data: null
+      data: null,
+      logs: []
     }
     this.prev = null;
   }
@@ -214,9 +234,13 @@ class MesheryVisualizeComponent extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({logs: logsJson.logs.join('\n')});
+  }
+
   render() {
     const { classes } = this.props
-    const { layout, open, data } = this.state;
+    const { layout, open, data, logs } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
@@ -318,6 +342,9 @@ class MesheryVisualizeComponent extends React.Component {
           <ButtonGroup className={classes.saveButton} color="primary" aria-label="outlined primary button group">
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{ textDecoration: 'none' }}>Save</Button>
           </ButtonGroup>
+          <Paper className={classes.logsContainer}>
+            <textarea className={classes.logs} readOnly={true} value={logs} />   
+          </Paper>
         </div>
       </NoSsr>
     )
