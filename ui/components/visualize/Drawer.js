@@ -58,7 +58,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = (theme) => ({
+const useStyles = () => ({
   root: {
     position: 'relative',
     flexGrow: 1,

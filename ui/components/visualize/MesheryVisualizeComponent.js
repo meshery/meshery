@@ -18,7 +18,7 @@ import clsx from 'clsx';
 import {
   TopologyIcon
 } from '@patternfly/react-icons';
-import { Paper, Typography, TextField } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import logsJson from './logs';
 
 cytoscape.use(dagre)
@@ -175,7 +175,7 @@ class MesheryVisualizeComponent extends React.Component {
       layout: 'cose',
       open: false,
       data: null,
-      logs: ['knwdjkwkjcjkdewjkde', 'bwcndwckckjc']
+      logs: []
     }
     this.prev = null;
   }
@@ -235,7 +235,7 @@ class MesheryVisualizeComponent extends React.Component {
   }
 
   componentDidMount() {
-      this.setState({logs: logsJson.logs.join('\n')});
+    this.setState({logs: logsJson.logs.join('\n')});
   }
 
   render() {
