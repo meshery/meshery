@@ -7,7 +7,7 @@ version: v1.0
 port: 10006/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-maesh
-image: /docs/assets/img/service-meshes/traefik.svg
+image: /docs/assets/img/service-meshes/maesh.svg
 ---
 # {{ page.name }}
 

@@ -7,7 +7,7 @@ version: "1.0"
 port: 10008/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-cpx
-image: /docs/assets/img/service-meshes/cpx.png
+image: /docs/assets/img/service-meshes/citrix.svg
 ---
 
 # {{ page.name }}
