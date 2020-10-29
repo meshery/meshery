@@ -17,6 +17,7 @@ package root
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
@@ -125,6 +126,12 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Use default ".meshery" folder location.
+		if _, err := os.Stat(utils.MesheryFolder); err != nil {
+			if os.IsNotExist(err) {
+				os.MkdirAll(utils.MesheryFolder, 0775)
+			}
+		}
+
 		viper.AddConfigPath(utils.MesheryFolder)
 		log.Debug("initConfig: ", utils.MesheryFolder)
 		viper.SetConfigFile(utils.DockerComposeFile)
