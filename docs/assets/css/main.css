@@ -283,7 +283,7 @@ a {
 
 a:hover {
     color: #00b39f;
-    font-weight: bold;
+    font-weight: normal;
     text-decoration: none
 }
 
@@ -18759,18 +18759,19 @@ div.overview {
     display:flex;
     text-align: center; 
     /* position:relative;float:left; */
-    background-color:#ebc017;
-    color: #111;
+    /* background-color:#ebc017; */
+    background: rgb(60,73,79);
+    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 87%);
+    color: #fff;
     font-size: 1.75em;
-    padding: 20px;
+    padding: 40px;
     margin: 10px;
-    min-width: 205px;
+    width: auto;
     /* width: calc(100% / 3.4); */
     overflow-wrap: break-word;
     border-radius: 25px;
     justify-content:space-evenly;
     align-content: stretch;
-
 }
 
 div.wrapper {
@@ -18781,9 +18782,14 @@ div.wrapper {
     justify-content:space-evenly;
     align-content: stretch;
     margin: auto;  
+}  
+
+div.overview:hover {
+    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 92%);
+    color: #eee;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 825px) {
     div.wrapper {
       display: block;
     }
