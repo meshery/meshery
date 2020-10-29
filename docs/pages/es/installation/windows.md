@@ -87,7 +87,7 @@ Si aun desea continuar, siga las instrucciones para <button onclick="HideToggleF
 
 <b>Advertencia</b>: Docker Toolbox es una versión obsoleta. Se recomienda actualizar el sistema e instalar la aplicación Docker Desktop con WSL2. <br/><br />
 
-Docker Toolbox utiliza características específicas del kernel de Linux, y no puede funcionar de forma nativa en Windows. En su lugar, crea y utiliza una pequeña VM de Linux en tu máquina junto con <a href="https://docs.docker.com/machine/overview/"><code>docker-machine</code></a>, y utiliza VirtualBox para ejecutar Docker. <br />
+Docker Toolbox utiliza características específicas del kernel de Linux, y no puede funcionar de forma nativa en Windows. En su lugar, crea y utiliza una pequeña VM de Linux en tu máquina junto con <a href="https://docs.docker.com/machine/overview/"><code>docker-machine</code> </a>, y utiliza VirtualBox para ejecutar Docker. <br />
     <ul>
        <li>  Valla a <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> y descargue la última versión del archivo <code>.exe</code></li>
        <li> Siga estas <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instrucciones</a> para configurar con éxito la aplicación Docker Toolbox. </li>
