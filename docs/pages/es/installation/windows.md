@@ -9,7 +9,7 @@ Para configurar y ejecutar Meshery en Windows:
 
 1. <a href="#step1">Configurar Windows y habilitar Docker </a>
 2. <a href="#step4">Instalar un cluster Kubernetes</a>
-3. <a href="#step5">Ejecutar Meshery</a>
+3. <a href="#step5">Instalar Meshery</a>
 
 ### **Compatibilidad**
 
@@ -81,13 +81,13 @@ Si aun desea continuar, siga las instrucciones para <button onclick="HideToggleF
 
 <div id="hiddendiv">
 <p>
-1. La versión por defecto de WSL está establecida en WSL1 por defecto. Puedes continuar para <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice">instalar la distro</a> de tu elección. <br /><br />
+1. La versión por defecto de WSL está establecida en WSL1 por defecto. Puedes ir al siguiente link para <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice">instalar la distro</a> de tu elección. <br /><br />
 
 2. <b><a href="https://docs.docker.com/toolbox/toolbox_install_windows/">Docker Toolbox</a></b> <br />
 
 <b>Advertencia</b>: Docker Toolbox es una versión obsoleta. Se recomienda actualizar el sistema e instalar la aplicación Docker Desktop con WSL2. <br/><br />
 
-Docker Toolbox utiliza características específicas del kernel de Linux, y no puede funcionar de forma nativa en Windows. En su lugar, crea y utiliza una pequeña VM de Linux en su máquina junto con <a href="https://docs.docker.com/machine/overview/"><code>docker-machine</code></a>, y utiliza VirtualBox para ejecutar Docker. <br />
+Docker Toolbox utiliza características específicas del kernel de Linux, y no puede funcionar de forma nativa en Windows. En su lugar, crea y utiliza una pequeña VM de Linux en tu máquina junto con <a href="https://docs.docker.com/machine/overview/"><code>docker-machine</code></a>, y utiliza VirtualBox para ejecutar Docker. <br />
     <ul>
        <li>  Valla a <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> y descargue la última versión del archivo <code>.exe</code></li>
        <li> Siga estas <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instrucciones</a> para configurar con éxito la aplicación Docker Toolbox. </li>
@@ -131,9 +131,9 @@ export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
 ```
 
 
-#### 5. <a name="step5"><b>Set up Meshery</b></a>
+#### 5. <a name="step5"><b>Instalar Meshery</b></a>
 
-Siga los [pasos de instalación](/docs/installation#windows) para instalar el CLI mesheryctl. Luego, ejecute:
+Siga los [pasos de instalación](/docs/pages/es/installation/windows.md) para instalar el CLI mesheryctl. Luego, ejecute:
 
 ```bash
 ./mesheryctl system start
