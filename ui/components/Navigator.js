@@ -189,10 +189,10 @@ const categories = [
     link: true,
   },
   {
-    id: 'Scope the Mesh',
+    id: 'MeshMap',
     icon: <FontAwesomeIcon icon={faEye} fixedWidth/>,
     href: '/visualize',
-    title: 'Scope the Mesh',
+    title: 'MeshMap',
     show: true,
     link: true,
   },
