@@ -128,7 +128,10 @@ func initConfig() {
 		// Use default ".meshery" folder location.
 		if _, err := os.Stat(utils.MesheryFolder); err != nil {
 			if os.IsNotExist(err) {
-				os.MkdirAll(utils.MesheryFolder, 0775)
+				err = os.MkdirAll(utils.MesheryFolder, 0775)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
 
