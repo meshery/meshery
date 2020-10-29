@@ -18,7 +18,7 @@ class Performance extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Visualize | Meshery</title>
+          <title>MeshMap | Meshery</title>
         </Head>
         <NoSsr>
           <MesheryVisualizeComponentNoSsr />
