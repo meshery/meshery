@@ -22,9 +22,8 @@ require (
 	github.com/gosimple/slug v1.9.0
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
-	github.com/layer5io/gokit v0.1.13 // indirect
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/nighthawk-go v0.1.2
+	github.com/layer5io/nighthawk-go v0.1.4
 	github.com/layer5io/service-mesh-performance v0.2.1
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
@@ -38,9 +37,9 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
-	golang.org/x/net v0.0.0-20200625001655-4c5254603344
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/tools v0.0.0-20200601175630-2caf76543d99 // indirect
+	golang.org/x/tools v0.0.0-20201027213030-631220838841 // indirect
 	google.golang.org/grpc v1.32.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0

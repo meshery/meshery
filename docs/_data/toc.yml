@@ -55,14 +55,14 @@
           url: service-meshes/adapters/maesh
         - title: Network Service Mesh
           url: service-meshes/adapters/nsm/nsm
+        - title: Nginx Service Mesh
+          url: service-meshes/adapters/nginx-sm
         - title: Octarine
           url: service-meshes/adapters/octarine/octarine
         - title: Open Service Mesh
           url: service-meshes/adapters/osm
         - title: Tanzu
           url: service-meshes/adapters/tanzu-sm
-        - title: Nginx Service Mesh
-          url: service-meshes/adapters/nginx-sm
     - title: Extensibility
       url: extensibility
     - title: Guides

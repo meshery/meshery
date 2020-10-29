@@ -36,7 +36,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)                   |     ✔️      |
 | <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://meshery.layer5.io/docs/installation#windows)                                                      |     ✔️      |
 | &nbsp;&nbsp;&nbsp; [Scoop](https://meshery.layer5.io/docs/installation#windows)                                                                                                                                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2)                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/windows#wsl2)                               |     ✔️      |
 | <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                                | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers thorough installation guides for your platform of choice.
@@ -57,44 +57,44 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-istio">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/istio.png' alt='Istio Service Mesh adapter' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/istio.svg' alt='Meshery Adapter for Istio Service Mesh' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-linkerd">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/linkerd.png' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-consul">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/consul.png' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Consul</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/consul.svg' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Consul</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-octarine">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/octarine.png' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nsm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nsm.png' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/nsm.svg' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="stable-adapters"></td></tr>
         <tr>
           <td rowspan="4" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
-            <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
          <tr>
            <td><a href="https://github.com/layer5io/meshery-kuma">
-             <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+             <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
            </td>
         </tr>
           <tr>
           <td><a href="https://github.com/layer5io/meshery-osm">
-            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="beta-adapters"></td></tr>
@@ -103,22 +103,22 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/traefik.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/maesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
           </td>
         </tr>
          <tr>
           <td><a href="https://github.com/layer5io/meshery-tanzu-sm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/tanzu.png' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nginx-sm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nginx-service-mesh.png' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="alpha-adapters"></td></tr>
@@ -149,7 +149,6 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <br /><br /><br /><br />
 
 </p>
-
 
 <h3>Adhering to Service Mesh Standards</h3>
 <img alt="Service Mesh Performance (SMP)" src="docs/assets/img/readme/smp-dark-text.svg" style="margin-left:10px;" width="18%" align="left" />
