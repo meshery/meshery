@@ -81,11 +81,9 @@
       children:
         - title: Contributing
           url: project/contributing
-        - title: Releases
-          url: project/releases
-        - title: Resources
-          url: project/resources 
         - title: FAQ
           url: project/faq
+        - title: Releases
+          url: project/releases
         - title: Vulnerabilities
           url: project/security-vulnerabilities
