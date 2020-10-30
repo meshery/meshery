@@ -2,7 +2,7 @@ import React from 'react';
 import MesherySMIResults from "../components/MesherySMIResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../lib/path";
 

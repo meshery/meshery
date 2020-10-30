@@ -160,6 +160,8 @@ theme = {
         '& svg': {
           fontSize: 20,
         },
+        justifyContent: 'center',
+        minWidth: 0
       },
     },
     MuiAvatar: {
