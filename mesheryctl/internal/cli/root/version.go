@@ -70,6 +70,7 @@ var versionCmd = &cobra.Command{
 		defer checkMesheryctlClientVersion(build)
 		client := &http.Client{}
 		resp, err := client.Do(req)
+
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
 			logrus.Errorf("\nUnable to communicate with Meshery: %v", err)
@@ -77,6 +78,8 @@ var versionCmd = &cobra.Command{
 			return
 		}
 
+		// needs multiple defer as Body.Close needs a valid response
+		defer resp.Body.Close()
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
