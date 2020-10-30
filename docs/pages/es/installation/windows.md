@@ -52,7 +52,7 @@ Abra la Powershell en modo administrador y ejecute:
 
 ```powershell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-Reiniciar-Computadora
+Restart-Computer
 ```
 
 ##### **Elegir tu versión WSL:**
@@ -89,7 +89,7 @@ Si aun desea continuar, siga las instrucciones para <button onclick="HideToggleF
 
 Docker Toolbox utiliza características específicas del kernel de Linux, y no puede funcionar de forma nativa en Windows. En su lugar, crea y utiliza una pequeña VM de Linux en tu máquina junto con <a href="https://docs.docker.com/machine/overview/"><code>docker-machine</code> </a>, y utiliza VirtualBox para ejecutar Docker. <br />
     <ul>
-       <li>  Valla a <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> y descargue la última versión del archivo <code>.exe</code></li>
+       <li>  Diríjase a <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> y descargue la última versión del archivo <code>.exe</code></li>
        <li> Siga estas <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instrucciones</a> para configurar con éxito la aplicación Docker Toolbox. </li>
     </ul>
 
@@ -122,7 +122,7 @@ La aplicación Docker Desktop para Windows incluye un completo conjunto de herra
 
 #### 4. <a name="step4"> <b>Instalar un cluster Kubernetes</b></a>
 
-Una vez que Docker esté instalado, el siguiente paso será instalar un cluster Kubernetes. En este como-hacerlo, se usará [K3d](https://github.com/rancher/k3d) ya que sólo depende de Docker.
+Una vez que Docker esté instalado, el siguiente paso será instalar un cluster Kubernetes. En esta guía, se usará [K3d](https://github.com/rancher/k3d) ya que sólo depende de Docker.
 
 ```bash
 curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
