@@ -2,7 +2,7 @@
 layout: page
 title: Lifecycle Management
 permalink: es/functionality/lifecycle-management
-type: functionality
+type: demostracion
 ---
 
 # Gestión del ciclo de vida del service mesh
@@ -15,7 +15,7 @@ Meshery automatiza el aprovisionamiento de varios service mesh, permitiendo a lo
 Comúnmente junto a cada service mesh hay una aplicación de muestra que facilita la demostración del valor del service mesh dado. Meshery permite que rápidamente despliegue la misma aplicación de muestra en diferentes service mesh.
 
 ## Uso de configuración de service mesh personalizada
-Meshery le brinda la posibilidad, como administrador del service mesh, de personalizar el despliegue de su malla de servicios.
+Meshery le brinda la posibilidad, a usted como administrador, de personalizar el despliegue de su service mesh.
 
 ## Eliminación de un service mesh
 Así como Meshery automatiza el aprovisionamiento de varios service mesh, también facilita el desaprovisionamiento de los service mesh.

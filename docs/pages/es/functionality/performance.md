@@ -2,11 +2,11 @@
 layout: page
 title: Performance Management
 permalink: es/functionality/performance-management
-type: functionality
+type: demostracion
 ---
 
 # Gestión del rendimiento
-La clave del funcionamiento eficiente de cualuier service mesh es la medición y gestión de su rendimiento.
+La clave del funcionamiento eficiente de cualquier service mesh es la medición y gestión de su rendimiento.
 
 ## Generadores de carga
 Meshery proporciona a los usuarios la opción de elegir qué generador de carga prefieren usar para una prueba de rendimiento determinada. Los usuarios pueden establecer su configuración basada en su propia preferencia de generador de carga diferente al generador de carga por defecto.
@@ -19,8 +19,7 @@ Meshery soporta los siguientes generadores de carga y es [extensible](extensibil
 
 ### Fortio
 
-Fortio es un rápido, pequeño (imgen de Docker de 3Mb, dependencias mínimas), 
-reusable, biblioteca go integrable, así como también una herramienta de línea de comandos y un proceso de servidor. El servidor incluye una Interfaz de Usuario web simple y una representación gráfica de los resultados (un gráfico de latencia único y gráficos comparativos de min, max, avg, qps y percentiles gráficos).
+Fortio es un rápida, pequeña (imagen de Docker de 3Mb, dependencias mínimas), reusable, biblioteca de go integrable, así como también una herramienta de línea de comandos y un proceso de servidor. El servidor incluye una Interfaz de Usuario web simple y una representación gráfica de los resultados (un gráfico de latencia único y gráficos comparativos de min, max, avg, qps y percentiles gráficos).
 
 ### wrk2
 
@@ -30,13 +29,13 @@ Es una herramienta moderna de evaluación comparativa HTTP capaz de generar una 
 
 NightHawk es una herramienta de caracterización L7 (HTTP/HTTPS/HTTP2). Actualmente ofrece:
 
-- Un cliente de prueba de carga que soporta HTTP/1.1 y HTTP/2 sobre HTTP y HTTPS (Los certificados HTTPS aún no se validan).
+- Un cliente de prueba de carga que soporta HTTP/1.1 y HTTP/2 sobre HTTP y HTTPS (los certificados HTTPS aún no se validan).
 - Un servidor de prueba simple capaz de generar tamaños de respuestas dinámicas, así como también inyectar retrasos.
 - Un binario para tranformar la salida de NightHawk a formatos conocidos, permitiendo la integración con otros sistemas y paneles.
 
 ## Node y métricas del service mesh
 
-Meshery proporciona los resultados de pruebas de rendimiento junto a las méticas del entorno, incluyendo el control del service mesh y las métricas del plano de datos. También incluye las métricas de los recursos del nodo del clúster, para que los operadores puedan comprender fácilmente la sobrecarga del plano de control y el plano de datos de su service mesh en el contexto de la sobrecarga incurrida en los nodos dentro del clúster.
+Meshery proporciona los resultados de pruebas de rendimiento junto a las métricas del entorno, incluyendo el control del service mesh y las métricas del plano de datos. También incluye las métricas de los recursos del nodo del clúster, para que los operadores puedan comprender fácilmente la sobrecarga del plano de control y el plano de datos de su service mesh en el contexto de la sobrecarga incurrida en los nodos dentro del clúster.
 
 ## Grafana y Meshery
 
@@ -55,7 +54,7 @@ Si tiene una clave de API configurada para restringir el acceso a sus tableros d
 * Configuración de las preferencias del panel de gráficos
 
 ## Prometheus y Meshery
-Meshery permite a los usuarios conectarse a una o más instancias de Prometheus para recopilar datos telemétricos (en forma de métricas). Estas métricas pueden pertenecer al service mesh, Kubernetes, aplicaciones en la malla o realmente... cualquier mátrica que Prometheus haya recolectado.
+Meshery permite a los usuarios conectarse a una o más instancias de Prometheus para recopilar datos telemétricos (en forma de métricas). Estas métricas pueden pertenecer al service mesh, Kubernetes, aplicaciones en la malla o realmente... cualquier métrica que Prometheus haya recolectado.
 
 Una vez que haya conectado Meshery a su (s) despliegue (es) de Prometheus, puede realizar pruebas de conectividad ad-hoc para verificar la comunicación entre Meshery y Prometheus.
 
