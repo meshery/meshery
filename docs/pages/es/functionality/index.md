@@ -1,10 +1,10 @@
 ---
 layout: page
 title: Functionality
-permalink: functionality
+permalink: es/functionality
 ---
 
-# Meshery Functionality
+# Funcionalidades de Meshery
 
 Estas secciones proveen guías de usuario sobre las funcionalidades que ofrece Meshery.
 
