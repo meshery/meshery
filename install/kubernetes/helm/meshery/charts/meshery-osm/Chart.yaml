@@ -1,21 +1,10 @@
 apiVersion: v2
-name: meshery
-description: Meshery chart for deploying Meshery and Meshery's adapters.
-icon: https://github.com/layer5io/meshery/blob/master/ui/public/static/img/meshery-logo/meshery-logo.svg
-kubeVersion: 
-keywords:
-  - meshery
-  - mesheryistio
-  - mesherylinkerd
-  - mesheryconsul
-  - meshery-osm
+name: meshery-osm
+description: Meshery Adapter for Open Service Mesh
 source: 
-  - https://github.com/layer5io/meshery
-
-engine: gotpl
+  - https://github.com/layer5io/meshery-osm
 
 deprecated: false
-
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -28,28 +17,17 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 1.1.0
+version: 0.1.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-# TODO: Need to confirm the image version
-appVersion: stable-latest
-
-
-dependencies:
-- name: mesheryistio
-  version: 0.1.0
-  condition: mesheryistio.enabled
-- name: mesherylinkerd
-  version: 0.1.0
-  condition: mesherylinkerd.enabled
-- name: mesheryconsul
-  version: 0.1.0
-  condition: mesheryconsul.enabled
-- name: meshery-osm
-  version: 0.1.0
-  condition: meshery-osm.enabled
+# TODO: Need the confirm the image tag.
+appVersion: 0.2.2
 
 maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
   - name: aisuko
     email: urakiny@gmail.com
+  - name: leecalcote
+    email: leecalcote@gmail.com
