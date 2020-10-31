@@ -27,7 +27,7 @@ permalink: es/architecture
 
 Meshery utiliza la siguiente lista de puertos de red para conectarse con sus múltiples componentes:
 
-| Applicación de Red                             | Puerto             |
+| Applicación de Red                             | Puerto           |
 | :--------------------------------------------- | :--------------: |
 | Meshery REST API                               | 9081/tcp         |
 | Learn Layer5 Application                       | 10011            |
@@ -48,9 +48,9 @@ Véase la sección de [**Adaptadores**](/docs/architecture/adapters) para más i
 
 Algunos componentes dentro la arquitectura de Meshery se preocupan por la persistencia de datos mientras que otros se preocupan por una configuración duradera, mientras que otros no lo consideran.
 
-| Componentes        | Persistencia  | Descripción                                                           |
-| :---------------------- | :------------- | :-------------------------------------------------------------------- |
-| mesheryctl              | stateless      | interface de línea de comando con un archivo de configuración                   |
-| Adaptadores de Meshery  | stateless      | interface con service meshes con una base transaccional                |
-| Servidor de Meshery     | caches state   | caché de aplicación guardada en la carpeta de usuario $HOME/.meshery/`        |
+| Componentes             | Persistencia   | Descripción                                                           			  |
+| :---------------------- | :------------- | :------------------------------------------------------------------------------- |
+| mesheryctl              | stateless      | interface de línea de comando con un archivo de configuración                    |
+| Adaptadores de Meshery  | stateless      | interface con service meshes con una base transaccional                		  |
+| Servidor de Meshery     | caché de estado| caché de aplicación guardada en la carpeta de usuario $HOME/.meshery/`           |
 | Proveedores de Meshery  | stateful       | ubicación de preferencias persitentes de usuario, ambiente, pruebas, entre otros |
