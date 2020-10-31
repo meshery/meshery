@@ -2,11 +2,18 @@ import { NoSsr } from "@material-ui/core";
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { getPath } from "../lib/path";
+import { connect } from "react-redux";
+import { updatepagepath } from "../lib/store";
+import { bindActionCreators } from 'redux';
 
 class Performance extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
   componentDidMount () {
     console.log(`path: ${getPath()}`);
-    // this.props.updatepagepath({ path: getPath() });
+    this.props.updatepagepath({ path: getPath() });
   }
 
   render () {
@@ -28,4 +35,11 @@ class Performance extends React.Component {
   }
 }
 
-export default Performance;
+const mapDispatchToProps = dispatch => ({
+  updatepagepath: bindActionCreators(updatepagepath, dispatch)
+})
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Performance);

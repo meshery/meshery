@@ -20,6 +20,7 @@ import {
 } from '@patternfly/react-icons';
 import { Paper } from '@material-ui/core';
 import logsJson from './logs';
+import MiniDrawer from './MiniDrawer';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -91,18 +92,14 @@ const style = (theme) => ({
 
   wrapper: {
     position: 'relative',
-    width: '100%',
+    width: '95%',
     height: '80%',
-    marginTop: '-20px',
-    marginLeft: '-15px'
   },
 
   wrapper2: {
     position: 'relative',
     width: '70%',
     height: '80%',
-    marginTop: '-20px',
-    marginLeft: '-15px'
   },
 
   logsContainer: {
@@ -111,7 +108,7 @@ const style = (theme) => ({
 
   logs: {
     width: '100%',
-    minHeight: '15vh',
+    minHeight: '13vh',
     overflow: 'auto',
     resize: 'vertical',
     color: '#fff',
@@ -175,6 +172,7 @@ class MesheryVisualizeComponent extends React.Component {
       layout: 'cose',
       open: false,
       data: null,
+      tab: 0,
       logs: []
     }
     this.prev = null;
@@ -183,6 +181,10 @@ class MesheryVisualizeComponent extends React.Component {
   toggleChildMenu(data, val) {
     if(!val) this.prev = null;
     this.setState({open: val, data: data});
+  }
+
+  toggleMiniDrawer(tab){
+    this.setState({open: true, tab: tab});
   }
 
   zoomIn() {
@@ -240,12 +242,17 @@ class MesheryVisualizeComponent extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, logs } = this.state;
+    const { layout, open, data, logs, tab } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
     return (
       <NoSsr>
+        <MiniDrawer 
+          toggle={(tab) => {
+            this.toggleMiniDrawer(tab);
+          }}
+        />
         <div className={clsx({ [classes.wrapper]: !open }, {
           [classes.wrapper2]: open,
         })} >
@@ -305,7 +312,7 @@ class MesheryVisualizeComponent extends React.Component {
             />
           </div>
           {
-            open && data && <Drawer data={data} open={open}
+            open && <Drawer data={data} open={open} tab={tab}
               toggle={(data, val) => {
                 this.toggleChildMenu(data, val);
               }}

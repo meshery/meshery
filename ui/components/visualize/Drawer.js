@@ -145,7 +145,7 @@ class PersistentDrawerRight extends Component {
   constructor(props){
     super(props);
     this.state = {
-      value: 0,
+      value: this.props.tab,
       modalOpen: false
     };
   }
@@ -156,6 +156,10 @@ class PersistentDrawerRight extends Component {
       value,
       modalOpen
     } = this.state;
+
+    if(data){
+      console.log(data.data('app'));
+    }
 
     const handleChange = (event, newValue) => {
       this.setState({ value: newValue});
@@ -202,9 +206,9 @@ class PersistentDrawerRight extends Component {
               <Tab icon={<NetworkIcon />} className={classes.tabroot} {...a11yProps(4)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-              <Typography variant="h6">
+              {/* <Typography variant="h6">
                 {data.data('app')}
-              </Typography>
+              </Typography> */}
               <Paper className={classes.actions}>
                 <AppBar style={{position: 'relative'}}>
                   <Toolbar>
