@@ -420,6 +420,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     // setExpanded(!expanded);
   }
 
+  /**
+   * generateMenu generates the management menus for the adapater management plane
+   * @param {*} cat
+   * @param {boolean} isDelete if set to true, a delete menu will be generated
+   * @param {{key: string, value: string, category?: number}[]} selectedAdapterOps is the array of the meshery adapaters
+   * 
+   * @returns {JSX.Element}
+   */
   generateMenu(cat, isDelete, selectedAdapterOps) {
     const { menuState } = this.state;
     const ele = !isDelete ? this.addIconEles[cat] : this.delIconEles[cat];
@@ -431,11 +439,13 @@ class MesheryAdapterPlayComponent extends React.Component {
         open={menuState[cat][isDelete ? "delete" : "add"]}
         onClose={this.addDelHandleClick(cat, isDelete)}
       >
-        {selectedAdapterOps.map(({ key, value }) => (
-          <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(cat, key, isDelete)}>
-            {value}
-          </MenuItem>
-        ))}
+        {selectedAdapterOps
+          .sort((adap1, adap2) => adap1.value.localeCompare(adap2.value))
+          .map(({ key, value }) => (
+            <MenuItem key={`${key}_${new Date().getTime()}`} onClick={this.handleSubmit(cat, key, isDelete)}>
+              {value}
+            </MenuItem>
+          ))}
       </Menu>
     );
   }
