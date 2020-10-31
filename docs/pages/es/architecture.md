@@ -48,9 +48,9 @@ Véase la sección de [**Adaptadores**](/docs/architecture/adapters) para más i
 
 Algunos componentes dentro la arquitectura de Meshery se preocupan por la persistencia de datos mientras que otros se preocupan por una configuración duradera, mientras que otros no lo consideran.
 
-| Componentes             | Persistencia   | Descripción                                                           	    |
+| Componentes             | Persistencia   | Descripción                                                                      |
 | :---------------------- | :------------- | :------------------------------------------------------------------------------- |
 | mesheryctl              | stateless      | interface de línea de comando con un archivo de configuración                    |
-| Adaptadores de Meshery  | stateless      | interface con service meshes con una base transaccional                	   |
+| Adaptadores de Meshery  | stateless      | interface con service meshes con una base transaccional                          |
 | Servidor de Meshery     | caché de estado| caché de aplicación guardada en la carpeta de usuario $HOME/.meshery/`           |
 | Proveedores de Meshery  | stateful       | ubicación de preferencias persitentes de usuario, ambiente, pruebas, entre otros |
