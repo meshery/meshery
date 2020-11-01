@@ -15,7 +15,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gogo/protobuf v1.3.1 // indirect
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.4.3
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/gorilla/mux v1.8.0
