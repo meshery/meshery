@@ -17,6 +17,7 @@ fortio.org/fortio v1.6.8 h1:YTV+6ydEyfn+bdTAYBofWg+VsOPRS5Q6fPI0cmjsmGE=
 fortio.org/fortio v1.6.8/go.mod h1:sbKl3MB8+XZTZ4HvLcBPUvFYPmMKG5zKsoCmgbo/YR8=
 fortio.org/fortio v1.8.1 h1:LLmsiKUKO8D1x42BoVm/aLJ9wvNJW/1ZJhwJeOWw6ZA=
 fortio.org/fortio v1.8.1/go.mod h1:sbKl3MB8+XZTZ4HvLcBPUvFYPmMKG5zKsoCmgbo/YR8=
+fortio.org/fortio v1.11.0/go.mod h1:sbKl3MB8+XZTZ4HvLcBPUvFYPmMKG5zKsoCmgbo/YR8=
 github.com/Azure/go-autorest v11.1.2+incompatible/go.mod h1:r+4oMnoxhatjLLJ6zxSWATqVooLgysK6ZNox3g/xq24=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
