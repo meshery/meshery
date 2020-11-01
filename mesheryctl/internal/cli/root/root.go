@@ -36,6 +36,7 @@ type TerminalFormatter struct{}
 var (
 	cfgFile     string
 	mctlCfgFile string
+	k8sCfgFile  string
 	version     = "Not Set"
 	commitsha   = "Not Set"
 )
@@ -101,6 +102,7 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
 	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", utils.MesheryFolder+"/mesheryctlConfig.yaml", "mesheryctl config file to override defaults (default file: "+utils.MesheryFolder+"/mesheryctlConfig.yaml)")
+	RootCmd.PersistentFlags().StringVar(&k8sCfgFile, "kubeconfig", "~/.kube/config", "Path to Kubernetes config file (default file: $HOME/.kube/config)")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
