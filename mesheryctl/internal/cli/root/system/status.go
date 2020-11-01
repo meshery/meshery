@@ -37,16 +37,16 @@ var statusCmd = &cobra.Command{
 
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
 
-		outputStd, err := start.Output();
+		outputStd, err := start.Output()
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to get meshery status"))
+			return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 		}
 
 		outputString := string(outputStd)
 		if strings.Contains(outputString, "meshery") {
-			 log.Info(outputString)
+			log.Info(outputString)
 		} else {
-			log.Info("Meshery is not running, run `mesheryctl system start` to start meshery")
+			log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
 		}
 
 		return nil
