@@ -46,7 +46,7 @@
     "codemirror": "^5.56.0",
     "eslint-loader": "^4.0.2",
     "immutable": "^4.0.0-rc.12",
-    "isomorphic-unfetch": "^3.0.0",
+    "isomorphic-unfetch": "^3.1.0",
     "js-yaml": "^3.13.1",
     "jsonlint-mod": "^1.7.4",
     "jss": "latest",
