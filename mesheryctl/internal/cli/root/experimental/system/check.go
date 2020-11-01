@@ -32,9 +32,12 @@ var (
 // StopCmd represents the stop command
 var checkCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Run checks on Meshery",
-	Long:  `Run comprehensive checks on Meshery environment, server and all adapters`,
-	Args:  cobra.NoArgs,
+	Short: "Run checks on Meshery to look for potential problems",
+	Long: `Run checks on Meshery to look for potential problems
+
+The check command will perform a series of checks to validate that Meshery is configured correctly.
+It checks the pre-requisites and also the status of the Meshery components.`,
+	Args: cobra.NoArgs,
 	// XXX (nitishm): Do we need to run this as a pre-run?
 	//PreRunE: func(cmd *cobra.Command, args []string) error {
 	//	return utils.PreReqCheck(cmd.Use)
@@ -118,7 +121,7 @@ func check() error {
 }
 
 func init() {
-	checkCmd.Flags().BoolVarP(&preflightChecks, "preflight", "",
+	checkCmd.Flags().BoolVarP(&preflightChecks, "pre", "",
 		false, "(optional) Checks status of docker and kubernetes only.")
 
 }
