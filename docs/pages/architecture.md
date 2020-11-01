@@ -24,12 +24,12 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 ## Clients
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-[![Client architecture](/docs/assets/img/architecture/meshery-client-architecture.svg)](/docs/assets/img/architecture/meshery-client-architecture.svg)
+[![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)](/docs/assets/img/architecture/Meshery-client-architecture.svg)
 
 ## Providers
 As a point of extension, Meshery supports two types of providers: _Local_ and _Remote_.
 
-[![Provider architecture](/docs/assets/img/architecture/meshery-provider-architecture.svg)](/docs/assets/img/architecture/meshery-provider-architecture.svg)
+[![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
 
 ## Object Model
 This diagram outlines logical constructs within Meshery and their relationships.
