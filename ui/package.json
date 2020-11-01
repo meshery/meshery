@@ -48,7 +48,7 @@
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
     "js-yaml": "^3.13.1",
-    "jsonlint-mod": "^1.7.4",
+    "jsonlint-mod": "^1.7.6",
     "jss": "latest",
     "minimist": ">=1.2.2",
     "moment": "^2.29.1",
