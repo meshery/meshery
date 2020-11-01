@@ -242,7 +242,8 @@ export default {
         "id": "721ef0b8cfba57d153213a5d659ae9da",
         "parent": "bcbbc26d201909101e45d8edb0b617ae",
         "nodeType": "app",
-        "namespace": "default"
+        "namespace": "default",
+        "URL": "http://google.com"
       },
       "position": {
         "x": 342,
