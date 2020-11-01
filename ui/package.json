@@ -89,7 +89,7 @@
     "http-proxy": "^1.18.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.5.0",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.6",
     "start-server-and-test": "^1.11.2"
   }
 }
