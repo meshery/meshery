@@ -5,14 +5,17 @@ permalink: overview
 ---
 
 # Introducing Meshery
-The service mesh management plane adopting, operating and developing on different service meshes. 
+As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads.
 Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+
 Meshery provides this high-level functionality:
 
 1. Service Mesh Performance Management
 1. Service Mesh Configuration Management
-    - Configuration best practices
+  - Configuration best practices
 1. Service Mesh Lifecycle Management
+1. Data Plane Intelligence 
+  - WebAssembly filters for Envoy
 1. Service Mesh Interoperability and Federation
 
 <iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
