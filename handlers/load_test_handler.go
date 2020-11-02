@@ -87,7 +87,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	testClient := perfTest.Clients[0]
 
 	// TODO: consider the multiple endpoints
-	loadTestOptions.URL = testClient.EndpointUrl[0]
+	loadTestOptions.URL = testClient.EndpointUrls[0]
 	loadTestOptions.HTTPNumThreads = int(testClient.Connections)
 	loadTestOptions.HTTPQPS = float64(testClient.Rps)
 
