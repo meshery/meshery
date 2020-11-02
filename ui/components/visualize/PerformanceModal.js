@@ -27,25 +27,25 @@ class PerformanceDialog extends Component {
   render() {
 
     return(
-    <Dialog
-      open={this.props.open}
-      onClose={this.props.handleClose}
-      aria-labelledby="performance-dialog-title"
-      aria-describedby="performance-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">{"Performance Test"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="performance-component">
-          <MesheryPerformanceComponent
-          />
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={this.props.handleClose} color="primary">
+      <Dialog
+        open={this.props.open}
+        onClose={this.props.handleClose}
+        aria-labelledby="performance-dialog-title"
+        aria-describedby="performance-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Performance Test"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="performance-component">
+            <MesheryPerformanceComponent
+            />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.props.handleClose} color="primary">
           Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+          </Button>
+        </DialogActions>
+      </Dialog>
     )
   }
 }
