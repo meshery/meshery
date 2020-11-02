@@ -307,8 +307,7 @@ github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRr
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
 github.com/layer5io/nighthawk-go v0.1.4 h1:bwu81fsdp6XkeirGkHwo9Vkwn1XQYMMibtwrK8VypDM=
 github.com/layer5io/nighthawk-go v0.1.4/go.mod h1:gbi0RbmV9VElcQaJlMAAjEwtMTBzptn7i737/MidKCM=
-github.com/layer5io/service-mesh-performance v0.2.1 h1:QnaFCpq2fVOjlKgJGz6KFR9zXdtnNysP3A2D0/mTqO8=
-github.com/layer5io/service-mesh-performance v0.2.1/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
+github.com/layer5io/service-mesh-performance v0.3.0 h1:x9Qc34KKmeQAE0xdneyUCDWyFTrbSxevc0TZcrl5NLI=
 github.com/layer5io/service-mesh-performance v0.3.0/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
 github.com/lightstep/lightstep-tracer-common/golang/gogo v0.0.0-20190605223551-bc2310a04743/go.mod h1:qklhhLq1aX+mtWk9cPHPzaBjWImj5ULL6C7HFJtXQMM=
 github.com/lightstep/lightstep-tracer-go v0.18.1/go.mod h1:jlF1pusYV4pidLvZ+XD0UBX0ZE6WURAspgAczcDHrL4=
