@@ -28,10 +28,10 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		if !(testClient.LoadGenerator == Wrk2LG.Name() || testClient.LoadGenerator == FortioLG.Name()) {
 			return errors.Errorf("specify valid Loadgenerator")
 		}
-		if len(testClient.EndpointUrl) < 1 {
+		if len(testClient.EndpointUrls) < 1 {
 			return errors.Errorf("minimum one test endpoint needs to be specified")
 		}
-		for _, URL := range testClient.EndpointUrl {
+		for _, URL := range testClient.EndpointUrls {
 			if _, err := url.Parse(URL); err != nil {
 				return errors.Wrapf(err, "Enter valid URLs")
 			}
