@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {updateLoadTestData} from '../../lib/store';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -7,11 +10,26 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MesheryPerformanceComponent from '../MesheryPerformanceComponent';
 
-export default function PerformanceDialog({open, handleClose, urlForModal}) {
-  return (
+
+class PerformanceDialog extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+    this.props.updateLoadTestData({
+      loadTest: {
+        url: this.props.urlForModal
+      },
+    });
+  }
+
+  render() {
+
+    return(
     <Dialog
-      open={open}
-      onClose={handleClose}
+      open={this.props.open}
+      onClose={this.props.handleClose}
       aria-labelledby="performance-dialog-title"
       aria-describedby="performance-dialog-description"
     >
@@ -19,15 +37,24 @@ export default function PerformanceDialog({open, handleClose, urlForModal}) {
       <DialogContent>
         <DialogContentText id="performance-component">
           <MesheryPerformanceComponent
-            customURL={urlForModal}
           />
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={this.props.handleClose} color="primary">
           Close
         </Button>
       </DialogActions>
     </Dialog>
-  );
+    )
+  }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
+})
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(PerformanceDialog);

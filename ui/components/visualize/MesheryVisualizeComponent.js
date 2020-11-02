@@ -211,8 +211,8 @@ class MesheryVisualizeComponent extends React.Component {
           content: 'Perf', // html/text content to be displayed in the menu
           contentStyle: {}, // css key:value pairs to set the command's css in js if you want
           select: function (ele) { // a function to execute when the command is selected
-            this.setState({showModal: true})
             this.setState({urlForModal: ele._private?.data?.URL ?? ''}) // `ele` holds the reference to the active element
+            this.setState({showModal: true})
           }.bind(this),
           enabled: true // whether the command is selectable
         },
