@@ -12,7 +12,7 @@ image:
 env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007
 
 probe:
   #TODO: Need to confirm the health check path of meshery. 
@@ -93,12 +93,17 @@ mesheryistio:
 # Deploy meshery-linkerd
 # 
 mesherylinkerd:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-linkerd
 
+
 mesheryconsul:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-consul
+
+meshery-kuma:
+  enabled: false
+  fullnameOverride: meshery-kuma
 
 # If there need the test cases set it as true.
 #

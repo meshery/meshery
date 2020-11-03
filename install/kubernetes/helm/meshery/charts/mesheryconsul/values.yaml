@@ -34,9 +34,7 @@ serviceAccount:
 podSecurityContext: {}
   # fsGroup: 2000
 
-annotations:
-  kompose.cmd: kompose convert -f ../docker-compose.yaml
-  kompose.version: 1.17.0 ()
+annotations: {}
 
 securityContext: {}
   # capabilities:
@@ -49,17 +47,14 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 10002
-  annotations:
-    kompose.cmd: kompose convert -f ../docker-compose.yaml
-    kompose.version: 1.17.0 ()
+  annotations: {}
 
 ingress:
   enabled: false
   annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-    kompose.cmd: kompose convert -f ../docker-compose.yaml
-    kompose.version: 1.17.0 ()
+
   hosts:
     - host: chart-example.local
       paths: []
