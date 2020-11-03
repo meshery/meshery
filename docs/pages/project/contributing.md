@@ -5,7 +5,7 @@ permalink: project/contributing
 ---
 # <a name="contributing">Contributing Overview</a>
 
-Please do! Thanks for your help! 
+Please do! Thanks for your help! :balloon:
 
 This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md). 
 

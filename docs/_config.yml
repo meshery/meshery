@@ -74,6 +74,16 @@ collections:
   docs:
     output: true
     permalink: /:collection/:path
+  adapters:
+    output: true
+    permalink: /service-meshes/:collection/:path
+    name: adapters
+  guides:
+    output: true
+    permalink: /:collection/:path
+  es:
+    output: true
+    permalink: /:collection/:path
 
 # Defaults
 defaults:
