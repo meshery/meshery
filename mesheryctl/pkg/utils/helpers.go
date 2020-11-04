@@ -167,7 +167,7 @@ func PreReqCheck(subcommand string) error {
 		}
 		err = startdockerdaemon(subcommand)
 		if err != nil {
-			return errors.Wrapf(err, "failed to start Docker daemon. Run `mesheryctl system %s` once docker is started.", subcommand)
+			return errors.Wrapf(err, "failed to start Docker daemon.")
 		}
 	}
 	//Check for installed docker-compose on client system
@@ -186,8 +186,17 @@ func PreReqCheck(subcommand string) error {
 }
 
 func startdockerdaemon(subcommand string) error {
+	// read user input on whether to start Docker daemon or not.
+	var userinput string
+	fmt.Printf("Do you want to start Docker daemon now?(y/n): ")
+	fmt.Scan(&userinput)
+	userinput = strings.TrimSpace(userinput)
+	userinput = strings.ToLower(userinput)
+	if userinput == "n" || userinput == "no" {
+		return errors.Errorf("please start Docker then run the command `mesheryctl system %s`", subcommand)
+	}
+
 	log.Info("Attempting to start Docker daemon")
-	// TODO: read user input on whether to start docker or not.
 	// once user gaves permission, start docker daemon on linux/macOS
 	if runtime.GOOS == "linux" {
 		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
@@ -201,7 +210,7 @@ func startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "20").Run()
+		err = exec.Command("sleep", "30").Run()
 		if err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
