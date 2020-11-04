@@ -27,9 +27,9 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, r *http.Request, pr
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-
 	if err := json.NewEncoder(w).Encode(meshes); err != nil {
-		logrus.Errorf("unable to send data: %v", err)
+		logrus.Errorf("error encoding meshlist object: %v", err)
+		http.Error(w, "Error encoding meshlist object", http.StatusInternalServerError)
+		return
 	}
 }
