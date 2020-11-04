@@ -379,7 +379,8 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this
     dataFetch('/api/perf/meshes', {
       credentials: 'same-origin',
-      credentials: 'include'
+      credentials: 'include',
+      method: 'GET'
     }, (result) => {
       if (result && Array.isArray(result.available_meshes)) {
         self.setState({ 
