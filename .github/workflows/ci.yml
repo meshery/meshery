@@ -71,10 +71,10 @@ jobs:
           ${{ runner.os }}-go-        
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v2
       with:
-        name: main
-        path: main
+        name: meshery
+        path: ./main
   build-ui:
     name: UI build
     runs-on: ubuntu-latest
@@ -136,10 +136,9 @@ jobs:
         with:
           fetch-depth: 1
       - name: Download artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v2
         with:
-          name: main
-          path: .
+          name: meshery
       - name: Setup go
         uses: actions/setup-go@v1
         with:
