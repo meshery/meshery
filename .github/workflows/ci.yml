@@ -139,7 +139,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: main
-          path: main
+          path: .
       - name: Setup go
         uses: actions/setup-go@v1
         with:
