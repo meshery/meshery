@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Drawer from '@material-ui/core/Drawer';
@@ -22,7 +24,8 @@ import { Divider, Link, Paper } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import MesheryPerformanceComponent from '../MesheryPerformanceComponent';
-let bb = require('billboard.js');
+import GrafanaCustomCharts from '../GrafanaCustomCharts';
+// let bb = require('billboard.js');
 // import clsx from 'clsx';
 
 function TabPanel(props) {
@@ -106,40 +109,6 @@ const useStyles = () => ({
   }
 });
 
-class Chart extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
-  componentDidMount() {
-    this._renderChart();
-  }
-
-  _renderChart() {
-    bb.bb.generate({
-      bindto: `#chart-${this.props.id}`,
-      data: {
-        columns: [
-          ["data1", 30, 200, 100, 170, 150, 250],
-          ["data2", 130, 100, 140, 35, 110, 50]
-        ],
-        types: {
-          data1: "bar",
-          data2: "area-spline"
-        },
-        colors: {
-          data1: "red",
-          data2: "green"
-        }
-      }
-    });
-  }
-
-  render() {
-    const { id } = this.props;
-    return <div id={`chart-${id}`} />;
-  }
-}
 
 class PersistentDrawerRight extends Component {
   constructor(props){
@@ -151,7 +120,10 @@ class PersistentDrawerRight extends Component {
   }
 
   render(){
-    const { classes, open, data, theme } = this.props;
+    const { classes, open, data, theme, } = this.props;
+    const {
+      grafanaURL, grafanaAPIKey, selectedBoardsConfigs,
+    } = this.props.grafana;
     const {
       value,
       modalOpen
@@ -253,11 +225,13 @@ class PersistentDrawerRight extends Component {
                   </Grid>
                 </Grid>
               </Paper>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
               <Paper className={classes.metrics}>
                 <AppBar style={{position: 'relative'}}>
                   <Toolbar>
                     <Typography component={'div'} variant="h6">
-                      Metrics
+                        Metrics
                     </Typography>
                     <Link href="http://localhost:3000" target="_blank">
                       <IconButton>
@@ -266,18 +240,12 @@ class PersistentDrawerRight extends Component {
                     </Link>
                   </Toolbar>
                 </AppBar>
-                <Grid container spacing={1}>
-                  <Grid item xs={6}>
-                    <Chart id={1}/>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Chart id={2}/>
-                  </Grid>
-                </Grid>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={selectedBoardsConfigs}
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey}
+                />
               </Paper>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              Item Two
             </TabPanel>
             <TabPanel value={value} index={2}>
               Item Three
@@ -304,4 +272,12 @@ class PersistentDrawerRight extends Component {
   }
 }
 
-export default withStyles(useStyles, {withTheme: true})(PersistentDrawerRight);
+const mapStateToProps = (st) => {
+  const grafana = st.get('grafana').toJS();
+  return { grafana };
+};
+
+// export default withStyles(useStyles, {withTheme: true})(PersistentDrawerRight);
+export default withStyles(useStyles, {withTheme: true})(connect(
+  mapStateToProps,
+)(withSnackbar(PersistentDrawerRight)));
