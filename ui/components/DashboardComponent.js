@@ -7,7 +7,26 @@ import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import { NoSsr, Chip, IconButton, Button, Card, CardContent, Typography, CardHeader, Tooltip } from "@material-ui/core";
+import { 
+  NoSsr, 
+  Chip, 
+  IconButton, 
+  Button, 
+  Card, 
+  CardContent, 
+  Typography, 
+  CardHeader, 
+  Tooltip,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow, 
+  TableCell,
+  Paper,
+  Select,
+  MenuItem
+} from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -335,6 +354,53 @@ class DashboardComponent extends React.Component {
     );
   };
 
+  /**
+   * meshcardFactory takes in the mesh related data
+   * and renders a table along with other information of
+   * the data
+   * @param {{name, icon, namespace}} mesh
+   * @param {{name, config, version}[]} components Array of components data
+   */
+  meshcardFactory = (mesh, components = []) => (
+    <Paper elevation={1} style={{padding: "2rem", marginTop: "1rem"}}>
+      <Grid container justify="space-between" spacing={1}>
+        <Grid item>
+          <div style={{display: "flex", alignItems: "center", marginBottom: "1rem"}}>
+            <img src={mesh.icon} className={this.props.classes.icon} style={{marginRight: "0.75rem"}}/>
+            <Typography variant="h6">{mesh.name}</Typography>
+          </div>
+        </Grid>
+        <Grid item>
+          <Select value={mesh.namespace}>
+            <MenuItem value={mesh.namespace}>{mesh.namespace}</MenuItem>
+          </Select>
+        </Grid>
+      </Grid>
+      <TableContainer>
+        <Table aria-label="mesh details table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">Component</TableCell>
+              <TableCell align="center">Configuration</TableCell>
+              <TableCell align="center">Version</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {components.map((component) => (
+              <TableRow key={component.name}>
+                <TableCell component="th" scope="row" align="center">
+                  {component.name}
+                </TableCell>
+                <TableCell align="center">{component.config}</TableCell>
+                <TableCell align="center">{component.version}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
+  )
+
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
@@ -562,6 +628,20 @@ class DashboardComponent extends React.Component {
       </div>
     );
 
+    const showServiceMesh = (
+      <>
+        {this.meshcardFactory({name: "Istios", icon: "/static/img/istio.svg", namespace: "Istio system"}, [
+          {name: "Ingress Gateway", config: "2 Gateways", version: "v1.7.3"},
+          {name: "Egress Gateway", config: "1 Gateway", version: "v1.7.3"},
+          {name: "Istiod", config: "Pilot", version: "v1.7.3"},
+        ])}
+        {this.meshcardFactory({name: "Linkerd", icon: "/static/img/linkerd.svg", namespace: "Linkerd"}, [
+          {name: "Ingress Gateway", config: "2 Gateways", version: "v1.7.3"},
+          {name: "Egress Gateway", config: "1 Gateway", version: "v1.7.3"},
+        ])}
+      </>
+    )
+
     /**
      * getMesheryVersionText returs a well formatted version text
      * @param {string} type type of version could be "latest" or "current"
@@ -616,6 +696,7 @@ class DashboardComponent extends React.Component {
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Service Mesh
                 </Typography>
+                {showServiceMesh}
               </div>
             </Grid>
             <Grid item xs={12} md={6}>
