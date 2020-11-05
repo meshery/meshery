@@ -377,7 +377,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   getSMPMeshes = () => {
     const self = this
-    dataFetch('/api/perf/mesh/list', {
+    dataFetch('/api/mesh', {
       credentials: 'same-origin',
       credentials: 'include',
       method: 'GET'
