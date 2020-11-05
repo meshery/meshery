@@ -122,6 +122,7 @@ jobs:
         npm test
         cd ..
   tests-ui-e2e:
+    needs: [build-backend, build-ui]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
     steps:
