@@ -96,7 +96,7 @@ jobs:
         npm i
         npm run build && npm run export
   tests-ui:
-    name: UI tests
+    name: UI integration tests
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -115,12 +115,48 @@ jobs:
     - run: |
         cd ui
         npm i
-        npm test
+        npm run ci-test-integration
         cd ..
         cd provider-ui
         npm i
         npm test
         cd ..
+  tests-ui-e2e:
+    name: UI end-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ secrets.NODE_VERSION }}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            ${{ runner.os }}-go-
+      - name: Run backend
+        env:
+          MESHERY_CLOUD_PROD: http://localhost:9876
+          PORT: 9081
+          ADAPTER_URLS: "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009"
+        run: ./main
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ui
+          start: npm start
+          wait-on: http://localhost:3000
+          spec: cypress/integration/e2e/**/*
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
