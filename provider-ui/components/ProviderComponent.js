@@ -242,6 +242,7 @@ class ProviderComponent extends React.Component {
         aria-controls={open ? 'split-button-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-label="Select Provider"
+        data-cy="select_provider"
         aria-haspopup="menu"
         onClick={self.handleToggle()}
         >

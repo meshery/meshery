@@ -11,10 +11,10 @@ describe('Provider UI', () => {
       .should('exist')
   })
 
-  it('selects a provider', () => {
+  it('selects None as provider', () => {
     cy
-      .get('[aria-label="Select Provider"]').click()
+      .get('[data-cy="select_provider"]').click()
       .get('#split-button-menu').contains('None').click()
-      .get('[aria-label="Select Provider"]').click()
+      .get('[data-cy="select_provider"]').click()
   })
 })
