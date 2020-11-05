@@ -20,7 +20,7 @@ import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing(5),
+    backgroundColor: "#eaeff1"
   },
   chip: {
     marginRight: theme.spacing(1),
@@ -80,6 +80,7 @@ const styles = (theme) => ({
   },
   card: {
     height: "100%",
+    marginTop: theme.spacing(2)
   },
   cardContent: {
     height: "100%",
@@ -88,6 +89,12 @@ const styles = (theme) => ({
     marginLeft: "-.5em",
     color: "#000",
   },
+  dashboardSection: {
+    backgroundColor: "#fff",
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: "100%"
+  }
 });
 
 class DashboardComponent extends React.Component {
@@ -603,22 +610,24 @@ class DashboardComponent extends React.Component {
     return (
       <NoSsr>
         <div className={classes.root}>
-          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-            Connection Status
-          </Typography>
-
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              {self.showCard("Kubernetes", showConfigured)}
+              <div className={classes.dashboardSection}>
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Service Mesh
+                </Typography>
+              </div>
             </Grid>
             <Grid item xs={12} md={6}>
-              {self.showCard("Adapters", showAdapters)}
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {self.showCard("Metrics", showMetrics)}
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {self.showCard("Release", showRelease)}
+              <div className={classes.dashboardSection}>
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Connection Status
+                </Typography>
+                <div>{self.showCard("Kubernetes", showConfigured)}</div>
+                <div>{self.showCard("Adapters", showAdapters)}</div>   
+                <div>{self.showCard("Metrics", showMetrics)}</div>
+                <div>{self.showCard("Release", showRelease)}</div>
+              </div>
             </Grid>
           </Grid>
         </div>
