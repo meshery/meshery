@@ -168,7 +168,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: ui
-          start: npm start
+          start: npm run build && npm run export && npm start
           wait-on: http://localhost:3000
           spec: cypress/integration/e2e/**/*
   mesheryctl_build:
