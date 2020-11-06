@@ -88,8 +88,10 @@ jobs:
         node-version: ${{ secrets.NODE_VERSION }}
     - uses: actions/cache@v1
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        path: |
+          ~/.npm
+          ~/.next/cache
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
     - run: |
@@ -114,7 +116,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
     - run: |
@@ -150,7 +152,7 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
             ${{ runner.os }}-go-
