@@ -121,7 +121,11 @@ jobs:
       id: node-cache
       uses: actions/cache@v2
       with:
-        path: '**/node_modules'
+        path: |
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
+          **/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
     - name: Install dependencies (if needed)
       if: steps.node-cache.outputs.cache-hit != 'true'
@@ -164,7 +168,11 @@ jobs:
         id: node-cache
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: |
+            ~/cache
+            ~/.cache
+            !~/cache/exclude
+            **/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
