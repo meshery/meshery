@@ -13,11 +13,31 @@ image: /docs/assets/img/service-meshes/linkerd.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.title }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
 ### Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery adapter for {{ page.mesh_name }}**
+
+<a href="#linkerd-adapter">
+  <img style="width:500px;" src="/docs/assets/img/adapters/linkerd/linkerd-adapter.png" />
+</a>
+<a href="#" class="lightbox" id="linkerd-adapter">
+  <span style="background-image: url('/docs/assets/img/adapters/linkerd/linkerd-adapter.png')"></span>
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="#linkerd-install">
+  <img style="width:500px;" src="/docs/assets/img/adapters/linkerd/linkerd-install.png" />
+</a>
+<a href="#" class="lightbox" id="linkerd-install">
+  <span style="background-image: url('/docs/assets/img/adapters/linkerd/linkerd-install.png')"></span>
+</a>
 
 ### Features
 1. Lifecycle management of {{page.mesh_name}}
@@ -26,18 +46,18 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ### Sample Applications
 
-The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
+The {{ page.name }} includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Emojivoto](https://github.com/BuoyantIO/emojivoto)
+- [Emojivoto](/docs/guides/sample-apps#emoji.voto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Istio Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) 
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
-- [Linkerd Books](https://github.com/BuoyantIO/booksapp)
-    - Application that helps you manage your bookshelf.
+- [Linkerd Books](/docs/guides/sample-apps#linkerdbooks)
+    - A sample application built for demonstrating  manage your bookshelf.
 
-- [HTTPbin](https://httpbin.org/)
+- [HTTPbin](/docs/guides/sample-apps#httpbin)
     - A simple HTTP Request & Response Service.
 
 Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.

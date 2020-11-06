@@ -18753,48 +18753,34 @@ footer {
     font-weight: bold;
 }
 
-/*page styling will be extracted out to another file*/
-/*button style*/
-div.overview {
-    display:flex;
-    text-align: center; 
-    /* position:relative;float:left; */
-    /* background-color:#ebc017; */
-    background: rgb(60,73,79);
-    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 87%);
-    color: #fff;
-    font-size: 1.75em;
-    padding: 40px;
-    margin: 10px;
-    width: auto;
-    /* width: calc(100% / 3.4); */
-    overflow-wrap: break-word;
-    border-radius: 25px;
-    justify-content:space-evenly;
-    align-content: stretch;
-}
+.image-right {
+    float: right;
+    padding-right: 10px;
+  }
 
-div.wrapper {
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1em;
+    background: rgba(0, 0, 0, 0.8);
+  }
+  /*image-width can be defined as needed*/
+  
+  .lightbox:target {
+    display: block;
+  }
+  
+  .lightbox span {
+    display: block;
     width: 100%;
-    text-align: justify;
-    display: flex;
-    -ms-flex-align: center;
-    justify-content:space-evenly;
-    align-content: stretch;
-    margin: auto;  
-}  
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 
-div.overview:hover {
-    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 92%);
-    color: #eee;
-}
-
-@media (max-width: 825px) {
-    div.wrapper {
-      display: block;
-    }
-    div.overview {
-      margin-left:20%;
-      margin-right:20%;
-    }
-}

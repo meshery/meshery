@@ -68,12 +68,16 @@
     - title: Guides
       url: guides
       children:
-        - title: Multiple Adapters
-          url: guides/multiple-adapters
         - title: Using mesheryctl
           url: guides/mesheryctl
+        - title: mesheryctl command structure
+          url: guides/mesheryctl-commands
+        - title: Sample Applications
+          url: guides/sample-apps
         - title: Upgrading Meshery
           url: guides/upgrade
+        - title: Multiple Adapters
+          url: guides/multiple-adapters
         - title: Integrating Prometheus and Grafana
           url: guides/meshery-metrics
     - title: Project

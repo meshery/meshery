@@ -14,7 +14,11 @@ image: /docs/assets/img/service-meshes/app-mesh.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.title }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+
+The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not live and cannot be interacted with through the <a href="/docs/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
+
+Want to contribute? Check our [progress](page.github_link).
 
 ### Lifecycle management
 
