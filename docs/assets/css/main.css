@@ -275,14 +275,15 @@ sup {
 }
 
 a {
-    color: #3176d9;
+    color: #696969;
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
 }
 
 a:hover {
-    color: #1e53a0;
+    color: #00b39f;
+    font-weight: normal;
     text-decoration: none
 }
 
@@ -18110,17 +18111,20 @@ html body .md-typeset .headerlink {
 }
 
 .td-sidebar-nav .td-sidebar-link {
+    color: #696969;
+    font-weight: 500;
     display: block;
     padding-bottom: .375rem
 }
 
 .td-sidebar-nav .td-sidebar-link__page {
-    color: #495057;
-    font-weight: 300
+    color: #696969;
+    font-weight: 370
 }
 
 .td-sidebar-nav a:hover {
-    color: #72a1e5;
+    color: #00b39f;
+    font-weight: bold;
     text-decoration: none
 }
 
@@ -18686,4 +18690,111 @@ footer {
     color: #2496ed;
 }
 
+#compatibility-table{
+    border-collapse: collapse;
+}
 
+#compatibility-table td, #compatibility-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #compatibility-table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #compatibility-table tr:hover {background-color: #ddd;}
+  
+  #compatibility-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #477E96;
+    color: white;
+  }
+
+  /*pop-out hidden div*/
+
+  #hiddendiv {
+    width: 85%;
+    padding: 25px 0;
+    padding-left: 15px;
+    text-align: left;
+    font-weight: bold;
+    background: rgba(5, 165, 146, 0.3);
+    margin-top: 10px;
+  }
+
+/*image-thumbnail-grid*/
+  
+.row {
+    display: flex;
+  }
+  
+.column {
+    flex: 25.00%;
+    padding: 5px;
+  }
+
+.img-thumbnail {
+    border: 1px solid #ddd;
+    padding: 5px;
+    max-width:calc(25.00% - 20px); 
+    min-height: 150px;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+  }
+  
+.img-thumbnail:hover {
+    box-shadow: 0 0 2px 1px rgba(71, 126, 150, 0.5);
+  }
+
+.caption {
+    display: block;
+    font-weight: bold;
+}
+
+/*page styling will be extracted out to another file*/
+/*button style*/
+div.overview {
+    display:flex;
+    text-align: center; 
+    /* position:relative;float:left; */
+    /* background-color:#ebc017; */
+    background: rgb(60,73,79);
+    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 87%);
+    color: #fff;
+    font-size: 1.75em;
+    padding: 40px;
+    margin: 10px;
+    width: auto;
+    /* width: calc(100% / 3.4); */
+    overflow-wrap: break-word;
+    border-radius: 25px;
+    justify-content:space-evenly;
+    align-content: stretch;
+}
+
+div.wrapper {
+    width: 100%;
+    text-align: justify;
+    display: flex;
+    -ms-flex-align: center;
+    justify-content:space-evenly;
+    align-content: stretch;
+    margin: auto;  
+}  
+
+div.overview:hover {
+    background: linear-gradient(337deg, rgba(60,73,79,1) 0%, rgba(0,179,159,0.861782212885154) 92%);
+    color: #eee;
+}
+
+@media (max-width: 825px) {
+    div.wrapper {
+      display: block;
+    }
+    div.overview {
+      margin-left:20%;
+      margin-right:20%;
+    }
+}

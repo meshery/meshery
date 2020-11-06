@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package system
 
 import (
-	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -33,15 +33,22 @@ var statusCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Meshery status...")
+		log.Info("Meshery status... \n")
 
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "ps")
-		start.Stdout = os.Stdout
-		start.Stderr = os.Stderr
 
-		if err := start.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to start meshery"))
+		outputStd, err := start.Output()
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to get Meshery status"))
 		}
+
+		outputString := string(outputStd)
+		if strings.Contains(outputString, "meshery") {
+			log.Info(outputString)
+		} else {
+			log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
+		}
+
 		return nil
 	},
 }

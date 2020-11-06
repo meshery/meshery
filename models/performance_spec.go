@@ -106,17 +106,18 @@ type Metrics struct {
 
 // PerformanceSpec - represents SMP, see here https://github.com/layer5io/service-mesh-performance-specification
 type PerformanceSpec struct {
-	StartTime    time.Time         `yaml:"start_time,omitempty"`
-	EndTime      time.Time         `yaml:"end_time,omitempty"`
-	MeshBuild    string            `yaml:"mesh_build,omitempty"`
-	ProxyBuild   string            `yaml:"proxy_build,omitempty"`
-	ExpGroupUUID string            `yaml:"exp_group_uuid,omitempty"`
-	ExpUUID      string            `yaml:"exp_uuid,omitempty"`
-	Profile      string            `yaml:"profile,omitempty"`
-	DetailsURI   string            `yaml:"details_uri,omitempty"`
-	EndpointURL  string            `yaml:"endpoint_url,omitempty"`
-	Env          *Environment      `yaml:"env,omitempty"`
-	Config       *MeshConfig       `yaml:"config,omitempty"`
-	Client       *MeshClientConfig `yaml:"client,omitempty"`
-	Metrics      *Metrics          `yaml:"metrics,omitempty"`
+	StartTime     time.Time         `yaml:"start_time,omitempty"`
+	EndTime       time.Time         `yaml:"end_time,omitempty"`
+	MeshBuild     string            `yaml:"mesh_build,omitempty"`
+	ProxyBuild    string            `yaml:"proxy_build,omitempty"`
+	ExpGroupUUID  string            `yaml:"exp_group_uuid,omitempty"`
+	ExpUUID       string            `yaml:"exp_uuid,omitempty"`
+	Profile       string            `yaml:"profile,omitempty"`
+	DetailsURI    string            `yaml:"details_uri,omitempty"`
+	EndpointURL   string            `yaml:"endpoint_url,omitempty"`
+	LoadGenerator string            `yaml:"load_generator,omitempty"`
+	Env           *Environment      `yaml:"env,omitempty"`
+	Config        *MeshConfig       `yaml:"config,omitempty"`
+	Client        *MeshClientConfig `yaml:"client,omitempty"`
+	Metrics       *Metrics          `yaml:"metrics,omitempty"`
 }

@@ -6,35 +6,58 @@ permalink: architecture
 
 # Architecture
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-architecture-diagram.svg" /></a>
+## Languages
+Meshery and its components are written using the following languages and technologies.
+
+- **Meshery Server:** Golang, gRPC
+- **Meshery Adapters:** Golang, gRPC
+- **Meshery WASM Filters:** Rust and C++
+- **Meshery UI:** ReactJS, NextJS, BillboardJS
+- **Meshery Provider UI:** ReactJS, NextJS
+- **Meshery Remote Providers:** _any_ - must adhere to gRPC interfaces
+
+## Deployments
+Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes.
+
+[![Meshery architecture](/docs/assets/img/architecture/meshery-architecture.svg)](/docs/assets/img/architecture/meshery-architecture.svg)
 
 ## Clients
+Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-client-architecture.svg" /></a>
+[![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)](/docs/assets/img/architecture/Meshery-client-architecture.svg)
 
 ## Providers
+As a point of extension, Meshery supports two types of providers: _Local_ and _Remote_.
 
-<a href="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.svg"><img src="{{site.baseurl}}/assets/img/architecture/meshery-provider-architecture.svg" /></a>
+[![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
 
-## Network Ports
+## Object Model
+This diagram outlines logical constructs within Meshery and their relationships.
+
+[![Object Model](/docs/assets/img/architecture/meshery-object-model.svg)](/docs/assets/img/architecture/meshery-object-model.svg)
+
+### **Network Ports**
 
 Meshery uses the following list of network ports to interface with its various components:
 
-| Adapter                                        | Port             |
-| :--------------------------------------------- | :--------------- |
-| Meshery REST API                               | 9081/tcp      
-| Learn Layer5 Application                       | 10011 |
-| {% assign adaptersSortedByPort = site.adapters | sort: 'port' -%} |
+| Component                                      | Port             |
+| :--------------------------------------------- | :--------------: |
+| Meshery REST API                               | 9081/tcp         |
+| Learn Layer5 Application                       | 10011            |
 
-{% for adapter in adaptersSortedByPort -%}
+### **Adapter Ports**
+
+| Service Mesh  | Port          |
+| :------------ | ------------: |
+{% for adapter in site.adapters -%}
 {% if adapter.port -%}
-| [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} |
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.port }} |
 {% endif -%}
 {% endfor %}
 
-See the [Adapters](/docs/architecture/adapters) section for more information on the function of an adapter.
+See the [**Adapters**](/docs/architecture/adapters) section for more information on the function of an adapter.
 
-## Statefulness in Meshery components
+### **Statefulness in Meshery components**
 
 Some components within Meshery's architecture are concerned with persisting data while others are only
 concerned with a long-lived configuration, while others have no state at all.

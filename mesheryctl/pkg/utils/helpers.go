@@ -39,6 +39,13 @@ const (
 	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
 )
 
+const (
+
+	// Repo Details
+	mesheryGitHubOrg  string = "layer5io"
+	mesheryGitHubRepo string = "meshery"
+)
+
 type cmdType string
 
 const (
@@ -127,6 +134,15 @@ func DownloadFile(filepath string, url string) error {
 	}
 
 	return nil
+}
+
+func GetMesheryGitHubOrg() string {
+	return mesheryGitHubOrg
+}
+
+// Get Meshery GitHub Details
+func GetMesheryGitHubRepo() string {
+	return mesheryGitHubRepo
 }
 
 func prereq() ([]byte, []byte, error) {
@@ -273,12 +289,12 @@ func IsMesheryRunning() bool {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "file read failed :")
+		err = errors.Wrap(err, "could not read token:")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid :")
+		err = errors.Wrap(err, "token file invalid:")
 		return err
 	}
 	req.AddCookie(&http.Cookie{

@@ -31,7 +31,7 @@ const meshes = [
   'Citrix Service Mesh',
   'Consul Connect',
   'Grey Matter',
-  'Kong',
+  'Kuma',
   'Mesher',
   'Network Service Mesh',
   'Octarine',
@@ -39,6 +39,7 @@ const meshes = [
   'SOFAMesh',
   'Open Service Mesh',
   'Zuul',
+  'NGINX Service Mesh'
 ];
 
 const loadGenerators = [

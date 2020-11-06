@@ -49,7 +49,7 @@ layout: null
                         return
                     }
                     var query = $(this).val();
-                    var searchPage = "{{ site.url }}/search/?q=" + query;
+                    var searchPage = "{{ site.baseurl }}/search/?q=" + query;
                     document.location = searchPage;
                     return false;
                 });
@@ -58,3 +58,14 @@ layout: null
     };
     Search.init();
 }(jQuery));
+
+function HideToggleFunction() {
+    var hide = document.getElementById("hiddendiv");
+    if (hide.style.display === "block") {
+      hide.style.display = "none";
+    } else {
+      hide.style.display = "block";
+    }
+  }
+
+ 

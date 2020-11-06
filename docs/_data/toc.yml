@@ -21,9 +21,7 @@
         - title: Minikube
           url: installation/platforms/minikube
         - title: Windows
-          url: installation/#windows
-        - title: WSL2
-          url: installation/platforms/wsl2
+          url: installation/platforms/windows
     - title: Architecture
       url: architecture
       children:
@@ -57,6 +55,8 @@
           url: service-meshes/adapters/maesh
         - title: Network Service Mesh
           url: service-meshes/adapters/nsm/nsm
+        - title: Nginx Service Mesh
+          url: service-meshes/adapters/nginx-sm
         - title: Octarine
           url: service-meshes/adapters/octarine/octarine
         - title: Open Service Mesh
@@ -81,6 +81,8 @@
       children:
         - title: Contributing
           url: project/contributing
+        - title: FAQ
+          url: project/faq
         - title: Releases
           url: project/releases
         - title: Vulnerabilities

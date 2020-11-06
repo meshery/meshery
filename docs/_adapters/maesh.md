@@ -1,13 +1,13 @@
 ---
 layout: page
-title: Maesh Adapter
-name: Meshery Adapter for Maesh
-mesh_name: Maesh
+title: Traefik Mesh Adapter
+name: Meshery Adapter for Traefik Mesh
+mesh_name: Traefik Mesh
 version: v1.0
 port: 10006/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-maesh
-image: /docs/assets/img/service-meshes/maesh.png
+image: /docs/assets/img/service-meshes/maesh.svg
 ---
 # {{ page.name }}
 

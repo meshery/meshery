@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -29,7 +30,8 @@ import (
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg *cfg.MesheryCtl
+	mctlCfg    *cfg.MesheryCtl
+	mesheryCfg *cfg.Version
 )
 
 // RequestErr is the error handler for the request
@@ -88,5 +90,12 @@ var versionCmd = &cobra.Command{
 		}
 
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+		logrus.Infof("Checking for latest version of Meshery....")
+
+		// Inform user of the latest release version
+		_, err = handlers.CheckLatestVersion(version.GetBuild())
+		if err != nil {
+			logrus.Warn("\nfailed to check for latest version of Meshery")
+		}
 	},
 }
