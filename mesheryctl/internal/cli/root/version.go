@@ -95,7 +95,7 @@ var versionCmd = &cobra.Command{
 		// Inform user of the latest release version
 		_, err = handlers.CheckLatestVersion(version.GetBuild())
 		if err != nil {
-			logrus.Warn("\nMeshery server unreachable. Please confirm that Meshery is running and available.")
+			logrus.Warn("\nMeshery server unreachable. Please confirm that Meshery is running and available")
 		}
 	},
 }
