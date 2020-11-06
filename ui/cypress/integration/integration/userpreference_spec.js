@@ -3,8 +3,6 @@ describe('User Preferences', () => {
     beforeEach(() => {
       cy.route2('GET', '/api/user/stats', { fixture: 'stats.json' }).as('getUserStats')
 
-      cy.selectProviderNone()
-
       cy.visit('/userpreference')
       cy.get('.MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program')
       cy.wait('@getUserStats')
