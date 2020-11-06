@@ -20,10 +20,17 @@ import {
   faTasks,
   faTerminal,
   faTachometerAlt,
-  faExternalLinkAlt,
   faChevronCircleLeft,
   faPollH,
+  faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFileAlt
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faSlack,
+  faGithub
+} from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
 import { Tooltip } from "@material-ui/core";
 
@@ -90,7 +97,7 @@ const styles = (theme) => ({
     height: "100%",
     borderRadius: "unset",
   },
-  community: {
+  documentation: {
     marginTop: theme.spacing(2),
   },
   settingsIcon: {
@@ -667,10 +674,39 @@ class Navigator extends React.Component {
             <Divider className={classes.divider} />
             <ListItem
               component="a"
-              href="https://meshery.io/"
+              href="http://docs.meshery.io"
               target="_blank"
               key="about"
-              className={classNames(classes.item, classes.itemActionable, classes.community)}
+              className={classNames(classes.item, classes.itemActionable, classes.documentation)}
+            >
+              <div className={classNames(classes.link)}>
+                <Tooltip
+                  title="Documentation"
+                  placement="right"
+                  disableFocusListener={!isDrawerCollapsed}
+                  disableHoverListener={!isDrawerCollapsed}
+                  disableTouchListener={!isDrawerCollapsed}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    <FontAwesomeIcon icon={faFileAlt} transform="shrink-2" fixedWidth />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText
+                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                  classes={{
+                    primary: classes.itemPrimary,
+                  }}
+                >
+                  Documentation
+                </ListItemText>
+              </div>
+            </ListItem>
+            <ListItem
+              component="a"
+              href="http://slack.layer5.io"
+              target="_blank"
+              key="about"
+              className={classNames(classes.item, classes.itemActionable)}
             >
               <div className={classNames(classes.link)}>
                 <Tooltip
@@ -681,7 +717,7 @@ class Navigator extends React.Component {
                   disableTouchListener={!isDrawerCollapsed}
                 >
                   <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
+                    <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText
@@ -691,6 +727,64 @@ class Navigator extends React.Component {
                   }}
                 >
                   Community
+                </ListItemText>
+              </div>
+            </ListItem>
+            <ListItem
+              component="a"
+              href="https://meshery.io/subscribe"
+              target="_blank"
+              key="about"
+              className={classNames(classes.item, classes.itemActionable)}
+            >
+              <div className={classNames(classes.link)}>
+                <Tooltip
+                  title="Mailing List"
+                  placement="right"
+                  disableFocusListener={!isDrawerCollapsed}
+                  disableHoverListener={!isDrawerCollapsed}
+                  disableTouchListener={!isDrawerCollapsed}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    <FontAwesomeIcon icon={faEnvelope} transform="shrink-2" fixedWidth />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText
+                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                  classes={{
+                    primary: classes.itemPrimary,
+                  }}
+                >
+                  Mailing List
+                </ListItemText>
+              </div>
+            </ListItem>
+            <ListItem
+              component="a"
+              href="https://github.com/layer5io/meshery/issues/new/choose"
+              target="_blank"
+              key="about"
+              className={classNames(classes.item, classes.itemActionable)}
+            >
+              <div className={classNames(classes.link)}>
+                <Tooltip
+                  title="Issues"
+                  placement="right"
+                  disableFocusListener={!isDrawerCollapsed}
+                  disableHoverListener={!isDrawerCollapsed}
+                  disableTouchListener={!isDrawerCollapsed}
+                >
+                  <ListItemIcon className={classes.listIcon}>
+                    <FontAwesomeIcon icon={faGithub} transform="shrink-2" fixedWidth />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText
+                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                  classes={{
+                    primary: classes.itemPrimary,
+                  }}
+                >
+                  Issues
                 </ListItemText>
               </div>
             </ListItem>
