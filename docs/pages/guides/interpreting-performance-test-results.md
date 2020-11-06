@@ -1,7 +1,7 @@
 ---
 layout: guide
 title: Interpreting Performance Test Results
-description: This test is to help users to glean an insights of what the performance tests result should look like.
+description: This guide is to help users to glean an insights of what the performance tests result should look like.
 permalink: guides/interpreting-performance-test-results
 type: guide
 ---

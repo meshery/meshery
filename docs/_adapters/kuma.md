@@ -2,6 +2,7 @@
 layout: page
 title: Kuma Adapter
 name: Meshery Adapter for Kuma
+mesh_name: Kuma
 version: v1.0
 port: 10007/tcp
 project_status: beta
@@ -13,16 +14,41 @@ image: /docs/assets/img/service-meshes/kuma.svg
 
 |  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
 | :------------: | :-------------------------------------------------: | :---------------------------: |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
+
+### Lifecycle management
+
+The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+
+<a href="#kuma-adapter">
+  <img style="width:500px;" src="/docs/assets/img/adapters/kuma/kuma-adapter.png" />
+</a>
+<a href="#" class="lightbox" id="kuma-adapter">
+  <span style="background-image: url('/docs/assets/img/adapters/citrix/citrix-adapter.png')"></span>
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="#kuma-install">
+  <img style="width:500px;" src="/docs/assets/img/adapters/kuma/kuma-install.png" />
+</a>
+<a href="#" class="lightbox" id="kuma-install">
+  <span style="background-image: url('/docs/assets/img/adapters/kuma/kuma-install.png')"></span>
+</a>
 
 ### Features
 
 1. Lifecycle management of Kuma
 1. SMI Conformance Capability of Kuma
 
-### Lifecycle management
+### Sample Applications
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### SMI Conformance Capability
 

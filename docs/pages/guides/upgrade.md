@@ -1,6 +1,6 @@
 ---
 layout: guide
-title: Upgrade mesheryctl and Meshery Server
+title: Upgrade mesheryctl and Meshery
 description: How to Upgrade mesheryctl
 permalink: guides/upgrade
 type: guide

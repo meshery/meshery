@@ -1,8 +1,8 @@
 ---
 layout: guide
-title: Using mesheryctl
-description: How to use mesheryctl
-permalink: guides/mesheryctl
+title: Using mesheryctl commands 
+description: A guide to mesheryctl command structure
+permalink: guides/mesheryctl-commands
 type: guide
 ---
 

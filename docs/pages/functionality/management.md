@@ -11,8 +11,8 @@ Meshery supports a number of [different service meshes](installation/adapters), 
 ## Deploying a service mesh
 Meshery automates the provisioning of various service meshes, allowing users to select different configuration profiles in order to support a variety of deployment models.
 
-## Installing sample applications
-Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to quickly deploy the same sample application across different service meshes.
+## [Installing sample applications](/docs/guides/sample-apps)
+Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently deploy the same sample application across different service meshes.
 
 ## Use custom service mesh configuration
 Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.

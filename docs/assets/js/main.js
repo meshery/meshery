@@ -67,5 +67,3 @@ function HideToggleFunction() {
       hide.style.display = "block";
     }
   }
-
- 

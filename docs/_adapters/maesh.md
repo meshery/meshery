@@ -13,22 +13,29 @@ image: /docs/assets/img/service-meshes/maesh.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
 ### Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
-### Suggested Topics
+The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="/docs/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 
-- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+Want to contribute? Check our [progress](page.github_link).
 
 ### Sample Applications
 
 The {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.  
 
-- [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [httpbin](https://httpbin.org)
-    - This is a simple HTTP Request & Response Service.
+- [Bookinfo](/docs/guides/sample-apps#bookinfo)
+    - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
+    
+- [Httpbin](/docs/guides/sample-apps#httpbin)
+    - Httpbin is a simple HTTP request and response service.
+
+    
+### Suggested Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+

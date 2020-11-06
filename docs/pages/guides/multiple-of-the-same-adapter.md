@@ -1,6 +1,6 @@
 ---
 layout: guide
-title: Multiple Adapters
+title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: guide
 ---

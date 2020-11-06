@@ -13,11 +13,34 @@ image: /docs/assets/img/service-meshes/consul.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+
 
 ### Lifecycle management
 
-The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. 
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{page.mesh_name}}**
+
+<a href="#consul-adapter">
+  <img style="width:500px;" src="/docs/assets/img/adapters/consul/consul-adapter.png" />
+</a>
+<a href="#" class="lightbox" id="consul-adapter">
+  <span style="background-image: url('/docs/assets/img/adapters/consul/consul-adapter.png')"></span>
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="#consul-install">
+  <img style="width:500px;" src="/docs/assets/img/adapters/consul/consul-install.png" />
+</a>
+<a href="#" class="lightbox" id="consul-install">
+  <span style="background-image: url('/docs/assets/img/adapters/consul/consul-install.png')"></span>
+</a>
+
+A number of [sample applications](#sample-applications) for {{page.mesh_name}} can also be installed using Meshery.
 
 ### Features
 
@@ -30,17 +53,16 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ### Sample Applications
 
-The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
+Meshery supports the deployment of a variety of sample applications on {{ page.name }}. Use Meshery to deploy any of these sample applications.
 
-- [httpbin](https://httpbin.org)
+- [httpbin](/docs/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [Image Hub](https://github.com/layer5io/image-hub)
+- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- [Image Hub](/docs/guides/sample-apps/imagehub)
     - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ![Layer5 Image Hub on HashiCorp Consul](/docs/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
-
 
 ### Performance management of Consul and it workloads
 

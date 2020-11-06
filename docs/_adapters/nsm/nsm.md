@@ -14,13 +14,33 @@ image: /docs/assets/img/service-meshes/nsm.svg
 
 |  Service Mesh  |                                 Adapter Status                                  | Latest Supported Mesh Version |
 | :------------: | :-----------------------------------------------------------------------------: | :---------------------------: |
-| {{page.title}} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
 
 ### Lifecycle management of {{ page.name }}
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
-### Lifecycle management of sample applications
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+
+<a href="#nsm-adapter">
+  <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-adapter.png" />
+</a>
+<a href="#" class="lightbox" id="nsm-adapter">
+  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-adapter.png')"></span>
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="#nsm-install">
+  <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-install.png" />
+</a>
+<a href="#" class="lightbox" id="nsm-install">
+  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-install.png')"></span>
+</a>
+
+### Sample Applications
 
 The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by {{page.mesh_name}}. Use Meshery to deploy any of these sample applications:
 

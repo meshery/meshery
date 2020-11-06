@@ -13,11 +13,31 @@ image: /docs/assets/img/service-meshes/octarine.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
 ### Lifecycle Management
 
 The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+
+<a href="#octarine-adapter">
+  <img style="width:500px;" src="/docs/assets/img/adapters/octarine/octarine-adapter.png" />
+</a>
+<a href="#" class="lightbox" id="octarine-adapter">
+  <span style="background-image: url('/docs/assets/img/adapters/octarine/octarine-adapter.png')"></span>
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="#octarine-install">
+  <img style="width:500px;" src="/docs/assets/img/adapters/octarine/octarine-install.png" />
+</a>
+<a href="#" class="lightbox" id="octarine-install">
+  <span style="background-image: url('/docs/assets/img/adapters/octarine/octarine-install.png')"></span>
+</a>
 
 ### Features
 
@@ -57,14 +77,14 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 ![Alt text](./octarine_dparch.jpg?raw=true "Octarine Data Plane")
 
-### Suggested Topics
-
-- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
-
 ### Sample Applications 
 
 The {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
 
-- [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+
+### Suggested Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
