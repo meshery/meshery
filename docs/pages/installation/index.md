@@ -54,11 +54,11 @@ permalink: /installation
   <span style="background-image: url('/docs/assets/img/adapters/meshery-settings.png')"></span>
   </a>
 
-- If your config has not been auto-detected, you may manually locate and upload your `kube config` file and select the `context name` (docker-desktop, kind-clsuter, minikube etc.)
+- If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
 
-###### 8. On successful configuration of your kubernetes settings, you can now check the same by clicking on your `configuration context name`. You will be notified of your connection status. You can also try pinging any of the available Meshery adapters.
+###### 8. Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available adapters
 
-###### 9. You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery.
+###### 9. You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery
 
 <video class="videoTest" width="750" height="auto" autoplay muted loop>
   <source src="/docs/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">

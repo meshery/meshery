@@ -14,7 +14,7 @@ image: /docs/assets/img/service-meshes/nsm.svg
 
 |  Service Mesh  |                                 Adapter Status                                  | Latest Supported Mesh Version |
 | :------------: | :-----------------------------------------------------------------------------: | :---------------------------: |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.title }} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
 
 ### Lifecycle management of {{ page.name }}
 

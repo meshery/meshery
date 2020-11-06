@@ -8,7 +8,7 @@ visibility: hidden
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
 ### Lifecycle management
 

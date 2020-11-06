@@ -13,7 +13,7 @@ image: /docs/assets/img/service-meshes/nginx-sm.svg
 
 | Service Mesh   | Adapter Status | Latest Supported Mesh Version |
 | :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.title }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress](page.github_link).
 
