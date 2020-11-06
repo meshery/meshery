@@ -13,33 +13,33 @@ describe('User Preferences', () => {
     it('deactivates "Send Anonymous Usage Statistics"', () => {
       cy.route2('POST', '/api/user/stats').as('postUserStats')
 
-      cy.get('fieldset > div > label:nth-child(1)').click()
+      cy.get('[data-cy="UsageStatsPreference"]').click()
       cy.wait('@postUserStats')
-      cy.get('.MuiSnackbarContent-message').should('have.text', 'Sending anonymous usage statistics was disabled')
+      cy.get('[data-cy="UsageStatsPreference"]').should('not.have.class', 'Mui-checked')
     })
 
     it('activates "Send Anonymous Usage Statistics"', () => {
       cy.route2('POST', '/api/user/stats').as('postUserStats')
 
-      cy.get('fieldset > div > label:nth-child(1)').click()
+      cy.get('[data-cy="UsageStatsPreference"]').click()
       cy.wait('@postUserStats')
-      cy.get('.MuiSnackbarContent-message').should('have.text', 'Sending anonymous usage statistics was enabled')
+      cy.get('[data-cy="UsageStatsPreference"]').should('have.class', 'Mui-checked')
     })
 
     it('deactivates "Send Anonymous Performance Results"', () => {
       cy.route2('POST', '/api/user/stats').as('postUserStats')
 
-      cy.get('fieldset > div > label:nth-child(2)').click()
+      cy.get('[data-cy="PerfResultPreference"]').click()
       cy.wait('@postUserStats')
-      cy.get('.MuiSnackbarContent-message').should('have.text', 'Sending anonymous performance results was disabled')
+      cy.get('[data-cy="PerfResultPreference"]').should('not.have.class', 'Mui-checked')
     })
 
     it('activates "Send Anonymous Performance Results"', () => {
       cy.route2('POST', '/api/user/stats').as('postUserStats')
 
-      cy.get('fieldset > div > label:nth-child(2)').click()
+      cy.get('[data-cy="PerfResultPreference"]').click()
       cy.wait('@postUserStats')
-      cy.get('.MuiSnackbarContent-message').should('have.text', 'Sending anonymous performance results was enabled')
+      cy.get('[data-cy="PerfResultPreference"]').should('have.class', 'Mui-checked')
     })
   })
 })
