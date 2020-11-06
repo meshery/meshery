@@ -86,22 +86,21 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v2
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
       with:
-        path: |
-          ~/.npm
-          ${{ github.workspace }}/.next/cache
+        path: '**/node_modules'
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - run: |
+    - name: Install dependencies
+      run: |
         cd ui
-        npm i
-        npm run build && npm run export
+        npm ci
         cd ..
         cd provider-ui
-        npm i
-        npm run build && npm run export
+        npm ci
   tests-ui:
     name: UI integration tests
     runs-on: ubuntu-latest
@@ -113,19 +112,26 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v1
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
       with:
-        path: ~/.npm
+        path: '**/node_modules'
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - run: |
+    - name: Install dependencies (if needed)
+      if: steps.node-cache.outputs.cache-hit != 'true'
+      run: |
         cd ui
-        npm i
+        npm ci
+        cd ..
+        cd provider-ui
+        npm ci
+    - name: Run tests
+      run: |
+        cd ui
         npm run ci-test-integration
         cd ..
         cd provider-ui
-        npm i
         npm test
         cd ..
   tests-ui-e2e:
@@ -149,13 +155,22 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ secrets.NODE_VERSION }}
-      - uses: actions/cache@v2
+      - name: Cache node modules
+        id: node-cache
+        uses: actions/cache@v2
         with:
-          path: ~/.npm
+          path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-            ${{ runner.os }}-go-
+      - name: Install dependencies (if needed)
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: |
+          cd ui
+          npm ci
+          cd ..
+          cd provider-ui
+          npm ci
       - name: Build Next App
         run: cd ui && npm run build && npm run export
       - name: Run backend
