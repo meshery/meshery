@@ -2,6 +2,7 @@
 layout: page
 title: SOFAmesh Adapter
 name: Meshery Adapter for SOFAmesh
+project_status: 
 visibility: hidden
 ---
 # {{ page.name }}

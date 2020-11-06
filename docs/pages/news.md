@@ -1,6 +1,7 @@
 ---
 title: News
 permalink: /news/
+excluded_in_search: true
 ---
 
 # News
