@@ -90,7 +90,9 @@ jobs:
       id: node-cache
       uses: actions/cache@v2
       with:
-        path: '**/node_modules'
+        path: |
+          ~/cache
+          **/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
