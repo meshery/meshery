@@ -141,6 +141,10 @@ class DashboardComponent extends React.Component {
       prometheus,
 
       versionDetail: { build: "", latest: "", outdated: false },
+
+      meshScan: {},
+      activeMeshScanNamespace: "",
+      meshScanNamespaces: []
     };
   }
 
@@ -169,6 +173,7 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
+    this.fetchMeshScanData();
   };
 
   fetchAvailableAdapters = () => {
@@ -220,6 +225,64 @@ class DashboardComponent extends React.Component {
       self.handleError("Unable to fetch meshery version.")
     );
   };
+
+  fetchMeshScanData = () => {
+    const self = this;
+    self.props.updateProgress({ showProgress: true });
+    dataFetch(
+      "/api/mesh/scan",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (result) {
+          // Extract all the unique namespaces in the mesh scan
+          const namespaces = new Set();
+          Object.keys(result).forEach(mesh => {
+            if (Array.isArray(result[mesh])) {
+              result[mesh].forEach(comp => {
+                comp.metadata && namespaces.add(comp.metadata.namespace)
+              })
+            }
+          })
+          self.setState({ 
+            meshScanNamespaces: [...namespaces], 
+            activeMeshScanNamespace: [...namespaces][0] || "" 
+          });
+
+          // Check if Istio data is present in the scan
+          if (Array.isArray(result.Istio)) {
+            const istioData = result.Istio.map(comp => {
+              const compData = {}
+              if(comp.metadata?.name === "istio-egressgateway") {
+                compData.name = "Egress Gateway";
+                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
+                compData.config = "2 Gateways";
+                compData.namespace = comp.metadata?.namespace;
+              } else if(comp.metadata?.name === "istio-ingressgateway") {
+                compData.name = "Ingress Gateway";
+                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
+                compData.config = "1 Gateways";
+                compData.namespace = comp.metadata?.namespace;
+              } else if (comp.metadata?.name === "istiod") {
+                compData.name = "Istiod";
+                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
+                compData.config = "Pilot";
+                compData.namespace = comp.metadata?.namespace;
+              }
+              return compData;
+            })
+
+            self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
+          }
+        }
+      },
+      self.handleError("Unable to fetch meshery version.")
+    );
+  }
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
@@ -355,51 +418,58 @@ class DashboardComponent extends React.Component {
   };
 
   /**
-   * meshcardFactory takes in the mesh related data
+   * Meshcard takes in the mesh related data
    * and renders a table along with other information of
-   * the data
-   * @param {{name, icon, namespace}} mesh
-   * @param {{name, config, version}[]} components Array of components data
+   * the mesh
+   * @param {{name, icon}} mesh
+   * @param {{name, config, version, namespace}[]} components Array of components data
    */
-  meshcardFactory = (mesh, components = []) => (
-    <Paper elevation={1} style={{padding: "2rem", marginTop: "1rem"}}>
-      <Grid container justify="space-between" spacing={1}>
-        <Grid item>
-          <div style={{display: "flex", alignItems: "center", marginBottom: "1rem"}}>
-            <img src={mesh.icon} className={this.props.classes.icon} style={{marginRight: "0.75rem"}}/>
-            <Typography variant="h6">{mesh.name}</Typography>
-          </div>
+  Meshcard = (mesh, components = []) => {
+    const self = this;
+    return (
+      <Paper elevation={1} style={{padding: "2rem", marginTop: "1rem"}}>
+        <Grid container justify="space-between" spacing={1}>
+          <Grid item>
+            <div style={{display: "flex", alignItems: "center", marginBottom: "1rem"}}>
+              <img src={mesh.icon} className={this.props.classes.icon} style={{marginRight: "0.75rem"}}/>
+              <Typography variant="h6">{mesh.name}</Typography>
+            </div>
+          </Grid>
+          <Grid item>
+            <Select 
+              value={self.state.activeMeshScanNamespace} 
+              onChange={(e) => self.setState({ activeMeshScanNamespace: e.target.value })}
+            >
+              {self.state.meshScanNamespaces.map(ns => <MenuItem value={ns}>{ns}</MenuItem>)}
+            </Select>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Select value={mesh.namespace}>
-            <MenuItem value={mesh.namespace}>{mesh.namespace}</MenuItem>
-          </Select>
-        </Grid>
-      </Grid>
-      <TableContainer>
-        <Table aria-label="mesh details table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">Component</TableCell>
-              <TableCell align="center">Configuration</TableCell>
-              <TableCell align="center">Version</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {components.map((component) => (
-              <TableRow key={component.name}>
-                <TableCell component="th" scope="row" align="center">
-                  {component.name}
-                </TableCell>
-                <TableCell align="center">{component.config}</TableCell>
-                <TableCell align="center">{component.version}</TableCell>
+        <TableContainer>
+          <Table aria-label="mesh details table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Component</TableCell>
+                <TableCell align="center">Configuration</TableCell>
+                <TableCell align="center">Version</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
-  )
+            </TableHead>
+            <TableBody>
+              {components
+                .filter(comp => comp.namespace === self.state.activeMeshScanNamespace)
+                .map((component) => (
+                  <TableRow key={component.name}>
+                    <TableCell component="th" scope="row" align="center">
+                      {component.name}
+                    </TableCell>
+                    <TableCell align="center">{component.config}</TableCell>
+                    <TableCell align="center">{component.version}</TableCell>
+                  </TableRow>)
+                )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>)
+  }
 
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress: true });
@@ -630,15 +700,7 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {this.meshcardFactory({name: "Istios", icon: "/static/img/istio.svg", namespace: "Istio system"}, [
-          {name: "Ingress Gateway", config: "2 Gateways", version: "v1.7.3"},
-          {name: "Egress Gateway", config: "1 Gateway", version: "v1.7.3"},
-          {name: "Istiod", config: "Pilot", version: "v1.7.3"},
-        ])}
-        {this.meshcardFactory({name: "Linkerd", icon: "/static/img/linkerd.svg", namespace: "Linkerd"}, [
-          {name: "Ingress Gateway", config: "2 Gateways", version: "v1.7.3"},
-          {name: "Egress Gateway", config: "1 Gateway", version: "v1.7.3"},
-        ])}
+        {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
       </>
     )
 
