@@ -102,6 +102,7 @@ jobs:
         cd provider-ui
         npm ci
   tests-ui:
+    needs: [build-ui]
     name: UI integration tests
     runs-on: ubuntu-latest
     steps:
