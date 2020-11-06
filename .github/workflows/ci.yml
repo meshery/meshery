@@ -90,7 +90,7 @@ jobs:
       with:
         path: |
           ~/.npm
-          ~/.next/cache
+          ${{ github.workspace }}/.next/cache
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
