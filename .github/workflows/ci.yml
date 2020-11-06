@@ -156,6 +156,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
             ${{ runner.os }}-go-
+      - name: Build Next App
+        run: cd ui && npm run build && npm run export
       - name: Run backend
         env:
           SAAS_BASE_URL: http://localhost:9876
@@ -168,7 +170,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: ui
-          start: npm run build && npm run export && npm start
+          start: npm start
           wait-on: http://localhost:3000
           spec: cypress/integration/e2e/**/*
   mesheryctl_build:
