@@ -101,10 +101,10 @@ jobs:
     - name: Install dependencies
       run: |
         cd ui
-        npm ci
+        npm i
         cd ..
         cd provider-ui
-        npm ci
+        npm i
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
@@ -131,10 +131,10 @@ jobs:
       if: steps.node-cache.outputs.cache-hit != 'true'
       run: |
         cd ui
-        npm ci
+        npm i
         cd ..
         cd provider-ui
-        npm ci
+        npm i
     - name: Run tests
       run: |
         cd ui
@@ -180,10 +180,10 @@ jobs:
         if: steps.node-cache.outputs.cache-hit != 'true'
         run: |
           cd ui
-          npm ci
+          npm i
           cd ..
           cd provider-ui
-          npm ci
+          npm i
       - name: Build Next App
         run: cd ui && npm run build && npm run export
       - name: Run backend
