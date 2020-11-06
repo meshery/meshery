@@ -9,6 +9,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import RemoveIcon from "@material-ui/icons/Remove";
+import GitHubIcon from '@material-ui/icons/GitHub';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import MailIcon from '@material-ui/icons/Mail';
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -22,14 +25,9 @@ import {
   faTachometerAlt,
   faChevronCircleLeft,
   faPollH,
-  faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  faFileAlt
-} from "@fortawesome/free-regular-svg-icons";
-import {
   faSlack,
-  faGithub
 } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
 import { Tooltip } from "@material-ui/core";
@@ -324,6 +322,33 @@ const categories = [
         show: true,
       },
     ],
+  },
+];
+
+const externlinks = [
+  {
+    id: "doc",
+    href: "http://docs.meshery.io",
+    title: "Documentation",
+    icon: <DescriptionOutlinedIcon/>
+  },
+  {
+    id: "community",
+    href: "http://slack.layer5.io",
+    title: "Community",
+    icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />
+  },
+  {
+    id: "mailinglist",
+    href: "https://meshery.io/subscribe",
+    title: "Mailing List",
+    icon: <MailIcon />
+  },
+  {
+    id: "issues",
+    href: "https://github.com/layer5io/meshery/issues/new/choose",
+    title: "Issues",
+    icon: <GitHubIcon />
   },
 ];
 
@@ -672,122 +697,45 @@ class Navigator extends React.Component {
               );
             })}
             <Divider className={classes.divider} />
-            <ListItem
-              component="a"
-              href="http://docs.meshery.io"
-              target="_blank"
-              key="about"
-              className={classNames(classes.item, classes.itemActionable, classes.documentation)}
-            >
-              <div className={classNames(classes.link)}>
-                <Tooltip
-                  title="Documentation"
-                  placement="right"
-                  disableFocusListener={!isDrawerCollapsed}
-                  disableHoverListener={!isDrawerCollapsed}
-                  disableTouchListener={!isDrawerCollapsed}
-                >
-                  <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faFileAlt} transform="shrink-2" fixedWidth />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  Documentation
-                </ListItemText>
-              </div>
-            </ListItem>
-            <ListItem
-              component="a"
-              href="http://slack.layer5.io"
-              target="_blank"
-              key="about"
-              className={classNames(classes.item, classes.itemActionable)}
-            >
-              <div className={classNames(classes.link)}>
-                <Tooltip
-                  title="Community"
-                  placement="right"
-                  disableFocusListener={!isDrawerCollapsed}
-                  disableHoverListener={!isDrawerCollapsed}
-                  disableTouchListener={!isDrawerCollapsed}
-                >
-                  <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  Community
-                </ListItemText>
-              </div>
-            </ListItem>
-            <ListItem
-              component="a"
-              href="https://meshery.io/subscribe"
-              target="_blank"
-              key="about"
-              className={classNames(classes.item, classes.itemActionable)}
-            >
-              <div className={classNames(classes.link)}>
-                <Tooltip
-                  title="Mailing List"
-                  placement="right"
-                  disableFocusListener={!isDrawerCollapsed}
-                  disableHoverListener={!isDrawerCollapsed}
-                  disableTouchListener={!isDrawerCollapsed}
-                >
-                  <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faEnvelope} transform="shrink-2" fixedWidth />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  Mailing List
-                </ListItemText>
-              </div>
-            </ListItem>
-            <ListItem
-              component="a"
-              href="https://github.com/layer5io/meshery/issues/new/choose"
-              target="_blank"
-              key="about"
-              className={classNames(classes.item, classes.itemActionable)}
-            >
-              <div className={classNames(classes.link)}>
-                <Tooltip
-                  title="Issues"
-                  placement="right"
-                  disableFocusListener={!isDrawerCollapsed}
-                  disableHoverListener={!isDrawerCollapsed}
-                  disableTouchListener={!isDrawerCollapsed}
-                >
-                  <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faGithub} transform="shrink-2" fixedWidth />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  Issues
-                </ListItemText>
-              </div>
-            </ListItem>
+            {externlinks.map(({ id, icon, title, href }) => {
+              return (
+                <React.Fragment key={id}>
+                  <ListItem
+                    component="a"
+                    href={href}
+                    target="_blank"
+                    key={id}
+                    className={classNames(
+                      classes.item,
+                      classes.itemActionable,
+                      id == "doc" ? classes.documentation : ""
+                    )}
+                  >
+                    <div className={classNames(classes.link)}>
+                      <Tooltip
+                        title={title}
+                        placement="right"
+                        disableFocusListener={!isDrawerCollapsed}
+                        disableHoverListener={!isDrawerCollapsed}
+                        disableTouchListener={!isDrawerCollapsed}
+                      >
+                        <ListItemIcon className={classes.listIcon}>
+                          {icon}
+                        </ListItemIcon>
+                      </Tooltip>
+                      <ListItemText
+                        className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                        classes={{
+                          primary: classes.itemPrimary,
+                        }}
+                      >
+                        {title}
+                      </ListItemText>
+                    </div>
+                  </ListItem>
+                </React.Fragment>
+              );
+            })}
           </List>
           <div className={classes.fixedSidebarFooter}>
             <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>
