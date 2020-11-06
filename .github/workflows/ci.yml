@@ -91,7 +91,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          ~/.cache
+          /home/runner/.cache/Cypress
           **/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
