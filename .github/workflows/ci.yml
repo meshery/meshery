@@ -91,9 +91,11 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          /home/runner/.cache/Cypress
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
           **/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
     - name: Install dependencies
@@ -120,7 +122,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: '**/node_modules'
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
     - name: Install dependencies (if needed)
       if: steps.node-cache.outputs.cache-hit != 'true'
       run: |
@@ -163,7 +165,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Install dependencies (if needed)
