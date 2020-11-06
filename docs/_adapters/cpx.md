@@ -22,7 +22,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery adapter for Citrix**
+##### **Choose the Meshery Adapter for Citrix**
 
 <a href="#cpx-adapter">
   <img style="width:500px;" src="/docs/assets/img/adapters/citrix/citrix-adapter.png" />

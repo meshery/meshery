@@ -1,6 +1,6 @@
 ---
 layout: guide
-title: mesheryctl command structure
+title: Using mesheryctl commands 
 description: A guide to mesheryctl command structure
 permalink: guides/mesheryctl-commands
 type: guide

@@ -368,7 +368,7 @@ Released on 1 May 2020
 - Mesheryctl
   - Homebrew support available for mesheryctl.
 - Meshery Server
-  - Meshery adapter for Octarine released as stable.
+  - Meshery Adapter for Octarine released as stable.
 - Documentation
   - Revised quick start guide for Mac, Linux and Windows.
   - WSL2 support published.
@@ -652,7 +652,7 @@ Released on 1 May 2020
       <td class="centered">0.2.4</td>
       <td>
         <em>Meshery</em>
-          - Meshery adapter for Octarine released as stable.
+          - Meshery Adapter for Octarine released as stable.
         <br />
         <em>mesheryctl</em>
           - now available through homebrew.
@@ -691,7 +691,7 @@ Released on 1 May 2020
     </tr>
     <tr>
       <td class="centered">0.2.0</td>
-      <td>Meshery adapter for Network Service Mesh: adapter is now in beta; NSM provisioning. Performance Testing enhancements: performance tests run asynchronously, notifying the user of when test results are available; collect and persist node metrics. Service Mesh Sync: support for discovering service mesh type. Performance enhancements through memory tweaks and code profiling.</td>
+      <td>Meshery Adapter for Network Service Mesh: adapter is now in beta; NSM provisioning. Performance Testing enhancements: performance tests run asynchronously, notifying the user of when test results are available; collect and persist node metrics. Service Mesh Sync: support for discovering service mesh type. Performance enhancements through memory tweaks and code profiling.</td>
       <td>Oct 22, 2019</td>
     </tr>
         <tr><td colspan="3"><strong>v0.2.0</strong></td></tr>

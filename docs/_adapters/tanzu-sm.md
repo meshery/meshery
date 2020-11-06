@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Tanzu Service Mesh Adapter
-name: Meshery adapter for Tanzu Service Mesh
+name: Meshery Adapter for Tanzu Service Mesh
 mesh_name: Tanzu Service Mesh
 version: pre-GA
 port: 10010/tcp
@@ -30,7 +30,7 @@ Want to contribute? Check our [progress](page.github_link).
 
 ### Sample Application
 
-The Meshery adapter for {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.  
+The Meshery Adapter for {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.  
 
 - [BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
     - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.

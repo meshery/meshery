@@ -22,7 +22,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery adapter for {{ page.mesh_name }}**
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
 <a href="#kuma-adapter">
   <img style="width:500px;" src="/docs/assets/img/adapters/kuma/kuma-adapter.png" />

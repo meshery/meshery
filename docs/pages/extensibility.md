@@ -99,7 +99,7 @@ Different use cases and different opinions call for different approaches to stat
 
 ## Adapters
 
-**What are Meshery adapters?**
+**What are Meshery Adapters?**
 Adapters allow Meshery to interface with the different service meshes. See a list of all available [service mesh adapters](service-meshes/adapters).
 
 ### Adapter Capabilities
@@ -118,7 +118,7 @@ Meshery uses adapters to provision and interact with different service meshes. F
 
 See the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) for additional information and specific steps.
 
-Tip: The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
+Tip: The [Meshery Adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery Adapter written in Go.
 
 ## REST API
 Meshery provides a REST API available through the default port of 9081/tcp.

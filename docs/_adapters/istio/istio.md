@@ -22,7 +22,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.title}} service
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery adapter for {{ page.mesh_name }}**
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
 <a href="#istio-adapter">
   <img style="width:500px;" src="/docs/assets/img/adapters/istio/istio-adapter.png" />

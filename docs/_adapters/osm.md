@@ -22,7 +22,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery adapter for {{ page.mesh_name }}**
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
 <a href="#osm-adapter">
   <img style="width:500px;" src="/docs/assets/img/adapters/osm/osm-adapter.png" />

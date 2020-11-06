@@ -21,7 +21,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery adapter for {{ page.mesh_name }}**
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
 <a href="#linkerd-adapter">
   <img style="width:500px;" src="/docs/assets/img/adapters/linkerd/linkerd-adapter.png" />
@@ -65,4 +65,4 @@ Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_na
 1. Prometheus integration
 1. Grafana integration
 
-The [Meshery adapter for Linkerd]({{ page.github_link }}) will connect to Linkerd's Prometheus and Grafana instances running in the control plane.
+The [Meshery Adapter for Linkerd]({{ page.github_link }}) will connect to Linkerd's Prometheus and Grafana instances running in the control plane.

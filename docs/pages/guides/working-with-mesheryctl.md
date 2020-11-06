@@ -1,6 +1,6 @@
 ---
 layout: guide
-title: Using mesheryctl
+title: Working with mesheryctl
 description: How to use mesheryctl
 permalink: guides/mesheryctl
 type: guide
@@ -8,7 +8,11 @@ type: guide
 
 ## Using `mesheryctl`
 
-`mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `reset`. Running `reset` will remove all active container instances, prune pulled images and remove any local volumes created by starting Meshery.
+`mesheryctl` is a command line interface to manage a Meshery deployment. 
+
+`mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `reset`. Running `reset` will remove all active container instances, prune pulled images and remove any local volumes created by starting Meshery. For more command cases, refer to our exhaustive list of [mesheryctl commands](/docs/guides/mesheryctl-commands).
+
+To upgrade an existing version of mesheryctl installed on your local system, refer to the [mesheryctl upgradation guide](/docs/guides/upgrade)
 
 ### Mac or Linux
 

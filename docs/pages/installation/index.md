@@ -10,11 +10,17 @@ permalink: /installation
 
 <h6>Getting Meshery up and running locally on a Docker-enabled system is easy with Meshery's command line interface, <a href="/docs/guides/mesheryctl">mesheryctl</a>:</h6>
 
-###### 1. Meshery works with both, Docker and Kubernetes enabled systems. Setup the prerequisites on any of Meshery's [supported platforms](/docs/installation/platforms)
+###### 1. Configure your local environment to support Meshery
 
-###### 2. Use the Meshery command line interface, [mesheryctl](/docs/guides/mesheryctl), to install and start Meshery
+Meshery works with both, Docker and Kubernetes enabled systems. Setup the prerequisites on any of Meshery's [supported platforms](/docs/installation/platforms)
 
-###### 3. When Meshery is up and running, instructions to access Meshery on the port:`9081` will be printed on your screen. Your default browser should be auto-directed to the Meshery login screen
+###### 2. Install Meshery
+
+Use the Meshery command line interface, [mesheryctl](/docs/guides/mesheryctl), to install and start Meshery
+
+###### 3. Access Meshery
+
+When Meshery is up and running, instructions to access Meshery on the host:`9081` will be printed on your screen. Your default browser should be auto-directed to the Meshery login screen
 
 ###### 4. Choose your [provider](/docs/extensibility#providers)
 
@@ -54,9 +60,11 @@ permalink: /installation
   <span style="background-image: url('/docs/assets/img/adapters/meshery-settings.png')"></span>
   </a>
 
-- If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
+- If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the `context name` (docker-desktop, kind-clsuter, minikube etc.)
 
-###### 8. Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available adapters
+###### 8. Check up on your connection
+
+Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports](/docs/architecture#adapter-ports).
 
 ###### 9. You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery
 
