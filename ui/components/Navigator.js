@@ -699,41 +699,39 @@ class Navigator extends React.Component {
             <Divider className={classes.divider} />
             {externlinks.map(({ id, icon, title, href }) => {
               return (
-                <React.Fragment key={id}>
-                  <ListItem
-                    component="a"
-                    href={href}
-                    target="_blank"
-                    key={id}
-                    className={classNames(
-                      classes.item,
-                      classes.itemActionable,
-                      id == "doc" ? classes.documentation : ""
-                    )}
-                  >
-                    <div className={classNames(classes.link)}>
-                      <Tooltip
-                        title={title}
-                        placement="right"
-                        disableFocusListener={!isDrawerCollapsed}
-                        disableHoverListener={!isDrawerCollapsed}
-                        disableTouchListener={!isDrawerCollapsed}
-                      >
-                        <ListItemIcon className={classes.listIcon}>
-                          {icon}
-                        </ListItemIcon>
-                      </Tooltip>
-                      <ListItemText
-                        className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                        classes={{
-                          primary: classes.itemPrimary,
-                        }}
-                      >
-                        {title}
-                      </ListItemText>
-                    </div>
-                  </ListItem>
-                </React.Fragment>
+                <ListItem
+                  component="a"
+                  href={href}
+                  target="_blank"
+                  key={id}
+                  className={classNames(
+                    classes.item,
+                    classes.itemActionable,
+                    id == "doc" ? classes.documentation : ""
+                  )}
+                >
+                  <div className={classNames(classes.link)}>
+                    <Tooltip
+                      title={title}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={!isDrawerCollapsed}
+                      disableTouchListener={!isDrawerCollapsed}
+                    >
+                      <ListItemIcon className={classes.listIcon}>
+                        {icon}
+                      </ListItemIcon>
+                    </Tooltip>
+                    <ListItemText
+                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                      classes={{
+                        primary: classes.itemPrimary,
+                      }}
+                    >
+                      {title}
+                    </ListItemText>
+                  </div>
+                </ListItem>
               );
             })}
           </List>
