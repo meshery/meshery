@@ -127,12 +127,17 @@ func GenerateConfigGKE(SAName, namespc string) error {
 }
 
 // GenerateConfigAKS generates kube config file in /tmp/meshery/kubeconfig.yaml for a AKS cluster
-func GenerateConfigAKS() error {
-	script := `set -e
+func GenerateConfigAKS(resourceGroup, clusterName string) error {
+
+	script := fmt.Sprintf(`
+	set -e
 	set -o pipefail
 	
 	TARGET_FOLDER="/tmp/meshery"
 	TARGET_FILE="$TARGET_FOLDER/kubeconfig.yaml"
+
+	Resource_Group="%s"
+	Cluster_Name="%s"
 	
 	create_target_folder() {
 		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
@@ -141,20 +146,16 @@ func GenerateConfigAKS() error {
 	}
 	
 	fetch_aks_script() {
-		echo -n "enter your resource group"
 		printf "\n"
-		read -r resource_group
-		echo -n "enter your aks cluster name"
-		printf "\n"
-		read -r aks_name
-		az aks get-credentials --resource-group "${resource_group}" --name "${aks_name}" --file "${TARGET_FILE}"
+		az aks get-credentials --resource-group "${Resource_Group}" --name "${Cluster_Name}" --file "${TARGET_FILE}"
 		printf "done"
 	}
 	
 	create_target_folder
 	fetch_aks_script
 	
-	echo -e "\\nAll done!"`
+	echo -e "\\nAll done!"
+	`, resourceGroup, clusterName)
 
 	generateCFG := exec.Command("bash", "-c", script)
 	generateCFG.Stdout = os.Stdout

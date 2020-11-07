@@ -135,7 +135,18 @@ var configCmd = &cobra.Command{
 				return
 			}
 		case "aks":
-			if err := utils.GenerateConfigAKS(); err != nil {
+			var resourceGroup, aksName string
+			log.Info("Enter your resource group")
+			_, err := fmt.Scanf("%s", &resourceGroup)
+			if err != nil {
+				log.Fatalf("Error reading input:  %s", err.Error())
+			}
+			log.Info("Enter your cluster name")
+			_, err = fmt.Scanf("%s", &aksName)
+			if err != nil {
+				log.Fatalf("Error reading input:  %s", err.Error())
+			}
+			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
