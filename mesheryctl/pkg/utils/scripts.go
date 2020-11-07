@@ -128,7 +128,6 @@ func GenerateConfigGKE(SAName, namespc string) error {
 
 // GenerateConfigAKS generates kube config file in /tmp/meshery/kubeconfig.yaml for a AKS cluster
 func GenerateConfigAKS(resourceGroup, clusterName string) error {
-
 	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
