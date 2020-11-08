@@ -134,8 +134,13 @@ var configCmd = &cobra.Command{
 				log.Fatal("Error generating config:", err)
 				return
 			}
+		case "aks":
+			if err := utils.GenerateConfigAKS(); err != nil {
+				log.Fatal("Error generating config:", err)
+				return
+			}
 		default:
-			log.Fatal("The argument has to be one of GKE | Minikube")
+			log.Fatal("The argument has to be one of gke | minikube | aks")
 		}
 
 		configPath := "/tmp/meshery/kubeconfig.yaml"

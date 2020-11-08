@@ -1,29 +1,36 @@
 <header>
-        <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar" >
-        <a class="navbar-brand" href="{{ site.baseurl }}/"> 
-            <div class="navbar-logo">{% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom;">{{ site.title }}</span></div>
-	</a>
-	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
-		<ul class="navbar-nav mt-2 mt-lg-0">
-      <!-- {% if site.repo %}
+  <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+    <a class="navbar-brand" href="{{ site.baseurl }}/">
+      <div class="navbar-logo">
+        {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom"
+          >{{ site.title }}</span
+        >
+      </div>
+    </a>
+    <div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+      <ul class="navbar-nav mt-2 mt-lg-0">
+        <!-- {% if site.repo %}
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
         <a class="nav-link" href="{{ site.repo }}" target="_blank"><span>GitHub</span></a>
       </li>{% endif %}  -->
 
+        <!-- Internal links -->
+        {% for link in site.data.navigation %}
+        <li class="nav-item mr-4 mb-2 mb-lg-0">
+          <a
+            class="nav-link"
+            href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
+            ><span>{{ link.title }}</span></a
+          >
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
 
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
 
-      <!-- Internal links -->
-      {% for link in site.data.navigation %}
-			<li class="nav-item mr-4 mb-2 mb-lg-0">
-        <a class="nav-link" href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}" ><span>{{ link.title }}</span></a>
-			</li>{% endfor %}
-		</ul>
-	</div>
-	<div class="navbar-nav d-none d-lg-block">
- <input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off">
-        </div>
-
-<!-- meshery-custom-begin
+    <!-- meshery-custom-begin
 
 	<div class="navbar-nav d-none d-lg-block">
           <a class="gh-source" data-gh-source="github" href="{{ site.repo }}" title="Go to repository" data-md-state="done">
@@ -35,8 +42,7 @@
       </div>
 
 meshery-custom-end -->
-
-</nav>
+  </nav>
 </header>
 
 <!-- meshery-custom-begin

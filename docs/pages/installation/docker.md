@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: Docker
 permalink: installation/platforms/docker
+type: installation
 ---
 
 ## Quick Start with Docker
