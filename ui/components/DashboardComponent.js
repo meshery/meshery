@@ -255,26 +255,14 @@ class DashboardComponent extends React.Component {
           // Check if Istio data is present in the scan
           if (Array.isArray(result.Istio)) {
             const istioData = result.Istio.map(comp => {
-              const compData = {}
-              if(comp.metadata?.name === "istio-egressgateway") {
-                compData.name = "Egress Gateway";
-                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
-                compData.config = `${comp.spec?.replicas} Gateway`;
-                compData.namespace = comp.metadata?.namespace;
-              } else if(comp.metadata?.name === "istio-ingressgateway") {
-                compData.name = "Ingress Gateway";
-                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
-                compData.config = `${comp.spec?.replicas} Gateway`;
-                compData.namespace = comp.metadata?.namespace;
-              } else if (comp.metadata?.name === "istiod") {
-                compData.name = "Istiod";
-                compData.version = `v${comp.metadata?.labels["operator.istio.io/version"]}`;
-                compData.config = `${comp.metadata?.labels["operator.istio.io/component"]}`;
-                compData.namespace = comp.metadata?.namespace;
+              const compData = {
+                name: comp.metadata.name,
+                component: comp.metadata.labels["operator.istio.io/component"],
+                version: `v${comp.metadata?.labels["operator.istio.io/version"]}`,
+                namespace: comp.metadata.namespace
               }
               return compData;
             })
-
             self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
           }
         }
@@ -421,7 +409,7 @@ class DashboardComponent extends React.Component {
    * and renders a table along with other information of
    * the mesh
    * @param {{name, icon}} mesh
-   * @param {{name, config, version, namespace}[]} components Array of components data
+   * @param {{name, component, version, namespace}[]} components Array of components data
    */
   Meshcard = (mesh, components = []) => {
     const self = this;
@@ -448,8 +436,8 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
+                  <TableCell align="center">Name</TableCell>
                   <TableCell align="center">Component</TableCell>
-                  <TableCell align="center">Configuration</TableCell>
                   <TableCell align="center">Version</TableCell>
                 </TableRow>
               </TableHead>
@@ -461,7 +449,7 @@ class DashboardComponent extends React.Component {
                       <TableCell component="th" scope="row" align="center">
                         {component.name}
                       </TableCell>
-                      <TableCell align="center">{component.config}</TableCell>
+                      <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
                     </TableRow>)
                   )}
