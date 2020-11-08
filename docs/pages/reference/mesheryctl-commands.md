@@ -1,10 +1,12 @@
 ---
-layout: guide
-title: Using mesheryctl commands 
-description: A guide to mesheryctl command structure
-permalink: guides/mesheryctl-commands
-type: guide
+layout: default
+title: mesheryctl Command Reference
+abstract: "A guide to Meshery's CLI: mesheryctl"
+permalink: reference/mesheryctl
+#redirect_from: guides/mesheryctl
+type: Reference
 ---
+To install `mesheryctl`, use `brew install layer5io/mesheryctl` or download the binary [directly](https://github.com/layer5io/meshery/releases).
 
 ### Global Commands and Flags
 

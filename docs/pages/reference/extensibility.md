@@ -1,14 +1,15 @@
 ---
-layout: page
+layout: default
 title: Extensibility
-permalink: extensibility
+permalink: reference/extensibility
+type: Reference
+abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
+redirect_from: extensibility
 ---
 
-# Extending Meshery
+Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via [adapters](#adapters), [load generators](#load-generators) and [providers](#providers). Meshery also offers a REST API.
 
-Meshery's architecture makes it fairly easily extensible via a variety of different extension points. Meshery provides several extension points for working with different service meshes via [adapters](#adapters), [load generators](#load-generators) and [providers](#providers). Meshery also offers a REST API.
-
-As of this writing there is no high level extension developer documentation. The existing extensions are a good way to learn what is possible.
+As of this writing there is extension developer documentation for adapters. The existing extensions are a good way to learn what is possible.
 
 **Guiding Principles for Extensibility**
 

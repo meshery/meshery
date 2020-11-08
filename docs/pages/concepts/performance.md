@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: Performance
 permalink: performance
+type: concepts
 published: false
 ---
 # Types of Load Generators

@@ -4,7 +4,7 @@
     - title: Overview
       url: overview
     - title: Quick Start
-      url: installation
+      url: installation/quick-start
     - title: Supported Platforms
       url: installation/platforms
       children:
@@ -22,11 +22,13 @@
           url: installation/platforms/minikube
         - title: Windows
           url: installation/platforms/windows
-    - title: Architecture
-      url: architecture
+    - title: Concepts
+      url: concepts
       children:
+        - title: Architecture
+          url: concepts/architecture
         - title: Adapters
-          url: architecture/adapters
+          url: concepts/architecture/adapters
     - title: Functionality
       url: functionality
       children:
@@ -55,7 +57,7 @@
           url: service-meshes/adapters/maesh
         - title: Network Service Mesh
           url: service-meshes/adapters/nsm/nsm
-        - title: Nginx Service Mesh
+        - title: NGINX Service Mesh
           url: service-meshes/adapters/nginx-sm
         - title: Octarine
           url: service-meshes/adapters/octarine/octarine
@@ -63,23 +65,26 @@
           url: service-meshes/adapters/osm
         - title: Tanzu
           url: service-meshes/adapters/tanzu-sm
-    - title: Extensibility
-      url: extensibility
     - title: Guides
       url: guides
       children:
-        - title: Working with mesheryctl
-          url: guides/mesheryctl
-        - title: Using mesheryctl commands
-          url: guides/mesheryctl-commands
         - title: Deploying Sample Applications
           url: guides/sample-apps
-        - title: Upgrading Meshery
-          url: guides/upgrade
-        - title: Using Multiple Adapters
-          url: guides/multiple-adapters
         - title: Integrating Prometheus and Grafana
           url: guides/meshery-metrics
+        - title: Upgrading Meshery
+          url: guides/upgrade
+        - title: Using mesheryctl
+          url: guides/mesheryctl
+        - title: Using Multiple Meshery Adapters
+          url: guides/multiple-adapters
+    - title: Reference
+      url: reference
+      children:
+        - title: mesheryctl Command Reference
+          url: reference/mesheryctl
+        - title: Extensibility
+          url: reference/extensibility
     - title: Project
       url: project
       children:

@@ -1,8 +1,8 @@
 ---
-layout: guide
+layout: default
 title: Using Multiple Adapters
 permalink: guides/multiple-adapters
-type: guide
+type: Guides
 ---
 ## Meshery Adapters: Advanced Configuration
 

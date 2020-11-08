@@ -1,12 +1,13 @@
 ---
-layout: page
+layout: default
 title: Adapters
-permalink: architecture/adapters
+permalink: concepts/architecture/adapters
+type: concepts
+redirect_from: architecture/adapters
+abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
 ---
 
-# Service Mesh Adapters
-As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
-Meshery uses adapters for managing the various service meshes.
+As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes.
 
 ## What are Meshery Adapters?
 

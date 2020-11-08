@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: Performance Management
 permalink: functionality/performance-management
 type: functionality
