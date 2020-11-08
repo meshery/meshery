@@ -1,5 +1,5 @@
 ---
-layout: deafult
+layout: default
 title: Istio
 name: Meshery Adapter for Istio
 version: v1.7.3

@@ -61,7 +61,7 @@
     - title: Consul
       url: service-meshes/adapters/consul
     - title: Istio
-      url: service-meshes/adapters/istio/istio
+      url: service-meshes/adapters/istio
     - title: Kuma
       url: service-meshes/adapters/kuma
     - title: Linkerd
@@ -69,11 +69,11 @@
     - title: Maesh
       url: service-meshes/adapters/maesh
     - title: Network Service Mesh
-      url: service-meshes/adapters/nsm/nsm
+      url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
       url: service-meshes/adapters/nginx-sm
     - title: Octarine
-      url: service-meshes/adapters/octarine/octarine
+      url: service-meshes/adapters/octarine
     - title: Open Service Mesh
       url: service-meshes/adapters/osm
     - title: Tanzu
