@@ -61,7 +61,7 @@ type: project
   </div>
 </div> -->
 
-# Lanzamientos de Meshery
+## Lanzamientos de Meshery
 
 ### [v0.4.4](https://github.com/layer5io/meshery/releases/tag/v0.4.4)
 

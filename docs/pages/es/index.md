@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Documentation in Espanol
+title: Documentación en Español 🇲🇽
 permalink: es
 ---
 {% assign sorted_pages = site.pages | sort: "name" %}
 
-## Installation
+## Inicio
 
 <ul>
     {% for item in sorted_pages %}

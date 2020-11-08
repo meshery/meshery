@@ -6,7 +6,7 @@ language: espanol
 type: installation
 ---
 
-# Empezando a trabajar con otras Plataformas<a name="compatibility-matrix"></a>
+## Empezando a trabajar con otras Plataformas<a name="compatibility-matrix"></a>
 
 La Tabla a continuación provee instrucciones de instalación para cada plataforma con la que Meshery es compatible:
 
