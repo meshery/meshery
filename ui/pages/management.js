@@ -1,12 +1,19 @@
 import React from 'react';
 import MesheryPlayComponent from '../components/MesheryPlayComponent';
-import { NoSsr } from "@material-ui/core";
+import { NoSsr, Paper, withStyles } from "@material-ui/core";
 import Head from 'next/head';
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import { getPath } from "../lib/path";
 
+const styles = {
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  }
+}
 class Manage extends React.Component {
   static getInitialProps = ({ query }) => {
     return { query };
@@ -34,9 +41,9 @@ class Manage extends React.Component {
         <Head>
           <title>Management | Meshery </title>
         </Head>
-        <React.Fragment>
+        <Paper className={this.props.classes.paper}>
           <MesheryPlayComponent adapter={this.props.query.adapter} />
-        </React.Fragment>
+        </Paper>
       </NoSsr>
     );
   }
@@ -48,7 +55,7 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(
+export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(Manage);
+)(Manage));
