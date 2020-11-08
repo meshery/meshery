@@ -40,12 +40,33 @@ permalink: /
     <a href="{{ site.baseurl }}/concepts">
         <div class="overview">Concepts</div>
     </a>
+    <ul><b>Concepts</b>
+      {% for item in sorted_pages %}
+      {% if item.type=="concepts" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
     <ul><b>Functionality</b>
       {% for item in sorted_pages %}
       {% if item.type=="functionality" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
+      {% endfor %}
+    </ul>
+    <ul><b>Service Mesh Management</b>
+      {% for item in sorted_pages %}
+      {% if item.type=="service-mesh" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+      {% for adapter in site.adapters -%}
+      {% if adapter.project_status -%}
+        <li><img src="{{ adapter.image }}" style="width:20px" /> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
+      {% endif -%}
       {% endfor %}
     </ul>
   </div>

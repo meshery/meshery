@@ -2,8 +2,9 @@
 layout: default
 title: Service Meshes
 permalink: service-meshes
+type: service-mesh
 ---
-# Support for Service Meshes
+## Support for Service Meshes
 As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
 
 | Service Mesh  | Service Mesh Version  |
