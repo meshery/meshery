@@ -3,6 +3,7 @@ layout: page
 title: Docker
 permalink: es/installation/platforms/docker
 language: espanol
+type: installation
 ---
 
 ## Inicio rápido con Docker

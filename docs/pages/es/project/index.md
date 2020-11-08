@@ -4,6 +4,7 @@ title: Proyecto
 permalink: es/project
 description: Proyecto Meshery
 language: espanol
+type: project
 ---
 
 # Proyectos Layer5
