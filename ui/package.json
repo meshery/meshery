@@ -12,7 +12,10 @@
     "export": "next export",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint ."
+    "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint .",
+    "test-integration": "cypress run --spec 'cypress/integration/integration/**/*'",
+    "test-e2e": "cypress run --spec 'cypress/integration/e2e/**/*'",
+    "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration"
   },
   "husky": {
     "hooks": {
