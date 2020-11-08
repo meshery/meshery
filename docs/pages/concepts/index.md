@@ -5,7 +5,7 @@ permalink: concepts
 ---
 Concepts for understanding Meshery's various features and components.
 
-{% assign sorted_pages = site.pages | sort: "type" | reverse %}
+{% assign sorted_pages = site.pages | sort: "name" | reverse %}
 
 <ul>
     {% for item in sorted_pages %}

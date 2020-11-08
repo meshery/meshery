@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: Releases
 permalink: project/releases
 ---
@@ -59,7 +59,7 @@ permalink: project/releases
   </div>
 </div> -->
 
-# Meshery Releases
+## Meshery Releases
 
 ### [v0.4.4](https://github.com/layer5io/meshery/releases/tag/v0.4.4)
 
