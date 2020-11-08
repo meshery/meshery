@@ -177,10 +177,10 @@ func SetFileLocation() error {
 func PreReqCheck(subcommand string) error {
 	//Check whether docker daemon is running or not
 	if err := exec.Command("docker", "ps").Run(); err != nil {
-		log.Info("Docker is not running")
+		log.Info("Docker is not running.")
 		//No auto installation of docker for windows
 		if runtime.GOOS == "windows" {
-			return errors.Wrapf(err, "please start Docker. Run `mesheryctl system %s` once docker is started.", subcommand)
+			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
 		}
 		err = startdockerdaemon(subcommand)
 		if err != nil {
@@ -205,12 +205,12 @@ func PreReqCheck(subcommand string) error {
 func startdockerdaemon(subcommand string) error {
 	// read user input on whether to start Docker daemon or not.
 	var userinput string
-	fmt.Printf("Do you want to start Docker now?(y/n): ")
+	fmt.Printf("Start Docker now [y/n]? ")
 	fmt.Scan(&userinput)
 	userinput = strings.TrimSpace(userinput)
 	userinput = strings.ToLower(userinput)
 	if userinput == "n" || userinput == "no" {
-		return errors.Errorf("please start Docker then run the command `mesheryctl system %s`", subcommand)
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 
 	log.Info("Attempting to start Docker...")
