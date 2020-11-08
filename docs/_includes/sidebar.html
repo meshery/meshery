@@ -29,18 +29,6 @@
                     <a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>
                   {% endfor %}
                   {% endif %}
-
-                  <ul>
-                    <li class="collapse show" id="{{ child.title | slugify }}">
-                      {% if entry.babies %}
-                      {% for child in entry.babies %}
-                        <a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ babies.title | slugify }}" href="{% if babies.url %}{{ site.baseurl }}/{{ babies.url }}{% else %}{{ babies.external_url }}{% endif %}">{{ babies.title }}</a>
-                      {% endfor %}
-                      {% endif %}
-                    </li>
-                  </ul>
-
-
                 </li>
               </ul>
               {% endif %}
