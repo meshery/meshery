@@ -1,6 +1,6 @@
 ---
-layout: page
-title: Citrix Service Mesh (CPX) Adapter
+layout: default
+title: Citrix Service Mesh (CPX)
 name: Meshery Adapter for Citrix Service Mesh
 mesh_name: Citrix 
 version: "1.0"
@@ -10,14 +10,9 @@ github_link: https://github.com/layer5io/meshery-cpx
 image: /docs/assets/img/service-meshes/citrix.svg
 ---
 
-# {{ page.name }}
+{% include adapter-status.html %}
 
-|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
-| :------------: | :-------------------------------------------------: | :---------------------------: |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
-
-
-### Lifecycle management
+## Lifecycle management
 The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}. 
 
 ### Install {{ page.mesh_name }}

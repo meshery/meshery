@@ -1,24 +1,20 @@
 ---
-layout: page
-title: NGINX Service Mesh Adapter
-name: Meshery Adapter for NGINX Servce Mesh
+layout: default
+title: NGINX Service Mesh
+name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
 version: v0.6.0
 port: 10010/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-nginx-sm
 image: /docs/assets/img/service-meshes/nginx-sm.svg
+permalink: service-meshes/adapters/nginx-sm
 ---
-# {{ page.name }}
-
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+{% include adapter-status.html %}
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress](page.github_link).
 
-
-### Lifecycle management
+## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 

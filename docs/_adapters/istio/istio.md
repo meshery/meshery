@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: deafult
 title: Istio
 name: Meshery Adapter for Istio
 version: v1.7.3
@@ -8,13 +8,10 @@ port: 10000/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-istio
 image: /docs/assets/img/service-meshes/istio.svg
+permalink: service-meshes/adapters/istio
 ---
 
-# {{ page.name }}
-
-|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
-| :------------: | :-------------------------------------------------: | :---------------------------: |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
+{% include adapter-status.html %}
 
 ### Lifecycle management
 

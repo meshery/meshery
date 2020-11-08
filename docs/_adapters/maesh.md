@@ -1,6 +1,6 @@
 ---
-layout: page
-title: Traefik Mesh Adapter
+layout: default
+title: Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh
 version: v1.0
@@ -8,14 +8,11 @@ port: 10006/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-maesh
 image: /docs/assets/img/service-meshes/maesh.svg
+permalink: service-meshes/adapters/maesh
 ---
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
-
-### Lifecycle management
+## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
@@ -34,7 +31,7 @@ The {{ page.name }} includes some sample applications operations. Meshery can be
     - Httpbin is a simple HTTP request and response service.
 
     
-### Suggested Topics
+## Suggested Topics
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).

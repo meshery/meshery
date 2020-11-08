@@ -1,6 +1,6 @@
 ---
-layout: page
-title: Tanzu Service Mesh Adapter
+layout: default
+title: Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 mesh_name: Tanzu Service Mesh
 version: pre-GA
@@ -8,12 +8,9 @@ port: 10010/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-tanzu-sm
 image: /docs/assets/img/service-meshes/tanzu.svg
+permalink: service-meshes/adapters/tanzu-sm
 ---
-# {{ page.name }}
-
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+{% include adapter-status.html %}
 
 ### Lifecycle management
 

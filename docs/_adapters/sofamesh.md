@@ -1,15 +1,11 @@
 ---
-layout: page
-title: SOFAmesh Adapter
+layout: default
+title: SOFAmesh
 name: Meshery Adapter for SOFAmesh
 project_status: 
 visibility: hidden
 ---
-# {{ page.name }}
-
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+{% include adapter-status.html %}
 
 ### Lifecycle management
 

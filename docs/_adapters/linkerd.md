@@ -1,6 +1,6 @@
 ---
-layout: page
-title: Linkerd Adapter
+layout: default
+title: Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
 version: v2.5.0
@@ -8,14 +8,11 @@ port: 10001/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-linkerd
 image: /docs/assets/img/service-meshes/linkerd.svg
+permalink: service-meshes/adapters/linkerd
 ---
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
-
-### Lifecycle management
+## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 

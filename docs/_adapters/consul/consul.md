@@ -1,6 +1,6 @@
 ---
-layout: page
-title: Consul Adapter
+layout: default
+title: Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
 version: v1.8.2
@@ -8,15 +8,12 @@ port: 10002/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-consul
 image: /docs/assets/img/service-meshes/consul.svg
+#redirect_from: service-meshes/adapters/consul
+permalink: service-meshes/adapters/consul
 ---
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
-
-
-### Lifecycle management
+## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. 
 

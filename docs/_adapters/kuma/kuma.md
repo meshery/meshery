@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Kuma Adapter
+title: Kuma
 name: Meshery Adapter for Kuma
 mesh_name: Kuma
 version: v1.0
@@ -8,13 +8,10 @@ port: 10007/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-kuma
 image: /docs/assets/img/service-meshes/kuma.svg
+permalink: service-meshes/adapters/kuma
 ---
 
-# {{ page.name }}
-
-|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
-| :------------: | :-------------------------------------------------: | :---------------------------: |
-| <img src="{{ page.image }}" style="width:20px" /> {{ page.mesh_name }} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
+{% include adapter-status.html %}
 
 ### Lifecycle management
 
