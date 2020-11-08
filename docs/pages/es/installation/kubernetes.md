@@ -2,6 +2,7 @@
 layout: page
 title: Kubernetes
 permalink: es/installation/platforms/kubernetes
+language: espanol
 ---
 
 ## Inicio Rápido con Kubernetes

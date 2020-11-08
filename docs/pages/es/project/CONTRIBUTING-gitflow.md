@@ -1,3 +1,6 @@
+---
+language: espanol
+---
 # Trabajando por Fork
 Simplemente dirígete a la página de GitHub y haz clic en el botón "Fork". Es así de simple. Una vez que hayas hecho eso, puedes usar tu cliente git favorito para clonar tu repositorio o simplemente dirigirse directamente a la línea de comando:
 

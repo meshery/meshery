@@ -3,6 +3,7 @@ layout: page
 title: Vulnerabilidades de seguridad
 permalink: es/project/security-vulnerabilities
 description: Cómo el equipo de Meshery maneja las vulnerabilidades de seguridad.
+language: espanol
 ---
 
 # Informar una vulnerabilidad

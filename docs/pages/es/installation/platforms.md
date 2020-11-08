@@ -2,6 +2,7 @@
 layout: page
 title: Supported Platforms
 permalink: es/installation/platforms
+language: espanol
 ---
 
 # Empezando a trabajar con otras Plataformas<a name="compatibility-matrix"></a>

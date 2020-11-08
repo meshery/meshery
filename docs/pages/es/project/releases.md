@@ -2,6 +2,7 @@
 layout: page
 title: Lanzamientos
 permalink: es/project/releases
+language: espanol
 ---
 
 <!-- Una lista de los [lanzamientos de Meshery](https://github.com/layer5io/meshery/releases). Consulta el documento [Estrategia de compilación y lanzamiento](https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit?usp=sharing) para obtener más detalles. -->

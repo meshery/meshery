@@ -3,6 +3,7 @@ layout: page
 title: Proyecto
 permalink: es/project
 description: Proyecto Meshery
+language: espanol
 ---
 
 # Proyectos Layer5

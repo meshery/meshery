@@ -2,6 +2,7 @@
 layout: page
 title: Contribuir
 permalink: es/project/contributing
+language: espanol
 ---
 # <a name="contributing">Descripción general de contribución</a>
 

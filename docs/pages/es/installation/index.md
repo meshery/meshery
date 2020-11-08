@@ -2,6 +2,7 @@
 layout: page
 title: Installation Guide
 permalink: es/installation
+language: espanol
 ---
 
 <a name="getting-started"></a>
