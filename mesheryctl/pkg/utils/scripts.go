@@ -131,28 +131,36 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
-	
+
 	TARGET_FOLDER="/tmp/meshery"
 	TARGET_FILE="$TARGET_FOLDER/kubeconfig.yaml"
 
 	Resource_Group="%s"
 	Cluster_Name="%s"
-	
+
+	check_for_az() {
+		echo -n "Checking for Azure-CLI"
+		printf "\n"
+		az version
+		printf "Found Azure-CLI \n"
+	}
+
 	create_target_folder() {
 		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
 		mkdir -p "${TARGET_FOLDER}"
 		printf "done\n"
 	}
-	
+
 	fetch_aks_script() {
 		printf "\n"
 		az aks get-credentials --resource-group "${Resource_Group}" --name "${Cluster_Name}" --file "${TARGET_FILE}"
 		printf "done"
 	}
-	
+
+	check_for_az
 	create_target_folder
 	fetch_aks_script
-	
+
 	echo -e "\\nAll done!"
 	`, resourceGroup, clusterName)
 
