@@ -36,10 +36,16 @@ const example = `  # bash <= 3.2
   mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
   # zsh
+
+  # If shell completion is not already enabled in your environment you will need
+  # to enable it.  You can execute the following once:
+  # Might need to start a new shell for this setup to take effect.
+  $ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
   source <(mesheryctl completion zsh)
 
   # zsh on osx / oh-my-zsh
-  mesheryctl completion zsh > "${fpath[1]}/mesheryctl"
+  mesheryctl completion zsh > "${fpath[1]}/_mesheryctl"
 
   # fish:
   mesheryctl completion fish | source
