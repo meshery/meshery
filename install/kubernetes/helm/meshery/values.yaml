@@ -26,6 +26,10 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# For AKS AWS GCP to get the permissions to watch the nodes 
+rbac:
+  nodes: false
+
 serviceAccount:
 
   # The name of the service account to use.
