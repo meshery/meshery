@@ -1,13 +1,20 @@
 ---
 layout: page
-title: AKS
+title: Quick Start with Azure Kubernetes Service (AKS)
 permalink: installation/platforms/aks
 ---
 
-# Quick Start with Azure Kubernetes Service (AKS)
+## Connect Meshery to Azure Kubernetes Cluster
 
-## Managed Kubernetes
-The following set of instructions expects you to have created a AKS cluster in your resource group.
+The following set of instructions expects you to have created a AKS cluster in your resource group Configure Meshery to connect to your AKS cluster by executing:
+
+```
+$ mesheryctl system config aks
+```
+
+### [Alternative Manual Steps]
+
+Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
 
 - Install [Azure CLI(`az`)](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), and login
 to your azure account using `az login`.
@@ -24,16 +31,20 @@ az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_
 kubectl set-context {{AKS_SERVICE_NAME}}
 kubectl cluster-info
 ```
-- Install Meshery into your AKS cluster 
+
+## Install Meshery into your AKS cluster 
+
 ```shell script
-kubectl create ns meshery
-helm repo add meshery https://meshery.io/charts/
-helm install meshery --namespace meshery meshery/meshery
+$ kubectl create ns meshery
+$ helm repo add meshery https://meshery.io/charts/
+$ helm install meshery --namespace meshery meshery/meshery
 ```
-- Port-forward meshery pod 
+
+## Port-forward Meshery's UI
+
 ```shell script
 export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
 kubectl --namespace meshery port-forward $POD_NAME 8080:8080
 ```
-- Congrats, you have got Meshery up & running on your AKS cluster. Navigate to `localhost:8080/provider` to login to meshery
-and start managing your service mesh deployments.
+
+Congratulations. Meshery should now be running in your AKS cluster and Meshery UI locally accessible. Navigate to [http://localhost:8080](http://localhost:8080] to log into Meshery and start managing your service mesh deployments.
