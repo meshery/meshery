@@ -110,7 +110,6 @@ func init() {
 
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
-		completionCmd,
 		system.SystemCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package root
+package system
 
 import (
 	"os"
@@ -22,18 +22,18 @@ import (
 )
 
 const example = `  # bash <= 3.2
-  source /dev/stdin <<< "$(mesheryctl completion bash)"
+  source /dev/stdin <<< "$(mesheryctl system completion bash)"
 
   # bash >= 4.0
-  source <(mesheryctl completion bash)
+  source <(mesheryctl system completion bash)
 
   # bash <= 3.2 on osx
   brew install bash-completion # ensure you have bash-completion 1.3+
-  mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+  mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
   # bash >= 4.0 on osx
   brew install bash-completion@2
-  mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+  mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
   # zsh
 
@@ -42,15 +42,15 @@ const example = `  # bash <= 3.2
   # Might need to start a new shell for this setup to take effect.
   $ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
-  source <(mesheryctl completion zsh)
+  source <(mesheryctl system completion zsh)
 
   # zsh on osx / oh-my-zsh
-  mesheryctl completion zsh > "${fpath[1]}/_mesheryctl"
+  mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
 
   # fish:
-  mesheryctl completion fish | source
+  mesheryctl system completion fish | source
   # To load fish shell completions for each session, execute once:
-  mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish`
+  mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish`
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
