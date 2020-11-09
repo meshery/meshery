@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -135,9 +137,16 @@ var configCmd = &cobra.Command{
 				return
 			}
 		case "aks":
+			aksCheck := exec.Command("aks", "version")
+			aksCheck.Stdout = os.Stdout
+			aksCheck.Stderr = os.Stderr
+			err := aksCheck.Run()
+			if err != nil {
+				log.Fatalf("Azure-CLI not found: %s \n Install Azure-CLI from https://docs.microsoft.com/en-us/cli/azure/install-azure-cli", err.Error())
+			}
 			var resourceGroup, aksName string
 			log.Info("Enter your resource group")
-			_, err := fmt.Scanf("%s", &resourceGroup)
+			_, err = fmt.Scanf("%s", &resourceGroup)
 			if err != nil {
 				log.Fatalf("Error reading input:  %s", err.Error())
 			}

@@ -138,13 +138,6 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 	Resource_Group="%s"
 	Cluster_Name="%s"
 
-	check_for_az() {
-		echo -n "Checking for Azure-CLI"
-		printf "\n"
-		az version
-		printf "Found Azure-CLI \n"
-	}
-
 	create_target_folder() {
 		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
 		mkdir -p "${TARGET_FOLDER}"
@@ -157,7 +150,6 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 		printf "done"
 	}
 
-	check_for_az
 	create_target_folder
 	fetch_aks_script
 
