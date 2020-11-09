@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: Windows
 permalink: installation/platforms/windows
+type: installation
 ---
 
 ## **Quick Start with Windows**

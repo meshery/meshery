@@ -104,6 +104,6 @@ func checkMesheryctlClientVersion(build string) {
 	// Inform user of the latest release version
 	_, err := handlers.CheckLatestVersion(build)
 	if err != nil {
-		logrus.Warn("\nfailed to check for latest version of Meshery")
+		logrus.Warn("\nfailed to check for latest version of Meshery, please check if you have working internet connection")
 	}
 }

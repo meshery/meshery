@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: Performance Management
 permalink: functionality/performance-management
 type: functionality
@@ -9,15 +9,15 @@ type: functionality
 Key to the efficient operation of any service mesh is the measurement and management of it's performance. 
 
 ## Load Generators
-Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
+Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
 
 Meshery supports the following load generators and is [extendible](extensibility) to support others:
 
-- Fortio
-- wrk2
-- NightHawk
+- [fortio](#fortio)
+- [wrk2](#wrk2)
+- [Nighthawk](#nighthawk)
 
-### Fortio
+### fortio
 
 Fortio is a fast, small (3Mb docker image, minimal dependencies), 
 reusable, embeddable go library as well as a command line tool and server process, 
@@ -28,7 +28,7 @@ the server includes a simple web UI and graphical representation of the results
 
 It is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.
 
-### NightHawk
+### Nighthawk
 
 NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It currently offers:
 

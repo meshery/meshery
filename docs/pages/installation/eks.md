@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: EKS
 permalink: installation/platforms/eks
+type: installation
 ---
 
 ## Quick Start with Amazon Elastic Kubernetes Service (EKS)

@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: AKS
 permalink: installation/platforms/aks
+type: installation
 ---
 
 # Quick Start with Azure Kubernetes Service (AKS)

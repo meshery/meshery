@@ -49,7 +49,7 @@ layout: null
                         return
                     }
                     var query = $(this).val();
-                    var searchPage = "{{ site.url }}/search/?q=" + query;
+                    var searchPage = "{{ site.baseurl }}/search/?q=" + query;
                     document.location = searchPage;
                     return false;
                 });
@@ -67,5 +67,3 @@ function HideToggleFunction() {
       hide.style.display = "block";
     }
   }
-
- 

@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: KinD
 permalink: installation/platforms/kind
+type: installation
 ---
 
 ## Quick Start with KinD

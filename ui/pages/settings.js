@@ -1,11 +1,18 @@
 import MesherySettings from "../components/MesherySettings";
-import { NoSsr } from "@material-ui/core";
+import { NoSsr, withStyles, Paper } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 
+const styles = {
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  }
+}
 
 class Settings extends React.Component {
   componentDidMount () {
@@ -19,7 +26,9 @@ class Settings extends React.Component {
         <Head>
           <title>Settings | Meshery</title>
         </Head>
-        <MesherySettings />
+        <Paper className={this.props.classes.paper}>
+          <MesherySettings />
+        </Paper>
       </NoSsr>
     );
   }
@@ -29,7 +38,7 @@ const mapDispatchToProps = dispatch => ({
   updatepagepath: bindActionCreators(updatepagepath, dispatch)
 })
 
-export default connect(
+export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(Settings);
+)(Settings));

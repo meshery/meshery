@@ -21,22 +21,22 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.5.1",
-    "isomorphic-unfetch": "^3.0.0",
+    "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
-    "next": "9.3.6",
+    "next": "10.0.0",
     "prop-types": "latest",
-    "react": "^16.12.0",
+    "react": "^16.14.0",
     "react-dom": "^16.12.0",
     "styled-jsx": "latest"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^5.4.0",
-    "eslint": "^7.6.0",
+    "cypress": "^5.5.0",
+    "eslint": "^7.12.1",
     "eslint-plugin-cypress": "^2.11.2",
-    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react": "^7.21.5",
     "http-proxy": "^1.18.1",
-    "nodemon": "^2.0.4",
-    "start-server-and-test": "^1.11.2"
+    "nodemon": "^2.0.6",
+    "start-server-and-test": "^1.11.5"
   }
 }
