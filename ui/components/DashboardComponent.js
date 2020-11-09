@@ -31,6 +31,7 @@ import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import SettingsIcon from "@material-ui/icons/Settings";
+import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -93,6 +94,10 @@ const styles = (theme) => ({
     width: theme.spacing(2.5),
     paddingRight: theme.spacing(0.5),
   },
+  addIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
   cardHeader: {
     fontSize: theme.spacing(2),
   },
@@ -142,8 +147,8 @@ class DashboardComponent extends React.Component {
       versionDetail: { build: "", latest: "", outdated: false },
 
       meshScan: {},
-      activeMeshScanNamespace: "",
-      meshScanNamespaces: []
+      activeMeshScanNamespace: {},
+      meshScanNamespaces: {}
     };
   }
 
@@ -239,18 +244,21 @@ class DashboardComponent extends React.Component {
         self.props.updateProgress({ showProgress: false });
         if (result) {
           // Extract all the unique namespaces in the mesh scan
-          const namespaces = new Set();
+          const namespaces = {};
+          const activeNamespaces = {};
           Object.keys(result).forEach(mesh => {
             if (Array.isArray(result[mesh])) {
               result[mesh].forEach(comp => {
-                comp.metadata && namespaces.add(comp.metadata.namespace)
+                if (comp.metadata) {
+                  if (namespaces[mesh]) namespaces[mesh].add(comp.metadata.namespace)
+                  else namespaces[mesh] = new Set([comp.metadata.namespace])
+                }
               })
+              namespaces[mesh] = [...namespaces[mesh]]
+              activeNamespaces[mesh] = namespaces[mesh][0] || "";
             }
           })
-          self.setState({ 
-            meshScanNamespaces: [...namespaces], 
-            activeMeshScanNamespace: [...namespaces][0] || "" 
-          });
+          self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
 
           // Check if Istio data is present in the scan
           if (Array.isArray(result.Istio)) {
@@ -264,6 +272,20 @@ class DashboardComponent extends React.Component {
               return compData;
             })
             self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
+          }
+
+          // Check if Linkerd data is present in the scan
+          if (Array.isArray(result.Linkerd)) {
+            const linkerdData = result.Linkerd.map(comp => {
+              const compData = {
+                name: comp.metadata.name,
+                component: comp.metadata.labels["app.kubernetes.io/name"],
+                version: comp.metadata?.labels["app.kubernetes.io/version"],
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
           }
         }
       },
@@ -425,10 +447,16 @@ class DashboardComponent extends React.Component {
             </Grid>
             <Grid item>
               <Select 
-                value={self.state.activeMeshScanNamespace} 
-                onChange={(e) => self.setState({ activeMeshScanNamespace: e.target.value })}
+                value={self.state.activeMeshScanNamespace[mesh.name]} 
+                onChange={(e) => self.setState(state => ({ 
+                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.name]: e.target.value} 
+                }))}
               >
-                {self.state.meshScanNamespaces.map(ns => <MenuItem value={ns}>{ns}</MenuItem>)}
+                {
+                  self.state.meshScanNamespaces[mesh.name] 
+                  && 
+                  self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                }
               </Select>
             </Grid>
           </Grid>
@@ -443,7 +471,7 @@ class DashboardComponent extends React.Component {
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace)
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => (
                     <TableRow key={component.name}>
                       <TableCell component="th" scope="row" align="center">
@@ -459,16 +487,7 @@ class DashboardComponent extends React.Component {
         </Paper>
       )
 
-    return (
-      <div style={{padding: "2rem", display: "flex", justifyContent: "center", alignItems: "center"}}>
-        <Typography 
-          style={{fontSize: "1.5rem"}} 
-          align="center"
-          color="textSecondary">
-          {mesh.name} Service Mesh was not detected in the Cluster
-        </Typography>
-      </div>
-    )
+    return null
   }
 
   handlePrometheusClick = () => {
@@ -704,7 +723,40 @@ class DashboardComponent extends React.Component {
 
     const showServiceMesh = (
       <>
-        {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
+        {
+          Object.keys(self.state.meshScan).length
+            ?
+            <>
+              {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
+              {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+            </>
+            :
+            <div style={{
+              padding: "2rem", 
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center",
+              flexDirection: "column"
+            }}>
+              <Typography 
+                style={{fontSize: "1.5rem"}} 
+                align="center"
+                gutterBottom
+                color="textSecondary">
+                No service meshes detected in the {self.state.contextName} cluster.
+              </Typography>
+              <Button
+                aria-label="Add Meshes"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => self.props.router.push("/management")}
+              >
+                <AddIcon className={classes.addIcon} />
+                Install Service Mesh
+              </Button>
+            </div>
+        }
       </>
     )
 
