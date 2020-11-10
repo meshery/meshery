@@ -173,14 +173,16 @@ var configCmd = &cobra.Command{
 
 			// Write AKS compatible config to the filesystem
 			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
-				log.Fatal("Error generating config:", err)
+				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
 		default:
 			log.Fatal("The argument has to be one of gke | minikube | aks")
 		}
 
-		configPath := "/tmp/meshery/kubeconfig.yaml"
+		// TODO: Assumes Mac or Linux. Make arch-specific
+		// Issue: https://github.com/layer5io/meshery/issues/1894
+		configPath := "$HOME/.meshery/aks-kubeconfig.yaml"
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
