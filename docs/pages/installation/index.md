@@ -3,6 +3,8 @@ layout: default
 title: Quick Start Guide
 permalink: /installation/quick-start
 redirect_from: installation
+language: en
+list: exclude
 ---
 
 <a name="getting-started"></a>

@@ -10629,6 +10629,10 @@ a.text-dark:focus {
     color: #888!important
 }
 
+.text-black {
+    color: rgba(0, 0, 0, 1)!important
+}
+
 .text-black-50 {
     color: rgba(0, 0, 0, .5)!important
 }

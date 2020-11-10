@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Quick Start with Azure Kubernetes Service (AKS)
+title: AKS
 permalink: installation/platforms/aks
+type: installation
+language: en
+list: include
 ---
 
 ## Connect Meshery to Azure Kubernetes Cluster
