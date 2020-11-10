@@ -1,8 +1,8 @@
 apiVersion: v2
-name: meshery-osm
-description: Meshery Adapter for Open Service Mesh
+name: meshery-nsm
+description: Meshery Adapter for Network Service Mesh.
 source: 
-  - https://github.com/layer5io/meshery-osm
+  - https://github.com/layer5io/meshery-nsm
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.
