@@ -287,6 +287,20 @@ class DashboardComponent extends React.Component {
             })
             self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
           }
+
+          // Check if Consul data is present in the scan
+          if (Array.isArray(result.Consul)) {
+            const consulData = result.Consul.map(comp => {
+              const compData = {
+                name: comp.metadata.name,
+                component: comp.metadata.labels?.app,
+                version: "1.8.5",
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
+          }
         }
       },
       self.handleError("Unable to fetch meshery version.")
@@ -729,6 +743,7 @@ class DashboardComponent extends React.Component {
             <>
               {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
               {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
             </>
             :
             <div style={{
@@ -739,9 +754,8 @@ class DashboardComponent extends React.Component {
               flexDirection: "column"
             }}>
               <Typography 
-                style={{fontSize: "1.5rem"}} 
+                style={{fontSize: "1.5rem", marginBottom: "2rem"}} 
                 align="center"
-                gutterBottom
                 color="textSecondary">
                 No service meshes detected in the {self.state.contextName} cluster.
               </Typography>
