@@ -22,7 +22,7 @@ version: 1.0.0
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need the confirm the image tag.
-appVersion: 0.3.7
+appVersion: stable-latest
 
 maintainers:
   - name: Layer5 Authors
@@ -30,4 +30,4 @@ maintainers:
   - name: aisuko
     email: urakiny@gmail.com
   - name: leecalcote
-    email: leecalcote@gmail.com
+    email: lee.calcote@layer5.io

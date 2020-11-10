@@ -55,9 +55,9 @@ dependencies:
   condition: meshery-osm.enabled
 
 maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
   - name: aisuko
     email: urakiny@gmail.com
   - name: leecalcote
     email: lee.calcote@layer5.io
-  - name: Layer5 Authors
-    email: community@layer5.io
