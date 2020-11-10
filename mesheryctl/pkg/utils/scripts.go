@@ -125,3 +125,40 @@ func GenerateConfigGKE(SAName, namespc string) error {
 
 	return generateCFG.Run()
 }
+
+// GenerateConfigAKS generates kube config file in /tmp/meshery/kubeconfig.yaml for a AKS cluster
+func GenerateConfigAKS(resourceGroup, clusterName string) error {
+	script := fmt.Sprintf(`
+	set -e
+	set -o pipefail
+
+	TARGET_FOLDER="/tmp/meshery"
+	TARGET_FILE="$TARGET_FOLDER/kubeconfig.yaml"
+
+	Resource_Group="%s"
+	Cluster_Name="%s"
+
+	create_target_folder() {
+		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
+		mkdir -p "${TARGET_FOLDER}"
+		printf "done\n"
+	}
+
+	fetch_aks_script() {
+		printf "\n"
+		az aks get-credentials --resource-group "${Resource_Group}" --name "${Cluster_Name}" --file "${TARGET_FILE}"
+		printf "done"
+	}
+
+	create_target_folder
+	fetch_aks_script
+
+	echo -e "\\nAll done!"
+	`, resourceGroup, clusterName)
+
+	generateCFG := exec.Command("bash", "-c", script)
+	generateCFG.Stdout = os.Stdout
+	generateCFG.Stderr = os.Stderr
+
+	return generateCFG.Run()
+}

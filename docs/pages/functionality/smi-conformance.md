@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: SMI Conformance Capability
 permalink: functionality/smi-conformance
 type: functionality

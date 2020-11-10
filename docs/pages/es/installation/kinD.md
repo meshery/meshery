@@ -2,6 +2,8 @@
 layout: page
 title: KinD
 permalink: es/installation/platforms/kind
+language: espanol
+type: installation
 ---
 
 ## Inicio Rápido con KinD
