@@ -28,17 +28,17 @@ var meshesMeta = map[string][]string{
 		"hashicorp/consul-k8s",
 	},
 	"Network Service Mesh": {
-		"docker.io/networkservicemesh/nsmdp",
-		"docker.io/networkservicemesh/nsmd",
-		"docker.io/networkservicemesh/nsmd-k8s",
+		"networkservicemesh/nsmdp",
+		"networkservicemesh/nsmd",
+		"networkservicemesh/nsmd-k8s",
 	},
 	"Citrix": {
 		"quay.io/citrix/citrix-istio-adaptor",
 		"quay.io/citrix/citrix-k8s-cpx-ingress",
 	},
 	"osm": {
-		"docker.io/openservicemesh/osm-controller",
-		"docker.io/openservicemesh/init",
+		"openservicemesh/osm-controller",
+		"openservicemesh/init",
 	},
 }
 
