@@ -12,6 +12,7 @@ image:
 env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007
   ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-osm:10009
 
 probe:
@@ -103,6 +104,10 @@ mesherylinkerd:
 mesheryconsul:
   enabled: false
   fullnameOverride: meshery-consul
+
+meshery-kuma:
+  enabled: false
+  fullnameOverride: meshery-kuma
 
 meshery-osm:
   enabled: true
