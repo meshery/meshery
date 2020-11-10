@@ -21,20 +21,14 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#nsm-adapter">
+<a href="/docs/assets/img/adapters/nsm/nsm-adapter.png">
   <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-adapter.png" />
-</a>
-<a href="#" class="lightbox" id="nsm-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-adapter.png')"></span>
 </a>
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="#nsm-install">
+<a href="/docs/assets/img/adapters/nsm/nsm-install.png">
   <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-install.png" />
-</a>
-<a href="#" class="lightbox" id="nsm-install">
-  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-install.png')"></span>
 </a>
 
 ### Sample Applications

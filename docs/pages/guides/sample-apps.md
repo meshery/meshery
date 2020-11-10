@@ -19,11 +19,11 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 To deploy a sample app on Meshery:
 
 1. Go to the management page of any [service mesh](/docs/service-meshes) and install any of its stable versions
-<img alt="Consul-install" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-install.png" />
+<a href="/docs/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-install.png" /></a>
 2. Click (+) on `Manage Sample Application Lifecycle`. You will now be able to see a drop down menu with the available sample applications
-<img alt="ImageHub sample app" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-sample-app.png" />
+<a href="/docs/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-sample-app.png" /></a>
 3. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed
-<img alt="ImageHub deployed" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-imagehub-success.png" />
+<a href="/docs/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-imagehub-success.png" /></a>
 
 #### [BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
 
@@ -36,7 +36,7 @@ Originally built by Istio, BookInfo is a sample application which on deployment 
 
 Once BookInfo is deployed, you can use Meshery to apply custom configurations to control traffic, inject latency, perform context-based routing, and so on. 
 
-<img alt="BookInfo sample app" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/bookinfo.png" />
+<a href="/docs/assets/img/adapters/sample-apps/bookinfo.png"><img alt="BookInfo sample app" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/bookinfo.png" /></a>
 
 #### [Emojivoto](https://github.com/BuoyantIO/emojivoto)
 
@@ -46,31 +46,31 @@ Emojivoto is a microservice application, originally built by Linkerd that allows
    - `emojivoto-emoji-svc`: gRPC API for finding and listing emoji
    - `emojivoto-voting-svc`: gRPC API for voting and leaderboard
 
-<img alt="Emojivoto" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/emojivoto.png" />
+<a href="/docs/assets/img/adapters/sample-apps/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/emojivoto.png" /></a>
 
 #### [ImageHub](https://layer5.io/projects/image-hub)
 
 Image Hub is a sample application for exploring WebAssembly modules used as Envoy filters. The application was originally written to run on Consul. However, it doesn't have any dependency on Consul and can be deployed on any service mesh. These modules can be used to implement multi-tenancy or to implement per user rate limiting in your application’s endpoints, without messing with your application infrastructure. 
 Follow this tutorial to set up [ImageHub with Ingress](https://github.com/layer5io/image-hub#use-image-hub)
 
-<img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/imagehub-on-consul.png" />
+<a href="/docs/assets/img/adapters/sample-apps/imagehub-on-consul.png"><img alt="Imagehub-on-Consul" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/imagehub-on-consul.png" /></a>
 
 #### [HTTPBin](https://httpbin.org)
 
 HttpBin is a simple HTTP request and response service that responds to many kinds of http/https requests including the standaard http request methods (or verbs) used by REST.
 
-<img alt="httpbin" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/httpbin.png" />
+<a href="/docs/assets/img/adapters/sample-apps/httpbin.png"><img alt="httpbin" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/httpbin.png" /></a>
 
 #### [Linkerd Books](https://github.com/BuoyantIO/booksapp)
 
 Linkerd Books is a sample Ruby based application. It is designed to demonstrate the various value propositions, including debugging, observability, and monitoring of your service mesh. It can be used to scope out your mesh's efficiency and for debugging.
 
-<img alt="Linkerd Books" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/linkerd-books.png" />
+<a href="/docs/assets/img/adapters/sample-apps/linkerd-books.png"><img alt="Linkerd Books" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/linkerd-books.png" /></a>
 
 #### [Hipster](https://github.com/GoogleCloudPlatform/microservices-demo)
 
 Hipster is a sample cloud-native application, originally built by Google. It comprises of 10 microservices and can be used to showcase and work with Kubernetes, Istio, gRPC and OpenCensus. On deployment, it runs a web-based e-commerce demo application, an example of which can be seen below:
 
-<img alt="Hipster" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/hipster-shop.png" />
+<a href="/docs/assets/img/adapters/sample-apps/hipster-shop.png"><img alt="Hipster" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/hipster-shop.png" /></a>
 
 <!--Sample apps specific to NSM can be found on /docs/service-meshesadapters/nsm/nsm-->

@@ -20,20 +20,15 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#linkerd-adapter">
+<a href="/docs/assets/img/adapters/linkerd/linkerd-adapter.png">
   <img style="width:500px;" src="/docs/assets/img/adapters/linkerd/linkerd-adapter.png" />
 </a>
-<a href="#" class="lightbox" id="linkerd-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/linkerd/linkerd-adapter.png')"></span>
-</a>
+
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="#linkerd-install">
+<a href="/docs/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="/docs/assets/img/adapters/linkerd/linkerd-install.png" />
-</a>
-<a href="#" class="lightbox" id="linkerd-install">
-  <span style="background-image: url('/docs/assets/img/adapters/linkerd/linkerd-install.png')"></span>
 </a>
 
 ### Features
