@@ -19,14 +19,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ##### **Choose the Meshery Adapter for Citrix**
 
-<a href="/docs/assets/img/adapters/citrix/citrix-adapter.png">
-  <img style="width:500px;" src="/docs/assets/img/adapters/citrix/citrix-adapter.png">
+<a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
 </a>
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="/docs/assets/img/adapters/citrix/citrix-install.png">
-  <img style="width:500px;" src="/docs/assets/img/adapters/citrix/citrix-install.png">
+<a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
 </a>
 
 ## Features

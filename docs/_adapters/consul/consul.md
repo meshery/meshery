@@ -21,14 +21,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ##### **Choose the Meshery Adapter for {{page.mesh_name}}**
 
-<a href="/docs/assets/img/adapters/consul/consul-adapter.png">
-  <img style="width:500px;" src="/docs/assets/img/adapters/consul/consul-adapter.png" />
+<a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="/docs/assets/img/adapters/consul/consul-install.png">
-  <img style="width:500px;" src="/docs/assets/img/adapters/consul/consul-install.png" />
+<a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />
 </a>
 
 A number of [sample applications](#sample-applications) for {{page.mesh_name}} can also be installed using Meshery.
