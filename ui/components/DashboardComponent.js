@@ -294,16 +294,41 @@ class DashboardComponent extends React.Component {
               const compData = {
                 name: comp.metadata.name,
                 component: comp.metadata.labels?.app,
-                version: "1.8.5",
+                // Extracting consul version name from the command with which consul containers 
+                // were spinned up.
+                // There are a bunch of commands in there so splitting the string on "\\\n"
+                // and then looking for the string which has "consul-image"
+                // Once the string is found, we match it against the regex to extract version
+                // If any of this fails, it will fallback to "NA"
+                version: `v${comp.spec.template.spec.containers?.[0]?.command[2]
+                .split("\\\n")
+                .find(str => str.includes("consul-image"))
+                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
                 namespace: comp.metadata.namespace
               }
               return compData;
             })
             self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
           }
+
+          // Check if OSM data is present in the scan
+          if (Array.isArray(result.osm)) {
+            const osmData = result.osm.map(comp => {
+              const compData = {
+                name: comp.metadata.name,
+                component: comp.metadata.labels?.app,
+                version: `v${comp.spec.template.spec.containers?.[0]?.args
+                ?.find(str => str.includes("openservicemesh/init"))
+                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
+          }
         }
       },
-      self.handleError("Unable to fetch meshery version.")
+      self.handleError("Unable to fetch mesh scan data.")
     );
   }
 
@@ -444,7 +469,7 @@ class DashboardComponent extends React.Component {
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
    * the mesh
-   * @param {{name, icon}} mesh
+   * @param {{name, icon, tag}} mesh
    * @param {{name, component, version, namespace}[]} components Array of components data
    */
   Meshcard = (mesh, components = []) => {
@@ -461,15 +486,15 @@ class DashboardComponent extends React.Component {
             </Grid>
             <Grid item>
               <Select 
-                value={self.state.activeMeshScanNamespace[mesh.name]} 
+                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]} 
                 onChange={(e) => self.setState(state => ({ 
-                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.name]: e.target.value} 
+                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value} 
                 }))}
               >
                 {
-                  self.state.meshScanNamespaces[mesh.name] 
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name] 
                   && 
-                  self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
                 }
               </Select>
             </Grid>
@@ -485,7 +510,7 @@ class DashboardComponent extends React.Component {
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
                   .map((component) => (
                     <TableRow key={component.name}>
                       <TableCell component="th" scope="row" align="center">
@@ -744,6 +769,11 @@ class DashboardComponent extends React.Component {
               {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
               {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
               {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ 
+                name: "Open Service Mesh", 
+                icon: "/static/img/osm.svg", 
+                tag: "osm" 
+              }, self.state.meshScan.osm)}
             </>
             :
             <div style={{
