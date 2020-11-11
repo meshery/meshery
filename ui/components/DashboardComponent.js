@@ -760,7 +760,7 @@ class DashboardComponent extends React.Component {
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection}>
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Service Mesh
+                  Service Mesh 
                 </Typography>
                 {showServiceMesh}
               </div>
