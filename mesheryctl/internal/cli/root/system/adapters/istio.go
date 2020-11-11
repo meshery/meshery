@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package system
+package adapters
 
 import (
 	"bufio"
@@ -24,23 +24,26 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/adapters"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var (
-	skipUpdateFlag     bool
-	adapterSubcommands = []*cobra.Command{}
+const (
+	istioFileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/mesheryctl/internal/cli/root/system/adapters/docker-compose-istio.yaml"
+	url          = "http://localhost:9081"
 )
 
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start Meshery",
-	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
+var (
+	skipUpdateFlag bool
+)
+
+// IstioCmd represents the start command
+var IstioCmd = &cobra.Command{
+	Use:   "istio",
+	Short: "Start Meshery-Istio Adapter",
+	Long:  `Run 'docker-compose' to start Meshery and the Meshery adapter for Istio.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -62,27 +65,8 @@ func start() error {
 	}
 
 	if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-		}
-	}
-
-	//////// FLAGS
-	// Control whether to pull for new Meshery container images
-	if skipUpdateFlag {
-		log.Info("Skipping Meshery update...")
-	} else {
-		err := updateMesheryContainers()
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
-		}
-	}
-
-	// Reset Meshery config file to default settings
-	if utils.ResetFlag {
-		err := resetMesheryConfig()
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
+		if err := utils.DownloadFile(utils.DockerComposeFile, istioFileURL); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, istioFileURL)))
 		}
 	}
 
@@ -171,10 +155,6 @@ func start() error {
 }
 
 func init() {
-	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	adapterSubcommands = []*cobra.Command{
-		adapters.IstioCmd,
-	}
-	startCmd.AddCommand(adapterSubcommands...)
+	IstioCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	IstioCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 }
