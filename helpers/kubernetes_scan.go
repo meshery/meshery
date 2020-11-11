@@ -28,9 +28,7 @@ var meshesMeta = map[string][]string{
 		"hashicorp/consul-k8s",
 	},
 	"Network Service Mesh": {
-		"networkservicemesh/nsmdp",
-		"networkservicemesh/nsmd",
-		"networkservicemesh/nsmd-k8s",
+		"docker.io/networkservicemesh",
 	},
 	"Citrix": {
 		"quay.io/citrix/citrix-istio-adaptor",
