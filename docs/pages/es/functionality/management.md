@@ -2,7 +2,7 @@
 layout: page
 title: Lifecycle Management
 permalink: es/functionality/lifecycle-management
-type: demostracion
+type: functionality
 ---
 
 # Gestión del ciclo de vida del service mesh

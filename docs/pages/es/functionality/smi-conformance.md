@@ -2,7 +2,7 @@
 layout: page
 title: SMI Conformance Capability
 permalink: es/functionality/smi-conformance
-type: demostracion 
+type: functionality 
 ---
 
 # Capacidad de conformidad de SMI
@@ -15,7 +15,7 @@ Definiendo “Conformidad” - Es importante reconocer que la conformidad consis
    ...algunos service mesh participantes nunca implementan completamente funciones a conciencia (especificaciones SMI)...
 
 2. La conformidad SMI identifica
-   ...una diferencia entre la completa implementación de una espacificación y el cumplimiento de las partes que implementa...
+   ...una diferencia entre la completa implementación de una especificación y el cumplimiento de las partes que implementa...
 
 ## Capacidad
 
@@ -29,7 +29,7 @@ Dado que algunas implementaciones del service mesh nunca tienen la intención de
 
 ## Enfoque de las pruebas de conformidad
 
-Cada versión de Kubernetes, versión de service mesh y categoría de SMI serán sometidos a varias pruebas. Cada prueba se llevará a cabo de forma automatizada y concurrente, principalmente invocando a Meshery para ejecutar las pruebas de conformidad.
+Cada versión de Kubernetes, versión de service mesh y categoría de SMI serán sometidas a varias pruebas. Cada prueba se llevará a cabo de forma automatizada y concurrente, principalmente invocando a Meshery para ejecutar las pruebas de conformidad.
 
 #### Estos son los pasos
 
@@ -37,7 +37,7 @@ Cada versión de Kubernetes, versión de service mesh y categoría de SMI serán
 - [Opcional] Configurar Prometheus
 - Desplegar una aplicación de muestra elegida
 - Desplegar el operador SMI necesario, como smi-metrics
-  la prueba se ejecutar+a, lo que puede implicar la llamada a un punto final de API
+  la prueba se ejecutará, lo que puede implicar la llamada a un punto final de API
 - Validar la respuesta
 
 No todas las pruebas pueden ser validadas simplemente usuando la respuesta, en estos casos podemos también conectarnos a una instancia de Prometheus, el cual está preconfigurado para recolectar todas las métricas para la prueba, y usar estas métricas para definir expectativas. Trabajaremos en ejemplos específicos.
@@ -46,7 +46,7 @@ Finalmente, los resultados de las ejecuciones de pruebas de Meshery son persiste
 
 ## Definiciones de las pruebas de conformidad
 
-Las pruebas de conformidad son clasificados por tipo de especificación SMI. Un conjunto de pruebas son definidas para cada especificación SMI. Dentro de cada conjunto de pruebas, se definen dos tipos de pruebas de aserción: aserción de presencia y aserción de capacidad.
+Las pruebas de conformidad son clasificadas por tipo de especificación SMI. Un conjunto de pruebas son definidas para cada especificación SMI. Dentro de cada conjunto de pruebas, se definen dos tipos de pruebas de aserción: aserción de presencia y aserción de capacidad.
 
 ## Validación de conformidad
 
@@ -62,7 +62,7 @@ La conformidad con las especificaciones de SMI es definida como una serie de pru
 
 - La capacidad de un determinado service mesh para adherirse a una especificación de SMI es validada ejecutando una carga de trabajo sobre el service mesh.
 - Los depliegues de cargas de trabajo son configurados de forma específica para los requisitos de incorporación del service mesh dado.
-- Las pruebas son definidas para validar la conformidad para cada tipo de especificación de SMI (por ejemplo, métricas, acceso, tráfico,...).
+- Las pruebas son definidas para validar la conformidad para cada tipo de especificación de SMI (por ejemplo, métricas, acceso, tráfico...).
 
 ### Invocación
 
@@ -75,12 +75,12 @@ La conformidad con las especificaciones de SMI es definida como una serie de pru
 
 ### Procedencia de los resultados de pruebas
 
-Cada proyecto de service mesh participante se le pedirá que incorpore la herramienta de conformidad, Meshery, en sus pipelines de CI o, alternativamente, que ejecute manualmente el conjuntto de pruebas de conformidad cuando se realice un despliegue del proyecto de service mesh. La herramienta de conformidad ejecutará el conjunto de pruebas y automáticamente actualizará el panel de conformidad cuando la prueba sea completada.
+A cada proyecto de service mesh participante se le pedirá que incorpore la herramienta de conformidad, Meshery, en sus pipelines de CI o, alternativamente, que ejecute manualmente el conjunto de pruebas de conformidad cuando se realice un despliegue del proyecto de service mesh. La herramienta de conformidad ejecutará el conjunto de pruebas y automáticamente actualizará el panel de conformidad cuando la prueba sea completada.
 Para garantizar la procedencia de los resultados de las pruebas que representan un service mesh determinado, se pedirá a cada proyecto que identifique uno o más cuentas de GitHub que se utilizarán para publicar las pruebas. Idealmente, esta cuenta de GitHub es una cuenta servicerobot que se usa dentro del pipeline de CI del proyecto.
 
 Este método de proporcionar la verification de resultados es usado de manera similar para esos mismos proyectos de service mesh que también usan Meshery, para proporcionar sus resultados de pruebas de rendimiento.
 
-Cada proyecto de service mesh necesita identificar su cuenta de servicerobot, actualizando esta lista httpsmeshery.iosmi-conformancesm-service-accounts. Identifique un usuario de proveedor de Meshery determinado y designe su "cuenta de servicio de CI".
+Cada proyecto de service mesh necesita identificar su cuenta de servicerobot, actualizando esta lista httpsmeshery.iosmi-conformancesm-service-accounts. Identifique un usuario proveedor de Meshery determinado y designe su "cuenta de servicio de CI".
 
 ## Publicación de resultados de pruebas
 
