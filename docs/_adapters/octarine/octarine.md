@@ -20,20 +20,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#octarine-adapter">
-  <img style="width:500px;" src="/docs/assets/img/adapters/octarine/octarine-adapter.png" />
-</a>
-<a href="#" class="lightbox" id="octarine-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/octarine/octarine-adapter.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
 </a>
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="#octarine-install">
-  <img style="width:500px;" src="/docs/assets/img/adapters/octarine/octarine-install.png" />
-</a>
-<a href="#" class="lightbox" id="octarine-install">
-  <span style="background-image: url('/docs/assets/img/adapters/octarine/octarine-install.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />
 </a>
 
 ### Features

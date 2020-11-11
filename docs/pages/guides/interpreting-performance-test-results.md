@@ -14,9 +14,9 @@ Once a performance tests and run, it's disco analysis is performed and test resu
 
 ## Graphical view
 
-![assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)
+[![{{ site.baseurl }}/assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)]({{ site.baseurl }}/assets/img/performance-management/dashboard.png)
 
-![assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)
+[![{{ site.baseurl }}/assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)]({{ site.baseurl }}/assets/img/performance-management/chart.png)
 
 ## Tests
 
