@@ -326,6 +326,20 @@ class DashboardComponent extends React.Component {
             })
             self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
           }
+
+          // Check if NSM data is present in the scan
+          if (Array.isArray(result["Network Service Mesh"])) {
+            const nsmData = result["Network Service Mesh"].map(comp => {
+              const compData = {
+                name: comp.metadata.name,
+                component: comp.metadata.labels?.app || comp.metadata.name,
+                version: `v0.2.0`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
+          }
         }
       },
       self.handleError("Unable to fetch mesh scan data.")
@@ -774,6 +788,10 @@ class DashboardComponent extends React.Component {
                 icon: "/static/img/osm.svg", 
                 tag: "osm" 
               }, self.state.meshScan.osm)}
+              {self.Meshcard({ 
+                name: "Network Service Mesh", 
+                icon: "/static/img/nsm.svg" 
+              }, self.state.meshScan["Network Service Mesh"])}
             </>
             :
             <div style={{
