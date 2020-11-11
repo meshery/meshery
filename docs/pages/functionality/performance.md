@@ -52,12 +52,12 @@ Connect Meshery to your existing Grafana instance. Meshery will auto-import the 
 ### [Connecting to Grafana](/docs/guides/meshery-metrics#expose-grafana-service)
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
-<a href="/docs/assets/img/performance-management/performance-meshery.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/performance-meshery.png" /></a>
+<a href="/docs/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/grafana-dashboard.png" /></a>
 
-* Importing Grafana boards
-    - Importing existing Grafana boards via API
-    - Importing custom Grafana board via yaml
-* Configuring graph panel preferences
+* Import Grafana boards
+    - Import existing Grafana boards via API
+    - Import custom Grafana board via yaml
+* Configure graph panel preferences
 
 ### [Prometheus and Meshery](/docs/guides/meshery-metrics#expose-prometheus-service)
 Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or really... any metric that Prometheus has collected.
