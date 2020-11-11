@@ -23,9 +23,7 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
-
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	log "github.com/sirupsen/logrus"
