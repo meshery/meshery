@@ -22,19 +22,18 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/pkg/errors"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/adapters"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/adapters"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
-	skipUpdateFlag bool
+	skipUpdateFlag     bool
 	adapterSubcommands = []*cobra.Command{}
-
 )
 
 // startCmd represents the start command

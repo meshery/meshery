@@ -22,17 +22,17 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/pkg/errors"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 const (
 	istioFileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/mesheryctl/internal/cli/root/system/adapters/docker-compose-istio.yaml"
-    url = "http://localhost:9081"
+	url          = "http://localhost:9081"
 )
 
 var (
