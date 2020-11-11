@@ -16,7 +16,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 - [Set up Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource)
 - [Set up Ingress on Minikube](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 
-To deploy a sample app on Meshery:
+###### To deploy a sample app on Meshery:
 
 1. Go to the management page of any [service mesh](/docs/service-meshes) and install any of its stable versions
 <img alt="Consul-install" style="width:500px;height:auto;" src="/docs/assets/img/adapters/consul/consul-install.png" />
