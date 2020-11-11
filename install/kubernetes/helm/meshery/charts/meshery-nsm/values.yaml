@@ -1,15 +1,15 @@
-# Default values for meshery-kuma.
+# Default values for meshery-nsm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-kuma:stable-latest
+  repository: layer5/meshery-nsm:stable-latest
   pullPolicy: IfNotPresent
 
 ports:
-  http: 10007
+  http: 10004
 
 env: {}
 
@@ -29,7 +29,7 @@ serviceAccount:
   create: false
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-kuma-service-account
+  name: meshery-nsm-service-account
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -46,7 +46,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 10007
+  port: 10004
   annotations: {}
 
 ingress:
