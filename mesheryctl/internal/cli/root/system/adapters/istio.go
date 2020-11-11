@@ -41,7 +41,7 @@ var (
 	skipUpdateFlag bool
 )
 
-// startCmd represents the start command
+// IstioCmd represents the start command
 var IstioCmd = &cobra.Command{
 	Use:   "istio",
 	Short: "Start Meshery-Istio Adapter",
