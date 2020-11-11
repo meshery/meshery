@@ -107,18 +107,18 @@ class Header extends React.Component {
 
                   <IconButton color="inherit">
                     <Link href="/">
-                      <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                      <DashboardIcon style={{preserveAspectRatio:"none"}} className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
                       {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                     </Link>
                   </IconButton>
 
                   <IconButton color="inherit">
                     <Link href="/settings">
-                      <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                      <SettingsIcon style={{preserveAspectRatio:"none"}} className={title === 'Settings' ? classes.itemActiveItem : ''} />
                     </Link>
                   </IconButton>
 
-                  <MesheryNotification />
+                  <MesheryNotification style={{preserveAspectRatio:"none"}} />
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>
