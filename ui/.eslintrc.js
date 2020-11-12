@@ -45,6 +45,7 @@ module.exports = {
     ],
     'indent': [
       'error', 2, {
+        "ignoredNodes": ["TemplateLiteral"],
         "FunctionExpression": {"parameters": "first"},
         "FunctionDeclaration": {"parameters": "first"},
         "MemberExpression": 1,
