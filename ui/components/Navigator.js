@@ -118,6 +118,7 @@ const styles = (theme) => ({
     textAlign: "center",
     display: "inline-table",
     paddingRight: theme.spacing(0.5),
+    opacity: '0.5',
   },
   nested1: {
     paddingLeft: theme.spacing(3),
