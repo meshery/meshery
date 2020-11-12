@@ -118,6 +118,7 @@ const styles = (theme) => ({
     textAlign: "center",
     display: "inline-table",
     paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
   },
   nested1: {
     paddingLeft: theme.spacing(3),
@@ -339,28 +340,28 @@ const externlinks = [
     href: "http://docs.meshery.io",
     title: "Documentation",
     icon: <DescriptionOutlinedIcon/>,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4" />
   },
   {
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
     icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"  />
   },
   {
     id: "mailinglist",
     href: "https://meshery.io/subscribe",
     title: "Mailing List",
     icon: <MailIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"  />
   },
   {
     id: "issues",
     href: "https://github.com/layer5io/meshery/issues/new/choose",
     title: "Issues",
     icon: <GitHubIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"  />
   },
 ];
 
