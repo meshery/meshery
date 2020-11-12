@@ -2,6 +2,7 @@
 layout: page
 title: Descripción General
 permalink: es/overview
+language: es
 ---
 # Introducción a Meshery
 El plano de gestión de service mesh adopta, opera y desarrolla sobre diferentes service meshes.

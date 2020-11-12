@@ -2,6 +2,7 @@
 layout: page
 title: Arquitectura de Meshery 
 permalink: es/architecture
+language: es
 ---
 
 ## Arquitectura
@@ -11,9 +12,7 @@ permalink: es/architecture
 ##### 1. [**Clientes**](#1-client-architecture)
 ##### 2. [**Proveedores**](#2-provider-architecture)
 
-
 ![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.png)
-
 
 ### 1. **Arquitectura del Client**
 
