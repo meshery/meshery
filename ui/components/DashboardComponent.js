@@ -265,7 +265,11 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.Istio)) {
             const istioData = result.Istio.map(comp => {
               const compData = {
-                name: comp.metadata.name,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
                 component: comp.metadata.labels?.app,
                 version: `v${comp.spec.containers?.[0]?.image
                   ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
@@ -280,7 +284,11 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.Linkerd)) {
             const linkerdData = result.Linkerd.map(comp => {
               const compData = {
-                name: comp.metadata.name,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
                 component: comp.metadata.labels["linkerd.io/control-plane-component"],
                 version: `v${comp.spec.containers?.[0]?.image
                   ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
@@ -295,7 +303,11 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.Consul)) {
             const consulData = result.Consul.map(comp => {
               const compData = {
-                name: comp.metadata.name,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
                 component: comp.metadata.labels?.app,
                 // Extracting consul version name from the command with which consul containers 
                 // were spinned up.
@@ -318,7 +330,11 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.osm)) {
             const osmData = result.osm.map(comp => {
               const compData = {
-                name: comp.metadata.name,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
                 component: comp.metadata.labels?.app,
                 version: `v${comp.spec.containers?.[0]?.args
                 ?.find(str => str.includes("openservicemesh/init"))
@@ -334,7 +350,11 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result["Network Service Mesh"])) {
             const nsmData = result["Network Service Mesh"].map(comp => {
               const compData = {
-                name: comp.metadata.name,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
                 component: comp.metadata.labels?.app || comp.metadata.name,
                 version: `v0.2.0`,
                 namespace: comp.metadata.namespace
@@ -347,6 +367,22 @@ class DashboardComponent extends React.Component {
       },
       self.handleError("Unable to fetch mesh scan data.")
     );
+  }
+
+  /**
+   * generateMeshScanPodName takes in the podname and the hash
+   * and returns the trimmed pod name
+   * @param {string} podname
+   * @param {string} hash
+   * @param {string | undefined} custom
+   * @returns {{full, trimmed}}
+   */
+  generateMeshScanPodName = (podname, hash, custom) => {
+    const str = (custom || podname)
+    return {
+      full: podname,
+      trimmed: str.substring(0, (hash ? podname.indexOf(hash) :  str.length) - 1)
+    }
   }
 
   handleError = (msg) => (error) => {
@@ -520,7 +556,7 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Name</TableCell>
+                  <TableCell align="center">Control Plane Pods</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
                 </TableRow>
@@ -529,9 +565,13 @@ class DashboardComponent extends React.Component {
                 {components
                   .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
                   .map((component) => (
-                    <TableRow key={component.name}>
-                      <TableCell component="th" scope="row" align="center">
-                        {component.name}
+                    <TableRow key={component.name.full}>
+                      <TableCell scope="row" align="center">
+                        <Tooltip title={component.name.full}>
+                          <div style={{textAlign: "center"}}>
+                            {component.name.trimmed}
+                          </div>
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
