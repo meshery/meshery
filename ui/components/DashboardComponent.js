@@ -266,8 +266,9 @@ class DashboardComponent extends React.Component {
             const istioData = result.Istio.map(comp => {
               const compData = {
                 name: comp.metadata.name,
-                component: comp.metadata.labels["operator.istio.io/component"],
-                version: `v${comp.metadata?.labels["operator.istio.io/version"]}`,
+                component: comp.metadata.labels?.app,
+                version: `v${comp.spec.containers?.[0]?.image
+                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -280,8 +281,9 @@ class DashboardComponent extends React.Component {
             const linkerdData = result.Linkerd.map(comp => {
               const compData = {
                 name: comp.metadata.name,
-                component: comp.metadata.labels["app.kubernetes.io/name"],
-                version: comp.metadata?.labels["app.kubernetes.io/version"],
+                component: comp.metadata.labels["linkerd.io/control-plane-component"],
+                version: `v${comp.spec.containers?.[0]?.image
+                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -301,7 +303,7 @@ class DashboardComponent extends React.Component {
                 // and then looking for the string which has "consul-image"
                 // Once the string is found, we match it against the regex to extract version
                 // If any of this fails, it will fallback to "NA"
-                version: `v${comp.spec.template.spec.containers?.[0]?.command[2]
+                version: `v${comp.spec.containers?.[0]?.command[2]
                 .split("\\\n")
                 .find(str => str.includes("consul-image"))
                 ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
@@ -318,7 +320,7 @@ class DashboardComponent extends React.Component {
               const compData = {
                 name: comp.metadata.name,
                 component: comp.metadata.labels?.app,
-                version: `v${comp.spec.template.spec.containers?.[0]?.args
+                version: `v${comp.spec.containers?.[0]?.args
                 ?.find(str => str.includes("openservicemesh/init"))
                 ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
                 namespace: comp.metadata.namespace
