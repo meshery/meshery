@@ -144,7 +144,7 @@ class DashboardComponent extends React.Component {
       grafana,
       prometheus,
 
-      versionDetail: { build: "", latest: "", outdated: false },
+      versionDetail: { build: "", latest: "", outdated: false, commitsha: "" },
 
       meshScan: {},
       activeMeshScanNamespace: {},
@@ -222,11 +222,12 @@ class DashboardComponent extends React.Component {
           this.setState({versionDetail: {
             build: "Unknown",
             latest: "Unknown",
-            outdated: false
+            outdated: false,
+            commitsha: "Unkown"
           }});
         }
       },
-      self.handleError("Unable to fetch meshery version.")
+      self.handleError("Unable to fetch Meshery version.")
     );
   };
 
@@ -617,7 +618,7 @@ class DashboardComponent extends React.Component {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
       }
 
-      showConfigured = <div className={classes.alignRight}>{chp}</div>;
+      showConfigured = <div showConfigured>{chp}</div>;
     }
 
     let showAdapters = "No adapters configured.";
@@ -828,11 +829,17 @@ class DashboardComponent extends React.Component {
      */
     const getMesheryVersionText = (type) => {
       const {build, latest, outdated} = this.state.versionDetail
-      if (type === "current") {
-        if (outdated) return `Running Meshery: stable-${build}`
-        if (build === "Unknown") return "Unknown"
 
-        return `Meshery is up to date: stable-${build}`
+      if (type === "current") {
+        if (outdated) return `Currently Running: stable-${build}`
+        if (build === "Unknown") return "Unknown"
+        
+        let ver = `Running Latest: stable-${build}`
+        //let showSHA = "Unknown";
+        // let tip = <Tooltip title={`SHA: ${commitsha}`}>{ver}</Tooltip>;
+        // showSHA = <div className={classes.alignRight}>{tip}</div>;
+        
+        return ver
       }
 
       if (type === "latest") {
