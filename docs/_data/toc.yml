@@ -40,6 +40,8 @@
       url: concepts/architecture
     - title: Adapters
       url: concepts/architecture/adapters
+    - title: SMI
+      url: concepts/smi-spec
 - title: Functionality
   url: functionality
   links:

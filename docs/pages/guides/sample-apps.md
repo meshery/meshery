@@ -36,7 +36,7 @@ Originally built by Istio, BookInfo is a sample application which on deployment 
 
 Once BookInfo is deployed, you can use Meshery to apply custom configurations to control traffic, inject latency, perform context-based routing, and so on. 
 
-<img alt="BookInfo sample app" style="width:500px;height:auto;" src="/docs/assets/img/adapters/sample-apps/bookinfo.png" />
+<img alt="BookInfo sample app" style="width:500px;height:auto;padding-top:5px;" src="/docs/assets/img/adapters/sample-apps/bookinfo.png" />
 
 #### [Emojivoto](https://github.com/BuoyantIO/emojivoto)
 
