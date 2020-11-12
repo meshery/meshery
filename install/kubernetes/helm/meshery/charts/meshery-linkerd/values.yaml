@@ -1,15 +1,12 @@
-# Default values for meshery-nsm.
+# Default values for meshery-linkerd.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-nsm:stable-latest
+  repository: layer5/meshery-linkerd:stable-latest
   pullPolicy: IfNotPresent
-
-ports:
-  http: 10004
 
 env: {}
 
@@ -29,7 +26,7 @@ serviceAccount:
   create: true
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-nsm-service-account
+  name: meshery-linkerd-service-account
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -46,7 +43,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 10004
+  port: 10001
   annotations: {}
 
 ingress:
