@@ -12,7 +12,7 @@ image:
 env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004
 
 probe:
   #TODO: Need to confirm the health check path of meshery. 
@@ -25,6 +25,10 @@ probe:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+# For AKS AWS GCP to get the permissions to watch the nodes 
+rbac:
+  nodes: false
 
 serviceAccount:
 
@@ -86,19 +90,31 @@ affinity: {}
 # Deploy meshery-istio
 #
 mesheryistio:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-istio
   
 
 # Deploy meshery-linkerd
 # 
 mesherylinkerd:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-linkerd
 
 mesheryconsul:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-consul
+
+meshery-kuma:
+  enabled: false
+  fullnameOverride: meshery-kuma
+
+meshery-osm:
+  enabled: true
+  fullnameOverride: meshery-osm
+
+meshery-nsm:
+  enabled: true
+  fullnameOverride: meshery-nsm
 
 # If there need the test cases set it as true.
 #

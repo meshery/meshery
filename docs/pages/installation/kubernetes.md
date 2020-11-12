@@ -3,6 +3,8 @@ layout: default
 title: Kubernetes
 permalink: installation/platforms/kubernetes
 type: installation
+language: en
+list: include
 ---
 
 ## Quick Start with Kubernetes

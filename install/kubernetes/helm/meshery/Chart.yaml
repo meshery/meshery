@@ -8,6 +8,8 @@ keywords:
   - mesheryistio
   - mesherylinkerd
   - mesheryconsul
+  - meshery-kuma
+  - meshery-osm
 source: 
   - https://github.com/layer5io/meshery
 
@@ -27,25 +29,38 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 1.1.0
+version: 1.3.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 # TODO: Need to confirm the image version
-appVersion:
+appVersion: stable-latest
 
 
 dependencies:
 - name: mesheryistio
-  version: 0.1.0
+  version: 1.0.0
   condition: mesheryistio.enabled
 - name: mesherylinkerd
-  version: 0.1.0
+  version: 1.0.0
   condition: mesherylinkerd.enabled
 - name: mesheryconsul
-  version: 0.1.0
+  version: 1.0.0
   condition: mesheryconsul.enabled
+- name: meshery-kuma
+  version: 1.0.0
+  condition: meshery-kuma.enabled
+- name: meshery-osm
+  version: 1.0.0
+  condition: meshery-osm.enabled
+- name: meshery-nsm
+  version: 1.0.0
+  condition: meshery-nsm.enabled
 
 maintainers:
+  - name: Layer5 Authors
+    email: community@layer5.io
   - name: aisuko
     email: urakiny@gmail.com
+  - name: leecalcote
+    email: lee.calcote@layer5.io

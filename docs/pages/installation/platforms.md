@@ -3,6 +3,8 @@ layout: default
 title: Supported Platforms
 permalink: installation/platforms
 type: installation
+language: en
+list: exclude
 ---
 
 # Getting Started with other Platforms<a name="compatibility-matrix"></a>

@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -135,15 +137,52 @@ var configCmd = &cobra.Command{
 				return
 			}
 		case "aks":
-			if err := utils.GenerateConfigAKS(); err != nil {
-				log.Fatal("Error generating config:", err)
+			aksCheck := exec.Command("az", "version")
+			aksCheck.Stdout = os.Stdout
+			aksCheck.Stderr = os.Stderr
+			err := aksCheck.Run()
+			if err != nil {
+				log.Fatalf("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+			}
+			log.Info("Configuring Meshery to access AKS...")
+			var resourceGroup, aksName string
+
+			// Prompt user for Azure resource name
+			log.Info("Please enter the Azure resource group name:")
+			_, err = fmt.Scanf("%s", &resourceGroup)
+			if err != nil {
+				log.Warnf("Error reading Azure resource group name: %s", err.Error())
+				log.Info("Let's try again. Please enter the Azure resource group name:")
+				_, err = fmt.Scanf("%s", &resourceGroup)
+				if err != nil {
+					log.Fatalf("Error reading Azure resource group name: %s", err.Error())
+				}
+			}
+
+			// Prompt user for AKS cluster name
+			log.Info("Please enter the AKS cluster name:")
+			_, err = fmt.Scanf("%s", &aksName)
+			if err != nil {
+				log.Warnf("Error reading AKS cluster name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AKS cluster name:")
+				_, err = fmt.Scanf("%s", &aksName)
+				if err != nil {
+					log.Fatalf("Error reading AKS cluster name: %s", err.Error())
+				}
+			}
+
+			// Write AKS compatible config to the filesystem
+			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
+				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
 		default:
 			log.Fatal("The argument has to be one of gke | minikube | aks")
 		}
 
-		configPath := "/tmp/meshery/kubeconfig.yaml"
+		// TODO: Assumes Mac or Linux. Make arch-specific
+		// Issue: https://github.com/layer5io/meshery/issues/1894
+		configPath := "$HOME/.meshery/aks-kubeconfig.yaml"
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)

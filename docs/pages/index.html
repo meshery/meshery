@@ -2,6 +2,7 @@
 layout: page
 title: Meshery Documentation
 permalink: /
+display-title: false
 ---
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
@@ -9,25 +10,25 @@ permalink: /
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
     <a href="https://layer5.io/meshery">
-    <img style="width: calc(100% / 3.4); " 
+    <img style="width: calc(100% / 3.2); " 
          src="/docs/assets/img/meshery/meshery-logo-light-text.svg" />
     </a>
 </div>
 <p style="margin:auto;padding:1rem;">Meshery is an open source, service mesh management plane for enabling the adoption, operation, and management of any service mesh and their workloads.</p>
-<div class="wrapper">
+<div class="wrapper" style="text-align: left;">
 
   <!-- QUICK START -->
   <div>
     <a href="{{ site.baseurl }}/installation">
         <div class="overview">Quick&nbsp;Start</div>
     </a>
-    <ul><b>Quick Start</b>
-        <li><a href="overview">Introducing Meshery</a></li>
-        <li><a href="installation">Quick&nbsp;Start</a></li>        
+    <ul><b>Getting Started</b>
+        <li><a href="{{ site.baseurl }}/overview">Introducing Meshery</a></li>
+        <li><a href="{{ site.baseurl }}/project">Project and Community</a></li>        
     </ul>
-    <ul><b>Supported Platforms</b>
+    <ul><b><a href="{{ site.baseurl }}/installation/platforms" class="text-black">Supported Platforms</a></b>
         {% for item in sorted_pages %}
-        {% if item.type=="installation" -%}
+        {% if item.type=="installation" and item.list=="include" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}
@@ -40,25 +41,25 @@ permalink: /
     <a href="{{ site.baseurl }}/concepts">
         <div class="overview">Concepts</div>
     </a>
-    <ul><b>Concepts</b>
+    <ul><b><a href="{{ site.baseurl }}/concepts" class="text-black">Concepts</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="concepts" -%}
+      {% if item.type=="concepts" and item.list!="exclude" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
     </ul>
-    <ul><b>Functionality</b>
+    <ul><b><a href="{{ site.baseurl }}/functionality" class="text-black">Functionality</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="functionality" -%}
+      {% if item.type=="functionality" and item.list!="exclude" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
     </ul>
-    <ul><b>Service Mesh Management</b>
+    <ul><b><a href="{{ site.baseurl }}/service-meshes" class="text-black">Service Mesh Management</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="service-mesh" -%}
+      {% if item.type=="service-mesh" and item.list!="exclude" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -76,18 +77,17 @@ permalink: /
     <a href="{{ site.baseurl }}/guides">
         <div class="overview">Guides</div>
     </a>
-    <!-- {% assign sorted_reference = site.pages | sort: "type" | reverse %} -->
-    <ul><b>Guides</b>
+    <ul><b><a href="{{ site.baseurl }}/guides" class="text-black">Guides</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" -%}
+      {% if item.type=="Guides" and item.list!="exclude" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
     </ul>
-    <ul><b>Reference</b>
+    <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</b>
         {% for item in sorted_pages %}
-        {% if item.type=="Reference" -%}
+        {% if item.type=="Reference" and item.list!="exclude" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}

@@ -10629,6 +10629,10 @@ a.text-dark:focus {
     color: #888!important
 }
 
+.text-black {
+    color: rgba(0, 0, 0, 1)!important
+}
+
 .text-black-50 {
     color: rgba(0, 0, 0, .5)!important
 }
@@ -18804,32 +18808,4 @@ div.overview:hover {
 .image-right {
     float: right;
     padding-right: 10px;
-  }
-
- /*zoom image on click*/ 
-.lightbox {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1em;
-    background: rgba(0, 0, 0, 0.8);
-  }
-  /*image-width can be defined as needed*/
-  
-  .lightbox:target {
-    display: block;
-  }
-  
-  .lightbox span {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
+}
