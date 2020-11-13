@@ -51,7 +51,7 @@ display-title: false
     </ul>
     <ul><b><a href="{{ site.baseurl }}/functionality" class="text-black">Functionality</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="functionality" and item.list!="exclude" -%}
+      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}

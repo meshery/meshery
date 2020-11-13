@@ -2,6 +2,9 @@
 layout: page
 title: Functionality
 permalink: es/functionality
+type: functionality
+language: es
+list: exclude
 ---
 
 # Funcionalidades de Meshery
