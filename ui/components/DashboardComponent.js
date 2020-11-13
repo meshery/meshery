@@ -381,7 +381,7 @@ class DashboardComponent extends React.Component {
     const str = (custom || podname)
     return {
       full: podname,
-      trimmed: str.substring(0, (hash ? podname.indexOf(hash) :  str.length) - 1)
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) :  str.length) - 1)
     }
   }
 
