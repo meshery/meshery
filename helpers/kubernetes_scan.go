@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 )
@@ -71,24 +72,24 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.
 }
 
 // ScanPromGrafana - Runs a quick scan for Prometheus & Grafanas
-func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]v1.Service, error) {
 	imageNames := []string{"prometheus", "grafana"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 // ScanPrometheus - Runs a quick scan for Prometheus
-func ScanPrometheus(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanPrometheus(kubeconfig []byte, contextName string) (map[string][]v1.Service, error) {
 	imageNames := []string{"prometheus"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 // ScanGrafana - Runs a quick scan for Grafanas
-func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]v1.Service, error) {
 	imageNames := []string{"grafana"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imageNames []string) (map[string][]string, error) {
@@ -158,5 +159,38 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 
 	// use that to go thru services with the given tags
 	// from there get the ports and service type
+	return result, nil
+}
+
+// detectServiceWithName detects the services in the cluster with the name given in "names" parameter
+func detectServiceWithName(kubeconfig []byte, contextName string, names []string) (map[string][]v1.Service, error) {
+	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get all the running services
+	// analogous to GET request to /api/v1/services
+	svcList, err := clientset.CoreV1().Services("").List(metav1.ListOptions{})
+	if err != nil {
+		err = errors.Wrapf(err, "[DetectServiceWithName] Unable to get services")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	result := map[string][]v1.Service{}
+
+	for _, svc := range svcList.Items {
+		svcName := svc.GetName()
+		logrus.Debugf("[DetectServiceWithName] Service Name: %s", svcName)
+		logrus.Debugf("[DetectServiceWithName] Service type: %s", svc.Spec.Type)
+
+		for _, query := range names {
+			if strings.Contains(strings.ToLower(svcName), query) {
+				result[query] = append(result[query], svc)
+			}
+		}
+	}
+
 	return result, nil
 }
