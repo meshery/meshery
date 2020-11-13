@@ -114,6 +114,15 @@ Released on 22 August 2020
   - smi-conformance - added Colons to front matter
   - Missing bottom row added
 
+### [v0.4.22](https://github.com/layer5io/meshery/releases/tag/v0.4.22)
+
+Released on 12 November 2020
+
+**What's new ?**
+
+- General
+  - No changes
+
 ### [v0.4.2](https://github.com/layer5io/meshery/releases/tag/v0.4.2)
 
 Released on 17 August 2020
