@@ -2,7 +2,7 @@
 layout: page
 title: Docker
 permalink: es/installation/platforms/docker
-language: espanol
+language: es
 type: installation
 ---
 

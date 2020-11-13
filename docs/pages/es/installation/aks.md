@@ -2,7 +2,7 @@
 layout: page
 title: AKS
 permalink: es/installation/platforms/aks
-language: espanol
+language: es
 type: installation
 ---
 
