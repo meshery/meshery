@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import { AppBar, Paper, Tooltip } from '@material-ui/core';
+import { AppBar, Paper, Tooltip, IconButton } from '@material-ui/core';
+import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -16,6 +18,9 @@ import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
 import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
+import dataFetch from '../lib/data-fetch';
+import { updateProgress } from "../lib/store";
+import { withSnackbar } from "notistack";
 
 const styles = (theme) => ({
   root: {
@@ -113,6 +118,11 @@ class MesherySettings extends React.Component {
       prometheus,
       tabVal,
       subTabVal,
+
+      // Array of scanned prometheus urls
+      scannedPrometheus: [],
+      // Array of scanned grafan urls
+      scannedGrafana: []
     };
   }
 
@@ -128,6 +138,64 @@ class MesherySettings extends React.Component {
     }
     return null;
   }
+
+  componentDidMount() {
+    this.fetchPromGrafanaScanData()
+  }
+
+  fetchPromGrafanaScanData = () => {
+    const self = this;
+    self.props.updateProgress({ showProgress: true });
+    dataFetch(
+      '/api/promGrafana/scan', 
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (Array.isArray(result.prometheus)) {
+          result.prometheus.forEach(prom => {
+            if (Array.isArray(prom.status?.loadBalancer?.ingress)) {
+              const urls = prom.status.loadBalancer.ingress.map((ip, i) => {
+                return `http://${ip.ip}:${prom.spec?.ports[i]?.port}`
+              })
+
+              self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }))
+            }
+          })
+        }
+
+        if (Array.isArray(result.grafana)) {
+          result.grafana.forEach(graf => {
+            if (Array.isArray(graf.status?.loadBalancer?.ingress)) {
+              const urls = graf.status.loadBalancer.ingress.map((ip, i) => {
+                return `http://${ip.ip}:${graf.spec?.ports[i]?.port}`
+              })
+
+              self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }))
+            }
+          })
+        }
+      },
+      self.handleError("Unable to fetch prometheus and grafana scan data")
+    )
+  }
+
+  handleError = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant: "error",
+      action: (key) => (
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+          <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 7000,
+    });
+  };
 
   handleChange = (val) => {
     const self = this;
@@ -304,12 +372,12 @@ class MesherySettings extends React.Component {
             </AppBar>
             {subTabVal === 0 && (
               <TabContainer>
-                <GrafanaComponent />
+                <GrafanaComponent scannedGrafana={this.state.scannedGrafana} />
               </TabContainer>
             )}
             {subTabVal === 1 && (
               <TabContainer>
-                <PrometheusComponent />
+                <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} />
               </TabContainer>
             )}
           </TabContainer>
@@ -340,8 +408,14 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
 MesherySettings.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(withRouter(MesherySettings)));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
+);

@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, TextField, Grid, Button,
+  NoSsr, Grid, Button,
 } from '@material-ui/core';
+import ReactSelectWrapper from "./ReactSelectWrapper";
 
 const promStyles = (theme) => ({
   root: {
@@ -22,7 +23,7 @@ const promStyles = (theme) => ({
 class PrometheusConfigComponent extends Component {
     render = () => {
       const {
-        classes, prometheusURL, urlError, handleChange, handlePrometheusConfigure,
+        classes, prometheusURL, urlError, handleChange, handlePrometheusConfigure, options = []
       } = this.props;
       return (
         <NoSsr>
@@ -30,19 +31,13 @@ class PrometheusConfigComponent extends Component {
             <div className={classes.root}>
               <Grid container spacing={1}>
                 <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="prometheusURL"
-                    name="prometheusURL"
+                  <ReactSelectWrapper
+                    onChange={(select) => handleChange('prometheusURL')(select ? select.value : '')}
+                    options={options}
+                    value={prometheusURL.value ? prometheusURL : (options[0] || prometheusURL)}
+                    // placeholder={'Mesh Adapter URL'}
                     label="Prometheus Base URL"
-                    type="url"
-                    autoFocus
-                    fullWidth
-                    value={prometheusURL}
                     error={urlError}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={handleChange('prometheusURL')}
                   />
                 </Grid>
               </Grid>
@@ -70,6 +65,7 @@ PrometheusConfigComponent.propTypes = {
   prometheusURL: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handlePrometheusConfigure: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired
 };
 
 export default withStyles(promStyles)(PrometheusConfigComponent);
