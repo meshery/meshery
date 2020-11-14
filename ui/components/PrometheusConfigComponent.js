@@ -34,8 +34,7 @@ class PrometheusConfigComponent extends Component {
                   <ReactSelectWrapper
                     onChange={(select) => handleChange('prometheusURL')(select ? select.value : '')}
                     options={options}
-                    value={prometheusURL.value ? prometheusURL : (options[0] || prometheusURL)}
-                    // placeholder={'Mesh Adapter URL'}
+                    value={prometheusURL}
                     label="Prometheus Base URL"
                     error={urlError}
                   />
@@ -62,7 +61,7 @@ class PrometheusConfigComponent extends Component {
 
 PrometheusConfigComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  prometheusURL: PropTypes.string.isRequired,
+  prometheusURL: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handlePrometheusConfigure: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired
