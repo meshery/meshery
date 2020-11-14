@@ -19,19 +19,21 @@ var meshesMeta = map[string][]string{
 		"istio",
 	},
 	"Linkerd": {
-		"linkerd-io",
+		"linkerd",
 	},
 	"Consul": {
-		"consul-k8s",
+		"consul",
 	},
 	"Network Service Mesh": {
 		"networkservicemesh",
+		"nsm",
 	},
 	"Citrix": {
 		"citrix",
 	},
 	"osm": {
 		"openservicemesh",
+		"osm",
 	},
 }
 
@@ -53,15 +55,23 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.
 	for _, p := range podlist.Items {
 		logrus.Debugf("[ScanKubernetes] Found pod %s", p.Name)
 		meshIdentifier := ""
-		for _, cont := range p.Spec.Containers {
-			for meshName, imageNames := range meshesMeta {
-				for _, imageName := range imageNames {
-					if strings.HasPrefix(cont.Image, imageName) || strings.Contains(cont.Image, imageName) {
-						meshIdentifier = meshName
-					}
+		// for _, cont := range p.Name {
+		// 	for meshName, imageNames := range meshesMeta {
+		// 		for _, imageName := range imageNames {
+		// 			if strings.HasPrefix(cont.Image, imageName) || strings.Contains(cont.Image, imageName) {
+		// 				meshIdentifier = meshName
+		// 			}
+		// 		}
+		// 	}
+		// }
+		for meshName, names := range meshesMeta {
+			for _, name := range names {
+				if strings.Contains(p.Name, name) {
+					meshIdentifier = meshName
 				}
 			}
 		}
+
 		// Ignoring "kube-system" pods
 		if meshIdentifier != "" && p.Namespace != "kube-system" {
 			result[meshIdentifier] = append(result[meshIdentifier], p)
