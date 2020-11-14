@@ -187,7 +187,7 @@ ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.object.isRequired,
   options: PropTypes.array.isRequired,
   error: PropTypes.bool.isRequired,
 };
