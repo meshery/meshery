@@ -156,31 +156,42 @@ class MesherySettings extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress: false });
         if (Array.isArray(result.prometheus)) {
-          result.prometheus.forEach(prom => {
-            if (Array.isArray(prom.status?.loadBalancer?.ingress)) {
-              const urls = prom.status.loadBalancer.ingress.map((ip, i) => {
-                return `http://${ip.ip}:${prom.spec?.ports[i]?.port}`
-              })
-
-              self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }))
-            }
-          })
+          const urls = self.extractURLFromScanData(result.prometheus);
+          self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
         }
 
         if (Array.isArray(result.grafana)) {
-          result.grafana.forEach(graf => {
-            if (Array.isArray(graf.status?.loadBalancer?.ingress)) {
-              const urls = graf.status.loadBalancer.ingress.map((ip, i) => {
-                return `http://${ip.ip}:${graf.spec?.ports[i]?.port}`
-              })
-
-              self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }))
-            }
-          })
+          const urls = self.extractURLFromScanData(result.grafana);
+          self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }));
         }
       },
       self.handleError("Unable to fetch prometheus and grafana scan data")
     )
+  }
+
+  /**
+   * extractURLFromScanData scans the ingress urls from the
+   * mesh scan data and returns an array of the response
+   * @param {string} scannedData 
+   * @returns {string[]}
+   */
+  extractURLFromScanData = (scannedData) => {
+    const result = [];
+    scannedData.forEach(data => {
+      if (Array.isArray(data.status?.loadBalancer?.ingress)) {
+        const urls = data.status.loadBalancer.ingress.map((ip, i) => {
+          let protocol = "http";
+          const port = data.spec?.ports[i]?.port;
+          if (port === 443) protocol = "https";
+
+          return `${protocol}://${ip.ip}:${port}`;
+        })
+
+        result.push(...urls)
+      }
+    })
+
+    return result
   }
 
   handleError = (msg) => (error) => {
