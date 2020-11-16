@@ -178,16 +178,37 @@ class MesherySettings extends React.Component {
   extractURLFromScanData = (scannedData) => {
     const result = [];
     scannedData.forEach(data => {
+      // Add loadbalancer based url
       if (Array.isArray(data.status?.loadBalancer?.ingress)) {
-        const urls = data.status.loadBalancer.ingress.map((ip, i) => {
+        data.status.loadBalancer.ingress.forEach(lbdata => {
           let protocol = "http";
-          const port = data.spec?.ports[i]?.port;
-          if (port === 443) protocol = "https";
 
-          return `${protocol}://${ip.ip}:${port}`;
+          // Iterate over ports exposed by the service
+          if(Array.isArray(data.spec.ports) ){
+            data.spec.ports.forEach(({ port }) => {
+              if (port === 443) protocol = "https";
+
+              // From kubernetes v1.19 docs
+              // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
+              // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
+              let address = lbdata.ip || lbdata.hostname;
+              if (address) result.push(`${protocol}://${address}:${port}`);
+            })
+          }
         })
+      }
 
-        result.push(...urls)
+      // Add clusterip based url
+      // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
+      // Looking for valid ipv4 address
+      if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
+        let protocol = "http";
+        if(Array.isArray(data.spec.ports)) {
+          data.spec.ports.forEach(({ port }) => {
+            if (port === 443) protocol = "https";
+            result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
+          })
+        }
       }
     })
 
