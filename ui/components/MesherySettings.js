@@ -155,6 +155,8 @@ class MesherySettings extends React.Component {
       },
       (result) => {
         self.props.updateProgress({ showProgress: false });
+        if (!result) return;
+        
         if (Array.isArray(result.prometheus)) {
           const urls = self.extractURLFromScanData(result.prometheus);
           self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
@@ -172,7 +174,7 @@ class MesherySettings extends React.Component {
   /**
    * extractURLFromScanData scans the ingress urls from the
    * mesh scan data and returns an array of the response
-   * @param {string} scannedData 
+   * @param {object[]} scannedData 
    * @returns {string[]}
    */
   extractURLFromScanData = (scannedData) => {
