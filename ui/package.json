@@ -44,7 +44,7 @@
     "@material-ui/pickers": "^3.2.8",
     "@zeit/next-css": "^1.0.1",
     "billboard.js": "=1.11.0",
-    "caniuse-lite": "^1.0.30001109",
+    "caniuse-lite": "^1.0.30001158",
     "classnames": "^2.2.6",
     "codemirror": "^5.58.2",
     "eslint-loader": "^4.0.2",
