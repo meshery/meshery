@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"sync"
 	"time"
 
@@ -36,7 +37,8 @@ type MesheryRemoteProvider struct {
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
 
-	ProviderVersion string
+	ProviderVersion    string
+	SmiResultPersister *BitCaskSmiResultsPersister
 }
 
 type userSession struct {
@@ -290,51 +292,19 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 
 // FetchSmiResults - fetches results from provider backend
 func (l *MesheryRemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	logrus.Infof("attempting to fetch results from cloud")
-
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
-	q := saasURL.Query()
-	if page != "" {
-		q.Set("page", page)
-	}
-	if pageSize != "" {
-		q.Set("page_size", pageSize)
-	}
-	if search != "" {
-		q.Set("search", search)
-	}
-	if order != "" {
-		q.Set("order", order)
-	}
-	saasURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed results url: %s", saasURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
-
-	tokenString, err := l.GetToken(req)
+	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
 		return nil, err
 	}
-	resp, err := l.DoRequest(cReq, tokenString)
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
 	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
 		return nil, err
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("results successfully retrieved from SaaS")
-		return bdr, nil
-	}
-	logrus.Errorf("error while fetching results: %s", bdr)
-	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
 // GetResult - fetches result from provider backend for the given result id

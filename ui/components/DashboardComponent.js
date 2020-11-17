@@ -7,11 +7,31 @@ import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import { NoSsr, Chip, IconButton, Button, Card, CardContent, Typography, CardHeader, Tooltip } from "@material-ui/core";
+import { 
+  NoSsr, 
+  Chip, 
+  IconButton, 
+  Button, 
+  Card, 
+  CardContent, 
+  Typography, 
+  CardHeader, 
+  Tooltip,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow, 
+  TableCell,
+  Paper,
+  Select,
+  MenuItem
+} from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import SettingsIcon from "@material-ui/icons/Settings";
+import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
@@ -20,7 +40,7 @@ import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing(5),
+    backgroundColor: "#eaeff1"
   },
   chip: {
     marginRight: theme.spacing(1),
@@ -39,7 +59,6 @@ const styles = (theme) => ({
   },
   alreadyConfigured: {
     textAlign: "center",
-    padding: theme.spacing(2),
   },
   margin: {
     margin: theme.spacing(1),
@@ -75,11 +94,16 @@ const styles = (theme) => ({
     width: theme.spacing(2.5),
     paddingRight: theme.spacing(0.5),
   },
+  addIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
   cardHeader: {
     fontSize: theme.spacing(2),
   },
   card: {
     height: "100%",
+    marginTop: theme.spacing(2)
   },
   cardContent: {
     height: "100%",
@@ -88,6 +112,12 @@ const styles = (theme) => ({
     marginLeft: "-.5em",
     color: "#000",
   },
+  dashboardSection: {
+    backgroundColor: "#fff",
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: "100%"
+  }
 });
 
 class DashboardComponent extends React.Component {
@@ -113,6 +143,12 @@ class DashboardComponent extends React.Component {
 
       grafana,
       prometheus,
+
+      versionDetail: { build: "", latest: "", outdated: false, commitsha: "" },
+
+      meshScan: {},
+      activeMeshScanNamespace: {},
+      meshScanNamespaces: {}
     };
   }
 
@@ -140,6 +176,8 @@ class DashboardComponent extends React.Component {
 
   componentDidMount = () => {
     this.fetchAvailableAdapters();
+    this.fetchVersionDetails();
+    this.fetchMeshScanData();
   };
 
   fetchAvailableAdapters = () => {
@@ -165,6 +203,187 @@ class DashboardComponent extends React.Component {
       self.handleError("Unable to fetch list of adapters.")
     );
   };
+
+  fetchVersionDetails = () => {
+    const self = this
+    this.props.updateProgress({ showProgress: true });
+    dataFetch(
+      "/api/server/version",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined") {
+          this.setState({ versionDetail: result });
+        } else {
+          this.setState({versionDetail: {
+            build: "Unknown",
+            latest: "Unknown",
+            outdated: false,
+            commitsha: "Unkown"
+          }});
+        }
+      },
+      self.handleError("Unable to fetch Meshery version.")
+    );
+  };
+
+  fetchMeshScanData = () => {
+    const self = this;
+    self.props.updateProgress({ showProgress: true });
+    dataFetch(
+      "/api/mesh/scan",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (result) {
+          // Extract all the unique namespaces in the mesh scan
+          const namespaces = {};
+          const activeNamespaces = {};
+          Object.keys(result).forEach(mesh => {
+            if (Array.isArray(result[mesh])) {
+              result[mesh].forEach(comp => {
+                if (comp.metadata) {
+                  if (namespaces[mesh]) namespaces[mesh].add(comp.metadata.namespace)
+                  else namespaces[mesh] = new Set([comp.metadata.namespace])
+                }
+              })
+              namespaces[mesh] = [...namespaces[mesh]]
+              activeNamespaces[mesh] = namespaces[mesh][0] || "";
+            }
+          })
+          self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
+
+          // Check if Istio data is present in the scan
+          if (Array.isArray(result.Istio)) {
+            const istioData = result.Istio.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                version: `v${comp.spec.containers?.[0]?.image
+                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
+          }
+
+          // Check if Linkerd data is present in the scan
+          if (Array.isArray(result.Linkerd)) {
+            const linkerdData = result.Linkerd.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels["linkerd.io/control-plane-component"],
+                version: `v${comp.spec.containers?.[0]?.image
+                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
+          }
+
+          // Check if Consul data is present in the scan
+          if (Array.isArray(result.Consul)) {
+            const consulData = result.Consul.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                // Extracting consul version name from the command with which consul containers 
+                // were spinned up.
+                // There are a bunch of commands in there so splitting the string on "\\\n"
+                // and then looking for the string which has "consul-image"
+                // Once the string is found, we match it against the regex to extract version
+                // If any of this fails, it will fallback to "NA"
+                version: `v${comp.spec.containers?.[0]?.command[2]
+                .split("\\\n")
+                .find(str => str.includes("consul-image"))
+                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
+          }
+
+          // Check if OSM data is present in the scan
+          if (Array.isArray(result.osm)) {
+            const osmData = result.osm.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                version: `v${comp.spec.containers?.[0]?.args
+                ?.find(str => str.includes("openservicemesh/init"))
+                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
+          }
+
+          // Check if NSM data is present in the scan
+          if (Array.isArray(result["Network Service Mesh"])) {
+            const nsmData = result["Network Service Mesh"].map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app || comp.metadata.name,
+                version: `v0.2.0`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
+          }
+        }
+      },
+      self.handleError("Unable to fetch mesh scan data.")
+    );
+  }
+
+  /**
+   * generateMeshScanPodName takes in the podname and the hash
+   * and returns the trimmed pod name
+   * @param {string} podname
+   * @param {string} hash
+   * @param {string | undefined} custom
+   * @returns {{full, trimmed}}
+   */
+  generateMeshScanPodName = (podname, hash, custom) => {
+    const str = (custom || podname)
+    return {
+      full: podname,
+      trimmed: str.substring(0, (hash ? podname.indexOf(hash) :  str.length) - 1)
+    }
+  }
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
@@ -299,6 +518,74 @@ class DashboardComponent extends React.Component {
     );
   };
 
+  /**
+   * Meshcard takes in the mesh related data
+   * and renders a table along with other information of
+   * the mesh
+   * @param {{name, icon, tag}} mesh
+   * @param {{name, component, version, namespace}[]} components Array of components data
+   */
+  Meshcard = (mesh, components = []) => {
+    const self = this;
+    if (Array.isArray(components) && components.length)
+      return (
+        <Paper elevation={1} style={{padding: "2rem", marginTop: "1rem"}}>
+          <Grid container justify="space-between" spacing={1}>
+            <Grid item>
+              <div style={{display: "flex", alignItems: "center", marginBottom: "1rem"}}>
+                <img src={mesh.icon} className={this.props.classes.icon} style={{marginRight: "0.75rem"}}/>
+                <Typography variant="h6">{mesh.name}</Typography>
+              </div>
+            </Grid>
+            <Grid item>
+              <Select 
+                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]} 
+                onChange={(e) => self.setState(state => ({ 
+                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value} 
+                }))}
+              >
+                {
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name] 
+                  && 
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                }
+              </Select>
+            </Grid>
+          </Grid>
+          <TableContainer>
+            <Table aria-label="mesh details table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Control Plane Pods</TableCell>
+                  <TableCell align="center">Component</TableCell>
+                  <TableCell align="center">Version</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {components
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
+                  .map((component) => (
+                    <TableRow key={component.name.full}>
+                      <TableCell scope="row" align="center">
+                        <Tooltip title={component.name.full}>
+                          <div style={{textAlign: "center"}}>
+                            {component.name.trimmed}
+                          </div>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell align="center">{component.component}</TableCell>
+                      <TableCell align="center">{component.version}</TableCell>
+                    </TableRow>)
+                  )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )
+
+    return null
+  }
+
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
@@ -373,7 +660,7 @@ class DashboardComponent extends React.Component {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
       }
 
-      showConfigured = <div className={classes.alignRight}>{chp}</div>;
+      showConfigured = <div showConfigured>{chp}</div>;
     }
 
     let showAdapters = "No adapters configured.";
@@ -425,7 +712,7 @@ class DashboardComponent extends React.Component {
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
                   case "nginx service mesh":
-                    image = "/static/img/nginx.svg";
+                    image = "/static/img/nginx-sm.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
                 }
@@ -520,44 +807,137 @@ class DashboardComponent extends React.Component {
     }
 
     const showMetrics = (
-      <div>
-        {showPrometheus}
-        {showGrafana}
-      </div>
+      <Grid container justify="center" spacing={2}>
+        <Grid item>
+          {showPrometheus}
+        </Grid>
+        <Grid item>
+          {showGrafana}
+        </Grid>
+      </Grid>
     );
 
+    const showServiceMesh = (
+      <>
+        {
+          Object.keys(self.state.meshScan).length
+            ?
+            <>
+              {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
+              {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
+              {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ 
+                name: "Open Service Mesh", 
+                icon: "/static/img/osm.svg", 
+                tag: "osm" 
+              }, self.state.meshScan.osm)}
+              {self.Meshcard({ 
+                name: "Network Service Mesh", 
+                icon: "/static/img/nsm.svg" 
+              }, self.state.meshScan["Network Service Mesh"])}
+            </>
+            :
+            <div style={{
+              padding: "2rem", 
+              display: "flex", 
+              justifyContent: "center", 
+              alignItems: "center",
+              flexDirection: "column"
+            }}>
+              <Typography 
+                style={{fontSize: "1.5rem", marginBottom: "2rem"}} 
+                align="center"
+                color="textSecondary">
+                No service meshes detected in the {self.state.contextName} cluster.
+              </Typography>
+              <Button
+                aria-label="Add Meshes"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => self.props.router.push("/management")}
+              >
+                <AddIcon className={classes.addIcon} />
+                Install Service Mesh
+              </Button>
+            </div>
+        }
+      </>
+    )
+
+    /**
+     * getMesheryVersionText returs a well formatted version text
+     * @param {string} type type of version could be "latest" or "current"
+     */
+    const getMesheryVersionText = (type) => {
+      const {build, latest, outdated} = this.state.versionDetail
+
+      if (type === "current") {
+        if (outdated) return `Currently Running: stable-${build}`
+        if (build === "Unknown") return "Unknown"
+        
+        let ver = `Running Latest: stable-${build}`
+        //let showSHA = "Unknown";
+        // let tip = <Tooltip title={`SHA: ${commitsha}`}>{ver}</Tooltip>;
+        // showSHA = <div className={classes.alignRight}>{tip}</div>;
+        
+        return ver
+      }
+
+      if (type === "latest") {
+        if (outdated) return `Latest Available: stable-${latest}`
+      }
+
+      return ``
+    };
+
     const showRelease = (
-      //Add Release Version Text
-      <FormControl component="fieldset">
-        <FormLabel component="legend" style={{ fontWeight: "bold" }}>
-          Release Channel
-        </FormLabel>
-        <RadioGroup aria-label="release_channel_option" name="release_channel">
-          <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
-          <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
-        </RadioGroup>
-      </FormControl>
+      <Grid container justify="space-between" spacing={1}>
+        <Grid item xs={12} md={6}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend" style={{ fontWeight: "bold" }}>
+            Channel
+            </FormLabel>
+            <RadioGroup aria-label="release_channel_option" name="release_channel">
+              <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
+              <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={6} style={{padding: "0"}}>
+          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>
+          <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+            {getMesheryVersionText("current")}
+          </Typography>
+          <Typography style={{paddingTop: "8px"}}>
+            {getMesheryVersionText("latest")}
+          </Typography>
+        </Grid>
+      </ Grid>
     );
 
     return (
       <NoSsr>
         <div className={classes.root}>
-          <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-            Connection Status
-          </Typography>
-
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              {self.showCard("Kubernetes", showConfigured)}
+              <div className={classes.dashboardSection}>
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Service Mesh 
+                </Typography>
+                {showServiceMesh}
+              </div>
             </Grid>
             <Grid item xs={12} md={6}>
-              {self.showCard("Adapters", showAdapters)}
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {self.showCard("Metrics", showMetrics)}
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {self.showCard("Release", showRelease)}
+              <div className={classes.dashboardSection}>
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Connection Status
+                </Typography>
+                <div>{self.showCard("Kubernetes", showConfigured)}</div>
+                <div>{self.showCard("Adapters", showAdapters)}</div>   
+                <div>{self.showCard("Metrics", showMetrics)}</div>
+                <div>{self.showCard("Release", showRelease)}</div>
+              </div>
             </Grid>
           </Grid>
         </div>

@@ -160,16 +160,16 @@ class ProviderComponent extends React.Component {
     const self = this;
     return (
       <NoSsr>
-      <div className={classes.root}>
+      <div data-cy="root" className={classes.root}>
       <img className={classes.logo} src="/provider/static/img/meshery-logo/meshery-logo-light-text.png" alt="logo" />
       <Typography variant="h6" gutterBottom className={classes.chartTitle}>
       Please choose a  
-      <Tooltip title="Learn more about providers" placement="bottom">
+      <Tooltip title="Learn more about providers" placement="bottom" data-cy="providers-tooltip">
       <a className={classes.providerLink} onClick={self.handleModalOpen()}> provider </a>
       </Tooltip>
       to continue
       </Typography>
-      <Dialog onClose={self.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true}>
+      <Dialog onClose={self.handleModalClose()} aria-labelledby="customized-dialog-title" open={modalOpen} disableScrollLock={true} data-cy="providers-modal">
       <DialogTitle id="customized-dialogs-title" onClose={self.handleModalClose()}>
       <b>Choosing a provider</b>
       </DialogTitle>
@@ -219,7 +219,7 @@ class ProviderComponent extends React.Component {
       </Typography>
       </DialogContent>
       <DialogActions>
-      <Button autoFocus onClick={self.handleModalClose()} color="primary">
+      <Button autoFocus onClick={self.handleModalClose()} color="primary" data-cy="providers-modal-button-ok">
       OK
       </Button>
       </DialogActions>
@@ -242,6 +242,7 @@ class ProviderComponent extends React.Component {
         aria-controls={open ? 'split-button-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-label="Select Provider"
+        data-cy="select_provider"
         aria-haspopup="menu"
         onClick={self.handleToggle()}
         >

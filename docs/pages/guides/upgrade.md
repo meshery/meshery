@@ -1,9 +1,9 @@
 ---
-layout: guide
-title: Upgrade mesheryctl and Meshery Server
+layout: default
+title: Upgrade mesheryctl and Meshery
 description: How to Upgrade mesheryctl
 permalink: guides/upgrade
-type: guide
+type: Guides
 ---
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI.
 

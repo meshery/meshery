@@ -8,7 +8,6 @@ import Navigator from '../components/Navigator';
 import Header from '../components/Header';
 import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
-import Paper from '@material-ui/core/Paper';
 import withRedux from "next-redux-wrapper";
 import { makeStore, actionTypes } from '../lib/store';
 import {Provider} from "react-redux";
@@ -214,12 +213,6 @@ const styles = {
     padding: '48px 36px 24px',
     background: '#eaeff1',
   },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-
-  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
@@ -400,9 +393,7 @@ class MesheryApp extends App {
                     <MesheryProgressBar />
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <Paper className={classes.paper}>
-                          <Component pageContext={this.pageContext} {...pageProps} />
-                        </Paper>
+                        <Component pageContext={this.pageContext} {...pageProps} />
                       </MuiPickersUtilsProvider>
                     </main>
                   </SnackbarProvider>

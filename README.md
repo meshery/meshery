@@ -36,7 +36,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://meshery.layer5.io/docs/installation#mac-or-linux)                   |     ✔️      |
 | <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://meshery.layer5.io/docs/installation#windows)                                                      |     ✔️      |
 | &nbsp;&nbsp;&nbsp; [Scoop](https://meshery.layer5.io/docs/installation#windows)                                                                                                                                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/wsl2)                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="docs/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://meshery.layer5.io/docs/installation/platforms/windows#wsl2)                               |     ✔️      |
 | <img src="docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                                | In Progress |
 
 [Meshery documentation](https://meshery.layer5.io/docs/installation) offers thorough installation guides for your platform of choice.
@@ -57,44 +57,44 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-istio">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/istio.png' alt='Istio Service Mesh adapter' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/istio.svg' alt='Meshery Adapter for Istio Service Mesh' align="middle" hspace="10px" vspace="5px" height="30px" > Meshery adapter for Istio</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-linkerd">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/linkerd.png' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Linkerd</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-consul">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/consul.png' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Consul</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/consul.svg' alt='Consul Connect' align="middle" hspace="5px" vspace="5px" height="30px" width="30px"> Meshery adapter for Consul</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-octarine">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/octarine.png' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/octarine.svg' alt='Octarine Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Octarine</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nsm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nsm.png' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/nsm.svg' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="stable-adapters"></td></tr>
         <tr>
           <td rowspan="4" class="beta-adapters">beta</td>
           <td><a href="https://github.com/layer5io/meshery-cpx">
-            <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksHj15DkID308qQw3cmkQrRULPxyzbVquSZVev-9dj1L6sPs-rQ&s' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
          <tr>
            <td><a href="https://github.com/layer5io/meshery-kuma">
-             <img src='docs/_adapters/kuma/Kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
+             <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
            </td>
         </tr>
           <tr>
           <td><a href="https://github.com/layer5io/meshery-osm">
-            <img src='docs/_adapters/osm/Osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="beta-adapters"></td></tr>
@@ -103,22 +103,22 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-maesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/traefik.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/maesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
           </td>
         </tr>
          <tr>
           <td><a href="https://github.com/layer5io/meshery-tanzu-sm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/tanzu.png' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/tanzu.svg' alt='Tanzu Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Tanzu SM</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/aws-app-mesh.png' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
           </td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-nginx-sm">
-            <img src='https://raw.githubusercontent.com/layer5io/meshery.io/master/images/nginx-service-mesh.png' alt='Nginx Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
+            <img src='https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="alpha-adapters"></td></tr>
@@ -149,7 +149,6 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 <br /><br /><br /><br />
 
 </p>
-
 
 <h3>Adhering to Service Mesh Standards</h3>
 <img alt="Service Mesh Performance (SMP)" src="docs/assets/img/readme/smp-dark-text.svg" style="margin-left:10px;" width="18%" align="left" />
@@ -246,7 +245,7 @@ We're a warm and welcoming community of open source contributors. Please join. A
 - [Cloud Native Rejekts EU 2019](https://cfp.cloud-native.rejekts.io/cloud-native-rejekts-eu-2019/speaker/GZQTEM/) | [deck](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
 - [DockerCon 2019 Open Source Summit](https://dockercon19.smarteventscloud.com/connect/sessionDetail.ww?SESSION_ID=309149&tclass=popup#.XJxH-TOcbjI.twitter) | [deck](https://calcotestudios.com/talks/decks/slides-dockercon-2019-establishing-an-open-source-office.html), [video](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
 - [Container World 2019](https://tmt.knect365.com/container-world/speakers/lee-calcote) | [deck](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
-- [Service Mesh Day](https://servicemeshday.com/schedule/) | [deck](https://docs.google.com/presentation/d/1HwG03okX3DHgGKbma4PL-MO7Xr9zDrjQgd05PRi9i8E/edit?usp=sharing), [video](https://youtu.be/CFj1O_uyhhs)
+- [Service Mesh Day](https://servicemeshday.com/schedule.html) | [deck](https://docs.google.com/presentation/d/1HwG03okX3DHgGKbma4PL-MO7Xr9zDrjQgd05PRi9i8E/edit?usp=sharing), [video](https://youtu.be/CFj1O_uyhhs)
 - [Innotech San Antonio](https://innotechsanantonio2019.sched.com/event/Lmlb/the-enterprise-path-to-service-mesh-architectures?iframe=no&w=100%&sidebar=yes&bg=no) | [deck](https://calcotestudios.com/talks/decks/slides-innotech-san-antonio-2019-the-enterprise-path-to-service-mesh.html)
 - [CNCF Networking WG](https://github.com/cncf/wg-networking) | [deck](https://www.slideshare.net/leecalcote/benchmarking-service-meshes-cncf-networking-wg-141938576), [video](https://www.youtube.com/watch?v=2_JwCc-kLMA&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE)
 

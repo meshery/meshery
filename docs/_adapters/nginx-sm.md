@@ -1,21 +1,20 @@
 ---
-layout: page
-title: NGINX Service Mesh Adapter
-name: Meshery Adapter for NGINX Servce Mesh
+layout: default
+title: NGINX Service Mesh
+name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
 version: v0.6.0
 port: 10010/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-nginx-sm
-image: /docs/assets/img/service-meshes/nginx.svg
+image: /docs/assets/img/service-meshes/nginx-sm.svg
+permalink: service-meshes/adapters/nginx-sm
 ---
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress](page.github_link).
 
-### Lifecycle management
+## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
@@ -28,17 +27,17 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto](https://github.com/BuoyantIO/emojivoto)
+- [Emojivoto](/docs/guides/sample-apps#emoji.voto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Istio Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) 
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- [Bookinfo](/docs/guides/sample-apps#bookinfo)
+    - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
+
+- [Httpbin](/docs/guides/sample-apps#httpbin)
+    - Httpbin is a simple HTTP request and response service.
 
 - [Nginx Servce Mesh Books](https://github.com/BuoyantIO/booksapp)
     - Application that helps you manage your bookshelf.
-
-- [HTTPbin](https://httpbin.org/)
-    - A simple HTTP Request & Response Service.
 
 Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 

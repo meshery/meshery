@@ -136,11 +136,12 @@ func DownloadFile(filepath string, url string) error {
 	return nil
 }
 
+// GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
 func GetMesheryGitHubOrg() string {
 	return mesheryGitHubOrg
 }
 
-// Get Meshery GitHub Details
+// GetMesheryGitHubRepo retrieves the name of the Meshery repository
 func GetMesheryGitHubRepo() string {
 	return mesheryGitHubRepo
 }
@@ -173,17 +174,17 @@ func SetFileLocation() error {
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck() error {
+func PreReqCheck(subcommand string) error {
 	//Check whether docker daemon is running or not
 	if err := exec.Command("docker", "ps").Run(); err != nil {
-		log.Info("Docker daemon is not running")
+		log.Info("Docker is not running.")
 		//No auto installation of docker for windows
 		if runtime.GOOS == "windows" {
-			return errors.Wrap(err, "please start Docker daemon. Run `mesheryctl system start` once docker is started.")
+			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
 		}
-		err = startdockerdaemon()
+		err = startdockerdaemon(subcommand)
 		if err != nil {
-			return errors.Wrap(err, "failed to start Docker daemon. Run `mesheryctl system start` once docker is started.")
+			return errors.Wrapf(err, "failed to start Docker.")
 		}
 	}
 	//Check for installed docker-compose on client system
@@ -191,42 +192,51 @@ func PreReqCheck() error {
 		log.Info("Docker-Compose is not installed")
 		//No auto installation of Docker-compose for windows
 		if runtime.GOOS == "windows" {
-			return errors.Wrap(err, "please install docker-compose. Run `mesheryctl system start` after docker-compose is installed.")
+			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 		err = installprereq()
 		if err != nil {
-			return errors.Wrap(err, "failed to install prerequisites. Run `mesheryctl system start` after docker-compose is installed.")
+			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 	}
 	return nil
 }
 
-func startdockerdaemon() error {
-	log.Info("Attempting to start Docker daemon")
-	// TODO: read user input on whether to start docker or not.
+func startdockerdaemon(subcommand string) error {
+	// read user input on whether to start Docker daemon or not.
+	var userinput string
+	fmt.Printf("Start Docker now [y/n]? ")
+	fmt.Scan(&userinput)
+	userinput = strings.TrimSpace(userinput)
+	userinput = strings.ToLower(userinput)
+	if userinput == "n" || userinput == "no" {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
 	// once user gaves permission, start docker daemon on linux/macOS
 	if runtime.GOOS == "linux" {
 		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
-			return errors.Wrap(err, "please start Docker then run the command `mesheryctl system start` to start Meshery")
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	} else {
 		// Assuming we are on macOS, try to start Docker from default path
 		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
 		err := cmd.Start()
 		if err != nil {
-			return errors.Wrap(err, "please start Docker then run the command `mesheryctl system start` to start Meshery")
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "20").Run()
+		err = exec.Command("sleep", "30").Run()
 		if err != nil {
-			return errors.Wrap(err, "please start Docker then run the command `mesheryctl system start` to start Meshery")
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// check whether docker started successfully or not, throw an error message otherwise
 		if err := exec.Command("docker", "ps").Run(); err != nil {
-			return errors.Wrap(err, "please start Docker then run the command `mesheryctl system start` to start Meshery")
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	}
-	log.Info("Prerequisite Docker daemon started.")
+	log.Info("Prerequisite Docker started.")
 	return nil
 }
 

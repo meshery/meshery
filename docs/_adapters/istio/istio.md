@@ -1,19 +1,35 @@
 ---
-layout: page
+layout: default
 title: Istio
 name: Meshery Adapter for Istio
 version: v1.7.3
+mesh_name: Istio
 port: 10000/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-istio
 image: /docs/assets/img/service-meshes/istio.svg
+permalink: service-meshes/adapters/istio
 ---
 
-# {{ page.name }}
+{% include adapter-status.html %}
 
-|  Service Mesh  |                   Adapter Status                    | Latest Supported Mesh Version |
-| :------------: | :-------------------------------------------------: | :---------------------------: |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) |       {{page.version}}        |
+### Lifecycle management
+
+The {{page.name}} can install **{{page.version}}** of the {{page.title}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+
+<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
+</a>
+
+##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+
+<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />
+</a>
 
 ### Features
 
@@ -24,19 +40,18 @@ image: /docs/assets/img/service-meshes/istio.svg
 1. Custom service mesh configuration
 1. Prometheus and Grafana connections
 
-### Lifecycle management
-
-The {{page.name}} can install **{{page.version}}** of the {{page.title}} service mesh. The SMI adapter for Istio can also be installed using Meshery.
-
 ### Sample applications
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo)
-- [Httpbin](https://httpbin.org/)
-- [Hipster](https://github.com/GoogleCloudPlatform/microservices-demo)
+- [Bookinfo](/docs/guides/sample-apps#bookinfo)
+    - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
 
-Once BookInfo is deployed, you can use Meshery to apply configuration to control traffic, inject latency, perform context-based routing, and so on.
+- [Httpbin](/docs/guides/sample-apps#httpbin)
+    - Httpbin is a simple HTTP request and response service.
+
+- [Hipster](/docs/guides/sample-apps#hipster)
+    - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ### SMI Conformance Capability
 
@@ -52,7 +67,12 @@ The {{page.name}} will parse all of Istio's configuration and compare the runnin
 
 Meshery allows you to paste (or type in) any Kubernetes manifest that you would like to have applied to the cluster. This configuraiton may be new VirtualServices or new DestinationRules or other.
 
-![Custom Istio Configuration in Meshery]({{ relative_url }}istio-adapter-custom-configuration.png)
+<a href="#istio-custom">
+  <img style="width:500px;" src="istio-adapter-custom-configuration.png" />
+</a>
+<a href="#" class="lightbox" id="istio-custom">
+  <span style="background-image: url('istio-adapter-custom-configuration.png')"></span>
+</a>
 
 ### Prometheus and Grafana connections
 

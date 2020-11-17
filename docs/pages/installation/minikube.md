@@ -1,7 +1,10 @@
 ---
-layout: page
+layout: default
 title: Minikube
 permalink: installation/platforms/minikube
+type: installation
+language: en
+list: include
 ---
 
 ## Quick Start with Minikube
