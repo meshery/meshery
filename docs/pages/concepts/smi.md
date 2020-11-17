@@ -35,7 +35,7 @@ Conformance with SMI specifications is defined as a series of test assertions. A
 
 **Meshery is the test harness used to fit SMI conformance tests to different service meshes and different workloads.**
 
-Meshery validates your service mesh's conformance to the SMI specifications through automated provisioning of individual service meshes and deployment of a consistent workload produced by deploying [`Learn Layer5`](https://github.com/layer5io/learn-layer5) as a sample application. 
+Meshery validates your service mesh's conformance to the SMI specifications through automated provisioning of individual service meshes and deployment of a consistent workload produced by deploying [**Learn Layer5**](https://github.com/layer5io/learn-layer5) as a sample application. 
 
 ##### **Suggested Reading**
 

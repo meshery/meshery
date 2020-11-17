@@ -12,7 +12,7 @@ type: functionality
 
 Meshery encaptures the SMI spec by validating your service mesh's conformance to the SMI specifications. We achieve this by running through a service mesh's workloads without interacting with the specific mesh's APIs by using a sample application to provide a consistent and constant workload. This testing practice is followed because we, at Meshery, understand your meshing needs and acknowledge that different workloads (applications) and the varied types and sizes of infrastructure resources pose a substantial need for a cross-mesh comparison between service meshes so that users can predict and understand distinct behavioural differences, and run performance tests to validate their mesh's abilities.
 
-This allows Meshery to provide an independent, unbiased and credible analysis in the form of a compatibility matrix, identifying the SMI features supported by each service mesh and the tabulated results of a suite of repeatable conformance tests. This is achieved by using a sample application to produce a consistent workload by deploying a pre-configured sample application [`Learn Layer5`](https://github.com/layer5io/learn-layer5).
+This allows Meshery to provide an independent, unbiased and credible analysis in the form of a compatibility matrix, identifying the SMI features supported by each service mesh and the tabulated results of a suite of repeatable conformance tests. This is achieved by using a sample application to produce a consistent workload by deploying a pre-configured sample application [**Learn Layer5**](https://github.com/layer5io/learn-layer5).
 
 #### **Features**
 
@@ -75,14 +75,12 @@ Finally, the results for the test runs from Meshery are persisted (same GitHub r
 ##### Provenance of Test Results
 
 Each participating service mesh project will be asked to incorporate the conformance tool, Meshery, into their CI pipelines, or alternatively, to manually run the conformance test suite when a release of the service mesh project is made. The conformance tool will run the test suite and automatically update the conformance dashboard when the test is complete.
-In order to ensure provenance of test results that represent a given service mesh, each project will be asked to identify one or more github accounts that will be used for publishing the tests. Ideally, this github account is a `servicerobot` account used within the project’s CI pipeline.
+In order to ensure provenance of test results that represent a given service mesh, each project will be asked to identify one or more github accounts that will be used for publishing the tests. Ideally, this github account is a *servicerobot* account used within the project’s CI pipeline.
 
 This method of providing verification of results is similarly used for the service mesh projects that also use Meshery to provide their performance test results.
-
-Each service mesh project needs to identify their `servicerobot` account, by updating this list `httpsmeshery.iosmi-conformancesm-service-accounts`. Identify a given Meshery Provider user and designate their “CI service account”.
 
 ### **Publishing Test Results**
 
 1. A public-facing report will display the current and historical status of individual service mesh capabilities with each of the SMI specifications.
-1.  The report will be visual in nature, but also be available as a yaml file. Dashboard to be published publicly here `httpsmeshery.iosmi-conformance` (currently, listed on `httpslayer5.iolandscape#smi`).
+1.  The report will be visual in nature, but also be available as a yaml file. The dashboard will be published publicly on our [SMI Conformance](https/meshery.io/smi-conformance) page. It is currently listed on the [Landscape](https/layer5.io/landscape#smi) page
 1. Reports tracking the history of service mesh versions, SMI spec versions and their compatibility will be stored.
