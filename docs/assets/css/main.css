@@ -18720,3 +18720,42 @@ footer {
     background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
   }
+
+#post h1, #post h2, #post h3, #post h4 {
+    color: gray;
+    padding-top: 10px;
+}
+
+#post h5 {
+    background: none repeat scroll 0% 0% #3c494f;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 15px;
+    margin-bottom: 0px;
+    border-radius: 3px 3px 0px 0px;
+}
+
+.btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 12px 12px 3px rgba(34, 25, 25, 0.2);
+    -moz-box-shadow: 12px 12px 3px rgba(34, 25, 25, 0.2);
+    -webkit-box-shadow: 12px 12px 3px rgba(34, 25, 25, 0.2);
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.btn .btn-copy-code {
+    color: gray;
+    padding-right: 5px;
+    float: right;
+    background: pink;
+    border: 0;
+    font-size: 12px;
+    margin-top: -30px;
+}
+.btn .btn-copy-code:hover {
+    cursor: pointer;
+    color: white;
+}

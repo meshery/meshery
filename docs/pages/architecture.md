@@ -53,5 +53,5 @@ concerned with a long-lived configuration, while others have no state at all.
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
 | mesheryctl        | stateless    | command line interface that has a configuration file                  |
 | Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
-| Meshery Server    | caches state | application cache is stored in user's `$HOME/.meshery/` folder        |
+| Meshery Server    | caches state | application cache is stored in user's _$HOME/.meshery/_ folder        |
 | Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
