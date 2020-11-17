@@ -390,7 +390,7 @@ class GrafanaComponent extends Component {
       return (
         <NoSsr>
           <GrafanaConfigComponent
-            grafanaURL={{ label: grafanaURL, value: grafanaURL }}
+            grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
             options={this.props.scannedGrafana.map(graf => ({ label: graf, value: graf }))}
             grafanaAPIKey={grafanaAPIKey}
             urlError={urlError}

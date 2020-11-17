@@ -42,7 +42,8 @@ class GrafanaConfigComponent extends Component {
                       value={grafanaURL}
                       label="Grafana Base URL"
                       error={urlError}
-                      noOptionsMessage="None Discovered"
+                      placeholder="Address of Grafana Server"
+                      noOptionsMessage="No Grafana servers discovered"
                     />
                   </div>
                 </Grid>

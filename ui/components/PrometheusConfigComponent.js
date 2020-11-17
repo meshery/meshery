@@ -36,7 +36,8 @@ class PrometheusConfigComponent extends Component {
                     options={options}
                     value={prometheusURL}
                     label="Prometheus Base URL"
-                    noOptionsMessage="None Discovered"
+                    placeholder="Address of Prometheus Server"
+                    noOptionsMessage="No Prometheus servers discovered"
                     error={urlError}
                   />
                 </Grid>
