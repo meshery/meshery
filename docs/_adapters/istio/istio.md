@@ -21,20 +21,14 @@ The {{page.name}} can install **{{page.version}}** of the {{page.title}} service
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#istio-adapter">
-  <img style="width:500px;" src="/docs/assets/img/adapters/istio/istio-adapter.png" />
-</a>
-<a href="#" class="lightbox" id="istio-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/istio/istio-adapter.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-adapter.png" />
 </a>
 
 ##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
 
-<a href="#istio-install">
-  <img style="width:500px;" src="/docs/assets/img/adapters/istio/istio-install.png" />
-</a>
-<a href="#" class="lightbox" id="istio-install">
-  <span style="background-image: url('/docs/assets/img/adapters/istio/istio-install.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/istio/istio-install.png" />
 </a>
 
 ### Features

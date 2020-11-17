@@ -20,22 +20,22 @@ Meshery and its components are written using the following languages and technol
 ## Deployments
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes.
 
-[![Meshery architecture](/docs/assets/img/architecture/meshery-architecture.svg)](/docs/assets/img/architecture/meshery-architecture.svg)
+[![Meshery architecture]({{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg)
 
 ## Clients
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-[![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)](/docs/assets/img/architecture/Meshery-client-architecture.svg)
+[![Client architecture]({{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg)
 
 ## Providers
 As a point of extension, Meshery supports two types of providers: _Local_ and _Remote_.
 
-[![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
+[![Provider architecture]({{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg)
 
 ## Object Model
 This diagram outlines logical constructs within Meshery and their relationships.
 
-[![Object Model](/docs/assets/img/architecture/meshery-object-model.svg)](/docs/assets/img/architecture/meshery-object-model.svg)
+[![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)
 
 ### **Network Ports**
 

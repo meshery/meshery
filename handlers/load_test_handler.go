@@ -21,7 +21,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/encoding/protojson"
-	v1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
@@ -326,7 +326,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string][]v1.Deployment)
+		installedMeshesChan := make(chan map[string][]corev1.Pod)
 
 		go func() {
 			var nodes []*models.K8SNode

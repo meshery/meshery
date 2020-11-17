@@ -2,7 +2,7 @@
 layout: page
 title: KinD
 permalink: es/installation/platforms/kind
-language: espanol
+language: es
 type: installation
 ---
 
