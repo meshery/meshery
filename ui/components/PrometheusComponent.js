@@ -304,7 +304,7 @@ class PrometheusComponent extends Component {
       return (
         <NoSsr>
           <PrometheusConfigComponent
-            prometheusURL={{label: prometheusURL, value: prometheusURL}}
+            prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
             options={this.props.scannedPrometheus.map(url => ({label: url, value: url}))}
             urlError={urlError}
             handleChange={this.handleChange}
