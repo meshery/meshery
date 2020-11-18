@@ -365,7 +365,7 @@ class DashboardComponent extends React.Component {
           }
         }
       },
-      self.handleError("Unable to fetch mesh scan data.")
+      self.redirectErrorToConsole("Unable to fetch mesh scan data.")
     );
   }
 
@@ -393,11 +393,13 @@ class DashboardComponent extends React.Component {
    * @returns {string}
    */
   generateMeshScanVersion = (versionStr) => {
-    const matchResult = versionStr?.match(/\d+(\.\d+){2,}/g)[0];
+    if (typeof versionStr !== "string") return "NA";
+
+    const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
     if (!matchResult) return "NA";
     
     // Add "v" iff we have a valid match result
-    return `v${matchResult}`;
+    return `v${matchResult[0]}`;
   }
 
   handleError = (msg) => (error) => {
@@ -413,6 +415,19 @@ class DashboardComponent extends React.Component {
       autoHideDuration: 7000,
     });
   };
+
+  /**
+   * redirectErrorToConsole returns a function which redirects
+   * ther error to the console under the group labelled by the "msg"
+   * param
+   * @param {string} msg 
+   */
+  redirectErrorToConsole = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    console.group(msg);
+    console.error(error);
+    console.groupEnd();
+  }
 
   handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;
