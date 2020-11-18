@@ -7,7 +7,13 @@ language: en
 list: include
 ---
 
-## Quick Start with Amazon Elastic Kubernetes Service (EKS)
+## Quick Start with Amazon Elastic Kubernetes Service (EKS) <img src="/docs/assets/img/platforms/eks.png" width="35" height="35" />
+
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+
+**To set up and run Meshery on EKS** 
 
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount` can be used or a new one created. 
@@ -15,7 +21,6 @@ Meshery will need to be assigned a `ServiceAccount`. An existing `ServiceAccount
 1. Configure Meshery to run on EKS:
     - [Automatic Configuration](#automatic-configuration-recommended)
     - [Manual Configuration](#manual-configuration-optional)
-
 
 _Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="_blank"}_
 

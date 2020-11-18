@@ -7,9 +7,13 @@ language: en
 list: include
 ---
 
-## Quick Start with KinD
+## Quick Start with KinD <img src="/docs/assets/img/platforms/kind.png" width="35" height="35" />
 
-To set up and run Meshery on KinD:
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+
+**To set up and run Meshery on KinD** 
 
 - [Install kinD](#installation)
 - [Create a Kubernetes cluster with kinD](#create-cluster-using-kind)

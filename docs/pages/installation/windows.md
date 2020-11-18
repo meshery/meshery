@@ -7,8 +7,13 @@ language: en
 list: include
 ---
 
-## **Quick Start with Windows**
-To set up and run Meshery on Windows:
+## Quick Start with Windows <img src="/docs/assets/img/platforms/wsl2.png" width="30" height="30" />
+
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+
+**To set up and run Meshery on Windows** 
 
 1. <a href="#step1">Configure Windows and enable Docker </a>
 2. <a href="#step4">Install a Kubernetes cluster on top </a>

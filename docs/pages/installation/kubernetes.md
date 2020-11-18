@@ -7,12 +7,16 @@ language: en
 list: include
 ---
 
-## Quick Start with Kubernetes
+## Quick Start with Kubernetes <img src="/docs/assets/img/platforms/kubernetes.svg" width="35" height="35" />
 
-To set up and run Meshery on Kubernetes:
+
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+
+**To set up and run Meshery on Kubernetes** 
 
 - [ Use Helm and set up a Kubernetes cluster](#using-helm)
-
 - [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
 
 #### **Using Helm**

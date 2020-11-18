@@ -7,8 +7,13 @@ language: en
 list: include
 ---
 
-## Quick Start with Minikube
-To set up and run Meshery on Minikube:
+## Quick Start with Minikube <img src="/docs/assets/img/platforms/minikube.png" width="35" height="35" />
+
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+
+**To set up and run Meshery on Minikube** 
 
 1. [Start Minikube](#1-start-minikube)
 1. [Configure Meshery to use minkube](#2-configure-meshery-to-use-minikube)

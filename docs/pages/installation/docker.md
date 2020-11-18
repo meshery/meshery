@@ -7,9 +7,12 @@ language: en
 list: include
 ---
 
-## Quick Start with Docker
+## Quick Start with Docker <img src="/docs/assets/img/platforms/docker.svg" width="35" height="35" />
 *Note: a minimum of 4GB RAM is needed for [Istio (and BookInfo sample app)](/docs/service-meshes/adapters/istio/istio) deployments.*
 
+###### **Prerequisite(s)**
+
+- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
 
 ### **Steps**
 
