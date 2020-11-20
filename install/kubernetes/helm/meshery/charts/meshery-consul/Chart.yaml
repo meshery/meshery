@@ -1,20 +1,8 @@
 apiVersion: v2
-name: meshery
-description: Meshery chart for deploying Meshery and Meshery's adapters.
-icon: https://github.com/layer5io/meshery/blob/master/ui/public/static/img/meshery-logo/meshery-logo.svg
-kubeVersion: 
-keywords:
-  - meshery
-  - meshery-istio
-  - meshery-linkerd
-  - meshery-consul
-  - meshery-kuma
-  - meshery-osm
-  - meshery-nsm
+name: meshery-consul
+description: Meshery Adapter for Consul chart.
 source: 
-  - https://github.com/layer5io/meshery
-
-engine: gotpl
+  - https://github.com/layer5io/meshery-consul
 
 deprecated: false
 
@@ -34,29 +22,8 @@ version: 2.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-# TODO: Need to confirm the image version
+# TODO: Need the confirm the image tag.
 appVersion: stable-latest
-
-
-dependencies:
-- name: meshery-istio
-  version: 2.0.0
-  condition: meshery-istio.enabled
-- name: meshery-linkerd
-  version: 2.0.0
-  condition: meshery-linkerd.enabled
-- name: meshery-consul
-  version: 2.0.0
-  condition: meshery-consul.enabled
-- name: meshery-kuma
-  version: 1.0.0
-  condition: meshery-kuma.enabled
-- name: meshery-osm
-  version: 1.0.0
-  condition: meshery-osm.enabled
-- name: meshery-nsm
-  version: 1.0.0
-  condition: meshery-nsm.enabled
 
 maintainers:
   - name: Layer5 Authors
