@@ -113,7 +113,6 @@ class SecondaryDrawer extends Component {
     super(props);
     this.state = {
       value: this.props.tab,
-      modalOpen: false
     };
   }
 
@@ -124,7 +123,6 @@ class SecondaryDrawer extends Component {
     } = this.props.grafana;
     const {
       value,
-      modalOpen
     } = this.state;
 
     if(data){
@@ -139,14 +137,6 @@ class SecondaryDrawer extends Component {
       const { toggle } = this.props;
       toggle(null, false);
     };
-
-    const handleModalOpen = () => {
-      this.setState({ modalOpen: true });
-    }
-
-    const handleModalClose = () => {
-      this.setState({ modalOpen: false });
-    }
 
     return (
       <div className={classes.root}>
