@@ -32,8 +32,10 @@ class PerformanceDialog extends Component {
         onClose={this.props.handleClose}
         aria-labelledby="performance-dialog-title"
         aria-describedby="performance-dialog-description"
+        fullWidth={true}
+        maxWidth = {'md'}
       >
-        <DialogTitle id="alert-dialog-title">{"Performance Test"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title"><h3 color="primary">Performance Test</h3></DialogTitle>
         <DialogContent>
           <DialogContentText id="performance-component">
             <MesheryPerformanceComponent
