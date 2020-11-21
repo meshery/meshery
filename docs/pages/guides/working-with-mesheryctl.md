@@ -90,7 +90,7 @@ To upgrade `mesheryctl`, execute the following command:
 scoop update mesheryctl
 ```
 
-# Advanced Installation
+### Advanced Installation
 
 Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local `~/.meshery/meshery.yaml` (a docker compose file).
 Aligned with the Meshery container image, instead of leaving the implicit `:stable-latest` tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
@@ -102,4 +102,66 @@ services:
     image: layer5/meshery:v0.5.0
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+```
+
+## Completion
+
+### bash
+
+#### bash <= 3.2
+
+```bash
+source /dev/stdin <<< "$(mesheryctl system completion bash)"
+```
+
+#### bash >= 4.0
+
+```bash
+source <(mesheryctl system completion bash)
+```
+
+#### bash <= 3.2 on osx
+
+```bash
+brew install bash-completion # ensure you have bash-completion 1.3+
+mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+```
+
+#### bash >= 4.0 on osx
+
+```bash
+brew install bash-completion@2
+mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+```
+
+### zsh
+
+```bash
+source <(mesheryctl system completion zsh)
+```
+
+If shell completion is not already enabled in your environment you will need to enable it.  You can execute the following once:
+
+```bash
+echo "autoload -U compinit; compinit" >> ~/.zshrc
+```
+
+Might need to start a new shell for this setup to take effect.
+
+#### zsh on osx / oh-my-zsh
+
+```bash
+mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
+```
+
+### fish
+
+```bash
+mesheryctl system completion fish | source
+```
+
+To load fish shell completions for each session, execute once:
+
+```bash
+mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
 ```
