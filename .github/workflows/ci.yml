@@ -226,7 +226,7 @@ jobs:
         version: latest
         args: release --snapshot --skip-publish --rm-dist
   docker-build-test:
-    name: Docker build and push
+    name: Docker build
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
