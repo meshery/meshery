@@ -83,12 +83,12 @@ class UserPreference extends React.Component {
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
       msg = !val ? "Sending anonymous usage statistics was enabled"
-        : "Sending anonymous usage statistics was diabled";
+        : "Sending anonymous usage statistics was disabled";
 
     } else {
       val = perfResultStats;
       msg = !val ? "Sending anonymous performance results was enabled"
-        : "Sending anonymous performance results was diabled";
+        : "Sending anonymous performance results was disabled";
     }
 
     const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
@@ -144,6 +144,7 @@ class UserPreference extends React.Component {
                       track: classes.track,
                       checked: classes.checked,
                     }}
+                    data-cy="UsageStatsPreference"
                   />
                 )}
                 labelPlacement="end"
@@ -161,6 +162,7 @@ class UserPreference extends React.Component {
                       track: classes.track,
                       checked: classes.checked,
                     }}
+                    data-cy="PerfResultPreference"
                   />
                 )}
                 labelPlacement="end"

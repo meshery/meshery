@@ -1,9 +1,9 @@
 ---
-layout: guide
+layout: default
 title: Using Metrics in Meshery
 description: How to connected and use Prometheus and Grafana metrics in Meshery
 permalink: guides/meshery-metrics
-type: guide
+type: Guides
 ---
 
 In order to generate performance test reports of service meshes and their workloads, Meshery uses `Grafana` and/or `Prometheus` as visualization and metrics systems, respectively. This document outlines the requirements necessary for Meshery to connect to these systems. Steps vary depending upon the service mesh and its configuration.

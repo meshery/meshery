@@ -23,24 +23,6 @@ import LoadTestTimerDialog from './load-test-timer-dialog';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import { durationOptions } from '../lib/prePopulatedOptions';
 
-const meshes = [
-  'Istio',
-  'Linkerd',
-  'App Mesh',
-  'Aspen Mesh',
-  'Citrix Service Mesh',
-  'Consul Connect',
-  'Grey Matter',
-  'Kong',
-  'Mesher',
-  'Network Service Mesh',
-  'Octarine',
-  'Rotor',
-  'SOFAMesh',
-  'Open Service Mesh',
-  'Zuul',
-];
-
 const loadGenerators = [
   'fortio',
   'wrk2',
@@ -113,6 +95,8 @@ class MesheryPerformanceComponent extends React.Component {
       staticPrometheusBoardConfig,
       selectedMesh: '',
       availableAdapters: [],
+
+      availableSMPMeshes: []
     };
   }
 
@@ -324,6 +308,7 @@ class MesheryPerformanceComponent extends React.Component {
     this.getStaticPrometheusBoardConfig();
     this.scanForMeshes();
     this.getLoadTestPrefs();
+    this.getSMPMeshes();
   }
 
   getLoadTestPrefs = () => {
@@ -390,6 +375,22 @@ class MesheryPerformanceComponent extends React.Component {
     }, () => {});
   }
 
+  getSMPMeshes = () => {
+    const self = this
+    dataFetch('/api/mesh', {
+      credentials: 'same-origin',
+      credentials: 'include',
+      method: 'GET'
+    }, (result) => {
+      if (result && Array.isArray(result.available_meshes)) {
+        self.setState({ 
+          availableSMPMeshes: result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)) 
+        })
+      }
+    }, self.handleError("unable to fetch SMP meshes")
+    );
+  }
+
   generateUUID() {
     const { v4: uuid } = require('uuid');
     return uuid();
@@ -446,8 +447,8 @@ class MesheryPerformanceComponent extends React.Component {
     let displayPromCharts = '';
 
     availableAdapters.forEach((item) => {
-      const index = meshes.indexOf(item);
-      if (index !== -1) meshes.splice(index, 1);
+      const index = this.state.availableSMPMeshes.indexOf(item);
+      if (index !== -1) this.state.availableSMPMeshes.splice(index, 1);
     });
 
     if (staticPrometheusBoardConfig && staticPrometheusBoardConfig !== null && Object.keys(staticPrometheusBoardConfig).length > 0 && prometheus.prometheusURL !== '') {
@@ -532,7 +533,7 @@ class MesheryPerformanceComponent extends React.Component {
                   ))}
                   {availableAdapters && (availableAdapters.length > 0) && <Divider />}
                   <MenuItem key="mh_-_none" value="None">None</MenuItem>
-                  {meshes && meshes.map((mesh) => (
+                  {this.state.availableSMPMeshes && this.state.availableSMPMeshes.map((mesh) => (
                     <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>{mesh}</MenuItem>
                   ))}
                 </TextField>

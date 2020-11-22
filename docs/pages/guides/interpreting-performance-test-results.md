@@ -1,9 +1,9 @@
 ---
-layout: guide
+layout: default
 title: Interpreting Performance Test Results
-description: This test is to help users to glean an insights of what the performance tests result should look like.
+description: This guide is to help users to glean an insights of what the performance tests result should look like.
 permalink: guides/interpreting-performance-test-results
-type: guide
+type: guides
 ---
 
 
@@ -14,9 +14,9 @@ Once a performance tests and run, it's disco analysis is performed and test resu
 
 ## Graphical view
 
-![assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)
+[![{{ site.baseurl }}/assets/img/performance-management/dashboard.png](https://layer5io.github.io/meshery/assets/img/performance-management/dashboard.png)]({{ site.baseurl }}/assets/img/performance-management/dashboard.png)
 
-![assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)
+[![{{ site.baseurl }}/assets/img/performance-management/chart.png](https://layer5io.github.io/meshery/assets/img/performance-management/chart.png)]({{ site.baseurl }}/assets/img/performance-management/chart.png)
 
 ## Tests
 

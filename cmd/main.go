@@ -131,6 +131,7 @@ func main() {
 		LoginCookieDuration:        1 * time.Hour,
 		BitCaskPreferencePersister: cPreferencePersister,
 		ProviderVersion:            "v0.3.14",
+		SmiResultPersister:         smiResultPersister,
 	}
 	cp.SyncPreferences()
 	defer cp.StopSyncPreferences()

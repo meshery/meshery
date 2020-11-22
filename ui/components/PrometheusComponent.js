@@ -86,11 +86,11 @@ class PrometheusComponent extends Component {
     return {};
   }
 
-      handleChange = (name) => (event) => {
-        if (name === 'prometheusURL' && event.target.value !== '') {
+      handleChange = (name) => (value) => {
+        if (name === 'prometheusURL' && value !== '') {
           this.setState({ urlError: false });
         }
-        this.setState({ [name]: event.target.value });
+        this.setState({ [name]: value });
       };
 
       handlePrometheusConfigure = () => {
@@ -304,7 +304,8 @@ class PrometheusComponent extends Component {
       return (
         <NoSsr>
           <PrometheusConfigComponent
-            prometheusURL={prometheusURL}
+            prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
+            options={this.props.scannedPrometheus.map(url => ({label: url, value: url}))}
             urlError={urlError}
             handleChange={this.handleChange}
             handlePrometheusConfigure={this.handlePrometheusConfigure}
@@ -316,6 +317,7 @@ class PrometheusComponent extends Component {
 
 PrometheusComponent.propTypes = {
   classes: PropTypes.object.isRequired,
+  scannedPrometheus: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => ({

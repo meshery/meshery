@@ -1,13 +1,11 @@
 import UserPreference from "../components/UserPreference";
-import { NoSsr } from "@material-ui/core";
-import Paper from '@material-ui/core/Paper';
+import { NoSsr, Paper, withStyles } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 import Head from 'next/head';
 import dataFetch from '../lib/data-fetch';
-import { withStyles } from '@material-ui/core/styles';
 
 const style = () => ({
 
@@ -19,6 +17,13 @@ const style = () => ({
   }
 })
 
+const styles = {
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  }
+}
 
 class UserPref extends React.Component {
   constructor(props){
@@ -58,10 +63,10 @@ class UserPref extends React.Component {
     }
     return (
       <NoSsr>
+        <Head>
+          <title>Preferences | Meshery</title>
+        </Head>
         <Paper className={this.props.classes.paper}>
-          <Head>
-            <title>Preferences | Meshery</title>
-          </Head>
           <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
         </Paper>
       </NoSsr>
@@ -73,7 +78,7 @@ const mapDispatchToProps = dispatch => ({
   updatepagepath: bindActionCreators(updatepagepath, dispatch)
 })
 
-export default connect(
+export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(withStyles(style)(UserPref));
+)(withStyles(style)(UserPref)));

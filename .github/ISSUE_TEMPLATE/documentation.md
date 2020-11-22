@@ -1,5 +1,5 @@
 ---
-name: Documentation issue
+name: 📄 Documentation issue
 about: Issues related to documentation.
 title: '[Docs]'
 labels: 'area/docs'
@@ -7,9 +7,7 @@ assignees: ''
 ---
 **Current State:**
 
-
 **Desired State:**
-
 
 ---
 **Contributor Resources**
