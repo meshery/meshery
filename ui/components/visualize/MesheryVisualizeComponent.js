@@ -22,6 +22,7 @@ import { Paper } from '@material-ui/core';
 import logsJson from './logs';
 import MiniDrawer from './MiniDrawer';
 import PerformanceModal from './PerformanceModal';
+import Terminal from './terminal';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -94,13 +95,13 @@ const style = (theme) => ({
   wrapper: {
     position: 'relative',
     width: '95%',
-    height: '80%',
+    height: '60vh',
   },
 
   wrapper2: {
     position: 'relative',
     width: '70%',
-    height: '80%',
+    height: '60vh',
   },
 
   logsContainer: {
@@ -198,7 +199,7 @@ class MesheryVisualizeComponent extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, logs, tab } = this.state;
+    const { layout, open, data, tab } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
@@ -359,7 +360,7 @@ class MesheryVisualizeComponent extends React.Component {
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{ textDecoration: 'none' }}>Save</Button>
           </ButtonGroup>
           <Paper className={classes.logsContainer}>
-            <textarea className={classes.logs} readOnly={true} value={logs} />   
+            <Terminal className={classes.logs} />   
           </Paper>
         </div>
       </NoSsr>
