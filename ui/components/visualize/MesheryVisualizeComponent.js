@@ -327,7 +327,9 @@ class MesheryVisualizeComponent extends React.Component {
               toggle={(data, val) => {
                 this.toggleChildMenu(data, val);
               }}
-              togglePeformanceModal = {() => {this.togglePeformanceModal()}}
+              togglePeformanceModal = {() => {
+                this.togglePeformanceModal() 
+              }}
             />
           }
           <ButtonGroup className={classes.zoomButton} color="primary" aria-label="outlined primary button group">

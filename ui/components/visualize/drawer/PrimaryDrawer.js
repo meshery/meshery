@@ -9,7 +9,6 @@ import TrafficIcon from '@material-ui/icons/Traffic';
 import SecurityIcon from '@material-ui/icons/Security';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
-import { NetworkIcon } from '@patternfly/react-icons';
 import { Divider } from '@material-ui/core';
 
 const useStyles = () => ({
