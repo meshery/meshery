@@ -22,9 +22,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import { Divider, Link, Paper } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
-import MesheryPerformanceComponent from '../MesheryPerformanceComponent';
-import GrafanaCustomCharts from '../GrafanaCustomCharts';
+import GrafanaCustomCharts from '../../GrafanaCustomCharts';
 // let bb = require('billboard.js');
 // import clsx from 'clsx';
 
@@ -110,12 +108,11 @@ const useStyles = () => ({
 });
 
 
-class PersistentDrawerRight extends Component {
+class SecondaryDrawer extends Component {
   constructor(props){
     super(props);
     this.state = {
       value: this.props.tab,
-      modalOpen: false
     };
   }
 
@@ -126,7 +123,6 @@ class PersistentDrawerRight extends Component {
     } = this.props.grafana;
     const {
       value,
-      modalOpen
     } = this.state;
 
     if(data){
@@ -141,14 +137,6 @@ class PersistentDrawerRight extends Component {
       const { toggle } = this.props;
       toggle(null, false);
     };
-
-    const handleModalOpen = () => {
-      this.setState({ modalOpen: true });
-    }
-
-    const handleModalClose = () => {
-      this.setState({ modalOpen: false });
-    }
 
     return (
       <div className={classes.root}>
@@ -194,7 +182,7 @@ class PersistentDrawerRight extends Component {
                 </Typography>
                 <Grid className={classes.smp} container spacing={2}>
                   <Grid item xs={4}>
-                    <Button className={classes.button} onClick={handleModalOpen}>
+                    <Button className={classes.button} onClick={this.props.togglePeformanceModal}>
                       <img className={classes.icon} src="/static/img/smp-dark.svg"/>
                         Adhoc Performance Test
                     </Button>
@@ -258,15 +246,6 @@ class PersistentDrawerRight extends Component {
             </TabPanel>
           </div>
         </Drawer>
-        <Modal 
-          open={modalOpen}
-          onClose={handleModalClose}
-          className={classes.modal}
-        >
-          <Paper className={classes.modalPaper}>
-            <MesheryPerformanceComponent />
-          </Paper>
-        </Modal>
       </div>
     );
   }
@@ -280,4 +259,4 @@ const mapStateToProps = (st) => {
 // export default withStyles(useStyles, {withTheme: true})(PersistentDrawerRight);
 export default withStyles(useStyles, {withTheme: true})(connect(
   mapStateToProps,
-)(withSnackbar(PersistentDrawerRight)));
+)(withSnackbar(SecondaryDrawer)));

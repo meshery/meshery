@@ -9,7 +9,6 @@ import cytoscape from 'cytoscape';
 import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
 import ReactDOM from 'react-dom';
-import Drawer from './Drawer'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import elementsJson from './Elements';
@@ -20,7 +19,8 @@ import {
 } from '@patternfly/react-icons';
 import { Paper } from '@material-ui/core';
 import logsJson from './logs';
-import MiniDrawer from './MiniDrawer';
+import PrimaryDrawer from './drawer/PrimaryDrawer';
+import SecondaryDrawer from './drawer/SecondaryDrawer'
 import PerformanceModal from './PerformanceModal';
 import Terminal from './terminal';
 
@@ -140,7 +140,7 @@ class MesheryVisualizeComponent extends React.Component {
     this.setState({open: val, data: data});
   }
 
-  toggleMiniDrawer(tab){
+  togglePrimaryDrawer(tab){
     this.setState({open: true, tab: tab});
   }
 
@@ -193,6 +193,14 @@ class MesheryVisualizeComponent extends React.Component {
     }
   }
 
+  togglePeformanceModal(ele) {
+    if(ele){
+      this.setState({urlForModal: ele.data.URL?ele.data.URL:''})
+    }
+
+    this.setState(prevState => ({showModal: !prevState.showModal}))
+  }
+
   componentDidMount() {
     this.setState({logs: logsJson.logs.join('\n')});
   }
@@ -203,50 +211,44 @@ class MesheryVisualizeComponent extends React.Component {
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
+    //Checkout the docs at https://github.com/cytoscape/cytoscape.js-cxtmenu/blob/master/demo-adaptative.html
     let cxtMenuSettings = {
-      menuRadius: 100, // the radius of the circular menu in pixels
-      selector: 'node', // elements matching this Cytoscape.js selector will trigger cxtmenus
-      commands: [ // an array of commands to list in the menu or a function that returns the array
+      menuRadius: 100,
+      selector: 'node',
+      commands: [
         {
-          fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
-          content: 'Perf', // html/text content to be displayed in the menu
-          contentStyle: {}, // css key:value pairs to set the command's css in js if you want
-          select: function (ele) { // a function to execute when the command is selected
-            this.setState({urlForModal: ele._private?.data?.URL ?? ''}) // `ele` holds the reference to the active element
-            this.setState({showModal: true})
-          }.bind(this),
+          content: '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="tachometer-alt" class="svg-inline--fa fa-tachometer-alt fa-w-18 fa-fw " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" style="transform-origin: 0.5625em 0.5em;"><g transform="translate(0, 0)  scale(1.7, 1.7)  rotate(0 0 0)"><path fill="currentColor" d="M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm0 64c14.71 0 26.58 10.13 30.32 23.65-1.11 2.26-2.64 4.23-3.45 6.67l-9.22 27.67c-5.13 3.49-10.97 6.01-17.64 6.01-17.67 0-32-14.33-32-32S270.33 96 288 96zM96 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm48-160c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm246.77-72.41l-61.33 184C343.13 347.33 352 364.54 352 384c0 11.72-3.38 22.55-8.88 32H232.88c-5.5-9.45-8.88-20.28-8.88-32 0-33.94 26.5-61.43 59.9-63.59l61.34-184.01c4.17-12.56 17.73-19.45 30.36-15.17 12.57 4.19 19.35 17.79 15.17 30.36zm14.66 57.2l15.52-46.55c3.47-1.29 7.13-2.23 11.05-2.23 17.67 0 32 14.33 32 32s-14.33 32-32 32c-11.38-.01-20.89-6.28-26.57-15.22zM480 384c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></g></svg>',
+          select: this.togglePeformanceModal.bind(this),
           enabled: true // whether the command is selectable
         },
         {
-          fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
           content: 'cmd2', // html/text content to be displayed in the menu
           contentStyle: {}, // css key:value pairs to set the command's css in js if you want
           select: function (ele) { // a function to execute when the command is selected
             console.log(ele.id()) // `ele` holds the reference to the active element
           },
-          enabled: true // whether the command is selectable
+          enabled: false // whether the command is selectable
         },
         {
-          fillColor: 'rgba(200, 200, 200, 0.75)', // optional: custom background color for item
           content: 'cmd3', // html/text content to be displayed in the menu
           contentStyle: {}, // css key:value pairs to set the command's css in js if you want
           select: function (ele) { // a function to execute when the command is selected
             console.log(ele.id()) // `ele` holds the reference to the active element
           },
-          enabled: true // whether the command is selectable
+          enabled: false // whether the command is selectable
         }
-      ], // function( ele ){ return [ /*...*/ ] }, // a function that returns commands or a promise of commands
-      fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
-      activeFillColor: 'rgba(1, 105, 217, 0.75)', // the colour used to indicate the selected command
-      activePadding: 20, // additional size in pixels for the active command
+      ],
+      fillColor: '#607d8b77',
+      activeFillColor: '#263237',
+      activePadding: 10, // additional size in pixels for the active command
       indicatorSize: 24, // the size in pixels of the pointer to the active command
-      separatorWidth: 3, // the empty spacing in pixels between successive commands
-      spotlightPadding: 4, // extra spacing in pixels between the element and the spotlight
+      separatorWidth: 2, // the empty spacing in pixels between successive commands
+      spotlightPadding: 1,  // extra spacing in pixels between the element and the spotlight
+      adaptativeNodeSpotlightRadius: true,
       minSpotlightRadius: 24, // the minimum radius in pixels of the spotlight
       maxSpotlightRadius: 38, // the maximum radius in pixels of the spotlight
       openMenuEvents: 'cxttapstart taphold', // space-separated cytoscape events that will open the menu; only `cxttapstart` and/or `taphold` work here
       itemColor: 'white', // the colour of text in the command's content
-      itemTextShadowColor: 'transparent', // the text shadow colour of the command's content
       zIndex: 9999, // the z-index of the ui div
       atMouse: false // draw menu at mouse position
     };
@@ -258,9 +260,9 @@ class MesheryVisualizeComponent extends React.Component {
           handleClose={() => this.setState({showModal: false})}
           urlForModal={this.state.urlForModal}
         />
-        <MiniDrawer 
+        <PrimaryDrawer 
           toggle={(tab) => {
-            this.toggleMiniDrawer(tab);
+            this.togglePrimaryDrawer(tab);
           }}
         />
         <div className={clsx({ [classes.wrapper]: !open }, {
@@ -322,9 +324,12 @@ class MesheryVisualizeComponent extends React.Component {
             />
           </div>
           {
-            open && <Drawer data={data} open={open} tab={tab}
+            open && <SecondaryDrawer data={data} open={open} tab={tab}
               toggle={(data, val) => {
                 this.toggleChildMenu(data, val);
+              }}
+              togglePeformanceModal = {() => {
+                this.togglePeformanceModal() 
               }}
             />
           }

@@ -9,7 +9,6 @@ import TrafficIcon from '@material-ui/icons/Traffic';
 import SecurityIcon from '@material-ui/icons/Security';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
-import { NetworkIcon } from '@patternfly/react-icons';
 import { Divider } from '@material-ui/core';
 
 const useStyles = () => ({
@@ -22,13 +21,14 @@ const useStyles = () => ({
   },
   drawerPaper: {
     width: 'auto',
+    background: '#fff'
   },
   items: {
     paddingTop: 70,
   }
 });
 
-class PermanentDrawerRight extends Component{
+class PrimaryDrawer extends Component{
   constructor(props){
     super(props);
   }
@@ -55,33 +55,28 @@ class PermanentDrawerRight extends Component{
             <List >
               <ListItem button onClick={() => this.handleDrawer(0)}>
                 <ListItemIcon>
-                  <ChevronLeftIcon />
+                  <ChevronLeftIcon color='primary'/>
                 </ListItemIcon>
               </ListItem>
               <Divider />
               <ListItem button onClick={() => this.handleDrawer(0)}>
                 <ListItemIcon>
-                  <InfoIcon />
+                  <InfoIcon color='primary' />
                 </ListItemIcon>
               </ListItem>
               <ListItem button onClick={() => this.handleDrawer(1)}>
                 <ListItemIcon>
-                  <TrafficIcon />
+                  <TrafficIcon color='primary' />
                 </ListItemIcon>
               </ListItem>
               <ListItem button onClick={() => this.handleDrawer(2)}>
                 <ListItemIcon>
-                  <SecurityIcon />
+                  <SecurityIcon color='primary'/>
                 </ListItemIcon>
               </ListItem>
               <ListItem button onClick={() => this.handleDrawer(3)}>
                 <ListItemIcon>
-                  <CloseIcon />
-                </ListItemIcon>
-              </ListItem>
-              <ListItem button onClick={() => this.handleDrawer(4)}>
-                <ListItemIcon>
-                  <NetworkIcon />
+                  <CloseIcon color='primary'/>
                 </ListItemIcon>
               </ListItem>
             </List>
@@ -92,4 +87,4 @@ class PermanentDrawerRight extends Component{
   }
 }
 
-export default withStyles(useStyles, {withTheme: true})(PermanentDrawerRight);
+export default withStyles(useStyles, {withTheme: true})(PrimaryDrawer);
