@@ -20,7 +20,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEye, faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH, faTasks
+  faMap, faTerminal, faTachometerAlt, faExternalLinkAlt, faChevronCircleLeft, faPollH, faTasks
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 import { Tooltip } from '@material-ui/core';
@@ -201,7 +201,7 @@ const categories = [
   },
   {
     id: 'MeshMap',
-    icon: <FontAwesomeIcon icon={faEye} fixedWidth/>,
+    icon: <FontAwesomeIcon icon={faMap} fixedWidth/>,
     href: '/visualize',
     title: 'MeshMap',
     show: true,
