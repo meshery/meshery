@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 import Head from 'next/head';
 import dataFetch from '../lib/data-fetch';
-import { withStyles } from '@material-ui/core/styles';
 
 const style = () => ({
 

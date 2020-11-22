@@ -6,7 +6,6 @@ import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import { getPath } from "../lib/path";
-import { withStyles } from '@material-ui/core/styles';
 
 const style = () => ({
   

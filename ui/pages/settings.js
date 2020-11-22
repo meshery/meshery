@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
-import { withStyles } from '@material-ui/core/styles';
 
 const style = () => ({
 
