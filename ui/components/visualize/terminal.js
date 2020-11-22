@@ -14,7 +14,7 @@ const useStyles = () => ({
   root: {
   },
   appBar: {
-    flexGrow: 1,
+    backgroundColor: '#fff',
     maxHeight: '40px'
   },
   terminal: {
