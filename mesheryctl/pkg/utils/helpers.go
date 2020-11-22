@@ -39,6 +39,13 @@ const (
 	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
 )
 
+const (
+
+	// Repo Details
+	mesheryGitHubOrg  string = "layer5io"
+	mesheryGitHubRepo string = "meshery"
+)
+
 type cmdType string
 
 const (
@@ -129,6 +136,16 @@ func DownloadFile(filepath string, url string) error {
 	return nil
 }
 
+// GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
+func GetMesheryGitHubOrg() string {
+	return mesheryGitHubOrg
+}
+
+// GetMesheryGitHubRepo retrieves the name of the Meshery repository
+func GetMesheryGitHubRepo() string {
+	return mesheryGitHubRepo
+}
+
 func prereq() ([]byte, []byte, error) {
 	ostype, err := exec.Command("uname", "-s").Output()
 	if err != nil {
@@ -157,19 +174,69 @@ func SetFileLocation() error {
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck() error {
+func PreReqCheck(subcommand string) error {
+	//Check whether docker daemon is running or not
+	if err := exec.Command("docker", "ps").Run(); err != nil {
+		log.Info("Docker is not running.")
+		//No auto installation of docker for windows
+		if runtime.GOOS == "windows" {
+			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
+		}
+		err = startdockerdaemon(subcommand)
+		if err != nil {
+			return errors.Wrapf(err, "failed to start Docker.")
+		}
+	}
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Info("Docker-Compose is not installed")
 		//No auto installation of Docker-compose for windows
 		if runtime.GOOS == "windows" {
-			return errors.Wrap(err, "please install docker-compose")
+			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 		err = installprereq()
 		if err != nil {
-			return errors.Wrap(err, "failed to install prerequisites")
+			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 	}
+	return nil
+}
+
+func startdockerdaemon(subcommand string) error {
+	// read user input on whether to start Docker daemon or not.
+	var userinput string
+	fmt.Printf("Start Docker now [y/n]? ")
+	fmt.Scan(&userinput)
+	userinput = strings.TrimSpace(userinput)
+	userinput = strings.ToLower(userinput)
+	if userinput == "n" || userinput == "no" {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
+	// once user gaves permission, start docker daemon on linux/macOS
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	} else {
+		// Assuming we are on macOS, try to start Docker from default path
+		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
+		err := cmd.Start()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// wait for few seconds for docker to start
+		err = exec.Command("sleep", "30").Run()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// check whether docker started successfully or not, throw an error message otherwise
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	}
+	log.Info("Prerequisite Docker started.")
 	return nil
 }
 
@@ -223,12 +290,12 @@ func IsMesheryRunning() bool {
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		err = errors.Wrap(err, "file read failed :")
+		err = errors.Wrap(err, "could not read token:")
 		return err
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid :")
+		err = errors.Wrap(err, "token file invalid:")
 		return err
 	}
 	req.AddCookie(&http.Cookie{

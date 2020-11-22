@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ var PerfCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 		//Check prerequisite
-		return utils.PreReqCheck()
+		return utils.PreReqCheck(cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Importing SMP Configuration from the file

@@ -8,9 +8,9 @@ The chart bootstraps a single nodes Meshery deployment on Kubernetes cluster usi
 
 ## Prerequisites
 
-* Kubernetes v1.15.0
+* Kubernetes >= v1.15.0
 * K3s v1.14.4-k3s.1
-* Helm v3.0.2
+* Helm v3.x.x
 
 ## Installing the Chart
 
@@ -31,25 +31,41 @@ $ kubectl get pods -n meshery
 ```
 
 ```
-NAME                                   READY   STATUS    RESTARTS   AGE
-pod/meshery-664668d77c-ztsgp           1/1     Running   0          98m
-pod/meshery-istio-5b77685db9-k2mz6     1/1     Running   0          98m
-pod/meshery-linkerd-569877fcff-ljtfs   1/1     Running   0          98m
+NAME                                  READY   STATUS    RESTARTS   AGE
+pod/meshery-78659f4d65-qfn5q          1/1     Running   0          7m57s
+pod/meshery-consul-5578fb5d54-tlgb9   1/1     Running   0          7m3s
+pod/meshery-istio-5f9cf5f678-mchnc    1/1     Running   0          7m3s
+pod/meshery-kuma-65bc58d67c-t7l52     1/1     Running   0          7m57s
+pod/meshery-linkerd-db46fbc88-ccnpb   1/1     Running   0          7m57s
+pod/meshery-nsm-d4dbf8f9b-hqc84       1/1     Running   0          7m57s
+pod/meshery-osm-654f884b76-ffx84      1/1     Running   0          7m57s
 
-NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)     AGE
-service/meshery           ClusterIP   10.43.84.165    <none>        8080/TCP    98m
-service/meshery-istio     ClusterIP   10.43.3.85      <none>        10000/TCP   98m
-service/meshery-linkerd   ClusterIP   10.43.196.211   <none>        10001/TCP   98m
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+service/meshery           ClusterIP   10.97.119.203    <none>        8080/TCP    7m57s
+service/meshery-consul    ClusterIP   10.97.141.111    <none>        10002/TCP   7m3s
+service/meshery-istio     ClusterIP   10.106.102.178   <none>        10000/TCP   7m3s
+service/meshery-kuma      ClusterIP   10.110.169.103   <none>        10007/TCP   7m57s
+service/meshery-linkerd   ClusterIP   10.104.36.196    <none>        10001/TCP   7m57s
+service/meshery-nsm       ClusterIP   10.97.129.64     <none>        10004/TCP   7m57s
+service/meshery-osm       ClusterIP   10.103.243.140   <none>        10009/TCP   7m57s
 
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/meshery           1/1     1            1           98m
-deployment.apps/meshery-istio     1/1     1            1           98m
-deployment.apps/meshery-linkerd   1/1     1            1           98m
+deployment.apps/meshery           1/1     1            1           7m57s
+deployment.apps/meshery-consul    1/1     1            1           7m3s
+deployment.apps/meshery-istio     1/1     1            1           7m3s
+deployment.apps/meshery-kuma      1/1     1            1           7m57s
+deployment.apps/meshery-linkerd   1/1     1            1           7m57s
+deployment.apps/meshery-nsm       1/1     1            1           7m57s
+deployment.apps/meshery-osm       1/1     1            1           7m57s
 
-NAME                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/meshery-664668d77c           1         1         1       98m
-replicaset.apps/meshery-istio-5b77685db9     1         1         1       98m
-replicaset.apps/meshery-linkerd-569877fcff   1         1         1       98m
+NAME                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/meshery-78659f4d65          1         1         1       7m57s
+replicaset.apps/meshery-consul-5578fb5d54   1         1         1       7m3s
+replicaset.apps/meshery-istio-5f9cf5f678    1         1         1       7m3s
+replicaset.apps/meshery-kuma-65bc58d67c     1         1         1       7m57s
+replicaset.apps/meshery-linkerd-db46fbc88   1         1         1       7m57s
+replicaset.apps/meshery-nsm-d4dbf8f9b       1         1         1       7m57s
+replicaset.apps/meshery-osm-654f884b76      1         1         1       7m57s
 ```
 
 ```
@@ -59,7 +75,7 @@ $ helm ls -n meshery
 
 ```
 NAME   	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART        	APP VERSION
-meshery	meshery  	1       	2020-01-22 11:53:20.407751 +0800 CST	deployed	meshery-0.1.0	latest
+meshery	meshery  	1       	2020-01-22 11:53:20.407751 +0800 CST	deployed	meshery-2.0.0	stable-latest
 ```
 
 

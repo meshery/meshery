@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,10 @@ var updateCmd = &cobra.Command{
 	Short: "Pull new Meshery images from Docker Hub.",
 	Long:  `Pull Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
 	Args:  cobra.NoArgs,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		return utils.PreReqCheck(cmd.Use)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
@@ -53,6 +57,7 @@ var updateCmd = &cobra.Command{
 
 func updateMesheryContainers() error {
 	log.Info("Updating Meshery now...")
+
 	start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "pull")
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr

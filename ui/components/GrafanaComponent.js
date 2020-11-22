@@ -59,33 +59,27 @@ class GrafanaComponent extends Component {
   constructor(props) {
     super(props);
 
-    const {
-      grafanaURL, grafanaAPIKey, grafanaBoards, selectedBoardsConfigs,
-    } = props.grafana;
-    let grafanaConfigSuccess = false;
-    if (grafanaURL !== '') {
-      grafanaConfigSuccess = true;
-    }
-
     this.state = {
       urlError: false,
-
-      grafanaConfigSuccess,
+  
+      grafanaConfigSuccess: (props.grafana.grafanaURL !== ''),
       grafanaBoardSearch: '',
-      grafanaURL,
-      grafanaAPIKey,
-      grafanaBoards,
-      selectedBoardsConfigs,
-      ts: new Date(),
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
     };
-  }
 
-  static getDerivedStateFromProps(props, state) {
-    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = props.grafana;
-    if (props.ts > state.ts) {
-      return {
-        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: props.ts,
-      };
+  }  
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs } = nextProps.grafana;
+    if ( nextProps.grafana.ts > this.state.ts) {
+      this.setState( {
+        grafanaURL, grafanaAPIKey, selectedBoardsConfigs, grafanaConfigSuccess: (grafanaURL !== ''), ts: nextProps.ts,
+      }, () => this.getGrafanaBoards());
+      
     }
     return {};
   }
@@ -94,8 +88,6 @@ class GrafanaComponent extends Component {
     this.getGrafanaBoards();
   }
 
-  componentDidUpdate() {
-  }
 
       handleChange = (name) => (event) => {
         if (name === 'grafanaURL' && event.target.value !== '') {
@@ -165,6 +157,7 @@ class GrafanaComponent extends Component {
                 selectedBoardsConfigs,
               },
             });
+            this.getGrafanaBoards();
           }
         }, self.handleError('There was an error communicating with Grafana'));
       }
@@ -344,6 +337,7 @@ class GrafanaComponent extends Component {
       }, self.handleError('There was an error persisting the board selection'));
     }
 
+    
     render() {
       const { classes } = this.props;
       const {
@@ -396,10 +390,14 @@ class GrafanaComponent extends Component {
       return (
         <NoSsr>
           <GrafanaConfigComponent
-            grafanaURL={grafanaURL}
+            grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
+            options={this.props.scannedGrafana.map(graf => ({ label: graf, value: graf }))}
             grafanaAPIKey={grafanaAPIKey}
             urlError={urlError}
-            handleChange={this.handleChange}
+            handleChange={(name) => {
+              // Simulating event.target.value
+              return (value) => this.handleChange(name)({ target: { value } })
+            }}
             handleGrafanaConfigure={this.handleGrafanaConfigure}
           />
         </NoSsr>
@@ -409,6 +407,7 @@ class GrafanaComponent extends Component {
 
 GrafanaComponent.propTypes = {
   classes: PropTypes.object.isRequired,
+  scannedGrafana: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -417,7 +416,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
-  return { grafana };
+  return { grafana: {...grafana, ts: new Date(grafana.ts)} };
 };
 
 export default withStyles(grafanaStyles)(connect(

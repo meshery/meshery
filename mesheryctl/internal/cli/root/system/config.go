@@ -1,4 +1,4 @@
-// Copyright 2020 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -106,7 +108,7 @@ func setContext(configFile, cname, tokenPath string) error {
 	return nil
 }
 
-// resetCmd represents the config command
+// configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure Meshery",
@@ -114,6 +116,10 @@ var configCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if len(tokenPath) < 0 {
+			log.Fatal("fetch me a token path invalid")
+
+		}
 		if tokenPath == "" {
 			log.Fatal("Token path invalid")
 		}
@@ -130,12 +136,55 @@ var configCmd = &cobra.Command{
 				log.Fatal("Error generating config:", err)
 				return
 			}
+		case "aks":
+			aksCheck := exec.Command("az", "version")
+			aksCheck.Stdout = os.Stdout
+			aksCheck.Stderr = os.Stderr
+			err := aksCheck.Run()
+			if err != nil {
+				log.Fatalf("Azure CLI not found. Please install Azure CLI and try again. \nSee https://docs.microsoft.com/en-us/cli/azure/install-azure-cli ")
+			}
+			log.Info("Configuring Meshery to access AKS...")
+			var resourceGroup, aksName string
+
+			// Prompt user for Azure resource name
+			log.Info("Please enter the Azure resource group name:")
+			_, err = fmt.Scanf("%s", &resourceGroup)
+			if err != nil {
+				log.Warnf("Error reading Azure resource group name: %s", err.Error())
+				log.Info("Let's try again. Please enter the Azure resource group name:")
+				_, err = fmt.Scanf("%s", &resourceGroup)
+				if err != nil {
+					log.Fatalf("Error reading Azure resource group name: %s", err.Error())
+				}
+			}
+
+			// Prompt user for AKS cluster name
+			log.Info("Please enter the AKS cluster name:")
+			_, err = fmt.Scanf("%s", &aksName)
+			if err != nil {
+				log.Warnf("Error reading AKS cluster name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AKS cluster name:")
+				_, err = fmt.Scanf("%s", &aksName)
+				if err != nil {
+					log.Fatalf("Error reading AKS cluster name: %s", err.Error())
+				}
+			}
+
+			// Write AKS compatible config to the filesystem
+			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
+				log.Fatal("Error generating kubeconfig: ", err)
+				return
+			}
 		default:
-			log.Fatal("The argument has to be one of GKE | Minikube")
+			log.Fatal("The argument has to be one of gke | minikube | aks")
 		}
 
-		configPath := "/tmp/meshery/kubeconfig.yaml"
+		// TODO: Assumes Mac or Linux. Make arch-specific
+		// Issue: https://github.com/layer5io/meshery/issues/1894
+		configPath := "$HOME/.meshery/aks-kubeconfig.yaml"
 
+		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
 			log.Fatalf("Error getting contexts : %s", err.Error())
@@ -165,5 +214,6 @@ var configCmd = &cobra.Command{
 }
 
 func init() {
-	configCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
+	configCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "Path to token for authenticating to Meshery API")
+	_ = configCmd.MarkFlagRequired("tokenPath")
 }

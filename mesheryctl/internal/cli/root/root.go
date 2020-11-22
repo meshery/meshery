@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@ package root
 import (
 	"errors"
 	"fmt"
+	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -97,7 +100,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
-	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", "", "mesheryctl config file to override defaults (default file: <unset>)")
+	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", utils.MesheryFolder+"/mesheryctlConfig.yaml", "mesheryctl config file to override defaults (default file: "+utils.MesheryFolder+"/mesheryctlConfig.yaml)")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -109,6 +112,8 @@ func init() {
 		versionCmd,
 		system.SystemCmd,
 		perf.PerfCmd,
+		mesh.MeshCmd,
+		experimental.ExpCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
@@ -121,6 +126,15 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Use default ".meshery" folder location.
+		if _, err := os.Stat(utils.MesheryFolder); err != nil {
+			if os.IsNotExist(err) {
+				err = os.MkdirAll(utils.MesheryFolder, 0775)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+
 		viper.AddConfigPath(utils.MesheryFolder)
 		log.Debug("initConfig: ", utils.MesheryFolder)
 		viper.SetConfigFile(utils.DockerComposeFile)
@@ -139,33 +153,49 @@ func initConfig() {
 	//  perf:
 	//	  authTokenURI:    "/gettoken",
 	//	  loadTestSmpURI: "/perf/load-test-smp",
+
+	defaultsMap := map[string]interface{}{
+		"baseMesheryURL": "http://localhost:9081/api",
+		"perf": map[string]interface{}{
+			"authTokenURI":   "/gettoken",
+			"loadTestSmpURI": "/perf/load-test-smp",
+			"loadTestURI":    "/perf/load-test",
+		},
+		"ctlversion": map[string]interface{}{
+			"build":     version,
+			"commitsha": commitsha,
+		}}
+
 	if mctlCfgFile != "" {
 		viper.SetConfigFile(mctlCfgFile)
 		if err := viper.ReadInConfig(); err == nil {
 			log.Debugf("Using mesheryctl config file: %s", viper.ConfigFileUsed())
 		} else {
-			log.Fatal(err)
+			log.Info(err)
+			errGen := generateMesheryctlConfigUsingDefaultValues(defaultsMap)
+			if errGen != nil {
+				log.Fatal(errGen)
+			}
 		}
 	} else {
-		setMesheryctlConfigDefaults(map[string]interface{}{
-			"baseMesheryURL": "http://localhost:9081/api",
-			"perf": map[string]interface{}{
-				"authTokenURI":   "/gettoken",
-				"loadTestSmpURI": "/perf/load-test-smp]",
-				"loadTestURI":    "/perf/load-test",
-			},
-			"ctlversion": map[string]interface{}{
-				"build":     version,
-				"commitsha": commitsha,
-			},
-		})
+		errGen := generateMesheryctlConfigUsingDefaultValues(defaultsMap)
+		if errGen != nil {
+			log.Fatal(errGen)
+		}
 	}
 }
 
-// setMesheryctlConfigDefaults loads the hardcoded defaults in to viper kv store
-func setMesheryctlConfigDefaults(defaults map[string]interface{}) {
+// generateMesheryctlConfigUsingDefaultValues creates config file using the hardcoded defaults in viper kv store
+func generateMesheryctlConfigUsingDefaultValues(defaults map[string]interface{}) error {
+	log.Info("Creating and Using defaults config for mesheryctl")
 	v := viper.GetViper()
 	for key, value := range defaults {
 		v.SetDefault(key, value)
 	}
+	err := v.WriteConfigAs(utils.MesheryFolder + "/mesheryctlConfig.yaml")
+	if err != nil {
+		return err
+	}
+	viper.SetConfigFile(utils.MesheryFolder + "/mesheryctlConfig.yaml")
+	return nil
 }
