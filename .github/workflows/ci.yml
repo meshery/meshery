@@ -225,3 +225,18 @@ jobs:
       with:
         version: latest
         args: release --snapshot --skip-publish --rm-dist
+  docker-build-test:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Docker edge build & tag
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      run: |
+        export DOCKER_BUILDKIT=0
+        export COMPOSE_DOCKER_CLI_BUILD=0
+        docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} .
+        docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::7}
