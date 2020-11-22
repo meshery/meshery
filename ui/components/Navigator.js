@@ -24,6 +24,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { updatepagetitle } from '../lib/store';
 import { Tooltip } from '@material-ui/core';
+import {
+  faSlack,
+} from "@fortawesome/free-brands-svg-icons";
 
 const styles = (theme) => ({
   categoryHeader: {
