@@ -67,7 +67,11 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+    - run: |
+        go clean -modcache
+        rm go.sum
+        go mod tidy
+        GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
