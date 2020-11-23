@@ -46,7 +46,7 @@
     "billboard.js": "=1.11.0",
     "caniuse-lite": "^1.0.30001109",
     "classnames": "^2.2.6",
-    "codemirror": "^5.58.2",
+    "codemirror": "^5.58.3",
     "eslint-loader": "^4.0.2",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.1.0",
