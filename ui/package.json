@@ -77,7 +77,7 @@
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "@babel/traverse": "^7.9.6",
+    "@babel/traverse": "^7.12.8",
     "@babel/types": "^7.12.7",
     "babel-eslint": "^10.1.0",
     "cypress": "^5.6.0",
