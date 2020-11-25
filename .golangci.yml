@@ -6,7 +6,7 @@ linters-settings:
       # is allowed to use only in logutils package
       - github.com/sirupsen/logrus
     packages-with-error-message:
-      - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+       github.com/sirupsen/logrus: logging is allowed only by logutils.Log
   dupl:
     threshold: 100
   exhaustive:
@@ -42,7 +42,7 @@ linters-settings:
     settings:
       mnd:
         # don't include the "operation" and "assign"
-        checks: argument,case,condition,return
+        checks: [argument, case, condition, return]
   gosec:
     settings:
       exclude: -G204
