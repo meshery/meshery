@@ -62,7 +62,7 @@ var (
 	// related configuration files.
 	MesheryFolder = ".meshery"
 	// DockerComposeFile is the default location within the MesheryFolder
-	// where the docker compose file is located?
+	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"

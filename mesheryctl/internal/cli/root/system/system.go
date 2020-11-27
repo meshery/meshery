@@ -56,6 +56,7 @@ func init() {
 		updateCmd,
 		configCmd,
 		completionCmd,
+		channelCmd,
 	}
 	SystemCmd.AddCommand(availableSubcommands...)
 }
