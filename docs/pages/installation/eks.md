@@ -46,18 +46,21 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
 
 1. Get secret name from *ServiceAccount*.
     
-    <pre><code>
+    <pre class="codeblock-pre">
+    <div class="codeblock"><div class="clipboardjs">
     $ kubectl get secrets
 
     NAME                           TYPE                                  DATA   AGE
     default-token-fnfjp            kubernetes.io/service-account-token   3      95d
     meshery-token-5z9xj               kubernetes.io/service-account-token   3      66m
-    </code></pre>
+    </div></div>
+    </pre>
 
     _Note: Here the secret name is **meshery-token-5z9xj**_
 1. Get secret/token:
 
-    <pre><code>
+    <pre class="codeblock-pre">
+    <div class="codeblock"><div class="clipboardjs">
     $ kubectl describe secret  sa-1-token-5z9xj
     Name:         meshery-token-5z9xj
     Namespace:    default
@@ -71,30 +74,36 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     ====
     ca.crt:     1025 bytes
     namespace:  7 bytes
-    token:      XXXhbGciOiJSUXXXX </code></pre>
+    token:      XXXhbGciOiJSUXXXX     </div></div></pre>
 
 1. Generate new kubeconfig yaml file to use as input to Meshery.
 1. Set config Credential using above generate `token`.
     
-    <pre><code>
+    <pre class="codeblock-pre">
+    <div class="codeblock"><div class="clipboardjs">
     $ kubectl config set-credentials meshery --token=XXXXX
 
     o/p:User "meshery" set.
-    </code></pre>
+    </div></div>
+    </pre>
 
 1. Set current context to our new service account `meshery`
     
-    <pre><code>
+    <pre class="codeblock-pre">
+    <div class="codeblock"><div class="clipboardjs">
     $ kubectl config set-context --current --user=meshery
 
     o/p:
     Context "aws" modified.
-    </code></pre>
+    </div></div>
+    </pre>
 
 1. Generate kubeconfig yaml file to use as input to Meshery.
     
-   <pre><code>
+    <pre class="codeblock-pre">
+    <div class="codeblock"><div class="clipboardjs">
     $ kubectl config view --minify --flatten >  config_aws_eks.yaml
-   </code></pre>
+    </div></div>
+    </pre>
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.

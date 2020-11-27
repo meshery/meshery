@@ -51,10 +51,12 @@ Perform the following steps in order:
 
 Open Powershell in administrator mode and run:
 
-<pre><code>
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-Restart-Computer
-</code></pre>
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+  Restart-Computer
+  </div></div>
+  </pre>
 
 ##### **Choosing your WSL version:**
 
@@ -122,16 +124,20 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
-<pre><code>
-curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-k3d cluster create
-export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
-</code></pre>
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+  k3d cluster create
+  export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
+  </div></div>
+  </pre>
 
 
 #### 5. <a name="step5"><b>Set up Meshery</b></a>
 
 Follow the [installation steps](/docs/installation#windows) to install the mesheryctl CLI. Then, execute:
-<pre><code>
-./mesheryctl system start
-</code></pre>
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  ./mesheryctl system start
+  </div></div>
+  </pre>
