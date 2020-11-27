@@ -7,10 +7,10 @@ jobs:
     steps:
     - name: Get current star count
       run: |
-        echo "name=STARS::$(curl --silent 'https://api.github.com/repos/layer5io/meshery' -H 'Accept: application/vnd.github.preview' | jq '.watchers_count')" >> $GITHUB_ENV
+      echo "STARS=$(curl --silent 'https://api.github.com/repos/layer5io/meshery' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
     - name: Notify slack
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: pullreminders/slack-action@master
       with:
-        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone just starred Meshery! (https://github.com/layer5io/meshery/stargazers) Total ⭐️: ${{env.STARS}}\"}'
+        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"Someone just starred Meshery! (https://github.com/layer5io/meshery/stargazers) Total ⭐️: $STARS\"}'
