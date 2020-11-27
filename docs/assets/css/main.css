@@ -193,7 +193,7 @@ h3,
 h4,
 h5,
 h6 {
-    margin-top: 0;
+    margin-top: .5rem;
     margin-bottom: .5rem
 }
 
@@ -477,15 +477,7 @@ template {
     display: none!important
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,
 .h4,
 .h5,
 .h6 {
@@ -18615,13 +18607,19 @@ footer {
         visibility: hidden
     }
     h2[id]:before,
-    h3[id]:before,
     h4[id]:before,
     h5[id]:before {
         display: block;
         content: " ";
-        margin-top: -5rem;
-        height: 5rem;
+        margin-top: -1.5em;
+        height: 1rem;
+        visibility: hidden;
+    }
+    h3[id]:before {
+        display: block;
+        content: " ";
+        margin-top: -1.25em;
+        height: 1rem;
         visibility: hidden
     }
 }
