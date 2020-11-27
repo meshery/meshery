@@ -16,11 +16,11 @@ package system
 
 import (
 	"fmt"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,17 +29,17 @@ var channelName string
 // configCmd represents the config command
 var channelCmd = &cobra.Command{
 	Use:   "channel",
-	Short: "Switch the release channel",
-	Long:  `Switch the available release channels 'Stable' & 'Edge'`,
+	Short: "Switch between release channels",
+	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(channelName) < 0 {
-			log.Fatal("Give a valid channel name")
+			log.Fatal("Provide 'stable' or 'edge' as the release channel name.")
 
 		}
 		if channelName == "" {
-			log.Fatal("Invalid channel name")
+			log.Fatal("Invalid channel name. Provide 'stable' or 'edge' as the release channel name.")
 		}
 
 		switch channelName {
@@ -54,18 +54,18 @@ var channelCmd = &cobra.Command{
 				return
 			}
 		default:
-			log.Fatal("Channel name has to be Stable | Edge.")
+			log.Fatal("Channel name has to be 'stable' or 'edge'.")
 		}
 
 		if utils.IsMesheryRunning() {
 			if err := stop(); err != nil {
-				log.Fatal("Failed to stop meshery:", err)
+				log.Fatal("Failed to stop Meshery:", err)
 				return
 			}
 		}
 
 		if err := start(); err != nil {
-			log.Fatal("Failed to start meshery:", err)
+			log.Fatal("Failed to start Meshery:", err)
 			return
 		}
 	},
@@ -102,7 +102,6 @@ func useEdgeChannel() error {
 	switchToEdge.Stderr = os.Stderr
 
 	return switchToEdge.Run()
-
 }
 
 func useStableChannel() error {
@@ -131,5 +130,4 @@ func useStableChannel() error {
 	switchToStable.Stderr = os.Stderr
 
 	return switchToStable.Run()
-
 }
