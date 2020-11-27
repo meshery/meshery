@@ -62,7 +62,8 @@ This configuration file will be used by Meshery.
 
 ```kubectl config view --minify --flatten > config_minikube.yaml```
 
-<pre><code>
+<pre class="codeblock-pre">
+<div class="codeblock"><div class="clipboardjs">
 apiVersion: v1
 clusters:
 - cluster:
@@ -82,7 +83,8 @@ users:
   user:
     client-certificate-data: <cert shortcutted >
     client-key-data: < key shortcutted >
-</code></pre>
+</div></div>
+</pre>
 
 Note: Make sure *current-context* is set to *minikube*.
 

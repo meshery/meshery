@@ -73,7 +73,7 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
-  var getcodeelement = $( "code" ); /*create custom id*/
+  var getcodeelement = $( ".clipboardjs" ); /*create custom id*/
 
   getcodeelement.each(function(i) {  
       /*target*/
@@ -82,7 +82,7 @@ function HideToggleFunction() {
 
     /*trigger*/
 
-    var clipButton = '<button class="btn" data-clipboard-target="#' + currentId + '"><img src="https://clipboardjs.com/assets/images/clippy.svg" width="13" alt="Copy to clipboard"></button>';
+    var clipButton = '<div class="btn-copy-wrap"><button class="btn" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
        $(this).after(clipButton);
     });
 
