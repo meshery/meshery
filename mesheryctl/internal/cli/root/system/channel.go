@@ -72,12 +72,12 @@ var channelCmd = &cobra.Command{
 }
 
 func init() {
-	configCmd.Flags().StringVarP(&channelName, "channelName", "c", "stable", "Release channel to be used for Meshery and its adapters.")
-	_ = configCmd.MarkFlagRequired("channelName")
+	channelCmd.Flags().StringVarP(&channelName, "switch", "c", "stable", "Release channel to be used for Meshery and its adapters.")
+	_ = channelCmd.MarkFlagRequired("switch")
 }
 
 func useEdgeChannel() error {
-	configPath := "$HOME" + "/" + utils.MesheryFolder + "/" + utils.DockerComposeFile
+	configPath := utils.DockerComposeFile
 
 	script := fmt.Sprintf(`
 	set -e
@@ -87,8 +87,10 @@ func useEdgeChannel() error {
 
 	replace_to_edge() {
 		echo -n "replacing stable with edge"
+		printf "\n"
 		sed -i -e 's/stable/edge/g' "${File_Location}"
-		printf "done\n"
+		printf "replaced stable with edge\n"
+		printf "fetching latest edge release \n"
 	}
 
 	replace_to_edge
@@ -104,7 +106,7 @@ func useEdgeChannel() error {
 }
 
 func useStableChannel() error {
-	configPath := "$HOME" + "/" + utils.MesheryFolder + "/" + utils.DockerComposeFile
+	configPath := utils.DockerComposeFile
 
 	script := fmt.Sprintf(`
 	set -e
@@ -113,9 +115,11 @@ func useStableChannel() error {
 	File_Location="%s"
 
 	replace_to_edge() {
-		echo -n "replacing stable with edge"
+		echo -n "replacing edge with stable"
+		printf "\n"
 		sed -i -e 's/edge/stable/g' "${File_Location}"
-		printf "done\n"
+		printf "replaced edge with stable\n"
+		printf "fetching latest stable release \n"
 	}
 
 	replace_to_edge
