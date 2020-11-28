@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	rand "math/rand"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -454,7 +454,7 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 func SearchAndReplace(path, oldString, newString string) error {
 	fileData, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Errorf("unable to read file:", err)
+		log.Errorf("unable to read file: %v", err)
 		return err
 	}
 
@@ -462,10 +462,9 @@ func SearchAndReplace(path, oldString, newString string) error {
 
 	err = ioutil.WriteFile(path, []byte(outputFile), 0644)
 	if err != nil {
-		log.Errorf("unable to write into file:", err)
+		log.Errorf("unable to write into file: %v", err)
 		return err
 	}
 
 	return nil
-
 }

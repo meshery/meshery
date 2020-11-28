@@ -40,18 +40,20 @@ var channelCmd = &cobra.Command{
 
 		switch channelName {
 		case "stable":
-			if err := useStableChannel(); err != nil {
-				log.Fatal("Error generating config:", err)
+			if err := utils.SearchAndReplace(utils.DockerComposeFile, "edge", "stable"); err != nil {
+				log.Fatal("Error switching channel:", err)
 				return
 			}
 		case "edge":
-			if err := useEdgeChannel(); err != nil {
-				log.Fatal("Error generating config:", err)
+			if err := utils.SearchAndReplace(utils.DockerComposeFile, "stable", "edge"); err != nil {
+				log.Fatal("Error switching channel:", err)
 				return
 			}
 		default:
 			log.Fatal("Channel name has to be 'stable' or 'edge'.")
 		}
+
+		log.Info("Successfully switched channel...")
 
 		if utils.IsMesheryRunning() {
 			if err := stop(); err != nil {
@@ -70,20 +72,4 @@ var channelCmd = &cobra.Command{
 func init() {
 	channelCmd.Flags().StringVarP(&channelName, "switch", "c", "stable", "Release channel to be used for Meshery and its adapters.")
 	_ = channelCmd.MarkFlagRequired("switch")
-}
-
-func useEdgeChannel() error {
-	configPath := utils.DockerComposeFile
-
-	err := utils.SearchAndReplace(configPath, "stable", "edge")
-
-	return err
-}
-
-func useStableChannel() error {
-	configPath := utils.DockerComposeFile
-
-	err := utils.SearchAndReplace(configPath, "edge", "stable")
-
-	return err
 }
