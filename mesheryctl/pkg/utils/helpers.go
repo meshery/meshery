@@ -450,3 +450,22 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 	}
 	return false
 }
+
+func SearchAndReplace(path, oldString, newString string) error {
+	fileData, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Errorf("unable to read file:", err)
+		return err
+	}
+
+	outputFile := strings.ReplaceAll(string(fileData), oldString, newString)
+
+	err = ioutil.WriteFile(path, []byte(outputFile), 0644)
+	if err != nil {
+		log.Errorf("unable to write into file:", err)
+		return err
+	}
+
+	return nil
+
+}

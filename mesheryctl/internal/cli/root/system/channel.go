@@ -15,10 +15,6 @@
 package system
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
-
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -79,55 +75,15 @@ func init() {
 func useEdgeChannel() error {
 	configPath := utils.DockerComposeFile
 
-	script := fmt.Sprintf(`
-	set -e
-	set -o pipefail
+	err := utils.SearchAndReplace(configPath, "stable", "edge")
 
-	File_Location="%s"
-
-	replace_to_edge() {
-		echo -n "replacing stable with edge"
-		printf "\n"
-		sed -i -e 's/stable/edge/g' "${File_Location}"
-		printf "replaced stable with edge\n"
-		printf "fetching latest edge release \n"
-	}
-
-	replace_to_edge
-
-    `, configPath)
-
-	switchToEdge := exec.Command("bash", "-c", script)
-	switchToEdge.Stdout = os.Stdout
-	switchToEdge.Stderr = os.Stderr
-
-	return switchToEdge.Run()
+	return err
 }
 
 func useStableChannel() error {
 	configPath := utils.DockerComposeFile
 
-	script := fmt.Sprintf(`
-	set -e
-	set -o pipefail
+	err := utils.SearchAndReplace(configPath, "edge", "stable")
 
-	File_Location="%s"
-
-	replace_to_edge() {
-		echo -n "replacing edge with stable"
-		printf "\n"
-		sed -i -e 's/edge/stable/g' "${File_Location}"
-		printf "replaced edge with stable\n"
-		printf "fetching latest stable release \n"
-	}
-
-	replace_to_edge
-
-    `, configPath)
-
-	switchToStable := exec.Command("bash", "-c", script)
-	switchToStable.Stdout = os.Stdout
-	switchToStable.Stderr = os.Stderr
-
-	return switchToStable.Run()
+	return err
 }
