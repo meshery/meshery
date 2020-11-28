@@ -458,6 +458,11 @@ func SearchAndReplace(path, oldString, newString string) error {
 		return err
 	}
 
+	if !strings.Contains(string(fileData), oldString) {
+		log.Errorf("unable to replace with %s", newString)
+		return errors.New("unable to find requested string")
+	}
+
 	outputFile := strings.ReplaceAll(string(fileData), oldString, newString)
 
 	err = ioutil.WriteFile(path, []byte(outputFile), 0644)

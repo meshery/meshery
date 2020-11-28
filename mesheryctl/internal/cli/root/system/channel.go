@@ -70,6 +70,9 @@ var channelCmd = &cobra.Command{
 }
 
 func init() {
-	channelCmd.Flags().StringVarP(&channelName, "switch", "c", "stable", "Release channel to be used for Meshery and its adapters.")
-	_ = channelCmd.MarkFlagRequired("switch")
+	channelCmd.Flags().StringVarP(&channelName, "set", "s", "stable", "Release channel to be used for Meshery and its adapters.")
+	err := channelCmd.MarkFlagRequired("set")
+	if err != nil {
+		log.Fatal("Failed to mark set as required flag")
+	}
 }
