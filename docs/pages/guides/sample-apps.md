@@ -20,7 +20,8 @@ To deploy a sample app on Meshery:
 
 1. Go to the management page of any [service mesh](/docs/service-meshes) and install any of its stable versions
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" /></a>
-2. Click (+) on `Manage Sample Application Lifecycle`. You will now be able to see a drop down menu with the available sample applications
+2. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a drop down menu with the available sample applications.
+
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png" /></a>
 3. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png" /></a>
@@ -29,10 +30,10 @@ To deploy a sample app on Meshery:
 
 Originally built by Istio, BookInfo is a sample application which on deployment displays information about a book, similar to a single catalog entry of an online book store. Displayed on the page is a description of the book, book details (ISBN, number of pages, and so on), and a few book reviews. The application comprises of four microservices:
 
-   - `productpage`: The productpage microservice calls the details and reviews microservices to populate the page.
-   - `details`: The details microservice contains book information.
-   - `reviews`: The reviews microservice contains book reviews. It also calls the ratings microservice.
-   - `ratings`: The ratings microservice contains book ranking information that accompanies a book review.
+   - **productpage**: The productpage microservice calls the details and reviews microservices to populate the page.
+   - **details**: The details microservice contains book information.
+   - **reviews**: The reviews microservice contains book reviews. It also calls the ratings microservice.
+   - **ratings**: The ratings microservice contains book ranking information that accompanies a book review.
 
 Once BookInfo is deployed, you can use Meshery to apply custom configurations to control traffic, inject latency, perform context-based routing, and so on. 
 
@@ -42,9 +43,9 @@ Once BookInfo is deployed, you can use Meshery to apply custom configurations to
 
 Emojivoto is a microservice application, originally built by Linkerd that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard. The application is composed of three microservices:
 
-   - `emojivoto-web`: Web frontend and REST API
-   - `emojivoto-emoji-svc`: gRPC API for finding and listing emoji
-   - `emojivoto-voting-svc`: gRPC API for voting and leaderboard
+   - **emojivoto-web**: Web frontend and REST API
+   - **emojivoto-emoji-svc**: gRPC API for finding and listing emoji
+   - **emojivoto-voting-svc**: gRPC API for voting and leaderboard
 
 <a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/emojivoto.png"><img alt="Emojivoto" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/emojivoto.png" /></a>
 

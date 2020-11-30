@@ -2,7 +2,7 @@
 layout: default
 title: Using mesheryctl
 description: How to use mesheryctl
-permalink: guides/mesheryctl
+permalink: guides/mesheryctl 
 type: Guides
 ---
 
@@ -24,24 +24,23 @@ type: Guides
 
 ## Mac or Linux
 
-Use your choice of homebrew or bash to install `mesheryctl`. You only need to use one.
+Use your choice of homebrew or bash to install *mesheryctl*. You only need to use one.
 
 ### Homebrew
 
-Install `mesheryctl` and run Meshery on Mac with Homebrew.
+Install *mesheryctl* and run Meshery on Mac with Homebrew.
 
 **Installing with Homebrew**
 
-To install `mesheryctl`, execute the following commands:
+To install *mesheryctl*, execute the following commands:
 
 ```bash
-brew install layer5io/mesheryctl
-mesheryctl system start
+brew install layer5io mesheryctl system start
 ```
 
 **Upgrading with Homebrew**
 
-To upgrade `mesheryctl`, execute the following command:
+To upgrade *mesheryctl*, execute the following command:
 
 ```bash
 brew upgrade mesheryctl
@@ -51,7 +50,7 @@ brew upgrade mesheryctl
 
 **Installing with Bash**
 
-Install `mesheryctl` and run Meshery on Mac or Linux with this script:
+Install *mesheryctl* and run Meshery on Mac or Linux with this script:
 
 ```bash
 curl -L https://git.io/meshery | bash -
@@ -59,7 +58,7 @@ curl -L https://git.io/meshery | bash -
 
 **Upgrading with Bash**
 
-Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
+Upgrade *mesheryctl* and run Meshery on Mac or Linux with this script:
 
 ```bash
 curl -L https://git.io/meshery | bash -
@@ -69,10 +68,10 @@ curl -L https://git.io/meshery | bash -
 
 ### Installing the `mesheryctl` binary
 
-Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
+Download and unzip *mesheryctl* from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add *mesheryctl* to your PATH for ease of use. Then, execute:
 
 ```bash
-./mesheryctl system start
+.*mesheryctl*system start
 ```
 
 ### Scoop
@@ -84,13 +83,13 @@ Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
 Add the Meshery Scoop Bucket and install:
 
 ```bash
-scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
-scoop install mesheryctl
+scoop bucket add*mesheryctl*https://github.com/layer5io/scoop-bucket.git
+scoop install*mesheryctl*
 ```
 
 **Upgrading with Scoop**
 
-To upgrade `mesheryctl`, execute the following command:
+To upgrade *mesheryctl*, execute the following command:
 
 ```bash
 scoop update mesheryctl
@@ -98,10 +97,11 @@ scoop update mesheryctl
 
 ## Advanced Installation
 
-Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local `~/.meshery/meshery.yaml` (a docker compose file).
-Aligned with the Meshery container image, instead of leaving the implicit `:stable-latest` tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
+Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local *~/.meshery/meshery.yaml* (a docker compose file).
+Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
 
-```bash
+```
+bash
 version: '3'
 services:
   meshery:
@@ -112,6 +112,7 @@ services:
 
 # Configuring Auto Completion for `mesheryctl`
 If you would like to have `mesheryctl` commands automatically completed for use as you use `mesheryctl`, then use the following instructions to configure automatic completion within your environment.
+
 ## Autocompletion for Bash
 
 ### bash <= 3.2
