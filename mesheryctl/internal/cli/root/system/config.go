@@ -176,8 +176,41 @@ var configCmd = &cobra.Command{
 				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
+		case "eks":
+			log.Info("Configuring Meshery to access EKS...")
+			var regionName, clusterName string
+
+			// Prompt user for AWS region name
+			log.Info("Please enter the AWS region name:")
+			_, err := fmt.Scanf("%s", &regionName)
+			if err != nil {
+				log.Warnf("Error reading AWS region name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS region name:")
+				_, err = fmt.Scanf("%s", &regionName)
+				if err != nil {
+					log.Fatalf("Error reading AWS region name: %s", err.Error())
+				}
+			}
+
+			// Prompt user for AWS cluster name
+			log.Info("Please enter the AWS cluster name:")
+			_, err = fmt.Scanf("%s", &clusterName)
+			if err != nil {
+				log.Warnf("Error reading AWS cluster name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS cluster name:")
+				_, err = fmt.Scanf("%s", &clusterName)
+				if err != nil {
+					log.Fatalf("Error reading AWS cluster name: %s", err.Error())
+				}
+			}
+
+			// Write EKS compatible config to the filesystem
+			if err := utils.GenerateConfigEKS(regionName, clusterName); err != nil {
+				log.Fatal("Error generating kubeconfig: ", err)
+				return
+			}
 		default:
-			log.Fatal("The argument has to be one of gke | minikube | aks")
+			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
 		}
 
 		// TODO: Assumes Mac or Linux. Make arch-specific

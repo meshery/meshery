@@ -162,3 +162,44 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 
 	return generateCFG.Run()
 }
+
+
+// GenerateConfigEKS generates kube config file in /tmp/meshery/kubeconfig.yaml for a GKE cluster
+func GenerateConfigEKS(region, cluster string) error {
+	script := fmt.Sprintf(`
+	set -e
+	set -o pipefail
+
+	TARGET_FOLDER="~/.meshery/"
+	KUBECFG_FILE_NAME="$TARGET_FOLDER/kubeconfig.yaml"
+	KUBECONFIG=${KUBECFG_FILE_NAME}
+
+	REGION_NAME=%s
+	CLUSTER_NAME="%s"
+
+	create_target_folder() {
+		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
+		mkdir -p "${TARGET_FOLDER}"
+		printf "done"
+	}
+
+	create_update_kubeconfig() {
+		echo -e "\\nQuerying the kubernetes configuration for cluster ${CLUSTER_NAME} from EKS..."
+		aws eks --region ${REGION_NAME} update-kubeconfig --name ${CLUSTER_NAME} --kubeconfig ${KUBECONFIG}
+		printf "done"
+	}
+
+	create_target_folder
+	create_update_kubeconfig
+
+	echo -e "\\nAll done! Test with:"
+	echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
+	`, region, cluster)
+
+	generateCFG := exec.Command("sh", "-c", script)
+	generateCFG.Stdout = os.Stdout
+	generateCFG.Stderr = os.Stderr
+
+	return generateCFG.Run()
+}
+
