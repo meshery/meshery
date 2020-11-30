@@ -66,7 +66,7 @@ Ensure that your kubernetes cluster is connected to Meshery. Go to <i class="fas
 
 ##### 8. Check up on your connection
 
-Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports](/docs/architecture#adapter-ports).
+Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports](/docs/concepts/architecture#adapter-ports).
 
 ##### 9. You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery
 
