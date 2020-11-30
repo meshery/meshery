@@ -5,13 +5,10 @@ permalink: installation/platforms/aks
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/aks.svg
 ---
 
-## Quick start with Azure Kubernetes Service (AKS) <img src="/docs/assets/img/platforms/aks.svg" width="35" height="35" />
-
-###### **Prerequisite(s)**
-
-- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+{% include installation_prerequisites.html %}
 
 **To set up and run Meshery on AKS**:
 

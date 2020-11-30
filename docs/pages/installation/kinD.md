@@ -5,13 +5,10 @@ permalink: installation/platforms/kind
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/kind.png
 ---
 
-## Quick Start with KinD <img src="/docs/assets/img/platforms/kind.png" width="35" height="35" />
-
-###### **Prerequisite(s)**
-
-- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+{% include installation_prerequisites.html %}
 
 **To set up and run Meshery on KinD** 
 

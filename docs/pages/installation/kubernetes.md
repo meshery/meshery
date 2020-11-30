@@ -5,14 +5,10 @@ permalink: installation/platforms/kubernetes
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/kubernetes.svg
 ---
 
-## Quick Start with Kubernetes <img src="/docs/assets/img/platforms/kubernetes.svg" width="35" height="35" />
-
-
-###### **Prerequisite(s)**
-
-- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+{% include installation_prerequisites.html %}
 
 **To set up and run Meshery on Kubernetes** 
 

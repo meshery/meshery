@@ -5,13 +5,10 @@ permalink: installation/platforms/windows
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/wsl2.png
 ---
 
-## Quick Start with Windows <img src="/docs/assets/img/platforms/wsl2.png" width="30" height="30" />
-
-###### **Prerequisite(s)**
-
-- Install [mesheryctl]({{ site.baseurl }}/guides/mesheryctl)
+{% include installation_prerequisites.html %}
 
 **To set up and run Meshery on Windows** 
 
