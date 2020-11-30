@@ -66,4 +66,4 @@ Once you have connected Meshery to your Prometheus deployment(s), you may perfor
 
 ## Suggested Reading
 
-- Guide: [Meshery Metrics](/docs/guides/meshery-metrics)
+- Guide: [Interpreting Performance Test Results](/docs/guides/interpreting-performance-test-results)

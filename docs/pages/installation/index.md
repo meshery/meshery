@@ -32,7 +32,9 @@ When Meshery is up and running, instructions to access Meshery on the host:`9081
   <span style="background-image: url('/docs/assets/img/meshery-server-page.png')"></span>
 </a>
 
-##### 5. Authenticate with your chosen your [Provider](/docs/reference/extensibility#providers)
+##### 5. Sign in 
+
+Sign in with your preferred authentication method:
 
 <a href="#meshery-sign-up">
 <img style="width:300px;height=auto;" src="/docs/assets/img/meshery-login-page.png" />
@@ -41,7 +43,7 @@ When Meshery is up and running, instructions to access Meshery on the host:`9081
   <span style="background-image: url('/docs/assets/img/meshery-login-page.png')"></span>
 </a>
 
-##### 6. Verify Meshery's Health
+##### 6. Access Meshery's UI
 
 <a href="#meshery-ui">
 <img style="width:450px;height=auto;" src="/docs/assets/img/adapters/meshery-ui.png" />
@@ -68,7 +70,7 @@ Ensure that your kubernetes cluster is connected to Meshery. Go to <i class="fas
 
 Check up on the successful configuration of your Kubernetes settings by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports](/docs/architecture#adapter-ports).
 
-##### 9. You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery
+**You may now proceed to install and work with any [service mesh](/docs/service-meshes) supported by Meshery**
 
 <video class="videoTest" width="750" height="auto" autoplay muted loop>
   <source src="/docs/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">

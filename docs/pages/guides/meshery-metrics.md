@@ -12,9 +12,9 @@ Meshery provides performance reports, including performance test results, node r
 
 In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an *ad-hoc* test to check Meshery's connection status.
 
-<a href="/docs/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/grafana-dashboard.png" /></a>
+#### Tutorial Guide
 
-#### In this guide, we will configure Meshery to:
+Follow along with this tutorial to set up and integrate Grafana and Prometheus instances on top of your service mesh and run performance tests:
 
 * Deploy a service mesh and any available sample application
 
@@ -30,7 +30,7 @@ In order to pull in these environment metrics, you can also manually configure M
 
 * Set up Grafana and/or Prometheus:
 1. [Connect Meshery to metric systems](#connect-meshery-to-metric-systems)
-2. [Connect Meshery to metric systems using Minkube](#Connect-Meshery-to-metric-systems-using-Minikube)
+2. [Connect Meshery to metric systems using Minikube](#Connect-Meshery-to-metric-systems-using-Minikube)
 
 * Expose the service metric ports - The service ports of Grafana and Prometheus need to be exposed in order for Meshery to connect to and interact with these visualizations and metrics systems.
 * Access the port assigned to the metric service
@@ -73,8 +73,8 @@ grafana   NodePort   10.100.67.144   <none>        3000:30188/TCP   3d11h
 
 In this scenario, Meshery will be configured to deploy Istio to a Kubernetes cluster running in Minikube. The service ports of Grafana and Prometheus need to be exposed in order for Meshery to connect to and interact with these visualizations and metrics systems.
 
-- [Grafana spec](#expose-grafana)
-- [Prometheus spec](#expose-prometheus)
+- [Grafana spec](#expose-grafana-service)
+- [Prometheus spec](#expose-prometheus-service)
 - [Bookinfo - `productpage` service](#expose-istio-bookinfo-sample-app-productpage-service)
 
 ###### 1. Get minikube ip
@@ -112,7 +112,35 @@ The Grafana endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 http://172.17.0.2:32130
 ```
 
+<a href="{{ site.baseurl }}/assets/img/meshery-metrics/grafana-server-settings.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/grafana-server-settings.png" />
+</a>
+
 ###### **Expose `Prometheus` service**
+
+Meshery allows you to expose Prometheus as a service with a single click. You can do this:
+- [Through the Meshery UI](#meshery-ui)
+- Alternatively, you can also attempt [Manual Integration](#manual-steps)
+
+###### **Meshery UI**
+
+Meshery auto-discovers all Prometheus instances available on your local system and will offer you a list of options to choose from. You can select the Prometheus Server that you wish to employ.
+
+<a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png" />
+</a>
+
+Meshery also provides you the option of simply pasting in your Prometheus queries:
+
+- Navigate to the management page for Istio on the Meshery UI
+- Click on <i class="fas fa-caret-right fa-lg"></i>, located under **Apply Custom Configuration** 
+- Paste in your Prometherus query. Click on <i class="fas fa-caret-right fa-lg"></i>
+
+<a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-query.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-query.png" />
+</a>
+
+###### **Manual Steps**
 
 * Get the NodePort of `prometheus` service by executing:
 
