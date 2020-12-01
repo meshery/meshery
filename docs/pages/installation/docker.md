@@ -5,10 +5,10 @@ permalink: installation/platforms/docker
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/docker.svg
 ---
 
-## Quick Start with Docker
-*Note: a minimum of 4GB RAM is needed for [Istio (and BookInfo sample app)](/docs/service-meshes/adapters/istio/istio) deployments.*
+{% include installation_prerequisites.html %}
 
 ### **Steps**
 

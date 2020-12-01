@@ -5,10 +5,12 @@ permalink: installation/platforms/minikube
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/minikube.png
 ---
 
-## Quick Start with Minikube
-To set up and run Meshery on Minikube:
+{% include installation_prerequisites.html %}
+
+**To set up and run Meshery on Minikube** 
 
 1. [Start Minikube](#1-start-minikube)
 1. [Configure Meshery to use minkube](#2-configure-meshery-to-use-minikube)

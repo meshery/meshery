@@ -35,7 +35,9 @@ Install *mesheryctl* and run Meshery on Mac with Homebrew.
 To install *mesheryctl*, execute the following commands:
 
 ```bash
-brew install layer5io mesheryctl system start
+brew tap layer5io/tap
+brew install mesheryctl
+mesheryctl system start
 ```
 
 **Upgrading with Homebrew**

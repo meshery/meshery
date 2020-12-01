@@ -5,14 +5,14 @@ permalink: installation/platforms/kubernetes
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/kubernetes.svg
 ---
 
-## Quick Start with Kubernetes
+{% include installation_prerequisites.html %}
 
-To set up and run Meshery on Kubernetes:
+**To set up and run Meshery on Kubernetes** 
 
 - [ Use Helm and set up a Kubernetes cluster](#using-helm)
-
 - [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
 
 #### **Using Helm**
