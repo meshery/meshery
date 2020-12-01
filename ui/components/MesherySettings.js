@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import { AppBar, Paper, Tooltip } from '@material-ui/core';
+import { AppBar, Paper, Tooltip, IconButton } from '@material-ui/core';
+import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -16,6 +18,9 @@ import GrafanaComponent from './GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './PrometheusComponent';
 import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
+import dataFetch from '../lib/data-fetch';
+import { updateProgress } from "../lib/store";
+import { withSnackbar } from "notistack";
 
 const styles = (theme) => ({
   root: {
@@ -113,6 +118,11 @@ class MesherySettings extends React.Component {
       prometheus,
       tabVal,
       subTabVal,
+
+      // Array of scanned prometheus urls
+      scannedPrometheus: [],
+      // Array of scanned grafan urls
+      scannedGrafana: []
     };
   }
 
@@ -128,6 +138,98 @@ class MesherySettings extends React.Component {
     }
     return null;
   }
+
+  componentDidMount() {
+    this.fetchPromGrafanaScanData()
+  }
+
+  fetchPromGrafanaScanData = () => {
+    const self = this;
+    self.props.updateProgress({ showProgress: true });
+    dataFetch(
+      '/api/promGrafana/scan', 
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (!result) return;
+        
+        if (Array.isArray(result.prometheus)) {
+          const urls = self.extractURLFromScanData(result.prometheus);
+          self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
+        }
+
+        if (Array.isArray(result.grafana)) {
+          const urls = self.extractURLFromScanData(result.grafana);
+          self.setState(state => ({ scannedGrafana: [...state.scannedGrafana, ...urls] }));
+        }
+      },
+      self.handleError("Unable to fetch prometheus and grafana scan data")
+    )
+  }
+
+  /**
+   * extractURLFromScanData scans the ingress urls from the
+   * mesh scan data and returns an array of the response
+   * @param {object[]} scannedData 
+   * @returns {string[]}
+   */
+  extractURLFromScanData = (scannedData) => {
+    const result = [];
+    scannedData.forEach(data => {
+      // Add loadbalancer based url
+      if (Array.isArray(data.status?.loadBalancer?.ingress)) {
+        data.status.loadBalancer.ingress.forEach(lbdata => {
+          let protocol = "http";
+
+          // Iterate over ports exposed by the service
+          if(Array.isArray(data.spec.ports) ){
+            data.spec.ports.forEach(({ port }) => {
+              if (port === 443) protocol = "https";
+
+              // From kubernetes v1.19 docs
+              // Hostname is set for load-balancer ingress points that are DNS based (typically AWS load-balancers)
+              // IP is set for load-balancer ingress points that are IP based (typically GCE or OpenStack load-balancers)
+              let address = lbdata.ip || lbdata.hostname;
+              if (address) result.push(`${protocol}://${address}:${port}`);
+            })
+          }
+        })
+      }
+
+      // Add clusterip based url
+      // As per kubernetes v1.19 api, "None", "" as well as a valid ip is a valid clusterIP
+      // Looking for valid ipv4 address
+      if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
+        let protocol = "http";
+        if(Array.isArray(data.spec.ports)) {
+          data.spec.ports.forEach(({ port }) => {
+            if (port === 443) protocol = "https";
+            result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
+          })
+        }
+      }
+    })
+
+    return result
+  }
+
+  handleError = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant: "error",
+      action: (key) => (
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+          <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 7000,
+    });
+  };
 
   handleChange = (val) => {
     const self = this;
@@ -304,12 +406,12 @@ class MesherySettings extends React.Component {
             </AppBar>
             {subTabVal === 0 && (
               <TabContainer>
-                <GrafanaComponent />
+                <GrafanaComponent scannedGrafana={this.state.scannedGrafana} />
               </TabContainer>
             )}
             {subTabVal === 1 && (
               <TabContainer>
-                <PrometheusComponent />
+                <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} />
               </TabContainer>
             )}
           </TabContainer>
@@ -340,8 +442,14 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
 MesherySettings.propTypes = {
   classes: PropTypes.object,
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(withRouter(MesherySettings)));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
+);

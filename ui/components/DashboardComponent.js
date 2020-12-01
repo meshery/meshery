@@ -144,7 +144,7 @@ class DashboardComponent extends React.Component {
       grafana,
       prometheus,
 
-      versionDetail: { build: "", latest: "", outdated: false },
+      versionDetail: { build: "", latest: "", outdated: false, commitsha: "" },
 
       meshScan: {},
       activeMeshScanNamespace: {},
@@ -222,11 +222,12 @@ class DashboardComponent extends React.Component {
           this.setState({versionDetail: {
             build: "Unknown",
             latest: "Unknown",
-            outdated: false
+            outdated: false,
+            commitsha: "Unkown"
           }});
         }
       },
-      self.handleError("Unable to fetch meshery version.")
+      self.handleError("Unable to fetch Meshery version.")
     );
   };
 
@@ -264,9 +265,13 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.Istio)) {
             const istioData = result.Istio.map(comp => {
               const compData = {
-                name: comp.metadata.name,
-                component: comp.metadata.labels["operator.istio.io/component"],
-                version: `v${comp.metadata?.labels["operator.istio.io/version"]}`,
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -278,19 +283,123 @@ class DashboardComponent extends React.Component {
           if (Array.isArray(result.Linkerd)) {
             const linkerdData = result.Linkerd.map(comp => {
               const compData = {
-                name: comp.metadata.name,
-                component: comp.metadata.labels["app.kubernetes.io/name"],
-                version: comp.metadata?.labels["app.kubernetes.io/version"],
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels["linkerd.io/control-plane-component"],
+                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
                 namespace: comp.metadata.namespace
               }
               return compData;
             })
             self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
           }
+
+          // Check if Consul data is present in the scan
+          if (Array.isArray(result.Consul)) {
+            const consulData = result.Consul.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                // Extracting consul version name from the command with which consul containers 
+                // were spinned up.
+                // There are a bunch of commands in there so splitting the string on "\\\n"
+                // and then looking for the string which has "consul-image"
+                // Once the string is found, we match it against the regex to extract version
+                // If any of this fails, it will fallback to "NA"
+                version: self.generateMeshScanVersion(
+                  comp.spec.containers?.[0]?.command[2]
+                  .split("\\\n")
+                  .find(str => str.includes("consul-image"))
+                ),
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
+          }
+
+          // Check if OSM data is present in the scan
+          if (Array.isArray(result.osm)) {
+            const osmData = result.osm.map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app,
+                version: self.generateMeshScanVersion(
+                  comp.spec.containers?.[0]?.args
+                  ?.find(str => str.includes("openservicemesh/init"))
+                ),
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
+          }
+
+          // Check if NSM data is present in the scan
+          if (Array.isArray(result["Network Service Mesh"])) {
+            const nsmData = result["Network Service Mesh"].map(comp => {
+              const compData = {
+                name: self.generateMeshScanPodName(
+                  comp.metadata.name, 
+                  comp.metadata.labels["pod-template-hash"],
+                  comp.metadata.generateName
+                ),
+                component: comp.metadata.labels?.app || comp.metadata.name,
+                version: `v0.2.0`,
+                namespace: comp.metadata.namespace
+              }
+              return compData;
+            })
+            self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
+          }
         }
       },
-      self.handleError("Unable to fetch meshery version.")
+      self.redirectErrorToConsole("Unable to fetch mesh scan data.")
     );
+  }
+
+  /**
+   * generateMeshScanPodName takes in the podname and the hash
+   * and returns the trimmed pod name
+   * @param {string} podname
+   * @param {string} hash
+   * @param {string | undefined} custom
+   * @returns {{full, trimmed}}
+   */
+  generateMeshScanPodName = (podname, hash, custom) => {
+    const str = (custom || podname)
+    return {
+      full: podname,
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) :  str.length) - 1)
+    }
+  }
+  
+  /**
+   * generateMeshScanVersion takes in the string from which version
+   * is to be extracted and returns the version. If the version string
+   * is undefined then it returns "NA"
+   * @param {string | undefined} versionStr is the string from which version is to be extracted
+   * @returns {string}
+   */
+  generateMeshScanVersion = (versionStr) => {
+    if (typeof versionStr !== "string") return "NA";
+
+    const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
+    if (!matchResult) return "NA";
+    
+    // Add "v" iff we have a valid match result
+    return `v${matchResult[0]}`;
   }
 
   handleError = (msg) => (error) => {
@@ -306,6 +415,19 @@ class DashboardComponent extends React.Component {
       autoHideDuration: 7000,
     });
   };
+
+  /**
+   * redirectErrorToConsole returns a function which redirects
+   * ther error to the console under the group labelled by the "msg"
+   * param
+   * @param {string} msg 
+   */
+  redirectErrorToConsole = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    console.group(msg);
+    console.error(error);
+    console.groupEnd();
+  }
 
   handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;
@@ -430,7 +552,7 @@ class DashboardComponent extends React.Component {
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
    * the mesh
-   * @param {{name, icon}} mesh
+   * @param {{name, icon, tag}} mesh
    * @param {{name, component, version, namespace}[]} components Array of components data
    */
   Meshcard = (mesh, components = []) => {
@@ -447,15 +569,15 @@ class DashboardComponent extends React.Component {
             </Grid>
             <Grid item>
               <Select 
-                value={self.state.activeMeshScanNamespace[mesh.name]} 
+                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]} 
                 onChange={(e) => self.setState(state => ({ 
-                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.name]: e.target.value} 
+                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value} 
                 }))}
               >
                 {
-                  self.state.meshScanNamespaces[mesh.name] 
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name] 
                   && 
-                  self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
                 }
               </Select>
             </Grid>
@@ -464,18 +586,22 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Name</TableCell>
+                  <TableCell align="center">Control Plane Pods</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
                   .map((component) => (
-                    <TableRow key={component.name}>
-                      <TableCell component="th" scope="row" align="center">
-                        {component.name}
+                    <TableRow key={component.name.full}>
+                      <TableCell scope="row" align="center">
+                        <Tooltip title={component.name.full}>
+                          <div style={{textAlign: "center"}}>
+                            {component.name.trimmed}
+                          </div>
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
@@ -564,7 +690,7 @@ class DashboardComponent extends React.Component {
         chp = <Tooltip title={`Server: ${configuredServer}`}>{chp}</Tooltip>;
       }
 
-      showConfigured = <div className={classes.alignRight}>{chp}</div>;
+      showConfigured = <div showConfigured>{chp}</div>;
     }
 
     let showAdapters = "No adapters configured.";
@@ -727,8 +853,18 @@ class DashboardComponent extends React.Component {
           Object.keys(self.state.meshScan).length
             ?
             <>
+              {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
               {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
               {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ 
+                name: "Open Service Mesh", 
+                icon: "/static/img/osm.svg", 
+                tag: "osm" 
+              }, self.state.meshScan.osm)}
+              {self.Meshcard({ 
+                name: "Network Service Mesh", 
+                icon: "/static/img/nsm.svg" 
+              }, self.state.meshScan["Network Service Mesh"])}
             </>
             :
             <div style={{
@@ -739,9 +875,8 @@ class DashboardComponent extends React.Component {
               flexDirection: "column"
             }}>
               <Typography 
-                style={{fontSize: "1.5rem"}} 
+                style={{fontSize: "1.5rem", marginBottom: "2rem"}} 
                 align="center"
-                gutterBottom
                 color="textSecondary">
                 No service meshes detected in the {self.state.contextName} cluster.
               </Typography>
@@ -766,11 +901,17 @@ class DashboardComponent extends React.Component {
      */
     const getMesheryVersionText = (type) => {
       const {build, latest, outdated} = this.state.versionDetail
-      if (type === "current") {
-        if (outdated) return `Running Meshery: stable-${build}`
-        if (build === "Unknown") return "Unknown"
 
-        return `Meshery is up to date: stable-${build}`
+      if (type === "current") {
+        if (outdated) return `Currently Running: stable-${build}`
+        if (build === "Unknown") return "Unknown"
+        
+        let ver = `Running Latest: stable-${build}`
+        //let showSHA = "Unknown";
+        // let tip = <Tooltip title={`SHA: ${commitsha}`}>{ver}</Tooltip>;
+        // showSHA = <div className={classes.alignRight}>{tip}</div>;
+        
+        return ver
       }
 
       if (type === "latest") {
@@ -812,7 +953,7 @@ class DashboardComponent extends React.Component {
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection}>
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Service Mesh
+                  Service Mesh 
                 </Typography>
                 {showServiceMesh}
               </div>
