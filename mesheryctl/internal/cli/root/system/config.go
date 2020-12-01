@@ -182,7 +182,7 @@ var configCmd = &cobra.Command{
 
 		// TODO: Assumes Mac or Linux. Make arch-specific
 		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := "$HOME/.meshery/aks-kubeconfig.yaml"
+		configPath := "/tmp/meshery/kubeconfig.yaml"
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)

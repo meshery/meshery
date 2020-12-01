@@ -2,7 +2,7 @@
 layout: page
 title: Minikube
 permalink: es/installation/platforms/minikube
-language: espanol
+language: es
 type: installation
 ---
 

@@ -2,7 +2,7 @@
 layout: page
 title: EKS
 permalink: es/installation/platforms/eks
-language: espanol
+language: es
 type: installation
 ---
 

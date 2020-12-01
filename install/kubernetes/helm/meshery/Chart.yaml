@@ -1,15 +1,16 @@
 apiVersion: v2
 name: meshery
 description: Meshery chart for deploying Meshery and Meshery's adapters.
-icon: https://github.com/layer5io/meshery/blob/master/ui/public/static/img/meshery-logo/meshery-logo.svg
+icon: https://meshery.io/images/logos/meshery-logo.png
 kubeVersion: 
 keywords:
   - meshery
-  - mesheryistio
-  - mesherylinkerd
-  - mesheryconsul
+  - meshery-istio
+  - meshery-linkerd
+  - meshery-consul
   - meshery-kuma
   - meshery-osm
+  - meshery-nsm
 source: 
   - https://github.com/layer5io/meshery
 
@@ -29,7 +30,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 1.2.0
+version: 2.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -38,21 +39,24 @@ appVersion: stable-latest
 
 
 dependencies:
-- name: mesheryistio
-  version: 0.1.0
-  condition: mesheryistio.enabled
-- name: mesherylinkerd
-  version: 0.1.0
-  condition: mesherylinkerd.enabled
-- name: mesheryconsul
-  version: 0.1.0
-  condition: mesheryconsul.enabled
+- name: meshery-istio
+  version: 2.0.0
+  condition: meshery-istio.enabled
+- name: meshery-linkerd
+  version: 2.0.0
+  condition: meshery-linkerd.enabled
+- name: meshery-consul
+  version: 2.0.0
+  condition: meshery-consul.enabled
 - name: meshery-kuma
-  version: 0.1.0
+  version: 1.0.0
   condition: meshery-kuma.enabled
 - name: meshery-osm
-  version: 0.1.0
+  version: 1.0.0
   condition: meshery-osm.enabled
+- name: meshery-nsm
+  version: 1.0.0
+  condition: meshery-nsm.enabled
 
 maintainers:
   - name: Layer5 Authors

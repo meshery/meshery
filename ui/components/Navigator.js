@@ -25,6 +25,7 @@ import {
   faTachometerAlt,
   faChevronCircleLeft,
   faPollH,
+  faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faSlack,
@@ -110,6 +111,14 @@ const styles = (theme) => ({
     textAlign: "center",
     display: "inline-table",
     paddingRight: theme.spacing(0.5),
+  },
+  listIcon1: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: "center",
+    display: "inline-table",
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
   },
   nested1: {
     paddingLeft: theme.spacing(3),
@@ -330,25 +339,29 @@ const externlinks = [
     id: "doc",
     href: "http://docs.meshery.io",
     title: "Documentation",
-    icon: <DescriptionOutlinedIcon/>
+    icon: <DescriptionOutlinedIcon/>,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"/>
   },
   {
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />
+    icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"/>
   },
   {
     id: "mailinglist",
     href: "https://meshery.io/subscribe",
     title: "Mailing List",
-    icon: <MailIcon />
+    icon: <MailIcon />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"/>
   },
   {
     id: "issues",
     href: "https://github.com/layer5io/meshery/issues/new/choose",
     title: "Issues",
-    icon: <GitHubIcon />
+    icon: <GitHubIcon />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-4"/>
   },
 ];
 
@@ -697,7 +710,7 @@ class Navigator extends React.Component {
               );
             })}
             <Divider className={classes.divider} />
-            {externlinks.map(({ id, icon, title, href }) => {
+            {externlinks.map(({ id, icon, title, href, external_icon}) => {
               return (
                 <ListItem
                   component="a"
@@ -719,9 +732,9 @@ class Navigator extends React.Component {
                       disableTouchListener={!isDrawerCollapsed}
                     >
                       <ListItemIcon className={classes.listIcon}>
-                        {icon}
+                        {icon}       
                       </ListItemIcon>
-                    </Tooltip>
+                    </Tooltip>               
                     <ListItemText
                       className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                       classes={{
@@ -730,6 +743,17 @@ class Navigator extends React.Component {
                     >
                       {title}
                     </ListItemText>
+                    <Tooltip
+                      title={title}
+                      placement="left"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={!isDrawerCollapsed}
+                      disableTouchListener={!isDrawerCollapsed}
+                    >
+                      <ListItemIcon className={classes.listIcon1}>
+                        {external_icon}
+                      </ListItemIcon>
+                    </Tooltip>
                   </div>
                 </ListItem>
               );

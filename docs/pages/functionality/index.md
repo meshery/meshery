@@ -18,6 +18,6 @@ These sections provide user guides to the functionality Meshery offers.
     {% endfor %}
 </ul>
 
-{% include toc.html page=functionality %}
+<!-- {% include toc.html page=functionality %} -->
 
-{:toc}
+<!-- {:toc} -->

@@ -2,7 +2,7 @@
 layout: page
 title: GKE
 permalink: es/installation/platforms/gke
-language: espanol
+language: es
 type: installation
 ---
 

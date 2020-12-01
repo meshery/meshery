@@ -17,4 +17,12 @@ describe('Provider UI', () => {
       .get('#split-button-menu').contains('None').click()
       .get('[data-cy="select_provider"]').click()
   })
+
+  it('opens and closes modal to learn more about providers', () => {
+    cy
+      .get('[data-cy="providers-tooltip"]').click()
+      .get('[data-cy="providers-modal"]').should('exist')
+      .get('[data-cy="providers-modal-button-ok"]').click()
+      .get('[data-cy="providers-modal"]').should('not.exist')
+  });
 })

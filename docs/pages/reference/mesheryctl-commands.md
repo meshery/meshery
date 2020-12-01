@@ -34,6 +34,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |         | stop   |               | Stop all Meshery containers.                                                                                                            | `mesheryctl system stop`                                     |
 |         |        |    --reset    | (optional) reset Meshery's configuration file to default settings.                                                                      | `mesheryctl system stop --reset`                             |
 |         | update |               | Pull new Meshery images from Docker Hub. Does not pulls new `mesheryctl` client. This command may be executed while Meshery is running. | `mesheryctl system update`                                   |
+|         | completion |               | Generates completion script.                                                                                               | `mesheryctl system completion [bash\|zsh\|fish]`              |
 |         | help   |               | Displays help about any Meshery lifecycle management command.                                                                           | `mesheryctl system --help`                                   |
 
 ### Performance Management

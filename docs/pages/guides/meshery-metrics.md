@@ -6,6 +6,7 @@ permalink: guides/meshery-metrics
 type: Guides
 ---
 
+
 ### **Connect and use metrics in Meshery**
 
 Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses `Grafana` and/or `Prometheus` as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.
@@ -35,6 +36,7 @@ Follow along with this tutorial to set up and integrate Grafana and Prometheus i
 * Expose the service metric ports - The service ports of Grafana and Prometheus need to be exposed in order for Meshery to connect to and interact with these visualizations and metrics systems.
 * Access the port assigned to the metric service
 * [Run Performance tests](#run-performance-tests)
+
 
 #### **Connect Meshery to metric systems**
 
@@ -88,11 +90,13 @@ Retreive the IP address of your Minikube cluster by executing:
 
 ###### 2. Expose the service
 
+
 By default, the service specification types, like `prometheus`, `grafana`, and the `productpage`, are configured to **ClusterIP**. You can change it to **NodePort** by replacing *service spec type* with the spec you wish to run and executing:
 
 ```
 $ kubectl patch svc `service spec type` -p '{"spec": {"type": "NodePort"}}' -n istio-system
 ```
+
 
 ###### **Expose `Grafana` service**
 
@@ -126,6 +130,7 @@ Meshery allows you to expose Prometheus as a service with a single click. You ca
 
 Meshery auto-discovers all Prometheus instances available on your local system and will offer you a list of options to choose from. You can select the Prometheus Server that you wish to employ.
 
+
 <a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png" />
 </a>
@@ -157,6 +162,7 @@ The Prometheus endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 ```
 http://172.17.0.2:30822
 ```
+
 
 ###### **Expose Istio BookInfo sample app `productpage` service**
 
