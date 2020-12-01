@@ -2,7 +2,7 @@
 layout: page
 title: Supported Platforms
 permalink: es/installation/platforms
-language: espanol
+language: es
 type: installation
 ---
 

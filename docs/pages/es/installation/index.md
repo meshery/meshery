@@ -2,7 +2,7 @@
 layout: page
 title: Installation Guide
 permalink: es/installation
-language: espanol
+language: es
 type: installation
 ---
 

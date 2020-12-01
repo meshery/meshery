@@ -6,7 +6,7 @@ ARG GIT_COMMITSHA
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/layer5io/meshery
 ADD . .
-RUN cd cmd; GOPROXY=direct GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA" -tags draft -a -o /meshery .
+RUN rm go.sum; go clean -modcache; cd cmd; GOPROXY=direct GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA" -tags draft -a -o /meshery .
 
 FROM node as ui
 ADD ui ui

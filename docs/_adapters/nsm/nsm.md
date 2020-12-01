@@ -21,20 +21,14 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#nsm-adapter">
-  <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-adapter.png" />
-</a>
-<a href="#" class="lightbox" id="nsm-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-adapter.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
-<a href="#nsm-install">
-  <img style="width:500px;" src="/docs/assets/img/adapters/nsm/nsm-install.png" />
-</a>
-<a href="#" class="lightbox" id="nsm-install">
-  <span style="background-image: url('/docs/assets/img/adapters/nsm/nsm-install.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
 </a>
 
 ### Sample Applications
@@ -110,7 +104,7 @@ Network Service Discovery and Routing, as well as the vWire 'Connection Handling
 ![icmp-responder-example-2](./icmp-responder-example-2.svg)
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using
-`PodAntiAffinity`, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
+*PodAntiAffinity*, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
 Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
 **Verification**

@@ -2,7 +2,7 @@
 layout: page
 title: Kubernetes
 permalink: es/installation/platforms/kubernetes
-language: espanol
+language: es
 type: installation
 ---
 

@@ -21,48 +21,36 @@ Use the Meshery command line interface, [mesheryctl](/docs/guides/mesheryctl), t
 
 ##### 3. Access Meshery
 
-When Meshery is up and running, instructions to access Meshery on the host:`9081` will be printed on your screen. Your default browser should be auto-directed to the Meshery login screen
+When Meshery is up and running, instructions to access Meshery on the host:**9081** will be printed on your screen. Your default browser should be auto-directed to the Meshery login screen
 
 ##### 4. Select a [Provider](/docs/reference/extensibility#providers)
 
-<a href="#meshery-login-page">
+<a href="/docs/assets/img/meshery-server-page.png">
   <img style="width:300px;" src="/docs/assets/img/meshery-server-page.png" />
-</a>
-<a href="#" class="lightbox" id="meshery-login-page">
-  <span style="background-image: url('/docs/assets/img/meshery-server-page.png')"></span>
 </a>
 
 ##### 5. Authenticate with your chosen your [Provider](/docs/reference/extensibility#providers)
 
-<a href="#meshery-sign-up">
+<a href="/docs/assets/img/meshery-login-page.png">
 <img style="width:300px;height=auto;" src="/docs/assets/img/meshery-login-page.png" />
-</a>
-<a href="#" class="lightbox" id="meshery-sign-up">
-  <span style="background-image: url('/docs/assets/img/meshery-login-page.png')"></span>
 </a>
 
 ##### 6. Verify Meshery's Health
 
-<a href="#meshery-ui">
+<a href="/docs/assets/img/adapters/meshery-ui.png">
 <img style="width:450px;height=auto;" src="/docs/assets/img/adapters/meshery-ui.png" />
-</a>
-<a href="#" class="lightbox" id="meshery-ui">
-  <span style="background-image: url('/docs/assets/img/adapters/meshery-ui.png')"></span>
 </a>
 
 ##### 7. Configure Connection to Kubernetes
 Ensure that your kubernetes cluster is connected to Meshery. Go to <i class="fas fa-cog"></i> Settings:
 
-- Meshery attempts to auto detect your kubernetes config if it is stored in the default path (`$HOME/.kube` directory) on your system. If your configuration has been auto-detected, you will be able to see your configuration details listed
+- Meshery attempts to auto detect your kubernetes config if it is stored in the default path (*$HOME/.kube* directory) on your system. If your configuration has been auto-detected, you will be able to see your configuration details listed
 
-  <a href="#meshery-settings">
+  <a href="/docs/assets/img/adapters/meshery-settings.png">
   <img style="width:600px;" src="/docs/assets/img/adapters/meshery-settings.png" />
   </a>
-  <a href="#" class="lightbox" id="meshery-settings">
-  <span style="background-image: url('/docs/assets/img/adapters/meshery-settings.png')"></span>
-  </a>
 
-- If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the `context name` (docker-desktop, kind-clsuter, minikube etc.)
+- If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
 
 ##### 8. Check up on your connection
 

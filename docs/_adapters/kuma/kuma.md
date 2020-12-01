@@ -21,20 +21,14 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
-<a href="#kuma-adapter">
-  <img style="width:500px;" src="/docs/assets/img/adapters/kuma/kuma-adapter.png" />
-</a>
-<a href="#" class="lightbox" id="kuma-adapter">
-  <span style="background-image: url('/docs/assets/img/adapters/citrix/citrix-adapter.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
-<a href="#kuma-install">
-  <img style="width:500px;" src="/docs/assets/img/adapters/kuma/kuma-install.png" />
-</a>
-<a href="#" class="lightbox" id="kuma-install">
-  <span style="background-image: url('/docs/assets/img/adapters/kuma/kuma-install.png')"></span>
+<a href="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/kuma/kuma-install.png" />
 </a>
 
 ### Features
