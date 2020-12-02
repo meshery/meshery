@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/models"
+	"github.com/sirupsen/logrus"
 )
 
 // MeshSyncHandler - handles that parses meshsync response
@@ -35,5 +36,8 @@ func (h *Handler) MeshSyncHandler(w http.ResponseWriter, req *http.Request, pref
 	// if err != nil {
 	// 	logrus.Errorf("unable to send data: %v", err)
 	// }
-	w.Write([]byte(data))
+	_, err := w.Write([]byte(data))
+	if err != nil {
+		logrus.Errorf("unable to send data: %v", err)
+	}
 }

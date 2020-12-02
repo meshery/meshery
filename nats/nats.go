@@ -6,16 +6,18 @@ import (
 	nats "github.com/nats-io/nats.go"
 )
 
-// temporary - will import this from meshsync
+// Message (temporary) - will import this from meshsync
 type Message struct {
 	Type   string
 	Object interface{}
 }
 
+// Nats - this will implement the nats subsriber for the meshery server
 type Nats struct {
 	ec *nats.EncodedConn
 }
 
+// New - returns a new nats client
 func New(url string) (*Nats, error) {
 	nc, err := nats.Connect(url)
 	if err != nil {
@@ -24,7 +26,7 @@ func New(url string) (*Nats, error) {
 	}
 	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
 	if err != nil {
-		logrus.Printf("Nats couldn't create encoded connection Error: %v", err)
+		logrus.Printf("Nats couldnt create encoded connection Error: %v", err)
 		return nil, err
 	}
 
@@ -33,6 +35,8 @@ func New(url string) (*Nats, error) {
 	}, nil
 }
 
+// Subscribe - this method will be used to subsribe to subjects.
+// subject - string, the subject to subscribe to
 func (n *Nats) Subscribe(subject string) error {
 	_, err := n.ec.Subscribe(subject, func(msg Message) {
 		// read the type and do unmarshalling of object
@@ -40,7 +44,7 @@ func (n *Nats) Subscribe(subject string) error {
 		// logrus.Println(msg.Object)
 	})
 	if err != nil {
-		logrus.Printf("Nats: couldnot subscribe %v", err)
+		logrus.Printf("Nats: couldnt subscribe %v", err)
 		return err
 	}
 	return nil
