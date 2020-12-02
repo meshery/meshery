@@ -116,4 +116,5 @@ export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/nam
 kubectl --namespace meshery port-forward $POD_NAME 8080:8080
 ```
 
+
 Congratulations. Meshery should now be running in your AKS cluster and Meshery UI locally accessible. Navigate to [http://localhost:8080](http://localhost:8080] to log into Meshery and start managing your service mesh deployments.

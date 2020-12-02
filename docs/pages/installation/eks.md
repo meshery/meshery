@@ -19,7 +19,6 @@ Meshery will need to be assigned a *ServiceAccount*. An existing ServiceAccount 
     - [Automatic Configuration](#automatic-configuration-recommended)
     - [Manual Configuration](#manual-configuration-optional)
 
-
 _Note: Make sure you are able to access EKS with `kubectl` by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="_blank"}_
 
 #### **Automatic Configuration (Recommended)**

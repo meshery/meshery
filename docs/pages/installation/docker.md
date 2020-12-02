@@ -8,7 +8,6 @@ list: include
 image: /docs/assets/img/platforms/docker.svg
 ---
 
-
 {% include installation_prerequisites.html %}
 
 *Note: a minimum of 4GB RAM is needed for [Istio (and BookInfo sample app)](/docs/service-meshes/adapters/istio/istio) deployments.*
