@@ -83,8 +83,9 @@ preferences: {}
 users:
 - name: minikube
   user:
-    client-certificate-data: <cert shortcutted >
+    client-certificate-data: < cert shortcutted >
     client-key-data: < key shortcutted >
+    
 </div></div>
 </pre>
 

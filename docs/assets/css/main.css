@@ -18745,6 +18745,7 @@ pre.codeblock-pre{
     align-items: center;
     background-color: black;
     margin: 0;
+    margin-bottom: 1rem;
     padding: 0 1rem 0 1rem;
     border-radius: 0.3rem;
 }
@@ -18766,16 +18767,21 @@ pre.codeblock-pre{
 .btn-copy-wrap {
     display: flex;
     align-self: flex-start;
-    margin-top: 0.7rem;
+    margin-top: 0.6rem;
+    margin-right: 0.2rem;
 }
 
 .btn {
     display: block;
-    width: 10px;
+    width: 0.5rem;
     padding: 0;
     background-color: transparent;
     color: white;
-    font-size: 20px;
+    font-size: 1.2rem;
+}
+
+.btn:active {
+    font-size: 1rem;
 }
 
 /*image-thumbnail-grid*/
