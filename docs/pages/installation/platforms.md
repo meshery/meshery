@@ -7,9 +7,12 @@ language: en
 list: exclude
 ---
 
-# Getting Started with other Platforms<a name="compatibility-matrix"></a>
+# Supported Platforms<a name="compatibility-matrix"></a>
+Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of supported platforms in the table below. With service meshes having sprung to life in the context of Kubernetes, so too, can Meshery’s deployment models be characterized in the context of Kubernetes. A given deployment of Meshery can be described as either an _in-cluster_ or an _out-of-cluster_ deployment. Meshery deploys as a stand-alone, management plane on a Docker host (_out-of-cluster_) or as a management plane in a Kubernetes cluster (_in-cluster_). 
 
-The table below provides installation instructions for each platform that Meshery is compatible with:
+
+## Platform Compatibility Matrix
+Find installation instructions for the Supported Platforms in the compatibility table.
 
 | Platform                                                                                                                                              |        Version        |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------: |
@@ -25,7 +28,7 @@ The table below provides installation instructions for each platform that Mesher
 | &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/minikube.png" width="20" height="20" /> [Minikube](/docs/installation/platforms/minikube)      |    1.2.x and above    |
 | &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/openshift.svg" width="20" height="20" /> OpenShift                                             |      In Progress      |
 | <img src="/docs/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](/docs/installation#mac-or-linux)              |                       |
-| &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew](/docs/installation#mac-or-linux)      |                       |
+| &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew](/docs/installation#mac-or-linux)      | macOS 10.12 - 10.15, 11 |
 | &nbsp;&nbsp;&nbsp; [Scoop](/docs/installation#windows)                                                                                                |                       |
 | &nbsp;&nbsp;&nbsp;<img src="/docs/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows](/docs/installation/platforms/windows)                  | Build 18917 and above |
 | <img src="/docs/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                         |      In Progress      |
