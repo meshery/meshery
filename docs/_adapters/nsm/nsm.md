@@ -73,15 +73,19 @@ In order to make this case more interesting, Endpoint1 and Endpoint2 are deploye
 
 First verify that the vpp-icmp-responder example Pods are all up and running:
 
-```bash
-kubectl get pods | grep vpp-icmp-responder
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl get pods | grep vpp-icmp-responder
+ </div></div>
+ </pre>
 
 To see the vpp-icmp-responder example in action, you can run:
 
-```bash
-curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
+ </div></div>
+ </pre>
 
 #### 3. **ICMP Responder**
 
@@ -111,15 +115,19 @@ Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
 1. Verify that the icmp-responder example Pods are all up and running:
 
-```bash
-kubectl get pods | grep icmp-responder
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl get pods | grep icmp-responder
+ </div></div>
+ </pre>
 
 2. To see the icmp-responder example in action, you may run:
 
-```bash
-curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
+ </div></div>
+ </pre>
 
 ### Suggested Topics
 

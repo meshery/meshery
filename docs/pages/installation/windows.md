@@ -44,7 +44,12 @@ The following minimum Windows build versions are required:
 
 **Note**
 <br />Run the following command on Powershell to check your Windows build and version:
-```[System.Environment]::OSVersion.Version```
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ [System.Environment]::OSVersion.Version
+ </div></div>
+ </pre>
 
 ### **Steps**
 Perform the following steps in order:
@@ -67,11 +72,19 @@ Set the default version to *WSL2*, which will be inherited by any distro you wis
 
 **Enable VM (Virtual Machine) feature**:
 
-```dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+ </div></div>
+ </pre>
 
 **Set WSL2 as the default version**:
 
-```wsl --set-default-version 2```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ wsl --set-default-version 2
+ </div></div>
+ </pre>
 
 <h6><b><a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10" name="wsl1"> WSL1 </a></b></h6>
 

@@ -10,8 +10,11 @@ Various components of Meshery will need to be upgraded as new releases become av
 ## Upgrade Meshery Server, Adapters, and UI
 All three of these components are released as part of the same set of artifacts. In order to upgrade Meshery server, UI and adapters, you may execute the following command:
 
-```*mesheryctl*system upgrade
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system upgrade
+ </div></div>
+ </pre>
 
 ## Upgrade Meshery Client *mesheryctl*
 
@@ -19,8 +22,11 @@ All three of these components are released as part of the same set of artifacts.
 
 To upgrade *mesheryctl*, execute the following command:
 
-```bash
-brew upgrade*mesheryctl*```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew upgrade mesheryctl
+ </div></div>
+ </pre>
 
 Example output of a successful upgrade:
 
@@ -42,14 +48,18 @@ Removing: /Users/lee/Library/Caches/Homebrew*mesheryctl*-0.3.2.zip... (3.9MB)
 
 Upgrade *mesheryctl* and run Meshery on Mac or Linux with this script:
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
 
 ### Upgrading*mesheryctl*using Scoop
 
 To upgrade *mesheryctl*, execute the following command:
 
-```bash
-scoop update *mesheryctl*
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ scoop update *mesheryctl*
+ </div></div>
+ </pre>

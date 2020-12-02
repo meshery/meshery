@@ -21,9 +21,11 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 Use the Meshery command line interface, , to install and start Meshery. Begin with Meshery by installing its command line client: [mesheryctl](/docs/guides/mesheryctl). If you are on a MacOS or Linux system, you can download, install, and run to the management plane with the command shown in the figure.
 
-```
-$ curl -L https://git.io/meshery | bash - 
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ curl -L https://git.io/meshery | bash - 
+ </div></div>
+ </pre>
 
 _Download, install, and run Meshery in a single command._
 

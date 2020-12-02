@@ -20,10 +20,12 @@ In this scenario, Meshery has deployed Istio to a Kubernetes cluster running in 
 
 Retreive the IP address of your Minikube cluster by executing:
     
-```        
-    $ minikube ip
-    172.17.0.2
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">       
+ $ minikube ip
+ 172.17.0.2
+ </div></div>
+ </pre>
 
 <i>Note: Istio is installed in `istio-system` namespace and the "BookInfo" sample app is installed in `default` namespace unless otherwise specified upon deployment of "BookInfo".
 </i>
@@ -32,9 +34,11 @@ Retreive the IP address of your Minikube cluster by executing:
 
 a) By default  *prometheus* service spec type is configured to *ClusterIP*. You can change it to **NodePort** by executing:
 
-```
-$ kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
+ </div></div>
+ </pre>
 
 b) Get NodePort of *prometheus* service by executing:
 
@@ -46,39 +50,47 @@ NodePort:  http  30535/TCP
 
 c) Prometheus endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
-```
-http://172.17.0.2:30822
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:30822
+ </div></div>
+ </pre>
 
 ### Expose Grafana service
 
 a) By default  *Grafana*  spec type is configured to *ClusterIP*  you can change it to **NodePort** by executing:
 
-```
-$ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
+ </div></div>
+ </pre>
 
 b) Get NodePort of *Grafana* service using below command
 
 ```
-$kubectl describe services grafana -n istio-system|grep NodePort
+$ kubectl describe services grafana -n istio-system|grep NodePort
 
 o/p:NodePort:  http  32130/TCP
 ```
 
 c) Grafana endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
-```
-http://172.17.0.2:32130
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:32130
+ </div></div>
+ </pre>
 
 ### Expose Istio BookInfo sample app `productpage` service
 
 a) By default *productpage*  spec type is configured to *ClusterIP*  you can change it to **NodePort** by executing:
 
-```
-$ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
+ </div></div>
+ </pre>
 
 b) Get NodePort of *productpage* service by executing:
 
@@ -90,9 +102,11 @@ NodePort:  http  30535/TCP
 
 c) *productpage* endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
-```
-http://172.17.0.2:30535/productpage
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:30535/productpage
+ </div></div>
+ </pre>
 
 ## Linkerd
 
