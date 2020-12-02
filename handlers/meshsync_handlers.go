@@ -9,7 +9,6 @@ import (
 
 // MeshSyncHandler - handles that parses meshsync response
 func (h *Handler) MeshSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-
 	data := `{
 		"clusters":[{
 			"name":"",
