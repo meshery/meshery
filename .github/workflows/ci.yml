@@ -14,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v1
+        uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.29
+          version: v1.32
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -67,7 +67,11 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+    - run: |
+        go clean -modcache
+        rm go.sum
+        go mod tidy
+        GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -225,3 +229,16 @@ jobs:
       with:
         version: latest
         args: release --snapshot --skip-publish --rm-dist
+  docker-build-test:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Docker edge build & tag
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} .
+        docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::7}

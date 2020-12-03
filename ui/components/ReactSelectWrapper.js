@@ -141,7 +141,7 @@ const components = {
 class ReactSelectWrapper extends React.Component {
   render() {
     const {
-      classes, theme, label, placeholder, onChange, onInputChange, value, options, error,
+      classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options"
     } = this.props;
 
     const selectStyles = {
@@ -174,6 +174,7 @@ class ReactSelectWrapper extends React.Component {
             onInputChange={onInputChange}
             placeholder={placeholder}
             isClearable
+            noOptionsMessage={() => noOptionsMessage}
           />
         </NoSsr>
       </div>
@@ -187,9 +188,10 @@ ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.object.isRequired,
   options: PropTypes.array.isRequired,
   error: PropTypes.bool.isRequired,
+  noOptionsMessage: PropTypes.string
 };
 
 export default withStyles(styles, { withTheme: true })(ReactSelectWrapper);

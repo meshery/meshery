@@ -27,6 +27,17 @@ type: Guides
 
 Use your choice of homebrew or bash to install *mesheryctl*. You only need to use one.
 
+## Related Guides
+
+- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference](/docs/guides/mesheryctl-commands)**.
+- To upgrade `mesheryctl`, refer to the **[Upgrade Guide](/docs/guides/upgrade)**.
+
+# Installing `mesheryctl`
+
+## Mac or Linux
+
+Use your choice of homebrew or bash to install *mesheryctl*. You only need to use one.
+
 ### Homebrew
 
 Install *mesheryctl* and run Meshery on Mac with Homebrew.
@@ -114,6 +125,7 @@ services:
 ```
 
 # Configuring Auto Completion for `mesheryctl`
+
 If you would like to have `mesheryctl` commands automatically completed for use as you use `mesheryctl`, then use the following instructions to configure automatic completion within your environment.
 
 ## Autocompletion for Bash

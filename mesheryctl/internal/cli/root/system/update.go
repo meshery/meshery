@@ -44,8 +44,12 @@ var updateCmd = &cobra.Command{
 				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 			}
 		}
+		err := resetMesheryConfig()
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+		}
 
-		err := updateMesheryContainers()
+		err = updateMesheryContainers()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}

@@ -271,8 +271,7 @@ class DashboardComponent extends React.Component {
                   comp.metadata.generateName
                 ),
                 component: comp.metadata.labels?.app,
-                version: `v${comp.spec.containers?.[0]?.image
-                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -290,8 +289,7 @@ class DashboardComponent extends React.Component {
                   comp.metadata.generateName
                 ),
                 component: comp.metadata.labels["linkerd.io/control-plane-component"],
-                version: `v${comp.spec.containers?.[0]?.image
-                  ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -315,10 +313,11 @@ class DashboardComponent extends React.Component {
                 // and then looking for the string which has "consul-image"
                 // Once the string is found, we match it against the regex to extract version
                 // If any of this fails, it will fallback to "NA"
-                version: `v${comp.spec.containers?.[0]?.command[2]
-                .split("\\\n")
-                .find(str => str.includes("consul-image"))
-                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                version: self.generateMeshScanVersion(
+                  comp.spec.containers?.[0]?.command[2]
+                  .split("\\\n")
+                  .find(str => str.includes("consul-image"))
+                ),
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -336,9 +335,10 @@ class DashboardComponent extends React.Component {
                   comp.metadata.generateName
                 ),
                 component: comp.metadata.labels?.app,
-                version: `v${comp.spec.containers?.[0]?.args
-                ?.find(str => str.includes("openservicemesh/init"))
-                ?.match(/\d+(\.\d+){2,}/g)[0] || "NA"}`,
+                version: self.generateMeshScanVersion(
+                  comp.spec.containers?.[0]?.args
+                  ?.find(str => str.includes("openservicemesh/init"))
+                ),
                 namespace: comp.metadata.namespace
               }
               return compData;
@@ -365,7 +365,7 @@ class DashboardComponent extends React.Component {
           }
         }
       },
-      self.handleError("Unable to fetch mesh scan data.")
+      self.redirectErrorToConsole("Unable to fetch mesh scan data.")
     );
   }
 
@@ -381,8 +381,25 @@ class DashboardComponent extends React.Component {
     const str = (custom || podname)
     return {
       full: podname,
-      trimmed: str.substring(0, (hash ? podname.indexOf(hash) :  str.length) - 1)
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) :  str.length) - 1)
     }
+  }
+  
+  /**
+   * generateMeshScanVersion takes in the string from which version
+   * is to be extracted and returns the version. If the version string
+   * is undefined then it returns "NA"
+   * @param {string | undefined} versionStr is the string from which version is to be extracted
+   * @returns {string}
+   */
+  generateMeshScanVersion = (versionStr) => {
+    if (typeof versionStr !== "string") return "NA";
+
+    const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
+    if (!matchResult) return "NA";
+    
+    // Add "v" iff we have a valid match result
+    return `v${matchResult[0]}`;
   }
 
   handleError = (msg) => (error) => {
@@ -398,6 +415,19 @@ class DashboardComponent extends React.Component {
       autoHideDuration: 7000,
     });
   };
+
+  /**
+   * redirectErrorToConsole returns a function which redirects
+   * ther error to the console under the group labelled by the "msg"
+   * param
+   * @param {string} msg 
+   */
+  redirectErrorToConsole = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    console.group(msg);
+    console.error(error);
+    console.groupEnd();
+  }
 
   handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;

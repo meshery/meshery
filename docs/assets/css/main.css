@@ -193,7 +193,7 @@ h3,
 h4,
 h5,
 h6 {
-    margin-top: 0;
+    margin-top: .5rem;
     margin-bottom: .5rem
 }
 
@@ -477,15 +477,7 @@ template {
     display: none!important
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,
 .h4,
 .h5,
 .h6 {
@@ -18615,13 +18607,19 @@ footer {
         visibility: hidden
     }
     h2[id]:before,
-    h3[id]:before,
     h4[id]:before,
     h5[id]:before {
         display: block;
         content: " ";
-        margin-top: -5rem;
-        height: 5rem;
+        margin-top: -1.5em;
+        height: 1rem;
+        visibility: hidden;
+    }
+    h3[id]:before {
+        display: block;
+        content: " ";
+        margin-top: -1.25em;
+        height: 1rem;
         visibility: hidden
     }
 }
@@ -18726,6 +18724,59 @@ footer {
     background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
   }
+
+#post h1, #post h2, #post h3, #post h4 {
+    color: gray;
+    padding-top: 10px;
+}
+
+#post h5 {
+    background: none repeat scroll 0% 0% #3c494f;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 15px;
+    margin-bottom: 0px;
+    border-radius: 3px 3px 0px 0px;
+}
+
+pre.codeblock-pre{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    margin: 0;
+    padding: 0 1rem 0 1rem;
+    border-radius: 0.3rem;
+}
+
+.codeblock {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.clipboardjs {
+    display: block;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.btn-copy-wrap {
+    display: flex;
+    align-self: flex-start;
+    margin-top: 0.7rem;
+}
+
+.btn {
+    display: block;
+    width: 10px;
+    padding: 0;
+    background-color: transparent;
+    color: white;
+    font-size: 20px;
+}
 
 /*image-thumbnail-grid*/
   

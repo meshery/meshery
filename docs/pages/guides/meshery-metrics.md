@@ -36,6 +36,7 @@ Follow along with this tutorial to set up and integrate Grafana and Prometheus i
 * Access the port assigned to the metric service
 * [Run Performance tests](#run-performance-tests)
 
+
 ### **Connect Meshery to metric systems**
 
 #### 1. Using kubectl, edit the Grafana and Prometheus services in the *Istio-system* namespace:
@@ -94,6 +95,7 @@ By default, the service specification types, like `prometheus`, `grafana`, and t
 $ kubectl patch svc `service spec type` -p '{"spec": {"type": "NodePort"}}' -n istio-system
 ```
 
+
 ### **Expose `Grafana` service**
 
 * Get the NodePort of `grafana` service using below command
@@ -126,6 +128,7 @@ Meshery allows you to expose Prometheus as a service with a single click. You ca
 
 Meshery auto-discovers all Prometheus instances available on your local system and will offer you a list of options to choose from. You can select the Prometheus Server that you wish to employ.
 
+
 <a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-settings.png" />
 </a>
@@ -157,6 +160,7 @@ The Prometheus endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 ```
 http://172.17.0.2:30822
 ```
+
 
 #### **Expose Istio BookInfo sample app `productpage` service**
 

@@ -33,15 +33,21 @@ Alternatively, you may execute the following steps to manually configure Meshery
 
 - Install [Azure CLI(az)](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), and login
 to your azure account using *az login*.
+
 - After successfull login, you have to select the subscription with which your AKS is associated with
+
 ```shell script
 az account set --subscription {{SUBSCRIPTION_ID}}
 ```
+
 - Get the kubeconfig from your AKS cluster
+
 ```shell script
 az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_NAME}}
 ```
+
 - Set your cluster context and check your cluster-info
+
 ```shell script
 kubectl set-context {{AKS_SERVICE_NAME}}
 kubectl cluster-info

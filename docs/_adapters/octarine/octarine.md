@@ -24,7 +24,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />

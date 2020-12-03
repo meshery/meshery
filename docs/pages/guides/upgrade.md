@@ -14,6 +14,7 @@ All three of these components are released as part of the same set of artifacts.
 ```*mesheryctl*system upgrade
 ```
 
+
 ## Upgrade Meshery Client `mesheryctl`
 
 ### Upgrading `mesheryctl` using Homebrew
@@ -23,6 +24,7 @@ To upgrade *mesheryctl*, execute the following command:
 ```bash
 brew upgrade*mesheryctl*
 ```
+
 
 **Example output of a successful upgrade**:
 
@@ -38,7 +40,6 @@ Removing: /Users/lee/Library/Caches/Homebrew*mesheryctl*-0.3.2.zip... (3.9MB)
 ==> Checking for dependents of upgraded formulae...
 ==> No dependents found!
 ```
-
 
 ### Upgrading `mesheryctl` using Bash
 
