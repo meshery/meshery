@@ -5,10 +5,12 @@ permalink: installation/platforms/windows
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/wsl2.png
 ---
 
-## **Quick Start with Windows**
-To set up and run Meshery on Windows:
+{% include installation_prerequisites.html %}
+
+**To set up and run Meshery on Windows** 
 
 1. <a href="#step1">Configure Windows and enable Docker </a>
 2. <a href="#step4">Install a Kubernetes cluster on top </a>
