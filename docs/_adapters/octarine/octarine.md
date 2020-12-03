@@ -62,11 +62,11 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 #### Control Plane
 
-![Alt text](./octarine_cparch.jpg?raw=true "Octarine Control Plane")
+[![Octarine Control Plane](./octarine_cparch.jpg?raw=true)](./octarine_cparch.jpg?raw=true)
 
 #### Data Plane
 
-![Alt text](./octarine_dparch.jpg?raw=true "Octarine Data Plane")
+[![Octarine Data Plane](./octarine_dparch.jpg?raw=true)](./octarine_dparch.jpg?raw=true)
 
 ### Sample Applications 
 
