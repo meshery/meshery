@@ -4,6 +4,8 @@ title: Supported Platforms
 permalink: es/installation/platforms
 language: es
 type: installation
+language: en
+list: exclude
 ---
 
 ## Empezando a trabajar con otras Plataformas<a name="compatibility-matrix"></a>

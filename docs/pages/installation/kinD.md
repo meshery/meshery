@@ -5,11 +5,12 @@ permalink: installation/platforms/kind
 type: installation
 language: en
 list: include
+image: /docs/assets/img/platforms/kind.png
 ---
 
-## Quick Start with KinD
+{% include installation_prerequisites.html %}
 
-To set up and run Meshery on KinD:
+**To set up and run Meshery on KinD** 
 
 - [Install kinD](#installation)
 - [Create a Kubernetes cluster with kinD](#create-cluster-using-kind)
@@ -34,11 +35,11 @@ mv ./kind /some-dir-in-your-PATH/kind
 
 If you are running Ubuntu on WSL2, use `Docker Ubuntu` distro to install `Docker`.
 
-#### **Create cluster using KinD**
+### **Create cluster using KinD**
 
 In order to successfully build the Meshery server on your local server, follow the instructions specific to your Operating System to complete the creation of a KinD cluster.
 
-###### 1. **KinD on WSL2**
+#### 1. **KinD on WSL2**
 
 First, we will get the ip address of your WSL2 distro by:
 
@@ -97,13 +98,13 @@ kubectl cluster-info --context kind-kind
 Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
 
-###### 2. **KinD on other systems**
+#### 2. **KinD on other systems**
 
 Creating a Kubernetes cluster is as simple as `kind create cluster`.
 
 For more configuration of installation, please refer to KinD official documentation.
 
-#### **Access the KinD cluster**
+### **Access the KinD cluster**
 
 By default, the cluster access configuration is stored in ${HOME}/.kube/config if $KUBECONFIG environment variable is not set. You can set the `KUBECONFIG` environment with the command below:
 
@@ -123,7 +124,7 @@ To delete your cluster use:
 kind delete cluster --name kind
 ```
 
-#### **Using Helm**
+### **Using Helm**
 
 ##### **Helm v3**
 

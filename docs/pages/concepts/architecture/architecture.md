@@ -5,9 +5,11 @@ permalink: concepts/architecture
 redirect_from: architecture
 type: concepts
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.
+language: en
+list: include
 ---
 
-## Languages
+# Languages
 Meshery and its components are written using the following languages and technologies.
 
 - **Meshery Server:** Golang, gRPC

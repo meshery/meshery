@@ -57,3 +57,4 @@ yarn.lock
 
 # Generated binaries
 **/bin
+*.Identifier

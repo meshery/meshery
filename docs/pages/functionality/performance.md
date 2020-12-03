@@ -3,6 +3,8 @@ layout: default
 title: Performance Management
 permalink: functionality/performance-management
 type: functionality
+language: en
+list: include
 ---
 
 # Performance Management
@@ -40,23 +42,26 @@ NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It curr
 
 Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
 
+
 ## Grafana and Meshery
 
-Connect Meshery to your existing Grafana instance and Meshery will import the boards of your choosing. 
+Connect Meshery to your existing Grafana instance. Meshery will auto-import the boards of your choosing:
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png">
     <img src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" style="width: 100%" />
 </a>
 
-### Connecting to Grafana
-If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana.
+### [Connecting to Grafana](/docs/guides/meshery-metrics#expose-grafana-service)
+If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
-* Importing Grafana boards
-    - Importing existing Grafana boards via API
-    - Importing custom Grafana board via yaml
-* Configuring graph panel preferences
+<a href="/docs/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/grafana-dashboard.png" /></a>
 
-## Prometheus and Meshery
+* Import Grafana boards
+    - Import existing Grafana boards via API
+    - Import custom Grafana board via yaml
+* Configure graph panel preferences
+
+### [Prometheus and Meshery](/docs/guides/meshery-metrics#expose-prometheus-service)
 Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or really... any metric that Prometheus has collected.
 
 Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.

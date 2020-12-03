@@ -3,12 +3,15 @@ layout: default
 title: Lifecycle Management
 permalink: functionality/lifecycle-management
 type: functionality
+language: en
+list: include
 ---
+<a name="lifecycle-management"></a>
 
-## Service Mesh Lifecycle Management
+# Service Mesh Lifecycle Management
 Meshery supports a number of [different service meshes](installation/adapters), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
 
-## #Deploying a service mesh
+## Deploying a service mesh
 Meshery automates the provisioning of various service meshes, allowing users to select different configuration profiles in order to support a variety of deployment models.
 
 ### [Installing sample applications](/docs/guides/sample-apps)
@@ -20,7 +23,7 @@ Meshery provides the ability for you as a service mesh manager to customize your
 ### Deleting a service mesh
 Just as Meshery automates the provisioning of various service meshes, so does it facilitate the deprovisioning of service meshes.
 
-## Notifications 
+# Notifications 
 Meshery tracks service mesh and application health. Meshery provides notification of environment issues, application conflicts with service mesh configuration.
 
 **Acknowledging and dismissing notifications**

@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## Inicio Rápido con Kubernetes
+# Inicio Rápido con Kubernetes
 
 Para preparar y ejecutar Meshery en Kubernetes:
 
