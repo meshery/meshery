@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var channelName string
+var channelSet, channelSwitch, channelName string
 
 // configCmd represents the config command
 var channelCmd = &cobra.Command{
@@ -30,12 +30,14 @@ var channelCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(channelName) < 0 {
+		if len(channelSet) < 0 && len(channelSwitch) < 0 {
 			log.Fatal("Provide 'stable' or 'edge' as the release channel name.")
-
 		}
-		if channelName == "" {
-			log.Fatal("Invalid channel name. Provide 'stable' or 'edge' as the release channel name.")
+
+		if channelSet == "" {
+			channelName = channelSwitch
+		} else {
+			channelName = channelSet
 		}
 
 		switch channelName {
@@ -53,26 +55,27 @@ var channelCmd = &cobra.Command{
 			log.Fatal("Channel name has to be 'stable' or 'edge'.")
 		}
 
-		log.Info("Successfully switched channel...")
+		log.Info("Successfully setted channel...")
 
-		if utils.IsMesheryRunning() {
-			if err := stop(); err != nil {
-				log.Fatal("Failed to stop Meshery:", err)
+		if channelSwitch != "" {
+			if utils.IsMesheryRunning() {
+				if err := stop(); err != nil {
+					log.Fatal("Failed to stop Meshery:", err)
+					return
+				}
+			}
+
+			if err := start(); err != nil {
+				log.Fatal("Failed to start Meshery:", err)
 				return
 			}
+			log.Info("Successfully switched channel...")
 		}
 
-		if err := start(); err != nil {
-			log.Fatal("Failed to start Meshery:", err)
-			return
-		}
 	},
 }
 
 func init() {
-	channelCmd.Flags().StringVarP(&channelName, "set", "s", "stable", "Release channel to be used for Meshery and its adapters.")
-	err := channelCmd.MarkFlagRequired("set")
-	if err != nil {
-		log.Fatal("Failed to mark set as required flag")
-	}
+	channelCmd.Flags().StringVarP(&channelSet, "set", "s", "", "Release channel to be set for Meshery and its adapters.")
+	channelCmd.Flags().StringVarP(&channelSwitch, "switch", "c", "", "Release channel to be switch for Meshery and its adapters.")
 }
