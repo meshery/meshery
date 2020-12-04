@@ -22,10 +22,10 @@ description: > # this means to ignore newlines until "baseurl:"
   Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Maesh, App Mesh, Citrix Service Mesh and other service meshes.
 
 # DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh
-baseurl: "/docs" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 
 # This is mostly for testing
-url: "https://meshery.layer5.io/docs" # the base hostname & protocol for your site
+url: "https://docs.meshery.io" # the base hostname & protocol for your site
 
 # Social (First three Required)
 repo: "https://github.com/layer5io/meshery"

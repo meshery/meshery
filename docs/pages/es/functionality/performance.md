@@ -42,8 +42,8 @@ Meshery proporciona los resultados de pruebas de rendimiento junto a las métric
 
 Conecte Meshery a su instancia de Grafana existente y Meshery importará los tableros que elija.
 
-<a href="/docs/assets/img/performance-management/meshery-and-grafana.png">
-    <img src="/docs/assets/img/performance-management/meshery-and-grafana.png" style="width: 100%" />
+<a href="/assets/img/performance-management/meshery-and-grafana.png">
+    <img src="/assets/img/performance-management/meshery-and-grafana.png" style="width: 100%" />
 </a>
 
 ### Conexión a Grafana

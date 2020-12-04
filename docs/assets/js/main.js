@@ -59,6 +59,9 @@ layout: null
     Search.init();
 }(jQuery));
 
+
+/*popup-hidden-div*/
+
 function HideToggleFunction() {
     var hide = document.getElementById("hiddendiv");
     if (hide.style.display === "block") {
@@ -67,3 +70,21 @@ function HideToggleFunction() {
       hide.style.display = "block";
     }
   }
+
+/*clipboard*/
+
+  var getcodeelement = $( ".clipboardjs" ); /*create custom id*/
+
+  getcodeelement.each(function(i) {  
+      /*target*/
+    var currentId = "codeblock" + (i + 1);
+    $(this).attr('id', currentId);
+
+    /*trigger*/
+
+    var clipButton = '<div class="btn-copy-wrap"><button class="btn" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
+       $(this).after(clipButton);
+    });
+
+    new Clipboard('.btn');
+ 

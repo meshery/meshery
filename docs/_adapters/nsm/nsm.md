@@ -7,7 +7,7 @@ version: v0.2.1
 port: 10004/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-nsm
-image: /docs/assets/img/service-meshes/nsm.svg
+image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 ---
 
@@ -25,7 +25,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
@@ -104,7 +104,7 @@ Network Service Discovery and Routing, as well as the vWire 'Connection Handling
 ![icmp-responder-example-2](./icmp-responder-example-2.svg)
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using
-`PodAntiAffinity`, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
+*PodAntiAffinity*, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
 Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
 **Verification**

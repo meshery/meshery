@@ -31,7 +31,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
-	docsBaseURL = "https://meshery.layer5.io/docs/"
+	docsBaseURL = "https://docs.meshery.io/"
 
 	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"

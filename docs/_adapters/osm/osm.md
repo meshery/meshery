@@ -7,7 +7,7 @@ version: OSM v0.3.0
 port: 10009/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-osm
-image: /docs/assets/img/service-meshes/osm.svg
+image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
 ---
 
@@ -36,7 +36,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
+Learn more about the SMI specification and [Meshery's conformance test suite](https://docs.meshery.io/functionality/smi-conformance).
 
 ### Sample Applications
 

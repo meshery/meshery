@@ -7,7 +7,7 @@ version: v2.5.0
 port: 10001/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-linkerd
-image: /docs/assets/img/service-meshes/linkerd.svg
+image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
 ---
 {% include adapter-status.html %}
@@ -25,7 +25,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 </a>
 
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />

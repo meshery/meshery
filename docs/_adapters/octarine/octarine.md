@@ -7,7 +7,7 @@ version: v1.0
 port: 10003/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-octarine
-image: /docs/assets/img/service-meshes/octarine.svg
+image: /assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
 ---
 {% include adapter-status.html %}
@@ -24,7 +24,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />
@@ -62,11 +62,11 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 #### Control Plane
 
-![Alt text](./octarine_cparch.jpg?raw=true "Octarine Control Plane")
+[![Octarine Control Plane](./octarine_cparch.jpg?raw=true)](./octarine_cparch.jpg?raw=true)
 
 #### Data Plane
 
-![Alt text](./octarine_dparch.jpg?raw=true "Octarine Data Plane")
+[![Octarine Data Plane](./octarine_dparch.jpg?raw=true)](./octarine_dparch.jpg?raw=true)
 
 ### Sample Applications 
 
