@@ -5,7 +5,7 @@ permalink: installation/platforms/eks
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/eks.png
+image: /assets/img/platforms/eks.png
 ---
 
 {% include installation_prerequisites.html %}

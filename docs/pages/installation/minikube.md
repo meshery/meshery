@@ -5,7 +5,7 @@ permalink: installation/platforms/minikube
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/minikube.png
+image: /assets/img/platforms/minikube.png
 ---
 
 {% include installation_prerequisites.html %}

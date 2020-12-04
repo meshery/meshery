@@ -7,7 +7,7 @@ version: v1.8.2
 port: 10002/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-consul
-image: /docs/assets/img/service-meshes/consul.svg
+image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---

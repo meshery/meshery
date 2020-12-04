@@ -5,7 +5,7 @@ permalink: installation/platforms/kubernetes
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/kubernetes.svg
+image: /assets/img/platforms/kubernetes.svg
 ---
 
 {% include installation_prerequisites.html %}

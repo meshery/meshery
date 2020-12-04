@@ -5,7 +5,7 @@ permalink: installation/platforms/kind
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/kind.png
+image: /assets/img/platforms/kind.png
 ---
 
 {% include installation_prerequisites.html %}
