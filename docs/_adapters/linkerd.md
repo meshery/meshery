@@ -7,7 +7,7 @@ version: v2.5.0
 port: 10001/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-linkerd
-image: /docs/assets/img/service-meshes/linkerd.svg
+image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
 ---
 {% include adapter-status.html %}

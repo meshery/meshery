@@ -7,7 +7,7 @@ version: v1.0
 port: 10003/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-octarine
-image: /docs/assets/img/service-meshes/octarine.svg
+image: /assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
 ---
 {% include adapter-status.html %}

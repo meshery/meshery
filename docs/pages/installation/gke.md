@@ -5,7 +5,7 @@ permalink: installation/platforms/gke
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/gke.png
+image: /assets/img/platforms/gke.png
 ---
 
 {% include installation_prerequisites.html %}

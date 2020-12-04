@@ -5,7 +5,7 @@ permalink: installation/platforms/windows
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/wsl2.png
+image: /assets/img/platforms/wsl2.png
 ---
 
 {% include installation_prerequisites.html %}

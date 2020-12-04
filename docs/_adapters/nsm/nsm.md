@@ -7,7 +7,7 @@ version: v0.2.1
 port: 10004/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-nsm
-image: /docs/assets/img/service-meshes/nsm.svg
+image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 ---
 

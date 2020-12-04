@@ -7,7 +7,7 @@ version: v1.0
 port: 10007/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-kuma
-image: /docs/assets/img/service-meshes/kuma.svg
+image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---
 
@@ -45,4 +45,4 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
+Learn more about the SMI specification and [Meshery's conformance test suite](https://docs.meshery.io/functionality/smi-conformance).

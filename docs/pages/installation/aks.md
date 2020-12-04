@@ -5,7 +5,7 @@ permalink: installation/platforms/aks
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/aks.svg
+image: /assets/img/platforms/aks.svg
 ---
 
 {% include installation_prerequisites.html %}
