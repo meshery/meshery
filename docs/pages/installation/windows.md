@@ -10,13 +10,14 @@ image: /docs/assets/img/platforms/wsl2.png
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on Windows** 
+# Overview
+To set up and run Meshery on Windows 
 
 1. <a href="#step1">Configure Windows and enable Docker </a>
 2. <a href="#step4">Install a Kubernetes cluster on top </a>
 3. <a href="#step5">Run Meshery</a>
 
-### **Compatibility**
+### Compatibility
 
 The following minimum Windows build versions are required:
 <table id="compatibility-table">
@@ -42,35 +43,33 @@ The following minimum Windows build versions are required:
   </tr>
 </table>
 
-**Note**
+Note
 <br />Run the following command on Powershell to check your Windows build and version:
-
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- [System.Environment]::OSVersion.Version
+[System.Environment]::OSVersion.Version
  </div></div>
  </pre>
-
-### **Steps**
+### Steps
 Perform the following steps in order:
 
 #### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a> 
 
 Open Powershell in administrator mode and run:
 
-  <pre class="codeblock-pre">
-  <div class="codeblock"><div class="clipboardjs">
-  dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-  Restart-Computer
-  </div></div>
-  </pre>
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+ Restart-Computer
+ </div></div>
+ </pre>
 
-##### **Choosing your WSL version:**
+##### Choosing your WSL version:
 
 <h6><b><a href="https://docs.microsoft.com/en-us/windows/wsl/release-notes#build-18917" name="wsl2">WSL2</a></b> (Recommended)</h6>
 Set the default version to *WSL2*, which will be inherited by any distro you wish to use.
 
-**Enable VM (Virtual Machine) feature**:
+Enable VM (Virtual Machine) feature:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -78,7 +77,7 @@ Set the default version to *WSL2*, which will be inherited by any distro you wis
  </div></div>
  </pre>
 
-**Set WSL2 as the default version**:
+Set WSL2 as the default version:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

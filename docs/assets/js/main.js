@@ -83,8 +83,8 @@ getcodeelement.each(function(i) {
     /*trigger*/
     var text = $(this).text();
     text = text.replace(/\$ /gi, '');
-    var clipButton = '<div class="btn-copy-wrap"><button class="btn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
+    var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
        $(this).after(clipButton);
 });
 
-new Clipboard('.btn');
+new Clipboard('.clipbtn');
