@@ -99,7 +99,7 @@ const styles = (theme) => ({
   mainLogoCollapsed: {
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-0.1),
+    marginLeft: theme.spacing(-0.5),
     width: 40,
     height: 40,
     borderRadius: "unset",
@@ -206,6 +206,7 @@ const styles = (theme) => ({
   collapseButtonWrapperRotated: {
     width: "auto",
     "margin-left": "auto",
+    marginRight: theme.spacing(1),
     opacity: "0.7",
     transition: "opacity 200ms linear",
     transform: "rotate(180deg)",
