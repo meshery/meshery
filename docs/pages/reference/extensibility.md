@@ -35,7 +35,7 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
-![Providers](/docs/assets/img/providers/provider_screenshot.png)
+![Providers](/assets/img/providers/provider_screenshot.png)
 
 Eventually, Meshery will keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
 

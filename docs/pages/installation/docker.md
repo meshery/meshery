@@ -5,7 +5,7 @@ permalink: installation/platforms/docker
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/docker.svg
+image: /assets/img/platforms/docker.svg
 ---
 
 {% include installation_prerequisites.html %}

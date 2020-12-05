@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Operation Guides
-permalink: Guides
+permalink: guides
 language: en
 list: exclude
 ---

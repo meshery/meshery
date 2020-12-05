@@ -66,18 +66,18 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 <div class="row">
 <div class="column">
   <a target="_blank" href="https://layer5.io/landscape">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/landscape#tools">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/books">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
+  <img  class="img-thumbnail" src="/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/workshops">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
+  <img  class="img-thumbnail" src="/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
 </div>
 </div> -->

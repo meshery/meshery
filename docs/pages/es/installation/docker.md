@@ -16,9 +16,11 @@ Siga estos pasos de instalación para usar Docker y Docker Compose para ejecutar
 
 El repositorio de Meshery incluye un archivo `docker-compose.yaml`. Podemos usar `docker-compose` para activar todos los servicios de Meshery ejecutando:
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
 
 Una vez que haya verificado que todos los servicios están en funcionamiento, la interfaz de usuario de Meshery será accesible en su máquina local en el puerto 9081. Abra su navegador y acceda a Meshery en [`http://localhost:9081`](http://localhost:9081).
 Se le redireccionará a una página de inicio de sesión social donde puede elegir uno de los métodos de inicio de sesión social disponibles para iniciar sesión en Meshery.

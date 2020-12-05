@@ -7,7 +7,7 @@ mesh_name: Istio
 port: 10000/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-istio
-image: /docs/assets/img/service-meshes/istio.svg
+image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
 
@@ -57,7 +57,7 @@ The ({{page.name}}) includes a handful of sample applications. Use Meshery to de
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite](https://meshery.layer5.io/docs/functionality/smi-conformance).
+Learn more about the SMI specification and [Meshery's conformance test suite](https://docs.meshery.io/functionality/smi-conformance).
 
 ### Configuration best practices
 

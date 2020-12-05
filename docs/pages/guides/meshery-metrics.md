@@ -18,15 +18,14 @@ Follow along with this tutorial to set up and integrate Grafana and Prometheus i
 
 * Deploy a service mesh and any available sample application
 
-  For the purpose of this tutorial guide, we will be installing [Istio](/docs/service-meshesadapters/istio) and deploying the [BookInfo sample application](/docs/guides/sample-apps#bookinfo):
-
-    - [Install Istio](/docs/service-meshesadapters/istio) on Meshery in the `istio-system` namespace. 
-      <a href="/docs/assets/img/adapters/istio/istio-install.png">
-      <img style="width:300px;padding-top:5px;" src="/docs/assets/img/adapters/istio/istio-install.png" />
-      </a>
-    - [Deploy the BookInfo sample application](/docs/guides/sample-apps#to-deploy-a-sample-app-on-meshery) 
-
-      The [BookInfo](/docs/guides/sample-apps#bookinfo) sample app should be installed in the `default` namespace unless otherwise specified upon deployment of BookInfo.
+Retreive the IP address of your Minikube cluster by executing:
+    
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">       
+ minikube ip
+ 172.17.0.2
+ </div></div>
+ </pre>
 
 * Set up Grafana and/or Prometheus:
 1. [Connect Meshery to metric systems](#connect-meshery-to-metric-systems)
@@ -49,15 +48,17 @@ kubectl edit svc grafana -n istio-system
 
 By default, the service specification types, like `grafana` is configured to `ClusterIP`. You can change it to `NodePort` by executing:
 
-```
-$ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ kubectl patch svc prometheus -p '{"spec": {"type": "NodePort"}}' -n istio-system
+ </div></div>
+ </pre>
 
 #### 3. Get the newly assigned port for your chosen service
 
 Run:
 ```
-$ kubectl get svc grafana -n istio-system
+kubectl get svc grafana -n istio-system
 ```
 
 Example output:
@@ -68,40 +69,28 @@ grafana   NodePort   10.100.67.144   <none>        3000:30188/TCP   3d11h
 
 #### 4. Access the service port
 
- Using your host's IP address, enter http://<host-ip>:30188 into the Metrics panel in Meshery's Settings page (replace 30188 with your environment's port number).
-
-#### **Connect Meshery to metric systems using Minikube**
-
-In this scenario, Meshery will be configured to deploy Istio to a Kubernetes cluster running in Minikube. The service ports of Grafana and Prometheus need to be exposed in order for Meshery to connect to and interact with these visualizations and metrics systems.
-
-- [Grafana spec](#expose-grafana-service)
-- [Prometheus spec](#expose-prometheus-service)
-- [Bookinfo - `productpage` service](#expose-istio-bookinfo-sample-app-productpage-service)
-
-##### 1. Get minikube ip
-
-Retreive the IP address of your Minikube cluster by executing:
-    
-```        
-    $ minikube ip
-    172.17.0.2
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:30822
+ </div></div>
+ </pre>
 
 ###### 2. Expose the service
 
 By default, the service specification types, like `prometheus`, `grafana`, and the `productpage`, are configured to **ClusterIP**. You can change it to **NodePort** by replacing *service spec type* with the spec you wish to run and executing:
 
-```
-$ kubectl patch svc `service spec type` -p '{"spec": {"type": "NodePort"}}' -n istio-system
-```
-
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n istio-system
+ </div></div>
+ </pre>
 
 ### **Expose `Grafana` service**
 
 * Get the NodePort of `grafana` service using below command
 
 ```
-$kubectl describe services grafana -n istio-system|grep NodePort
+kubectl describe services grafana -n istio-system|grep NodePort
 
 o/p:NodePort:  http  32130/TCP
 ```
@@ -110,9 +99,11 @@ o/p:NodePort:  http  32130/TCP
 
 The Grafana endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 
-```
-http://172.17.0.2:32130
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:32130
+ </div></div>
+ </pre>
 
 <a href="{{ site.baseurl }}/assets/img/meshery-metrics/grafana-server-settings.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/grafana-server-settings.png" />
@@ -147,11 +138,11 @@ Meshery also provides you the option of simply pasting in your Prometheus querie
 
 * Get the NodePort of `prometheus` service by executing:
 
-```
-$ kubectl describe services prometheus -n istio-system|grep NodePort
-
-NodePort:  http  30535/TCP
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ kubectl patch svc grafana -p '{"spec": {"type": "NodePort"}}' -n book-info
+ </div></div>
+ </pre>
 
 * Find the `prometheus` endpoint 
 
@@ -167,7 +158,7 @@ http://172.17.0.2:30822
 * Get the NodePort of `productpage` service by executing:
 
 ```
-$ kubectl describe services productpage -n book-info|grep NodePort
+kubectl describe services productpage -n book-info|grep NodePort
 
 NodePort:  http  30535/TCP
 ```
@@ -176,9 +167,11 @@ NodePort:  http  30535/TCP
 
 The `productpage` endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
-```
-http://172.17.0.2:30535/productpage
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ http://172.17.0.2:30535/productpage
+ </div></div>
+ </pre>
 
 #### **Run Performance Tests**
 

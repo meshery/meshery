@@ -46,19 +46,23 @@ Install *mesheryctl* and run Meshery on Mac with Homebrew.
 
 To install *mesheryctl*, execute the following commands:
 
-```bash
-brew tap layer5io/tap
-brew install mesheryctl
-mesheryctl system start
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew tap layer5io/tap
+ brew install mesheryctl
+ mesheryctl system start
+ </div></div>
+ </pre>
 
 **Upgrading with Homebrew**
 
 To upgrade *mesheryctl*, execute the following command:
 
-```bash
-brew upgrade mesheryctl
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew upgrade mesheryctl
+ </div></div>
+ </pre>
 
 #### Bash
 
@@ -66,17 +70,21 @@ brew upgrade mesheryctl
 
 Install *mesheryctl* and run Meshery on Mac or Linux with this script:
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
 
 **Upgrading with Bash**
 
 Upgrade *mesheryctl* and run Meshery on Mac or Linux with this script:
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
 
 ## Windows
 
@@ -84,9 +92,11 @@ curl -L https://git.io/meshery | bash -
 
 Download and unzip *mesheryctl* from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add *mesheryctl* to your PATH for ease of use. Then, execute:
 
-```bash
-.*mesheryctl*system start
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ .*mesheryctl*system start
+ </div></div>
+ </pre>
 
 ### Scoop
 
@@ -96,18 +106,22 @@ Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
 
 Add the Meshery Scoop Bucket and install:
 
-```bash
-scoop bucket add*mesheryctl*https://github.com/layer5io/scoop-bucket.git
-scoop install*mesheryctl*
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ scoop bucket add*mesheryctl*https://github.com/layer5io/scoop-bucket.git
+ scoop install*mesheryctl*
+ </div></div>
+ </pre>
 
 **Upgrading with Scoop**
 
 To upgrade *mesheryctl*, execute the following command:
 
-```bash
-scoop update mesheryctl
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ scoop update mesheryctl
+ </div></div>
+ </pre>
 
 ## Advanced Installation
 
@@ -132,58 +146,76 @@ If you would like to have `mesheryctl` commands automatically completed for use 
 
 ### bash <= 3.2
 
-```bash
-source /dev/stdin <<< "$(mesheryctl system completion bash)"
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ source /dev/stdin <<< "$(mesheryctl system completion bash)"
+ </div></div>
+ </pre>
 
 ### bash >= 4.0
 
-```bash
-source <(mesheryctl system completion bash)
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ source <(mesheryctl system completion bash)
+ </div></div>
+ </pre>
 
 ### bash <= 3.2 on osx
 
-```bash
-brew install bash-completion # ensure you have bash-completion 1.3+
-mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew install bash-completion # ensure you have bash-completion 1.3+
+ mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+ </div></div>
+ </pre>
 
 ### bash >= 4.0 on osx
 
-```bash
-brew install bash-completion@2
-mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew install bash-completion@2
+ mesheryctl system completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+ </div></div>
+ </pre>
 
 ## Autocompletion for zsh
 
-```bash
-source <(mesheryctl system completion zsh)
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ source <(mesheryctl system completion zsh)
+ </div></div>
+ </pre>
 
 If shell completion is not already enabled in your environment you will need to enable it.  You can execute the following once:
 
-```bash
-echo "autoload -U compinit; compinit" >> ~/.zshrc
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ echo "autoload -U compinit; compinit" >> ~/.zshrc
+ </div></div>
+ </pre>
 
 Might need to start a new shell for this setup to take effect.
 
 ### zsh on osx / oh-my-zsh
 
-```bash
-mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
+ </div></div>
+ </pre>
 
 ## Autocompletion for fish
 
-```bash
-mesheryctl system completion fish | source
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system completion fish | source
+ </div></div>
+ </pre>
 
 To load fish shell completions for each session, execute once:
 
-```bash
-mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
+ </div></div>
+ </pre>
