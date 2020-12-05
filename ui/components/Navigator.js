@@ -136,6 +136,15 @@ const styles = (theme) => ({
     paddingRight: theme.spacing(0.5),
     opacity: 0.5,
   },
+  listIconSlack: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: "center",
+    display: "inline-table",
+    marginLeft: theme.spacing(-0.1),
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
+  },
   nested1: {
     paddingLeft: theme.spacing(3),
   },
@@ -766,7 +775,7 @@ class Navigator extends React.Component {
                       disableHoverListener={!isDrawerCollapsed}
                       disableTouchListener={!isDrawerCollapsed}
                     >
-                      <ListItemIcon className={classes.listIcon1}>
+                      <ListItemIcon className={id === "community" ? classes.listIconSlack : classes.listIcon1}>
                         {external_icon}
                       </ListItemIcon>
                     </Tooltip>
