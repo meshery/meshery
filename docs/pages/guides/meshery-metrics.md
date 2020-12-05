@@ -8,15 +8,13 @@ type: Guides
 
 # Connect and use metrics in Meshery
 
-Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses `Grafana` and/or `Prometheus` as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.
+Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.
 
 In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an *ad-hoc* test to check Meshery's connection status.
 
-## Tutorial Guide
+<!-- ## Tutorial Guide
 
-Follow along with this tutorial to set up and integrate Grafana and Prometheus instances on top of your service mesh and run performance tests:
-
-* Deploy a service mesh and any available sample application
+Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
 
 Retreive the IP address of your Minikube cluster by executing:
     
@@ -46,7 +44,7 @@ kubectl edit svc grafana -n istio-system
 
 #### 2. Change specification type
 
-By default, the service specification types, like `grafana` is configured to `ClusterIP`. You can change it to `NodePort` by executing:
+By default, the service specification types, like Grafana is configured to `ClusterIP`. You can change it to `NodePort` by executing:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -77,7 +75,7 @@ grafana   NodePort   10.100.67.144   <none>        3000:30188/TCP   3d11h
 
 ###### 2. Expose the service
 
-By default, the service specification types, like `prometheus`, `grafana`, and the `productpage`, are configured to **ClusterIP**. You can change it to **NodePort** by replacing *service spec type* with the spec you wish to run and executing:
+By default, the service specification types, like Prometheus, Grafana, and the `productpage`, are configured to **ClusterIP**. You can change it to **NodePort** by replacing *service spec type* with the spec you wish to run and executing:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -85,9 +83,9 @@ By default, the service specification types, like `prometheus`, `grafana`, and t
  </div></div>
  </pre>
 
-### **Expose `Grafana` service**
+### **Expose Grafana service**
 
-* Get the NodePort of `grafana` service using below command
+* Get the NodePort of Grafana service using below command
 
 ```
 kubectl describe services grafana -n istio-system|grep NodePort
@@ -95,7 +93,7 @@ kubectl describe services grafana -n istio-system|grep NodePort
 o/p:NodePort:  http  32130/TCP
 ```
 
-* Find the `grafana` endpoint
+* Find the Grafana endpoint
 
 The Grafana endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 
@@ -109,7 +107,7 @@ The Grafana endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/meshery-metrics/grafana-server-settings.png" />
 </a>
 
-### **Expose `Prometheus` service**
+### **Expose Prometheus service**
 
 Meshery allows you to expose Prometheus as a service with a single click. You can do this:
 - [Through the Meshery UI](#meshery-ui)
@@ -136,7 +134,7 @@ Meshery also provides you the option of simply pasting in your Prometheus querie
 
 #### **Manual Steps**
 
-* Get the NodePort of `prometheus` service by executing:
+* Get the NodePort of Prometheus service by executing:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -144,14 +142,13 @@ Meshery also provides you the option of simply pasting in your Prometheus querie
  </div></div>
  </pre>
 
-* Find the `prometheus` endpoint 
+* Find the Prometheus endpoint 
 
 The Prometheus endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 
 ```
 http://172.17.0.2:30822
 ```
-
 
 #### **Expose Istio BookInfo sample app `productpage` service**
 
@@ -181,7 +178,7 @@ After successfully setting up a connection between your metric service and Meshe
 
 **Run Test Results**
 
-<a href="/docs/assets/img/performance-management/meshery-and-grafana.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/meshery-and-grafana.png" /></a>
+<a href="/docs/assets/img/performance-management/meshery-and-grafana.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/meshery-and-grafana.png" /></a> -->
 
 ##### Suggested Reading
 
