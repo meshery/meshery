@@ -111,9 +111,18 @@ func (r *queryResolver) Deployment(ctx context.Context, layout *model.Deployment
 		},
 	}
 
-	// filter things out
+	if layout == nil || layout.Namespaceid == nil || *layout.Namespaceid == "" {
+		return deployments, nil
+	}
 
-	return deployments, nil
+	var result []*model.Deployment
+	for _, deployment := range deployments {
+		if deployment.Namespaceid == *layout.Namespaceid {
+			result = append(result, deployment)
+		}
+	}
+
+	return result, nil
 }
 
 func (r *queryResolver) Pod(ctx context.Context, layout *model.PodFilter) ([]*model.Pod, error) {
@@ -211,7 +220,39 @@ func (r *queryResolver) Pod(ctx context.Context, layout *model.PodFilter) ([]*mo
 		},
 	}
 
-	// filter things out
+	if layout == nil {
+		return pods, nil
+	}
+
+	if layout.Namespaceid != nil && *layout.Namespaceid != "" {
+		var temp []*model.Pod
+		for _, pod := range pods {
+			if pod.Namespaceid == *layout.Namespaceid {
+				temp = append(temp, pod)
+			}
+		}
+		pods = temp
+	}
+
+	if layout.Nodeid != nil && *layout.Nodeid != "" {
+		var temp []*model.Pod
+		for _, pod := range pods {
+			if pod.Nodeid == *layout.Nodeid {
+				temp = append(temp, pod)
+			}
+		}
+		pods = temp
+	}
+
+	if layout.Deploymentid != nil && *layout.Deploymentid != "" {
+		var temp []*model.Pod
+		for _, pod := range pods {
+			if pod.Deploymentid == *layout.Deploymentid {
+				temp = append(temp, pod)
+			}
+		}
+		pods = temp
+	}
 
 	return pods, nil
 }
