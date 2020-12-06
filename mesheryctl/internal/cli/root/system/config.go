@@ -215,22 +215,22 @@ var configCmd = &cobra.Command{
 
 		// TODO: Assumes Mac or Linux. Make arch-specific
 		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := "$HOME/.meshery/aks-kubeconfig.yaml"
+		configPath := "$HOME/.meshery/kubeconfig.yaml"
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
-			log.Fatalf("Error getting contexts : %s", err.Error())
+			log.Fatalf("Error getting context: %s", err.Error())
 		}
 
 		choosenCtx := contexts[0]
 		if len(contexts) > 1 {
-			fmt.Println("List of available contexts : ")
+			fmt.Println("List of available contexts: ")
 			for i, ctx := range contexts {
 				fmt.Printf("(%d) %s \n", i+1, ctx)
 			}
 			var choice int
-			fmt.Print("Enter choice (number) : ")
+			fmt.Print("Enter choice (number): ")
 			_, err = fmt.Scanf("%d", &choice)
 			if err != nil {
 				log.Fatalf("Error reading input:  %s", err.Error())
@@ -241,7 +241,7 @@ var configCmd = &cobra.Command{
 		log.Debugf("Chosen context : %s", choosenCtx)
 		err = setContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
-			log.Fatalf("Error setting context : %s", err.Error())
+			log.Fatalf("Error setting context: %s", err.Error())
 		}
 	},
 }
