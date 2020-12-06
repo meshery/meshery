@@ -23,15 +23,15 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ### Install {{ page.mesh_name }}
 
-**Note:** Linkerd's control plane will be deployed to the `linkerd` namespace. Linkerd does not support deployments of its control plane into namespaces under a different name.
-##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+Note: Linkerd's control plane will be deployed to the `linkerd` namespace. Linkerd does not support deployments of its control plane into namespaces under a different name.
+##### Choose the Meshery Adapter for {{ page.mesh_name }}
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-adapter.png" />
 </a>
 
 
-##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
+##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />

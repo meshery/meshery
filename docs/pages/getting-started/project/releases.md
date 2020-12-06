@@ -59,7 +59,6 @@ permalink: project/releases
   </div>
 </div> -->
 
-## Meshery Releases
 
 ### [v0.4.22](https://github.com/layer5io/meshery/releases/tag/v0.4.22)
 

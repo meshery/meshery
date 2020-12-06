@@ -7,8 +7,7 @@ language: en
 list: include
 ---
 
-# Performance Management
-Key to the efficient operation of any service mesh is the measurement and management of it's performance. 
+Key to the efficient operation of any service mesh is the measurement and management of it's performance.
 
 ## Load Generators
 Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
@@ -41,7 +40,6 @@ NightHawk is an L7 (HTTP/HTTPS/HTTP2) performance characterization tool. It curr
 ## Node and Service Mesh Metrics
 
 Meshery provides performance test results alongside environment metrics, including service mesh control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes within the cluster.
-
 
 ## Grafana and Meshery
 

@@ -1,17 +1,20 @@
 ---
 layout: default
 title: Upgrade `mesheryctl` and Meshery
-description: How to Upgrade mesheryctl
+description: How to Meshery and all of its components
 permalink: guides/upgrade
 type: Guides
 ---
+# Upgrading Meshery
+
+As an application, Meshery is a composition of different functional components. Some of the components must be upgraded simultaneously, while others may be upgraded independently.
+
+## Upgrading Meshery Server, Adapters, and UI
 
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI.
 
-# Upgrade Meshery Server, Adapters, and UI
-All three of these components are released as part of the same set of artifacts. In order to upgrade Meshery server, UI and adapters, you may execute the following command:
-
 ### Meshery Docker Deployments
+
 In order to upgrade Meshery Server, Adapters, and UI, execute the following command:
 
  <pre class="codeblock-pre"><div class="codeblock">
@@ -19,6 +22,7 @@ In order to upgrade Meshery Server, Adapters, and UI, execute the following comm
  mesheryctl system upgrade
  </div></div>
  </pre>
+
 ### Meshery Kubernetes Deployments
 
 Use `kubectl apply` or `helm` to upgrade the Meshery application manifests in your Kubernetes cluster.
