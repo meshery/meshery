@@ -89,23 +89,23 @@ affinity: {}
 
 # Deploy meshery-istio
 #
-mesheryistio:
-  enabled: false
+meshery-istio:
+  enabled: true
   fullnameOverride: meshery-istio
   
 
 # Deploy meshery-linkerd
 # 
-mesherylinkerd:
-  enabled: false
+meshery-linkerd:
+  enabled: true
   fullnameOverride: meshery-linkerd
 
-mesheryconsul:
-  enabled: false
+meshery-consul:
+  enabled: true
   fullnameOverride: meshery-consul
 
 meshery-kuma:
-  enabled: false
+  enabled: true
   fullnameOverride: meshery-kuma
 
 meshery-osm:

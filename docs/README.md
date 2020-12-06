@@ -1,7 +1,7 @@
 # Meshery Docs
 
 ![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
-*Check out the [Meshery Docs](https://meshery.layer5.io/docs/)!*
+*Check out the [Meshery Docs](https://docs.meshery.io/)!*
 
 ## Contributing to the Meshery Documentation
 

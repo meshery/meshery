@@ -95,24 +95,27 @@ class MesheryResultDialog extends React.Component {
         <NoSsr>
           <Typography className={classes.title} variant="h6" id="tableTitle">
             Service Mesh
-            {/*meshes.length > 1 ? 'es' : ''*/}
+            {meshes.length > 1 ? 'es' : ''}
           </Typography>
           <Table className={classes.table} size="small" aria-label="Service Mesh">
             <TableBody>
-              {
+              {meshes.map(([mesh, version], ind) => (
                 <NoSsr>
-                  {
-                    <TableRow>
-                      <TableCell colSpan={2} className={classes.row} align="center">
-                        <strong>
+                  {meshes.length > 1
+                    ? (
+                      <TableRow>
+                        <TableCell colSpan={2} className={classes.row} align="center">
+                          <strong>
                             Service Mesh
-                          {ind + 1}
-                        </strong>
-                      </TableCell>
-                    </TableRow>
-                  }
-                  {this.createTableRow('Name', meshes)}
+                            {ind + 1}
+                          </strong>
+                        </TableCell>
+                      </TableRow>
+                    ) : ''}
+                  {this.createTableRow('Name', mesh)}
+                  {this.createTableRow('Version', version)}
                 </NoSsr>
+              ))
               }
             </TableBody>
           </Table>

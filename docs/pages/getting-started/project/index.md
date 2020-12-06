@@ -5,7 +5,7 @@ permalink: project
 description: Meshery Project
 ---
 
-## Layer5 Community
+# Layer5 Community
 
 The Meshery project is maintained by the [Layer5 community](https://layer5.io/community). We are an open source organization that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Our projects advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Layer5 projects forward.
 
@@ -66,18 +66,18 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 <div class="row">
 <div class="column">
   <a target="_blank" href="https://layer5.io/landscape">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/landscape#tools">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/books">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
+  <img  class="img-thumbnail" src="/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/workshops">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
+  <img  class="img-thumbnail" src="/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
 </div>
 </div> -->

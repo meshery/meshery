@@ -2,6 +2,8 @@
 layout: default
 title: Concepts
 permalink: concepts
+language: en
+list: exclude
 ---
 Concepts for understanding Meshery's various features and components.
 

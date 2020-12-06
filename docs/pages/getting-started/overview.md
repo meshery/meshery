@@ -46,7 +46,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
 In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
 Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
 ## Meshery is for any service mesh

@@ -19,6 +19,8 @@
     - title: Supported Platforms
       url: installation/platforms
       children:
+        - title: AKS
+          url: installation/platforms/aks
         - title: Docker
           url: installation/platforms/docker
         - title: EKS

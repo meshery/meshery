@@ -5,11 +5,12 @@ permalink: installation/platforms/kind
 type: installation
 language: en
 list: include
+image: /assets/img/platforms/kind.png
 ---
 
-## Quick Start with KinD
+{% include installation_prerequisites.html %}
 
-To set up and run Meshery on KinD:
+**To set up and run Meshery on KinD** 
 
 - [Install kinD](#installation)
 - [Create a Kubernetes cluster with kinD](#create-cluster-using-kind)
@@ -20,17 +21,21 @@ To set up and run Meshery on KinD:
 
 - On Mac / Linux via Homebrew (Recommended):
 
-```powershell
-brew install kind
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ brew install kind
+ </div></div>
+ </pre>
 
 - On macOS / Linux via curl:
 
-```bash
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64
-chmod +x ./kind
-mv ./kind /some-dir-in-your-PATH/kind
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64
+ chmod +x ./kind
+ mv ./kind /some-dir-in-your-PATH/kind
+ </div></div>
+ </pre>
 
 If you are running Ubuntu on WSL2, use `Docker Ubuntu` distro to install `Docker`.
 
@@ -42,33 +47,41 @@ In order to successfully build the Meshery server on your local server, follow t
 
 First, we will get the ip address of your WSL2 distro by:
 
-```bash
-ip addr | grep eth0
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ ip addr | grep eth0
+ </div></div>
+ </pre>
 
 You will see the output like:
 
-```bash
-4: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ 4: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
     inet 172.1.1.1/20 brd 172.1.1.255 scope global eth0
-```
+ </div></div>
+ </pre>
 
 Copy the ip address, we will use that in the next step.
 
 Then, create a file called `kind_cluster.yaml` and put the ip address under `apiServerAddress`:
 
-```bash
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-networking:
-  apiServerAddress: "172.1.1.1"
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kind: Cluster
+ apiVersion: kind.x-k8s.io/v1alpha4
+ networking:
+   apiServerAddress: "172.1.1.1"
+ </div></div>
+ </pre>
 
 Now create the KinD cluster with the config file `kind_cluster.yaml`:
 
-```
-kind create cluster --config kind_cluster.yaml --name kind --wait 300s
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kind create cluster --config kind_cluster.yaml --name kind --wait 300s
+ </div></div>
+ </pre>
 
 You will see
 
@@ -107,21 +120,27 @@ For more configuration of installation, please refer to KinD official documentat
 
 By default, the cluster access configuration is stored in ${HOME}/.kube/config if $KUBECONFIG environment variable is not set. You can set the `KUBECONFIG` environment with the command below:
 
-```bash
-export KUBECONFIG=${HOME}/.kube/config
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ export KUBECONFIG=${HOME}/.kube/config
+ </div></div>
+ </pre>
 
 Use the command below check the connection of the cluster and make sure the cluster you connected what's the cluster was created by KinD:
 
-```bash
-kubectl cluster-info --context kind-kind
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kubectl cluster-info --context kind-kind
+ </div></div>
+ </pre>
 
 To delete your cluster use:
 
-```bash
-kind delete cluster --name kind
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kind delete cluster --name kind
+ </div></div>
+ </pre>
 
 #### **Using Helm**
 
@@ -131,17 +150,21 @@ We strongly recommend to use Helm v3, because of this version not including the 
 
 Run the following:
 
-```bash
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
-$ kubectl create namespace meshery
-$ helm install meshery --namespace meshery install/kubernetes/helm/meshery
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ git clone https://github.com/layer5io/meshery.git; cd meshery
+ $ kubectl create namespace meshery
+ $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+ </div></div>
+ </pre>
 
 - **NodePort** - If your cluster does not have an Ingress Controller or a load balancer, then use NodePort to expose Meshery and that can be modify under the chart `values.yaml`:
 
-```bash
-service:
-  type: NodePort
-  port: 8080
-  annotations: {}
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ service:
+   type: NodePort
+   port: 8080
+   annotations: {}
+ </div></div>
+ </pre>

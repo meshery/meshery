@@ -7,7 +7,7 @@ version: v1.8.2
 port: 10002/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-consul
-image: /docs/assets/img/service-meshes/consul.svg
+image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
@@ -25,7 +25,7 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-adapter.png" />
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" />
