@@ -85,7 +85,7 @@ display-title: false
         {% endif %}
       {% endfor %}
     </ul>
-    <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</b>
+    <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</a></b>
         {% for item in sorted_pages %}
         {% if item.type=="Reference" and item.list!="exclude" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>

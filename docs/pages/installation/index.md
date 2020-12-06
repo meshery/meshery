@@ -33,7 +33,7 @@ _Download, install, and run Meshery in a single command._
 Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery is installed on a Docker host, your default browser will be opened and navigated to `http://localhost:9081`.
 
 ## Select a Provider
-Select from the list of [Providers](/docs/reference/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
+Select from the list of [Providers]({{site.baseurl}}/reference/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img style="width:300px;" src="/assets/img/meshery-server-page.png" />

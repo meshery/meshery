@@ -8,7 +8,7 @@ type: Reference
 ---
 To install `mesheryctl`, use `brew install layer5io/mesheryctl` or download the binary [directly](https://github.com/layer5io/meshery/releases).
 
-# Global Commands and Flags
+## Global Commands and Flags
 
 | command    |        flag         | function                                                                                                                               | Usage                                                                   |
 | :--------- | :-----------------: | :------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
@@ -18,7 +18,7 @@ To install `mesheryctl`, use `brew install layer5io/mesheryctl` or download the 
 |            | --mesheryctl-config | (optional) path to Meshery Client (`mesheryctl`) configuration file (`~/.meshery/mesheryctl.yaml`) to overrides defaults.              | `mesheryctl perf <args> --mesheryctl-config=~/.meshery/mesheryctl.yaml` |
 |            |      --config       | configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE/EKS). | `mesheryctl system config gke --token "PATH TO TOKEN"`                  |
 
-### Meshery Lifecycle Management
+## Meshery Lifecycle Management
 
 Installation, troubleshooting and debugging of Meshery and its adapters.
 
@@ -37,7 +37,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |         | completion |               | Generates completion script.                                                                                               | `mesheryctl system completion [bash\|zsh\|fish]`              |
 |         | help   |               | Displays help about any Meshery lifecycle management command.                                                                           | `mesheryctl system --help`                                   |
 
-### Performance Management
+## Performance Management
 
 | command |               flag               | function                                                                                                     | Usage                                                                                                                                                       |
 | :------ | :------------------------------: | :----------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -52,7 +52,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 |         |   --load-generator (optional)    | Choice of load generator: fortio (OR) wrk2 (default) fortio                                                  | `--load-generator=fortio`                                                                                                                                   |
 |         |            --help, -h            | Displays help the performance management command.                                                            | `mesheryctl perf --help`                                                                                                                                    |
 
-### Service Mesh Lifecycle Management
+## Service Mesh Lifecycle Management
 
 | command | arg  | flag       | function                                                           | Usage               |
 | :------ | :--- | :--------- | :----------------------------------------------------------------- | :------------------ |

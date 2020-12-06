@@ -3,6 +3,7 @@ layout: page
 title: AKS
 permalink: installation/platforms/aks
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/aks.svg

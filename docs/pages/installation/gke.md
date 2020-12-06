@@ -3,6 +3,7 @@ layout: default
 title: GKE
 permalink: installation/platforms/gke
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/gke.png

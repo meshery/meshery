@@ -3,6 +3,7 @@ layout: default
 title: Kubernetes
 permalink: installation/platforms/kubernetes
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/kubernetes.svg

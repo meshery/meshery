@@ -3,6 +3,7 @@ layout: default
 title: Windows
 permalink: installation/platforms/windows
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/wsl2.png

@@ -3,6 +3,7 @@ layout: default
 title: Minikube
 permalink: installation/platforms/minikube
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/minikube.png

@@ -3,6 +3,7 @@ layout: default
 title: EKS
 permalink: installation/platforms/eks
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/eks.png
