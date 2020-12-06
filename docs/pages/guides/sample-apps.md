@@ -6,7 +6,7 @@ permalink: guides/sample-apps
 type: Guides
 ---
 
-# Sample Applications
+# Sample Service Mesh Applications
 
 Sample Applications are used to interact and exemplify the features of your service mesh. They are often a collection of microservices which you can be used by the user as a sandbox playground to experiment and learn about the service mesh and it's exhaustive set of features.
 Before deploying a sample app on top of your service mesh, the application needs to be exposed and allowed external access to the available services in a cluster. There are a myriad of ways to do this, specific to the service mesh you are using. 

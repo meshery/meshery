@@ -187,16 +187,6 @@ hr {
     overflow: visible
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin-top: .9rem;
-    margin-bottom: .5rem
-}
-
 p {
     margin-top: .25rem;
     margin-bottom: 1rem
@@ -482,9 +472,9 @@ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,
 .h5,
 .h6 {
     margin-bottom: .5rem;
+    margin-top: .9rem;
     font-family: inherit;
     font-weight: 500;
-    line-height: 1.2;
     color: inherit
 }
 

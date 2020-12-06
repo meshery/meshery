@@ -1,11 +1,11 @@
 ---
 layout: default
 title: SMI Conformance Capability
-permalink: functionality/smi-conformance
+permalink: functionality/service-mesh-interface
 type: functionality
 ---
 
-# SMI Conformance Capability
+# Meshery and Service Mesh Interface (SMI)
 
 ## Conformance
 

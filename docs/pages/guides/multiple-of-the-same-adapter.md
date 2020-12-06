@@ -19,7 +19,7 @@ In the *~/.meshery/meshery.yaml* configuration file, remove the entry(ies) of th
 
 The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the *meshery-istio* adapter. To do so, modify *~/.meshery/meshery.yaml* to include multiple copies of the given adapter.
 
-**Demo of Meshery managing service mesh deployments across multiple clusters:**
+Demo of Meshery managing service mesh deployments across multiple clusters:
 
 <iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/yWPu3vq4vEs?start=5041" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

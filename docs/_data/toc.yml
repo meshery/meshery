@@ -49,8 +49,8 @@
       url: functionality/lifecycle-management
     - title: Performance Management
       url: functionality/performance-management
-    - title: SMI Conformance
-      url: functionality/smi-conformance
+    - title: Service Mesh Interface (SMI)
+      url: functionality/service-mesh-interface
 - title: Service Meshes
   url: service-meshes
   links:
