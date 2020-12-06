@@ -8,7 +8,7 @@ type: functionality
 ## Service Mesh Lifecycle Management
 Meshery supports a number of [different service meshes](installation/adapters), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
 
-## #Deploying a service mesh
+## Deploying a service mesh
 
 Meshery automates the provisioning of various service meshes, allowing users to select different configuration profiles in order to support a variety of deployment models.
 
