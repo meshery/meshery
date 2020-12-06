@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	fortio.org/fortio v1.11.0
+	github.com/99designs/gqlgen v0.13.0
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/aspenmesh/istio-client-go v0.0.0-20191010215625-4de6e89009c4
@@ -36,6 +37,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
+	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45

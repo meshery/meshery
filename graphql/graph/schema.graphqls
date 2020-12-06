@@ -1,0 +1,40 @@
+type Query {
+  node: [Node!]!
+  namespace: [Namespace!]!
+  deployment(layout: DeploymentFilter): [Deployment]
+  pod(layout: PodFilter): [Pod]
+}
+
+type Node {
+  name: String!
+  id: ID!
+}
+
+type Namespace {
+  name: String!
+  id: ID!
+}
+
+type Deployment {
+  name: String!
+  id: ID!
+  namespaceid: ID!
+}
+
+input DeploymentFilter {
+  namespaceid: ID
+}
+
+type Pod {
+  name: String!
+  id: ID!
+  nodeid: ID!
+  namespaceid: ID!
+  deploymentid: ID!
+}
+
+input PodFilter {
+  nodeid: ID
+  namespaceid: ID
+  deploymentid: ID
+}
