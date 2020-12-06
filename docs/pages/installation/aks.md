@@ -10,7 +10,7 @@ image: /assets/img/platforms/aks.svg
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on AKS**:
+## To set up and run Meshery on AKS:
 
 - Connect Meshery to your AKS cluster
   * [Meshery CLI (mesheryctl)](#connect-meshery-to-azure-kubernetes-cluster)
@@ -18,7 +18,7 @@ image: /assets/img/platforms/aks.svg
 - [Install Meshery on your AKS cluster](#install-meshery-into-your-aks-cluster)
 - [Access Meshery's UI](#port-forward-to-the-meshery-ui)
 
-### **Connect Meshery to Azure Kubernetes Cluster**
+### Connect Meshery to Azure Kubernetes Cluster
 
 The following set of instructions expects you to have created a AKS cluster in your resource group Configure Meshery to connect to your AKS cluster by executing:
 
@@ -28,7 +28,7 @@ The following set of instructions expects you to have created a AKS cluster in y
  </div></div>
  </pre>
 
-#### **Manual Steps**
+#### Manual Steps
 
 Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
 
@@ -55,7 +55,7 @@ to your azure account using *az login*.
  </div></div>
  </pre>
 
-### **Install Meshery into your AKS cluster** 
+### Install Meshery into your AKS cluster 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -65,7 +65,7 @@ to your azure account using *az login*.
  </div></div>
  </pre>
 
-### **Port forward to the Meshery UI**
+### Port forward to the Meshery UI
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

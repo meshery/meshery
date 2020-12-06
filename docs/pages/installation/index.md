@@ -9,7 +9,6 @@ list: exclude
 
 <a name="getting-started"></a>
 
-# Meshery Quick Start Guide
 
 Getting Meshery up and running locally on a Docker-enabled system is easy with Meshery's command line interface, <a href="/docs/guides/mesheryctl">mesheryctl</a>.
 

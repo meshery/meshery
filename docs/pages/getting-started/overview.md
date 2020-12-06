@@ -4,9 +4,10 @@ title: Overview
 permalink: overview
 ---
 
-# Introducing Meshery
 As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads.
 Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+
+## Meshery's Functionality
 
 Meshery provides this high-level functionality:
 

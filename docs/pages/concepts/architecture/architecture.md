@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-# Languages
+## Languages
 Meshery and its components are written using the following languages and technologies.
 
 - **Meshery Server:** Golang, gRPC

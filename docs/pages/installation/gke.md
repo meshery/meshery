@@ -10,7 +10,7 @@ image: /assets/img/platforms/gke.png
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on GKE** 
+To set up and run Meshery on GKE 
 
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a *ServiceAccount*. An existing ServiceAccount can be used or a new one created. Ensure that the ServiceAccount you use has the *cluster-admin* role assigned.
@@ -20,10 +20,10 @@ Meshery will use this *ServiceAccount* to interact with your managed Kubernetes 
 - [Automatic Configuration](#automatic-configuration-recommended)
 - [Manual configuration](#manual-configuration-optional)
 
-### **Automatic Configuration** (Recommended)
+### Automatic Configuration (Recommended)
 
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
-1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
+1. Download your Meshery authentication token by clicking Get Token under your user profile.
 1. Use this authentication token to execute the following command:
     
  <pre class="codeblock-pre"><div class="codeblock">
@@ -36,7 +36,7 @@ This command updates your kubeconfig to provide Meshery with access to your mana
 Once configured, proceed with using Meshery:
 `mesheryctl system start`
 
-### **Manual Configuration** (Optional)
+### Manual Configuration (Optional)
 
 If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 
@@ -57,6 +57,6 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     </div></div>
     </pre>
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
-1. Under Settings-->Environment, provide the generated file (**config-cluster-admin-sa-gke-default.yaml**)as the kubeconfig file.
+1. Under Settings-->Environment, provide the generated file (config-cluster-admin-sa-gke-default.yaml)as the kubeconfig file.
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
