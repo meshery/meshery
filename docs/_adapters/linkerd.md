@@ -7,10 +7,15 @@ version: v2.5.0
 port: 10001/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-linkerd
-image: /docs/assets/img/service-meshes/linkerd.svg
+image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
 ---
 {% include adapter-status.html %}
+### Features
+1. Lifecycle management of {{page.mesh_name}}
+1. Lifecycle management of sample applications
+1. Performance testing
+
 
 ## Lifecycle management
 
@@ -18,6 +23,7 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 ### Install {{ page.mesh_name }}
 
+**Note:** Linkerd's control plane will be deployed to the `linkerd` namespace. Linkerd does not support deployments of its control plane into namespaces under a different name.
 ##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
 
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-adapter.png">
@@ -30,11 +36,6 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 <a href="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/linkerd/linkerd-install.png" />
 </a>
-
-### Features
-1. Lifecycle management of {{page.mesh_name}}
-1. Lifecycle management of sample applications
-1. Performance testing
 
 ### Sample Applications
 

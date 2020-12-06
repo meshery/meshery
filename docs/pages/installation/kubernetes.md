@@ -5,7 +5,7 @@ permalink: installation/platforms/kubernetes
 type: installation
 language: en
 list: include
-image: /docs/assets/img/platforms/kubernetes.svg
+image: /assets/img/platforms/kubernetes.svg
 ---
 
 {% include installation_prerequisites.html %}
@@ -53,7 +53,7 @@ Create a namespace as a new logical space to host Meshery and its components:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
-  $ kubectl create ns meshery```
+ $ kubectl create ns meshery
  </div></div>
  </pre>
 

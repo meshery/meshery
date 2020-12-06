@@ -193,12 +193,12 @@ h3,
 h4,
 h5,
 h6 {
-    margin-top: .5rem;
+    margin-top: .9rem;
     margin-bottom: .5rem
 }
 
 p {
-    margin-top: 0;
+    margin-top: .25rem;
     margin-bottom: 1rem
 }
 
@@ -275,16 +275,16 @@ sup {
 }
 
 a {
-    color: #778899;
+    color: #00B39F;
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
 }
 
 a:hover {
-    color: #00b39f;
+    /* color: #00b39f; */
     font-weight: normal;
-    text-decoration: none
+    text-decoration: underline;
 }
 
 a:not([href]):not([tabindex]) {
@@ -18739,45 +18739,6 @@ footer {
     border-radius: 3px 3px 0px 0px;
 }
 
-pre.codeblock-pre{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    margin: 0;
-    padding: 0 1rem 0 1rem;
-    border-radius: 0.3rem;
-}
-
-.codeblock {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-}
-
-.clipboardjs {
-    display: block;
-    overflow-x: auto;
-    margin: 0;
-}
-
-.btn-copy-wrap {
-    display: flex;
-    align-self: flex-start;
-    margin-top: 0.7rem;
-}
-
-.btn {
-    display: block;
-    width: 10px;
-    padding: 0;
-    background-color: transparent;
-    color: white;
-    font-size: 20px;
-}
-
 /*image-thumbnail-grid*/
   
 .row {
@@ -18825,7 +18786,7 @@ div.overview {
     width: auto;
     /* width: calc(100% / 3.4); */
     overflow-wrap: break-word;
-    border-radius: 25px;
+    border-radius: 2rem;
     justify-content:space-evenly;
     align-content: stretch;
 }
