@@ -1,6 +1,8 @@
-name: Mesheryctl Build and Releaser
+name: Meshery Build and Releaser
 on:
   push:
+    paths-ignore:
+      - 'docs/**'
     branches:
       - 'master'
     tags:
@@ -8,7 +10,7 @@ on:
 
 jobs:
   build_release:
-    name: Mesheryctl build & release
+    name: Meshery build & release
     runs-on: macos-latest
     steps:
     - name: Check out code
