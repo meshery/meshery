@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/graphql"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
 )
@@ -145,6 +146,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)
 		}))))
+
+	// adding graphql endpoint
+	gMux.Handle("/graphql", graphql.GraphQLHandler())
 
 	// TODO: have to change this too
 	gMux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
