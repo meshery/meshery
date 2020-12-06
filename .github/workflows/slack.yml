@@ -5,9 +5,9 @@ jobs:
     name: Notify Slack on star
     runs-on: ubuntu-latest
     steps:
-    - name: Get current star count
+    - name: Get current repo stars count
       run: |
-      echo "STARS=$(curl --silent 'https://api.github.com/repos/layer5io/meshery' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
+        echo "STARS=$(curl --silent 'https://api.github.com/repos/layer5io/meshery' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
     - name: Notify slack
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
