@@ -5,7 +5,6 @@ description: How to use mesheryctl
 permalink: guides/mesheryctl 
 type: Guides
 ---
-# Using `mesheryctl`
 
 `mesheryctl` is the command line interface to manage Meshery and interface with its functionality using a terminal. `mesheryctl` commands are categorized into three main areas:
 
