@@ -4,12 +4,14 @@ on:
     branches:
       - 'master'
   pull_request:
+    types: [ labeled ]
     branches:
       - 'master'
 
 jobs:
   golangci:
     name: golangci-lint
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,6 +32,7 @@ jobs:
   server-tests:
     needs: [tests-ui, golangci, build-backend, build-ui]
     name: Server tests
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -50,6 +53,7 @@ jobs:
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Backend build
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -79,6 +83,7 @@ jobs:
         path: ./main
   build-ui:
     name: UI build
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -110,6 +115,7 @@ jobs:
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -148,6 +154,7 @@ jobs:
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -205,6 +212,7 @@ jobs:
           spec: cypress/integration/e2e/**/*
   mesheryctl_build:
     name: Mesheryctl build & release
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: macos-latest
     needs: [server-tests]
     steps:
@@ -231,6 +239,7 @@ jobs:
         args: release --snapshot --skip-publish --rm-dist
   docker-build-test:
     name: Docker build
+    if: ${{ github.event.label.name != 'area/docs' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
