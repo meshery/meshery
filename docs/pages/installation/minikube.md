@@ -106,7 +106,7 @@ This configuration file will be used by Meshery.
 
 Note: Make sure *current-context* is set to *minikube*.
 
-#### 3. **Set up Meshery**
+### 3. **Set up Meshery**
 
 Follow the [installation steps](/docs/installation) to install the mesheryctl CLI. 
 

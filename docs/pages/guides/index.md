@@ -1,7 +1,9 @@
 ---
 layout: default
 title: Operation Guides
-permalink: /guides
+permalink: guides
+language: en
+list: exclude
 ---
 Guides to using Meshery's various features and components. 
 

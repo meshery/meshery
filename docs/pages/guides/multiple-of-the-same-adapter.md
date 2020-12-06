@@ -4,7 +4,8 @@ title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: Guides
 ---
-## Meshery Adapters: Advanced Configuration
+
+# Meshery Adapters: Advanced Configuration
 
 Meshery is capable of running zero or more service mesh adapters. Without any service mesh adapters, some but not all of Meshery's features will continue to function (e.g. performance testing of workloads not running on a service mesh).
 

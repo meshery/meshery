@@ -20,7 +20,7 @@ Meshery will use this *ServiceAccount* to interact with your managed Kubernetes 
 - [Automatic Configuration](#automatic-configuration-recommended)
 - [Manual configuration](#manual-configuration-optional)
 
-#### **Automatic Configuration** (Recommended)
+### **Automatic Configuration** (Recommended)
 
 1. In your browser, navigate to Meshery (e.g., `http://localhost:9081`) and login.
 1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
@@ -36,7 +36,7 @@ This command updates your kubeconfig to provide Meshery with access to your mana
 Once configured, proceed with using Meshery:
 `mesheryctl system start`
 
-#### **Manual Configuration** (Optional)
+### **Manual Configuration** (Optional)
 
 If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 

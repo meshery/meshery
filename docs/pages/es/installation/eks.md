@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## Inicio rápido con el Servicio Elastic Kubernetes de Amazon (EKS)
+# Inicio rápido con el Servicio Elastic Kubernetes de Amazon (EKS)
 
 Para brindar a Meshery el acceso necesario a su instancia de Kubernetes administrada,
 Meshery deberá tener asignada una ServiceAccount (Cuenta de servicio). Se puede utilizar una "ServiceAccount" existente o crear una nueva.

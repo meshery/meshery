@@ -5,7 +5,7 @@ permalink: es/architecture
 language: es
 ---
 
-## Arquitectura
+# Arquitectura
 
 #### La arquitectura de Meshery puede ser vista desde dos perspectivas:
  

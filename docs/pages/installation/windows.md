@@ -53,7 +53,7 @@ Note
 ### Steps
 Perform the following steps in order:
 
-#### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a> 
+### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a> 
 
 Open Powershell in administrator mode and run:
 
@@ -110,11 +110,11 @@ Docker Toolbox uses Linux-specific kernel features, and can’t run natively on 
 </div>
 
 
-#### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
+### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
 In this tutorial, [Ubuntu 18.04](https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q?activetab=pivot:overviewtab) will be the distro used. Feel free to use any distro of your choice.
 
 
-#### 3. <b>Enable Docker</b>
+### 3. <b>Enable Docker</b>
 
 The Docker Desktop application for Windows includes a comprehensive set of tools, including Docker Engine, Docker CLI client, Docker Compose, Notary, Kubernetes, and a Credential Helper.
 
@@ -133,7 +133,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
   </tr>
 </table>
 
-#### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
+### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
@@ -147,7 +147,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   </pre>
 
 
-#### 5. <a name="step5"><b>Set up Meshery</b></a>
+### 5. <a name="step5"><b>Set up Meshery</b></a>
 
 Follow the [installation steps](/docs/installation#windows) to install the mesheryctl CLI. Then, execute:
   <pre class="codeblock-pre">

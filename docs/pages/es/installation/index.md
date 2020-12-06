@@ -4,6 +4,8 @@ title: Installation Guide
 permalink: es/installation
 language: es
 type: installation
+language: en
+list: exclude
 ---
 
 <a name="getting-started"></a>

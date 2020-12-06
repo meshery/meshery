@@ -5,11 +5,11 @@ description: How to Upgrade mesheryctl
 permalink: guides/upgrade
 type: Guides
 ---
-# Upgrading Versions
+
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI.
 
-## Upgrading Meshery Server, Adapters, and UI
-The Meshery Server, Adapters, and UI components should be upgraded in unison.
+# Upgrade Meshery Server, Adapters, and UI
+All three of these components are released as part of the same set of artifacts. In order to upgrade Meshery server, UI and adapters, you may execute the following command:
 
 ### Meshery Docker Deployments
 In order to upgrade Meshery Server, Adapters, and UI, execute the following command:

@@ -8,7 +8,7 @@ type: Reference
 ---
 To install `mesheryctl`, use `brew install layer5io/mesheryctl` or download the binary [directly](https://github.com/layer5io/meshery/releases).
 
-### Global Commands and Flags
+# Global Commands and Flags
 
 | command    |        flag         | function                                                                                                                               | Usage                                                                   |
 | :--------- | :-----------------: | :------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
