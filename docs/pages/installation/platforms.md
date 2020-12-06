@@ -3,6 +3,7 @@ layout: default
 title: Supported Platforms
 permalink: installation/platforms
 type: installation
+display-title: "false"
 language: en
 list: exclude
 ---

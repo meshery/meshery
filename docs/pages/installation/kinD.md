@@ -3,6 +3,7 @@ layout: default
 title: KinD
 permalink: installation/platforms/kind
 type: installation
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/kind.png
