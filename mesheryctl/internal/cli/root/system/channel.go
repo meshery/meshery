@@ -15,6 +15,10 @@
 package system
 
 import (
+	"errors"
+	"io/ioutil"
+	"strings"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -42,12 +46,12 @@ var channelCmd = &cobra.Command{
 
 		switch channelName {
 		case "stable":
-			if err := utils.SearchAndReplace(utils.DockerComposeFile, "edge", "stable"); err != nil {
+			if err := searchAndReplace(utils.DockerComposeFile, "edge", "stable"); err != nil {
 				log.Fatal("Error subscribing to release channel:", err)
 				return
 			}
 		case "edge":
-			if err := utils.SearchAndReplace(utils.DockerComposeFile, "stable", "edge"); err != nil {
+			if err := searchAndReplace(utils.DockerComposeFile, "stable", "edge"); err != nil {
 				log.Fatal("Error subscribing to release channel:", err)
 				return
 			}
@@ -78,4 +82,27 @@ var channelCmd = &cobra.Command{
 func init() {
 	channelCmd.Flags().StringVarP(&channelSet, "set", "s", "", "Release channel to be set for Meshery and its adapters.")
 	channelCmd.Flags().StringVarP(&channelSwitch, "switch", "c", "", "Release channel to be switch for Meshery and its adapters.")
+}
+
+func searchAndReplace(mesheryConfig, currentChannel, newChannel string) error {
+	fileData, err := ioutil.ReadFile(mesheryConfig)
+	if err != nil {
+		log.Errorf("unable to read meshery config file: %v", err)
+		return err
+	}
+
+	if !strings.Contains(string(fileData), currentChannel) {
+		log.Errorf("unable to switch channel with %s", newChannel)
+		return errors.New("unable to set channel")
+	}
+
+	outputFile := strings.ReplaceAll(string(fileData), currentChannel, newChannel)
+
+	err = ioutil.WriteFile(mesheryConfig, []byte(outputFile), 0644)
+	if err != nil {
+		log.Errorf("unable to change meshery config: %v", err)
+		return errors.New("unable to write meshery config")
+	}
+
+	return nil
 }
