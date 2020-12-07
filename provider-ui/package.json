@@ -20,7 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@material-ui/core": "^4.11.1",
-    "@material-ui/icons": "^4.5.1",
+    "@material-ui/icons": "^4.11.2",
     "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
     "next": "10.0.3",
