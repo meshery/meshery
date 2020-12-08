@@ -1,40 +1,43 @@
 type Query {
-  node: [Node!]!
-  namespace: [Namespace!]!
-  deployment(layout: DeploymentFilter): [Deployment]
-  pod(layout: PodFilter): [Pod]
+  cluster(id: ID): Cluster
+}
+
+type Cluster {
+  node(id:ID) : [Node]
+  namespace(id: ID) : [Namespace]
 }
 
 type Node {
-  name: String!
   id: ID!
+  parentid: ID!
+  name: String!
+  pods: [Pod]!
 }
 
 type Namespace {
-  name: String!
   id: ID!
+  parentid: ID!
+  name: String!
+  deployments(id: ID): [Deployment]
+  services(id: ID): [Service]
 }
 
 type Deployment {
-  name: String!
   id: ID!
-  namespaceid: ID!
+  parentid: ID!
+  name: String!
+  pods: [Pod]
 }
 
-input DeploymentFilter {
-  namespaceid: ID
+type Service {
+  id: ID!
+  parentid: ID!
+  name: String
+  deployments: [ID]
 }
 
 type Pod {
-  name: String!
   id: ID!
-  nodeid: ID!
-  namespaceid: ID!
-  deploymentid: ID!
-}
-
-input PodFilter {
-  nodeid: ID
-  namespaceid: ID
-  deploymentid: ID
+  parentid: ID!
+  name: String!
 }

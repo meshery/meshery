@@ -2,36 +2,42 @@
 
 package model
 
-type Deployment struct {
-	Name        string `json:"name"`
-	ID          string `json:"id"`
-	Namespaceid string `json:"namespaceid"`
+type Cluster struct {
+	Node      []*Node      `json:"node"`
+	Namespace []*Namespace `json:"namespace"`
 }
 
-type DeploymentFilter struct {
-	Namespaceid *string `json:"namespaceid"`
+type Deployment struct {
+	ID       string `json:"id"`
+	Parentid string `json:"parentid"`
+	Name     string `json:"name"`
+	Pods     []*Pod `json:"pods"`
 }
 
 type Namespace struct {
-	Name string `json:"name"`
-	ID   string `json:"id"`
+	ID          string        `json:"id"`
+	Parentid    string        `json:"parentid"`
+	Name        string        `json:"name"`
+	Deployments []*Deployment `json:"deployments"`
+	Services    []*Service    `json:"services"`
 }
 
 type Node struct {
-	Name string `json:"name"`
-	ID   string `json:"id"`
+	ID       string `json:"id"`
+	Parentid string `json:"parentid"`
+	Name     string `json:"name"`
+	Pods     []*Pod `json:"pods"`
 }
 
 type Pod struct {
-	Name         string `json:"name"`
-	ID           string `json:"id"`
-	Nodeid       string `json:"nodeid"`
-	Namespaceid  string `json:"namespaceid"`
-	Deploymentid string `json:"deploymentid"`
+	ID       string `json:"id"`
+	Parentid string `json:"parentid"`
+	Name     string `json:"name"`
 }
 
-type PodFilter struct {
-	Nodeid       *string `json:"nodeid"`
-	Namespaceid  *string `json:"namespaceid"`
-	Deploymentid *string `json:"deploymentid"`
+type Service struct {
+	ID          string    `json:"id"`
+	Parentid    string    `json:"parentid"`
+	Name        *string   `json:"name"`
+	Deployments []*string `json:"deployments"`
 }
