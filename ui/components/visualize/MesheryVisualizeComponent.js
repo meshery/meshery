@@ -23,6 +23,7 @@ import PrimaryDrawer from './drawer/PrimaryDrawer';
 import SecondaryDrawer from './drawer/SecondaryDrawer'
 import PerformanceModal from './PerformanceModal';
 import Terminal from './terminal';
+import GraphQL from './GraphqlData';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -130,7 +131,8 @@ class MesheryVisualizeComponent extends React.Component {
       tab: 0,
       logs: [],
       showModal: false,
-      urlForModal: ''
+      urlForModal: '',
+      elements: {},
     }
     this.prev = null;
   }
@@ -162,6 +164,8 @@ class MesheryVisualizeComponent extends React.Component {
 
   fit() {
     this.cy.fit()
+    
+
   }
 
   saveGraph() {
@@ -203,13 +207,13 @@ class MesheryVisualizeComponent extends React.Component {
 
   componentDidMount() {
     this.setState({logs: logsJson.logs.join('\n')});
+    this.setState({elements: GraphQL.getData()}, () => console.log(this.state.elements));
   }
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, tab } = this.state;
+    const { layout, open, data, tab , elements} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
-    const elements = elementsJson.elements;
 
     //Checkout the docs at https://github.com/cytoscape/cytoscape.js-cxtmenu/blob/master/demo-adaptative.html
     let cxtMenuSettings = {
