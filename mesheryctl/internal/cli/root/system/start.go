@@ -72,7 +72,7 @@ func start() error {
 	if skipUpdateFlag {
 		log.Info("Skipping Meshery update...")
 	} else {
-		err := updateMesheryContainers()
+		err := utils.UpdateMesheryContainers()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
