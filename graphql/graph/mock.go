@@ -10,12 +10,12 @@ type pod struct {
 }
 
 var (
-	nodes = []*model.Node{
-		&model.Node{
+	nodes = []*model.ClusterNode{
+		&model.ClusterNode{
 			Name: "kube-master-7f4a",
 			ID:   "kube-master-7f4a",
 		},
-		&model.Node{
+		&model.ClusterNode{
 			Name: "kube-node-45cd",
 			ID:   "kube-node-45cd",
 		},

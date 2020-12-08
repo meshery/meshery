@@ -42,8 +42,17 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Cluster struct {
-		Namespace func(childComplexity int, id *string) int
-		Node      func(childComplexity int, id *string) int
+		ClusterNodes func(childComplexity int, id *string) int
+		ID           func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Namespaces   func(childComplexity int, id *string) int
+	}
+
+	ClusterNode struct {
+		ID       func(childComplexity int) int
+		Name     func(childComplexity int) int
+		Parentid func(childComplexity int) int
+		Pods     func(childComplexity int) int
 	}
 
 	Deployment struct {
@@ -59,13 +68,6 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 		Parentid    func(childComplexity int) int
 		Services    func(childComplexity int, id *string) int
-	}
-
-	Node struct {
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Parentid func(childComplexity int) int
-		Pods     func(childComplexity int) int
 	}
 
 	Pod struct {
@@ -87,7 +89,7 @@ type ComplexityRoot struct {
 }
 
 type QueryResolver interface {
-	Cluster(ctx context.Context, id *string) (*model.Cluster, error)
+	Cluster(ctx context.Context, id *string) ([]*model.Cluster, error)
 }
 
 type executableSchema struct {
@@ -105,29 +107,71 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Cluster.namespace":
-		if e.complexity.Cluster.Namespace == nil {
+	case "Cluster.clusterNodes":
+		if e.complexity.Cluster.ClusterNodes == nil {
 			break
 		}
 
-		args, err := ec.field_Cluster_namespace_args(context.TODO(), rawArgs)
+		args, err := ec.field_Cluster_clusterNodes_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Cluster.Namespace(childComplexity, args["id"].(*string)), true
+		return e.complexity.Cluster.ClusterNodes(childComplexity, args["id"].(*string)), true
 
-	case "Cluster.node":
-		if e.complexity.Cluster.Node == nil {
+	case "Cluster.id":
+		if e.complexity.Cluster.ID == nil {
 			break
 		}
 
-		args, err := ec.field_Cluster_node_args(context.TODO(), rawArgs)
+		return e.complexity.Cluster.ID(childComplexity), true
+
+	case "Cluster.name":
+		if e.complexity.Cluster.Name == nil {
+			break
+		}
+
+		return e.complexity.Cluster.Name(childComplexity), true
+
+	case "Cluster.namespaces":
+		if e.complexity.Cluster.Namespaces == nil {
+			break
+		}
+
+		args, err := ec.field_Cluster_namespaces_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Cluster.Node(childComplexity, args["id"].(*string)), true
+		return e.complexity.Cluster.Namespaces(childComplexity, args["id"].(*string)), true
+
+	case "ClusterNode.id":
+		if e.complexity.ClusterNode.ID == nil {
+			break
+		}
+
+		return e.complexity.ClusterNode.ID(childComplexity), true
+
+	case "ClusterNode.name":
+		if e.complexity.ClusterNode.Name == nil {
+			break
+		}
+
+		return e.complexity.ClusterNode.Name(childComplexity), true
+
+	case "ClusterNode.parentid":
+		if e.complexity.ClusterNode.Parentid == nil {
+			break
+		}
+
+		return e.complexity.ClusterNode.Parentid(childComplexity), true
+
+	case "ClusterNode.pods":
+		if e.complexity.ClusterNode.Pods == nil {
+			break
+		}
+
+		return e.complexity.ClusterNode.Pods(childComplexity), true
 
 	case "Deployment.id":
 		if e.complexity.Deployment.ID == nil {
@@ -201,34 +245,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Namespace.Services(childComplexity, args["id"].(*string)), true
-
-	case "Node.id":
-		if e.complexity.Node.ID == nil {
-			break
-		}
-
-		return e.complexity.Node.ID(childComplexity), true
-
-	case "Node.name":
-		if e.complexity.Node.Name == nil {
-			break
-		}
-
-		return e.complexity.Node.Name(childComplexity), true
-
-	case "Node.parentid":
-		if e.complexity.Node.Parentid == nil {
-			break
-		}
-
-		return e.complexity.Node.Parentid(childComplexity), true
-
-	case "Node.pods":
-		if e.complexity.Node.Pods == nil {
-			break
-		}
-
-		return e.complexity.Node.Pods(childComplexity), true
 
 	case "Pod.id":
 		if e.complexity.Pod.ID == nil {
@@ -342,15 +358,17 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "graph/schema.graphqls", Input: `type Query {
-  cluster(id: ID): Cluster
+  cluster(id: ID): [Cluster]
 }
 
 type Cluster {
-  node(id:ID) : [Node]
-  namespace(id: ID) : [Namespace]
+  id: ID
+  name: String
+  clusterNodes(id:ID) : [ClusterNode]
+  namespaces(id: ID) : [Namespace]
 }
 
-type Node {
+type ClusterNode {
   id: ID!
   parentid: ID!
   name: String!
@@ -391,7 +409,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Cluster_namespace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Cluster_clusterNodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
@@ -406,7 +424,7 @@ func (ec *executionContext) field_Cluster_namespace_args(ctx context.Context, ra
 	return args, nil
 }
 
-func (ec *executionContext) field_Cluster_node_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Cluster_namespaces_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
@@ -519,7 +537,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Cluster_node(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+func (ec *executionContext) _Cluster_id(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -535,16 +553,9 @@ func (ec *executionContext) _Cluster_node(ctx context.Context, field graphql.Col
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Cluster_node_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -553,12 +564,44 @@ func (ec *executionContext) _Cluster_node(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Node)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONode2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐNode(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Cluster_namespace(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+func (ec *executionContext) _Cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Cluster",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_clusterNodes(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -575,7 +618,7 @@ func (ec *executionContext) _Cluster_namespace(ctx context.Context, field graphq
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Cluster_namespace_args(ctx, rawArgs)
+	args, err := ec.field_Cluster_clusterNodes_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -583,7 +626,46 @@ func (ec *executionContext) _Cluster_namespace(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Namespace, nil
+		return obj.ClusterNodes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ClusterNode)
+	fc.Result = res
+	return ec.marshalOClusterNode2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐClusterNode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_namespaces(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Cluster",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Cluster_namespaces_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespaces, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -595,6 +677,146 @@ func (ec *executionContext) _Cluster_namespace(ctx context.Context, field graphq
 	res := resTmp.([]*model.Namespace)
 	fc.Result = res
 	return ec.marshalONamespace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐNamespace(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterNode_id(ctx context.Context, field graphql.CollectedField, obj *model.ClusterNode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ClusterNode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterNode_parentid(ctx context.Context, field graphql.CollectedField, obj *model.ClusterNode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ClusterNode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Parentid, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterNode_name(ctx context.Context, field graphql.CollectedField, obj *model.ClusterNode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ClusterNode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClusterNode_pods(ctx context.Context, field graphql.CollectedField, obj *model.ClusterNode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ClusterNode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pods, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Pod)
+	fc.Result = res
+	return ec.marshalNPod2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐPod(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Deployment_id(ctx context.Context, field graphql.CollectedField, obj *model.Deployment) (ret graphql.Marshaler) {
@@ -917,146 +1139,6 @@ func (ec *executionContext) _Namespace_services(ctx context.Context, field graph
 	return ec.marshalOService2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐService(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Node_id(ctx context.Context, field graphql.CollectedField, obj *model.Node) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Node",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Node_parentid(ctx context.Context, field graphql.CollectedField, obj *model.Node) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Node",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Parentid, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Node_name(ctx context.Context, field graphql.CollectedField, obj *model.Node) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Node",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Node_pods(ctx context.Context, field graphql.CollectedField, obj *model.Node) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Node",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Pods, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Pod)
-	fc.Result = res
-	return ec.marshalNPod2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐPod(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Pod_id(ctx context.Context, field graphql.CollectedField, obj *model.Pod) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1196,9 +1278,9 @@ func (ec *executionContext) _Query_cluster(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Cluster)
+	res := resTmp.([]*model.Cluster)
 	fc.Result = res
-	return ec.marshalOCluster2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
+	return ec.marshalOCluster2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2512,10 +2594,56 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Cluster")
-		case "node":
-			out.Values[i] = ec._Cluster_node(ctx, field, obj)
-		case "namespace":
-			out.Values[i] = ec._Cluster_namespace(ctx, field, obj)
+		case "id":
+			out.Values[i] = ec._Cluster_id(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Cluster_name(ctx, field, obj)
+		case "clusterNodes":
+			out.Values[i] = ec._Cluster_clusterNodes(ctx, field, obj)
+		case "namespaces":
+			out.Values[i] = ec._Cluster_namespaces(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var clusterNodeImplementors = []string{"ClusterNode"}
+
+func (ec *executionContext) _ClusterNode(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterNode) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterNodeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ClusterNode")
+		case "id":
+			out.Values[i] = ec._ClusterNode_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "parentid":
+			out.Values[i] = ec._ClusterNode_parentid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._ClusterNode_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pods":
+			out.Values[i] = ec._ClusterNode_pods(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2596,48 +2724,6 @@ func (ec *executionContext) _Namespace(ctx context.Context, sel ast.SelectionSet
 			out.Values[i] = ec._Namespace_deployments(ctx, field, obj)
 		case "services":
 			out.Values[i] = ec._Namespace_services(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var nodeImplementors = []string{"Node"}
-
-func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj *model.Node) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, nodeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Node")
-		case "id":
-			out.Values[i] = ec._Node_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "parentid":
-			out.Values[i] = ec._Node_parentid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Node_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "pods":
-			out.Values[i] = ec._Node_pods(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3343,11 +3429,98 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) marshalOCluster2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v []*model.Cluster) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOCluster2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐCluster(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalOCluster2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐCluster(ctx context.Context, sel ast.SelectionSet, v *model.Cluster) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Cluster(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOClusterNode2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐClusterNode(ctx context.Context, sel ast.SelectionSet, v []*model.ClusterNode) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOClusterNode2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐClusterNode(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalOClusterNode2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐClusterNode(ctx context.Context, sel ast.SelectionSet, v *model.ClusterNode) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ClusterNode(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODeployment2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐDeployment(ctx context.Context, sel ast.SelectionSet, v []*model.Deployment) graphql.Marshaler {
@@ -3493,53 +3666,6 @@ func (ec *executionContext) marshalONamespace2ᚖgithubᚗcomᚋlayer5ioᚋmeshe
 		return graphql.Null
 	}
 	return ec._Namespace(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalONode2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v []*model.Node) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalONode2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐNode(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalONode2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v *model.Node) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Node(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPod2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋgraphqlᚋgraphᚋmodelᚐPod(ctx context.Context, sel ast.SelectionSet, v []*model.Pod) graphql.Marshaler {

@@ -3,8 +3,17 @@
 package model
 
 type Cluster struct {
-	Node      []*Node      `json:"node"`
-	Namespace []*Namespace `json:"namespace"`
+	ID           *string        `json:"id"`
+	Name         *string        `json:"name"`
+	ClusterNodes []*ClusterNode `json:"clusterNodes"`
+	Namespaces   []*Namespace   `json:"namespaces"`
+}
+
+type ClusterNode struct {
+	ID       string `json:"id"`
+	Parentid string `json:"parentid"`
+	Name     string `json:"name"`
+	Pods     []*Pod `json:"pods"`
 }
 
 type Deployment struct {
@@ -20,13 +29,6 @@ type Namespace struct {
 	Name        string        `json:"name"`
 	Deployments []*Deployment `json:"deployments"`
 	Services    []*Service    `json:"services"`
-}
-
-type Node struct {
-	ID       string `json:"id"`
-	Parentid string `json:"parentid"`
-	Name     string `json:"name"`
-	Pods     []*Pod `json:"pods"`
 }
 
 type Pod struct {

@@ -1,13 +1,15 @@
 type Query {
-  cluster(id: ID): Cluster
+  cluster(id: ID): [Cluster]
 }
 
 type Cluster {
-  node(id:ID) : [Node]
-  namespace(id: ID) : [Namespace]
+  id: ID
+  name: String
+  clusterNodes(id:ID) : [ClusterNode]
+  namespaces(id: ID) : [Namespace]
 }
 
-type Node {
+type ClusterNode {
   id: ID!
   parentid: ID!
   name: String!

@@ -10,7 +10,7 @@ import (
 	"github.com/layer5io/meshery/graphql/graph/model"
 )
 
-func (r *queryResolver) Cluster(ctx context.Context, id *string) (*model.Cluster, error) {
+func (r *queryResolver) Cluster(ctx context.Context, id *string) ([]*model.Cluster, error) {
 	// id is for multi clusters - no use right now
 
 	// nodes first
@@ -62,10 +62,10 @@ func (r *queryResolver) Cluster(ctx context.Context, id *string) (*model.Cluster
 		}
 	}
 
-	return &model.Cluster{
-		Node:      nodes,
-		Namespace: namespaces,
-	}, nil
+	return []*model.Cluster{&model.Cluster{
+		ClusterNodes: nodes,
+		Namespaces:   namespaces,
+	}}, nil
 }
 
 // Query returns generated.QueryResolver implementation.
