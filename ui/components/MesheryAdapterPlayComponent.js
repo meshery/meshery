@@ -1,5 +1,5 @@
 import NoSsr from "@material-ui/core/NoSsr";
-import React from "react";
+import React, { Fragment } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import {
   withStyles,
@@ -39,6 +39,11 @@ import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 import MesheryResultDialog from "./MesheryResultDialog";
 
 const styles = (theme) => ({
@@ -184,6 +189,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       open: false,
 
       menuState, // category: {add: 1, delete: 0}
+
+      addonSwitchGroup: {},
 
       smi_result: [],
       selectedRowData: null,
@@ -814,7 +821,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const { classes, adapter } = this.props;
     // const expanded = false;
 
-    const selectedAdapterOps =
+    let selectedAdapterOps =
       adapter && adapter.ops
         ? adapter.ops.filter(({ category }) => (typeof category === "undefined" && cat === 0) || category === cat)
         : [];
@@ -834,6 +841,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       case 2:
         content = "Apply Service Mesh Configuration";
         description = "Configure your service mesh using some pre-defined options.";
+        selectedAdapterOps = selectedAdapterOps.filter(ops => !ops.value.startsWith("Add-on:"))
         break;
 
       case 3:
@@ -846,35 +854,91 @@ class MesheryAdapterPlayComponent extends React.Component {
         description = "Customize the configuration of your service mesh.";
         break;
     }
+
     return (
-      <Card className={classes.card}>
-        <CardHeader title={content} subheader={description} />
-        <CardActions disableSpacing>
-          <IconButton
-            aria-label="install"
-            ref={(ch) => (this.addIconEles[cat] = ch)}
-            onClick={this.addDelHandleClick(cat, false)}
-          >
-            {cat !== 4 ? <AddIcon /> : <PlayIcon />}
-          </IconButton>
-          {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
-          {cat === 4 && this.generateYAMLEditor(cat, false)}
-          {cat !== 3 && (
-            <div className={classes.fileLabel}>
-              <IconButton
-                aria-label="delete"
-                ref={(ch) => (this.delIconEles[cat] = ch)}
-                className={classes.deleteRight}
-                onClick={this.addDelHandleClick(cat, true)}
-              >
-                <DeleteIcon />
-              </IconButton>
-              {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
-              {cat === 4 && this.generateYAMLEditor(cat, true)}
-            </div>
-          )}
-        </CardActions>
-      </Card>
+      <Fragment>
+        <Card className={classes.card}>
+          <CardHeader title={content} subheader={description} />
+          <CardActions disableSpacing>
+            <IconButton
+              aria-label="install"
+              ref={(ch) => (this.addIconEles[cat] = ch)}
+              onClick={this.addDelHandleClick(cat, false)}
+            >
+              {cat !== 4 ? <AddIcon /> : <PlayIcon />}
+            </IconButton>
+            {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
+            {cat === 4 && this.generateYAMLEditor(cat, false)}
+            {cat !== 3 && (
+              <div className={classes.fileLabel}>
+                <IconButton
+                  aria-label="delete"
+                  ref={(ch) => (this.delIconEles[cat] = ch)}
+                  className={classes.deleteRight}
+                  onClick={this.addDelHandleClick(cat, true)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
+                {cat === 4 && this.generateYAMLEditor(cat, true)}
+              </div>
+            )}
+          </CardActions>
+        </Card>
+      </Fragment>
+    );
+  }
+
+  /**
+   * extractAddonOperations returns an array of operations
+   * which have a prefix "Addon:"
+   * @param {number} addonOpsCat category for addon operations
+   * @returns {{category: number, key: string, value: string}[]}
+   */
+  extractAddonOperations(addonOpsCat) {
+    return this.props.adapter.ops.filter(
+      ({ category, value }) => category === addonOpsCat && value?.startsWith("Add-on:")
+    );
+  }
+
+  /**
+   * generateAddonSwitches creates a switch based ui for the addon operations
+   * @param {{category: number, key: string, value: string}[]} selectedAdapterOps available adapter operations
+   * @returns {JSX.Element}
+   */
+  generateAddonSwitches(selectedAdapterOps) {
+    const self = this.state;
+    return (
+      <FormControl component="fieldset" style={{padding: "1rem"}}>
+        <FormLabel component="legend">Customize Addons</FormLabel>
+        <FormGroup>
+          {selectedAdapterOps
+            .map((ops) => ({ ...ops, value: ops.value.replace("Add-on:", "") }))
+            .sort((ops1, ops2) => ops1.value.localeCompare(ops2.value))
+            .map((ops) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    color="primary"
+                    checked={self.addonSwitchGroup[ops.key]}
+                    onChange={(ev) => {
+                      this.setState(
+                        {
+                          addonSwitchGroup: { ...self.addonSwitchGroup, [ev.target.name]: ev.target.checked },
+                        },
+                        () => {
+                          this.submitOp(ops.category, ops.key, !!self.addonSwitchGroup[ops.key]);
+                        }
+                      );
+                    }}
+                    name={ops.key}
+                  />
+                }
+                label={ops.value}
+              />
+            ))}
+        </FormGroup>
+      </FormControl>
     );
   }
 
@@ -915,7 +979,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             <Grid container spacing={5}>
-              <Grid container item xs={12} spacing={4} alignItems="center" >
+              <Grid container item xs={12} spacing={4} alignItems="center">
                 <Grid item xs={9}>
                   <TextField
                     required
@@ -939,6 +1003,9 @@ class MesheryAdapterPlayComponent extends React.Component {
                   {this.generateCardForCategory(val)}
                 </Grid>
               ))}
+              <Grid item xs={12} md={4}>
+                {this.generateAddonSwitches(this.extractAddonOperations(2))}
+              </Grid>
             </Grid>
           </div>
         </React.Fragment>
