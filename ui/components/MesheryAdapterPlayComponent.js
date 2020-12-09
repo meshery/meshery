@@ -907,6 +907,8 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @returns {JSX.Element}
    */
   generateAddonSwitches(selectedAdapterOps) {
+    if (!selectedAdapterOps.length) return null;
+    
     const self = this.state;
     return (
       <FormControl component="fieldset" style={{padding: "1rem"}}>
