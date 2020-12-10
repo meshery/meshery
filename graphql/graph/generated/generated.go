@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -34,6 +35,10 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Cluster() ClusterResolver
+	ClusterNode() ClusterNodeResolver
+	Deployment() DeploymentResolver
+	Namespace() NamespaceResolver
 	Query() QueryResolver
 }
 
@@ -42,10 +47,10 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Cluster struct {
-		ClusterNodes func(childComplexity int, id *string) int
+		ClusterNodes func(childComplexity int, nodeid *string) int
 		ID           func(childComplexity int) int
 		Name         func(childComplexity int) int
-		Namespaces   func(childComplexity int, id *string) int
+		Namespaces   func(childComplexity int, namespaceid *string) int
 	}
 
 	ClusterNode struct {
@@ -63,11 +68,11 @@ type ComplexityRoot struct {
 	}
 
 	Namespace struct {
-		Deployments func(childComplexity int, id *string) int
+		Deployments func(childComplexity int, deploymentid *string) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Parentid    func(childComplexity int) int
-		Services    func(childComplexity int, id *string) int
+		Services    func(childComplexity int, serviceid *string) int
 	}
 
 	Pod struct {
@@ -77,7 +82,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Cluster func(childComplexity int, id *string) int
+		Cluster func(childComplexity int, clusterid *string) int
 	}
 
 	Service struct {
@@ -88,8 +93,22 @@ type ComplexityRoot struct {
 	}
 }
 
+type ClusterResolver interface {
+	ClusterNodes(ctx context.Context, obj *model.Cluster, nodeid *string) ([]*model.ClusterNode, error)
+	Namespaces(ctx context.Context, obj *model.Cluster, namespaceid *string) ([]*model.Namespace, error)
+}
+type ClusterNodeResolver interface {
+	Pods(ctx context.Context, obj *model.ClusterNode) ([]*model.Pod, error)
+}
+type DeploymentResolver interface {
+	Pods(ctx context.Context, obj *model.Deployment) ([]*model.Pod, error)
+}
+type NamespaceResolver interface {
+	Deployments(ctx context.Context, obj *model.Namespace, deploymentid *string) ([]*model.Deployment, error)
+	Services(ctx context.Context, obj *model.Namespace, serviceid *string) ([]*model.Service, error)
+}
 type QueryResolver interface {
-	Cluster(ctx context.Context, id *string) ([]*model.Cluster, error)
+	Cluster(ctx context.Context, clusterid *string) ([]*model.Cluster, error)
 }
 
 type executableSchema struct {
@@ -117,7 +136,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Cluster.ClusterNodes(childComplexity, args["id"].(*string)), true
+		return e.complexity.Cluster.ClusterNodes(childComplexity, args["nodeid"].(*string)), true
 
 	case "Cluster.id":
 		if e.complexity.Cluster.ID == nil {
@@ -143,7 +162,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Cluster.Namespaces(childComplexity, args["id"].(*string)), true
+		return e.complexity.Cluster.Namespaces(childComplexity, args["namespaceid"].(*string)), true
 
 	case "ClusterNode.id":
 		if e.complexity.ClusterNode.ID == nil {
@@ -211,7 +230,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Namespace.Deployments(childComplexity, args["id"].(*string)), true
+		return e.complexity.Namespace.Deployments(childComplexity, args["deploymentid"].(*string)), true
 
 	case "Namespace.id":
 		if e.complexity.Namespace.ID == nil {
@@ -244,7 +263,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Namespace.Services(childComplexity, args["id"].(*string)), true
+		return e.complexity.Namespace.Services(childComplexity, args["serviceid"].(*string)), true
 
 	case "Pod.id":
 		if e.complexity.Pod.ID == nil {
@@ -277,7 +296,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Cluster(childComplexity, args["id"].(*string)), true
+		return e.complexity.Query.Cluster(childComplexity, args["clusterid"].(*string)), true
 
 	case "Service.deployments":
 		if e.complexity.Service.Deployments == nil {
@@ -358,14 +377,14 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "graph/schema.graphqls", Input: `type Query {
-  cluster(id: ID): [Cluster]
+  cluster(clusterid: ID): [Cluster]
 }
 
 type Cluster {
-  id: ID
-  name: String
-  clusterNodes(id:ID) : [ClusterNode]
-  namespaces(id: ID) : [Namespace]
+  id: ID!
+  name: String!
+  clusterNodes(nodeid:ID) : [ClusterNode]
+  namespaces(namespaceid: ID) : [Namespace]
 }
 
 type ClusterNode {
@@ -379,8 +398,8 @@ type Namespace {
   id: ID!
   parentid: ID!
   name: String!
-  deployments(id: ID): [Deployment]
-  services(id: ID): [Service]
+  deployments(deploymentid: ID): [Deployment]
+  services(serviceid: ID): [Service]
 }
 
 type Deployment {
@@ -413,14 +432,14 @@ func (ec *executionContext) field_Cluster_clusterNodes_args(ctx context.Context,
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["nodeid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nodeid"))
 		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["nodeid"] = arg0
 	return args, nil
 }
 
@@ -428,14 +447,14 @@ func (ec *executionContext) field_Cluster_namespaces_args(ctx context.Context, r
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["namespaceid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespaceid"))
 		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["namespaceid"] = arg0
 	return args, nil
 }
 
@@ -443,14 +462,14 @@ func (ec *executionContext) field_Namespace_deployments_args(ctx context.Context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["deploymentid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deploymentid"))
 		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["deploymentid"] = arg0
 	return args, nil
 }
 
@@ -458,14 +477,14 @@ func (ec *executionContext) field_Namespace_services_args(ctx context.Context, r
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["serviceid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceid"))
 		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["serviceid"] = arg0
 	return args, nil
 }
 
@@ -488,14 +507,14 @@ func (ec *executionContext) field_Query_cluster_args(ctx context.Context, rawArg
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["clusterid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterid"))
 		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["clusterid"] = arg0
 	return args, nil
 }
 
@@ -562,11 +581,14 @@ func (ec *executionContext) _Cluster_id(ctx context.Context, field graphql.Colle
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Cluster_name(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
@@ -594,11 +616,14 @@ func (ec *executionContext) _Cluster_name(ctx context.Context, field graphql.Col
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Cluster_clusterNodes(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
@@ -612,8 +637,8 @@ func (ec *executionContext) _Cluster_clusterNodes(ctx context.Context, field gra
 		Object:     "Cluster",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -626,7 +651,7 @@ func (ec *executionContext) _Cluster_clusterNodes(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterNodes, nil
+		return ec.resolvers.Cluster().ClusterNodes(rctx, obj, args["nodeid"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -651,8 +676,8 @@ func (ec *executionContext) _Cluster_namespaces(ctx context.Context, field graph
 		Object:     "Cluster",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -665,7 +690,7 @@ func (ec *executionContext) _Cluster_namespaces(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Namespaces, nil
+		return ec.resolvers.Cluster().Namespaces(rctx, obj, args["namespaceid"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -795,14 +820,14 @@ func (ec *executionContext) _ClusterNode_pods(ctx context.Context, field graphql
 		Object:     "ClusterNode",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Pods, nil
+		return ec.resolvers.ClusterNode().Pods(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -935,14 +960,14 @@ func (ec *executionContext) _Deployment_pods(ctx context.Context, field graphql.
 		Object:     "Deployment",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Pods, nil
+		return ec.resolvers.Deployment().Pods(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1072,8 +1097,8 @@ func (ec *executionContext) _Namespace_deployments(ctx context.Context, field gr
 		Object:     "Namespace",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -1086,7 +1111,7 @@ func (ec *executionContext) _Namespace_deployments(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Deployments, nil
+		return ec.resolvers.Namespace().Deployments(rctx, obj, args["deploymentid"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1111,8 +1136,8 @@ func (ec *executionContext) _Namespace_services(ctx context.Context, field graph
 		Object:     "Namespace",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
@@ -1125,7 +1150,7 @@ func (ec *executionContext) _Namespace_services(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Services, nil
+		return ec.resolvers.Namespace().Services(rctx, obj, args["serviceid"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1269,7 +1294,7 @@ func (ec *executionContext) _Query_cluster(ctx context.Context, field graphql.Co
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Cluster(rctx, args["id"].(*string))
+		return ec.resolvers.Query().Cluster(rctx, args["clusterid"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2596,12 +2621,36 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = graphql.MarshalString("Cluster")
 		case "id":
 			out.Values[i] = ec._Cluster_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "name":
 			out.Values[i] = ec._Cluster_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "clusterNodes":
-			out.Values[i] = ec._Cluster_clusterNodes(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Cluster_clusterNodes(ctx, field, obj)
+				return res
+			})
 		case "namespaces":
-			out.Values[i] = ec._Cluster_namespaces(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Cluster_namespaces(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2627,23 +2676,32 @@ func (ec *executionContext) _ClusterNode(ctx context.Context, sel ast.SelectionS
 		case "id":
 			out.Values[i] = ec._ClusterNode_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "parentid":
 			out.Values[i] = ec._ClusterNode_parentid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._ClusterNode_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "pods":
-			out.Values[i] = ec._ClusterNode_pods(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ClusterNode_pods(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2669,20 +2727,29 @@ func (ec *executionContext) _Deployment(ctx context.Context, sel ast.SelectionSe
 		case "id":
 			out.Values[i] = ec._Deployment_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "parentid":
 			out.Values[i] = ec._Deployment_parentid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Deployment_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "pods":
-			out.Values[i] = ec._Deployment_pods(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Deployment_pods(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2708,22 +2775,40 @@ func (ec *executionContext) _Namespace(ctx context.Context, sel ast.SelectionSet
 		case "id":
 			out.Values[i] = ec._Namespace_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "parentid":
 			out.Values[i] = ec._Namespace_parentid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Namespace_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "deployments":
-			out.Values[i] = ec._Namespace_deployments(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Namespace_deployments(ctx, field, obj)
+				return res
+			})
 		case "services":
-			out.Values[i] = ec._Namespace_services(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Namespace_services(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -54,3 +54,23 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Cluster:
+    fields:
+      clusterNodes:
+        resolver: true
+      namespaces:
+        resolver: true
+  ClusterNode:
+    fields:
+      pods:
+        resolver: true
+  Namespace:
+    fields:
+      deployments:
+        resolver: true
+      services:
+        resolver: true
+  Deployment:
+    fields:
+      pods:
+        resolver: true
