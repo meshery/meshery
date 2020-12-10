@@ -69,17 +69,17 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
 		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
-		promptLabel := fmt.Sprintf("Would you like to upgrade to v%s now?", res.Current)
+		promptLabel := fmt.Sprintf("Would you like to upgrade to v%s now?(y/n)", res.Current)
 
 		prompt := promptui.Select{
 			Label: promptLabel,
-			Items: []string{"Yes", "No"},
+			Items: []string{"y", "n"},
 		}
 		_, result, err := prompt.Run()
 		if err != nil {
 			logrus.Error("Prompt failed %w\n", err)
 		}
-		if result == "Yes" {
+		if result != "n" {
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				logrus.Error("Unable to update meshery: %w", err)
