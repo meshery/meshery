@@ -450,3 +450,16 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 	}
 	return false
 }
+
+// UpdateMesheryContainers runs the update command for meshery client
+func UpdateMesheryContainers() error {
+	log.Info("Updating Meshery now...")
+
+	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
+	start.Stdout = os.Stdout
+	start.Stderr = os.Stderr
+	if err := start.Run(); err != nil {
+		return errors.Wrap(err, SystemError("failed to start meshery"))
+	}
+	return nil
+}

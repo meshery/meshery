@@ -17,7 +17,6 @@ package system
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/pkg/errors"
 
@@ -49,7 +48,7 @@ var updateCmd = &cobra.Command{
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
 
-		err = updateMesheryContainers()
+		err = utils.UpdateMesheryContainers()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
@@ -57,16 +56,4 @@ var updateCmd = &cobra.Command{
 		log.Info("Meshery is now up-to-date")
 		return nil
 	},
-}
-
-func updateMesheryContainers() error {
-	log.Info("Updating Meshery now...")
-
-	start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "pull")
-	start.Stdout = os.Stdout
-	start.Stderr = os.Stderr
-	if err := start.Run(); err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to start meshery"))
-	}
-	return nil
 }

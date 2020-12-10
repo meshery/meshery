@@ -60,6 +60,88 @@ permalink: project/releases
 </div> -->
 
 
+### [v0.4.25](https://github.com/layer5io/meshery/releases/tag/v0.4.25)
+
+Released on 29 November 2020
+
+**What's new ?**
+
+- General
+
+  - fix: config command looks up invalid file location @kushthedude (#1989)
+  - Added reset function call in update @Sudhish2101 (#1987)
+  - fix: undefined error in perf results @kushthedude (#1982)
+
+- Maintenance
+
+  - CI: Modified to get star count in slack notification @SudhanAruna (#1988)
+  - Bump next from 10.0.0 to 10.0.3 in /provider-ui @dependabot-preview (#1985)
+  - Bump codemirror from 5.58.2 to 5.58.3 in /ui @dependabot-preview (#1972)
+  - Bump styled-jsx from 3.3.1 to 3.3.2 in /provider-ui @dependabot-preview (#1969)
+  - Bump styled-jsx from 3.3.1 to 3.3.2 in /ui @dependabot-preview (#1977)
+  - Bump caniuse-lite from 1.0.30001157 to 1.0.30001159 in /ui @dependabot-preview (#1975)
+  - Bump start-server-and-test from 1.11.5 to 1.11.6 in /ui @dependabot-preview (#1976)
+  - Bump eslint-config-airbnb from 18.2.0 to 18.2.1 in /ui @dependabot-preview (#1973)
+  - Bump @babel/traverse from 7.12.5 to 7.12.8 in /ui @dependabot-preview (#1981)
+  - fix: use docker hyper kit which was disabled @kushthedude (#1983)
+  - Bump start-server-and-test from 1.11.5 to 1.11.6 in /provider-ui @dependabot-preview (#1971)
+  - Bump eslint from 7.13.0 to 7.14.0 in /ui @dependabot-preview (#1974)
+  - Bump @babel/types from 7.12.1 to 7.12.7 in /ui @dependabot-preview (#1966)
+  - Bump eslint from 7.13.0 to 7.14.0 in /provider-ui @dependabot-preview (#1968)
+  - Bump jss from 10.4.0 to 10.5.0 in /ui @dependabot-preview (#1933)
+
+### [v0.4.24](https://github.com/layer5io/meshery/releases/tag/v0.4.24)
+
+Released on 24 November 2020
+
+**What's new ?**
+
+- General
+
+  - [ doc ] add completion doc @jiraguha (#1962)
+  - fixes #1954 @vineethvanga18 (#1958)
+  - Replace the chart icon @Aisuko (#1955)
+  - Reformat the rest of the adapter charts @Aisuko (#1917)
+
+- Bug Fixes
+
+  - fix: backend build for meshery @kushthedude (#1979)
+  - fix: docker builds failures in CI @kushthedude (#1959)
+
+- Maintenance
+
+  - fix: backend build for meshery @kushthedude (#1979)
+  - Bump start-server-and-test from 1.11.2 to 1.11.5 in /ui @dependabot-preview (#1939)
+  - Bump cypress from 5.5.0 to 5.6.0 in /ui @dependabot-preview (#1940)
+  - fix: docker builds failures in CI @kushthedude (#1959)
+  - Bump uuid from 8.3.0 to 8.3.1 in /ui @dependabot-preview (#1932)
+  - Bump husky from 4.2.5 to 4.3.0 in /ui @dependabot-preview (#1938)
+
+### [v0.4.23](https://github.com/layer5io/meshery/releases/tag/v0.4.23)
+
+Released on 19 November 2020
+
+**What's new ?**
+
+- General
+
+  - Add redirectErrorToConsole method to let mesh sync call fail silently @utkarsh-pro (#1949)
+  - Utkarsh pro/meshery/kubernetes service scan @utkarsh-pro (#1928)
+  - fix: golangci-lint failures @kushthedude (#1945)
+  - All releases between v0.4.22 and v0.4.4 added @ezioishan (#1943)
+  - [UI] External Link Icon @Sudhish2101 (#1913)
+  - Update mui-datatables to 3.7.1 @ramrodo (#1925)
+  - Rename name column to "control plane pods" and add tooltip with fullname @utkarsh-pro (#1924)
+  - Proposal for replacing kubescan with new implementation @utkarsh-pro (#1923)
+  - Fix eslint error for "TemplateLiteral" and fix package-lock.json for billboard.js @ramrodo (#1921)
+
+- Maintenance
+
+  - Bump eslint from 7.6.0 to 7.13.0 in /ui @dependabot-preview (#1935)
+  - Bump react-jss from 10.4.0 to 10.5.0 in /ui @dependabot-preview (#1941)
+  - Bump jss from 10.4.0 to 10.5.0 in /provider-ui @dependabot-preview (#1930)
+  - Bump cypress from 5.5.0 to 5.6.0 in /provider-ui @dependabot-preview (#1931)
+
 ### [v0.4.22](https://github.com/layer5io/meshery/releases/tag/v0.4.22)
 
 Released on 12 November 2020
