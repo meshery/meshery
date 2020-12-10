@@ -3,8 +3,8 @@
 package model
 
 type Cluster struct {
-	ID           *string        `json:"id"`
-	Name         *string        `json:"name"`
+	ID           string         `json:"id"`
+	Name         string         `json:"name"`
 	ClusterNodes []*ClusterNode `json:"clusterNodes"`
 	Namespaces   []*Namespace   `json:"namespaces"`
 }

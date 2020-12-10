@@ -1,12 +1,12 @@
 type Query {
-  cluster(id: ID): [Cluster]
+  cluster(clusterid: ID): [Cluster]
 }
 
 type Cluster {
-  id: ID
-  name: String
-  clusterNodes(id:ID) : [ClusterNode]
-  namespaces(id: ID) : [Namespace]
+  id: ID!
+  name: String!
+  clusterNodes(nodeid:ID) : [ClusterNode]
+  namespaces(namespaceid: ID) : [Namespace]
 }
 
 type ClusterNode {
@@ -20,8 +20,8 @@ type Namespace {
   id: ID!
   parentid: ID!
   name: String!
-  deployments(id: ID): [Deployment]
-  services(id: ID): [Service]
+  deployments(deploymentid: ID): [Deployment]
+  services(serviceid: ID): [Service]
 }
 
 type Deployment {
