@@ -11,7 +11,7 @@ import popper from 'cytoscape-popper';
 import ReactDOM from 'react-dom';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import elementsJson from './Elements';
+// import elementsJson from './Elements';
 import dagre from 'cytoscape-dagre';
 import clsx from 'clsx';
 import {
