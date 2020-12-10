@@ -14,7 +14,7 @@ display-title: false
          src="/assets/img/meshery/meshery-logo-light-text.svg" />
     </a>
 </div>
-<p style="margin:auto;padding:1rem;">Meshery is an open source, service mesh management plane for enabling the adoption, operation, and management of any service mesh and their workloads.</p>
+<p style="margin:auto;padding:1rem;font-size: 1.25rem;">Meshery is the open source, service mesh management plane for enabling the adoption, operation, and management of any service mesh and their workloads.</p>
 <div class="wrapper" style="text-align: left;">
 
   <!-- QUICK START -->
@@ -85,7 +85,7 @@ display-title: false
         {% endif %}
       {% endfor %}
     </ul>
-    <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</b>
+    <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</a></b>
         {% for item in sorted_pages %}
         {% if item.type=="Reference" and item.list!="exclude" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>

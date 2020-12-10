@@ -9,7 +9,6 @@ list: exclude
 
 <a name="getting-started"></a>
 
-# Meshery Quick Start Guide
 
 Getting Meshery up and running locally on a Docker-enabled system is easy with Meshery's command line interface, <a href="/docs/guides/mesheryctl">mesheryctl</a>.
 
@@ -21,9 +20,11 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 Use the Meshery command line interface, , to install and start Meshery. Begin with Meshery by installing its command line client: [mesheryctl](/docs/guides/mesheryctl). If you are on a MacOS or Linux system, you can download, install, and run to the management plane with the command shown in the figure.
 
-```
-$ curl -L https://git.io/meshery | bash - 
-```
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ curl -L https://git.io/meshery | bash - 
+ </div></div>
+ </pre>
 
 _Download, install, and run Meshery in a single command._
 
@@ -32,7 +33,7 @@ _Download, install, and run Meshery in a single command._
 Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery is installed on a Docker host, your default browser will be opened and navigated to `http://localhost:9081`.
 
 ## Select a Provider
-Select from the list of [Providers](/docs/reference/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
+Select from the list of [Providers]({{site.baseurl}}/reference/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img style="width:300px;" src="/assets/img/meshery-server-page.png" />

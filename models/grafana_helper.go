@@ -157,7 +157,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			var ds sdk.Datasource
 			var dsName string
 			if tmpVar.Type == "datasource" {
-				dsName = tmpVar.Query // datasource name can be found in the query field
+				dsName = strings.Title(strings.ToLower(tmpVar.Query)) // datasource name can be found in the query field
 				tmpDsName[tmpVar.Name] = dsName
 			} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
 				if !strings.HasPrefix(*tmpVar.Datasource, "$") {

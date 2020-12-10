@@ -5,6 +5,7 @@ permalink: es/project
 description: Proyecto Meshery
 language: es
 type: project
+list: exclude
 ---
 
 ## Proyectos Layer5

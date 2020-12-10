@@ -5,7 +5,7 @@ metadata:
   name: meshery-gateway
 spec:
   selector:
-    istio: ingressgateway # use istio default controller
+    {{- toYaml .Values.mesherygateway.selector| nindent 4 }}
   servers:
   - port:
       number: 80

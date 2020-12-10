@@ -4,7 +4,6 @@ title: FAQ
 permalink: project/faq
 ---
 
-# FAQ 
 <div class="center" style="color:gray;position:relative;top:-10px;font-size:1.25em;"> Can't find your question here?<br />Post it on the <a href="https://layer5io.slack.com/archives/C01AFD2D547">#support channel</a> on the <a hre="http://slack.layer5.io/">Layer5 Slack</a>. </div>
 
 

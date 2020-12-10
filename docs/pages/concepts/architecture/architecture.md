@@ -5,17 +5,21 @@ permalink: concepts/architecture
 redirect_from: architecture
 type: concepts
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.
+language: en
+list: include
 ---
 
 ## Languages
 Meshery and its components are written using the following languages and technologies.
 
-- **Meshery Server:** Golang, gRPC
-- **Meshery Adapters:** Golang, gRPC
-- **Meshery WASM Filters:** Rust and C++
-- **Meshery UI:** ReactJS, NextJS, BillboardJS
-- **Meshery Provider UI:** ReactJS, NextJS
-- **Meshery Remote Providers:** _any_ - must adhere to gRPC interfaces
+| Components               | Languages and Technologies             |
+| :----------------------- | :------------------------------------- |
+| Meshery Server           | Golang, gRPC                           |
+| Meshery Adapters         | Golang, gRPC                           |
+| Meshery WASM Filters     | Rust and C++                           |
+| Meshery UI               | ReactJS, NextJS, BillboardJS           |
+| Meshery Provider UI      | ReactJS, NextJS                        |
+| Meshery Remote Providers | _any_ - must adhere to gRPC interfaces |
 
 ## Deployments
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes.
