@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## Inicio Rápido con Minikube
+# Inicio Rápido con Minikube
 
 Para configurar y ejecutar Meshery en Minikube:
 

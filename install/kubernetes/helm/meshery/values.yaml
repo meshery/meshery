@@ -127,3 +127,5 @@ testCase:
 #
 mesherygateway:
   enabled: false
+  selector:
+    istio: ingressgateway

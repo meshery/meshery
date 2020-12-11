@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## Inicio Rápido con KinD
+# Inicio Rápido con KinD
 
 Para configurar y ejecutar Meshery en KinD:
 

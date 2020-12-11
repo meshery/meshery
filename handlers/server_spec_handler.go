@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+
+	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -66,6 +69,22 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	// If user is running an outdated release, let them know.
 	if res.Outdated {
 		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
+		promptLabel := fmt.Sprintf("Would you like to upgrade to v%s now?(y/n)", res.Current)
+
+		prompt := promptui.Select{
+			Label: promptLabel,
+			Items: []string{"y", "n"},
+		}
+		_, result, err := prompt.Run()
+		if err != nil {
+			logrus.Error("Prompt failed %w\n", err)
+		}
+		if result != "n" {
+			err = utils.UpdateMesheryContainers()
+			if err != nil {
+				logrus.Error("Unable to update meshery: %w", err)
+			}
+		}
 	}
 
 	// If user is running the latest release, let them know.
