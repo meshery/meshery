@@ -100,7 +100,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
-	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", utils.MesheryFolder+"/mesheryctlConfig.yaml", "mesheryctl config file to override defaults (default file: "+utils.MesheryFolder+"/mesheryctlConfig.yaml)")
+	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", utils.MesheryFolder+"/mesheryctlConfig.yaml", "mesheryctl config file to override defaults")
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
