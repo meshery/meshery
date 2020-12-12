@@ -44,12 +44,10 @@ import MesheryResultDialog from "./MesheryResultDialog";
 const styles = (theme) => ({
   root: {
     padding: theme.spacing(10),
+    [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(4)
+    },
     width: "100%",
-  },
-  chipGrid: {
-    padding: theme.spacing(10),
-    width: "100%",
-    paddingBottom: "0",
   },
   buttons: {
     width: "100%",
@@ -915,8 +913,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         <React.Fragment>
           <div className={classes.root}>
             <Grid container spacing={5}>
-              <Grid container item xs={12} spacing={4} alignItems="center" >
-                <Grid item xs={9}>
+              <Grid container item xs={12} spacing={4} alignItems="center" justify="center" >
+                <Grid item lg={9} md={6} xs={12}>
                   <TextField
                     required
                     id="namespace"
@@ -930,12 +928,12 @@ class MesheryAdapterPlayComponent extends React.Component {
                     onChange={this.handleChange("namespace")}
                   />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item lg={3} md={6}>
                   {adapterChip}
                 </Grid>
               </Grid>
               {filteredOps.map((val) => (
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                   {this.generateCardForCategory(val)}
                 </Grid>
               ))}
