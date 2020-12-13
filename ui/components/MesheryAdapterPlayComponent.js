@@ -2,6 +2,7 @@ import NoSsr from "@material-ui/core/NoSsr";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import {
+  Button,
   withStyles,
   Grid,
   TextField,
@@ -23,6 +24,7 @@ import {
   TableHead,
   Table,
   Tooltip,
+  Typography,
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
@@ -65,9 +67,9 @@ const styles = (theme) => ({
     fontSize: "15px",
     position: "relative",
     top: theme.spacing(0.5),
-    [theme.breakpoints.down('md')]: {
-      fontSize: "12px"
-    }
+    [theme.breakpoints.down("md")]: {
+      fontSize: "12px",
+    },
   },
   colorSwitchBase: {
     color: blue[300],
@@ -881,6 +883,58 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
+  /**
+   * renderGrafanaCustomCharts takes in the configuration and renders
+   * the grafana boards. If the configuration is empty then it renders
+   * a note directing a user to install grafana and prometheus
+   * @param {Array<{ board: any, panels: Array<any>, templateVars: Array<any>}>} boardConfigs grafana board configs
+   * @param {string} grafanaURL grafana URL
+   * @param {string} grafanaAPIKey grafana API keey
+   */
+  renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
+    const {classes} = this.props
+    if (boardConfigs?.length)
+      return (
+        <>
+          <Typography align="center" style={{ 
+            fontSize: "1.25rem",
+            margin: "0 0 1rem" 
+          }}>Grafana Charts</Typography>
+          <GrafanaCustomCharts
+            boardPanelConfigs={boardConfigs || []}
+            grafanaURL={grafanaURL || ""}
+            grafanaAPIKey={grafanaAPIKey || ""}
+          />
+        </>
+      );
+
+    return (
+      <div
+        style={{
+          padding: "2rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
+          No Grafana Configurations Detected
+        </Typography>
+        <Button
+          aria-label="Add Grafana Charts"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={() => this.props.router.push("/settings/#metrics")}
+        >
+          <AddIcon className={classes.addIcon} />
+          Configure Grafana Charts
+        </Button>
+      </div>
+    );
+  }
+
   render() {
     const { classes, adapter } = this.props;
     const { namespace, namespaceError, selectedRowData } = this.state;
@@ -938,11 +992,13 @@ class MesheryAdapterPlayComponent extends React.Component {
                         />
                       </Grid>
                       <Grid item lg={6} xs={12}>
-                        {adapterChip}
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          {adapterChip}
+                        </div>
                       </Grid>
                     </Grid>
-                    {filteredOps.map((val) => (
-                      <Grid item lg={6} xs={12}>
+                    {filteredOps.map((val, i) => (
+                      <Grid item lg={6} sm={12} key={`adapter-card-${i}`}>
                         {this.generateCardForCategory(val)}
                       </Grid>
                     ))}
@@ -952,11 +1008,11 @@ class MesheryAdapterPlayComponent extends React.Component {
               {/* SECTION 2 */}
               <Grid item lg={6} md={7} xs={12}>
                 <div className={classes.paneSection}>
-                  <GrafanaCustomCharts
-                    boardPanelConfigs={this.props.grafana.selectedBoardsConfigs || []}
-                    grafanaURL={this.props.grafana.grafanaURL || ""}
-                    grafanaAPIKey={this.props.grafana.grafanaAPIKey || ""}
-                  />
+                  {this.renderGrafanaCustomCharts(
+                    this.props.grafana.selectedBoardsConfigs, 
+                    this.props.grafana.grafanaURL,
+                    this.props.grafana.grafanaAPIKey,
+                  )}
                 </div>
               </Grid>
             </Grid>
