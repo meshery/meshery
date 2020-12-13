@@ -1,0 +1,40 @@
+name: Meshery Docs
+on:
+  push:
+    paths:
+      - 'docs/**'
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: build
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        ruby: '2.7.1'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Setup Cache
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Bundle install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+      - name: Build jekyll bundle
+        run: |
+          bundle exec jekyll build --drafts
