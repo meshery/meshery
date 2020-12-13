@@ -61,8 +61,6 @@ class GrafanaCustomCharts extends Component {
       });
     }
 
-    genRandomNumberForKey = () => Math.floor((Math.random() * 1000) + 1)
-
     chartDialogClose() {
       const self = this;
       return () => {
@@ -132,7 +130,6 @@ class GrafanaCustomCharts extends Component {
                         </div>
                       )}
                   <GrafanaCustomChart
-                    key={this.genRandomNumberForKey()}
                     board={chartDialogBoard}
                     panel={chartDialogPanel}
                     handleChartDialogOpen={this.handleChartDialogOpen}
@@ -172,13 +169,13 @@ class GrafanaCustomCharts extends Component {
                     </div>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
-                    <Grid container spacing={5}>
-                      {config.panels.map((panel) =>
+                    <Grid container spacing={3}>
+                      {config.panels.map((panel, i) =>
                         // if(panel.type === 'graph'){
                         (
-                          <Grid item xs={12} sm={6}>
+                          <Grid item md={12} lg={6}>
                             <GrafanaCustomChart
-                              key={this.genRandomNumberForKey()}
+                              key={`grafana-chart-${i}`}
                               board={config}
                               panel={panel}
                               handleChartDialogOpen={this.handleChartDialogOpen}

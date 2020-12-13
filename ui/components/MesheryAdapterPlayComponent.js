@@ -35,6 +35,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 // import { updateSMIResults } from '../lib/store';
+import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
@@ -43,11 +44,7 @@ import MesheryResultDialog from "./MesheryResultDialog";
 
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing(10),
-    [theme.breakpoints.down('md')]: {
-      padding: theme.spacing(4)
-    },
-    width: "100%",
+    backgroundColor: "#eaeff1",
   },
   buttons: {
     width: "100%",
@@ -68,6 +65,9 @@ const styles = (theme) => ({
     fontSize: "15px",
     position: "relative",
     top: theme.spacing(0.5),
+    [theme.breakpoints.down('md')]: {
+      fontSize: "12px"
+    }
   },
   colorSwitchBase: {
     color: blue[300],
@@ -135,6 +135,11 @@ const styles = (theme) => ({
   secondaryTable: {
     borderRadius: 10,
     backgroundColor: "#f7f7f7",
+  },
+  paneSection: {
+    backgroundColor: "#fff",
+    padding: theme.spacing(2),
+    borderRadius: 4,
   },
 });
 
@@ -912,31 +917,48 @@ class MesheryAdapterPlayComponent extends React.Component {
         )}
         <React.Fragment>
           <div className={classes.root}>
-            <Grid container spacing={5}>
-              <Grid container item xs={12} spacing={4} alignItems="center" justify="center" >
-                <Grid item lg={9} md={6} xs={12}>
-                  <TextField
-                    required
-                    id="namespace"
-                    name="namespace"
-                    label="Namespace"
-                    fullWidth
-                    value={namespace}
-                    error={namespaceError}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange("namespace")}
-                  />
-                </Grid>
-                <Grid item lg={3} md={6}>
-                  {adapterChip}
-                </Grid>
+            <Grid container spacing={2} direction="row" alignItems="flex-start">
+              {/* SECTION 1 */}
+              <Grid item lg={6} md={5} xs={12}>
+                <div className={classes.paneSection}>
+                  <Grid container spacing={2}>
+                    <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
+                      <Grid item lg={6} xs={12}>
+                        <TextField
+                          required
+                          id="namespace"
+                          name="namespace"
+                          label="Namespace"
+                          fullWidth
+                          value={namespace}
+                          error={namespaceError}
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange("namespace")}
+                        />
+                      </Grid>
+                      <Grid item lg={6} xs={12}>
+                        {adapterChip}
+                      </Grid>
+                    </Grid>
+                    {filteredOps.map((val) => (
+                      <Grid item lg={6} xs={12}>
+                        {this.generateCardForCategory(val)}
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
               </Grid>
-              {filteredOps.map((val) => (
-                <Grid item xs={12} md={6} lg={4}>
-                  {this.generateCardForCategory(val)}
-                </Grid>
-              ))}
+              {/* SECTION 2 */}
+              <Grid item lg={6} md={7} xs={12}>
+                <div className={classes.paneSection}>
+                  <GrafanaCustomCharts
+                    boardPanelConfigs={this.props.grafana.selectedBoardsConfigs || []}
+                    grafanaURL={this.props.grafana.grafanaURL || ""}
+                    grafanaAPIKey={this.props.grafana.grafanaAPIKey || ""}
+                  />
+                </div>
+              </Grid>
             </Grid>
           </div>
         </React.Fragment>
@@ -954,6 +976,10 @@ MesheryAdapterPlayComponent.propTypes = {
 //   const smi_result = state.get('smi_result').toJS();
 //   return { smi_result, };
 // };
+const mapStateToProps = (st) => {
+  const grafana = st.get("grafana").toJS();
+  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
@@ -961,9 +987,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(
-    // mapStateToProps,
-    null,
-    mapDispatchToProps
-  )(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
 );
