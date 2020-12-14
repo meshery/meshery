@@ -49,21 +49,21 @@ Connect Meshery to your existing Grafana instance. Meshery will auto-import the 
     <img src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" style="width: 100%" />
 </a>
 
-### [Connecting to Grafana](/docs/guides/meshery-metrics#expose-grafana-service)
+### [Connecting to Grafana]({{ site.baseurl }}/guides/meshery-metrics#expose-grafana-service)
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
-<a href="/docs/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/grafana-dashboard.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/grafana-dashboard.png" /></a>
 
 * Import Grafana boards
     - Import existing Grafana boards via API
     - Import custom Grafana board via yaml
 * Configure graph panel preferences
 
-### [Prometheus and Meshery](/docs/guides/meshery-metrics#expose-prometheus-service)
+### [Prometheus and Meshery]({{ site.baseurl }}/guides/meshery-metrics#expose-prometheus-service)
 Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or really... any metric that Prometheus has collected.
 
 Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.
 
 ## Suggested Reading
 
-- Guide: [Interpreting Performance Test Results](/docs/guides/interpreting-performance-test-results)
+- Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)

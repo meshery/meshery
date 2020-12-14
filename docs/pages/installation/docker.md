@@ -27,4 +27,4 @@ Meshery repository includes a *docker-compose.yaml* file. We can use *docker-com
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
 You will be redirected to a social login page where you can pick one of the available Social Login methods to login to Meshery.
 
-Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
+Upon starting Meshery successfully, instructions to access Meshery will be printed on the sceen. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.

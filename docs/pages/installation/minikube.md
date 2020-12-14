@@ -63,7 +63,7 @@ Perform the following steps in order:
 #### 2. Configure Meshery to use minikube
 
 1. Login to Meshery. Under your user profile, click *Get Token*.
-2. Use [mesheryctl](/docs/installation#using-mesheryctl) to configure Meshery to use minikube. Execute:
+2. Use [mesheryctl]({{ site.baseurl }}/installation#using-mesheryctl) to configure Meshery to use minikube. Execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -109,7 +109,7 @@ Note: Make sure *current-context* is set to *minikube*.
 
 ### 3. Set up Meshery
 
-Follow the [installation steps](/docs/installation) to install the mesheryctl CLI. 
+Follow the [installation steps]({{ site.baseurl }}/installation) to install the mesheryctl CLI. 
 
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
 

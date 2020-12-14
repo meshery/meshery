@@ -169,3 +169,5 @@ Run the following:
    annotations: {}
  </div></div>
  </pre>
+
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.

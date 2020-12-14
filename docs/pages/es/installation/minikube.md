@@ -98,6 +98,6 @@ Nota: Asegúrese que _current-context_ (contexto actual) esté establecido a `mi
 
 #### 3. **Configurar Meshery**
 
-Siga los [pasos de instalación](/docs/installation) para instalar el CLI (Intérprete de Línea de Comandos) mesheryctl.
+Siga los [pasos de instalación]({{ site.baseurl }}/installation) para instalar el CLI (Intérprete de Línea de Comandos) mesheryctl.
 
-Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Eche un vistazo a [guías Meshery](/docs/guides) para consejos de uso advanzado.
+Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Eche un vistazo a [guías Meshery]({{ site.baseurl }}/guides) para consejos de uso advanzado.

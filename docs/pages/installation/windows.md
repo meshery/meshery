@@ -150,7 +150,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
-Follow the [installation steps](/docs/installation#windows) to install the mesheryctl CLI. Then, execute:
+Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
   ./mesheryctl system start

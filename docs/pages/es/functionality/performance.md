@@ -61,4 +61,4 @@ Una vez que haya conectado Meshery a su (s) despliegue (es) de Prometheus, puede
 
 ## Lectura sugerida
 
-- Guía: [Interpretación de los resultados de la prueba de rendimiento](/docs/guides/interpreting-performance-test-results)
+- Guía: [Interpretación de los resultados de la prueba de rendimiento]({{ site.baseurl }}/guides/interpreting-performance-test-results)

@@ -34,9 +34,9 @@ No, different service mesh adapters are written to expose the unique value of ea
 Adapters have a set of operations which are grouped based on predefined operation types. See the [extensibility](/docs/extensibility) page for more details on adapter operations.
 
 #### How can I create a new adapter?
-See the [extensibility](/docs/extensibility) documentation for details on how new Meshery adapters are made.
+See the [extensibility]({{ site.baseurl }}/extensibility) documentation for details on how new Meshery adapters are made.
 
 #### Can I run more than one instance of the same Meshery adapter?
 The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the `meshery-istio` adapter. To do so, modify ~/.meshery/meshery.yaml to include multiple copies of the given adapter.
 
-See the "[Multiple Adapters](/docs/guides/multiple-adapters)" guide for more information.
+See the "[Multiple Adapters]({{ site.baseurl }}/guides/multiple-adapters)" guide for more information.
