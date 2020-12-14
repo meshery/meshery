@@ -23,6 +23,7 @@ export default class GraphStyle {
           "background-position-y": "1px",
           "border-width": "1px",
           ghost: "yes",
+          "label": "data(label)",
           "ghost-offset-x": "1px",
           "ghost-offset-y": "1px",
           "ghost-opacity": "0.4",

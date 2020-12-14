@@ -1,12 +1,8 @@
-type Query {
-  cluster(id: ID): [Cluster]
-}
-
 type Cluster {
-  id: ID
-  name: String
-  clusterNodes(id:ID) : [ClusterNode]
-  namespaces(id: ID) : [Namespace]
+  id: ID!
+  name: String!
+  clusterNodes(nodeid: ID): [ClusterNode]
+  namespaces(namespaceid: ID): [Namespace]
 }
 
 type ClusterNode {
@@ -16,19 +12,29 @@ type ClusterNode {
   pods: [Pod]!
 }
 
-type Namespace {
-  id: ID!
-  parentid: ID!
-  name: String!
-  deployments(id: ID): [Deployment]
-  services(id: ID): [Service]
-}
-
 type Deployment {
   id: ID!
   parentid: ID!
   name: String!
   pods: [Pod]
+}
+
+type Namespace {
+  id: ID!
+  parentid: ID!
+  name: String!
+  deployments(deploymentid: ID): [Deployment]
+  services(serviceid: ID): [Service]
+}
+
+type Pod {
+  id: ID!
+  parentid: ID!
+  name: String!
+}
+
+type Query {
+  cluster(clusterid: ID): [Cluster]
 }
 
 type Service {
@@ -38,8 +44,3 @@ type Service {
   deployments: [ID]
 }
 
-type Pod {
-  id: ID!
-  parentid: ID!
-  name: String!
-}

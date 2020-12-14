@@ -8,12 +8,19 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type GraphqlDataQueryVariables = {||};
+export type GraphqlDataQueryVariables = {|
+  nodeID?: ?string
+|};
 export type GraphqlDataQueryResponse = {|
   +cluster: ?$ReadOnlyArray<?{|
     +clusterNodes: ?$ReadOnlyArray<?{|
       +id: string,
       +parentid: string,
+      +pods: $ReadOnlyArray<?{|
+        +id: string,
+        +parentid: string,
+        +name: string,
+      |}>,
     |}>
   |}>
 |};
@@ -25,11 +32,18 @@ export type GraphqlDataQuery = {|
 
 
 /*
-query GraphqlDataQuery {
+query GraphqlDataQuery(
+  $nodeID: ID
+) {
   cluster {
-    clusterNodes {
+    clusterNodes(nodeid: $nodeID) {
       id
       parentid
+      pods {
+        id
+        parentid
+        name
+      }
     }
     id
   }
@@ -37,27 +51,61 @@ query GraphqlDataQuery {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "nodeID"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "parentid",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "nodeid",
+      "variableName": "nodeID"
+    }
+  ],
   "concreteType": "ClusterNode",
   "kind": "LinkedField",
   "name": "clusterNodes",
   "plural": true,
   "selections": [
-    (v0/*: any*/),
+    (v1/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "parentid",
+      "concreteType": "Pod",
+      "kind": "LinkedField",
+      "name": "pods",
+      "plural": true,
+      "selections": [
+        (v1/*: any*/),
+        (v2/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     }
   ],
@@ -65,7 +113,7 @@ v1 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "GraphqlDataQuery",
@@ -78,7 +126,7 @@ return {
         "name": "cluster",
         "plural": true,
         "selections": [
-          (v1/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
@@ -88,7 +136,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "GraphqlDataQuery",
     "selections": [
@@ -100,24 +148,24 @@ return {
         "name": "cluster",
         "plural": true,
         "selections": [
-          (v1/*: any*/),
-          (v0/*: any*/)
+          (v3/*: any*/),
+          (v1/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "bc178dded9175a88d33145f3a7137b69",
+    "cacheID": "3be50f84716323401e3831d42b13fe80",
     "id": null,
     "metadata": {},
     "name": "GraphqlDataQuery",
     "operationKind": "query",
-    "text": "query GraphqlDataQuery {\n  cluster {\n    clusterNodes {\n      id\n      parentid\n    }\n    id\n  }\n}\n"
+    "text": "query GraphqlDataQuery(\n  $nodeID: ID\n) {\n  cluster {\n    clusterNodes(nodeid: $nodeID) {\n      id\n      parentid\n      pods {\n        id\n        parentid\n        name\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd5f0f8ccb3f9b8592ae2ffe56b746098';
+(node/*: any*/).hash = 'cb2e0b12aaa20f7d04b49f32832d4a1a';
 
 module.exports = node;

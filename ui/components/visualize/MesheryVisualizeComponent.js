@@ -11,13 +11,12 @@ import popper from 'cytoscape-popper';
 import ReactDOM from 'react-dom';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-// import elementsJson from './Elements';
 import dagre from 'cytoscape-dagre';
 import clsx from 'clsx';
 import {
   TopologyIcon,
 } from '@patternfly/react-icons';
-import { Paper } from '@material-ui/core';
+import { TextField, MenuItem, Paper } from '@material-ui/core';
 import logsJson from './logs';
 import PrimaryDrawer from './drawer/PrimaryDrawer';
 import SecondaryDrawer from './drawer/SecondaryDrawer'
@@ -133,6 +132,9 @@ class MesheryVisualizeComponent extends React.Component {
       showModal: false,
       urlForModal: '',
       elements: {},
+
+      queryLayout: 'layout1',
+      queryFilter: {},
     }
     this.prev = null;
   }
@@ -205,14 +207,33 @@ class MesheryVisualizeComponent extends React.Component {
     this.setState(prevState => ({showModal: !prevState.showModal}))
   }
 
+  handleChange = (name) => (event) => {
+    if(name == "queryLayout" && event.target.value) {
+      this.setState({queryLayout: event.target.value})
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
+    } else if(name == "queryFilter") {
+      let filter = {}
+      event.target.value.split(";").map( data => {
+        if(data.split(":")[0] && data.split(":")[1]){
+          filter[data.split(":")[0]] = data.split(":")[1]
+        }
+      }
+      )
+      this.setState({queryFilter: filter})
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
+    }
+  }
+
   componentDidMount() {
     this.setState({logs: logsJson.logs.join('\n')});
-    this.setState({elements: GraphQL.getData()}, () => console.log(this.state.elements));
+    this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
   }
+
+  
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, tab , elements} = this.state;
+    const { layout, open, data, tab , elements, queryLayout} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
 
     //Checkout the docs at https://github.com/cytoscape/cytoscape.js-cxtmenu/blob/master/demo-adaptative.html
@@ -272,6 +293,33 @@ class MesheryVisualizeComponent extends React.Component {
         <div className={clsx({ [classes.wrapper]: !open }, {
           [classes.wrapper2]: open,
         })} >
+          <div>
+            <Paper>
+              <TextField
+                select
+                id="layout"
+                name="layout"
+                label="Layout"
+                value={queryLayout}
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('queryLayout')}
+              >
+                <MenuItem value="layout1">Layout 1</MenuItem>
+                <MenuItem value="layout2">Layout 2</MenuItem>
+                <MenuItem value="layout3">Layout 3</MenuItem>
+              </TextField>
+              <TextField
+                id="filter"
+                name="filter"
+                label="Filter"
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('queryFilter')}
+              >
+              </TextField>
+            </Paper>
+          </div>
           <div className={classes.div}>
             <CytoscapeComponent
               elements={CytoscapeComponent.normalizeElements(elements)}
@@ -369,7 +417,7 @@ class MesheryVisualizeComponent extends React.Component {
             <Button id="download" onClick={this.saveGraph.bind(this)} style={{ textDecoration: 'none' }}>Save</Button>
           </ButtonGroup>
           <Paper className={classes.logsContainer}>
-            <Terminal className={classes.logs} />   
+            <Terminal className={classes.logs} />
           </Paper>
         </div>
       </NoSsr>
