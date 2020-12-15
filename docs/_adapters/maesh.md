@@ -7,7 +7,7 @@ version: v1.0
 port: 10006/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-maesh
-image: /docs/assets/img/service-meshes/maesh.svg
+image: /assets/img/service-meshes/maesh.svg
 permalink: service-meshes/adapters/maesh
 ---
 {% include adapter-status.html %}

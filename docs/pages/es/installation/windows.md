@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## **Inicio rápido con Windows**
+# **Inicio rápido con Windows**
 
 Para configurar y ejecutar Meshery en Windows:
 

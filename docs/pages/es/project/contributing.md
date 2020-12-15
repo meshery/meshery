@@ -6,7 +6,7 @@ language: es
 type: project
 ---
 
-## <a name="contributing">Descripción general de contribución</a>
+# <a name="contributing">Descripción general de contribución</a>
 
 Por favor, ¡hazlo! ¡Gracias por tu ayuda! :balloon:
 

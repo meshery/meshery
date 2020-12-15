@@ -67,10 +67,9 @@ const styles = (theme) => ({
   },
   chip: {
     height: "40px",
-    marginRight: theme.spacing(5),
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(-5),
     fontSize: "15px",
+    position: "relative",
+    top: theme.spacing(0.5),
   },
   colorSwitchBase: {
     color: blue[300],
@@ -425,7 +424,7 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {*} cat
    * @param {boolean} isDelete if set to true, a delete menu will be generated
    * @param {{key: string, value: string, category?: number}[]} selectedAdapterOps is the array of the meshery adapaters
-   * 
+   *
    * @returns {JSX.Element}
    */
   generateMenu(cat, isDelete, selectedAdapterOps) {
@@ -914,30 +913,26 @@ class MesheryAdapterPlayComponent extends React.Component {
           <MesheryResultDialog rowData={selectedRowData} close={self.resetSelectedRowData()} />
         )}
         <React.Fragment>
-          <div className={classes.chipGrid}>
-            <Grid container spacing={3}>
-              <Grid item xs={3}>
-                {adapterChip}
-              </Grid>
-              <Grid item xs={3}></Grid>
-              <Grid item xs={3}></Grid>
-            </Grid>
-          </div>
           <div className={classes.root}>
             <Grid container spacing={5}>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  id="namespace"
-                  name="namespace"
-                  label="Namespace"
-                  fullWidth
-                  value={namespace}
-                  error={namespaceError}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange("namespace")}
-                />
+              <Grid container item xs={12} spacing={4} alignItems="center" >
+                <Grid item xs={9}>
+                  <TextField
+                    required
+                    id="namespace"
+                    name="namespace"
+                    label="Namespace"
+                    fullWidth
+                    value={namespace}
+                    error={namespaceError}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={this.handleChange("namespace")}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  {adapterChip}
+                </Grid>
               </Grid>
               {filteredOps.map((val) => (
                 <Grid item xs={12} md={4}>

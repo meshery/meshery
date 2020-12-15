@@ -5,22 +5,22 @@ permalink: es/architecture
 language: es
 ---
 
-## Arquitectura
+# Arquitectura
 
 #### La arquitectura de Meshery puede ser vista desde dos perspectivas:
  
 ##### 1. [**Clientes**](#1-client-architecture)
 ##### 2. [**Proveedores**](#2-provider-architecture)
 
-![Meshery architecture](/docs/assets/img/architecture/Meshery-architecture-diagram.png)
+![Meshery architecture](/assets/img/architecture/Meshery-architecture-diagram.png)
 
 ### 1. **Arquitectura del Client**
 
-![Client architecture](/docs/assets/img/architecture/Meshery-client-architecture.svg)
+![Client architecture](/assets/img/architecture/Meshery-client-architecture.svg)
 
 ### 2. **Arquitectura del Proveedor**
 
-![Provider architecture](/docs/assets/img/architecture/Meshery-provider-architecture.svg)
+![Provider architecture](/assets/img/architecture/Meshery-provider-architecture.svg)
 
 #### **Puertos de Red**
 

@@ -328,7 +328,8 @@ class MesheryResults extends Component {
           });
         } else {
           Object.keys(results_selection[page]).forEach((ind) => {
-            rowsSelected.push(ind);
+            const val = parseInt(ind)
+            rowsSelected.push(val);
           });
         }
       });

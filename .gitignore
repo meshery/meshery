@@ -48,12 +48,10 @@ dist/
 
 */npm-debug.log
 
-Gemfile.lock
-
 **/.idea
-docs/Gemfile.lock
 
 yarn.lock
 
 # Generated binaries
 **/bin
+*.Identifier
