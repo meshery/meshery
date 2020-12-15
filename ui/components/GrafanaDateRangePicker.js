@@ -533,7 +533,7 @@ class GrafanaDateRangePicker extends Component {
               // aria-haspopup="true"
               onClick={this.handleClick}
             >
-              <AccessTimeIcon />
+              <AccessTimeIcon style={{ marginRight: "0.25rem" }}/>
               <Moment format="LLLL">{startDate}</Moment>
               <span className={classes.space}>-</span>
               {liveTail ? 'now' : (<Moment format="LLLL">{endDate}</Moment>)}

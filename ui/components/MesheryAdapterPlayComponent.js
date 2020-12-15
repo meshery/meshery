@@ -882,7 +882,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       </Card>
     );
   }
-
+  
   /**
    * renderGrafanaCustomCharts takes in the configuration and renders
    * the grafana boards. If the configuration is empty then it renders
@@ -899,8 +899,9 @@ class MesheryAdapterPlayComponent extends React.Component {
           <Typography align="center" style={{ 
             fontSize: "1.25rem",
             margin: "0 0 1rem" 
-          }}>Grafana Charts</Typography>
+          }}>Service Mesh Metrics</Typography>
           <GrafanaCustomCharts
+            enableGrafanaChip
             boardPanelConfigs={boardConfigs || []}
             grafanaURL={grafanaURL || ""}
             grafanaAPIKey={grafanaAPIKey || ""}
@@ -919,7 +920,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         }}
       >
         <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
-          No Grafana Configurations Detected
+          No Service Mesh Metrics Configurations Found
         </Typography>
         <Button
           aria-label="Add Grafana Charts"
@@ -929,7 +930,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           onClick={() => this.props.router.push("/settings/#metrics")}
         >
           <AddIcon className={classes.addIcon} />
-          Configure Grafana Charts
+          Configure Service Mesh Metrics
         </Button>
       </div>
     );
@@ -973,11 +974,15 @@ class MesheryAdapterPlayComponent extends React.Component {
           <div className={classes.root}>
             <Grid container spacing={2} direction="row" alignItems="flex-start">
               {/* SECTION 1 */}
-              <Grid item lg={6} md={5} xs={12}>
+              <Grid item xs={12}>
                 <div className={classes.paneSection}>
+                  <Typography align="center" style={{ 
+                    fontSize: "1.25rem",
+                    margin: "0 0 1rem" 
+                  }}>Manage Service Mesh</Typography>
                   <Grid container spacing={2}>
                     <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
-                      <Grid item lg={6} xs={12}>
+                      <Grid item md={8} xs={12}>
                         <TextField
                           required
                           id="namespace"
@@ -991,14 +996,14 @@ class MesheryAdapterPlayComponent extends React.Component {
                           onChange={this.handleChange("namespace")}
                         />
                       </Grid>
-                      <Grid item lg={6} xs={12}>
+                      <Grid item md={4} xs={12}>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                           {adapterChip}
                         </div>
                       </Grid>
                     </Grid>
                     {filteredOps.map((val, i) => (
-                      <Grid item lg={6} sm={12} key={`adapter-card-${i}`}>
+                      <Grid item xl={2} lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
                         {this.generateCardForCategory(val)}
                       </Grid>
                     ))}
@@ -1006,7 +1011,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 </div>
               </Grid>
               {/* SECTION 2 */}
-              <Grid item lg={6} md={7} xs={12}>
+              <Grid item xs={12}>
                 <div className={classes.paneSection}>
                   {this.renderGrafanaCustomCharts(
                     this.props.grafana.selectedBoardsConfigs, 

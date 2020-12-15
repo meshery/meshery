@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle,
+  NoSsr, Grid, ExpansionPanelDetails, Typography, Dialog, Button, DialogActions, DialogContent, DialogTitle, Chip
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
@@ -26,10 +26,12 @@ const grafanaStyles = (theme) => ({
   dateRangePicker: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(2),
+  },
+  icon: {
+    width: theme.spacing(2.5),
   },
 });
+
 
 class GrafanaCustomCharts extends Component {
   constructor(props) {
@@ -77,6 +79,18 @@ class GrafanaCustomCharts extends Component {
       });
     }
 
+    GrafanaChip(grafanaURL){
+      const { classes } = this.props;
+      return (
+        <Chip
+          label={grafanaURL}
+          onClick={() => window.open(grafanaURL)}
+          icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
+          className={classes.chip}
+          variant="outlined"
+        />
+      )
+    }
     render() {
       const {
         from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard,
@@ -84,6 +98,7 @@ class GrafanaCustomCharts extends Component {
       } = this.state;
       const { classes, boardPanelConfigs, boardPanelData } = this.props;
       const { grafanaURL, grafanaAPIKey, prometheusURL } = this.props;
+      const { enableGrafanaChip } = this.props;
       // we are now proxying. . .
       // if (grafanaURL && grafanaURL.endsWith('/')){
       //   grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
@@ -94,16 +109,21 @@ class GrafanaCustomCharts extends Component {
             <div className={classes.root}>
               {!(boardPanelData && boardPanelData !== null)
                 && (
-                  <div className={classes.dateRangePicker}>
-                    <GrafanaDateRangePicker
-                      from={from}
-                      startDate={startDate}
-                      to={to}
-                      endDate={endDate}
-                      liveTail={liveTail}
-                      refresh={refresh}
-                      updateDateRange={this.updateDateRange}
-                    />
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                    <div>
+                      {enableGrafanaChip && this.GrafanaChip(grafanaURL)}
+                    </div>
+                    <div className={classes.dateRangePicker}>
+                      <GrafanaDateRangePicker
+                        from={from}
+                        startDate={startDate}
+                        to={to}
+                        endDate={endDate}
+                        liveTail={liveTail}
+                        refresh={refresh}
+                        updateDateRange={this.updateDateRange}
+                      />
+                    </div>
                   </div>
                 )}
               <Dialog
@@ -173,9 +193,8 @@ class GrafanaCustomCharts extends Component {
                       {config.panels.map((panel, i) =>
                         // if(panel.type === 'graph'){
                         (
-                          <Grid item md={12} lg={6}>
+                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={6}>
                             <GrafanaCustomChart
-                              key={`grafana-chart-${i}`}
                               board={config}
                               panel={panel}
                               handleChartDialogOpen={this.handleChartDialogOpen}
