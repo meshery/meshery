@@ -25,8 +25,8 @@
     "jss": "latest",
     "next": "10.0.3",
     "prop-types": "latest",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "styled-jsx": "latest"
   },
   "devDependencies": {
