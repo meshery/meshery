@@ -29,10 +29,8 @@ RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone https://github.com/layer5io/nighthawk-go
+RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
-# FROM alpine
-# RUN apk --update add ca-certificates
-# RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 FROM ubuntu
 RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
 COPY --from=meshery-server /meshery /app/cmd/
