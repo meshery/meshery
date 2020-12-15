@@ -41,7 +41,7 @@ COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
-COPY --from=nighthawk /apinighthawk/bin /usr/local/bin
+COPY --from=nighthawk /nighthawk-go/apinighthawk/bin /usr/local/bin
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
