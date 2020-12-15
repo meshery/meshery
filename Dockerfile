@@ -21,7 +21,14 @@ RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make 
+RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
+
+FROM ubuntu as nighthawk
+RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
+RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
+RUN git config --global user.email "meshery@layer5.io"
+RUN git config --global user.name "meshery"
+RUN git clone https://github.com/layer5io/nighthawk-go
 
 # FROM alpine
 # RUN apk --update add ca-certificates
@@ -34,6 +41,7 @@ COPY --from=ui /out /app/ui/out
 COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
+COPY --from=nighthawk /apinighthawk/bin /usr/local/bin
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
