@@ -1,0 +1,129 @@
+type Query {
+  cluster(id: ID): Cluster
+}
+
+type Cluster {
+  node(id:ID) : [Node]
+  namespace(id: ID) : [Namespace]
+}
+
+type Node {
+  id: ID!
+  parentid: ID!
+  name: String!
+  pods: [Pod]!
+  istio: Istio
+}
+
+type Namespace {
+  id: ID!
+  parentid: ID!
+  name: String!
+  deployments(id: ID): [Deployment]
+  services(id: ID): [Service]
+}
+
+type Deployment {
+  id: ID!
+  parentid: ID!
+  name: String!
+  pods: [Pod]
+}
+
+type Service {
+  id: ID!
+  parentid: ID!
+  name: String
+  deployments: [ID]
+}
+
+type Pod {
+  id: ID!
+  parentid: ID!
+  name: String!
+}
+
+interface ServiceMesh {
+  Type: String!
+  Name: String!
+  Version: String!
+}
+
+type Istio implements ServiceMesh{
+  Name: String!
+  Type: String!
+  Version: String!
+  VirtualServices(id: ID): [VirtualService]
+  Sidecars(id: ID): [Sidecar]
+  WorkloadEntries(id: ID): [WorkloadEntry]
+  AuthorizationPolicies: [AuthorizationPolicy]
+  DestinationRules(id: ID): [DestinationRule]
+  EnvoyFilters(id: ID): [EnvoyFilter]
+  Gateways(id: ID): [Gateway]
+  PeerAuthentications(id: ID): [PeerAuthentication]
+  RequestAuthentications(id: ID): [RequestAuthentication]
+  ServiceEntries(id: ID): [ServiceEntry]
+  WorkloadGroups(id: ID): [WorkloadGroup]
+}
+
+type VirtualService {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type Sidecar {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type WorkloadEntry {
+  id: ID!
+  name: String!
+}
+
+type ServiceEntry {
+  id: ID!
+  name: String!
+}
+
+type WorkloadGroup {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type Gateway {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type EnvoyFilter {
+  id: ID!
+  name: String!
+}
+
+type DestinationRule {
+  id: ID!
+  name: String!
+}
+
+type AuthorizationPolicy {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type PeerAuthentication {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
+
+type RequestAuthentication {
+  id: ID!
+  name: String!
+  namespace: Namespace!
+}
