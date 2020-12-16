@@ -232,6 +232,7 @@ class UserPreference extends React.Component {
                           track: classes.track,
                           checked: classes.checked,
                         }}
+                        data-cy="UsageStatsPreference"
                       />
                     )}
                     labelPlacement="end"
@@ -249,6 +250,7 @@ class UserPreference extends React.Component {
                           track: classes.track,
                           checked: classes.checked,
                         }}
+                        data-cy="PerfResultPreference"
                       />
                     )}
                     labelPlacement="end"
@@ -275,6 +277,7 @@ class UserPreference extends React.Component {
                           track: classes.track,
                           checked: classes.checked,
                         }}
+                        data-cy="StartOnZoomPreference"
                       />
                     )}
                     labelPlacement="end"
