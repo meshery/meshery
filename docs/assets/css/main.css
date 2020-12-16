@@ -92,13 +92,13 @@ excluded_in_search: true
     vertical-align: middle;
 }
 
-.WSL1-button {
+.toggle-button {
     border: 1px solid  rgba(0, 0, 0, .26);
     border-radius: 5px;
     margin-left: 0.4rem;
 }
 
-.WSL1-button:hover {
+.toggle-button:hover {
     background-color:  rgb(44, 164, 243);
   }
   
