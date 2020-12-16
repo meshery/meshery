@@ -52,6 +52,21 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 		trackStats = true
 	}
 
+	meshMapPreferences := req.FormValue("StartOnZoom")
+	if meshMapPreferences != "" {
+		aMeshMapPreferences, err := strconv.ParseBool(meshMapPreferences)
+		if err != nil {
+			err = errors.Wrap(err, "unable to parse meshMapPreferences")
+			logrus.Error(err)
+			http.Error(w, "please provide a valid value for meshMapPreferences", http.StatusBadRequest)
+			return
+		}
+		prefObj.MeshMapPreferences = &models.MeshMapPreferences{
+			StartOnZoom: aMeshMapPreferences,
+		}
+		trackStats = true
+	}
+
 	perfStats := req.FormValue("anonymousPerfResults")
 	if perfStats != "" {
 		aPerfStats, err := strconv.ParseBool(perfStats)

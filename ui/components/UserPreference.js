@@ -9,11 +9,56 @@ import { IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
 import { updateUser, updateProgress } from '../lib/store';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { Paper, Tooltip } from '@material-ui/core';
+import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 
-
-const styles = () => ({
+const styles = (theme) => ({
+  root: {
+    maxWidth: "100%",
+    height: 'auto',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+  },
+  paperRoot: {
+    flexGrow: 1,
+    maxWidth: "20%",
+    marginLeft: 0,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
+  },
+  tabs: {
+    marginLeft: 0
+  },
+  tab: {
+    minWidth: "50%",
+    margin: 0
+  },
+  icon: {
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
+  },
+  iconText: {
+    display: 'inline',
+    verticalAlign: 'middle',
+  },
+  backToPlay: {
+    margin: theme.spacing(2),
+  },
+  link: {
+    cursor: 'pointer',
+  },
   formContainer: {
-    margin: 50,
+    display: 'flex',
+    'flex-wrap': 'wrap',
+    'justify-content': 'space-evenly',
+    padding: 50
   },
   formGrp: {
     padding: 20,
@@ -43,6 +88,8 @@ class UserPreference extends React.Component {
     this.state = {
       anonymousStats: props.anonymousStats,
       perfResultStats: props.perfResultStats,
+      startOnZoom: props.startOnZoom,
+      tabVal: 0
     };
   }
 
@@ -50,8 +97,10 @@ class UserPreference extends React.Component {
     const self = this;
     if (name == 'anonymousUsageStats') {
       self.setState((state) => ({ anonymousStats: !state.anonymousStats }));
-    } else {
+    } else if (name == 'anonymousPerfResults') {
       self.setState((state) => ({ perfResultStats: !state.perfResultStats }));
+    } else {
+      self.setState((state) => ({ startOnZoom: !state.startOnZoom }));
     }
 
     this.handleChange(name);
@@ -78,17 +127,21 @@ class UserPreference extends React.Component {
 
   handleChange = (name) => {
     const self = this;
-    const { anonymousStats, perfResultStats } = this.state;
+    const { anonymousStats, perfResultStats, startOnZoom } = this.state;
     let val, msg;
     if (name == 'anonymousUsageStats') {
       val = anonymousStats;
       msg = !val ? "Sending anonymous usage statistics was enabled"
         : "Sending anonymous usage statistics was disabled";
 
-    } else {
+    } else if (name == 'anonymousPerfResults') {
       val = perfResultStats;
       msg = !val ? "Sending anonymous performance results was enabled"
         : "Sending anonymous performance results was disabled";
+    } else {
+      val = startOnZoom;
+      msg = !val ? "Start on Zoom was enabled"
+        : "Start on Zoom was disabled";
     }
 
     const params = `${encodeURIComponent(name)}=${encodeURIComponent(!val)}`;
@@ -122,55 +175,119 @@ class UserPreference extends React.Component {
     }, self.handleError('There was an error sending your preference'));
   }
 
+  handleTabValChange = (event, newVal) => {
+    this.setState({ tabVal: newVal });
+  }
+
   render() {
-    const { anonymousStats, perfResultStats } = this.state;
+    const { anonymousStats, perfResultStats, tabVal, startOnZoom } = this.state;
     const { classes } = this.props;
 
     return (
       <NoSsr>
-        <div className={classes.formContainer}>
-          <FormControl component="fieldset" className={classes.formGrp}>
-            <FormLabel component="legend" className={classes.formLegend}>Analytics and Improvement Program</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                key="UsageStatsPreference"
-                control={(
-                  <Switch
-                    checked={anonymousStats}
-                    onChange={this.handleToggle('anonymousUsageStats')}
-                    color="primary"
-                    classes={{
-                      switchBase: classes.switchBase,
-                      track: classes.track,
-                      checked: classes.checked,
-                    }}
-                    data-cy="UsageStatsPreference"
-                  />
-                )}
-                labelPlacement="end"
-                label="Send Anonymous Usage Statistics"
+        <Paper square className={classes.paperRoot}>
+          <Tabs
+            value={tabVal}
+            onChange={this.handleTabValChange}
+            variant="fullWidth"
+            indicatorColor="primary"
+            textColor="primary"
+            className={classes.tabs}
+          >
+            <Tooltip title="General preferences" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <SettingsCellIcon/>
+                }
+                label="General"
               />
-              <FormControlLabel
-                key="PerfResultPreference"
-                control={(
-                  <Switch
-                    checked={perfResultStats}
-                    onChange={this.handleToggle('anonymousPerfResults')}
-                    color="primary"
-                    classes={{
-                      switchBase: classes.switchBase,
-                      track: classes.track,
-                      checked: classes.checked,
-                    }}
-                    data-cy="PerfResultPreference"
-                  />
-                )}
-                labelPlacement="end"
-                label="Send Anonymous Performance Results"
+            </Tooltip>
+            <Tooltip title="Remote Provider preferences" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <SettingsRemoteIcon/>
+                }
+                label="Remote Provider"
               />
-            </FormGroup>
-          </FormControl>
-        </div>
+            </Tooltip>
+          </Tabs>
+        </Paper>
+        <Paper className={classes.root}>
+          {tabVal == 0 &&
+            <div className={classes.formContainer}>
+              <FormControl component="fieldset" className={classes.formGrp}>
+                <FormLabel component="legend" className={classes.formLegend}>Analytics and Improvement Program</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="UsageStatsPreference"
+                    control={(
+                      <Switch
+                        checked={anonymousStats}
+                        onChange={this.handleToggle('anonymousUsageStats')}
+                        color="primary"
+                        classes={{
+                          switchBase: classes.switchBase,
+                          track: classes.track,
+                          checked: classes.checked,
+                        }}
+                        data-cy="UsageStatsPreference"
+                      />
+                    )}
+                    labelPlacement="end"
+                    label="Send Anonymous Usage Statistics"
+                  />
+                  <FormControlLabel
+                    key="PerfResultPreference"
+                    control={(
+                      <Switch
+                        checked={perfResultStats}
+                        onChange={this.handleToggle('anonymousPerfResults')}
+                        color="primary"
+                        classes={{
+                          switchBase: classes.switchBase,
+                          track: classes.track,
+                          checked: classes.checked,
+                        }}
+                        data-cy="PerfResultPreference"
+                      />
+                    )}
+                    labelPlacement="end"
+                    label="Send Anonymous Performance Results"
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
+          }
+          {tabVal == 1 &&
+            <div className={classes.formContainer}>
+              <FormControl component="fieldset" className={classes.formGrp}>
+                <FormLabel component="legend" className={classes.formLegend}>MeshMap User Settings</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="StartOnZoom"
+                    control={(
+                      <Switch
+                        checked={startOnZoom}
+                        onChange={this.handleToggle('StartOnZoom')}
+                        color="primary"
+                        classes={{
+                          switchBase: classes.switchBase,
+                          track: classes.track,
+                          checked: classes.checked,
+                        }}
+                        data-cy="StartOnZoomPreference"
+                      />
+                    )}
+                    labelPlacement="end"
+                    label="Start MeshMap on Zoom"
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
+          }
+        </Paper>
       </NoSsr>
     );
   }

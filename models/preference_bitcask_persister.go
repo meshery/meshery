@@ -63,6 +63,9 @@ func (s *BitCaskPreferencePersister) ReadFromPersister(userID string) (*Preferen
 	data := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
+		MeshMapPreferences: &MeshMapPreferences{
+			StartOnZoom: true,
+		},
 	}
 
 	dataCopyI, ok := s.cache.Load(userID)
@@ -109,6 +112,9 @@ func (s *BitCaskPreferencePersister) writeToCache(userID string, data *Preferenc
 	newSess := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
+		MeshMapPreferences: &MeshMapPreferences{
+			StartOnZoom: true,
+		},
 	}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)

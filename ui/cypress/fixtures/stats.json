@@ -1,5 +1,6 @@
 {
   "anonymousUsageStats":true,
   "anonymousPerfResults":true,
+  "startOnZoom":true,
   "updated_at":""
 }
