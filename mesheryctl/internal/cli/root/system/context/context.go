@@ -48,7 +48,7 @@ var ContextCmd = &cobra.Command{
 
 func init() {
 	homeDir, err := os.UserHomeDir()
-	viper.SetConfigName("mesheryctlconfig")
+	viper.SetConfigName("config")
 	viper.AddConfigPath(homeDir + string(os.PathSeparator) + utils.MesheryFolder)
 	viper.AutomaticEnv()
 	viper.SetConfigType("yaml")

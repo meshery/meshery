@@ -24,7 +24,7 @@ var createContextCmd = &cobra.Command{
 		log.Println("Setting as Current Context")
 		_, exists := configuration.Contexts[args[0]]
 		if exists {
-			return errors.New("Error adding context. A context with same name already exists.")
+			return errors.New("error adding context, a context with same name already exists")
 		}
 		configuration.Contexts[args[0]] = models.Context{BaseMesheryURL: url}
 		configuration.CurrentContext = args[0]
