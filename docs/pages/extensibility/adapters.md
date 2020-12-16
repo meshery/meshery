@@ -43,7 +43,7 @@ Tip: The [Meshery Adapter for Istio](https://github.com/layer5io/meshery-istio) 
 #### [MeshKit](https://github.com/layer5io/meshkit)
 
 The code hierarchy is pluggable and independent from one another. There can be N number of packages depending upon the use case.
-- `errors/`  -  holds the implementations and the error handlers and error codes which are used across projects.
+- `errors/` - holds the implementations and the error handlers and error codes which are used across projects.
 - `logger/` - holds the implementations of logging handler and custom attributes to add if any.
 - `utils/` - holds all the utility functions that are specific to meshery projects and are to be used generically across all of them.
 - `tracing/` - holds the implementations of tracing handlers with different tracing providers like jaeger,newrelic, etc.
