@@ -254,7 +254,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Username:    user.UserID,
 		Namespace:   namespace,
 		CustomBody:  customBody,
-		DeleteOp:    (delete != ""),
+		DeleteOp:    delete != "",
 	})
 	if err != nil {
 		logrus.Error(err)
