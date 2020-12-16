@@ -51,14 +51,14 @@ var channelCmd = &cobra.Command{
 				return
 			}
 			log.Info("Subscribed to stable channel.")
-			
+
 		case "edge":
 			if err := searchAndReplace(utils.DockerComposeFile, "stable", "edge"); err != nil {
 				log.Fatal("Error subscribing to release channel:", err)
 				return
 			}
 			log.Info("Subscribed to edge channel.")
-		
+
 		default:
 			log.Fatal("Please subscribe to either the 'stable' or 'edge' release channel.")
 		}
