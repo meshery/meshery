@@ -19,6 +19,8 @@
     - title: Supported Platforms
       url: installation/platforms
       children:
+        - title: AKS
+          url: installation/platforms/aks
         - title: Docker
           url: installation/platforms/docker
         - title: EKS
@@ -47,8 +49,8 @@
       url: functionality/lifecycle-management
     - title: Performance Management
       url: functionality/performance-management
-    - title: SMI Conformance
-      url: functionality/smi-conformance
+    - title: Service Mesh Interface (SMI)
+      url: functionality/service-mesh-interface
 - title: Service Meshes
   url: service-meshes
   links:

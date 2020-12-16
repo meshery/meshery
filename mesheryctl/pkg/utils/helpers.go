@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	rand "math/rand"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -31,7 +31,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
-	docsBaseURL = "https://meshery.layer5.io/docs/"
+	docsBaseURL = "https://docs.meshery.io/"
 
 	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
@@ -62,7 +62,7 @@ var (
 	// related configuration files.
 	MesheryFolder = ".meshery"
 	// DockerComposeFile is the default location within the MesheryFolder
-	// where the docker compose file is located?
+	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
@@ -449,4 +449,17 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 		return true
 	}
 	return false
+}
+
+// UpdateMesheryContainers runs the update command for meshery client
+func UpdateMesheryContainers() error {
+	log.Info("Updating Meshery now...")
+
+	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
+	start.Stdout = os.Stdout
+	start.Stderr = os.Stderr
+	if err := start.Run(); err != nil {
+		return errors.Wrap(err, SystemError("failed to start meshery"))
+	}
+	return nil
 }

@@ -10,7 +10,7 @@ display-title: false
 <div style="display: block; text-align: center; margin-bottom: 30px;">
     <a href="https://layer5.io/meshery">
     <img style="width: calc(100% / 3.2); margin-bottom: 20px;"
-         src="/docs/assets/img/meshery/meshery-logo-light-text.svg" />
+         src="/assets/img/meshery/meshery-logo-light-text.svg" />
     </a>
     <p>
       <h1>Documentación en Español 🇲🇽</h1>
