@@ -17,14 +17,14 @@ var (
 var createContextCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create context",
-	Long:  `create context and add to config`,
+	Long:  `Add a new context to mesheryctl config`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Printf("Adding Context %s to config", args[0])
 		log.Println("Setting as Current Context")
 		_, exists := configuration.Contexts[args[0]]
 		if exists {
-			return errors.New("error adding context, Context with same name already exists")
+			return errors.New("Error adding context. A context with same name already exists.")
 		}
 		configuration.Contexts[args[0]] = models.Context{BaseMesheryURL: url}
 		configuration.CurrentContext = args[0]
