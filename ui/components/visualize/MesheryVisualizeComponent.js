@@ -18,11 +18,15 @@ import {
   TopologyIcon,
 } from '@patternfly/react-icons';
 import { Paper } from '@material-ui/core';
-import logsJson from './logs';
 import PrimaryDrawer from './drawer/PrimaryDrawer';
 import SecondaryDrawer from './drawer/SecondaryDrawer'
 import PerformanceModal from './PerformanceModal';
 import Terminal from './terminal';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import dataFetch from '../../lib/data-fetch';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -67,6 +71,15 @@ const style = (theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(2),
     right: 'auto'
+  },
+
+  formControl: {
+    position: 'absolute',
+    top: 'auto',
+    bottom: theme.spacing(2),
+    left: '20%',
+    right: 'auto',
+    minWidth: 120,
   },
 
   layoutButton: {
@@ -130,9 +143,30 @@ class MesheryVisualizeComponent extends React.Component {
       tab: 0,
       logs: [],
       showModal: false,
-      urlForModal: ''
+      urlForModal: '',
+      zoomLevel: 1
     }
     this.prev = null;
+  }
+
+  async componentDidMount() {
+    await new Promise(resolve => {
+      dataFetch('/api/user/stats', {
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, (result) => {
+        resolve();
+        if (typeof result !== 'undefined') {
+          this.setState({
+            zoomLevel: (result.meshMapPreferences.startOnZoom||false)? 2 : 1
+          })
+        }
+      },
+      // Ignore error because we will fallback to default state
+      // and to avoid try catch due to async await functions
+      resolve);
+    })
   }
 
   toggleChildMenu(data, val) {
@@ -201,13 +235,13 @@ class MesheryVisualizeComponent extends React.Component {
     this.setState(prevState => ({showModal: !prevState.showModal}))
   }
 
-  componentDidMount() {
-    this.setState({logs: logsJson.logs.join('\n')});
-  }
+  handleChange = (event) => {
+    this.setState({ zoomLevel: event.target.value});
+  };
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, tab } = this.state;
+    const { layout, open, data, tab, zoomLevel } = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
     const elements = elementsJson.elements;
 
@@ -320,6 +354,37 @@ class MesheryVisualizeComponent extends React.Component {
                   }
                   this.cy.endBatch();
                 });
+                this.cy.fit(zoomLevel);
+                let zoom = zoomLevel;
+                if(zoom >= 2){
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0, "border-width": 0, 'background-image-opacity': 0});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":1, "border-width": 1});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'element'})
+                } else if (zoom < 2 && zoom >1){
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0.5, "border-width": 0, 'background-image-opacity': 0.5});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":0.5, "border-width": 1});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                } else {
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":1, "border-width": 0, 'background-image-opacity': 1});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":0, "border-width": 0});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                }
+                this.cy.on('zoom', () => {
+                  let zoom = this.cy.zoom();
+                  if(zoom >= 2){
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0, "border-width": 0, 'background-image-opacity': 0});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":1, "border-width": 1});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'element'})
+                  } else if (zoom < 2 && zoom >1){
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0.5, "border-width": 0, 'background-image-opacity': 0.5});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":0.5, "border-width": 1});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                  } else {
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":1, "border-width": 0, 'background-image-opacity': 1});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":0, "border-width": 0});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                  }
+                })
               }}
             />
           </div>
@@ -338,6 +403,18 @@ class MesheryVisualizeComponent extends React.Component {
             <Button onClick={this.zoomOut.bind(this)}>-</Button>
             <Button onClick={this.fit.bind(this)}>fit</Button>
           </ButtonGroup>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-helper-label">Zoom level</InputLabel>
+            <Select
+              labelId="zoom-select-helper-label"
+              id="zoom-select-helper"
+              value={zoomLevel}
+              onChange={this.handleChange}
+            >
+              <MenuItem value={1}>service mesh</MenuItem>
+              <MenuItem value={2}>services</MenuItem>
+            </Select>
+          </FormControl>
           <ToggleButtonGroup
             value={layout}
             exclusive

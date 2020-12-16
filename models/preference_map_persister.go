@@ -26,6 +26,9 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	data := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
+		MeshMapPreferences: &MeshMapPreferences{
+			StartOnZoom: true,
+		},
 	}
 
 	if s.db == nil {
@@ -69,6 +72,9 @@ func (s *MapPreferencePersister) WriteToPersister(userID string, data *Preferenc
 	newSess := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
+		MeshMapPreferences: &MeshMapPreferences{
+			StartOnZoom: true,
+		},
 	}
 	if err := copier.Copy(newSess, data); err != nil {
 		logrus.Errorf("session copy error: %v", err)

@@ -83,7 +83,13 @@ type Preference struct {
 	LoadTestPreferences  *LoadTestPreferences `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats  bool                 `json:"anonymousUsageStats"`
 	AnonymousPerfResults bool                 `json:"anonymousPerfResults"`
+	MeshMapPreferences   *MeshMapPreferences  `json:"meshMapPreferences"`
 	UpdatedAt            time.Time            `json:"updated_at,omitempty"`
+}
+
+// MeshMapPreferences represents preferences stored for MeshMap
+type MeshMapPreferences struct {
+	StartOnZoom bool `json:"startOnZoom"`
 }
 
 func init() {
