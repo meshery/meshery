@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Citrix Service Mesh (CPX)
+title: Meshery Adapter for Citrix Service Mesh
 name: Meshery Adapter for Citrix Service Mesh
 mesh_name: Citrix 
 version: "1.0"

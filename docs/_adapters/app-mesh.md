@@ -1,6 +1,6 @@
 ---
 layout: default
-title: App Mesh
+title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
 version: v0.1.0

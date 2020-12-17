@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tanzu Service Mesh
+title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 mesh_name: Tanzu Service Mesh
 version: pre-GA

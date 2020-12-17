@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Traefik Mesh
+title: Meshery Adapter for Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh
 version: v1.0

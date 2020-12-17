@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Istio
+title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
-version: v1.7.3
+version: v1.8.1
 mesh_name: Istio
 port: 10000/tcp
 project_status: stable

@@ -80,7 +80,7 @@ Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/l
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- .`mesheryctl`system start
+ ./mesheryctl system start
  </div></div>
  </pre>
 
@@ -94,8 +94,8 @@ Add the Meshery Scoop Bucket and install:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- scoop bucket add`mesheryctl`https://github.com/layer5io/scoop-bucket.git
- scoop install`mesheryctl`
+ scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+ scoop install mesheryctl
  </div></div>
  </pre>
 
@@ -170,17 +170,16 @@ If you would like to have `mesheryctl` commands automatically completed for use 
  <div class="clipboardjs">
  source <(mesheryctl system completion zsh)
  </div></div>
- </pre>
+ </pre><br>
 
 If shell completion is not already enabled in your environment you will need to enable it.  You can execute the following once:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- echo "autoload -U compinit; compinit" >> ~/.zshrc
+ ~/.zshrc > echo "autoload -U compinit; compinit" 
  </div></div>
  </pre>
-
-Might need to start a new shell for this setup to take effect.
+_Note_ : You might need to restart your shell for this setup to take effect.
 
 #### zsh on MacOS and Oh My zsh
 
@@ -196,10 +195,9 @@ Might need to start a new shell for this setup to take effect.
  <div class="clipboardjs">
  mesheryctl system completion fish | source
  </div></div>
- </pre>
+ </pre><br>
 
 To load fish shell completions for each session, execute once:
-
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish

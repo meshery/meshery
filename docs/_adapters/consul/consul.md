@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Consul
+title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
 version: v1.8.2

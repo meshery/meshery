@@ -59,8 +59,10 @@ If you have an API key configured to restrict access to your Grafana boards, you
     - Import custom Grafana board via yaml
 * Configure graph panel preferences
 
+
 ### [Prometheus and Meshery]({{ site.baseurl }}/guides/meshery-metrics#expose-prometheus-service)
-Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or really... any metric that Prometheus has collected.
+
+Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to service meshes, Kubernetes, applications on the mesh or any other metric that Prometheus has collected.
 
 Once you have connected Meshery to your Prometheus deployment(s), you may perform ad-hoc connectivity tests to verify communication between Meshery and Prometheus.
 

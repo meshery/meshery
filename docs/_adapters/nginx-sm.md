@@ -1,6 +1,6 @@
 ---
 layout: default
-title: NGINX Service Mesh
+title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh
 version: v0.6.0

@@ -2,7 +2,7 @@
 layout: page
 title: 
 permalink: /
-display-title: false
+display-title: "false"
 ---
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}

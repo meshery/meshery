@@ -91,10 +91,18 @@
       url: guides/mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
+- title: Extensibility
+  url: extensibility
+  links:
+    - title: "Service Mesh Adapters"
+      url: extensibility/adapters
+    - title: "Load Generators"
+      url: extensibility/load-generators
+    - title: "Providers"
+      url: extensibility/providers
 - title: Reference
   url: reference
   links:
     - title: mesheryctl Command Reference
       url: reference/mesheryctl
-    - title: Extensibility
-      url: reference/extensibility
+    

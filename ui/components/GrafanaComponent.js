@@ -360,11 +360,13 @@ class GrafanaComponent extends Component {
               {/* <GrafanaCharts
                   boardPanelConfigs={selectedBoardsConfigs}
                   grafanaURL={grafanaURL} /> */}
-              <GrafanaCustomCharts
-                boardPanelConfigs={selectedBoardsConfigs}
-                grafanaURL={grafanaURL}
-                grafanaAPIKey={grafanaAPIKey}
-              />
+              <div style={{ padding: "0 1rem" }}>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={selectedBoardsConfigs}
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey}
+                />
+              </div>
             </React.Fragment>
           );
         }

@@ -11,13 +11,13 @@ image: /assets/img/platforms/minikube.png
 
 {% include installation_prerequisites.html %}
 
-## Setup and run Meshery on Minikube
+**To Setup and run Meshery on Minikube** :
 
 1. [Start Minikube](#1-start-minikube)
 1. [Configure Meshery to use minkube](#2-configure-meshery-to-use-minikube)
 1. [Run Meshery](#3-set-up-meshery)
 
-#### Compatibility
+##### Compatibility
 The following minimum component versions are required:
 
 <table id="compatibility-table">
@@ -39,10 +39,10 @@ The following minimum component versions are required:
   </tr>
 </table>
 
-### Steps
+## Steps
 Perform the following steps in order:
 
-#### 1. Start minikube
+### 1. Start minikube
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -52,7 +52,16 @@ Perform the following steps in order:
 
 *Note: minimum memory required is --memory=4096 (for Istio deployments only)*
 
-*Note: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server.*
+**Check up on your minikube cluster** :
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs"> minikube status </div></div></pre>
+
+### 2. Install Meshery
+
+Follow the [installation steps](/guides/mesheryctl) to setup the mesheryctl CLI and install Meshery.
+
+**Note**: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server :
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -60,26 +69,30 @@ Perform the following steps in order:
  </div></div>
  </pre>
 
-#### 2. Configure Meshery to use minikube
+### 2. Configure Meshery to use minikube
 
 1. Login to Meshery. Under your user profile, click *Get Token*.
-2. Use [mesheryctl]({{ site.baseurl }}/installation#using-mesheryctl) to configure Meshery to use minikube. Execute:
+
+2. Use [mesheryctl]({{ site.baseurl }}/installation#using-mesheryctl) to configure Meshery to use minikube. To allow Meshery to detect your config file, execute the following commands:
+
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  mesheryctl system config minikube -t ~/Downloads/auth.json
  </div></div>
  </pre>
-
-You may also manually generate and load kubeconfig file for Meshery to use:
-
-This configuration file will be used by Meshery.
-
+<br />
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  kubectl config view --minify --flatten > config_minikube.yaml
  </div></div>
  </pre>
+
+### Manual Steps
+
+You may also manually generate and load the kubeconfig file for Meshery to use:
+
+**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** : 
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -105,11 +118,14 @@ This configuration file will be used by Meshery.
  </div></div>
  </pre>
 
-Note: Make sure *current-context* is set to *minikube*.
+_Note_: Make sure *current-context* is set to *minikube*.
 
-### 3. Set up Meshery
+<br />
+**To allow Meshery to auto detect your config file, Run** :
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kubectl config view --minify --flatten > config_minikube.yaml
+ </div></div>
 
-Follow the [installation steps]({{ site.baseurl }}/installation) to install the mesheryctl CLI. 
-
+<br />
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
-

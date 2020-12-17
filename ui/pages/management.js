@@ -1,23 +1,15 @@
-import React from 'react';
-import MesheryPlayComponent from '../components/MesheryPlayComponent';
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import Head from 'next/head';
+import React from "react";
+import MesheryPlayComponent from "../components/MesheryPlayComponent";
+import { NoSsr } from "@material-ui/core";
+import Head from "next/head";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from "redux";
 import { getPath } from "../lib/path";
-
-const styles = {
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  }
-}
 class Manage extends React.Component {
   static getInitialProps = ({ query }) => {
     return { query };
-  }
+  };
   constructor(props) {
     super(props);
     if (!props.query.adapter) {
@@ -41,21 +33,16 @@ class Manage extends React.Component {
         <Head>
           <title>Management | Meshery </title>
         </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesheryPlayComponent adapter={this.props.query.adapter} />
-        </Paper>
+        <MesheryPlayComponent adapter={this.props.query.adapter} />
       </NoSsr>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    updatepagepath: bindActionCreators(updatepagepath, dispatch)
-  }
-}
+    updatepagepath: bindActionCreators(updatepagepath, dispatch),
+  };
+};
 
-export default withStyles(styles)(connect(
-  null,
-  mapDispatchToProps
-)(Manage));
+export default connect(null, mapDispatchToProps)(Manage);
