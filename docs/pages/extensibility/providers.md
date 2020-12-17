@@ -8,12 +8,53 @@ abstract: "Meshery offers support for more adapters than any other project or pr
 language: en
 list: include
 ---
-
-Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
+Meshery offers Providers as a point of extensibility. 
 
 ![Providers](/assets/img/providers/provider_screenshot.png)
 
-Eventually, Meshery will keep the implementation of Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
+### What functionality do Providers perform? 
+
+What a given Remote Provider offers might vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject different functionality - functionality specific to that provider.
+
+- Authentication and Authorization
+  - Examples: session management, two factor authentication, LDAP integration
+- Long-Term Persistence
+  - Examples: Storage and retrieval of performance test results
+  - Examples: Storage and retrieval of user preferences
+
+## Types of providers
+
+Two types of providers are defined in Meshery: `local` and `remote`. The Local provider is built-into Meshery. Remote providers are may be implemented by anyone or organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
+
+### Remote Providers
+
+Use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. Use a Remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people).
+
+Name: **“Meshery”** (default)
+
+- Enforces user authentication.
+- Long-term term persistence of test results.
+- Save environment setup.
+- Retrieve performance test results.
+- Retrieve conformance test results.
+- Free to use.
+
+### Local Provider
+
+Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
+
+Name: **“None”**
+
+- No user authentication.
+- Container-local storage of test results. Ephemeral.
+- Environment setup not saved.
+- No performance test result history.
+- No conformance test result history.
+- Free to use.
+## Building a Provider
+Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
+
+Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
 
 Providers as an object have the following attributes:
 
@@ -32,30 +73,4 @@ Providers as an object have the following attributes:
 }
 ```
 
-### What functionality do Providers perform? 
-- Authentication and Authorization
- - Examples: session management, two factor authentication, LDAP integration
-- Long-Term Persistence
- - Storage and retrieval of performance test results
- - Storage and retrieval of user preferences
-
-### Types of providers
-Two types of providers are defined in Meshery: local and remote.
-
-**Remote Providers**
-Name: “Meshery” (default)
-- Authentication and Authorization
-- Results long term persistence
-- Save environment setup
-- Retrieve performance test results
-- Free to use
-
-**Local Provider**
-Name: “None”
-- No Authentication
-- Local storage of results. Mainly ephemeral.
-- Environment setup not saved.
-- No performance test result history.
-- Free to use.
-
-Meshery provides the ability for you as a service mesh manager to customize your service mesh deployment.
+Meshery enables you as a service mesh owner to customize your service mesh deployment.

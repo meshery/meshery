@@ -97,9 +97,9 @@
     - title: "Service Mesh Adapters"
       url: extensibility/adapters
     - title: "Load Generators"
-      url: extensibililty/load-generators
+      url: extensibility/load-generators
     - title: "Providers"
-      url: extensibililty/providers
+      url: extensibility/providers
 - title: Reference
   url: reference
   links:
