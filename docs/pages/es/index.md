@@ -2,7 +2,7 @@
 layout: page
 title: Documentación en Español 🇲🇽
 permalink: es
-display-title: false
+display-title: "false"
 ---
 
 {% assign sorted_pages = site.pages | where: "language", "es" | sort: "name" | alphabetical %}

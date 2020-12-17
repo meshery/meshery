@@ -2,7 +2,7 @@
 layout: page
 title: Meshery Documentation
 permalink: /
-display-title: false
+display-title: "false"
 ---
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
