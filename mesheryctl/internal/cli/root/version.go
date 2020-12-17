@@ -22,6 +22,7 @@ import (
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -45,7 +46,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		return nil
+		return utils.PreReqCheck(cmd.Use)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
