@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Linkerd
+title: Meshery Adapter for Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
 version: v2.5.0

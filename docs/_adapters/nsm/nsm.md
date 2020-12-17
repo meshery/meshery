@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Network Service Mesh
+title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
 version: v0.2.1

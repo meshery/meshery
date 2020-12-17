@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Open Service Mesh
+title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
 version: OSM v0.5.0
