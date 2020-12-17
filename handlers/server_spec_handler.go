@@ -70,7 +70,7 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	if res.Outdated {
 		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Update to v", res.Current, ". Run `mesheryctl system update`")
 		promptLabel := fmt.Sprintf("Would you like to upgrade to v%s now?(y/n): ", res.Current)
-		fmt.Printf(promptLabel)
+		fmt.Printf("%s", promptLabel)
 		var result string
 		_, err := fmt.Scan(&result)
 		if err != nil {
