@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documentación en Español 🇲🇽
+title: 
 permalink: es
 display-title: false
 ---

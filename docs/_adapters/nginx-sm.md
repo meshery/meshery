@@ -30,7 +30,7 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
 - [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emoji.voto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{ site.baseurl }}//guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
     - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
 
 - [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
