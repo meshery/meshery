@@ -22,9 +22,9 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 **Types of Extension Points:**
 
-1. [Providers](providers)
-1. [Load Generators](load-generators)
-1. [Adapters](adapters)
+1. [Providers]({{site.baseurl}}/extensibility/providers)
+1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
+1. [Adapters]({{site.baseurl}}/extensibility/adapters)
 1. [REST API](#rest-api)
 
 ## REST API
