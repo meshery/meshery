@@ -72,7 +72,7 @@ Released on 29 November 2020
   - Added reset function call in update @Sudhish2101 (#1987)
   - fix: undefined error in perf results @kushthedude (#1982)
 
-- Maintenance
+- 🧰 Maintenance
 
   - CI: Modified to get star count in slack notification @SudhanAruna (#1988)
   - Bump next from 10.0.0 to 10.0.3 in /provider-ui @dependabot-preview (#1985)
@@ -103,12 +103,12 @@ Released on 24 November 2020
   - Replace the chart icon @Aisuko (#1955)
   - Reformat the rest of the adapter charts @Aisuko (#1917)
 
-- Bug Fixes
+- 🐛 Bug Fixes
 
   - fix: backend build for meshery @kushthedude (#1979)
   - fix: docker builds failures in CI @kushthedude (#1959)
 
-- Maintenance
+- 🧰 Maintenance
 
   - fix: backend build for meshery @kushthedude (#1979)
   - Bump start-server-and-test from 1.11.2 to 1.11.5 in /ui @dependabot-preview (#1939)
@@ -135,7 +135,7 @@ Released on 19 November 2020
   - Proposal for replacing kubescan with new implementation @utkarsh-pro (#1923)
   - Fix eslint error for "TemplateLiteral" and fix package-lock.json for billboard.js @ramrodo (#1921)
 
-- Maintenance
+- 🧰 Maintenance
 
   - Bump eslint from 7.6.0 to 7.13.0 in /ui @dependabot-preview (#1935)
   - Bump react-jss from 10.4.0 to 10.5.0 in /ui @dependabot-preview (#1941)
@@ -181,7 +181,7 @@ Released on 12 November 2020
   - [Docs] Add lightbox plugin @chandrashritii (#1903)
   - [provider-ui] Add e2e test to provider-ui to test modal @ramrodo (#1901)
 
-- Maintenance
+- 🧰 Maintenance
 
   - Bump @fortawesome/fontawesome-svg-core from 1.2.30 to 1.2.32 in /ui @dependabot-preview (#1888)
   - Bump notistack from 0.8.9 to 1.0.1 in /ui @dependabot-preview (#1850)
@@ -211,15 +211,15 @@ Released on 10 November 2020
   - Add permission to watch the nodes @Aisuko (#1893)
   - add shell completion command @WLun001 (#1877)
 
-- Bug Fixes
+- 🐛 Bug Fixes
 
   - fix: bash script to utilise dynamic input @kushthedude (#1875)
 
-- Maintenance
+- 🧰 Maintenance
 
   - [UI] Add e2e test for /userpreference @ramrodo (#1862)
 
-- Documentation
+- 📖 Documentation
 
   - Docs: add AKS installation instructions for Meshery @kushthedude (#1871)
 
@@ -255,12 +255,12 @@ Released on 8 November 2020
   - Translation of the minikube quick start page to es. @alonsolopezr (#1775)
   - [FIX - #1772] Missing Images in Documentation Overview Section @akashprasher (#1786)
 
-- Features
+- 🚀 Features
 
   - feat: add AKS support in mesheryctl @kushthedude (#1874)
   - fix: system status gives empty output if meshery is not running @kushthedude (#1812)
 
-- Maintenance
+- 🧰 Maintenance
 
   - Bump react-lazyload from 2.6.8 to 3.1.0 in /ui @dependabot-preview (#1848)
   - Bump react from 16.13.1 to 16.14.0 in /provider-ui @dependabot-preview (#1829)
@@ -308,12 +308,12 @@ Released on 29 October 2020
   - Bump the chart version and add mesheryconsul adapter @Aisuko (#1781)
   - [provider-ui] - Add Integration test for Provider UI @ramrodo (#1778)
 
-- Bug Fixes
+- 🐛 Bug Fixes
 
   - Generate meshery config dir at mesheryctl init @nitishm (#1780)
   - fix: ubuntu sh is linked to dash @kushthedude (#1777)
 
-- Documentation
+- 📖 Documentation
 
   - [Docs] Architecture diagrams @leecalcote (#1783)
 
@@ -366,11 +366,11 @@ Released on 23 October 2020
   - [mesheryctl] #1708 version command add indicator to user @cardinalion (#1710)
   - [mesheryctl] Fix command provides invalid upgrade prompt #1707 @cardinalion (#1709)
 
-- Features
+- 🚀 Features
 
   - [Docs] feature update @chandrashritii (#1719)
 
-- Documentation
+- 📖 Documentation
 
   - [Docs] feature update @chandrashritii (#1719)
 
@@ -394,7 +394,7 @@ Released on 20 October 2020
   - [Docs] Update windows installation guide for Meshery @chandrashritii (#1657)
   - Updated 'Kong' -> 'Kuma' @Neilblaze (#1681)
 
-- Documentation
+- 📖 Documentation
 
   - [mesheryctl] Generate cluster access for Minikube clusters @leecalcote (#1672)
 
@@ -451,14 +451,14 @@ Released on 3 October 2020
   - SMI table Tweaks @dhruv0000 (#1624)
     Conforming to Navigation Conformances @dhruv0000 (#1618)
 
-- Maintenance
+- 🧰 Maintenance
 
   - Bump github.com/sirupsen/logrus from 1.6.0 to 1.7.0 @dependabot-preview (#1621)
   - Bump google.golang.org/grpc from 1.31.1 to 1.32.0 @dependabot-preview (#1623)
   - Bump fortio.org/fortio from 1.6.8 to 1.8.1 @dependabot-preview (#1620)
   - Bump github.com/prometheus/common from 0.13.0 to 0.14.0 @dependabot-preview (#1622)
 
-- Documentation
+- 📖 Documentation
 
   - [Docs] Updated adapter docs @chandrashritii (#1614)
   - update meshery architecture diagrams @lolyparty (#1619)
@@ -483,7 +483,7 @@ Released on 28 September 2020
 
   - Fixed broken image Signed-off-by: Bart Kalanski bkalanski@gmail.com @bartkalanski (#1609)
 
-- Documentation
+- 📖 Documentation
 
   - Meshery releases documentation update w/ sign off @bartkalanski (#1607)
 
@@ -511,7 +511,7 @@ Released on 25 September 2020
   - “Add Load Generators Description ” @Annysah (#1533)
   - include supported operations @lolyparty (#1534)
 
-- Features
+- 🚀 Features
 
   - feat: package nighthawk with meshery @kushthedude (#1601)
   - feat: complete nighthawk integration with meshery @kushthedude (#1505)
@@ -519,19 +519,19 @@ Released on 25 September 2020
   - CI: establish edge release channel @kushthedude (#1570)
   - feat: add deployment yamls for meshery-kuma adapter @kushthedude (#1539)
 
-- Bug Fixes
+- 🐛 Bug Fixes
 
   - fix: welcome bot configuration @kushthedude (#1592)
   - fix: docker build arguement missing @kushthedude (#1575)
   - Fix: build and release pipelines of Meshery @kushthedude (#1572)
   - fix: k8s deployment for osm @kushthedude (#1525)
 
-- Maintenance
+- 🧰 Maintenance
 
   - fix: welcome bot configuration @kushthedude (#1592)
   - CI: establish edge release channel @kushthedude (#1570)
 
-- Documentation
+- 📖 Documentation
 
   - Kumarabd/feature/smi test persistence @kumarabd (#1578)
   - added release notes v0.4.3 @anshdhinhgra47 (#1600)
@@ -562,7 +562,7 @@ Released on 3 September 2020
   - ADDED SMI CONFORMANCE FEATURE @was-coder (#1518)
   - feat: close drawer after clear all notification @PmcFizz (#1515)
 
-- Features
+- 🚀 Features
 
   - feat: Add pre-commit hook for lint @kushthedude (#1107)
 
@@ -588,7 +588,7 @@ Released on 2 September 2020
   - removed 'common issues' heading and fixed typo @tim-hanke (#1477)
   - Merge master into meshmap @kushthedude (#1472)
 
-- Maintenance
+- 🧰 Maintenance
 
   - Bump github.com/gorilla/mux from 1.7.4 to 1.8.0 @dependabot-preview (#1508)
   - Bump google.golang.org/grpc from 1.31.0 to 1.31.1 @dependabot-preview (#1507)
@@ -602,26 +602,26 @@ Released on 27 August 2020
 
 **What's new ?**
 
-- Features
+- 🚀 Features
 
   - Added timeout in golang-ci lint
   - Moved to Gorilla/mux for server routing
   - Migrated to golangci-lint
   - Initialised nighthawk load generator interface
 
-- Maintenance
+- 🧰 Maintenance
 
   - Updated meshmap branch to latest on master branch
   - Made page heading title bold
   - Moved meshery adapter for osm
 
-- Documentation
+- 📖 Documentation
 
   - Added extra RVM notes for Windows Users
   - Added SMI screenshot and description
   - Added the current version of osm
 
-- Bug fixes
+- 🐛 Bug Fixes
   - Auto detecting kube configuration
   - Fixed the footer social bar
 
@@ -631,21 +631,21 @@ Released on 22 August 2020
 
 **What's new ?**
 
-- Features
+- 🚀 Features
 
   - Use Open Service Mesh in place of osm
   - Duration field use dropdown + text in performance preference
   - Added tooltips for navigation menu items while in minimised state
   - Added community calendar button
 
-- Documentation
+- 📖 Documentation
 
   - Doc pages fixed
   - Updated README.md
   - Added first timers' and welcome guide link
   - Added "Open Service Mesh" to navigation menu in Meshery docs
 
-- Bug fixes
+- 🐛 Bug Fixes
   - smi-conformance - added Colons to front matter
   - Missing bottom row added
 
@@ -655,7 +655,7 @@ Released on 17 August 2020
 
 **What's new?**
 
-- Features
+- 🚀 Features
 
   - Update CRUD operations on test config
   - Fix for unwanted snackbar in perf preferences tab
@@ -663,13 +663,13 @@ Released on 17 August 2020
   - Initialize OSM adapter for Meshery
   - Add new command restart to mesheryctl
 
-- Maintenance
+- 🧰 Maintenance
 
   - Fix broken ci for ui tests
   - Optimize images
   - Remove redundant step from docker push
 
-- Documentation
+- 📖 Documentation
 
   - Remove broken links from table of supported platforms
   - Remove example of brew upgrade mesheryctl output
@@ -682,7 +682,7 @@ Released on 17 August 2020
   - Add Open Service Mesh to list
   - Fix typo error in App Mesh Adapter description
 
-- Bug Fixes
+- 🐛 Bug Fixes
   - Create/Delete/Read on user test profiles
   - Fix for the results page
   - Fix releaseDrafter configuration file
@@ -693,7 +693,7 @@ Released on 8 August 2020
 
 **What's new ?**
 
-- Documentation
+- 📖 Documentation
   - Typo and error fixes
 
 ### [v0.4.0-beta.4](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.4)
@@ -702,7 +702,7 @@ Released on 9 July 2020
 
 **What's new ?**
 
-- Bug Fixes
+- 🐛 Bug Fixes
   - hotfix: Meshery settings page not building
 
 ### [v0.4.0-beta.3](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.3)
@@ -711,7 +711,7 @@ Released on 8 July 2020
 
 **What's new ?**
 
-- Bug Fixes
+- 🐛 Bug Fixes
   - Hotfix of bug introduced in Release v0.4.0-beta.2
 
 ### [v0.4.0-beta.2](https://github.com/layer5io/meshery/releases/tag/v0.4.0-beta.2)
@@ -724,7 +724,7 @@ Released on 8 July 2020
   - Added initial kubeconfig.
 - Mesheryctl
   - Removed fatal error due to missing `meshery.yaml`.
-- Documentation
+- 📖 Documentation
   - Updated Kuma adapter logo in Meshery Docs.
   - Added network ports to the adapters table.
   - Added providers screenshot.
@@ -904,7 +904,7 @@ Released on 1 May 2020
   - Homebrew support available for mesheryctl.
 - Meshery Server
   - Meshery Adapter for Octarine released as stable.
-- Documentation
+- 📖 Documentation
   - Revised quick start guide for Mac, Linux and Windows.
   - WSL2 support published.
   - GKE kubeconfig generation script switched to `--decode`.
@@ -1001,7 +1001,7 @@ Released on 1 May 2020
 
 **What's new?**
 
-- Documentation site segragated
+- 📖 Documentation site segragated
 
 * content laid out.
 
