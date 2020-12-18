@@ -29,7 +29,7 @@ var createContextCmd = &cobra.Command{
 		configuration.Contexts[args[0]] = models.Context{BaseMesheryURL: url}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
-		viper.Set("currentcontext", args[0])
+		viper.Set("currentcontext", configuration.CurrentContext)
 		err := viper.WriteConfig()
 
 		return err
