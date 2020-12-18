@@ -11,8 +11,8 @@ const initialState = fromJS({
   user: {},
   k8sConfig: {
     inClusterConfig: false,
-    k8sfile: '', 
-    contextName: '', 
+    k8sfile: '',
+    contextName: '',
     clusterConfigured: false,
     configuredServer: '',
     ts: new Date(),
@@ -56,6 +56,7 @@ const initialState = fromJS({
   staticPrometheusBoardConfig: {},
   anonymousUsageStats: true,
   anonymousPerfResults: true,
+  startOnZoom: true,
   showProgress: false,
 
 });
@@ -77,6 +78,7 @@ export const actionTypes = {
   UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
   UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
   UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
+  START_ON_ZOOM: 'START_ON_ZOOM',
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
 }
@@ -113,6 +115,8 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ anonymousUsageStats: action.anonymousUsageStats });
     case actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS:
       return state.mergeDeep({ anonymousPerfResults: action.anonymousPerfResults });
+    case actionTypes.START_ON_ZOOM:
+      return state.mergeDeep({ startOnZoom: action.startOnZoom });
     case actionTypes.UPDATE_ADAPTERS_INFO:
       // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       state = state.updateIn(['meshAdapters'], val => fromJS([]));
@@ -130,18 +134,18 @@ export const reducer = (state = initialState, action) => {
       //   lg += `- indices: ${JSON.stringify(Object.keys(action.results[pg]))}`;
       // });
       // alert(lg);
-      
+
       // if (typeof rs[action.page] === 'undefined'){
       //   rs[action.page] = {};
       // }
-      if (Object.keys(action.results).length > 0){
+      if (Object.keys(action.results).length > 0) {
         // const rs = state.get('results_selection').toObject();
         // rs[action.page] = action.results;
         return state.updateIn(['results_selection', action.page], val => action.results);
       } else {
         return state.deleteIn(['results_selection', action.page]);
       }
-    case actionTypes.UPDATE_GRAFANA_CONFIG:
+    case actionTypes.UPDATE_GRAFANA_CONFIG: SecondaryDrawer
       action.grafana.ts = new Date();
       return state.updateIn(['grafana'], val => fromJS(action.grafana));
 
@@ -153,85 +157,89 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['staticPrometheusBoardConfig'], val => fromJS(action.staticPrometheusBoardConfig));
     case actionTypes.CLEAR_RESULTS_SELECTION:
       state = state.deleteIn(['results_selection']);
-      return state.mergeDeep({results_selection: fromJS({})});
+      return state.mergeDeep({ results_selection: fromJS({}) });
 
     case actionTypes.UPDATE_PROGRESS:
-      return state.mergeDeep({showProgress: action.showProgress});
-    
-      // case actionTypes.UPDATE_SMI_RESULT:
-      //   console.log(`received an action to update smi result`,action.smi_result);
-      //   if(action.smi_result!==undefined)
-      //     return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
-      //   else
-      //     return state
-    
+      return state.mergeDeep({ showProgress: action.showProgress });
+
+    // case actionTypes.UPDATE_SMI_RESULT:
+    //   console.log(`received an action to update smi result`,action.smi_result);
+    //   if(action.smi_result!==undefined)
+    //     return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
+    //   else
+    //     return state
+
     default:
       return state
   }
 }
 
 // ACTION CREATOR
-export const updatepagepath = ({path}) => dispatch => {
+export const updatepagepath = ({ path }) => dispatch => {
   // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type: actionTypes.UPDATE_PAGE, path });
 }
 
-export const updatepagetitle = ({path, title}) => dispatch => {
+export const updatepagetitle = ({ path, title }) => dispatch => {
   // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type: actionTypes.UPDATE_TITLE, title });
 }
 
-export const updateProgress = ({showProgress}) => dispatch => {
+export const updateProgress = ({ showProgress }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
 }
 
-export const updateUser = ({user}) => dispatch => {
+export const updateUser = ({ user }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_USER, user });
 }
 
-export const updateK8SConfig = ({k8sConfig}) => dispatch => {
+export const updateK8SConfig = ({ k8sConfig }) => dispatch => {
   console.log("Update K8s config action");
   return dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
 }
 
-export const updateLoadTestData = ({loadTest}) => dispatch => {
+export const updateLoadTestData = ({ loadTest }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_LOAD_TEST_DATA, loadTest });
 }
 
-export const updateLoadTestPref = ({loadTestPref}) => dispatch => {
+export const updateLoadTestPref = ({ loadTestPref }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
 }
-export const updateAnonymousUsageStats = ({anonymousUsageStats}) => dispatch => {
+export const updateAnonymousUsageStats = ({ anonymousUsageStats }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats });
 }
-export const updateAnonymousPerformanceResults = ({anonymousPerfResults}) => dispatch => {
+export const updateAnonymousPerformanceResults = ({ anonymousPerfResults }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS, anonymousPerfResults });
 }
 
-export const updateAdaptersInfo = ({meshAdapters}) => dispatch => {
+export const updateStartOnZoom = ({ startOnZoom }) => dispatch => {
+  return dispatch({ type: actionTypes.START_ON_ZOOM, startOnZoom });
+}
+
+export const updateAdaptersInfo = ({ meshAdapters }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters });
 }
 // export const updateMeshResults = ({startKey, results}) => dispatch => {
 //   return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
 // }
-export const updateResultsSelection = ({page, results}) => dispatch => {
+export const updateResultsSelection = ({ page, results }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_RESULTS_SELECTION, page, results });
 }
 // export const deleteFromResultsSelection = ({page, index}) => dispatch => {
 //   return dispatch({ type: actionTypes.DELETE_RESULTS_SELECTION, page, index });
 // }
 export const clearResultsSelection = () => dispatch => {
-  return dispatch({ type: actionTypes.CLEAR_RESULTS_SELECTION});
+  return dispatch({ type: actionTypes.CLEAR_RESULTS_SELECTION });
 }
-export const updateGrafanaConfig = ({grafana}) => dispatch => {
+export const updateGrafanaConfig = ({ grafana }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana });
 }
 
-export const updatePrometheusConfig = ({prometheus}) => dispatch => {
+export const updatePrometheusConfig = ({ prometheus }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus });
 }
 
-export const updateStaticPrometheusBoardConfig = ({staticPrometheusBoardConfig}) => dispatch => {
+export const updateStaticPrometheusBoardConfig = ({ staticPrometheusBoardConfig }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_STATIC_BOARD_CONFIG, staticPrometheusBoardConfig });
 }
 
@@ -271,7 +279,7 @@ export const resultsMerge = (arr1, arr2) => {
   const keys = {}
   var arr = [];
   const compareAndAdd = (a) => {
-    if (typeof keys[a.meshery_id] === 'undefined'){
+    if (typeof keys[a.meshery_id] === 'undefined') {
       keys[a.meshery_id] = true;
       arr = arr.push(a);
     }

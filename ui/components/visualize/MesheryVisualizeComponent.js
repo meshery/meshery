@@ -14,9 +14,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import elementsJson from './Elements';
 import dagre from 'cytoscape-dagre';
 import clsx from 'clsx';
-import {
-  TopologyIcon,
-} from '@patternfly/react-icons';
+import { TopologyIcon } from '@patternfly/react-icons';
 import { Paper } from '@material-ui/core';
 import PrimaryDrawer from './drawer/PrimaryDrawer';
 import SecondaryDrawer from './drawer/SecondaryDrawer'

@@ -42,6 +42,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.8",
+    "@paciolan/remote-component": "^2.10.2",
     "@patternfly/react-core": "^4.63.3",
     "@patternfly/react-icons": "^4.7.22",
     "@zeit/next-css": "^1.0.1",

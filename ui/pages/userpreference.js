@@ -1,4 +1,4 @@
-import UserPreference from "../components/UserPreference";
+import RemoteUserPref from "../components/RemoteUserPref";
 import { NoSsr, withStyles } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -68,7 +68,7 @@ class UserPref extends React.Component {
           <title>Preferences | Meshery</title>
         </Head>
         <div className={this.props.classes.paper}>
-          <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats} startOnZoom={startOnZoom}/>
+          <RemoteUserPref anonymousStats={anonymousStats} perfResultStats={perfResultStats} startOnZoom={startOnZoom}/>
         </div>
       </NoSsr>
     );

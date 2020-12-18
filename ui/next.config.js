@@ -16,4 +16,13 @@ module.exports = compose([
         '/404': { page: '/_error' },
       }
     }
+  },
+  {
+    webpack: (config) => {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "remote-component.config.js": __dirname + "/remote-component.config.js"
+      }
+      return config
+    }
   }]);
