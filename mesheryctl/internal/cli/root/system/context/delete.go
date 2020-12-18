@@ -26,7 +26,3 @@ var deleteContextCmd = &cobra.Command{
 		return err
 	},
 }
-
-func init() {
-
-}

@@ -35,9 +35,9 @@ var (
 // ContextCmd represents the update command
 var ContextCmd = &cobra.Command{
 	Use:   "context",
-	Short: "Switch between different meshery contexts",
-	Long:  `Switch between different meshery server version hosted on different URLs.`,
-	Args:  cobra.NoArgs,
+	Short: "Operate on multiple meshery contexts",
+	Long:  `Operate between different meshery server version hosted on different URLs.`,
+	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
@@ -65,6 +65,7 @@ func init() {
 	availableSubcommands = []*cobra.Command{
 		createContextCmd,
 		deleteContextCmd,
+		switchContextCmd,
 	}
 	ContextCmd.AddCommand(availableSubcommands...)
 }
