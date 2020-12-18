@@ -4,6 +4,9 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import GraphStyle from './styles/styleContainer';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
 import cytoscape from 'cytoscape';
 import cxtmenu from 'cytoscape-cxtmenu';
@@ -22,7 +25,7 @@ import PrimaryDrawer from './drawer/PrimaryDrawer';
 import SecondaryDrawer from './drawer/SecondaryDrawer'
 import PerformanceModal from './PerformanceModal';
 import Terminal from './terminal';
-import GraphQL from './GraphqlData';
+import GraphQL from './queries/GraphqlData';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -133,8 +136,24 @@ class MesheryVisualizeComponent extends React.Component {
       urlForModal: '',
       elements: {},
 
-      queryLayout: 'layout1',
-      queryFilter: {},
+      queryView: 'view1',
+      queryFilter: {
+        nodeID: "",
+        namespaceID: "",
+        deploymentID: "",
+        showClusters: true,
+        showNamespaces: true,
+        showNodes: true,
+        showDeployments: true,
+        showPods: true,
+      },
+      filterType: [
+        'Clusters',
+        'Namespaces',
+        'Nodes',
+        'Deployments',
+        'Pods',
+      ],
     }
     this.prev = null;
   }
@@ -166,8 +185,6 @@ class MesheryVisualizeComponent extends React.Component {
 
   fit() {
     this.cy.fit()
-    
-
   }
 
   saveGraph() {
@@ -208,9 +225,9 @@ class MesheryVisualizeComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
-    if(name == "queryLayout" && event.target.value) {
-      this.setState({queryLayout: event.target.value})
-      this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
+    if(name == "queryView" && event.target.value) {
+      this.setState({queryView: event.target.value})
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
     } else if(name == "queryFilter") {
       let filter = {}
       event.target.value.split(";").map( data => {
@@ -220,20 +237,43 @@ class MesheryVisualizeComponent extends React.Component {
       }
       )
       this.setState({queryFilter: filter})
-      this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
+    } else if (name == "filterType") {
+      this.setState({filterType: event.target.value})
+      let query = {
+        showClusters: false,
+        showNamespaces: false,
+        showNodes: false,
+        showDeployments: false,
+        showPods: false,
+      }
+      event.target.value.map(type => {
+        query["show"+ type]=true
+      })
+      this.setState((prev) => ({queryFilter: {...prev.queryFilter, ...query}}))
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
+    } else if(name=="fetchQuery") {
+      let cyData = GraphQL.getData(this.state.queryView, this.state.queryFilter)
+      this.setState({elements: cyData})
+    }
+    
+    else {
+      let query = {}; query[name] = event.target.value
+      this.setState((prev) => ({queryFilter: {...prev.queryFilter, ...query}}))
+      this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
     }
   }
 
   componentDidMount() {
     this.setState({logs: logsJson.logs.join('\n')});
-    this.setState((prev) => ({elements: GraphQL.getData(prev.queryLayout, prev.queryFilter)}), () => console.log(this.state.elements));
+    this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
   }
 
   
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, tab , elements, queryLayout} = this.state;
+    const { layout, open, data, tab , elements, queryView, filterType} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
 
     //Checkout the docs at https://github.com/cytoscape/cytoscape.js-cxtmenu/blob/master/demo-adaptative.html
@@ -300,16 +340,15 @@ class MesheryVisualizeComponent extends React.Component {
                 id="layout"
                 name="layout"
                 label="Layout"
-                value={queryLayout}
+                value={queryView}
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleChange('queryLayout')}
               >
-                <MenuItem value="layout1">Layout 1</MenuItem>
-                <MenuItem value="layout2">Layout 2</MenuItem>
-                <MenuItem value="layout3">Layout 3</MenuItem>
+                <MenuItem value="view1">View 1</MenuItem>
+                <MenuItem value="view3">View 2</MenuItem>
               </TextField>
-              <TextField
+              {/* <TextField
                 id="filter"
                 name="filter"
                 label="Filter"
@@ -317,7 +356,48 @@ class MesheryVisualizeComponent extends React.Component {
                 variant="outlined"
                 onChange={this.handleChange('queryFilter')}
               >
-              </TextField>
+              </TextField> */}
+              {/* <InputLabel id="filter-type">Filter Type</InputLabel> */}
+              <Select
+                labelId="filter-type"
+                id="filter-type"
+                label="Filter Type"
+                multiple
+                value={filterType}
+                onChange={this.handleChange('filterType')}
+                input={<Input />}
+              >
+                {[
+                  'Clusters',
+                  'Namespaces',
+                  'Nodes',
+                  'Deployments',
+                  'Pods',
+                ].map((name) => (
+                  <MenuItem key={name} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <TextField
+                label="Node"
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('nodeID')}
+              ></TextField>
+              <TextField
+                label="Namespace"
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('namespaceID')}
+              ></TextField>
+              <TextField
+                label="Deployment"
+                margin="normal"
+                variant="outlined"
+                onChange={this.handleChange('deploymentID')}
+              ></TextField>
+              <Button onClick={this.handleChange('fetchQuery')}>Fetch Query</Button>
             </Paper>
           </div>
           <div className={classes.div}>
