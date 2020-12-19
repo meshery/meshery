@@ -60,18 +60,64 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 Providers as an object have the following attributes:
 
+All provider
+
 ```
-{
- id: aower2-1234xd-1234 [guid] 	# future consideration
- type: local, [ local | remote ]
- display-name: "None", [ string ]
- description: "Default Provider
-   - feature 1 
-   - feature 2", [ multi-line string ] 
- capabilities: [ 			# future consideration
-    {featureName:"perf_results", present: true}, 
-    {featureName:"two_factor_auth", present: true}
-   ]
+
+ {
+ "provider-type": "remote",
+ "package-version": "v0.1.0",
+ "package-url":"https://s3-bucket-rp1234.aws.amazon.com/42/remote-provider-package.tar.gz",
+ "provider-name": "Meshery",
+ "provider-description": [
+   "persistent sessions",
+   "save environment setup",
+   "retrieve performance test results",
+   "free use"
+ ],
+ "extensions": { 
+    "navigator": [
+          {
+            "title":"MeshMap", 
+            "href":"/meshmap", 
+            "icon":"navigator/img/meshmap.svg",
+            "link:": true,
+            "show": true,
+            "children": {
+                "viewSingleMesh": [  
+                  {
+                    "title":"View: Multi-Mesh", 
+                    "href":{
+                      "uri": "/meshmap/mesh/all",
+                      "external": false
+                    }, 
+                    "icon":"navigator/img/meshmap-all.svg",
+                    "link": false,
+                    "show": true
+                  }
+                ],
+                "viewMultiMesh": [  
+                  {
+                    "title":"View: Single Mesh", 
+                    "href":"https://layer5.io/meshmap/mesh/single",
+                    "icon":"/img/meshmap-single.svg",
+                    "link:": false,
+                    "show": true
+                  }
+                ]
+            }
+          }
+    ],
+    "userprefs": [
+      {
+        "component": "userpref/meshmap-preferences.js"
+      }
+    ]
+}, 
+"capabilities": [
+      {"perf-test-history":"true", "endpoint":"/performance/results"}, 
+      {"smi-conformance-history":"true","endpoint":"/conformance/results"}
+    ]
 }
 ```
 
