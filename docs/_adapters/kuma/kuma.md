@@ -6,12 +6,15 @@ mesh_name: Kuma
 version: v1.0
 port: 10007/tcp
 project_status: beta
+lab: kuma-meshery-adapter
 github_link: https://github.com/layer5io/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 

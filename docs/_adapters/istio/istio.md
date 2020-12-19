@@ -6,12 +6,16 @@ version: v1.8.1
 mesh_name: Istio
 port: 10000/tcp
 project_status: stable
+lab: istio-meshery-adapter
 github_link: https://github.com/layer5io/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
+
 ## Features
 
 1. {{page.mesh_name}} Lifecycle Management

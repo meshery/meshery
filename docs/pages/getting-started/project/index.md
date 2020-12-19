@@ -25,10 +25,13 @@ If this is your first time making open source contribution, you are in the right
 
 Please see our [contributing guide](/docs/project/contributing) for more details.
 
-
 ## Presentations
 
-Past presentations of Meshery: 
+<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<div style="text-align:center;width:100%"><emphasis>Delivered at Service Mesh Day 2019</emphasis></div>
+
+Past presentations of Meshery:
 
 - [O'Reilly OSCON 2020](https://conferences.oreilly.com/oscon/oscon-or)
 - [O'Reilly Infrastructure & Ops 2020](https://conferences.oreilly.com/infrastructure-ops/io-ca/public/schedule/speaker/226795)
@@ -53,7 +56,7 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 
 <div class="wrapper">
     <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview l5-dark-yellow">Access slides and resources</div></a>
+    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview">Access slides and resources</div></a>
 </div>
 
 <!-- 

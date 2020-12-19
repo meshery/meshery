@@ -6,12 +6,15 @@ mesh_name: Consul
 version: v1.8.2
 port: 10002/tcp
 project_status: stable
+lab: consul-meshery-adapter
 github_link: https://github.com/layer5io/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 
