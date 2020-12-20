@@ -55,7 +55,7 @@
     "jss": "latest",
     "minimist": ">=1.2.2",
     "moment": "^2.29.1",
-    "mui-datatables": "^3.7.1",
+    "mui-datatables": "^3.7.3",
     "next": "^10.0.1",
     "next-compose": "0.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.3",
