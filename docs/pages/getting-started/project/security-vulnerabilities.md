@@ -5,7 +5,7 @@ permalink: project/security-vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
 ---
 
-# Reporting a vulnerability
+# #Reporting a vulnerability
 We are very grateful to the security researchers and users that report
 back Meshery security vulnerabilities. We investigate every report thoroughly.
 

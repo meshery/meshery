@@ -4,9 +4,8 @@ title: Functionality
 permalink: functionality
 ---
 
-# Meshery Functionality
-
 These sections provide user guides to the functionality Meshery offers.
+## Meshery Functionality
 
 {% assign sorted_functionality = site.pages | sort: "functionality" %}
 
@@ -18,6 +17,6 @@ These sections provide user guides to the functionality Meshery offers.
     {% endfor %}
 </ul>
 
-{% include toc.html page=functionality %}
+<!-- {% include toc.html page=functionality %} -->
 
-{:toc}
+<!-- {:toc} -->

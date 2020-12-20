@@ -5,8 +5,10 @@ permalink: service-meshes
 type: service-mesh
 list: exclude
 ---
-## Support for Service Meshes
+
+
 As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
+## Support for Service Meshes
 
 | Service Mesh  | Service Mesh Version  |
 | :------------ | :------------: |

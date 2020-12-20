@@ -7,7 +7,7 @@ language: es
 type: project
 ---
 
-## Informar una vulnerabilidad
+# Informar una vulnerabilidad
 
 Estamos muy agradecidos con quienes investigan temas de seguridad y quienes informan
 sobre las vulnerabilidades de seguridad de Meshery. Investigamos cada informe a fondo.

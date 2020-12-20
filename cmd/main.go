@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshery/nats"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -161,6 +162,21 @@ func main() {
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
+
+	// subscribing to nats
+	natsClient, err := nats.New("<server-url>")
+	if err != nil {
+		logrus.Printf("Nats client create error %v", err)
+	} else {
+		err = natsClient.Subscribe("cluster")
+		if err != nil {
+			logrus.Printf("Error subscribing to cluster %v", err)
+		}
+		err = natsClient.Subscribe("istio")
+		if err != nil {
+			logrus.Printf("Error subscribing to istio %v", err)
+		}
+	}
 
 	go func() {
 		logrus.Infof("Starting Server listening on :%d", port)

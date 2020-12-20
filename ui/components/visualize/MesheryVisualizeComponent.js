@@ -26,6 +26,8 @@ import SecondaryDrawer from './drawer/SecondaryDrawer'
 import PerformanceModal from './PerformanceModal';
 import Terminal from './terminal';
 import GraphQL from './queries/GraphqlData';
+import FormControl from '@material-ui/core/FormControl';
+import dataFetch from '../../lib/data-fetch';
 
 cytoscape.use(dagre)
 cytoscape.use(popper)
@@ -70,6 +72,15 @@ const style = (theme) => ({
     bottom: theme.spacing(2),
     left: theme.spacing(2),
     right: 'auto'
+  },
+
+  formControl: {
+    position: 'absolute',
+    top: 'auto',
+    bottom: theme.spacing(2),
+    left: '20%',
+    right: 'auto',
+    minWidth: 120,
   },
 
   layoutButton: {
@@ -154,8 +165,32 @@ class MesheryVisualizeComponent extends React.Component {
         'Deployments',
         'Pods',
       ],
+      zoomLevel: 1
     }
     this.prev = null;
+  }
+
+  async componentDidMount() {
+    await new Promise(resolve => {
+      dataFetch('/api/user/stats', {
+        credentials: 'same-origin',
+        method: 'GET',
+        credentials: 'include',
+      }, (result) => {
+        resolve();
+        if (typeof result !== 'undefined') {
+          this.setState({
+            zoomLevel: (result.meshMapPreferences.startOnZoom||false)? 2 : 1
+          })
+        }
+      },
+      // Ignore error because we will fallback to default state
+      // and to avoid try catch due to async await functions
+      resolve);
+    })
+    
+    this.setState({logs: logsJson.logs.join('\n')});
+    this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
   }
 
   toggleChildMenu(data, val) {
@@ -225,7 +260,9 @@ class MesheryVisualizeComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
-    if(name == "queryView" && event.target.value) {
+    if(name == "zoomLevel") {
+      this.setState({ zoomLevel: event.target.value});
+    } else if(name == "queryView" && event.target.value) {
       this.setState({queryView: event.target.value})
       this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
     } else if(name == "queryFilter") {
@@ -255,25 +292,17 @@ class MesheryVisualizeComponent extends React.Component {
     } else if(name=="fetchQuery") {
       let cyData = GraphQL.getData(this.state.queryView, this.state.queryFilter)
       this.setState({elements: cyData})
-    }
-    
-    else {
+    } else {
       let query = {}; query[name] = event.target.value
       this.setState((prev) => ({queryFilter: {...prev.queryFilter, ...query}}))
       this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
     }
   }
-
-  componentDidMount() {
-    this.setState({logs: logsJson.logs.join('\n')});
-    this.setState((prev) => ({elements: GraphQL.getData(prev.queryView, prev.queryFilter)}), () => console.log(this.state.elements));
-  }
-
   
 
   render() {
     const { classes } = this.props
-    const { layout, open, data, tab , elements, queryView, filterType} = this.state;
+    const { layout, open, data, tab , elements, zoomLevel ,queryView, filterType} = this.state;
     //Checkout the docs for JSON format https://js.cytoscape.org/#notation/elements-json
 
     //Checkout the docs at https://github.com/cytoscape/cytoscape.js-cxtmenu/blob/master/demo-adaptative.html
@@ -337,9 +366,9 @@ class MesheryVisualizeComponent extends React.Component {
             <Paper>
               <TextField
                 select
-                id="layout"
-                name="layout"
-                label="Layout"
+                id="view"
+                name="view"
+                label="View"
                 value={queryView}
                 margin="normal"
                 variant="outlined"
@@ -452,6 +481,37 @@ class MesheryVisualizeComponent extends React.Component {
                   }
                   this.cy.endBatch();
                 });
+                this.cy.fit(zoomLevel);
+                let zoom = zoomLevel;
+                if(zoom >= 2){
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0, "border-width": 0, 'background-image-opacity': 0});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":1, "border-width": 1});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'element'})
+                } else if (zoom < 2 && zoom >1){
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0.5, "border-width": 0, 'background-image-opacity': 0.5});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":0.5, "border-width": 1});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                } else {
+                  this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":1, "border-width": 0, 'background-image-opacity': 1});
+                  this.cy.elements("node[namespace = 'default']").style({"background-opacity":0, "border-width": 0});
+                  this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                }
+                this.cy.on('zoom', () => {
+                  let zoom = this.cy.zoom();
+                  if(zoom >= 2){
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0, "border-width": 0, 'background-image-opacity': 0});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":1, "border-width": 1});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'element'})
+                  } else if (zoom < 2 && zoom >1){
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":0.5, "border-width": 0, 'background-image-opacity': 0.5});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":0.5, "border-width": 1});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                  } else {
+                    this.cy.elements("node[nodeType = 'service mesh']").style({"background-opacity":1, "border-width": 0, 'background-image-opacity': 1});
+                    this.cy.elements("node[namespace = 'default']").style({"background-opacity":0, "border-width": 0});
+                    this.cy.edges("edge[namespace = 'default']").style({'display': 'none'})
+                  }
+                })
               }}
             />
           </div>
@@ -470,6 +530,18 @@ class MesheryVisualizeComponent extends React.Component {
             <Button onClick={this.zoomOut.bind(this)}>-</Button>
             <Button onClick={this.fit.bind(this)}>fit</Button>
           </ButtonGroup>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-helper-label">Zoom level</InputLabel>
+            <Select
+              labelId="zoom-select-helper-label"
+              id="zoom-select-helper"
+              value={zoomLevel}
+              onChange={this.handleChange("zoomLevel")}
+            >
+              <MenuItem value={1}>service mesh</MenuItem>
+              <MenuItem value={2}>services</MenuItem>
+            </Select>
+          </FormControl>
           <ToggleButtonGroup
             value={layout}
             exclusive

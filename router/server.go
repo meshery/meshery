@@ -116,6 +116,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
 
+	// meshsync endpoint
+	gMux.Handle("/api/v1/meshsync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshSyncHandler))))
+
 	gMux.Handle("/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)

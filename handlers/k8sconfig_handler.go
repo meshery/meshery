@@ -44,7 +44,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 	var k8sConfigBytes []byte
 	var contextName string
 	kc := &models.K8SConfig{
-		InClusterConfig: (inClusterConfig != ""),
+		InClusterConfig: inClusterConfig != "",
 	}
 
 	if inClusterConfig == "" {
@@ -173,7 +173,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		ct := &models.K8SContext{
 			ContextName:      contextName,
 			ClusterName:      contextVal.Cluster,
-			IsCurrentContext: (contextName == ccfg.CurrentContext),
+			IsCurrentContext: contextName == ccfg.CurrentContext,
 		}
 		contexts = append(contexts, ct)
 	}

@@ -4,8 +4,12 @@ title: Performance
 permalink: performance
 type: concepts
 published: false
+language: en
+list: include
 ---
+
 # Types of Load Generators
+
 ## Fortio
 * Why use Fortio?
 

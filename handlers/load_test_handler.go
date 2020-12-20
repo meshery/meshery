@@ -72,7 +72,7 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	testDuration, err := time.ParseDuration(perfTest.Duration)
 	if err != nil {
-		msg := "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
+		msg := "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
 		http.Error(w, msg, http.StatusBadRequest)

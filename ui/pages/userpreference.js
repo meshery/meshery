@@ -1,5 +1,5 @@
 import UserPreference from "../components/UserPreference";
-import { NoSsr, Paper, withStyles } from "@material-ui/core";
+import { NoSsr, withStyles } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
@@ -45,7 +45,8 @@ class UserPref extends React.Component {
         if (typeof result !== 'undefined') {
           this.setState({
             anonymousStats: result.anonymousUsageStats||false,
-            perfResultStats: result.anonymousPerfResults||false
+            perfResultStats: result.anonymousPerfResults||false,
+            startOnZoom: result.meshMapPreferences.startOnZoom||false
           })
         }
       },
@@ -56,7 +57,7 @@ class UserPref extends React.Component {
   }
 
   render () {
-    const {anonymousStats,perfResultStats}=this.state;
+    const {anonymousStats,perfResultStats,startOnZoom}=this.state;
     if(anonymousStats==undefined){
       // Skip rendering till data is not loaded
       return <div></div>
@@ -66,9 +67,9 @@ class UserPref extends React.Component {
         <Head>
           <title>Preferences | Meshery</title>
         </Head>
-        <Paper className={this.props.classes.paper}>
-          <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
-        </Paper>
+        <div className={this.props.classes.paper}>
+          <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats} startOnZoom={startOnZoom}/>
+        </div>
       </NoSsr>
     );
   }

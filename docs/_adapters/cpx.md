@@ -7,7 +7,7 @@ version: "1.0"
 port: 10008/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-cpx
-image: /docs/assets/img/service-meshes/citrix.svg
+image: /assets/img/service-meshes/citrix.svg
 ---
 
 {% include adapter-status.html %}
@@ -17,13 +17,13 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery Adapter for Citrix**
+##### Choose the Meshery Adapter for Citrix
 
 <a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
 </a>
 
-##### **Click on (+) and choose the `{{page.version}}` of the {{page.mesh_name}} service mesh.**
+##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
