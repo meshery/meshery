@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
+	"path"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -215,7 +217,13 @@ var configCmd = &cobra.Command{
 
 		// TODO: Assumes Mac or Linux. Make arch-specific
 		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := "$HOME/.meshery/kubeconfig.yaml"
+		configPath := ""
+		usr, err := user.Current()
+		if err != nil {
+			configPath = ".meshery/kubeconfig.yaml"
+		} else {
+			configPath = path.Join(usr.HomeDir, ".meshery/kubeconfig.yaml")
+		}
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)

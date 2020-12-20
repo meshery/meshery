@@ -166,7 +166,7 @@ func GenerateConfigEKS(region, cluster string) error {
 	set -e
 	set -o pipefail
 
-	TARGET_FOLDER="~/.meshery/"
+	TARGET_FOLDER="$HOME/.meshery/"
 	KUBECFG_FILE_NAME="$TARGET_FOLDER/kubeconfig.yaml"
 	KUBECONFIG=${KUBECFG_FILE_NAME}
 
@@ -179,7 +179,9 @@ func GenerateConfigEKS(region, cluster string) error {
 
 	create_update_kubeconfig() {
 		echo -e "\\nGenerating kubeconfig for EKS cluster ${CLUSTER_NAME}..."
-		aws eks --region ${REGION_NAME} update-kubeconfig --name ${CLUSTER_NAME} --kubeconfig ${KUBECONFIG}
+		aws eks --region ${REGION_NAME} update-kubeconfig --name ${CLUSTER_NAME} --kubeconfig ${KUBECONFIG} >/dev/null 2>&1 || \
+		(echo -e "\\naws CLI is not available on the system.\nInstall aws CLI and run 'mesheryctl system config eks' command again" && \
+		aws --version >/dev/null 2>&1)
 	}
 
 	create_target_folder
