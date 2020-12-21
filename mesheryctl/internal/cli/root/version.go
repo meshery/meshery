@@ -50,8 +50,8 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		url := mctlCfg.GetBaseMesheryURL()
-		build := mctlCfg.GetVersion().GetBuild()
-		commitsha := mctlCfg.GetVersion().GetCommitSHA()
+		build := version
+		commitsha := commitsha
 
 		version := cfg.Version{
 			Build:     "unavailable",
