@@ -83,7 +83,7 @@ wsl --set-default-version 2
 <b>Advertencia:</b>
 Se recomienda actualizar a <a href="#wsl2">WSL2</a> ya que WSL1 no soporta la aplicación Docker Desktop para Windows. En su lugar, solo soporta la versión obsoleta, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/).
 
-Si aun desea continuar, siga las instrucciones para <button onclick="HideToggleFunction()"><b>WSL1</b></button>
+Si aun desea continuar, siga las instrucciones para <button class="toggle-button" onclick="HideToggleFunction()"><b>WSL1</b></button>
 
 <div id="hiddendiv">
 <p>
@@ -137,7 +137,7 @@ export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
 
 #### 5. <a name="step5"><b>Instalar Meshery</b></a>
 
-Siga los [pasos de instalación](/docs/pages/es/installation/windows.md) para instalar el CLI mesheryctl. Luego, ejecute:
+Siga los [pasos de instalación]({{ site.baseurl }}/es/installation/windows.md) para instalar el CLI mesheryctl. Luego, ejecute:
 
 ```bash
 ./mesheryctl system start
