@@ -20,11 +20,11 @@ var switchContextCmd = &cobra.Command{
 		if !exists {
 			return errors.New("context requested to switch, does not exist")
 		}
-		if viper.GetString("currentcontext") == args[0] {
+		if viper.GetString("current-context") == args[0] {
 			return errors.New("already using context " + args[0])
 		}
 		configuration.CurrentContext = args[0]
-		viper.Set("currentcontext", configuration.CurrentContext)
+		viper.Set("current-context", configuration.CurrentContext)
 		log.Printf("switched to %s", args[0])
 		err := viper.WriteConfig()
 		return err

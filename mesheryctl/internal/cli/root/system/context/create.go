@@ -26,10 +26,10 @@ var createContextCmd = &cobra.Command{
 		if exists {
 			return errors.New("error adding context, a context with same name already exists")
 		}
-		configuration.Contexts[args[0]] = models.Context{BaseMesheryURL: url}
+		configuration.Contexts[args[0]] = models.Context{Endpoint: url}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
-		viper.Set("currentcontext", configuration.CurrentContext)
+		viper.Set("current-context", configuration.CurrentContext)
 		err := viper.WriteConfig()
 
 		return err
