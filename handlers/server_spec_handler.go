@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -79,7 +79,9 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 		if err != nil {
 			logrus.Error("Prompt failed %w\n", err)
 		}
-		if result != "n" {
+		result = strings.TrimSpace(result)
+		result = strings.ToLower(result)
+		if result != "n" && result != "no" {
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				logrus.Error("Unable to update meshery: %w", err)
