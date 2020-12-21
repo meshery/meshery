@@ -1,14 +1,21 @@
 package models
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,6 +23,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/util/homedir"
 )
 
 // RemoteProvider - represents a local provider
@@ -74,6 +82,21 @@ func (l *RemoteProvider) Initialize() {
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
 	}
+
+	// Location for the package to be stored
+	loc := path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
+
+	// Skip download if the file is already present
+	if _, err := os.Stat(loc); err == nil {
+		logrus.Debugf("[Initialize]: Package found at %s skipping download", loc)
+		return
+	}
+
+	logrus.Debugf("[Initialize]: Package not found at %s proceeding to download", loc)
+	// Download the provider package
+	if err := TarXZF(l.PackageURL, loc); err != nil {
+		logrus.Errorf("[Initialize]: Failed to download provider package %s", err)
+	}
 }
 
 // Name - Returns Provider's friendly name
@@ -118,7 +141,7 @@ func (l *RemoteProvider) SyncPreferences() {
 	}()
 }
 
-// GetProviderCapabilities proxies request to SAAS_BASE_URL/capabilities
+// GetProviderCapabilities returns all of the provider properties
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
 	encoder.Encode(l.ProviderProperties)
@@ -804,4 +827,87 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	}
 	logrus.Errorf("error while deleting testConfig: %s", testUUID)
 	return fmt.Errorf("error while deleting testConfig - Status code: %d, Body: %s", resp.StatusCode, testUUID)
+}
+
+// TarXZF takes in a source url downloads the tar.gz file
+// uncompresses and then save the file to the destination
+func TarXZF(srcURL, destination string) error {
+	filename := filepath.Base(srcURL)
+
+	// Check if filename ends with tar.gz or tgz extension
+	if !strings.HasSuffix(filename, "tar.gz") && !strings.HasSuffix(filename, "tgz") {
+		return fmt.Errorf("file is not of type tar.gz or tgz")
+	}
+
+	resp, err := http.Get(srcURL)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			logrus.Error(err)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("response code is not 200")
+	}
+
+	return TarXZ(resp.Body, destination)
+}
+
+// TarXZ takes in a gzip stream and untars and uncompresses it to
+// the destination directory
+//
+// If the destination doesn't exists, it will create it
+func TarXZ(gzipStream io.Reader, destination string) error {
+	if err := os.MkdirAll(destination, 0755); err != nil {
+		return err
+	}
+
+	uncompressedStream, err := gzip.NewReader(gzipStream)
+	if err != nil {
+		return err
+	}
+
+	tarReader := tar.NewReader(uncompressedStream)
+
+	for true {
+		header, err := tarReader.Next()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return err
+		}
+
+		loc := createDestinationPath(destination, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if err := os.Mkdir(loc, 0755); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			outFile, err := os.Create(loc)
+			if err != nil {
+				return err
+			}
+			defer outFile.Close()
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("unknown type: %s", string(header.Typeflag))
+		}
+	}
+
+	return nil
+}
+
+func createDestinationPath(dest, filename string) string {
+	return path.Join(dest, filename)
 }

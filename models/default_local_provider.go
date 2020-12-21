@@ -60,10 +60,10 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 	return l.ProviderProperties
 }
 
-// GetProviderCapabilities proxies request to SAAS_BASE_URL/capabilities
+// GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
-	logrus.Debug("[GetProviderCapabilities]: Local provider capabilities doesn't exist")
-	w.WriteHeader(http.StatusNotFound)
+	encoder := json.NewEncoder(w)
+	encoder.Encode(l.ProviderProperties)
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
