@@ -90,6 +90,8 @@ collections:
   es:
     output: true
     permalink: /:collection/:path
+  releases:
+    output: true
 
 # Defaults
 defaults:
