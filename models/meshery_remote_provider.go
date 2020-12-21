@@ -18,8 +18,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// MesheryRemoteProvider - represents a local provider
-type MesheryRemoteProvider struct {
+// RemoteProvider - represents a local provider
+type RemoteProvider struct {
+	ProviderProperties
 	*BitCaskPreferencePersister
 
 	SaaSTokenName string
@@ -52,39 +53,57 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+// Initialize function will initialize the RemoteProvider instance with the metadata
+// fetched from the remote providers capabilities endpoint
+func (l *RemoteProvider) Initialize() {
+	// Get the capabilities
+	saasURL, _ := url.Parse(l.SaaSBaseURL + "/capabilities")
+	resp, err := http.Get(saasURL.String())
+	if err != nil || resp.StatusCode != http.StatusOK {
+		logrus.Errorf("[Initialize]: Failed to get capabilities %s", err)
+		return
+	}
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			logrus.Errorf("[Initialize]: Failed to close response body %s", err)
+		}
+	}()
+
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&l.ProviderProperties); err != nil {
+		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
+	}
+}
+
 // Name - Returns Provider's friendly name
-func (l *MesheryRemoteProvider) Name() string {
-	return "Meshery"
+func (l *RemoteProvider) Name() string {
+	return l.ProviderName
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
-func (l *MesheryRemoteProvider) Description() string {
-	return `Provider: Meshery (default)
-	- persistent sessions 
-	- save environment setup 
-	- retrieve performance test results 
-	- free use`
+func (l *RemoteProvider) Description() []string {
+	return l.ProviderDescription
 }
 
 const tokenName = "token"
 
 // GetProviderType - Returns ProviderType
-func (l *MesheryRemoteProvider) GetProviderType() ProviderType {
-	return RemoteProviderType
+func (l *RemoteProvider) GetProviderType() ProviderType {
+	return l.ProviderType
 }
 
 // GetProviderProperties - Returns all the provider properties required
-func (l *MesheryRemoteProvider) GetProviderProperties() ProviderProperties {
-	var result ProviderProperties
-	result.ProviderType = l.GetProviderType()
-	result.DisplayName = l.Name()
-	result.Description = l.Description()
-	result.Capabilities = make([]Capability, 0)
-	return result
+func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
+	return l.ProviderProperties
 }
 
 // SyncPreferences - used to sync preferences with the remote provider
-func (l *MesheryRemoteProvider) SyncPreferences() {
+func (l *RemoteProvider) SyncPreferences() {
+	if !l.Capabilities.IsSupported(SyncPrefs) {
+		return
+	}
+
 	l.syncStopChan = make(chan struct{})
 	l.syncChan = make(chan *userSession, 100)
 	go func() {
@@ -99,18 +118,35 @@ func (l *MesheryRemoteProvider) SyncPreferences() {
 	}()
 }
 
+// GetProviderCapabilities proxies request to SAAS_BASE_URL/capabilities
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	encoder.Encode(l.ProviderProperties)
+}
+
 // StopSyncPreferences - used to stop sync preferences
-func (l *MesheryRemoteProvider) StopSyncPreferences() {
+func (l *RemoteProvider) StopSyncPreferences() {
+	if !l.Capabilities.IsSupported(SyncPrefs) {
+		return
+	}
+
 	l.syncStopChan <- struct{}{}
 }
 
-func (l *MesheryRemoteProvider) executePrefSync(tokenString string, sess *Preference) {
+func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
+	ep, exists := l.Capabilities.GetEndpointForFeature(SyncPrefs)
+	if !exists {
+		logrus.Warn("SyncPrefs is not a supported capability by provider:", l.ProviderName)
+		return
+	}
+
 	bd, err := json.Marshal(sess)
 	if err != nil {
 		logrus.Errorf("unable to marshal preference data: %v", err)
 		return
 	}
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/preferences")
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bytes.NewReader(bd))
 
 	// tokenString, err := l.GetToken(req)
@@ -129,7 +165,9 @@ func (l *MesheryRemoteProvider) executePrefSync(tokenString string, sess *Prefer
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
+//
+// It is assumed that every remote provider will offer this feature
+func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	tu := "http://" + r.Host + r.RequestURI
 
 	_, err := r.Cookie(tokenName)
@@ -150,7 +188,7 @@ func (l *MesheryRemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Req
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
+func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
 	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
@@ -185,7 +223,9 @@ func (l *MesheryRemoteProvider) fetchUserDetails(tokenString string) (*User, err
 }
 
 // GetUserDetails - returns the user details
-func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
+//
+// It is assumed that every remote provider will support this feature
+func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	token, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
@@ -198,7 +238,9 @@ func (l *MesheryRemoteProvider) GetUserDetails(req *http.Request) (*User, error)
 }
 
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
-func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
+//
+// It is assumed that each remote provider will support this feature
+func (l *RemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
 	if err != nil {
 		err = fmt.Errorf("session not found")
@@ -223,7 +265,7 @@ func (l *MesheryRemoteProvider) GetSession(req *http.Request) error {
 }
 
 // GetProviderToken - returns provider token
-func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *RemoteProvider) GetProviderToken(req *http.Request) (string, error) {
 	tokenVal, err := l.GetToken(req)
 	if err != nil {
 		return "", err
@@ -232,7 +274,9 @@ func (l *MesheryRemoteProvider) GetProviderToken(req *http.Request) (string, err
 }
 
 // Logout - logout from provider backend
-func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
+//
+// It is assumed that every remote provider will support this feature
+func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	ck, err := req.Cookie(tokenName)
 	if err == nil {
 		ck.MaxAge = -1
@@ -242,10 +286,17 @@ func (l *MesheryRemoteProvider) Logout(w http.ResponseWriter, req *http.Request)
 }
 
 // FetchResults - fetches results from provider backend
-func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistResults) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistResults, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResults)
+
 	logrus.Infof("attempting to fetch results from cloud")
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/results")
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	q := saasURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -291,7 +342,9 @@ func (l *MesheryRemoteProvider) FetchResults(req *http.Request, page, pageSize, 
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *MesheryRemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+//
+// Assuming that every remote provider will support this feature
+func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -308,10 +361,17 @@ func (l *MesheryRemoteProvider) FetchSmiResults(req *http.Request, page, pageSiz
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
+	if !l.Capabilities.IsSupported(PersistResult) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistResult, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResult)
+
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
 
-	saasURL, _ := url.Parse(fmt.Sprintf("%s/result/%s", l.SaaSBaseURL, resultID.String()))
+	saasURL, _ := url.Parse(fmt.Sprintf("%s/%s/%s", l.SaaSBaseURL, ep, resultID.String()))
 	logrus.Debugf("constructed result url: %s", saasURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
 
@@ -349,7 +409,14 @@ func (l *MesheryRemoteProvider) GetResult(req *http.Request, resultID uuid.UUID)
 }
 
 // PublishResults - publishes results to the provider backend synchronously
-func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+	if !l.Capabilities.IsSupported(PersistResult) {
+		logrus.Error("operation not available")
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistResult, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResult)
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -360,7 +427,7 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -399,7 +466,14 @@ func (l *MesheryRemoteProvider) PublishResults(req *http.Request, result *Mesher
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
-func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
+func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
+	if !l.Capabilities.IsSupported(PersistSMIResult) {
+		logrus.Error("operation not available")
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMIResult, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -410,7 +484,7 @@ func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, er
 	logrus.Infof("attempting to publish results to SaaS")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/smi/results")
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	tokenString, err := l.GetToken(nil)
 	if err != nil {
@@ -449,7 +523,14 @@ func (l *MesheryRemoteProvider) PublishSmiResults(result *SmiResult) (string, er
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously
-func (l *MesheryRemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
+func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResult) error {
+	if !l.Capabilities.IsSupported(PersistMetrics) {
+		logrus.Error("operation not available")
+		return fmt.Errorf("%s is not supported by provider: %s", PersistMetrics, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMetrics)
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
@@ -460,7 +541,7 @@ func (l *MesheryRemoteProvider) PublishMetrics(tokenString string, result *Meshe
 	logrus.Infof("attempting to publish metrics to SaaS")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
 
 	// tokenString, err := l.GetToken(req)
@@ -490,7 +571,11 @@ func (l *MesheryRemoteProvider) PublishMetrics(tokenString string, result *Meshe
 }
 
 // RecordPreferences - records the user preference
-func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+	if !l.Capabilities.IsSupported(SyncPrefs) {
+		logrus.Error("operation not available")
+		return fmt.Errorf("%s is not supported by provider: %s", SyncPrefs, l.ProviderName)
+	}
 	if err := l.BitCaskPreferencePersister.WriteToPersister(userID, data); err != nil {
 		return err
 	}
@@ -503,7 +588,7 @@ func (l *MesheryRemoteProvider) RecordPreferences(req *http.Request, userID stri
 }
 
 // TokenHandler - specific to remote auth
-func (l *MesheryRemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
 	tokenString := r.URL.Query().Get(tokenName)
 	logrus.Debugf("token : %v", tokenString)
 	ck := &http.Cookie{
@@ -517,7 +602,7 @@ func (l *MesheryRemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Requ
 }
 
 // UpdateToken - in case the token was refreshed, this routine updates the response with the new token
-func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
+func (l *RemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Request) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 
@@ -535,7 +620,7 @@ func (l *MesheryRemoteProvider) UpdateToken(w http.ResponseWriter, r *http.Reque
 }
 
 // ExtractToken - Returns the auth token and the provider type
-func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
+func (l *RemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 
@@ -561,7 +646,14 @@ func (l *MesheryRemoteProvider) ExtractToken(w http.ResponseWriter, r *http.Requ
 }
 
 // SMPTestConfigStore - persist test profile details to provider
-func (l *MesheryRemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
+		logrus.Error("operation not available")
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
 	data, err := json.Marshal(perfConfig)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal testConfig for shipping"))
@@ -570,7 +662,7 @@ func (l *MesheryRemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig
 
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -595,8 +687,15 @@ func (l *MesheryRemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig
 }
 
 // SMPTestConfigGet - retrieve a single test profile details
-func (l *MesheryRemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	q := saasURL.Query()
 	q.Add("test_uuid", testUUID)
 	saasURL.RawQuery = q.Encode()
@@ -635,8 +734,15 @@ func (l *MesheryRemoteProvider) SMPTestConfigGet(req *http.Request, testUUID str
 }
 
 // SMPTestConfigFetch - retrieve list of test profiles
-func (l *MesheryRemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	q := saasURL.Query()
 	q.Add("page", page)
 	q.Add("pageSize", pageSize)
@@ -666,8 +772,15 @@ func (l *MesheryRemoteProvider) SMPTestConfigFetch(req *http.Request, page, page
 }
 
 // SMPTestConfigDelete - tombstone a given test profile
-func (l *MesheryRemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user/test-config")
+func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
+	if !l.Capabilities.IsSupported(PersistSMPTestProfile) {
+		logrus.Error("operation not available")
+		return fmt.Errorf("%s is not supported by provider: %s", PersistSMPTestProfile, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+
+	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
 	q := saasURL.Query()
 	q.Add("test_uuid", testUUID)
 	saasURL.RawQuery = q.Encode()

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"path"
@@ -105,14 +106,15 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
+	saasBaseURLNone := viper.GetString("SAAS_BASE_URL_NONE")
 	lProv := &models.DefaultLocalProvider{
-		SaaSBaseURL:            saasBaseURL,
+		SaaSBaseURL:            saasBaseURLNone,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
 	}
+	lProv.Initialize()
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
@@ -121,22 +123,34 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	if saasBaseURL == "" {
-		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+	if saasBaseURLNone == "" {
+		logrus.Fatalf("SAAS_BASE_URL_NONE environment variable not set.")
 	}
-	cp := &models.MesheryRemoteProvider{
-		SaaSBaseURL:                saasBaseURL,
-		RefCookieName:              "meshery_ref",
-		SessionName:                "meshery",
-		TokenStore:                 make(map[string]string),
-		LoginCookieDuration:        1 * time.Hour,
-		BitCaskPreferencePersister: cPreferencePersister,
-		ProviderVersion:            "v0.3.14",
-		SmiResultPersister:         smiResultPersister,
+
+	saasBaseURLs := viper.GetStringSlice("SAAS_BASE_URLS")
+	for _, saasurl := range saasBaseURLs {
+		parsedURL, err := url.Parse(saasurl)
+		if err != nil {
+			logrus.Error(saasurl, "is invalid url skipping provider")
+			continue
+		}
+		cp := &models.RemoteProvider{
+			SaaSBaseURL:                parsedURL.String(),
+			RefCookieName:              parsedURL.Host + "_ref",
+			SessionName:                parsedURL.Host,
+			TokenStore:                 make(map[string]string),
+			LoginCookieDuration:        1 * time.Hour,
+			BitCaskPreferencePersister: cPreferencePersister,
+			ProviderVersion:            "v0.3.14",
+			SmiResultPersister:         smiResultPersister,
+		}
+
+		cp.Initialize()
+
+		cp.SyncPreferences()
+		defer cp.StopSyncPreferences()
+		provs[cp.Name()] = cp
 	}
-	cp.SyncPreferences()
-	defer cp.StopSyncPreferences()
-	provs[cp.Name()] = cp
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		Providers:              provs,

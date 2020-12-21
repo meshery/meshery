@@ -49,3 +49,14 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 	ServeUI(w, r, "/provider", "../provider-ui/out/")
 }
+
+// ProviderCapabilityHandler returns the capabilities.json for the provider
+func (h *Handler) ProviderCapabilityHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	provider.GetProviderCapabilities(w, r)
+}
