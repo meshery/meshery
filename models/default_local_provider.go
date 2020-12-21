@@ -26,7 +26,18 @@ type DefaultLocalProvider struct {
 }
 
 func (l *DefaultLocalProvider) Initialize() {
-
+	l.ProviderName = "None"
+	l.ProviderDescription = []string{
+		"Ephemeral sessions",
+		"Environment setup not saved",
+		"No performance test result history",
+		"Free Use",
+	}
+	l.ProviderType = LocalProviderType
+	l.PackageVersion = "v0.0.1"
+	l.PackageURL = ""
+	l.Extensions = Extensions{}
+	l.Capabilities = Capabilities{}
 }
 
 // Name - Returns Provider's friendly name
