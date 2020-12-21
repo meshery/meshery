@@ -23,7 +23,7 @@ The Meshery project is community-built and welcomes collaboration!
 Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
 If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
 
-Please see our [contributing guide](/docs/project/contributing) for more details.
+Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
 
 ## Presentations
 

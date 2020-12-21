@@ -137,7 +137,7 @@ export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
 
 #### 5. <a name="step5"><b>Instalar Meshery</b></a>
 
-Siga los [pasos de instalación](/docs/pages/es/installation/windows.md) para instalar el CLI mesheryctl. Luego, ejecute:
+Siga los [pasos de instalación]({{ site.baseurl }}/es/installation/windows.md) para instalar el CLI mesheryctl. Luego, ejecute:
 
 ```bash
 ./mesheryctl system start

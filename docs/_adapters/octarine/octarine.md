@@ -72,7 +72,7 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 The {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
 
-- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### Suggested Topics
