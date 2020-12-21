@@ -60,3 +60,17 @@ func (h *Handler) ProviderCapabilityHandler(
 ) {
 	provider.GetProviderCapabilities(w, r)
 }
+
+// ProviderComponentsHandler handlers the requests to serve static
+// assets from the provider package
+func (h *Handler) ProviderComponentsHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	reqBasePath := "/api/provider/component"
+
+	ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+}

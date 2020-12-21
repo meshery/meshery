@@ -84,7 +84,7 @@ func (l *RemoteProvider) Initialize() {
 	}
 
 	// Location for the package to be stored
-	loc := path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
+	loc := l.PackageLocation()
 
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
@@ -97,6 +97,12 @@ func (l *RemoteProvider) Initialize() {
 	if err := TarXZF(l.PackageURL, loc); err != nil {
 		logrus.Errorf("[Initialize]: Failed to download provider package %s", err)
 	}
+}
+
+// PackageLocation returns the location of where the package for the current
+// provider is located
+func (l *RemoteProvider) PackageLocation() string {
+	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
 // Name - Returns Provider's friendly name
@@ -835,7 +841,7 @@ func TarXZF(srcURL, destination string) error {
 	filename := filepath.Base(srcURL)
 
 	// Check if filename ends with tar.gz or tgz extension
-	if !strings.HasSuffix(filename, "tar.gz") && !strings.HasSuffix(filename, "tgz") {
+	if !strings.HasSuffix(filename, ".tar.gz") && !strings.HasSuffix(filename, ".tgz") {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
@@ -873,7 +879,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 
 	tarReader := tar.NewReader(uncompressedStream)
 
-	for true {
+	for {
 		header, err := tarReader.Next()
 
 		if err == io.EOF {
@@ -884,7 +890,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return err
 		}
 
-		loc := createDestinationPath(destination, header.Name)
+		loc := path.Join(destination, header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
@@ -906,8 +912,4 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	}
 
 	return nil
-}
-
-func createDestinationPath(dest, filename string) string {
-	return path.Join(dest, filename)
 }

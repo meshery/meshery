@@ -60,6 +60,12 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 	return l.ProviderProperties
 }
 
+// PackageLocation returns an empty string as there is no extension package for
+// the local provider
+func (l *DefaultLocalProvider) PackageLocation() string {
+	return ""
+}
+
 // GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)

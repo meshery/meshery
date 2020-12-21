@@ -132,6 +132,8 @@ type Provider interface {
 	// Returns ProviderType
 	GetProviderType() ProviderType
 
+	PackageLocation() string
+
 	GetProviderCapabilities(http.ResponseWriter, *http.Request)
 
 	GetProviderProperties() ProviderProperties
