@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/layer5io/service-mesh-performance/tree/v0.3.1/spec"
 	"github.com/pkg/errors"
 	"github.com/prologic/bitcask"
 	"github.com/sirupsen/logrus"

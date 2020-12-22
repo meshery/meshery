@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"time"
 
-	SMP "github.com/layer5io/service-mesh-performance/spec"
+	SMP "github.com/layer5io/service-mesh-performance/tree/v0.3.1/spec"
 	"github.com/pkg/errors"
 )
 
