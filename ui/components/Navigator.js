@@ -833,11 +833,11 @@ class Navigator extends React.Component {
               );
             })}
             {
-              this.state.navigator
+              (this.state.navigator && this.state.navigator.length)
               &&
               <React.Fragment>
                 <Divider className={classes.divider} />
-                {this.renderNavigatorExtensions(this.state.navigator, 0)}
+                {this.renderNavigatorExtensions(this.state.navigator, 1)}
               </React.Fragment>
             }
             <Divider className={classes.divider} />
