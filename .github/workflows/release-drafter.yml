@@ -18,8 +18,18 @@ jobs:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+      - name: checkout to master
+        uses: actions/checkout@master
       - name: Write release to file
         run: |
-          CONTENT=${{ steps.release_drafter.outputs.body }}
-          TAG=${{ steps.release_drafter.outputs.tag_name }}
-          prinf '%b\n' "---\nlayout: default\n---\n\n${CONTENT}" > ./docs/_releases/${TAG}.md
+          printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+      - name: Commit release file
+        run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "github-actions"
+        git add ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+        git commit -m "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.RELEASEDRAFTER_PAT }}
