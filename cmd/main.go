@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,7 +11,9 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/nats"
+	"github.com/layer5io/meshsync/pkg/broker"
+	"github.com/layer5io/meshsync/pkg/broker/nats"
+	"github.com/layer5io/meshsync/pkg/model"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -164,18 +168,30 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	// subscribing to nats
-	natsClient, err := nats.New("<server-url>")
+	natsClient, err := nats.New("nats://127.0.0.1:4222")
 	if err != nil {
 		logrus.Printf("Nats client create error %v", err)
 	} else {
-		err = natsClient.Subscribe("cluster")
+		msgch := make(chan *broker.Message)
+		err = natsClient.SubscribeWithChannel("cluster", "cluster-queue", msgch)
 		if err != nil {
 			logrus.Printf("Error subscribing to cluster %v", err)
 		}
-		err = natsClient.Subscribe("istio")
+		err = natsClient.SubscribeWithChannel("istio", "istio-queue", msgch)
 		if err != nil {
 			logrus.Printf("Error subscribing to istio %v", err)
 		}
+
+		go func() {
+			for {
+				msg := <-msgch
+				objectJSON, _ := json.Marshal(msg.Object)
+				var object model.Object
+				_ = json.Unmarshal(objectJSON, &object)
+				// persist the object
+				log.Printf("%+v\n", object)
+			}
+		}()
 	}
 
 	go func() {
