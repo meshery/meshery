@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/broker"
 	"github.com/layer5io/meshsync/pkg/broker/nats"
 	"github.com/layer5io/meshsync/pkg/model"
@@ -187,7 +188,7 @@ func main() {
 				msg := <-msgch
 				objectJSON, _ := json.Marshal(msg.Object)
 				var object model.Object
-				_ = json.Unmarshal(objectJSON, &object)
+				_ = utils.Unmarshal(string(objectJSON), &object)
 				// persist the object
 				log.Printf("%+v\n", object)
 			}
