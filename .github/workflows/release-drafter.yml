@@ -25,11 +25,11 @@ jobs:
           printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
       - name: Commit release file
         run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "github-actions"
-        git add ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-        git commit -m "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
+          git config --local user.email "community@layer5.io"
+          git config --local user.name "l5io"
+          git add ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+          git commit -m "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.RELEASEDRAFTER_PAT }}
+          github_token: ${{ secrets.RELEASE_NOTES_PAT }}
