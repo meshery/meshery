@@ -26,7 +26,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
-	gMux.PathPrefix("/api/provider/component").
+	gMux.PathPrefix("/api/provider/extension").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderComponentsHandler)))).
 		Methods("GET")
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler)))).

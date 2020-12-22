@@ -25,6 +25,7 @@ type DefaultLocalProvider struct {
 	TestProfilesPersister *BitCaskTestProfilesPersister
 }
 
+// Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderName = "None"
 	l.ProviderDescription = []string{

@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// ServeReactComponentFromPackage serves statci assets from the package
+// ServeReactComponentFromPackage serves static assets from the package
 // located at provider.PackageLocation()
 func ServeReactComponentFromPackage(
 	w http.ResponseWriter,

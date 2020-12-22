@@ -30,7 +30,7 @@ type Extensions struct {
 // NavigatorExtensions is a collection of NavigatorExtension
 type NavigatorExtensions []NavigatorExtension
 
-// UserPrefsExtensions is a collectionf of UserPrefsExtension
+// UserPrefsExtensions is a collection of UserPrefsExtension
 type UserPrefsExtensions []UserPrefsExtension
 
 // NavigatorExtension describes the Navigator extension point in the UI
@@ -39,8 +39,8 @@ type NavigatorExtension struct {
 	Href      Href                `json:"href,omitempty"`
 	Component string              `json:"component,omitempty"`
 	Icon      string              `json:"icon,omitempty"`
-	Link      bool                `json:"link,omitempty"`
-	Show      bool                `json:"show,omitempty"`
+	Link      *bool               `json:"link,omitempty"`
+	Show      *bool               `json:"show,omitempty"`
 	Children  NavigatorExtensions `json:"children,omitempty"`
 }
 
@@ -52,7 +52,7 @@ type UserPrefsExtension struct {
 // Href describes a link along with its type
 type Href struct {
 	URI      string `json:"uri,omitempty"`
-	External bool   `json:"external,omitempty"`
+	External *bool  `json:"external,omitempty"`
 }
 
 // Capabilities is the collection of capability
@@ -117,6 +117,22 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	}
 
 	return "", false
+}
+
+// GetComponentForURI takes in a uri and returns the component mapping
+// for it.
+//
+// If the uri is invalid, then an empty string is returned.
+// If the uri is present more than once, then the component mapping
+// for it's first instance will be returned
+func (navexts NavigatorExtensions) GetComponentForURI(uri string) string {
+	for _, ne := range navexts {
+		if ne.Href.URI == uri {
+			return ne.Component
+		}
+	}
+
+	return ""
 }
 
 // Provider - interface for providers
