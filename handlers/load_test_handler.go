@@ -17,7 +17,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-	SMP "github.com/layer5io/service-mesh-performance/tree/v0.3.1/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/encoding/protojson"

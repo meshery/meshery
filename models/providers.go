@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	SMP "github.com/layer5io/service-mesh-performance/tree/v0.3.1/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
 // ProviderType - for representing provider types
