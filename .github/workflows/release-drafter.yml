@@ -18,18 +18,35 @@ jobs:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
-      - name: checkout to master
-        uses: actions/checkout@master
-      - name: Write release to file
+      - name: Write release notes to markdown file
         run: |
           printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-      - name: Commit release file
-        run: |
-          git config --local user.email "community@layer5.io"
-          git config --local user.name "l5io"
-          git add ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-          git commit -m "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
         with:
-          github_token: ${{ secrets.RELEASE_NOTES_PAT }}
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
+          committer: l5io <ci@layer5.io>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: docs/automated-release-notes
+          delete-branch: true
+          title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
+          body: |
+            An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
+          labels: |
+            area/docs
+            area/ci
+          # assignees:
+          # reviewers:
+          team-reviewers: |
+            release-team
+            maintainers
+          # milestone: 1
+          draft: false
+
+      - name: Verify PR
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
