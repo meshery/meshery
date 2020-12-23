@@ -28,7 +28,8 @@ var createContextCmd = &cobra.Command{
 		if exists {
 			return errors.New("error adding context, a context with same name already exists")
 		}
-		configuration.Contexts[args[0]] = models.Context{Endpoint: url}
+		listOfAdapters := []string{"istio", "linkerd", "consul", "octarine", "nsm", "kuma", "cpx", "osm", "nginx-sm"}
+		configuration.Contexts[args[0]] = models.Context{Endpoint: url, Adapters: listOfAdapters}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
 		viper.Set("current-context", configuration.CurrentContext)
