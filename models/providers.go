@@ -69,7 +69,7 @@ type Feature string
 
 const (
 	// SyncPrefs indicates the Preference Synchronization feature
-	SyncPrefs Feature = "SyncPrefs" // /user/preferences
+	SyncPrefs Feature = "sync-prefs" // /user/preferences
 
 	PersistResults Feature = "persist-results" // /results
 
@@ -117,22 +117,6 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 	}
 
 	return "", false
-}
-
-// GetComponentForURI takes in a uri and returns the component mapping
-// for it.
-//
-// If the uri is invalid, then an empty string is returned.
-// If the uri is present more than once, then the component mapping
-// for it's first instance will be returned
-func (navexts NavigatorExtensions) GetComponentForURI(uri string) string {
-	for _, ne := range navexts {
-		if ne.Href.URI == uri {
-			return ne.Component
-		}
-	}
-
-	return ""
 }
 
 // Provider - interface for providers
