@@ -15,14 +15,18 @@ var deleteContextCmd = &cobra.Command{
 	Long:  `Delete a specific context from Meshery config`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Printf("Delete Context %s from config", args[0])
+		err := viper.Unmarshal(&configuration)
+		if err != nil {
+			return err
+		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
 			return errors.New("no context to delete")
 		}
 		delete(configuration.Contexts, args[0])
 		viper.Set("contexts", configuration.Contexts)
-		err := viper.WriteConfig()
+		log.Printf("deleted context %s", args[0])
+		err = viper.WriteConfig()
 		return err
 	},
 }

@@ -20,6 +20,10 @@ var createContextCmd = &cobra.Command{
 	Long:  `Add a new context to mesheryctl config`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		err := viper.Unmarshal(&configuration)
+		if err != nil {
+			return err
+		}
 		_, exists := configuration.Contexts[args[0]]
 		if exists {
 			return errors.New("error adding context, a context with same name already exists")
@@ -28,7 +32,7 @@ var createContextCmd = &cobra.Command{
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
 		viper.Set("current-context", configuration.CurrentContext)
-		err := viper.WriteConfig()
+		err = viper.WriteConfig()
 		if err != nil {
 			log.Fatal(err)
 		}

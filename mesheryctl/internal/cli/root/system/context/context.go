@@ -16,14 +16,11 @@ package context
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var configuration models.MesheryCtlConfig
@@ -47,21 +44,6 @@ var ContextCmd = &cobra.Command{
 }
 
 func init() {
-	homeDir, err := os.UserHomeDir()
-	viper.SetConfigName("config")
-	viper.AddConfigPath(homeDir + string(os.PathSeparator) + utils.MesheryFolder)
-	viper.AutomaticEnv()
-	viper.SetConfigType("yaml")
-	if err != nil {
-		log.Fatalf("Unable to Access home directory, %s", err)
-	}
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file %s", err)
-	}
-	err = viper.Unmarshal(&configuration)
-	if err != nil {
-		log.Fatalf("Unable to decode struct, %s", err)
-	}
 	availableSubcommands = []*cobra.Command{
 		createContextCmd,
 		deleteContextCmd,

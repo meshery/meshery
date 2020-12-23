@@ -13,8 +13,11 @@ var viewContextCmd = &cobra.Command{
 	Long:  `view current active meshery context`,
 	Args:  cobra.MaximumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		err := viper.Unmarshal(&configuration)
+		if err != nil {
+			return err
+		}
 		currentContext := viper.GetString("current-context")
-		log.Println("file used", viper.ConfigFileUsed())
 		log.Println("Current context:", currentContext)
 		return nil
 	},
