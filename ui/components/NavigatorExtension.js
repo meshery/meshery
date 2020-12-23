@@ -6,6 +6,7 @@ import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import MesheryPerformanceComponent from "./MesheryPerformanceComponent";
+import dataFetch from "../lib/data-fetch"
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -23,10 +24,13 @@ function Extension({ grafana, updateLoadTestData, url }) {
 
   return (
     <RemoteComponent
-      GrafanaCustomCharts={GrafanaCustomCharts}
-      updateLoadTestData={updateLoadTestData}
-      grafana={grafana}
-      MesheryPerformanceComponent={MesheryPerformanceComponent}
+      injectProps={{
+        GrafanaCustomCharts,
+        updateLoadTestData,
+        grafana,
+        MesheryPerformanceComponent,
+        dataFetch
+      }}
     />
   );
 }
