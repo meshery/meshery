@@ -43,7 +43,6 @@ require (
 
 replace (
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
-	github.com/layer5io/meshsync => /home/devkalra/Desktop/meshsync
 	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )
