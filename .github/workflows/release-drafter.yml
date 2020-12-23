@@ -18,11 +18,14 @@ jobs:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+      
       - name: Write release notes to markdown file
+      - uses: actions/checkout    
         run: |
           CONTENT=${{ steps.release_drafter.outputs.body }}
           TAG=${{ steps.release_drafter.outputs.tag_name }}
           printf '%b\n' "---\nlayout: default\n---\n\n${CONTENT}" > ./docs/_releases/${TAG}.md
+          
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
