@@ -6,12 +6,15 @@ mesh_name: Kuma
 version: v1.0
 port: 10007/tcp
 project_status: beta
+lab: kuma-meshery-adapter
 github_link: https://github.com/layer5io/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 
@@ -35,12 +38,12 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The following sample applications are available in this adapter.
 
-- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### SMI Conformance Capability
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite](https://docs.meshery.io/functionality/smi-conformance).
+Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/functionality/service-mesh-interface).
 

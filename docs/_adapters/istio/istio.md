@@ -1,17 +1,21 @@
 ---
 layout: default
-title: Istio
+title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
-version: v1.7.3
+version: v1.8.1
 mesh_name: Istio
 port: 10000/tcp
 project_status: stable
+lab: istio-meshery-adapter
 github_link: https://github.com/layer5io/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
+
 ## Features
 
 1. {{page.mesh_name}} Lifecycle Management
@@ -46,13 +50,13 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The ({{page.name}}) includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo](/docs/guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
    - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 
-- [Httpbin](/docs/guides/sample-apps#httpbin)
+- [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
 
-- [Hipster](/docs/guides/sample-apps#hipster)
+- [Hipster]({{ site.baseurl }}/guides/sample-apps#hipster)
     - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ## Using Service Mesh Standards
@@ -61,7 +65,7 @@ The ({{page.name}}) includes a handful of sample applications. Use Meshery to de
 
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
-Learn more about the SMI specification and [Meshery's conformance test suite](https://docs.meshery.io/functionality/smi-conformance).
+Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/functionality/service-mesh-interface).
 
 ### Managing Service Mesh Performance (SMP)
 

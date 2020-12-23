@@ -16,7 +16,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 
 ## Deploy a sample app on Meshery
 
-1. Go to the management page of any [service mesh](/docs/service-meshes) and install any of its stable versions
+1. Go to the management page of any [service mesh]({{ site.baseurl }}/service-meshes) and install any of its stable versions
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" /></a>
 2. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a drop down menu with the available sample applications.
 
@@ -72,4 +72,4 @@ Hipster is a sample cloud-native application, originally built by Google. It com
 
 <a href="{{ site.baseurl }}/assets/img/adapters/sample-apps/hipster-shop.png"><img alt="Hipster" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/sample-apps/hipster-shop.png" /></a>
 
-<!--Sample apps specific to NSM can be found on /docs/service-meshesadapters/nsm/nsm-->
+<!--Sample apps specific to NSM can be found on {{ site.baseurl }}/service-meshesadapters/nsm/nsm-->

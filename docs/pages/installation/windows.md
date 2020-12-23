@@ -91,7 +91,7 @@ Set WSL2 as the default version:
 <b>Warning:</b>
 It is recommended to update to <a href="#wsl2">WSL2</a> as WSL1 doesn't support the Docker Desktop application for Windows. Instead, it only supports the deprecated version, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/). 
 
-If you still wish to continue, follow the instructions for <button onclick="HideToggleFunction()"><b>WSL1</b></button>
+If you still wish to continue, follow the instructions for <button class="toggle-button" onclick="HideToggleFunction()"><b>WSL1</b></button>
 
 <div id="hiddendiv">
 <p>
@@ -150,7 +150,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
-Follow the [installation steps](/docs/installation#windows) to install the mesheryctl CLI. Then, execute:
+Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
   ./mesheryctl system start

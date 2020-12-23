@@ -72,7 +72,9 @@ Follow the [installation steps](/guides/mesheryctl) to setup the mesheryctl CLI 
 ### 2. Configure Meshery to use minikube
 
 1. Login to Meshery. Under your user profile, click *Get Token*.
-2. Use [mesheryctl](/docs/installation#using-mesheryctl) to configure Meshery to use minikube. To allow Meshery to detect your config file, execute the following commands:
+
+2. Use [mesheryctl]({{ site.baseurl }}/installation#using-mesheryctl) to configure Meshery to use minikube. To allow Meshery to detect your config file, execute the following commands:
+
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -124,7 +126,6 @@ _Note_: Make sure *current-context* is set to *minikube*.
  <div class="clipboardjs">
  kubectl config view --minify --flatten > config_minikube.yaml
  </div></div>
- </pre>
 
 <br />
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.

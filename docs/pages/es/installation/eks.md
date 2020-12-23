@@ -102,4 +102,4 @@ Si el procedimiento de [Configuración automática](#configuración-automática-
    $ kubectl config view --minify --flatten >  config_aws_eks.yaml
    ```
 
-Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Eche un vistazo a las [Guías Meshery](/docs/guides) para ver más consejos de uso avanzados.
+Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Eche un vistazo a las [Guías Meshery]({{ site.baseurl }}/guides) para ver más consejos de uso avanzados.
