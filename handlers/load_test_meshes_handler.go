@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/models"
-	SMP "github.com/layer5io/service-mesh-performance/tree/v0.3.1/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 )
 
