@@ -13,7 +13,7 @@ type Token struct {
 
 type Context struct {
 	Endpoint string   `json:"endpoint"`
-	Token    string   `json:"token"`
+	Token    Token    `json:"token"`
 	Platform string   `json:"platform"`
 	Adapters []string `json:"adapters,omitempty"`
 }

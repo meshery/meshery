@@ -140,7 +140,10 @@ func initConfig() {
 		if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml")); os.IsNotExist(err) {
 			localContext := models.Context{
 				Endpoint: "localhost:9081",
-				Token:    "",
+				Token: models.Token{
+					Name:     "Default",
+					Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
+				},
 				Platform: "",
 				Adapters: nil,
 			}
