@@ -20,13 +20,12 @@ import (
 	"os"
 
 	"github.com/ghodss/yaml"
-	"github.com/layer5io/meshery/models"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -127,45 +126,62 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Use default ".meshery" folder location.
-		if _, err := os.Stat(utils.MesheryFolder); err != nil {
-			if os.IsNotExist(err) {
-				err = os.MkdirAll(utils.MesheryFolder, 0775)
-				if err != nil {
-					log.Fatal(err)
+		log.Printf("No config file available." +
+			" Provide location using --config <config-file> or" +
+			" run `mesheryctl system context create <name>` to " +
+			"generate one. Create default config now? (y/n)")
+		var userInput string
+		_, err := fmt.Scan(&userInput)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		if userInput == "y" || userInput == "Y" {
+			if _, err := os.Stat(utils.MesheryFolder); err != nil {
+				if os.IsNotExist(err) {
+					err = os.MkdirAll(utils.MesheryFolder, 0775)
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
 			}
-		}
 
-		if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml")); os.IsNotExist(err) {
-			localContext := models.Context{
-				Endpoint: "localhost:9081",
-				Token: models.Token{
-					Name:     "Default",
-					Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
-				},
-				Platform: "",
-				Adapters: nil,
+			if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml")); os.IsNotExist(err) {
+				localContext := models.Context{
+					Endpoint: "localhost:9081",
+					Token: models.Token{
+						Name:     "Default",
+						Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
+					},
+					Platform: "",
+					Adapters: nil,
+				}
+				ContextMap := map[string]models.Context{}
+				ContextMap["local"] = localContext
+				basicMap := models.MesheryCtlConfig{
+					Contexts:       ContextMap,
+					CurrentContext: "local",
+					Tokens:         nil,
+				}
+				filePointer, err := os.Create(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"))
+				if err != nil {
+					log.Fatalln(err)
+				}
+				content, err := yaml.Marshal(basicMap)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				_, err = filePointer.Write(content)
+				if err != nil {
+					log.Fatalln(err)
+				}
 			}
-			ContextMap := map[string]models.Context{}
-			ContextMap["local"] = localContext
-			basicMap := models.MesheryCtlConfig{
-				Contexts:       ContextMap,
-				CurrentContext: "local",
-				Tokens:         nil,
-			}
-			filePointer, err := os.Create(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"))
-			if err != nil {
-				log.Fatalln(err)
-			}
-			content, err := yaml.Marshal(basicMap)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			_, err = filePointer.Write(content)
-			if err != nil {
-				log.Fatalln(err)
-			}
+
+			log.Println(
+				fmt.Sprintf("sample config file created at %s. Do edit it as per your configuration",
+					fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"),
+				))
+		} else {
+			os.Exit(1)
 		}
 
 		viper.SetConfigFile(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"))
