@@ -391,15 +391,16 @@ class MeshConfigComponent extends React.Component {
           onClick={self.handleKubernetesClick}
           icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
           variant="outlined"
+          data-cy="chipContextName"
         />
       );
       const lst = (
         <List>
           <ListItem>
-            <ListItemText primary="Context Name" secondary={inClusterConfig ? 'Using In Cluster Config' : contextName} />
+            <ListItemText primary="Context Name" secondary={inClusterConfig ? 'Using In Cluster Config' : contextName} data-cy="itemListContextName" />
           </ListItem>
           <ListItem>
-            <ListItemText primary="Server Name" secondary={inClusterConfig ? 'In Cluster Server' : (configuredServer || '')} />
+            <ListItemText primary="Server Name" secondary={inClusterConfig ? 'In Cluster Server' : (configuredServer || '')} data-cy="itemListServerName" />
           </ListItem>
         </List>
       );
@@ -560,6 +561,7 @@ class MeshConfigComponent extends React.Component {
                 size="large"
                 onClick={() => window.location.reload(false)}
                 className={classes.button}
+                data-cy="btnDiscoverCluster"
               >
                 Discover Cluster
               </Button>
