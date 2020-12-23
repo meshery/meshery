@@ -20,7 +20,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
       - name: Write release notes to markdown file
         run: |
-          printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+          CONTENT=${{ steps.release_drafter.outputs.body }}
+          TAG=${{ steps.release_drafter.outputs.tag_name }}
+          printf '%b\n' "---\nlayout: default\n---\n\n${CONTENT}" > ./docs/_releases/${TAG}.md
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
