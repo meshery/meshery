@@ -43,8 +43,5 @@ var createContextCmd = &cobra.Command{
 }
 
 func init() {
-	createContextCmd.Flags().StringVarP(&url, "url", "u", "", "Meshery Server URL with Port")
-	_ = createContextCmd.MarkFlagRequired("url")
-	createContextCmd.Flags().StringVarP(&tokenPath, "token", "t", "", "Token to be used for Authentication")
-	_ = createContextCmd.MarkFlagRequired("token")
+	createContextCmd.Flags().StringVarP(&url, "url", "u", "localhost:9081", "Meshery Server URL with Port")
 }
