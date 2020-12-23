@@ -1,5 +1,5 @@
 - title: Documentation
-  url: ''
+  url: ""
   links:
     - title: Overview
       url: overview
@@ -13,7 +13,7 @@
         - title: Releases
           url: project/releases
         - title: Vulnerabilities
-          url: project/security-vulnerabilities          
+          url: project/security-vulnerabilities
     - title: Quick Start
       url: installation/quick-start
     - title: Supported Platforms
@@ -66,8 +66,6 @@
       url: service-meshes/adapters/kuma
     - title: Linkerd
       url: service-meshes/adapters/linkerd
-    - title: Maesh
-      url: service-meshes/adapters/maesh
     - title: Network Service Mesh
       url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
@@ -78,6 +76,8 @@
       url: service-meshes/adapters/osm
     - title: Tanzu
       url: service-meshes/adapters/tanzu-sm
+    - title: Traefik Mesh
+      url: service-meshes/adapters/traefik-mesh
 - title: Guides
   url: guides
   links:
@@ -97,12 +97,11 @@
     - title: "Service Mesh Adapters"
       url: extensibility/adapters
     - title: "Load Generators"
-      url: extensibililty/load-generators
+      url: extensibility/load-generators
     - title: "Providers"
-      url: extensibililty/providers
+      url: extensibility/providers
 - title: Reference
   url: reference
   links:
     - title: mesheryctl Command Reference
       url: reference/mesheryctl
-    

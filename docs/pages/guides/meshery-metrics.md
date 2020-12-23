@@ -174,12 +174,12 @@ The `productpage` endpoint will be http://$MINIKUBE_IP:NODE_PORT
 
 After successfully setting up a connection between your metric service and Meshery, you may proceed to run performance tests by navigating to the Performance Test tab on Meshery:
 
-<a href="/docs/assets/img/performance-management/performance-meshery.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/performance-meshery.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/performance-management/performance-meshery.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/performance-meshery.png" /></a>
 
 **Run Test Results**
 
-<a href="/docs/assets/img/performance-management/meshery-and-grafana.png"><img style="width:450px;padding-top:5px;" src="/docs/assets/img/performance-management/meshery-and-grafana.png" /></a> -->
+<a href="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" /></a> -->
 
 ##### Suggested Reading
 
-- Guide: [Interpreting Performance Test Results](/docs/guides/interpreting-performance-test-results)
+- Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)

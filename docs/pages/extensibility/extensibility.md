@@ -28,11 +28,10 @@ Meshery is not just an application. It is a set of microservices where the centr
 1. [REST API](#rest-api)
 
 ## REST API
-Meshery provides a REST API available through the default port of 9081/tcp.
+Meshery provides a REST API available through the default port of `9081/tcp`.
 
 ### Authentication
-Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers.
-Type of authentication is determined by the selected [Provider](#providers).
+Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
 ### Authorization
 Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.

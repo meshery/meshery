@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Extensibility: Load Generators"
-permalink: extensibililty/load-generators
+permalink: extensibility/load-generators
 type: Reference
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
@@ -19,8 +19,9 @@ Load generators will provide the capability to run load tests from Meshery. As o
 
 Different use cases and different opinions call for different approaches to statistical analysis of the performance results. For example, wrk2 accounts for a concept called Coordinated Omission.
 
-### Which are currently supported?
+### Which load generators does Meshery support?
 
 1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
 1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
-1. [nighthawk](https://github.com/envoyproxy/nighthawk) (coming soon!) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
+1. [nighthawk](https://github.com/envoyproxy/nighthawk) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
+  - See the GetNighthawk project.

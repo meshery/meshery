@@ -91,4 +91,4 @@ spec:
     type: NodePort
 ```
 
-Meshery debe ahora ser conectado con su instancia administrada de Kubernetes. Eche un vistazo a las guías [guías Meshery](/docs/guides) para tips de uso advanzado.
+Meshery debe ahora ser conectado con su instancia administrada de Kubernetes. Eche un vistazo a las guías [guías Meshery]({{ site.baseurl }}/guides) para tips de uso advanzado.

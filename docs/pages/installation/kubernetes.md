@@ -105,4 +105,4 @@ If your Kubernetes cluster has a functional Ingress Controller, then you can con
  </div></div>
  </pre>
 
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
