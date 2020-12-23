@@ -75,7 +75,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
 			logrus.Errorf("\n  Unable to communicate with Meshery: %v", err)
-			logrus.Errorf("\n  See https://docs.meshery.io for help.\n")
+			logrus.Errorf("  See https://docs.meshery.io for help getting started with Meshery.\n")
 			return
 		}
 
