@@ -145,7 +145,7 @@ jobs:
         npm test
         cd ..
   tests-ui-e2e:
-    needs: [build-backend, build-ui]
+    needs: [build-backend, create-kind-cluster, build-ui]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
     steps:
@@ -237,3 +237,25 @@ jobs:
       run: |
         DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} .
         docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::7}
+  create-kind-cluster:
+    name: Create a Kind cluster
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: Install latest version of Kind
+      run: |
+        GO111MODULE=on go get sigs.k8s.io/kind
+    - name: Create Kind cluster
+      run: |
+        PATH=$(go env GOPATH)/bin:$PATH kind create cluster --name kind-cluster
+    - name: Run some sanity checks
+      run: |
+        kubectl get nodes -o wide
+        kubectl get pods --all-namespaces -o wide
+        kubectl get services --all-namespaces -o wide
+    - name: Delete Kind cluster
+      run: |
+        kind delete cluster --name kind-cluster
