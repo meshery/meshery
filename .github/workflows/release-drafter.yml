@@ -19,8 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
       
-      - name: Write release notes to markdown file
-        uses: actions/checkout    
+      - name: Write release notes to markdown file  
         run: |
           CONTENT=${{ steps.release_drafter.outputs.body }}
           TAG=${{ steps.release_drafter.outputs.tag_name }}
