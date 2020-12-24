@@ -13,7 +13,7 @@ var deleteContextCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {

@@ -14,7 +14,7 @@ var switchContextCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "switch context",
 	Long:  `Configure mesheryctl to actively use one one context vs. the another context`,
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {

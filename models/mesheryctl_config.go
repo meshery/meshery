@@ -1,19 +1,19 @@
 package models
 
 type MesheryCtlConfig struct {
-	Contexts       map[string]Context `json:"contexts"`
-	CurrentContext string             `json:"current-context"`
-	Tokens         map[string]Token   `json:"tokens"`
+	Contexts       map[string]Context `yaml:"contexts"`
+	CurrentContext string             `yaml:"current-context"`
+	Tokens         map[string]Token   `yaml:"tokens"`
 }
 
 type Token struct {
-	Name     string `json:"name"`
-	Location string `json:"location"`
+	Name     string `yaml:"name"`
+	Location string `yaml:"location"`
 }
 
 type Context struct {
-	Endpoint string   `json:"endpoint"`
-	Token    Token    `json:"token"`
-	Platform string   `json:"platform"`
-	Adapters []string `json:"adapters,omitempty"`
+	Endpoint string   `yaml:"endpoint"`
+	Token    Token    `yaml:"token"`
+	Platform string   `yaml:"platform"`
+	Adapters []string `yaml:"adapters,omitempty"`
 }

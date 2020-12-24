@@ -21,7 +21,7 @@ var createContextCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
-	Args:  cobra.MaximumNArgs(1),
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
@@ -53,5 +53,5 @@ var createContextCmd = &cobra.Command{
 }
 
 func init() {
-	createContextCmd.Flags().StringVarP(&url, "url", "u", "localhost:9081", "Meshery Server URL with Port")
+	createContextCmd.Flags().StringVarP(&url, "url", "u", "https://localhost:9081", "Meshery Server URL with Port")
 }
