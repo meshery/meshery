@@ -18,7 +18,7 @@ Meshery automates the provisioning of various service meshes, allowing users to 
 
 Meshery adapters will dynamically retrieve the specific service mesh's release package upon initial deployment of a given service mesh. Meshery adapters cache (in `.meshery/bin`) the service mesh installation package.
 
-#### [Installing sample applications](/docs/guides/sample-apps)
+#### [Installing sample applications]({{ site.baseurl }}/guides/sample-apps)
 
 Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently deploy the same sample application across different service meshes.
 

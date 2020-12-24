@@ -16,8 +16,8 @@ type: Guides
 
 ## Related Guides
 
-- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference](/docs/guides/mesheryctl-commands)**.
-- To upgrade `mesheryctl`, refer to the **[Upgrade Guide](/docs/guides/upgrade)**.
+- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/guides/mesheryctl-commands)**.
+- To upgrade `mesheryctl`, refer to the **[Upgrade Guide]({{ site.baseurl }}/guides/upgrade)**.
 
 ## Installing `mesheryctl`
 
@@ -206,5 +206,5 @@ To load fish shell completions for each session, execute once:
 
 # Suggested Reading
 
-- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference](/docs/guides/mesheryctl-commands)**.
-- To upgrade `mesheryctl`, refer to the **[Upgrade Guide](/docs/guides/upgrade)**.
+- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/guides/mesheryctl-commands)**.
+- To upgrade `mesheryctl`, refer to the **[Upgrade Guide]({{ site.baseurl }}/guides/upgrade)**.

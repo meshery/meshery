@@ -4,28 +4,34 @@ title: Overview
 permalink: overview
 ---
 
-As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads.
-Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's multi-mesh management functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI). Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
 
 ## Meshery's Functionality
 
-Meshery provides this high-level functionality:
+Meshery features can be categorized by:
 
 1. Service Mesh Performance Management
+   - Workload and service mesh benchmarking
+   - Prometheus and Grafana Integration
 1. Service Mesh Configuration Management
-  - Configuration best practices
+   - Configuration best practices
 1. Service Mesh Lifecycle Management
-1. Data Plane Intelligence 
-  - WebAssembly filters for Envoy
+   - Service mesh provisioning and workload onboarding
+   - Meshery Operator and MeshSync
+1. Data Plane Intelligence
+   - WebAssembly filters for Envoy
 1. Service Mesh Interoperability and Federation
+   - Manage multiple service meshes concurrently
+   - Connect to multiple clusters independently
 
-<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+### Meshery is for Developers, Operators, and Product Owners
 
-<div style="text-align:center;width:100%"><emphasis>Delivered at Service Mesh Day 2019</emphasis></div>
+Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
 
-
-<h2>What challenges does Meshery solve?</h2>
-<b>Service mesh management - one or multiple service meshes.</b>
+### Service mesh management - one or multiple service meshes.**
+### Meshery is for performance management: testing and benchmarking
+Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
+In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 
 Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be:
 - Involved
@@ -40,22 +46,15 @@ Meshery is intended to be a vendor and project-neutral utility for uniformly ben
 1. Understand behavioral differences between service meshes.
 1. Track your application performance from version to version.
 
-## Meshery is for Adopters and Operators
-Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform. 
-
-## Meshery is for performance management: testing and benchmarking
-Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
-In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
-
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
 Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
 ## Meshery is for any service mesh
+
 Infrastructure diversity is a reality for any enterprise. Whether you're running a single service mesh or multiple types of service meshes, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
+### Supported Service Meshes
 
-The Meshery service mesh adapters are present in three stages:
-
-##### **Available** - Service mesh adapters that Meshery currently supports.
+#### **Stable**
 
 | Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
 | :------------ | :------------ |
@@ -65,7 +64,7 @@ The Meshery service mesh adapters are present in three stages:
 {% endif -%}
 {% endfor %}
 
-##### **In-progress** - Service mesh adapters which are currently under development.
+##### **Beta**
 
 | Platform      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Status        |
 | :------------ | :------------ |
@@ -75,7 +74,7 @@ The Meshery service mesh adapters are present in three stages:
 {% endif -%}
 {% endfor %}
 
-##### **Help-wanted** - Service mesh adapters adapters for which we are seeking community-contributed support.
+##### **Alpha** - Service mesh adapters adapters for which we are seeking community-contributed support.
 
 | Platform          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     | Status        |
 | :------------               | :------------ |

@@ -60,7 +60,7 @@ Meshery uses the following list of network ports to interface with its various c
 {% endif -%}
 {% endfor %}
 
-See the [**Adapters**](/docs/architecture/adapters) section for more information on the function of an adapter.
+See the [**Adapters**]({{ site.baseurl }}/architecture/adapters) section for more information on the function of an adapter.
 
 ### **Statefulness in Meshery components**
 

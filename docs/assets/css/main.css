@@ -92,6 +92,17 @@ excluded_in_search: true
     vertical-align: middle;
 }
 
+.toggle-button {
+    border: 1px solid  rgba(0, 0, 0, .26);
+    border-radius: 5px;
+    margin-left: 0.4rem;
+}
+
+.toggle-button:hover {
+    background-color:  rgb(44, 164, 243);
+  }
+  
+
 
 /*!* Bootstrap v4.1.3 (https://getbootstrap.com/)
 * Copyright 2011-2018 The Bootstrap Authors
@@ -18713,6 +18724,7 @@ footer {
     font-weight: bold;
     background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
+    display: none;
   }
 
 #post h1, #post h2, #post h3, #post h4 {

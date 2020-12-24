@@ -1,17 +1,20 @@
 ---
 layout: default
-title: Network Service Mesh
+title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
 version: v0.2.1
 port: 10004/tcp
 project_status: stable
+lab: nsm-meshery-adapter
 github_link: https://github.com/layer5io/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 ---
 
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management of {{ page.name }}
 

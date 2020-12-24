@@ -1,17 +1,20 @@
 ---
 layout: default
-title: Consul
+title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 mesh_name: Consul
 version: v1.8.2
 port: 10002/tcp
 project_status: stable
+lab: consul-meshery-adapter
 github_link: https://github.com/layer5io/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
 {% include adapter-status.html %}
+
+{% include adapter-labs.html %}
 
 ## Lifecycle management
 
@@ -46,11 +49,11 @@ A number of [sample applications](#sample-applications) for {{page.mesh_name}} c
 
 Meshery supports the deployment of a variety of sample applications on {{ page.name }}. Use Meshery to deploy any of these sample applications.
 
-- [httpbin](/docs/guides/sample-apps#httpbin)
+- [httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Bookinfo](/docs/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [Image Hub](/docs/guides/sample-apps/imagehub)
+- [Image Hub]({{ site.baseurl }}/guides/sample-apps/imagehub)
     - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 [![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
