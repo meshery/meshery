@@ -33,7 +33,7 @@
 	      </ol>
            </nav>
            <div class="td-content">
-            {% if page.display-title != "false" %}
+            {% if page.display-title != "false" and layout.display-title != "false" %}
             <h1>{{page.title}}</h1>
             {% endif %}
 	           {{ content }}	
