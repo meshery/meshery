@@ -1,6 +1,9 @@
 package context
 
 import (
+	"fmt"
+	urlLib "net/url"
+
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -28,7 +31,14 @@ var createContextCmd = &cobra.Command{
 		if exists {
 			return errors.New("error adding context: a context with same name already exists")
 		}
-		listOfAdapters := []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
+		ParsedURL, err := urlLib.ParseRequestURI(url)
+		if err != nil {
+			return err
+		}
+		if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
+			return fmt.Errorf("%s is not a supported request scheme", ParsedURL.Scheme)
+		}
+		listOfAdapters := []string{"istio", "linkerd", "consul", "octarine", "nsm", "kuma", "cpx", "osm", "nginx-sm"}
 		configuration.Contexts[args[0]] = models.Context{Endpoint: url, Adapters: listOfAdapters}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
