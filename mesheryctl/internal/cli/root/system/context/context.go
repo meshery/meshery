@@ -34,8 +34,11 @@ var ContextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Configure your Meshery deployment(s)",
 	Long:  `Configure and switch between different named Meshery server and adapter versions and deployments.`,
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return viewContextCmd.RunE(cmd, args)
+		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
