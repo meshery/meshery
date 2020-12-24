@@ -8,12 +8,12 @@
       children:
         - title: Contributing
           url: project/contributing
-        - title: FAQ
-          url: project/faq
         - title: Releases
           url: project/releases
         - title: Vulnerabilities
           url: project/security-vulnerabilities
+        - title: FAQ
+          url: project/faq
     - title: Quick Start
       url: installation/quick-start
     - title: Supported Platforms
