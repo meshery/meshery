@@ -27,7 +27,7 @@ jobs:
         id: md_writer
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
-          printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+          printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
 
       - name: Create Pull Request
         id: cpr
