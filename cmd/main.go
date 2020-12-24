@@ -29,6 +29,11 @@ var (
 	commitsha                      = "Not Set"
 )
 
+const (
+	// SAAS_BASE_URL_NONE is the saas base url for the "none" provider
+	SAAS_BASE_URL_NONE = "https://meshery.layer5.io"
+)
+
 func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
@@ -106,7 +111,7 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURLNone := viper.GetString("SAAS_BASE_URL_NONE")
+	saasBaseURLNone := SAAS_BASE_URL_NONE
 	lProv := &models.DefaultLocalProvider{
 		SaaSBaseURL:            saasBaseURLNone,
 		MapPreferencePersister: preferencePersister,
