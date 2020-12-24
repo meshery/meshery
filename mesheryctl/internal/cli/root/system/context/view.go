@@ -10,7 +10,7 @@ import (
 var viewContextCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view current context",
-	Long:  `view current active meshery context`,
+	Long:  `Display active Meshery context`,
 	Args:  cobra.MaximumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)

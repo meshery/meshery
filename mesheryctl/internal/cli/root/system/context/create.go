@@ -16,8 +16,8 @@ var (
 // createContextCmd represents the update command
 var createContextCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create context",
-	Long:  `Add a new context to mesheryctl config`,
+	Short: "Create a new context (a named Meshery deployment)",
+	Long:  `Add a new context to Meshery config.yaml file`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -26,9 +26,9 @@ var createContextCmd = &cobra.Command{
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if exists {
-			return errors.New("error adding context, a context with same name already exists")
+			return errors.New("error adding context: a context with same name already exists")
 		}
-		listOfAdapters := []string{"istio", "linkerd", "consul", "octarine", "nsm", "kuma", "cpx", "osm", "nginx-sm"}
+		listOfAdapters := []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
 		configuration.Contexts[args[0]] = models.Context{Endpoint: url, Adapters: listOfAdapters}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)

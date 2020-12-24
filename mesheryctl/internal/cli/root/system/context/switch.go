@@ -13,7 +13,7 @@ import (
 var switchContextCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "switch context",
-	Long:  `switch between meshery contexts`,
+	Long:  `Configure mesheryctl to actively use one one context vs. the another context`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -22,14 +22,14 @@ var switchContextCmd = &cobra.Command{
 		}
 		_, exists := configuration.Contexts[args[0]]
 		if !exists {
-			return errors.New("context requested to switch, does not exist")
+			return errors.New("requested context does not exist")
 		}
 		if viper.GetString("current-context") == args[0] {
-			return errors.New("already using context " + args[0])
+			return errors.New("already using context '" + args[0] + "'")
 		}
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
-		log.Printf("switched to %s", args[0])
+		log.Printf("switched to context '%s'", args[0])
 		err = viper.WriteConfig()
 		return err
 	},
