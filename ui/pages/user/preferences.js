@@ -1,11 +1,11 @@
-import UserPreference from "../components/UserPreference";
+import UserPreferences from "../../components/UserPreferences";
 import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import { updatepagepath } from "../lib/store";
+import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
-import { getPath } from "../lib/path";
+import { getPath } from "../../lib/path";
 import Head from 'next/head';
-import dataFetch from '../lib/data-fetch';
+import dataFetch from '../../lib/data-fetch';
 
 const styles = {
   paper: {
@@ -57,7 +57,7 @@ class UserPref extends React.Component {
           <title>Preferences | Meshery</title>
         </Head>
         <Paper className={this.props.classes.paper}>
-          <UserPreference anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
         </Paper>
       </NoSsr>
     );
