@@ -174,23 +174,21 @@ func main() {
 		logrus.Printf("Nats client create error %v", err)
 	} else {
 		msgch := make(chan *broker.Message)
-		err = natsClient.SubscribeWithChannel("cluster", "cluster-queue", msgch)
+		err = natsClient.SubscribeWithChannel("meshsync", "meshery", msgch)
 		if err != nil {
-			logrus.Printf("Error subscribing to cluster %v", err)
-		}
-		err = natsClient.SubscribeWithChannel("istio", "istio-queue", msgch)
-		if err != nil {
-			logrus.Printf("Error subscribing to istio %v", err)
+			logrus.Printf("Error subscribing to meshsync %v", err)
 		}
 
 		go func() {
 			for {
-				msg := <-msgch
-				objectJSON, _ := json.Marshal(msg.Object)
-				var object model.Object
-				_ = utils.Unmarshal(string(objectJSON), &object)
-				// persist the object
-				log.Printf("%+v\n", object)
+				select {
+				case msg := <-msgch:
+					objectJSON, _ := json.Marshal(msg.Object)
+					var object model.Object
+					_ = utils.Unmarshal(string(objectJSON), &object)
+					// persist the object
+					log.Printf("%+v\n", object)
+				}
 			}
 		}()
 	}
