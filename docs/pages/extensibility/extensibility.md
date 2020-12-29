@@ -18,7 +18,13 @@ The following principles are upheld in the design of Meshery's extensibility.
 
 ## Extension Points
 
-Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. The following points of extension are currently incorporated into Meshery.
+Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. Integrators may extend Meshery by taking advantage of designated Extension Points. Extension points come in various forms and are available through Meshery’s architecture.
+
+![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/Meshery_Extension_Points.png)
+
+_Figure: Extension points available throughout Meshery_
+
+The following points of extension are currently incorporated into Meshery.
 
 **Types of Extension Points:**
 
@@ -37,5 +43,4 @@ Requests to any of the API endpoints must be authenticated and include a valid J
 Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
 
 ### Endpoints
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go).
-Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
