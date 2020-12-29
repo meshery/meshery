@@ -20,7 +20,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/models"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
