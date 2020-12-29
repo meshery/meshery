@@ -10,7 +10,7 @@ import (
 
 // deleteContextCmd represents the update command
 var deleteContextCmd = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete <context-name>",
 	Short: "delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
 	Args:  cobra.ExactArgs(1),

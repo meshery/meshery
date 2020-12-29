@@ -31,7 +31,7 @@ var (
 
 // ContextCmd represents the update command
 var ContextCmd = &cobra.Command{
-	Use:   "context",
+	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
 	Long:  `Configure and switch between different named Meshery server and adapter versions and deployments.`,
 	Args:  cobra.MaximumNArgs(1),

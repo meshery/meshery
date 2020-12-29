@@ -11,7 +11,7 @@ import (
 
 // switchContextCmd represents the update command
 var switchContextCmd = &cobra.Command{
-	Use:          "switch",
+	Use:          "switch <context-name>",
 	Short:        "switch context",
 	Long:         `Configure mesheryctl to actively use one one context vs. the another context`,
 	Args:         cobra.ExactArgs(1),

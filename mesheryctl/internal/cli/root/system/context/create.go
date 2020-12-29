@@ -18,7 +18,7 @@ var (
 
 // createContextCmd represents the update command
 var createContextCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create <context-name>",
 	Short: "Create a new context (a named Meshery deployment)",
 	Long:  `Add a new context to Meshery config.yaml file`,
 	Args:  cobra.ExactArgs(1),
