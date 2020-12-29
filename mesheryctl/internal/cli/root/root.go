@@ -153,7 +153,7 @@ func initConfig() {
 							Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
 						},
 						Platform: "",
-						Adapters: []string{"istio", "linkerd", "consul", "octarine", "nsm", "kuma", "cpx", "osm", "nginx-sm"},
+						Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"},
 					}
 					ContextMap := map[string]models.Context{}
 					ContextMap["local"] = localContext

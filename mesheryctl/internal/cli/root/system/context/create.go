@@ -38,7 +38,7 @@ var createContextCmd = &cobra.Command{
 		if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
 			return fmt.Errorf("%s is not a supported request scheme", ParsedURL.Scheme)
 		}
-		listOfAdapters := []string{"istio", "linkerd", "consul", "octarine", "nsm", "kuma", "cpx", "osm", "nginx-sm"}
+		listOfAdapters := []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
 		configuration.Contexts[args[0]] = models.Context{Endpoint: url, Adapters: listOfAdapters}
 		configuration.CurrentContext = args[0]
 		viper.Set("contexts", configuration.Contexts)
