@@ -8,19 +8,43 @@ abstract: "Meshery offers support for more adapters than any other project or pr
 language: en
 list: include
 ---
-Meshery offers Providers as a point of extensibility. 
+Meshery offers Providers as a point of extensibility. With a built-in Local Provider (named "None"), Meshery Remote Providers are designed to be pluggable. Remote Providers offer points of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform.
+
+1. **Extensibility points offer clean separation of open vs closed source capabilities.**
+   - Meshmap is an example of a feature to be delivered via Remote Provider. 
+1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
+   - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
+
+### Design Principles: Meshery Remote Provider Framework
+
+Meshery's Remote Provider extensbility framework is designed to enable:
+
+1. **Pluggable UI Functionality:**
+   - Out-of-tree custom UI components with seamless user experience.
+   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
+
+1. **Pluggable Backend Functionality:**
+   - Remote Providers have any number of capabilities unbeknownst to Meshery.
+
+1. **Pluggable AuthZ**
+   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
 
 ![Providers](/assets/img/providers/provider_screenshot.png)
 
-### What functionality do Providers perform? 
+### What functionality do Providers perform?
 
 What a given Remote Provider offers might vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject different functionality - functionality specific to that provider.
 
-- Authentication and Authorization
-  - Examples: session management, two factor authentication, LDAP integration
-- Long-Term Persistence
-  - Examples: Storage and retrieval of performance test results
-  - Examples: Storage and retrieval of user preferences
+- **Authentication and Authorization**
+  - Examples: session management, two factor authentication, LDAP integration.
+- **Long-Term Persistence**
+  - Examples: Storage and retrieval of performance test results.
+  - Examples: Storage and retrieval of user preferences.
+- **Enhanced Visualization**
+  - Examples: Creation of a visual service mesh topology.
+  - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
+- **Reporting**
+  - Examples: Using Meshery's GraphQL server to compose new dashboards.
 
 ## Types of providers
 
@@ -139,7 +163,8 @@ Providers as an object have the following attributes (this must be returned as a
 Meshery enables you as a service mesh owner to customize your service mesh deployment.
 
 ## Managing your Remote Provider Extension Code
-Remote Provider extensions are kept out-of-tree from Meshery (server and UI). You might need to build your extensions under the same environment and set of dependencies as Meshery. The Meshery framework of extensibility has been designed such that in-tree extensions can be safely avoided while still providing a robust platform from which to extend Meshery’s functionality.
+
+Remote Provider extensions are kept out-of-tree from Meshery (server and UI). You might need to build your extensions under the same environment and set of dependencies as Meshery. The Meshery framework of extensibility has been designed such that in-tree extensions can be safely avoided while still providing a robust platform from which to extend Meshery’s functionality. Often, herein lies the delineation of open vs. closed functionality within Meshery. Remote Providers can bring (plugin) what functionality that they want behind this extensible interface (more about Meshery extensibility), at least that is up to the point that Meshery has provided a way to plug that feature in.
 
 Offering out-of-tree support for Meshery extensions means that:
 
