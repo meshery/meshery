@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Extensibility: Providers"
-permalink: extensibility/providers
+title: "Extensibility: APIs"
+permalink: extensibility/api
 type: Reference
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
@@ -85,12 +85,12 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 Providers as an object have the following attributes:
 
 ### Remote Provider Extension Points
+
 Interwoven into Meshery’s web-based, user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
 
-**Name:** navigator 
-**Type:** Menu Items
-Description: This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar.
-Menu items may refer to full page extensions.
+- **Name:** navigator 
+   **Type:** Menu Items
+  **Description:** This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.
 
 **Name:** user_prefs 
 **Type:** Single Component
