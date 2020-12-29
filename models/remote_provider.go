@@ -68,7 +68,7 @@ func (l *RemoteProvider) Initialize() {
 	saasURL, _ := url.Parse(l.SaaSBaseURL + "/capabilities")
 	resp, err := http.Get(saasURL.String())
 	if err != nil || resp.StatusCode != http.StatusOK {
-		logrus.Errorf("[Initialize]: Failed to get capabilities %s", err)
+		logrus.Errorf("[Initialize Provider]: Failed to get capabilities %s", err)
 		return
 	}
 	defer func() {
