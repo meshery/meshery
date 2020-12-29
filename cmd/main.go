@@ -118,7 +118,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
+	// saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	saasBaseURLNone := SAAS_BASE_URL_NONE
 	lProv := &models.DefaultLocalProvider{
 		SaaSBaseURL:            saasBaseURLNone,

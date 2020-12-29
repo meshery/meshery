@@ -839,7 +839,7 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 }
 
 // RecordMeshSyncData records the mesh sync data
-func (l *MesheryRemoteProvider) RecordMeshSyncData(obj model.Object) error {
+func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
@@ -918,4 +918,5 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return fmt.Errorf("unknown type: %s", string(header.Typeflag))
 		}
 	}
+	return nil
 }
