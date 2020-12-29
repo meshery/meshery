@@ -10,6 +10,8 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/internal/database"
+	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -22,6 +24,7 @@ type DefaultLocalProvider struct {
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
+	GenericPersister      database.Handler
 }
 
 // Name - Returns Provider's friendly name
@@ -341,4 +344,9 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 		return err
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
+	return nil
 }

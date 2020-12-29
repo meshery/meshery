@@ -68,6 +68,15 @@ run-local:
 	./meshery; \
 	cd ..
 
+run-fast:
+	cd cmd; go mod tidy; \
+	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	go run main.go;
+
+
 golangci-run:
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
 	$(GOPATH)/bin/golangci-lint run

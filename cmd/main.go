@@ -2,21 +2,16 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"time"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshsync/pkg/broker"
-	"github.com/layer5io/meshsync/pkg/broker/nats"
-	"github.com/layer5io/meshsync/pkg/model"
-
 	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshery/internal/database"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
 	"github.com/spf13/viper"
@@ -110,6 +105,13 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
+	dbHandler, err := database.New(database.GORM, database.Options{
+		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
 	saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	lProv := &models.DefaultLocalProvider{
 		SaaSBaseURL:            saasBaseURL,
@@ -117,6 +119,7 @@ func main() {
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
+		GenericPersister:       dbHandler,
 	}
 	provs[lProv.Name()] = lProv
 
@@ -138,6 +141,7 @@ func main() {
 		BitCaskPreferencePersister: cPreferencePersister,
 		ProviderVersion:            "v0.3.14",
 		SmiResultPersister:         smiResultPersister,
+		GenericPersister:           dbHandler,
 	}
 	cp.SyncPreferences()
 	defer cp.StopSyncPreferences()
@@ -167,31 +171,6 @@ func main() {
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-
-	// subscribing to nats
-	natsClient, err := nats.New("nats://127.0.0.1:4222")
-	if err != nil {
-		logrus.Printf("Nats client create error %v", err)
-	} else {
-		msgch := make(chan *broker.Message)
-		err = natsClient.SubscribeWithChannel("meshsync", "meshery", msgch)
-		if err != nil {
-			logrus.Printf("Error subscribing to meshsync %v", err)
-		}
-
-		go func() {
-			for {
-				select {
-				case msg := <-msgch:
-					objectJSON, _ := json.Marshal(msg.Object)
-					var object model.Object
-					_ = utils.Unmarshal(string(objectJSON), &object)
-					// persist the object
-					log.Printf("%+v\n", object)
-				}
-			}
-		}()
-	}
 
 	go func() {
 		logrus.Infof("Starting Server listening on :%d", port)

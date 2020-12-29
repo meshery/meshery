@@ -2,6 +2,12 @@ module github.com/layer5io/meshery
 
 go 1.13
 
+replace (
+	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
+	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
+)
+
 require (
 	fortio.org/fortio v1.11.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
@@ -17,6 +23,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
+	github.com/layer5io/meshery-operator v0.2.0
 	github.com/layer5io/meshkit v0.1.30
 	github.com/layer5io/meshsync v0.1.0
 	github.com/layer5io/nighthawk-go v0.1.4
@@ -36,13 +43,10 @@ require (
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
+	gorm.io/driver/sqlite v1.1.4
+	gorm.io/gorm v1.20.9
+	istio.io/api v0.0.0-20201123152548-197f11e4ea09
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12
-)
-
-replace (
-	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
-	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
-	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )

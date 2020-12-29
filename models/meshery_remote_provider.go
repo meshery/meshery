@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/internal/database"
+	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -39,6 +41,7 @@ type MesheryRemoteProvider struct {
 
 	ProviderVersion    string
 	SmiResultPersister *BitCaskSmiResultsPersister
+	GenericPersister   database.Handler
 }
 
 type userSession struct {
@@ -691,4 +694,9 @@ func (l *MesheryRemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID 
 	}
 	logrus.Errorf("error while deleting testConfig: %s", testUUID)
 	return fmt.Errorf("error while deleting testConfig - Status code: %d, Body: %s", resp.StatusCode, testUUID)
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *MesheryRemoteProvider) RecordMeshSyncData(obj model.Object) error {
+	return nil
 }
