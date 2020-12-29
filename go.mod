@@ -21,6 +21,7 @@ require (
 	github.com/layer5io/meshsync v0.1.0
 	github.com/layer5io/nighthawk-go v0.1.4
 	github.com/layer5io/service-mesh-performance v0.3.1
+	github.com/norwoodj/helm-docs v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
 	github.com/prometheus/client_golang v1.8.0
@@ -36,6 +37,7 @@ require (
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12

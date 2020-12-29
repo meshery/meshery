@@ -130,3 +130,6 @@ docker-docs:
 	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 
+.PHONY: chart-readme
+chart-readme:
+	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
