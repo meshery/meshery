@@ -37,7 +37,7 @@ const styles = () => ({
   checked: {},
 });
 
-class UserPreference extends React.Component {
+class UserPreferences extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -184,4 +184,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps,
-)(withRouter(withSnackbar(UserPreference))));
+)(withRouter(withSnackbar(UserPreferences))));

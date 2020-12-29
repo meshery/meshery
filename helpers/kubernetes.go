@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"context"
 	"time"
 
 	"github.com/layer5io/meshery/models"
@@ -60,7 +61,7 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string) ([]*models.K8SN
 	// nodes
 	nodesClient := clientset.CoreV1().Nodes()
 	logrus.Debugf("Listing nodes")
-	nodelist, err := nodesClient.List(metav1.ListOptions{})
+	nodelist, err := nodesClient.List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		err = errors.Wrap(err, "unable to get the list of nodes")
 		logrus.Error(err)

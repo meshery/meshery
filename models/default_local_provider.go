@@ -18,39 +18,59 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
+	ProviderProperties
 	SaaSBaseURL           string
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
 }
 
+// Initialize will initialize the local provider
+func (l *DefaultLocalProvider) Initialize() {
+	l.ProviderName = "None"
+	l.ProviderDescription = []string{
+		"Ephemeral sessions",
+		"Environment setup not saved",
+		"No performance test result history",
+		"Free Use",
+	}
+	l.ProviderType = LocalProviderType
+	l.PackageVersion = "v0.0.1"
+	l.PackageURL = ""
+	l.Extensions = Extensions{}
+	l.Capabilities = Capabilities{}
+}
+
 // Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
-	return "None"
+	return l.ProviderName
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
-func (l *DefaultLocalProvider) Description() string {
-	return `Provider: None
-	- ephemeral sessions
-	- environment setup not saved
-	- no performance test result history
-	- free use`
+func (l *DefaultLocalProvider) Description() []string {
+	return l.ProviderDescription
 }
 
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
-	return LocalProviderType
+	return l.ProviderType
 }
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
-	var result ProviderProperties
-	result.ProviderType = l.GetProviderType()
-	result.DisplayName = l.Name()
-	result.Description = l.Description()
-	result.Capabilities = make([]Capability, 0)
-	return result
+	return l.ProviderProperties
+}
+
+// PackageLocation returns an empty string as there is no extension package for
+// the local provider
+func (l *DefaultLocalProvider) PackageLocation() string {
+	return ""
+}
+
+// GetProviderCapabilities returns all of the provider properties
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	encoder.Encode(l.ProviderProperties)
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue

@@ -101,6 +101,12 @@ theme = {
         },
       },
     },
+    MuiToggleButton: {
+      label: {
+        textTransform: 'initial',
+        color: '#607d8b',
+      },
+    },
     MuiTabs: {
       root: {
         marginLeft: theme.spacing(1),
@@ -154,6 +160,8 @@ theme = {
         '& svg': {
           fontSize: 20,
         },
+        justifyContent: 'center',
+        minWidth: 0
       },
     },
     MuiAvatar: {

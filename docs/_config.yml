@@ -92,6 +92,7 @@ collections:
     permalink: /:collection/:path
   releases:
     output: true
+    permalink: project/:collection/:path
 
 # Defaults
 defaults:
