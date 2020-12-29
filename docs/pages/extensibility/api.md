@@ -1,9 +1,9 @@
 ---
 layout: default
-title: "Extensibility: Service Mesh Adapters"
+title: "Extensibility: APIs"
 permalink: extensibility/api
 type: Reference
-abstract: 'Meshery architecture is extensible.'
+abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
 #redirect_from: extensibility
 ---
 ## Meshery's APIs
