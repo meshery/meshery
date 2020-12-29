@@ -152,7 +152,7 @@ func initConfig() {
 							Name:     "Default",
 							Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
 						},
-						Platform: "",
+						Platform: "docker",
 						Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"},
 					}
 					ContextMap := map[string]models.Context{}
