@@ -11,10 +11,11 @@ import (
 
 // switchContextCmd represents the update command
 var switchContextCmd = &cobra.Command{
-	Use:   "switch",
-	Short: "switch context",
-	Long:  `Configure mesheryctl to actively use one one context vs. the another context`,
-	Args:  cobra.ExactArgs(1),
+	Use:          "switch",
+	Short:        "switch context",
+	Long:         `Configure mesheryctl to actively use one one context vs. the another context`,
+	Args:         cobra.ExactArgs(1),
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
