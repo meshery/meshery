@@ -85,9 +85,6 @@ type HandlerConfig struct {
 
 	// SessionStore sessions.Store
 
-	// SaaSTokenName string
-	// SaaSBaseURL   string
-
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface
 
