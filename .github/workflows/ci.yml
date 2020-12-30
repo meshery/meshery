@@ -183,12 +183,12 @@ jobs:
           npm i
           npm run build
           npm run export
-      - name: Install latest version of Kind
-        run: |
-          GO111MODULE=on go get sigs.k8s.io/kind
-      - name: Create Kind cluster
-        run: |
-          PATH=$(go env GOPATH)/bin:$PATH kind create cluster --name kind-cluster
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.1.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Build Next App
+        run: cd ui && npm run build && npm run export
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
