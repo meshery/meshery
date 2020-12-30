@@ -20,7 +20,7 @@ import (
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	ProviderProperties
-	SaaSBaseURL           string
+	ProviderBaseURL       string
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
@@ -217,8 +217,8 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 
 func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -236,7 +236,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		return "", nil
 	}
 	if resp.StatusCode == http.StatusCreated {
-		// logrus.Infof("results successfully published to SaaS")
+		// logrus.Infof("results successfully published to reomote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Warnf("unable to unmarshal body: %v", err)
@@ -263,8 +263,8 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
-	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -273,7 +273,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
+		logrus.Infof("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {

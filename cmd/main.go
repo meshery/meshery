@@ -35,7 +35,7 @@ var (
 )
 
 const (
-	// DefaultProviderURL is the saas base url for the "none" provider
+	// DefaultProviderURL is the provider url for the "none" provider
 	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
@@ -116,9 +116,8 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURLNone := DefaultProviderURL
 	lProv := &models.DefaultLocalProvider{
-		SaaSBaseURL:            saasBaseURLNone,
+		ProviderBaseURL:        DefaultProviderURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,
@@ -133,19 +132,15 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	if saasBaseURLNone == "" {
-		logrus.Fatalf("SAAS_BASE_URL_NONE environment variable not set.")
-	}
-
-	saasBaseURLs := viper.GetStringSlice("SAAS_BASE_URLS")
-	for _, saasurl := range saasBaseURLs {
-		parsedURL, err := url.Parse(saasurl)
+	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	for _, providerurl := range RemoteProviderURLs {
+		parsedURL, err := url.Parse(providerurl)
 		if err != nil {
-			logrus.Error(saasurl, "is invalid url skipping provider")
+			logrus.Error(providerurl, "is invalid url skipping provider")
 			continue
 		}
 		cp := &models.RemoteProvider{
-			SaaSBaseURL:                parsedURL.String(),
+			RemoteProviderURL:          parsedURL.String(),
 			RefCookieName:              parsedURL.Host + "_ref",
 			SessionName:                parsedURL.Host,
 			TokenStore:                 make(map[string]string),
