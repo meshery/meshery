@@ -35,8 +35,8 @@ var (
 )
 
 const (
-	// SAAS_BASE_URL_NONE is the saas base url for the "none" provider
-	SAAS_BASE_URL_NONE = "https://meshery.layer5.io"
+	// DefaultProviderURL is the saas base url for the "none" provider
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {
@@ -116,7 +116,7 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURLNone := SAAS_BASE_URL_NONE
+	saasBaseURLNone := DefaultProviderURL
 	lProv := &models.DefaultLocalProvider{
 		SaaSBaseURL:            saasBaseURLNone,
 		MapPreferencePersister: preferencePersister,
