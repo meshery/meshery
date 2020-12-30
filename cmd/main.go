@@ -35,8 +35,8 @@ var (
 )
 
 const (
-	// DEFAULT_PROVIDER_URL is the provider url for the "none" provider
-	DEFAULT_PROVIDER_URL = "https://meshery.layer5.io"
+	// DefaultProviderURL is the provider url for the "none" provider
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {
@@ -117,7 +117,7 @@ func main() {
 	defer testConfigPersister.CloseTestConfigsPersister()
 
 	lProv := &models.DefaultLocalProvider{
-		ProviderBaseURL:        DEFAULT_PROVIDER_URL,
+		ProviderBaseURL:        DefaultProviderURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,

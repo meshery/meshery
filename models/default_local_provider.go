@@ -70,7 +70,9 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 // GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
-	encoder.Encode(l.ProviderProperties)
+	if err := encoder.Encode(l.ProviderProperties); err != nil {
+		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+	}
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
