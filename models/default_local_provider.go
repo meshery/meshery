@@ -13,6 +13,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -35,7 +36,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
-	l.PackageVersion = "v0.0.1"
+	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{}
