@@ -194,7 +194,7 @@ jobs:
         run: cd ui && npm run build && npm run export
       - name: Run backend
         env:
-          SAAS_BASE_URL: http://localhost:9876
+          PROVIDER_BASE_URLS: https://meshery.layer5.io
           PORT: 9081
           ADAPTER_URLS: "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 mesherylocal.layer5.io:10007"
         run: |

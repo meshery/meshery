@@ -198,7 +198,7 @@ Any UI changes made now will automatically be recompiled and served in the brows
 If you want to run Meshery from IDE like Goland, VSCode. set below environment variable
 
 ```
-SAAS_BASE_URL=https://meshery.layer5.io
+PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
 ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009

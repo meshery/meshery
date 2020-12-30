@@ -132,7 +132,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	RemoteProviderURLs := viper.GetStringSlice("SAAS_BASE_URLS")
+	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
 		if err != nil {

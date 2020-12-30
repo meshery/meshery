@@ -1,9 +1,9 @@
 ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009"
 
-MESHERY_CLOUD_LOCAL=http://mesherylocal.layer5.io:9876
-MESHERY_CLOUD_DEV=http://localhost:9876
-MESHERY_CLOUD_PROD=https://meshery.layer5.io
-MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
+MESHERY_CLOUD_LOCAL="http://mesherylocal.layer5.io:9876"
+MESHERY_CLOUD_DEV="http://localhost:9876"
+MESHERY_CLOUD_PROD="https://meshery.layer5.io"
+MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
 
@@ -24,7 +24,7 @@ docker-run-local-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
-	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-p 9081:8080 \
@@ -35,7 +35,7 @@ docker-run-local-cloud:
 docker-run-cloud: 
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-v meshery-config:/home/appuser/.meshery/config \
@@ -49,7 +49,7 @@ docker-run-cloud:
 run-local-cloud: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
-	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -61,7 +61,7 @@ run-local-cloud:
 run-local: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
-	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
