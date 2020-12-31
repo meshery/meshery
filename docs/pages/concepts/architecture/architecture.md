@@ -10,6 +10,7 @@ list: include
 ---
 
 ## Languages
+
 Meshery and its components are written using the following languages and technologies.
 
 | Components               | Languages and Technologies             |
@@ -22,21 +23,25 @@ Meshery and its components are written using the following languages and technol
 | Meshery Remote Providers | _any_ - must adhere to gRPC interfaces |
 
 ## Deployments
+
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes.
 
 [![Meshery architecture]({{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-architecture.svg)
 
 ## Clients
+
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
 [![Client architecture]({{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg)
 
 ## Providers
+
 As a point of extension, Meshery supports two types of providers: _Local_ and _Remote_.
 
 [![Provider architecture]({{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg)]({{ site.baseurl }}/assets/img/architecture/Meshery-provider-architecture.svg)
 
 ## Object Model
+
 This diagram outlines logical constructs within Meshery and their relationships.
 
 [![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)
@@ -45,15 +50,20 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 Meshery uses the following list of network ports to interface with its various components:
 
-| Component                                      | Port             |
-| :--------------------------------------------- | :--------------: |
-| Meshery REST API                               | 9081/tcp         |
-| Learn Layer5 Application                       | 10011            |
+| Component                |   Port   |
+| :----------------------- | :------: |
+| Meshery REST API         | 9081/tcp |
+| Meshery GraphQL          | 9081/tcp |
+| Meshery Operator NATS    | 4222/tcp |
+| Learn Layer5 Application | 10011/tcp |
+| Meshery Adapters         | 10000+/tcp |
+| Meshery Remote Providers | 443/tcp  |
 
 ### **Adapter Ports**
 
-| Service Mesh  | Port          |
-| :------------ | ------------: |
+| Service Mesh | Port |
+| :----------- | ---: |
+
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.port }} |
@@ -73,3 +83,5 @@ concerned with a long-lived configuration, while others have no state at all.
 | Meshery Adapters  | stateless    | interface with service meshes on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in user's `$HOME/.meshery/` folder        |
 | Meshery Providers | stateful     | location of persistent user preferences, environment, tests and so on |
+| Meshery Operator  | stateless    | operator of Meshery custom controllers, notably MeshSync              |
+| MeshSync          | stateless    | Kubernetes custom controller, continuously running discovery          |
