@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-## Languages
+## Architectural Components and Their Languages
 
 Meshery and its components are written using the following languages and technologies.
 
@@ -48,6 +48,11 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 [![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)
 
+## Meshery Operator and MeshSync
+
+[![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
+)]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
+
 ### **Network Ports**
 
 Meshery uses the following list of network ports to interface with its various components:
@@ -65,7 +70,6 @@ Meshery uses the following list of network ports to interface with its various c
 
 | Service Mesh | Port |
 | :----------- | ---: |
-
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.port }} |
