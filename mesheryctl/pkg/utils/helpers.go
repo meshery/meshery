@@ -12,6 +12,7 @@ import (
 	"math/rand"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -19,8 +20,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -68,6 +71,20 @@ var (
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 )
+
+// ListOfAdapters returns the list of adapters available
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
+
+// TemplateContext is the template context provided when creating a config file
+var TemplateContext = models.Context{
+	Endpoint: "http://localhost:9081",
+	Token: models.Token{
+		Name:     "Default",
+		Location: fmt.Sprintf("%s/%s", MesheryFolder, "auth.json"),
+	},
+	Platform: "docker",
+	Adapters: ListOfAdapters,
+}
 
 type cryptoSource struct{}
 
@@ -484,4 +501,71 @@ func AskForConfirmation(s string) bool {
 			return false
 		}
 	}
+}
+
+// CreateConfigFile creates config file in Meshery Folder
+func CreateConfigFile() error {
+	if _, err := os.Stat(fmt.Sprintf("%s/%s", MesheryFolder, "config.yaml")); os.IsNotExist(err) {
+		_, err := os.Create(fmt.Sprintf("%s/%s", MesheryFolder, "config.yaml"))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AddContextToConfig adds context passed to it to mesheryctl config file
+func AddContextToConfig(contextName string, context models.Context, configPath string, set bool) error {
+	var currentConfig models.MesheryCtlConfig
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	file, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(file, &currentConfig)
+	if err != nil {
+		return err
+	}
+
+	if currentConfig.Contexts == nil {
+		currentConfig.Contexts = map[string]models.Context{}
+	}
+
+	_, exists := currentConfig.Contexts[contextName]
+	if exists {
+		return errors.New("error adding context: a context with same name already exists")
+	}
+
+	currentConfig.Contexts[contextName] = context
+	if set {
+		currentConfig.CurrentContext = contextName
+	}
+
+	content, err := yaml.Marshal(currentConfig)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(configPath, content, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ValidateURL validates url provided for meshery backend to mesheryctl context
+func ValidateURL(URL string) error {
+	ParsedURL, err := url.ParseRequestURI(URL)
+	if err != nil {
+		return err
+	}
+	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
+		return fmt.Errorf("%s is not a supported request scheme", ParsedURL.Scheme)
+	}
+	return nil
 }

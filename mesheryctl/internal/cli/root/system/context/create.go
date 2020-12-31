@@ -1,11 +1,7 @@
 package context
 
 import (
-	"fmt"
-	urlLib "net/url"
-
-	"github.com/layer5io/meshery/models"
-	"github.com/pkg/errors"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,6 +10,7 @@ import (
 var (
 	url       = ""
 	tokenPath = ""
+	set       = false
 )
 
 // createContextCmd represents the update command
@@ -23,35 +20,25 @@ var createContextCmd = &cobra.Command{
 	Long:  `Add a new context to Meshery config.yaml file`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := viper.Unmarshal(&configuration)
+		tempContext := utils.TemplateContext
+
+		err := utils.ValidateURL(url)
 		if err != nil {
 			return err
 		}
-		_, exists := configuration.Contexts[args[0]]
-		if exists {
-			return errors.New("error adding context: a context with same name already exists")
-		}
-		ParsedURL, err := urlLib.ParseRequestURI(url)
+		tempContext.Endpoint = url
+
+		err = utils.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
 		if err != nil {
 			return err
 		}
-		if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-			return fmt.Errorf("%s is not a supported request scheme", ParsedURL.Scheme)
-		}
-		listOfAdapters := []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
-		configuration.Contexts[args[0]] = models.Context{Endpoint: url, Adapters: listOfAdapters}
-		configuration.CurrentContext = args[0]
-		viper.Set("contexts", configuration.Contexts)
-		viper.Set("current-context", configuration.CurrentContext)
-		err = viper.WriteConfig()
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("Added %s context and set as current context", args[0])
+
+		log.Printf("Added %s context", args[0])
 		return nil
 	},
 }
 
 func init() {
 	createContextCmd.Flags().StringVarP(&url, "url", "u", "https://localhost:9081", "Meshery Server URL with Port")
+	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 }

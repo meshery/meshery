@@ -19,9 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/layer5io/meshery/models"
-	"gopkg.in/yaml.v2"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
@@ -144,36 +141,16 @@ func initConfig() {
 					}
 				}
 
-				// Create Meshery config file using standard template
-				if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml")); os.IsNotExist(err) {
-					localContext := models.Context{
-						Endpoint: "localhost:9081",
-						Token: models.Token{
-							Name:     "Default",
-							Location: fmt.Sprintf("%s/%s", utils.MesheryFolder, "auth.json"),
-						},
-						Platform: "docker",
-						Adapters: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"},
-					}
-					ContextMap := map[string]models.Context{}
-					ContextMap["local"] = localContext
-					basicMap := models.MesheryCtlConfig{
-						Contexts:       ContextMap,
-						CurrentContext: "local",
-						Tokens:         nil,
-					}
-					filePointer, err := os.Create(fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"))
-					if err != nil {
-						log.Fatalln(err)
-					}
-					content, err := yaml.Marshal(basicMap)
-					if err != nil {
-						log.Fatalln(err)
-					}
-					_, err = filePointer.Write(content)
-					if err != nil {
-						log.Fatalln(err)
-					}
+				// Create config file if not present in meshery folder
+				err = utils.CreateConfigFile()
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// Add Context to context file
+				err = utils.AddContextToConfig("local", utils.TemplateContext, fmt.Sprintf("%s/%s", utils.MesheryFolder, "config.yaml"), true)
+				if err != nil {
+					log.Fatal(err)
 				}
 
 				log.Println(
