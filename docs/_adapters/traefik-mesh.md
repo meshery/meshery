@@ -5,7 +5,7 @@ name: Meshery Adapter for Traefik Mesh
 mesh_name: Traefik Mesh
 version: v1.0
 port: 10006/tcp
-project_status: alpha
+project_status: beta
 github_link: https://github.com/layer5io/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
