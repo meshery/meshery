@@ -3,9 +3,9 @@ layout: default
 title: Meshery Adapter for Open Service Mesh
 name: Meshery Adapter for Open Service Mesh
 mesh_name: Open Service Mesh
-version: OSM v0.5.0
+version: v0.5.0
 port: 10009/tcp
-project_status: beta
+project_status: stable
 github_link: https://github.com/layer5io/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
