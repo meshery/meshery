@@ -22,6 +22,7 @@ Meshery and its components are written using the following languages and technol
 | Meshery Provider UI      | ReactJS, NextJS                                                                   |
 | Meshery Remote Providers | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility}}) |
 | Meshery Operator         | Golang, NATS                                                                      |
+| MeshSync                 | Golang                                                                            |
 
 ## Deployments
 
