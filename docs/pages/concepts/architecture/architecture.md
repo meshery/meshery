@@ -13,14 +13,15 @@ list: include
 
 Meshery and its components are written using the following languages and technologies.
 
-| Components               | Languages and Technologies             |
-| :----------------------- | :------------------------------------- |
-| Meshery Server           | Golang, gRPC                           |
-| Meshery Adapters         | Golang, gRPC                           |
-| Meshery WASM Filters     | Rust and C++                           |
-| Meshery UI               | ReactJS, NextJS, BillboardJS           |
-| Meshery Provider UI      | ReactJS, NextJS                        |
-| Meshery Remote Providers | _any_ - must adhere to gRPC interfaces |
+| Components               | Languages and Technologies                                                        |
+| :----------------------- | :-------------------------------------------------------------------------------- |
+| Meshery Server           | Golang, gRPC, GraphQL, SQLlite                                                    |
+| Meshery Adapters         | Golang, gRPC                                                                      |
+| Meshery WASM Filters     | Rust and C++                                                                      |
+| Meshery UI               | ReactJS, NextJS, BillboardJS                                                      |
+| Meshery Provider UI      | ReactJS, NextJS                                                                   |
+| Meshery Remote Providers | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility}}) |
+| Meshery Operator         | Golang, NATS                                                                      |
 
 ## Deployments
 
@@ -50,14 +51,14 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 Meshery uses the following list of network ports to interface with its various components:
 
-| Component                |   Port   |
-| :----------------------- | :------: |
-| Meshery REST API         | 9081/tcp |
-| Meshery GraphQL          | 9081/tcp |
-| Meshery Operator NATS    | 4222/tcp |
-| Learn Layer5 Application | 10011/tcp |
+| Component                |    Port    |
+| :----------------------- | :--------: |
+| Meshery REST API         |  9081/tcp  |
+| Meshery GraphQL          |  9081/tcp  |
+| Meshery Operator NATS    |  4222/tcp  |
+| Learn Layer5 Application | 10011/tcp  |
 | Meshery Adapters         | 10000+/tcp |
-| Meshery Remote Providers | 443/tcp  |
+| Meshery Remote Providers |  443/tcp   |
 
 ### **Adapter Ports**
 
