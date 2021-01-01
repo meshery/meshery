@@ -177,6 +177,8 @@ jobs:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
+    outputs:
+      node_modules_changed: ${{ steps.check_files.outputs.node_modules_changed }}
     steps:
       - name: Check out code
         uses: actions/checkout@master
@@ -194,8 +196,30 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ secrets.NODE_VERSION }}
+      - name: check modified files
+        id: check_files
+        run: |
+          git -c user.name="ci" -c user.email="noreply@githubci.com" commit --allow-empty -n -m "Initial commit".
+          echo "=============== list modified files ==============="
+          git diff --name-only HEAD^ HEAD
+          
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            echo $file
+            if [[ $file != package.json ]]; then
+              echo "Package.json not modified."
+              echo "::set-output name=node_modules_changed::false"
+              break
+            else
+              echo "::set-output name=node_modules_changed::true"
+            fi
+          done < files.txt
+
       - name: Cache node modules
         id: node-cache
+        if: needs.tests-ui-e2e.outputs.node_modules_changed == 'false'
         uses: actions/cache@v2
         with:
           path: |
