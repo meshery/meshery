@@ -72,8 +72,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
     - run: |
-        go clean -modcache
-        rm go.sum
         go mod tidy
         GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
     - name: Upload artifacts
@@ -111,6 +109,9 @@ jobs:
         cd ..
         cd provider-ui
         npm i
+    - name: build app
+      run: |
+        make build-ui
   tests-ui:
     needs: [build-ui]
     name: UI integration tests
@@ -133,20 +134,16 @@ jobs:
           !~/cache/exclude
           **/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
-    - name: Install dependencies (if needed)
-      if: steps.node-cache.outputs.cache-hit != 'true'
-      run: |
-        cd ui
-        npm i
-        cd ..
-        cd provider-ui
-        npm i
     - name: Run tests
       run: |
         cd ui
+        npm cache clean --force
+        npm i
         npm run ci-test-integration
         cd ..
         cd provider-ui
+        npm cache clean --force
+        npm i
         npm test
         cd ..
   tests-ui-e2e:
@@ -182,16 +179,13 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install dependencies (if needed)
-        if: steps.node-cache.outputs.cache-hit != 'true'
+      - name: Build Next App
         run: |
           cd ui
+          npm cache clean --force
           npm i
-          cd ..
-          cd provider-ui
-          npm i
-      - name: Build Next App
-        run: cd ui && npm run build && npm run export
+          npm run build
+          npm run export
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
