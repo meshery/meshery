@@ -70,6 +70,8 @@ var (
 	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
+	// DefaultConfigPath is the detail path to mesheryctl config
+	DefaultConfigPath = "config.yaml"
 )
 
 // ListOfAdapters returns the list of adapters available
@@ -80,7 +82,7 @@ var TemplateContext = models.Context{
 	Endpoint: "http://localhost:9081",
 	Token: models.Token{
 		Name:     "Default",
-		Location: fmt.Sprintf("%s/%s", MesheryFolder, "auth.json"),
+		Location: AuthConfigFile,
 	},
 	Platform: "docker",
 	Adapters: ListOfAdapters,
@@ -188,6 +190,7 @@ func SetFileLocation() error {
 	MesheryFolder = path.Join(home, MesheryFolder)
 	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = path.Join(MesheryFolder, DefaultConfigPath)
 	return nil
 }
 
@@ -505,8 +508,8 @@ func AskForConfirmation(s string) bool {
 
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
-	if _, err := os.Stat(fmt.Sprintf("%s/%s", MesheryFolder, "config.yaml")); os.IsNotExist(err) {
-		_, err := os.Create(fmt.Sprintf("%s/%s", MesheryFolder, "config.yaml"))
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		_, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
