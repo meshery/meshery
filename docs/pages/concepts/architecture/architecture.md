@@ -46,7 +46,7 @@ As a point of extension, Meshery supports two types of providers: _Local_ and _R
 
 This diagram outlines logical constructs within Meshery and their relationships.
 
-[![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-object-model.svg)
+[![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg)
 
 ## Meshery Operator and MeshSync
 
