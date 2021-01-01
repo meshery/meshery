@@ -97,11 +97,12 @@ jobs:
     - name: check modified files
       id: check_files
       run: |
+        git commit --allow-empty -n -m "Initial commit".
         echo "=============== list modified files ==============="
-        git diff --name-only HEAD^ HEAD
+        git diff --name-only HEAD^ -- HEAD
         
         echo "========== check paths of modified files =========="
-        git diff --name-only HEAD^ HEAD > files.txt
+        git diff --name-only HEAD^ -- HEAD > files.txt
         while IFS= read -r file
         do
           echo $file
