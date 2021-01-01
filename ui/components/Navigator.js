@@ -358,6 +358,14 @@ const categories = [
         link: false,
         show: true,
       },
+      {
+        id: "Traefik Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/traefik-mesh",
+        title: "Traefik Mesh",
+        link: false,
+        show: true,
+      },
     ],
   },
 ];
@@ -563,10 +571,12 @@ class Navigator extends React.Component {
     const children = [];
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
-      const aName = adapter.name.toLowerCase();
+      let aName = adapter.name.toLowerCase();
+      // Manually changing adapter name so that it matches the internal name
+      if (aName === "osm") aName = "open service mesh"
       if (category !== aName) {
         return;
-      }
+      } 
       children.push({
         id: adapter.adapter_location,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -622,6 +632,10 @@ class Navigator extends React.Component {
         image = "/static/img/nginx-sm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
+      case "traefik mesh":
+        image = "/static/img/traefikmesh-light.svg";
+        logoIcon = <img src={image} className={classes.icon} />;
+        break;
     }
     return logoIcon;
   }
@@ -640,7 +654,8 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
-      "NGINX Service Mesh"
+      "NGINX Service Mesh",
+      "Traefik Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {
@@ -834,11 +849,13 @@ class Navigator extends React.Component {
             })}
             {
               (this.state.navigator && this.state.navigator.length)
-              &&
-              <React.Fragment>
-                <Divider className={classes.divider} />
-                {this.renderNavigatorExtensions(this.state.navigator, 1)}
-              </React.Fragment>
+                ?
+                <React.Fragment>
+                  <Divider className={classes.divider} />
+                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
+                </React.Fragment>
+                :
+                null
             }
             <Divider className={classes.divider} />
             {externlinks.map(({ id, icon, title, href, external_icon}) => {
