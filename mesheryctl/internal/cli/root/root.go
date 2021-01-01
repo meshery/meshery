@@ -56,7 +56,7 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
-	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
+	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes, test and their workloads.`,
 	Args:  cobra.MinimumNArgs(1),
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
