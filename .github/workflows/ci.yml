@@ -137,12 +137,10 @@ jobs:
     - name: Run tests
       run: |
         cd ui
-        npm cache clean --force
         npm i
         npm run ci-test-integration
         cd ..
         cd provider-ui
-        npm cache clean --force
         npm i
         npm test
         cd ..
@@ -182,7 +180,6 @@ jobs:
       - name: Build Next App
         run: |
           cd ui
-          npm cache clean --force
           npm i
           npm run build
           npm run export
