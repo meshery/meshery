@@ -30,7 +30,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 2.1.0
+version: 2.1.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -40,22 +40,22 @@ appVersion: stable-latest
 
 dependencies:
 - name: meshery-istio
-  version: 2.0.0
+  version: 2.0.1
   condition: meshery-istio.enabled
 - name: meshery-linkerd
-  version: 2.0.0
+  version: 2.0.1
   condition: meshery-linkerd.enabled
 - name: meshery-consul
-  version: 2.0.0
+  version: 2.0.1
   condition: meshery-consul.enabled
 - name: meshery-kuma
-  version: 1.0.0
+  version: 1.0.1
   condition: meshery-kuma.enabled
 - name: meshery-osm
-  version: 1.0.0
+  version: 1.0.1
   condition: meshery-osm.enabled
 - name: meshery-nsm
-  version: 1.0.0
+  version: 1.0.1
   condition: meshery-nsm.enabled
 
 maintainers:
