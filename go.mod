@@ -36,8 +36,7 @@ require (
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
-  k8s.io/utils v0.0.0-20191010214722-8d271d903fe4 // indirect
-  k8s.io/api v0.18.12
+	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12
 )
