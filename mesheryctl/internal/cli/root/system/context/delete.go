@@ -24,6 +24,9 @@ var deleteContextCmd = &cobra.Command{
 			return errors.New("no context to delete")
 		}
 		delete(configuration.Contexts, args[0])
+		if viper.GetString("current-context") == args[0] {
+			viper.Set("current-context", "")
+		}
 		viper.Set("contexts", configuration.Contexts)
 		log.Printf("deleted context %s", args[0])
 		err = viper.WriteConfig()
