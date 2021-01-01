@@ -33,7 +33,7 @@ var createContextCmd = &cobra.Command{
 			return err
 		}
 
-		log.Printf("Added %s context", args[0])
+		log.Printf("Added `%s` context", args[0])
 		return nil
 	},
 }

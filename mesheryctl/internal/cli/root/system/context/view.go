@@ -21,7 +21,7 @@ var viewContextCmd = &cobra.Command{
 		}
 		currentContext := viper.GetString("current-context")
 		if currentContext == "" {
-			return errors.New("context not set")
+			return errors.New("current context not set")
 		}
 		log.Println("Current context:", currentContext)
 		return nil

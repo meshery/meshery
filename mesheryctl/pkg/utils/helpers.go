@@ -568,7 +568,7 @@ func ValidateURL(URL string) error {
 		return err
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
-		return fmt.Errorf("%s is not a supported request scheme", ParsedURL.Scheme)
+		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
 	}
 	return nil
 }
