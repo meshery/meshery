@@ -26,15 +26,10 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // TODO: https://github.com/layer5io/meshery/issues/1022
-
-// GETCONTEXTS endpoint points to the URL return the contexts available
-const GETCONTEXTS = "http://localhost:9081/api/k8sconfig/contexts"
-
-// SETCONTEXT endpoint points to set context
-const SETCONTEXT = "http://localhost:9081/api/k8sconfig"
 
 const paramName = "k8sfile"
 const contextName = "contextName"
@@ -49,6 +44,14 @@ type k8sContext struct {
 
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
+
+	contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+	if err != nil {
+		return nil, err
+	}
+
+	// GETCONTEXTS endpoint points to the URL return the contexts available
+	GETCONTEXTS := contextContent.Endpoint + "/api/k8sconfig/contexts"
 
 	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, paramName, configFile)
 	if err != nil {
@@ -87,6 +90,13 @@ func setContext(configFile, cname, tokenPath string) error {
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
+	contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+	if err != nil {
+		return err
+	}
+
+	// SETCONTEXT endpoint points to set context
+	SETCONTEXT := contextContent.Endpoint + "/api/k8sconfig"
 	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, paramName, configFile)
 	if err != nil {
 		return err

@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Operation is the common body type to be passed for Mesh Ops
@@ -43,7 +44,12 @@ var validateCmd = &cobra.Command{
 
 		log.Infof("Starting service mesh validation...")
 
-		path := "http://localhost:9081/api/mesh/ops"
+		contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+		if err != nil {
+			return err
+		}
+
+		path := contextContent.Endpoint + "/api/mesh/ops"
 		method := "POST"
 
 		data := url.Values{}
