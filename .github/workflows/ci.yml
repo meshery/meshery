@@ -177,18 +177,16 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.1.0
+        with:
+          cluster_name: "kind-cluster"
       - name: Build Next App
         run: |
           cd ui
           npm i
           npm run build
           npm run export
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.1.0
-        with:
-          cluster_name: "kind-cluster"
-      - name: Build Next App
-        run: cd ui && npm run build && npm run export
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
