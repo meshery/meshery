@@ -26,7 +26,7 @@ const styles = (theme) => ({
   root: {
     flexGrow: 1,
     maxWidth: '100%',
-    height:'auto',
+    height: 'auto',
   },
   tab: {
     minWidth: 40,
@@ -72,21 +72,21 @@ class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
     const {
-      k8sconfig, meshAdapters, grafana, prometheus, router: {asPath}
+      k8sconfig, meshAdapters, grafana, prometheus, router: { asPath }
     } = props;
 
     let tabVal = 0, subTabVal = 0;
     const splittedPath = asPath.split('#');
-    if(splittedPath.length >= 2 && splittedPath[1]) {
+    if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
       switch (subTabPath[0]) {
-        case 'environment': 
+        case 'environment':
           tabVal = 0;
           break;
-        case 'service-mesh': 
+        case 'service-mesh':
           tabVal = 1;
           break;
-        case 'metrics': 
+        case 'metrics':
           tabVal = 2;
           break;
         case 'performance':
@@ -94,7 +94,7 @@ class MesherySettings extends React.Component {
           break;
       }
       if (subTabPath.length >= 2 && subTabPath[1]) {
-        switch(subTabPath[1]) {
+        switch (subTabPath[1]) {
           case 'inclusterconfig':
             subTabVal = 0;
             break;
@@ -128,7 +128,7 @@ class MesherySettings extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig)
-        || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
+      || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
       return {
         k8sconfig: props.k8sconfig,
         meshAdapters: props.meshAdapters,
@@ -147,7 +147,7 @@ class MesherySettings extends React.Component {
     const self = this;
     self.props.updateProgress({ showProgress: true });
     dataFetch(
-      '/api/promGrafana/scan', 
+      '/api/promGrafana/scan',
       {
         credentials: "same-origin",
         method: "GET",
@@ -156,7 +156,7 @@ class MesherySettings extends React.Component {
       (result) => {
         self.props.updateProgress({ showProgress: false });
         if (!result) return;
-        
+
         if (Array.isArray(result.prometheus)) {
           const urls = self.extractURLFromScanData(result.prometheus);
           self.setState(state => ({ scannedPrometheus: [...state.scannedPrometheus, ...urls] }));
@@ -186,7 +186,7 @@ class MesherySettings extends React.Component {
           let protocol = "http";
 
           // Iterate over ports exposed by the service
-          if(Array.isArray(data.spec.ports) ){
+          if (Array.isArray(data.spec.ports)) {
             data.spec.ports.forEach(({ port }) => {
               if (port === 443) protocol = "https";
 
@@ -205,7 +205,7 @@ class MesherySettings extends React.Component {
       // Looking for valid ipv4 address
       if (data.spec.clusterIP?.match(/^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/g)?.[0]) {
         let protocol = "http";
-        if(Array.isArray(data.spec.ports)) {
+        if (Array.isArray(data.spec.ports)) {
           data.spec.ports.forEach(({ port }) => {
             if (port === 443) protocol = "https";
             result.push(`${protocol}://${data.spec.clusterIP}:${port}`);
@@ -236,40 +236,40 @@ class MesherySettings extends React.Component {
     return (event, newVal) => {
       if (val === 'tabVal') {
         let newRoute = this.props.router.route;
-        switch(newVal) {
+        switch (newVal) {
           case 0:
-            newRoute+='#environment'
+            newRoute += '#environment'
             break;
           case 1:
-            newRoute+='#service-mesh'
+            newRoute += '#service-mesh'
             break;
           case 2:
-            newRoute+='#metrics'
+            newRoute += '#metrics'
             break;
           case 3:
-            newRoute+='#performance'
+            newRoute += '#performance'
             break;
         }
-        if(this.props.router.route != newRoute)
+        if (this.props.router.route != newRoute)
           this.props.router.push(newRoute)
         self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
         let newRoute = this.props.router.route;
-        switch(newVal) {
+        switch (newVal) {
           case 0:
-            if ( self.state.tabVal == 0 )
-              newRoute+='#environment/outclusterconfig'
-            else if ( self.state.tabVal == 2 )
-              newRoute+='#metrics/grafana'
+            if (self.state.tabVal == 0)
+              newRoute += '#environment/outclusterconfig'
+            else if (self.state.tabVal == 2)
+              newRoute += '#metrics/grafana'
             break;
           case 1:
-            if ( self.state.tabVal == 0 )
-              newRoute+='#environment/inclusterconfig'
-            else if ( self.state.tabVal == 2 )
-              newRoute+='#metrics/prometheus'
+            if (self.state.tabVal == 0)
+              newRoute += '#environment/inclusterconfig'
+            else if (self.state.tabVal == 2)
+              newRoute += '#metrics/prometheus'
             break;
         }
-        if(this.props.router.route != newRoute)
+        if (this.props.router.route != newRoute)
           this.props.router.push(newRoute)
         self.setState({ subTabVal: newVal });
       }
@@ -355,8 +355,8 @@ class MesherySettings extends React.Component {
                 textColor="primary"
                 variant="fullWidth"
               >
-                <Tab className={classes.tab} label="Out of Cluster Deployment" />
-                <Tab className={classes.tab} label="In Cluster Deployment" />
+                <Tab className={classes.tab} label="Out of Cluster Deployment" data-cy="tabOutOfClusterDeployment" />
+                <Tab className={classes.tab} label="In Cluster Deployment" data-cy="tabInClusterDeployment" />
               </Tabs>
             </AppBar>
             {subTabVal === 0 && (
@@ -377,45 +377,45 @@ class MesherySettings extends React.Component {
           </TabContainer>
         )}
         {tabVal === 2
-        && (
-          <TabContainer>
-            <AppBar position="static" color="default">
-              <Tabs
-                value={subTabVal}
-                className={classes.tab}
-                onChange={this.handleChange('subTabVal')}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-              >
-                <Tab label={(
-                  <div className={classes.iconText}>
-                  Grafana
-                    <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                  </div>
-                )}
-                />
-                <Tab label={(
-                  <div className={classes.iconText}>
-                  Prometheus
-                    <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
-                  </div>
-                )}
-                />
-              </Tabs>
-            </AppBar>
-            {subTabVal === 0 && (
-              <TabContainer>
-                <GrafanaComponent scannedGrafana={this.state.scannedGrafana} />
-              </TabContainer>
-            )}
-            {subTabVal === 1 && (
-              <TabContainer>
-                <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} />
-              </TabContainer>
-            )}
-          </TabContainer>
-        )}
+          && (
+            <TabContainer>
+              <AppBar position="static" color="default">
+                <Tabs
+                  value={subTabVal}
+                  className={classes.tab}
+                  onChange={this.handleChange('subTabVal')}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <Tab label={(
+                    <div className={classes.iconText}>
+                      Grafana
+                      <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                    </div>
+                  )}
+                  />
+                  <Tab label={(
+                    <div className={classes.iconText}>
+                      Prometheus
+                      <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                    </div>
+                  )}
+                  />
+                </Tabs>
+              </AppBar>
+              {subTabVal === 0 && (
+                <TabContainer>
+                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} />
+                </TabContainer>
+              )}
+              {subTabVal === 1 && (
+                <TabContainer>
+                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} />
+                </TabContainer>
+              )}
+            </TabContainer>
+          )}
         {tabVal === 3 && (
           <TabContainer>
             <MesherySettingsPerformanceComponent />
