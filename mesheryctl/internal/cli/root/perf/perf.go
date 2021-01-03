@@ -70,7 +70,7 @@ var PerfCmd = &cobra.Command{
 				return errors.Wrap(err, "error processing config")
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/perf/load-test-smp", bytes.NewBuffer(smpConfig))
+			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/load-test-smp", bytes.NewBuffer(smpConfig))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
@@ -99,7 +99,7 @@ var PerfCmd = &cobra.Command{
 				return errors.Wrap(err, "error processing config")
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/perf/load-test", nil)
+			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/load-test", nil)
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
