@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -44,12 +45,12 @@ var validateCmd = &cobra.Command{
 
 		log.Infof("Starting service mesh validation...")
 
-		contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return errors.Wrap(err, "error processing config")
 		}
 
-		path := contextContent.Endpoint + "/api/mesh/ops"
+		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
 		method := "POST"
 
 		data := url.Values{}

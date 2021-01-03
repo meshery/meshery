@@ -16,8 +16,8 @@ package system
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/context"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -45,11 +45,11 @@ var SystemCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
-		contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatal(err)
+			return errors.Wrap(err, "error processing config")
 		}
-		url = contextContent.Endpoint
+		url = mctlCfg.GetBaseMesheryURL()
 		return nil
 	},
 }

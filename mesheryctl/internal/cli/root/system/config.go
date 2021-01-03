@@ -22,7 +22,9 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -45,13 +47,13 @@ type k8sContext struct {
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 
-	contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error processing config")
 	}
 
 	// GETCONTEXTS endpoint points to the URL return the contexts available
-	GETCONTEXTS := contextContent.Endpoint + "/api/k8sconfig/contexts"
+	GETCONTEXTS := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig/contexts"
 
 	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, paramName, configFile)
 	if err != nil {
@@ -90,13 +92,13 @@ func setContext(configFile, cname, tokenPath string) error {
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
-	contextContent, err := utils.GetContentFromCurrentContext(viper.GetString("current-context"))
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error processing config")
 	}
 
 	// SETCONTEXT endpoint points to set context
-	SETCONTEXT := contextContent.Endpoint + "/api/k8sconfig"
+	SETCONTEXT := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig"
 	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, paramName, configFile)
 	if err != nil {
 		return err

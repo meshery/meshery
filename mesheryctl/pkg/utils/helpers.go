@@ -20,6 +20,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -335,12 +336,13 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
-	contextContent, err := GetContentFromCurrentContext(viper.GetString("current-context"))
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error processing config")
 	}
+
 	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", contextContent.Endpoint+"/api/gettoken", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/gettoken", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request :")
 		return err
@@ -576,17 +578,4 @@ func ValidateURL(URL string) error {
 		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
 	}
 	return nil
-}
-
-// GetContentFromCurrentContext returns object configuration for current context
-func GetContentFromCurrentContext(currentContext string) (models.Context, error) {
-	if currentContext == "" {
-		return models.Context{}, errors.New("current context not set")
-	}
-	currentConfig := models.MesheryCtlConfig{}
-	err := viper.Unmarshal(&currentConfig)
-	if err != nil {
-		return models.Context{}, err
-	}
-	return currentConfig.Contexts[currentContext], nil
 }
