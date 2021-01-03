@@ -38,6 +38,7 @@ var (
 	mctlCfgFile string
 	version     = "Not Set"
 	commitsha   = "Not Set"
+	releasechannel	= "Not Set"
 )
 
 //Format is exported

@@ -938,7 +938,7 @@ class DashboardComponent extends React.Component {
     const showRelease = (
       <Grid container justify="space-between" spacing={1}>
         <Grid item xs={12} md={6}>
-          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Channel Subscribed</Typography>
+          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Channel Subscription</Typography>
           <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
             {capitalize(this.state.versionDetail.release_channel)}
           </Typography>

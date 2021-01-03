@@ -53,10 +53,12 @@ var versionCmd = &cobra.Command{
 		url := mctlCfg.GetBaseMesheryURL()
 		build := version
 		commitsha := commitsha
+		releasechannel := releasechannel
 
 		version := cfg.Version{
 			Build:     "unavailable",
 			CommitSHA: "unavailable",
+			ReleaseChannel: "unavailable",
 		}
 
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
