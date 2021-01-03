@@ -53,6 +53,14 @@ func main() {
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("COMMITSHA", commitsha)
 
+	// Get the channel
+	channel, err := helpers.GetReleaseChannel(version, commitsha)
+	if err != nil {
+		logrus.Error(err)
+	}
+	logrus.Info("Meshery server current channel: ", channel)
+	viper.SetDefault("RELEASE_CHANNEL", channel)
+
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
 		if err != nil {

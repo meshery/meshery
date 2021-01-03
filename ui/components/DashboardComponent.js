@@ -2,11 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import { 
   NoSsr, 
   Chip, 
@@ -120,6 +115,15 @@ const styles = (theme) => ({
   }
 });
 
+/**
+ * capitalize takes in a string and returns
+ * capitalized string
+ * @param {string} str - string to be capitalized
+ */
+function capitalize(str) {
+  return `${str.charAt(0).toUpperCase()}${str.substring(1)}`
+}
+
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -144,7 +148,13 @@ class DashboardComponent extends React.Component {
       grafana,
       prometheus,
 
-      versionDetail: { build: "", latest: "", outdated: false, commitsha: "" },
+      versionDetail: { 
+        build: "", 
+        latest: "", 
+        outdated: false, 
+        commitsha: "",
+        release_channel: "NA" 
+      },
 
       meshScan: {},
       activeMeshScanNamespace: {},
@@ -904,13 +914,13 @@ class DashboardComponent extends React.Component {
      * @param {string} type type of version could be "latest" or "current"
      */
     const getMesheryVersionText = (type) => {
-      const {build, latest, outdated} = this.state.versionDetail
+      const {build, latest, outdated, release_channel} = this.state.versionDetail
 
       if (type === "current") {
-        if (outdated) return `Currently Running: stable-${build}`
+        if (outdated) return `Currently Running: ${release_channel}-${build}`
         if (build === "Unknown") return "Unknown"
         
-        let ver = `Running Latest: stable-${build}`
+        let ver = `Running Latest: ${release_channel}-${build}`
         //let showSHA = "Unknown";
         // let tip = <Tooltip title={`SHA: ${commitsha}`}>{ver}</Tooltip>;
         // showSHA = <div className={classes.alignRight}>{tip}</div>;
@@ -928,15 +938,10 @@ class DashboardComponent extends React.Component {
     const showRelease = (
       <Grid container justify="space-between" spacing={1}>
         <Grid item xs={12} md={6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" style={{ fontWeight: "bold" }}>
-            Channel
-            </FormLabel>
-            <RadioGroup aria-label="release_channel_option" name="release_channel">
-              <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
-              <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
-            </RadioGroup>
-          </FormControl>
+          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Channel Subscribed</Typography>
+          <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+            {capitalize(this.state.versionDetail.release_channel)}
+          </Typography>
         </Grid>
         <Grid item xs={12} md={6} style={{padding: "0"}}>
           <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>

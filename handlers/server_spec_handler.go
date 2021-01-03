@@ -13,18 +13,20 @@ import (
 
 // Version defines the Json payload structure for version api\
 type Version struct {
-	Build     string `json:"build,omitempty"`
-	Latest    string `json:"latest,omitempty"`
-	Outdated  *bool  `json:"outdated,omitempty"`
-	CommitSHA string `json:"commitsha,omitempty"`
+	Build          string `json:"build,omitempty"`
+	Latest         string `json:"latest,omitempty"`
+	Outdated       *bool  `json:"outdated,omitempty"`
+	CommitSHA      string `json:"commitsha,omitempty"`
+	ReleaseChannel string `json:"release_channel,omitempty"`
 }
 
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
 	// Default values incase any errors
 	version := &Version{
-		Build:     viper.GetString("BUILD"),
-		CommitSHA: viper.GetString("COMMITSHA"),
+		Build:          viper.GetString("BUILD"),
+		CommitSHA:      viper.GetString("COMMITSHA"),
+		ReleaseChannel: viper.GetString("RELEASE_CHANNEL"),
 	}
 
 	// if r.Method != http.MethodGet {
