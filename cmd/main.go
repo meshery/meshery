@@ -32,7 +32,7 @@ var (
 	globalTokenForAnonymousResults string
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
-	releasechannel				   = "Not Set"
+	releasechannel                 = "Not Set"
 )
 
 const (

@@ -16,9 +16,9 @@ type PerfCfg struct {
 
 // Version unmarshals the json response from the server's version api
 type Version struct {
-	Build     string `json:"build,omitempty"`
-	CommitSHA string `json:"commitsha,omitempty"`
-	ReleaseChannel string `json:releasechannel,omitempty"`
+	Build          string `json:"build,omitempty"`
+	CommitSHA      string `json:"commitsha,omitempty"`
+	ReleaseChannel string `json:"release_channel,omitempty"`
 }
 
 // MesheryCtl stores the configurations used by mesheryctl CLI
