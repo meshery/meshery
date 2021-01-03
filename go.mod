@@ -3,7 +3,7 @@ module github.com/layer5io/meshery
 go 1.13
 
 require (
-	fortio.org/fortio v1.11.0
+	fortio.org/fortio v1.11.4
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
