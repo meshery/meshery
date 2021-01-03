@@ -53,11 +53,10 @@ var versionCmd = &cobra.Command{
 		url := mctlCfg.GetBaseMesheryURL()
 		build := version
 		commitsha := commitsha
-		releasechannel := releasechannel
 
 		version := cfg.Version{
-			Build:     "unavailable",
-			CommitSHA: "unavailable",
+			Build:          "unavailable",
+			CommitSHA:      "unavailable",
 			ReleaseChannel: "unavailable",
 		}
 
