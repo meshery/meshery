@@ -45,7 +45,7 @@
     "@paciolan/remote-component": "^2.10.3",
     "@zeit/next-css": "^1.0.1",
     "billboard.js": "=1.11.0",
-    "caniuse-lite": "^1.0.30001170",
+    "caniuse-lite": "^1.0.30001171",
     "classnames": "^2.2.6",
     "codemirror": "^5.59.0",
     "eslint-loader": "^4.0.2",
