@@ -1,5 +1,5 @@
 - title: Quick Start
-  url: "installation/#getting-started"
+  url: "installation/quick-start"
 - title: All Platforms
   url: "installation/platforms"
 - title: Project
@@ -8,3 +8,5 @@
   external_url: http://slack.layer5.io
 - title: GitHub
   external_url: https://github.com/layer5io/meshery
+- title: "🇲🇽 Español"
+  url: "es"

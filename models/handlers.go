@@ -19,6 +19,8 @@ type HandlerInterface interface {
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
+	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -35,6 +37,7 @@ type HandlerInterface interface {
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -71,6 +74,8 @@ type HandlerInterface interface {
 	UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	MeshSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -79,9 +84,6 @@ type HandlerConfig struct {
 	// RefCookieName string
 
 	// SessionStore sessions.Store
-
-	// SaaSTokenName string
-	// SaaSBaseURL   string
 
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface

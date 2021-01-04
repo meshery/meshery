@@ -1,6 +1,6 @@
 <div id="td-sidebar-menu" class="td-sidebar__inner">  
   <form class="td-sidebar__search d-flex align-items-center">
- <input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off">
+ <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
     <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
     </button>
   </form>  
@@ -33,8 +33,10 @@
               </ul>
               {% endif %}
             {% endfor %}
-        </ul>  
+          </ul>
+      </ul>  
     {% endif %}    
-    {% endfor %}
+  </ul>
+  {% endfor %}
   </nav>
 </div>

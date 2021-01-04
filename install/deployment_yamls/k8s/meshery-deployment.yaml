@@ -24,10 +24,10 @@ spec:
         - env:
             - name: EVENT
               value: mesheryLocal
-            - name: SAAS_BASE_URL
+            - name: PROVIDER_BASE_URLS
               value: https://meshery.layer5.io
             - name: ADAPTER_URLS
-              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004 meshery-kuma:10007 meshery-cpx:10008 meshery-osm:10009
+              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004 meshery-kuma:10007 meshery-cpx:10008 meshery-osm:10009 meshery-nginx-sm:10010
           image: layer5/meshery:stable-latest
           name: meshery
           ports:

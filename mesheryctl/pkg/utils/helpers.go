@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	crand "crypto/rand"
 	"encoding/binary"
@@ -8,9 +9,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	rand "math/rand"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -18,8 +20,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -31,7 +35,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
-	docsBaseURL = "https://meshery.layer5.io/docs/"
+	docsBaseURL = "https://docs.meshery.io/"
 
 	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
@@ -62,11 +66,27 @@ var (
 	// related configuration files.
 	MesheryFolder = ".meshery"
 	// DockerComposeFile is the default location within the MesheryFolder
-	// where the docker compose file is located?
+	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
+	// DefaultConfigPath is the detail path to mesheryctl config
+	DefaultConfigPath = "config.yaml"
 )
+
+// ListOfAdapters returns the list of adapters available
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
+
+// TemplateContext is the template context provided when creating a config file
+var TemplateContext = models.Context{
+	Endpoint: "http://localhost:9081",
+	Token: models.Token{
+		Name:     "Default",
+		Location: AuthConfigFile,
+	},
+	Platform: "docker",
+	Adapters: ListOfAdapters,
+}
 
 type cryptoSource struct{}
 
@@ -136,11 +156,12 @@ func DownloadFile(filepath string, url string) error {
 	return nil
 }
 
+// GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
 func GetMesheryGitHubOrg() string {
 	return mesheryGitHubOrg
 }
 
-// Get Meshery GitHub Details
+// GetMesheryGitHubRepo retrieves the name of the Meshery repository
 func GetMesheryGitHubRepo() string {
 	return mesheryGitHubRepo
 }
@@ -169,23 +190,74 @@ func SetFileLocation() error {
 	MesheryFolder = path.Join(home, MesheryFolder)
 	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = path.Join(MesheryFolder, DefaultConfigPath)
 	return nil
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck() error {
+func PreReqCheck(subcommand string) error {
+	//Check whether docker daemon is running or not
+	if err := exec.Command("docker", "ps").Run(); err != nil {
+		log.Info("Docker is not running.")
+		//No auto installation of docker for windows
+		if runtime.GOOS == "windows" {
+			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
+		}
+		err = startdockerdaemon(subcommand)
+		if err != nil {
+			return errors.Wrapf(err, "failed to start Docker.")
+		}
+	}
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Info("Docker-Compose is not installed")
 		//No auto installation of Docker-compose for windows
 		if runtime.GOOS == "windows" {
-			return errors.Wrap(err, "please install docker-compose")
+			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 		err = installprereq()
 		if err != nil {
-			return errors.Wrap(err, "failed to install prerequisites")
+			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 	}
+	return nil
+}
+
+func startdockerdaemon(subcommand string) error {
+	// read user input on whether to start Docker daemon or not.
+	var userinput string
+	fmt.Printf("Start Docker now [y/n]? ")
+	fmt.Scan(&userinput)
+	userinput = strings.TrimSpace(userinput)
+	userinput = strings.ToLower(userinput)
+	if userinput == "n" || userinput == "no" {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
+	// once user gaves permission, start docker daemon on linux/macOS
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	} else {
+		// Assuming we are on macOS, try to start Docker from default path
+		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
+		err := cmd.Start()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// wait for few seconds for docker to start
+		err = exec.Command("sleep", "30").Run()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// check whether docker started successfully or not, throw an error message otherwise
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	}
+	log.Info("Prerequisite Docker started.")
 	return nil
 }
 
@@ -357,8 +429,7 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
-// MeshError returns a formatted error message with a link to 'mesh' command usage page
-// in addition to the error message
+// MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 //func MeshError(msg string) string {
 //	return formatError(msg, cmdMesh)
 //}
@@ -398,4 +469,106 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 		return true
 	}
 	return false
+}
+
+// UpdateMesheryContainers runs the update command for meshery client
+func UpdateMesheryContainers() error {
+	log.Info("Updating Meshery now...")
+
+	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
+	start.Stdout = os.Stdout
+	start.Stderr = os.Stderr
+	if err := start.Run(); err != nil {
+		return errors.Wrap(err, SystemError("failed to start meshery"))
+	}
+	return nil
+}
+
+// AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
+func AskForConfirmation(s string) bool {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]: ", s)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if response == "y" || response == "yes" {
+			return true
+		} else if response == "n" || response == "no" {
+			return false
+		}
+	}
+}
+
+// CreateConfigFile creates config file in Meshery Folder
+func CreateConfigFile() error {
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		_, err := os.Create(DefaultConfigPath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AddContextToConfig adds context passed to it to mesheryctl config file
+func AddContextToConfig(contextName string, context models.Context, configPath string, set bool) error {
+	var currentConfig models.MesheryCtlConfig
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	file, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(file, &currentConfig)
+	if err != nil {
+		return err
+	}
+
+	if currentConfig.Contexts == nil {
+		currentConfig.Contexts = map[string]models.Context{}
+	}
+
+	_, exists := currentConfig.Contexts[contextName]
+	if exists {
+		return errors.New("error adding context: a context with same name already exists")
+	}
+
+	currentConfig.Contexts[contextName] = context
+	if set {
+		currentConfig.CurrentContext = contextName
+	}
+
+	content, err := yaml.Marshal(currentConfig)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(configPath, content, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ValidateURL validates url provided for meshery backend to mesheryctl context
+func ValidateURL(URL string) error {
+	ParsedURL, err := url.ParseRequestURI(URL)
+	if err != nil {
+		return err
+	}
+	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
+		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+	}
+	return nil
 }

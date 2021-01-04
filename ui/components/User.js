@@ -56,7 +56,7 @@ class User extends React.Component {
   };
 
   handlePreference = () => {
-    this.props.router.push('/userpreference');
+    this.props.router.push('/user/preferences');
   };
 
   handleGetToken = () => {

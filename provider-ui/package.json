@@ -11,6 +11,7 @@
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "cy:run": "cypress run",
+    "cy:open": "cypress open",
     "test": "start-server-and-test dev http://localhost:3001 cy:run && eslint ."
   },
   "keywords": [],
@@ -18,23 +19,24 @@
   "repository": "https://github.com/layer5io/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.5.1",
-    "isomorphic-unfetch": "^3.0.0",
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
-    "next": "9.3.6",
+    "next": "10.0.3",
     "prop-types": "latest",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "styled-jsx": "latest"
   },
   "devDependencies": {
-    "eslint": "^7.6.0",
-    "eslint-plugin-react": "^7.20.5",
     "babel-eslint": "^10.1.0",
+    "cypress": "^6.1.0",
+    "eslint": "^7.16.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-react": "^7.21.5",
     "http-proxy": "^1.18.1",
-    "nodemon": "^2.0.4",
-    "start-server-and-test": "^1.11.2",
-    "cypress": "^4.11.0"
+    "nodemon": "^2.0.6",
+    "start-server-and-test": "^1.11.7"
   }
 }

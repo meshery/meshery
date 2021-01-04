@@ -1,30 +1,44 @@
 ---
-layout: page
-title: Network Service Mesh Adapter
+layout: default
+title: Meshery Adapter for Network Service Mesh
 name: Meshery Adapter for Network Service Mesh
 mesh_name: Network Service Mesh
 version: v0.2.1
 port: 10004/tcp
 project_status: stable
+lab: nsm-meshery-adapter
 github_link: https://github.com/layer5io/meshery-nsm
-image: /docs/assets/img/service-meshes/nsm.svg
+image: /assets/img/service-meshes/nsm.svg
+permalink: service-meshes/adapters/nsm
 ---
 
-# {{ page.name }}
+{% include adapter-status.html %}
 
-|  Service Mesh  |                                 Adapter Status                                  | Latest Supported Mesh Version |
-| :------------: | :-----------------------------------------------------------------------------: | :---------------------------: |
-| {{page.title}} | <a href ="{{ page.github_link }}" target="_blank">{{ page.project_status }}</a> |       {{page.version}}        |
+{% include adapter-labs.html %}
 
-### Lifecycle management of {{ page.name }}
+## Lifecycle management of {{ page.name }}
 
-The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install {{page.version}} of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
 
-### Lifecycle management of sample applications
+### Install {{ page.mesh_name }}
+
+##### Choose the Meshery Adapter for {{ page.mesh_name }}
+
+<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-adapter.png" />
+</a>
+
+Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
+
+<a href="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/nsm/nsm-install.png" />
+</a>
+
+## Sample Applications
 
 The ({{ page.name }}) includes a handful of sample applications. These applications represent different network services orchestrated by {{page.mesh_name}}. Use Meshery to deploy any of these sample applications:
 
-#### 1. **Hello NSM Application**
+### 1. Hello NSM Application
 
 Watch this presentation to see the Hello NSM Application in-action:
 
@@ -32,7 +46,7 @@ Watch this presentation to see the Hello NSM Application in-action:
 
 See on YouTube: [Adopting Network Service Mesh with Meshery](https://www.youtube.com/watch?v=4xKixsDTtdM&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)
 
-#### 2. **VPP-ICMP Application**
+#### 2. VPP-ICMP Application
 
 _A simple example that connects a vpp based Pod to a Network Service using memif._
 
@@ -43,14 +57,14 @@ The icmp responder example does this with kernel interfaces. The vpp-icmp-respon
 
 ![vpp-icmp-responder-example](./vpp-icmp-responder-example.svg)
 
-**Working process**
+Working process
 
 This will install two Deployments:
 
 | Name                       | Description                  |
 | :------------------------- | :--------------------------- |
-| **vpp-icmp-responder-nsc** | The Clients (four replicas)  |
-| **vpp-icmp-responder-nse** | The Endpoints (two replicas) |
+| vpp-icmp-responder-nsc | The Clients (four replicas)  |
+| vpp-icmp-responder-nse | The Endpoints (two replicas) |
 
 And cause each Client to get a vWire connecting it to one of the Endpoints. Network Service Mesh handles the Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
 
@@ -58,34 +72,38 @@ And cause each Client to get a vWire connecting it to one of the Endpoints. Netw
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using PodAntiAffinity, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
-**Verification**
+Verification
 
 First verify that the vpp-icmp-responder example Pods are all up and running:
 
-```bash
-kubectl get pods | grep vpp-icmp-responder
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl get pods | grep vpp-icmp-responder
+ </div></div>
+ </pre>
 
 To see the vpp-icmp-responder example in action, you can run:
 
-```bash
-curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
+ </div></div>
+ </pre>
 
-#### 3. **ICMP Responder**
+#### 3. ICMP Responder
 
 The simplest possible case for Network Service Mesh is to have is connecting a Client via a vWire to another Pod that is providing a Network Service. We call this case the ‘icmp-responder’ example, because it allows the client to ping the IP address of the Endpoint over the vWire.
 
 ![icmp-responder-example](./icmp-responder-example.svg)
 
-**Outcomes**
+Outcomes
 
 This will install two Deployments:
 
 | Name                   | Description                 |
 | :--------------------- | :-------------------------- |
-| **icmp-responder-nsc** | The Clients, four replicas  |
-| **icmp-responder-nse** | The Endpoints, two replicas |
+| icmp-responder-nsc | The Clients, four replicas  |
+| icmp-responder-nse | The Endpoints, two replicas |
 
 And cause each Client to get a vWire connecting it to one of the Endpoints. Network Service Mesh handles the
 Network Service Discovery and Routing, as well as the vWire 'Connection Handling' for setting all of this up.
@@ -93,22 +111,26 @@ Network Service Discovery and Routing, as well as the vWire 'Connection Handling
 ![icmp-responder-example-2](./icmp-responder-example-2.svg)
 
 In order to make this case more interesting, Endpoint1 and Endpoint2 are deployed on two separate Nodes using
-`PodAntiAffinity`, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
+*PodAntiAffinity*, so that the Network Service Mesh has to demonstrate the ability to string vWires between Clients and
 Endpoints on the same Node and Clients and Endpoints on different Nodes.
 
-**Verification**
+Verification
 
 1. Verify that the icmp-responder example Pods are all up and running:
 
-```bash
-kubectl get pods | grep icmp-responder
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ kubectl get pods | grep icmp-responder
+ </div></div>
+ </pre>
 
 2. To see the icmp-responder example in action, you may run:
 
-```bash
-curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
-```
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ curl -s https://raw.githubusercontent.com/networkservicemesh/networkservicemesh/master/scripts/nsc_ping_all.sh | bash
+ </div></div>
+ </pre>
 
 ### Suggested Topics
 

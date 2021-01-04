@@ -17,7 +17,9 @@ package root
 import (
 	"errors"
 	"fmt"
+	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -56,6 +58,7 @@ var RootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		log.Println("Args passed in", args)
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
@@ -97,8 +100,7 @@ func init() {
 	}
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default location is: "+utils.DockerComposeFile+")")
-	RootCmd.PersistentFlags().StringVar(&mctlCfgFile, "mesheryctl-config", "", "mesheryctl config file to override defaults (default file: <unset>)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
@@ -111,6 +113,7 @@ func init() {
 		system.SystemCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
+		experimental.ExpCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
@@ -118,14 +121,54 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	// Allow user to override config file with use of --config global flag
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
+		// Otherwise, use the default `config.yaml` config file
 	} else {
-		// Use default ".meshery" folder location.
-		viper.AddConfigPath(utils.MesheryFolder)
-		log.Debug("initConfig: ", utils.MesheryFolder)
-		viper.SetConfigFile(utils.DockerComposeFile)
+		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
+			log.Printf("Missing Meshery config file.")
+			userResponse := utils.AskForConfirmation("Create default config now?")
+
+			// Check for Meshery existence and permission of application folder
+			if userResponse {
+				if _, err := os.Stat(utils.MesheryFolder); err != nil {
+					if os.IsNotExist(err) {
+						err = os.MkdirAll(utils.MesheryFolder, 0775)
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+				}
+
+				// Create config file if not present in meshery folder
+				err = utils.CreateConfigFile()
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// Add Context to context file
+				err = utils.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				log.Println(
+					fmt.Sprintf("Default config file created at %s",
+						utils.DefaultConfigPath,
+					))
+			} else {
+				// User choose not to have a config file created. User must provide location to config file or create one.
+				log.Printf("Provide config file location using `--config <config-file>` or" +
+					" run `mesheryctl system context create <name>` to " +
+					"generate a config file.")
+
+				os.Exit(1)
+			}
+		}
+
+		viper.SetConfigFile(utils.DefaultConfigPath)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -133,41 +176,5 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
-	}
-
-	// Read in mesheryctl config or use defaults
-	// Default config:
-	//  baseMesheryURL: "http://localhost:9081/api",
-	//  perf:
-	//	  authTokenURI:    "/gettoken",
-	//	  loadTestSmpURI: "/perf/load-test-smp",
-	if mctlCfgFile != "" {
-		viper.SetConfigFile(mctlCfgFile)
-		if err := viper.ReadInConfig(); err == nil {
-			log.Debugf("Using mesheryctl config file: %s", viper.ConfigFileUsed())
-		} else {
-			log.Fatal(err)
-		}
-	} else {
-		setMesheryctlConfigDefaults(map[string]interface{}{
-			"baseMesheryURL": "http://localhost:9081/api",
-			"perf": map[string]interface{}{
-				"authTokenURI":   "/gettoken",
-				"loadTestSmpURI": "/perf/load-test-smp]",
-				"loadTestURI":    "/perf/load-test",
-			},
-			"ctlversion": map[string]interface{}{
-				"build":     version,
-				"commitsha": commitsha,
-			},
-		})
-	}
-}
-
-// setMesheryctlConfigDefaults loads the hardcoded defaults in to viper kv store
-func setMesheryctlConfigDefaults(defaults map[string]interface{}) {
-	v := viper.GetViper()
-	for key, value := range defaults {
-		v.SetDefault(key, value)
 	}
 }

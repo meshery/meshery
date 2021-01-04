@@ -20,13 +20,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tcnksm/go-latest"
 )
 
 var (
@@ -34,43 +34,6 @@ var (
 	mctlCfg    *cfg.MesheryCtl
 	mesheryCfg *cfg.Version
 )
-
-// RequestErr is the error handler for the request
-func requestErr(err error, url string) bool {
-	if err != nil {
-		logrus.Infof("Server Version: Unavailable \t  GitSHA: Unavailable")
-		logrus.Errorf("\nError Occurred: %v", err)
-		logrus.Errorf("\nCould not communicate with Meshery at %s", url+"/server/version")
-		logrus.Errorf("Ensure that Meshery is available.\n See Meshery Documentation (https://docs.meshery.io) for help.\n")
-		return true
-	}
-	return false
-}
-
-func checkLatestVersion(err error, serverVersion string) error {
-	githubTag := &latest.GithubTag{
-		Owner:      utils.GetMesheryGitHubOrg(),
-		Repository: utils.GetMesheryGitHubRepo(),
-	}
-	if err != nil {
-		return errors.Wrap(err, "could not reach Meshery GitHub repo")
-	}
-	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
-	res, err := latest.Check(githubTag, serverVersion)
-	if err != nil {
-		return errors.Wrap(err, "failed to compare latest and current version of Meshery")
-	}
-	// If user is running an outdated release, let them know.
-	if res.Outdated {
-		logrus.Info("\n", serverVersion, " is not the latest Meshery release. Upgrade to v", res.Current, ". Run `mesheryctl system upgrade`")
-	}
-
-	// If user is running the latest release, let them know.
-	if res.Latest {
-		logrus.Info("\n", serverVersion, " is the latest Meshery release.")
-	}
-	return nil
-}
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
@@ -83,44 +46,65 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		return nil
+		return utils.PreReqCheck(cmd.Use)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
 		url := mctlCfg.GetBaseMesheryURL()
-		build := mctlCfg.GetVersion().GetBuild()
-		commitsha := mctlCfg.GetVersion().GetCommitSHA()
+		build := version
+		commitsha := commitsha
+
+		version := cfg.Version{
+			Build:     "unavailable",
+			CommitSHA: "unavailable",
+		}
 
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", url), nil)
-		if requestErr(err, url) {
+		if err != nil {
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\nUnable to get request context: %v", err)
 			return
 		}
 
+		defer checkMesheryctlClientVersion(build)
 		client := &http.Client{}
 		resp, err := client.Do(req)
-		if requestErr(err, url) {
+
+		if err != nil {
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\n  Unable to communicate with Meshery: %v", err)
+			logrus.Errorf("  See https://docs.meshery.io for help getting started with Meshery.\n")
 			return
 		}
 
+		// needs multiple defer as Body.Close needs a valid response
+		defer resp.Body.Close()
 		data, err := ioutil.ReadAll(resp.Body)
-		if requestErr(err, url) {
+		if err != nil {
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\n  Invalid response: %v", err)
 			return
 		}
 
-		version := cfg.Version{}
 		err = json.Unmarshal(data, &version)
-		if requestErr(err, url) {
+		if err != nil {
+			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			logrus.Errorf("\n  Unable to unmarshal data: %v", err)
 			return
 		}
 
 		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
-
-		// Inform user of the latest release version
-		err = checkLatestVersion(err, version.GetBuild())
-		if err != nil {
-			logrus.Warn("\nfailed to check for latest version of Meshery")
-		}
 	},
+}
+
+func checkMesheryctlClientVersion(build string) {
+	logrus.Infof("Checking for latest version of Meshery...")
+
+	// Inform user of the latest release version
+	_, err := handlers.CheckLatestVersion(build)
+	if err != nil {
+		logrus.Warn("\n  Unable to check for latest version of Meshery.")
+	}
 }

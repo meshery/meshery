@@ -11,7 +11,8 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "plugin:cypress/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -25,7 +26,10 @@ module.exports = {
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    "plugins": ["react"],
+    "plugins": [
+        "react",
+        "cypress"
+    ],
     "rules": {
         "arrow-spacing": [
             "error",

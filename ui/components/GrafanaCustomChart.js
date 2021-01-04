@@ -40,12 +40,18 @@ const grafanaStyles = (theme) => ({
   },
   cardHeader: {
     fontSize: theme.spacing(2),
+    width: "100%"
+  },
+  cardHeaderIcon: {
+    fontSize: theme.spacing(2),
   },
   card: {
     height: '100%',
+    width: "100%"
   },
   cardContent: {
     height: '100%',
+    width: "100%"
   },
   error: {
     color: '#D32F2F',
@@ -740,7 +746,7 @@ class GrafanaCustomChart extends Component {
           color="inherit"
           onClick={() => handleChartDialogOpen(board, panel, panelData)}
         >
-          <OpenInNewIcon className={classes.cardHeader} />
+          <OpenInNewIcon className={classes.cardHeaderIcon} />
         </IconButton>
       );
 

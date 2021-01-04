@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - 'master'
-    tags:
-      - 'v*'
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches:
       - 'master'
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   golangci:
@@ -16,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v1
+        uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.29
+          version: v1.32
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -48,7 +50,7 @@ jobs:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-        
+          ${{ runner.os }}-go-
     - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Backend build
@@ -68,8 +70,15 @@ jobs:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-        
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+          ${{ runner.os }}-go-
+    - run: |
+        go mod tidy
+        GOPROXY=direct GOSUMDB=off GO111MODULE=on go build -tags draft ./cmd/main.go
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: meshery
+        path: ./main
   build-ui:
     name: UI build
     runs-on: ubuntu-latest
@@ -81,22 +90,31 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v1
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        path: |
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
+          **/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - run: |
+    - name: Install dependencies
+      run: |
         cd ui
         npm i
-        npm run build && npm run export
         cd ..
         cd provider-ui
         npm i
-        npm run build && npm run export
+    - name: build app
+      run: |
+        make build-ui
   tests-ui:
-    name: UI tests
+    needs: [build-ui]
+    name: UI integration tests
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -106,21 +124,84 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
-    - uses: actions/cache@v1
+    - name: Cache node modules
+      id: node-cache
+      uses: actions/cache@v2
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - run: |
+        path: |
+          ~/cache
+          ~/.cache
+          !~/cache/exclude
+          **/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+    - name: Run tests
+      run: |
         cd ui
         npm i
-        npm test
+        npm run ci-test-integration
         cd ..
         cd provider-ui
         npm i
         npm test
         cd ..
+  tests-ui-e2e:
+    needs: [build-backend, build-ui]
+    name: UI end-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: meshery
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ secrets.GO_VERSION }}
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ secrets.NODE_VERSION }}
+      - name: Cache node modules
+        id: node-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/cache
+            ~/.cache
+            !~/cache/exclude
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.1.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Build Next App
+        run: |
+          cd ui
+          npm i
+          npm run build
+          npm run export
+      - name: Run backend
+        env:
+          PROVIDER_BASE_URLS: https://meshery.layer5.io
+          PORT: 9081
+          ADAPTER_URLS: "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 mesherylocal.layer5.io:10007"
+        run: |
+          chmod +x ./main
+          ./main &
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ui
+          start: npm start
+          wait-on: http://localhost:3000
+          spec: cypress/integration/e2e/**/*
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
@@ -140,10 +221,23 @@ jobs:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-        
+          ${{ runner.os }}-go-
     - name: goreleaser WITHOUT tag
       uses: goreleaser/goreleaser-action@v1
       if: success() && startsWith(github.ref, 'refs/tags/') == false
       with:
         version: latest
         args: release --snapshot --skip-publish --rm-dist
+  docker-build-test:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Docker edge build & tag
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      run: |
+        DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} .
+        docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::7}

@@ -5,7 +5,7 @@ services:
     labels:
       - ${labels.watchtower}
     environment:
-      - "SAAS_BASE_URL=https://meshery.layer5.io"
+      - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-octarine:10003 meshery-nsm:10004"
       - "EVENT=mesheryLocal"
     ports:

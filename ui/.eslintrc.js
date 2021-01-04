@@ -10,7 +10,8 @@ module.exports = {
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:cypress/recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -24,7 +25,10 @@ module.exports = {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": [
+    "react",
+    "cypress"
+  ],
   "rules": {
     "arrow-spacing": [
       "error",
@@ -46,7 +50,8 @@ module.exports = {
         "MemberExpression": 1,
         "SwitchCase": 1,
         "outerIIFEBody": 0,
-        "VariableDeclarator": { "var": 2, "let": 2, "const": 3 }
+        "VariableDeclarator": { "var": 2, "let": 2, "const": 3 },
+        ignoredNodes: ['TemplateLiteral']
       }
     ],
     "react/react-in-jsx-scope": "off",

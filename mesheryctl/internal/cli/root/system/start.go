@@ -44,7 +44,7 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return utils.PreReqCheck()
+		return utils.PreReqCheck(cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
@@ -72,7 +72,7 @@ func start() error {
 	if skipUpdateFlag {
 		log.Info("Skipping Meshery update...")
 	} else {
-		err := updateMesheryContainers()
+		err := utils.UpdateMesheryContainers()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
