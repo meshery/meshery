@@ -20,10 +20,13 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
+var config models.MesheryCtlConfig
 var channelSet, channelSwitch, channelName string
 
 // configCmd represents the config command
@@ -57,10 +60,15 @@ var channelCmd = &cobra.Command{
 				log.Fatal("Error subscribing to release channel:", err)
 				return
 			}
+
 			log.Info("Subscribed to edge channel.")
 
 		default:
-			log.Fatal("Please subscribe to either the 'stable' or 'edge' release channel.")
+			currentChannel := getCurrentContextChannel()
+			if currentChannel == "" {
+				log.Fatal("No release channel subscription found. Please subscribe to either the 'stable' or 'edge' release channel.")
+			}
+			log.Println("Channel subscription:", currentChannel)
 		}
 
 		if channelSwitch != "" {
@@ -99,12 +107,30 @@ func searchAndReplace(mesheryConfig, currentChannel, newChannel string) error {
 	}
 
 	outputFile := strings.ReplaceAll(string(fileData), currentChannel, newChannel)
-
 	err = ioutil.WriteFile(mesheryConfig, []byte(outputFile), 0644)
 	if err != nil {
 		log.Errorf("unable to change meshery config: %v", err)
 		return errors.New("unable to write meshery config")
 	}
-
+	setCurrentContextChannel(newChannel)
 	return nil
+}
+
+func getCurrentContextChannelKey() string {
+	currentContext := viper.GetString("current-context")
+	if currentContext != "" {
+		return "contexts." + currentContext + ".channel"
+	}
+	return ""
+}
+
+func getCurrentContextChannel() string {
+	return viper.GetString(getCurrentContextChannelKey())
+}
+
+func setCurrentContextChannel(desiredChannel string) {
+	viper.Set(getCurrentContextChannelKey(), desiredChannel)
+	if err := viper.WriteConfig(); err != nil {
+		log.Fatal("Error writing config to file:", err)
+	}
 }
