@@ -77,7 +77,7 @@ brews:
   # same kind. We will probably unify this in the next major version like it is done with scoop.
 
   # Github repository to push the tap to.
-  github:
+  tap:
     owner: layer5io
     name: homebrew-tap
   
