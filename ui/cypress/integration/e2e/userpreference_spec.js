@@ -5,7 +5,7 @@ describe('User Preferences', () => {
 
       cy.selectProviderNone()
 
-      cy.visit('/userpreference')
+      cy.visit('/user/preferences')
       cy.get('.MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program')
       cy.wait('@getUserStats')
     })

@@ -733,7 +733,7 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/citrix.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
-                  case "open service mesh":
+                  case "osm":
                     image = "/static/img/osm.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
@@ -745,6 +745,10 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/nginx-sm.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
+                  case "traefik mesh":
+                    image = "/static/img/traefikmesh.svg";
+                    logoIcon = <img src={image} className={classes.icon} />;
+                    break; 
                 }
               }
             });

@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"context"
 	"strings"
 
 	"fmt"
@@ -43,7 +44,7 @@ func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.
 		return nil, err
 	}
 	// equivalent to GET request to /api/v1/pods
-	podlist, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+	podlist, err := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		logrus.Debug("[ScanKubernetes] Failed to retrieve Pod List")
 		return nil, err
@@ -106,7 +107,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 	if err != nil {
 		return nil, err
 	}
-	namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespacelist, err := clientset.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		err = errors.Wrap(err, "unable to get the list of namespaces")
 		logrus.Error(err)
@@ -118,7 +119,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
 
 		deploymentsClient := clientset.AppsV1().Deployments(ns.GetName())
-		deplist, err := deploymentsClient.List(metav1.ListOptions{})
+		deplist, err := deploymentsClient.List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())
 			logrus.Error(err)
@@ -143,7 +144,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 				logrus.Debugf("found deployment: %s", d.GetName())
 				lbls := d.Spec.Template.ObjectMeta.GetLabels()
 				svcClient := clientset.CoreV1().Services(ns.GetName())
-				svcList, err := svcClient.List(metav1.ListOptions{
+				svcList, err := svcClient.List(context.Background(), metav1.ListOptions{
 					LabelSelector: labels.SelectorFromSet(lbls).String(),
 				})
 				if err != nil {
@@ -180,7 +181,7 @@ func detectServiceWithName(kubeconfig []byte, contextName string, names []string
 
 	// Get all the running services
 	// analogous to GET request to /api/v1/services
-	svcList, err := clientset.CoreV1().Services("").List(metav1.ListOptions{})
+	svcList, err := clientset.CoreV1().Services("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		err = errors.Wrapf(err, "[DetectServiceWithName] Unable to get services")
 		logrus.Error(err)

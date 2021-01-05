@@ -2,14 +2,20 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"path"
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/nats"
+	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshsync/pkg/broker"
+	"github.com/layer5io/meshsync/pkg/broker/nats"
+	"github.com/layer5io/meshsync/pkg/model"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -26,6 +32,11 @@ var (
 	globalTokenForAnonymousResults string
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
+)
+
+const (
+	// DefaultProviderURL is the provider url for the "none" provider
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {
@@ -105,14 +116,14 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
 	lProv := &models.DefaultLocalProvider{
-		SaaSBaseURL:            saasBaseURL,
+		ProviderBaseURL:        DefaultProviderURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
 	}
+	lProv.Initialize()
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
@@ -121,22 +132,30 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	if saasBaseURL == "" {
-		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	for _, providerurl := range RemoteProviderURLs {
+		parsedURL, err := url.Parse(providerurl)
+		if err != nil {
+			logrus.Error(providerurl, "is invalid url skipping provider")
+			continue
+		}
+		cp := &models.RemoteProvider{
+			RemoteProviderURL:          parsedURL.String(),
+			RefCookieName:              parsedURL.Host + "_ref",
+			SessionName:                parsedURL.Host,
+			TokenStore:                 make(map[string]string),
+			LoginCookieDuration:        1 * time.Hour,
+			BitCaskPreferencePersister: cPreferencePersister,
+			ProviderVersion:            "v0.3.14",
+			SmiResultPersister:         smiResultPersister,
+		}
+
+		cp.Initialize()
+
+		cp.SyncPreferences()
+		defer cp.StopSyncPreferences()
+		provs[cp.Name()] = cp
 	}
-	cp := &models.MesheryRemoteProvider{
-		SaaSBaseURL:                saasBaseURL,
-		RefCookieName:              "meshery_ref",
-		SessionName:                "meshery",
-		TokenStore:                 make(map[string]string),
-		LoginCookieDuration:        1 * time.Hour,
-		BitCaskPreferencePersister: cPreferencePersister,
-		ProviderVersion:            "v0.3.14",
-		SmiResultPersister:         smiResultPersister,
-	}
-	cp.SyncPreferences()
-	defer cp.StopSyncPreferences()
-	provs[cp.Name()] = cp
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		Providers:              provs,
@@ -164,18 +183,28 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	// subscribing to nats
-	natsClient, err := nats.New("<server-url>")
+	natsClient, err := nats.New("nats://127.0.0.1:4222")
 	if err != nil {
 		logrus.Printf("Nats client create error %v", err)
 	} else {
-		err = natsClient.Subscribe("cluster")
+		msgch := make(chan *broker.Message)
+		err = natsClient.SubscribeWithChannel("meshsync", "meshery", msgch)
 		if err != nil {
-			logrus.Printf("Error subscribing to cluster %v", err)
+			logrus.Printf("Error subscribing to meshsync %v", err)
 		}
-		err = natsClient.Subscribe("istio")
-		if err != nil {
-			logrus.Printf("Error subscribing to istio %v", err)
-		}
+
+		go func() {
+			for {
+				select {
+				case msg := <-msgch:
+					objectJSON, _ := json.Marshal(msg.Object)
+					var object model.Object
+					_ = utils.Unmarshal(string(objectJSON), &object)
+					// persist the object
+					log.Printf("%+v\n", object)
+				}
+			}
+		}()
 	}
 
 	go func() {

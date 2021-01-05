@@ -181,7 +181,7 @@ Cualquier cambio en la interfaz de usuario realizado ahora se volverá a compila
 Si deseas ejecutar Meshery desde un IDE como Goland, VSCode. establece la variable de entorno descrito aqui:
 
 ```
-SAAS_BASE_URL=https://meshery.layer5.io
+PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
 ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009

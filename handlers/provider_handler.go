@@ -49,3 +49,28 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 	ServeUI(w, r, "/provider", "../provider-ui/out/")
 }
+
+// ProviderCapabilityHandler returns the capabilities.json for the provider
+func (h *Handler) ProviderCapabilityHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	provider.GetProviderCapabilities(w, r)
+}
+
+// ProviderComponentsHandler handlers the requests to serve react
+// components from the provider package
+func (h *Handler) ProviderComponentsHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	reqBasePath := "/api/provider/extension"
+
+	ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+}

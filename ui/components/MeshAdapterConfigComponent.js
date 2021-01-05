@@ -301,7 +301,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/citrix.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
-              case "open service mesh":
+              case "osm":
                 image = "/static/img/osm.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
@@ -311,6 +311,10 @@ class MeshAdapterConfigComponent extends React.Component {
                 break;
               case "nginx service mesh":
                 image = "/static/img/nginx-sm.svg";
+                logoIcon = <img src={image} className={classes.icon} />;
+                break;
+              case "traefik mesh":
+                image = "/static/img/traefik-mesh.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
             }

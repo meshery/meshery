@@ -32,6 +32,8 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
 import { Tooltip } from "@material-ui/core";
+import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -356,6 +358,14 @@ const categories = [
         link: false,
         show: true,
       },
+      {
+        id: "Traefik Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/traefik-mesh",
+        title: "Traefik Mesh",
+        link: false,
+        show: true,
+      },
     ],
   },
 ];
@@ -399,7 +409,102 @@ class Navigator extends React.Component {
       path: "",
       meshAdapters,
       mts: new Date(),
+
+      // ExtensionPointSchemaValidator will return a navigator schema
+      // decoder which in turn will return an empty array when there is no content
+      // passed into it
+      navigator: ExtensionPointSchemaValidator("navigator")()
     };
+  }
+
+  componentDidMount() {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        if (result) {
+          this.setState({ 
+            navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator)
+          })
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
+  /**
+   * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children
+   * @param {number} depth
+   */
+  renderNavigatorExtensions(children, depth) {
+    const { classes, isDrawerCollapsed } = this.props;
+    const { path } = this.state;
+
+    if (children && children.length > 0) {
+      return (
+        <List disablePadding>
+          {children.map(({ id, icon, href, title, children }) => {
+            if (typeof showc !== "undefined" && !showc) {
+              return "";
+            }
+            return (
+              <React.Fragment key={id}>
+                <ListItem
+                  button
+                  key={id}
+                  className={classNames(
+                    depth === 1 ? classes.nested1 : classes.nested2,
+                    classes.item,
+                    classes.itemActionable,
+                    path === href && classes.itemActiveItem,
+                    isDrawerCollapsed && classes.noPadding
+                  )}
+                >
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                </ListItem>
+                {this.renderNavigatorExtensions(children, depth + 1)}
+              </React.Fragment>
+            );
+          })}
+        </List>
+      );
+    }
+  }
+
+  extensionPointContent(icon, href, name, drawerCollapsed) {
+    const { classes } = this.props;
+
+    const content = (
+      <div className={classNames(classes.link)}>
+        <Tooltip
+          title={name}
+          placement="right"
+          disableFocusListener={!drawerCollapsed}
+          disableHoverListener={!drawerCollapsed}
+          disableTouchListener={!drawerCollapsed}
+        >
+          <ListItemIcon className={classes.listIcon}>
+            <img src={icon} className={classes.icon}/>
+          </ListItemIcon>
+        </Tooltip>
+        <ListItemText
+          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
+          classes={{
+            primary: classes.itemPrimary,
+          }}
+        >
+          {name}
+        </ListItemText>
+      </div>
+    )
+
+    if (href) return <Link href={href}>{content}</Link>
+
+    return content
   }
 
   updateCategoriesMenus() {
@@ -466,10 +571,12 @@ class Navigator extends React.Component {
     const children = [];
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
-      const aName = adapter.name.toLowerCase();
+      let aName = adapter.name.toLowerCase();
+      // Manually changing adapter name so that it matches the internal name
+      if (aName === "osm") aName = "open service mesh"
       if (category !== aName) {
         return;
-      }
+      } 
       children.push({
         id: adapter.adapter_location,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -525,6 +632,10 @@ class Navigator extends React.Component {
         image = "/static/img/nginx-sm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
+      case "traefik mesh":
+        image = "/static/img/traefikmesh-light.svg";
+        logoIcon = <img src={image} className={classes.icon} />;
+        break;
     }
     return logoIcon;
   }
@@ -543,7 +654,8 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
-      "NGINX Service Mesh"
+      "NGINX Service Mesh",
+      "Traefik Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {
@@ -735,6 +847,16 @@ class Navigator extends React.Component {
                 </React.Fragment>
               );
             })}
+            {
+              (this.state.navigator && this.state.navigator.length)
+                ?
+                <React.Fragment>
+                  <Divider className={classes.divider} />
+                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
+                </React.Fragment>
+                :
+                null
+            }
             <Divider className={classes.divider} />
             {externlinks.map(({ id, icon, title, href, external_icon}) => {
               return (

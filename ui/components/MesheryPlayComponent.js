@@ -152,7 +152,7 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/citrix.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
-        case "open service mesh":
+        case "osm":
           image = "/static/img/osm.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
@@ -164,6 +164,10 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/nginx-sm.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
+        case "traefik mesh":
+          image = "/static/img/traefikmesh.svg";
+          imageIcon = <img src={image} className={classes.expTitleIcon} />;
+          break; 
       }
     }
     return imageIcon;

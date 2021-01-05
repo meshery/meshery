@@ -30,7 +30,7 @@ func SafeClose(co io.Closer) {
 }
 
 //DoRequest - executes a request and does refreshing automatically
-func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
+func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
 		logrus.Error("trying after refresh")
@@ -46,7 +46,7 @@ func (l *MesheryRemoteProvider) DoRequest(req *http.Request, tokenString string)
 }
 
 // refreshToken - takes a tokenString and returns a new tokenString
-func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error) {
+func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	l.TokenStoreMut.Lock()
 	defer l.TokenStoreMut.Unlock()
 	newTokenString := l.TokenStore[tokenString]
@@ -61,7 +61,7 @@ func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error)
 		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
 	}
-	r, err := http.Post(l.SaaSBaseURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
 	if err != nil {
 		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
@@ -81,7 +81,7 @@ func (l *MesheryRemoteProvider) refreshToken(tokenString string) (string, error)
 	return target[tokenName], nil
 }
 
-func (l *MesheryRemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
+func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
 	token, err := l.DecodeTokenData(tokenString)
 	if err != nil {
 		logrus.Errorf("error performing the request, %s", err.Error())
@@ -98,7 +98,7 @@ func (l *MesheryRemoteProvider) doRequestHelper(req *http.Request, tokenString s
 }
 
 // GetToken - extracts token form a request
-func (l *MesheryRemoteProvider) GetToken(req *http.Request) (string, error) {
+func (l *RemoteProvider) GetToken(req *http.Request) (string, error) {
 	ck, err := req.Cookie(tokenName)
 	if err != nil {
 		logrus.Errorf("error in getting the token, %s", err.Error())
@@ -108,7 +108,7 @@ func (l *MesheryRemoteProvider) GetToken(req *http.Request) (string, error) {
 }
 
 // DecodeTokenData - Decodes a tokenString to a token
-func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, error) {
+func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, error) {
 	var token oauth2.Token
 	// logrus.Debugf("Token string %s", tokenStringB64)
 	tokenString, err := base64.RawStdEncoding.DecodeString(tokenStringB64)
@@ -125,10 +125,10 @@ func (l *MesheryRemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.
 }
 
 // UpdateJWKs - Updates Keys to the JWKS
-func (l *MesheryRemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get(l.SaaSBaseURL + "/keys")
+func (l *RemoteProvider) UpdateJWKs() error {
+	resp, err := http.Get(l.RemoteProviderURL + "/keys")
 	if err != nil {
-		logrus.Errorf("error fetching keys from Saas : %v", err.Error())
+		logrus.Errorf("error fetching keys from remote provider : %v", err.Error())
 		return err
 	}
 	defer SafeClose(resp.Body)
@@ -157,7 +157,7 @@ func (l *MesheryRemoteProvider) UpdateJWKs() error {
 }
 
 // GetJWK - Takes a keyId and returns the JWK
-func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
+func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
 	for _, key := range l.Keys {
 		if key["kid"] == kid {
 			return key, nil
@@ -176,7 +176,7 @@ func (l *MesheryRemoteProvider) GetJWK(kid string) (JWK, error) {
 }
 
 // GenerateKey - generate the actual key from the JWK
-func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
+func (l *RemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 	// decode the base64 bytes for n
 	nb, err := base64.RawURLEncoding.DecodeString(jwk["n"])
 	if err != nil {
@@ -221,7 +221,7 @@ func (l *MesheryRemoteProvider) GenerateKey(jwk JWK) (*rsa.PublicKey, error) {
 }
 
 // VerifyToken - verifies the validity of a tokenstring
-func (l *MesheryRemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
+func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error) {
 	dtoken, err := l.DecodeTokenData(tokenString)
 	if err != nil {
 		logrus.Fatalf("error decoding token : %v", err.Error())

@@ -18,24 +18,18 @@ The following principles are upheld in the design of Meshery's extensibility.
 
 ## Extension Points
 
-Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. The following points of extension are currently incorporated into Meshery.
+Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. Integrators may extend Meshery by taking advantage of designated Extension Points. Extension points come in various forms and are available through Meshery’s architecture.
 
-**Types of Extension Points:**
+![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
+
+_Figure: Extension points available throughout Meshery_
+
+The following points of extension are currently incorporated into Meshery.
+
+## Types of Extension Points
 
 1. [Providers]({{site.baseurl}}/extensibility/providers)
 1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-1. [REST API](#rest-api)
-
-## REST API
-Meshery provides a REST API available through the default port of `9081/tcp`.
-
-### Authentication
-Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
-
-### Authorization
-Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
-
-### Endpoints
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go).
-Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+1. [REST API](/extensibility/api#rest)
+1. [GraphQL API](/extensibility/api#graphql)

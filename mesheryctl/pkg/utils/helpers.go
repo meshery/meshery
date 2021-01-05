@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	crand "crypto/rand"
 	"encoding/binary"
@@ -11,6 +12,7 @@ import (
 	"math/rand"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -18,8 +20,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -66,7 +70,23 @@ var (
 	DockerComposeFile = "meshery.yaml"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
+	// DefaultConfigPath is the detail path to mesheryctl config
+	DefaultConfigPath = "config.yaml"
 )
+
+// ListOfAdapters returns the list of adapters available
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
+
+// TemplateContext is the template context provided when creating a config file
+var TemplateContext = models.Context{
+	Endpoint: "http://localhost:9081",
+	Token: models.Token{
+		Name:     "Default",
+		Location: AuthConfigFile,
+	},
+	Platform: "docker",
+	Adapters: ListOfAdapters,
+}
 
 type cryptoSource struct{}
 
@@ -170,6 +190,7 @@ func SetFileLocation() error {
 	MesheryFolder = path.Join(home, MesheryFolder)
 	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
 	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = path.Join(MesheryFolder, DefaultConfigPath)
 	return nil
 }
 
@@ -408,8 +429,7 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
-// MeshError returns a formatted error message with a link to 'mesh' command usage page
-// in addition to the error message
+// MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 //func MeshError(msg string) string {
 //	return formatError(msg, cmdMesh)
 //}
@@ -460,6 +480,95 @@ func UpdateMesheryContainers() error {
 	start.Stderr = os.Stderr
 	if err := start.Run(); err != nil {
 		return errors.Wrap(err, SystemError("failed to start meshery"))
+	}
+	return nil
+}
+
+// AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
+func AskForConfirmation(s string) bool {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]: ", s)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if response == "y" || response == "yes" {
+			return true
+		} else if response == "n" || response == "no" {
+			return false
+		}
+	}
+}
+
+// CreateConfigFile creates config file in Meshery Folder
+func CreateConfigFile() error {
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		_, err := os.Create(DefaultConfigPath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AddContextToConfig adds context passed to it to mesheryctl config file
+func AddContextToConfig(contextName string, context models.Context, configPath string, set bool) error {
+	var currentConfig models.MesheryCtlConfig
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	file, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(file, &currentConfig)
+	if err != nil {
+		return err
+	}
+
+	if currentConfig.Contexts == nil {
+		currentConfig.Contexts = map[string]models.Context{}
+	}
+
+	_, exists := currentConfig.Contexts[contextName]
+	if exists {
+		return errors.New("error adding context: a context with same name already exists")
+	}
+
+	currentConfig.Contexts[contextName] = context
+	if set {
+		currentConfig.CurrentContext = contextName
+	}
+
+	content, err := yaml.Marshal(currentConfig)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(configPath, content, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ValidateURL validates url provided for meshery backend to mesheryctl context
+func ValidateURL(URL string) error {
+	ParsedURL, err := url.ParseRequestURI(URL)
+	if err != nil {
+		return err
+	}
+	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
+		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
 	}
 	return nil
 }

@@ -31,12 +31,12 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^6.1.0",
+    "cypress": "^6.2.0",
     "eslint": "^7.16.0",
     "eslint-plugin-cypress": "^2.11.2",
-    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react": "^7.22.0",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.6",
-    "start-server-and-test": "^1.11.6"
+    "start-server-and-test": "^1.11.7"
   }
 }

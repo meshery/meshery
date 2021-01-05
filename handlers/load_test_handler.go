@@ -437,7 +437,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	}
 }
 
-// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS
+// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
 	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
