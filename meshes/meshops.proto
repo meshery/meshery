@@ -10,6 +10,7 @@ service MeshService {
     rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
+    rpc AdapterInfo(AdapterInfoRequest) returns (AdapterInfoResponse) {}
 }
 
 message CreateMeshInstanceRequest {
@@ -49,7 +50,7 @@ message SupportedOperationsResponse {
 message SupportedOperation {
     string key = 1;
     string value = 2;
-    OpCategory category = 3; 
+    OpCategory category = 3;
 }
 
 enum OpCategory {
@@ -73,4 +74,10 @@ message EventsResponse {
     string summary = 2;
     string details = 3;
     string operation_id = 4;
+}
+
+message AdapterInfoRequest {}
+
+message AdapterInfoResponse {
+    map <string, string> AdapterInfoBody = 1;
 }
