@@ -70,6 +70,8 @@ var (
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
+	// TemplateConfig is the default location of template used for creating docker-compose file
+	TemplateConfig = "template.tmpl"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
