@@ -153,6 +153,11 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 1
+      - name: Check out meshery-consul code
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/meshery-consul
+          path: ./meshery-consul
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -197,9 +202,7 @@ jobs:
           ./main &
       - name: Run meshery-consul
         run: |
-          mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-          git clone git@github.com:layer5io/meshery-consul.git
-          cd meshery-consul
+          cd ./meshery-consul
           DEBUG=true go run main.go &
       - name: Cypress run
         uses: cypress-io/github-action@v2
