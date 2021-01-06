@@ -192,6 +192,8 @@ jobs:
           npm i
           npm run build
           npm run export
+      - name: Update /etc/hosts
+        run: echo "127.0.0.1 mesherylocal.layer5.io" >> /etc/hosts
       - name: Run meshery-consul
         run: |
           cd ./meshery-consul
