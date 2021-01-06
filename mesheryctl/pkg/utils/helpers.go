@@ -70,8 +70,8 @@ var (
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
-	// TemplateConfig is the default location of template used for creating docker-compose file
-	TemplateConfig = "template.tmpl"
+	// TemplateConfigFile is the default location of template used for creating docker-compose file
+	TemplateConfigFile = "template.tmpl"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
@@ -193,6 +193,7 @@ func SetFileLocation() error {
 	}
 	MesheryFolder = path.Join(home, MesheryFolder)
 	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
+	TemplateConfigFile = path.Join(MesheryFolder, TemplateConfigFile)
 	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
 	DefaultConfigPath = path.Join(MesheryFolder, DefaultConfigPath)
 	return nil

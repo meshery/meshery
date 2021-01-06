@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"text/template"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -61,11 +62,18 @@ func start() error {
 	}
 
 	// Fetch Template if it doesn't exist
-	if _, err := os.Stat(utils.TemplateConfig); os.IsNotExist(err) {
-		if err := utils.DownloadFile(utils.TemplateConfig, templateURL); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.TemplateConfig, fileURL)))
+	if _, err := os.Stat(utils.TemplateConfigFile); os.IsNotExist(err) {
+		if err := utils.DownloadFile(utils.TemplateConfigFile, templateURL); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.TemplateConfigFile, fileURL)))
 		}
 	}
+
+	tmpl, err := template.ParseFiles(utils.TemplateConfigFile)
+	if err != nil {
+		return err
+	}
+
+	log.Println(tmpl.ParseName)
 
 	// Generate docker-compose using context name as context-name.yaml
 	//if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "context-name")); os.IsNotExist(err) {
