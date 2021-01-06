@@ -55,8 +55,9 @@ var versionCmd = &cobra.Command{
 		commitsha := commitsha
 
 		version := cfg.Version{
-			Build:     "unavailable",
-			CommitSHA: "unavailable",
+			Build:          "unavailable",
+			CommitSHA:      "unavailable",
+			ReleaseChannel: "unavailable",
 		}
 
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
