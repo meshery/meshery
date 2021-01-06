@@ -3,7 +3,6 @@ layout: default
 title: Interpreting Performance Test Results
 description: This guide is to help users to glean an insights of what the performance tests result should look like.
 permalink: guides/interpreting-performance-test-results
-type: guides
 ---
 
 Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Service Mesh Performance](/service-mesh-performance) (SMP) format.

@@ -1,9 +1,8 @@
 ---
 layout: default
 title: Operation Guides
-permalink: guides
 language: en
-list: exclude
+exclude: true
 ---
 
 Guides to using Meshery's various features and components. 
@@ -28,14 +27,3 @@ Guides to using Meshery's various features and components.
 #  To sort by title or other variables use {% assign sorted_posts = category[1] | sort: 'title' %}
 #
 {% endcomment %}
-
-{% for guide in site.adapter %}
-<h2 id="{{guide[0] | uri_escape | downcase }}">{{guide[0] | capitalize}}1</h2>
-
-{% endfor %}
-
-{% assign sorted_guides = site.guides | sort %}
-{% for guide in sorted_guides %}
-<h2 id="{{guide[0] | uri_escape | downcase }}">{{guide[0] | capitalize}}</h2>
-
-{% endfor %} -->

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
@@ -25,3 +25,4 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} ser
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+

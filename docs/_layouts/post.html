@@ -1,13 +1,22 @@
 ---
-layout: page
+layout: default
 ---
 
-<h1 style="margin-bottom:0px">{{ page.title }}</h1>
 {% if page.badges %}{% for badge in page.badges %}<span class="badge badge-{{ badge.type }}">{{ badge.tag }}</span>{% endfor %}{% endif %}
-<span class="post-date" style="font-style: italic;">{{ page.date | date: "%B %d, %Y" }}</span>
 {{ content }}
 {% if page.content contains "code" %}
 <script>
 /*clipboard.js code*/
 </script>
 {% endif %}
+
+
+<!--Pagination-->
+<div class="pagination">
+    {% if paginator.next_page %}
+    <a href="{{ paginator.last_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="left arrow">&#8592;</a>
+    {% endif %}
+    {% if paginator.last_page %}
+    <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="right arrow">&#8594;</a>
+    {% endif %}
+</div>

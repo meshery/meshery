@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
 mesh_name: NGINX Service Mesh

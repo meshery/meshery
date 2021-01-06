@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: Linkerd
 name: Meshery Adapter for Linkerd
 mesh_name: Linkerd
@@ -10,7 +10,8 @@ github_link: https://github.com/layer5io/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
 ---
-{% include adapter-status.html %}
+
+
 ### Features
 1. Lifecycle management of {{page.mesh_name}}
 1. Lifecycle management of sample applications

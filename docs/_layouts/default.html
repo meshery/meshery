@@ -2,6 +2,9 @@
 <html lang="en" class="no-js">
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+    
+  </head>
   {% include head.html %}
   <body class="td-section">
     {% include header.html %}
@@ -29,6 +32,70 @@
                 </li>
 	      </ol>
            </nav>
+          
+          <div class="home">
+            
+            
+          
+            <ul class="post-list">
+              <!-- 
+                  Here is the main paginator logic called.
+                  All calls to site.posts should be replaced by paginator.posts 
+              -->
+              {% for post in paginator.posts %}
+              <br>
+                <li>
+                  <h2>
+                    <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+                  </h2>
+                </li>
+                
+              {% endfor %}
+            </ul>
+            
+
+            
+            <!-- 
+              Showing buttons to move to the next and to the previous list of posts (pager buttons).
+            -->
+            {% if paginator.total_pages > 1 %}
+            <ul class="pager">
+                {% if paginator.first_page %}
+                <li class="previous">
+                    <a href="{{ paginator.first_page_path | prepend: site.baseurl | replace: '//', '/' }}">First</a>
+                </li>
+                {% endif %}
+          
+                {% if paginator.previous_page %}
+                <li class="previous">
+                    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
+                </li>
+                {% endif %}
+          
+                {% if paginator.page_trail %}
+                  {% for trail in paginator.page_trail %}
+                    <li {% if page.url == trail.path %}class="selected"{% endif %}>
+                        <a href="{{ trail.path | prepend: site.baseurl | replace: '//', '/' }}" title="{{trail.title}}">{{ trail.num }}</a>
+                    </li>
+                  {% endfor %}
+                {% endif %}
+          
+                {% if paginator.next_page %}
+                <li class="next">
+                    <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
+                </li>
+                {% endif %}
+          
+                 {% if paginator.last_page %}
+                <li class="previous">
+                    <a href="{{ paginator.last_page_path | prepend: site.baseurl | replace: '//', '/' }}">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+            {% endif %}
+
+
+           <!--Page Index-->
            <div class="td-content">
             {% if page.display-title != "false" %}
             <h1>{{page.title}}</h1>
@@ -48,8 +115,9 @@
           </main>
         </div>
       </div>
-      {% include footer.html %}
     </div>
+    {% include footer.html %}
+
     {% include scripts.html %}
     {% include google-analytics.html %}
   </body>

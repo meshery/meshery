@@ -3,7 +3,6 @@ layout: default
 title: Deploying Sample Applications
 description: This guide is to help users get a better understanding of sample apps
 permalink: guides/sample-apps
-type: Guides
 ---
 
 Sample Applications are used to interact and exemplify the features of your service mesh. They are often a collection of microservices which you can be used by the user as a sandbox playground to experiment and learn about the service mesh and it's exhaustive set of features.
