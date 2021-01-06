@@ -82,8 +82,6 @@ Meshery interfaces with Providers through a Go interface. The Provider implement
 
 Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
 
-Providers as an object have the following attributes:
-
 ### Remote Provider Extension Points
 
 Interwoven into Meshery’s web-based, user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
@@ -100,8 +98,30 @@ Interwoven into Meshery’s web-based, user interface are a variety of extension
 **Type:** Full Page
 Description: 
 
-### Capabilities Endpoint Example
-Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
+The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.
+
+Remote Providers must fulfill the following endpoints:
+
+1. `/login` - return valid token
+1. `/logout` - invalidating token
+1. `/capabilities` - return capabilities.json
+
+## UI Extension Points
+
+All UI extensions will be hosted under the endpoint <mesheryserver:port/provider>
+
+### UserPrefs
+
+The UserPrefs extension point expects and loads a component to be displayed into /userpreferences page.
+
+### Navigator
+
+The Navigator extension point loads a set of menu items to be displayed in the menu bar on the left hand side of the Meshery UI.
+
+
+## Capabilities Endpoint Example
+
+Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
 
 ```json
 {
@@ -159,6 +179,8 @@ Providers as an object have the following attributes (this must be returned as a
 }
 
 ```
+
+
 
 Meshery enables you as a service mesh owner to customize your service mesh deployment.
 
