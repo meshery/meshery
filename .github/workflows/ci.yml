@@ -192,6 +192,10 @@ jobs:
           npm i
           npm run build
           npm run export
+      - name: Run meshery-consul
+        run: |
+          cd ./meshery-consul
+          DEBUG=true go run main.go &
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
@@ -200,10 +204,6 @@ jobs:
         run: |
           chmod +x ./main
           ./main &
-      - name: Run meshery-consul
-        run: |
-          cd ./meshery-consul
-          DEBUG=true go run main.go &
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
