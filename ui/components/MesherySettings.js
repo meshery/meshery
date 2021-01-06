@@ -314,6 +314,7 @@ class MesherySettings extends React.Component {
                   <FontAwesomeIcon icon={faCloud} transform={mainIconScale} />
                 }
                 label="Environment"
+                data-cy="tabEnvironment"
               />
             </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
@@ -323,6 +324,7 @@ class MesherySettings extends React.Component {
                   <FontAwesomeIcon icon={faMendeley} transform={mainIconScale} />
                 }
                 label="Service Meshes"
+                data-cy="tabServiceMeshes"
               />
             </Tooltip>
             <Tooltip title="Configure Metrics backends" placement="top">
@@ -332,6 +334,7 @@ class MesherySettings extends React.Component {
                   <FontAwesomeIcon icon={faPoll} transform={mainIconScale} fixedWidth />
                 }
                 label="Metrics"
+                tab="tabMetrics"
               />
             </Tooltip>
             <Tooltip title="Choose Performance Test Defaults" placement="top">
@@ -341,6 +344,7 @@ class MesherySettings extends React.Component {
                   <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
                 }
                 label="Performance"
+                tab="tabPerformance"
               />
             </Tooltip>
           </Tabs>

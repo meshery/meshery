@@ -195,6 +195,12 @@ jobs:
         run: |
           chmod +x ./main
           ./main &
+      - name: Run meshery-consul
+        run: |
+          mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+          git clone git@github.com:layer5io/meshery-consul.git
+          cd meshery-consul
+          DEBUG=true go run main.go &
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
