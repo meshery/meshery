@@ -27,14 +27,9 @@ import (
 )
 
 const (
-<<<<<<< HEAD
-	fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-=======
-	url         = "http://localhost:9081"
 	fileURL     = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	templateURL = "https://raw.githubusercontent.com/anirudhjain75/meshery/templatize-docker-compose/docker-compose.tmpl"
 	// Used for testing : https://raw.githubusercontent.com/anirudhjain75/meshery/templatize-docker-compose/docker-compose.tmpl
->>>>>>> download template file incase it doesn't exist in the meshery folder
 )
 
 var (
