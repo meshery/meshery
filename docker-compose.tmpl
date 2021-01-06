@@ -1,7 +1,7 @@
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:{{.MesheryVersion}}
+    image: layer5/meshery:{{.ReleaseChannel}}-{{.MesheryVersion}}
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
@@ -14,55 +14,55 @@ services:
     ports:
       - "9081:8080"
   meshery-istio:
-    image: layer5/meshery-istio:{{.ReleaseChannel}}
+    image: layer5/meshery-istio:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10000:10000"
   meshery-linkerd:
-    image: layer5/meshery-linkerd:{{.ReleaseChannel}}
+    image: layer5/meshery-linkerd:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10001:10001"
   meshery-consul:
-    image: layer5/meshery-consul:{{.ReleaseChannel}}
+    image: layer5/meshery-consul:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10002:10002"
   meshery-octarine:
-    image: layer5/meshery-octarine:{{.ReleaseChannel}}
+    image: layer5/meshery-octarine:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10003:10003"
   meshery-nsm:
-    image: layer5/meshery-nsm:{{.ReleaseChannel}}
+    image: layer5/meshery-nsm:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10004:10004"
   meshery-kuma:
-    image: layer5/meshery-kuma:{{.ReleaseChannel}}
+    image: layer5/meshery-kuma:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10007:10007"
   meshery-cpx:
-    image: layer5/meshery-cpx:{{.ReleaseChannel}}
+    image: layer5/meshery-cpx:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10008:10008"
   meshery-osm:
-    image: layer5/meshery-osm:{{.ReleaseChannel}}
+    image: layer5/meshery-osm:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10009:10009"
   meshery-nginx-sm:
-    image: layer5/meshery-nginx-sm:{{.ReleaseChannel}}
+    image: layer5/meshery-nginx-sm:{{.ReleaseChannel}}-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:

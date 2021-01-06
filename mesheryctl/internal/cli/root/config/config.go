@@ -21,6 +21,12 @@ type MesheryCtlConfig struct {
 	Tokens         map[string]Token   `yaml:"tokens"`
 }
 
+// TemplateConfiguration is the parameters passed to template to create final compose file.
+type TemplateConfiguration struct {
+	ReleaseChannel string
+	MesheryVersion string
+}
+
 // Token defines the structure of Token stored in mesheryctl
 type Token struct {
 	Name     string `yaml:"name"`

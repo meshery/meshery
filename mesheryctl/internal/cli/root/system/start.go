@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"os"
 	"os/exec"
 	"runtime"
@@ -42,10 +43,10 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use)
-	},
+	//PreRunE: func(cmd *cobra.Command, args []string) error {
+	//	//Check prerequisite
+	//	return utils.PreReqCheck(cmd.Use)
+	//},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
@@ -73,7 +74,13 @@ func start() error {
 		return err
 	}
 
-	log.Println(tmpl.ParseName)
+	err = tmpl.Execute(os.Stdout, config.TemplateConfiguration{
+		ReleaseChannel: "stable",
+		MesheryVersion: "latest",
+	})
+	if err != nil {
+		return err
+	}
 
 	// Generate docker-compose using context name as context-name.yaml
 	//if _, err := os.Stat(fmt.Sprintf("%s/%s", utils.MesheryFolder, "context-name")); os.IsNotExist(err) {
