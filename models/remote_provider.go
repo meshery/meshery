@@ -33,8 +33,8 @@ type RemoteProvider struct {
 	ProviderProperties
 	*BitCaskPreferencePersister
 
-	SaaSTokenName string
-	SaaSBaseURL   string
+	SaaSTokenName     string
+	RemoteProviderURL string
 
 	SessionName   string
 	RefCookieName string
@@ -68,8 +68,8 @@ type UserPref struct {
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
 	// Get the capabilities
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/capabilities")
-	resp, err := http.Get(saasURL.String())
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/capabilities")
+	resp, err := http.Get(remoteProviderURL.String())
 	if err != nil || resp.StatusCode != http.StatusOK {
 		logrus.Errorf("[Initialize Provider]: Failed to get capabilities %s", err)
 		return
@@ -153,7 +153,9 @@ func (l *RemoteProvider) SyncPreferences() {
 // GetProviderCapabilities returns all of the provider properties
 func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
-	encoder.Encode(l.ProviderProperties)
+	if err := encoder.Encode(l.ProviderProperties); err != nil {
+		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+	}
 }
 
 // StopSyncPreferences - used to stop sync preferences
@@ -178,8 +180,8 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		return
 	}
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	req, _ := http.NewRequest(http.MethodPut, saasURL.String(), bytes.NewReader(bd))
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	req, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bytes.NewReader(bd))
 
 	// tokenString, err := l.GetToken(req)
 	// if err != nil {
@@ -212,7 +214,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		http.Redirect(w, r, l.SaaSBaseURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
+		http.Redirect(w, r, l.RemoteProviderURL+"?source="+base64.RawURLEncoding.EncodeToString([]byte(tu))+"&provider_version="+l.ProviderVersion, http.StatusFound)
 		return
 	}
 
@@ -221,8 +223,8 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 }
 
 func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/user")
-	req, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user")
+	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(req, tokenString)
 	if err != nil {
@@ -328,8 +330,8 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 
 	logrus.Infof("attempting to fetch results from cloud")
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	q := saasURL.Query()
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
 	}
@@ -342,9 +344,9 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 	if order != "" {
 		q.Set("order", order)
 	}
-	saasURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed results url: %s", saasURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -366,7 +368,7 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("results successfully retrieved from SaaS")
+		logrus.Infof("results successfully retrieved from remote provider")
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching results: %s", bdr)
@@ -403,9 +405,9 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
 
-	saasURL, _ := url.Parse(fmt.Sprintf("%s/%s/%s", l.SaaSBaseURL, ep, resultID.String()))
-	logrus.Debugf("constructed result url: %s", saasURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/%s/%s", l.RemoteProviderURL, ep, resultID.String()))
+	logrus.Debugf("constructed result url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -427,7 +429,7 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("result successfully retrieved from SaaS")
+		logrus.Infof("result successfully retrieved from remote provider")
 		res := &MesheryResult{}
 		err = json.Unmarshal(bdr, res)
 		if err != nil {
@@ -456,11 +458,11 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to publish results to SaaS")
+	logrus.Infof("attempting to publish results to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
@@ -481,7 +483,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		return "", err
 	}
 	if resp.StatusCode == http.StatusCreated {
-		logrus.Infof("results successfully published to SaaS")
+		logrus.Infof("results successfully published to remote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Errorf("unable to unmarshal body: %v", err)
@@ -513,11 +515,11 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to publish results to SaaS")
+	logrus.Infof("attempting to publish results to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(nil)
 	if err != nil {
 		logrus.Errorf("unable to get results: %v", err)
@@ -538,7 +540,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		return "", err
 	}
 	if resp.StatusCode == http.StatusCreated {
-		logrus.Infof("results successfully published to SaaS")
+		logrus.Infof("results successfully published to remote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Errorf("unable to unmarshal body: %v", err)
@@ -570,11 +572,11 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	}
 
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to publish metrics to SaaS")
+	logrus.Infof("attempting to publish metrics to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
 	// tokenString, err := l.GetToken(req)
 	// if err != nil {
@@ -587,7 +589,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		return err
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
+		logrus.Infof("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {
@@ -694,8 +696,8 @@ func (l *RemoteProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.P
 
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Errorf("unable to get token: %v", err)
@@ -727,12 +729,12 @@ func (l *RemoteProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	q := saasURL.Query()
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
 	q.Add("test_uuid", testUUID)
-	saasURL.RawQuery = q.Encode()
-	logrus.Debugf("Making request to : %s", saasURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Errorf("unable to get token: %v", err)
@@ -774,13 +776,13 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	q := saasURL.Query()
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
 	q.Add("page", page)
 	q.Add("pageSize", pageSize)
-	saasURL.RawQuery = q.Encode()
-	logrus.Debugf("Making request to : %s", saasURL.String())
-	cReq, _ := http.NewRequest(http.MethodGet, saasURL.String(), nil)
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Errorf("unable to get token: %v", err)
@@ -812,11 +814,11 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + ep)
-	q := saasURL.Query()
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
 	q.Add("test_uuid", testUUID)
-	saasURL.RawQuery = q.Encode()
-	cReq, _ := http.NewRequest(http.MethodDelete, saasURL.String(), nil)
+	remoteProviderURL.RawQuery = q.Encode()
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Errorf("unable to get token: %v", err)
@@ -841,6 +843,11 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 // RecordMeshSyncData records the mesh sync data
 func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
+}
+
+// ReadMeshSyncData records the mesh sync data
+func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
+	return make([]model.Object, 0), nil
 }
 
 // TarXZF takes in a source url downloads the tar.gz file

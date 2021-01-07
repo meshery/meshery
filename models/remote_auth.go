@@ -61,7 +61,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
 	}
-	r, err := http.Post(l.SaaSBaseURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
 	if err != nil {
 		logrus.Errorf("error refreshing token : %v", err.Error())
 		return "", err
@@ -126,9 +126,9 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get(l.SaaSBaseURL + "/keys")
+	resp, err := http.Get(l.RemoteProviderURL + "/keys")
 	if err != nil {
-		logrus.Errorf("error fetching keys from Saas : %v", err.Error())
+		logrus.Errorf("error fetching keys from remote provider : %v", err.Error())
 		return err
 	}
 	defer SafeClose(resp.Body)

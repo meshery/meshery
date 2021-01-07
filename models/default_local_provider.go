@@ -15,13 +15,14 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	ProviderProperties
-	SaaSBaseURL           string
+	ProviderBaseURL       string
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
@@ -38,7 +39,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
-	l.PackageVersion = "v0.0.1"
+	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{}
@@ -73,7 +74,9 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 // GetProviderCapabilities returns all of the provider properties
 func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
-	encoder.Encode(l.ProviderProperties)
+	if err := encoder.Encode(l.ProviderProperties); err != nil {
+		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+	}
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -217,8 +220,8 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 
 func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -236,7 +239,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		return "", nil
 	}
 	if resp.StatusCode == http.StatusCreated {
-		// logrus.Infof("results successfully published to SaaS")
+		// logrus.Infof("results successfully published to reomote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Warnf("unable to unmarshal body: %v", err)
@@ -263,8 +266,8 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
-	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -273,7 +276,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
+		logrus.Infof("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {
@@ -368,5 +371,53 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
+	result := l.GenericPersister.Create(&obj)
+	if result.Error != nil {
+		return result.Error
+	}
+	fmt.Println(obj.ID)
 	return nil
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
+	var objs []model.Object
+	result := l.GenericPersister.Find(&objs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var typemetas []model.KubernetesResourceTypeMeta
+	result = l.GenericPersister.Find(&typemetas)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var objectmetas []model.KubernetesResourceObjectMeta
+	result = l.GenericPersister.Find(&objectmetas)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var specs []model.KubernetesResourceSpec
+	result = l.GenericPersister.Find(&specs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var status []model.KubernetesResourceStatus
+	result = l.GenericPersister.Find(&status)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	for i, obj := range objs {
+		// obj.TypeMeta = typemetas[i]
+		obj.ObjectMeta = objectmetas[i]
+		obj.Spec = specs[i]
+		obj.Status = status[i]
+		objs[i] = obj
+	}
+
+	return objs, nil
 }

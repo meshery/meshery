@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        ruby: '2.7.1'
+        ruby: ['2.7.1']
     steps:
       - name: Check out code
         uses: actions/checkout@v2

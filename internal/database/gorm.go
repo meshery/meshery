@@ -18,11 +18,13 @@ func newGorm(opts Options) (Handler, error) {
 	}
 
 	// Migrate the schema
-	object := &model.KubernetesResource{}
-	db.AutoMigrate(object)
+	object := &model.Object{}
+	err = db.AutoMigrate(object)
+	if err != nil {
+		return Handler{}, ErrDatabaseMigrate(err)
+	}
 
 	return Handler{
 		db,
 	}, nil
-
 }

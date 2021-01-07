@@ -161,4 +161,5 @@ type Provider interface {
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
 	RecordMeshSyncData(model.Object) error
+	ReadMeshSyncData() ([]model.Object, error)
 }

@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
+	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
@@ -21,112 +22,171 @@ import (
 
 const (
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
-	operatorCRDS = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/crd.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
+var (
+	status = Status{
+		OperatorInstalled:   "false",
+		BrokerInstalled:     "false",
+		MeshsyncInstalled:   "false",
+		SubscriptionStarted: "false",
+		EventHandlerStarted: "false",
+		Error:               "none",
+	}
+)
+
+type Status struct {
+	OperatorInstalled   string `json:"operator-installed,omitempty"`
+	BrokerInstalled     string `json:"broker-installed,omitempty"`
+	MeshsyncInstalled   string `json:"meshsync-installed,omitempty"`
+	SubscriptionStarted string `json:"subscription-started,omitempty"`
+	EventHandlerStarted string `json:"event-handler-started,omitempty"`
+	Error               string `json:"error,omitempty"`
+}
+
+func (h *Handler) MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	objects, err := provider.ReadMeshSyncData()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	data, err := utils.Marshal(objects)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_, err = w.Write([]byte(data))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	s, err := utils.Marshal(status)
+	if err != nil {
+		return
+	}
+
+	_, err = w.Write([]byte(s))
+	if err != nil {
+		return
+	}
+}
+
 func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	datach := make(chan *broker.Message)
 
 	client, err := helpers.NewKubeClient(prefObj.K8SConfig.Config)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	h.config.KubeClient = client
 
 	enable, err := strconv.ParseBool(req.FormValue("enable"))
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	err = h.initialize(!enable)
-	if err != nil {
-		fmt.Println(err)
-	}
+	go h.handleEvents(datach, provider)
 
-	ch := make(chan *broker.Message)
-	go h.subscribeToMeshsync(ch)
-	fmt.Println("subscriber started")
-	go h.persistEvents(ch, provider)
-	fmt.Println("persister started")
+	go func(e bool, d chan *broker.Message) {
+		er := h.initialize(e)
+		if er != nil {
+			status.Error = er.Error()
+			return
+		}
+
+		er = h.subscribeToMeshsync(d)
+		if er != nil {
+			status.Error = er.Error()
+			return
+		}
+	}(!enable, datach)
 
 	_, err = w.Write([]byte("ok"))
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 }
 
 func (h *Handler) initialize(delete bool) error {
-
 	// installOperator
 	err := h.applyYaml(delete, operatorYaml)
-	handleError(err)
-	fmt.Println("applied operator")
-
-	// installCRDS
-	err = h.applyYaml(delete, operatorCRDS)
-	handleError(err)
-	fmt.Println("applied crd")
+	if err != nil {
+		return err
+	}
+	status.OperatorInstalled = "true"
 
 	// installBroker
 	err = h.applyYaml(delete, brokerYaml)
-	handleError(err)
-	fmt.Println("applied broker")
+	if err != nil {
+		return err
+	}
+	status.BrokerInstalled = "true"
 
 	// installMeshSync
 	err = h.applyYaml(delete, meshsyncYaml)
-	handleError(err)
-	fmt.Println("applied meshsync")
+	if err != nil {
+		return err
+	}
+	status.MeshsyncInstalled = "true"
 
 	return nil
 }
 
-func (h *Handler) subscribeToMeshsync(msgch chan *broker.Message) {
-
+func (h *Handler) subscribeToMeshsync(datach chan *broker.Message) error {
+	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&h.config.KubeClient.RestConfig)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
-	broker, err := mesheryclient.CoreV1Alpha1().Brokers("meshery").Get(context.Background(), "broker", metav1.GetOptions{})
-	if err != nil {
-		fmt.Println(err)
-		return
+	for i := 0; i < 10; i++ {
+		broker, err = mesheryclient.CoreV1Alpha1().Brokers("meshery").Get(context.Background(), "broker", metav1.GetOptions{})
+		if err == nil {
+			break
+		}
+		time.Sleep(1 * time.Second)
 	}
 
 	// subscribing to nats
 	natsClient, err := nats.New(broker.Status.Endpoint)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
-	err = natsClient.SubscribeWithChannel("meshsync", "meshery", msgch)
+	err = natsClient.SubscribeWithChannel("meshsync", "meshery", datach)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
+	status.SubscriptionStarted = "true"
+	return nil
 }
 
-func (h *Handler) persistEvents(msgch chan *broker.Message, provider models.Provider) {
-	// broker.Message
+func (h *Handler) handleEvents(datach chan *broker.Message, provider models.Provider) {
+	status.EventHandlerStarted = "true"
 	for {
 		select {
-		case msg := <-msgch:
-			objectJSON, _ := json.Marshal(msg.Object)
+		case msg := <-datach:
+			objectJSON, _ := utils.Marshal(msg.Object)
 			var object model.Object
 			err := utils.Unmarshal(string(objectJSON), &object)
 			if err != nil {
-				fmt.Println(err)
-				return
+				status.Error = err.Error()
 			}
 			// persist the object
 			err = provider.RecordMeshSyncData(object)
 			if err != nil {
-				fmt.Println(err)
-				return
+				status.Error = err.Error()
 			}
 		}
 	}
@@ -134,22 +194,18 @@ func (h *Handler) persistEvents(msgch chan *broker.Message, provider models.Prov
 
 func (h *Handler) applyYaml(delete bool, file string) error {
 	contents, err := utils.ReadRemoteFile(file)
-	handleError(err)
+	if err != nil {
+		return err
+	}
 
 	err = h.config.KubeClient.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
 		Namespace: "meshery",
 		Update:    true,
 		Delete:    delete,
 	})
-	handleError(err)
-
-	return nil
-}
-
-func handleError(err error) error {
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
+
 	return nil
 }

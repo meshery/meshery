@@ -14,12 +14,10 @@ type Handler struct {
 }
 
 func New(engine string, opts Options) (Handler, error) {
-
 	switch engine {
 	case GORM:
 		return newGorm(opts)
 	}
 
 	return Handler{}, ErrNoneDatabase
-
 }
