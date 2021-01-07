@@ -206,6 +206,7 @@ jobs:
         run: |
           chmod +x ./main
           ./main &
+          sleep 30
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
