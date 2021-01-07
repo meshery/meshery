@@ -197,7 +197,8 @@ jobs:
       - name: Run meshery-consul
         run: |
           cd ./meshery-consul
-          DEBUG=true go run main.go &
+          DEBUG=true go run main.go
+          sleep 30
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
@@ -206,7 +207,6 @@ jobs:
         run: |
           chmod +x ./main
           ./main &
-          sleep 30
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
