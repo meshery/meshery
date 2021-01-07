@@ -12,8 +12,8 @@ import (
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/internal/database"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/pkg/database"
 	"github.com/layer5io/meshery/router"
 	"github.com/spf13/viper"
 

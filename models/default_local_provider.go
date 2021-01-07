@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/internal/database"
+	"github.com/layer5io/meshery/pkg/database"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
