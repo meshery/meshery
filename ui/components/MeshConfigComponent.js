@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  NoSsr, FormGroup, InputAdornment, Chip, IconButton, MenuItem, Tooltip,
+  NoSsr, FormGroup, InputAdornment, Chip, IconButton, MenuItem, Tooltip, Paper, Grid, FormControlLabel, Switch
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import blue from '@material-ui/core/colors/blue';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { connect } from 'react-redux';
@@ -139,6 +138,17 @@ const styles = (theme) => ({
       width: '100%',
     },
   },
+  paper: {
+    padding: theme.spacing(2),
+  },
+  heading: {
+    textAlign: 'center',
+  },
+  grey: {
+    background: "WhiteSmoke",
+    padding: theme.spacing(2),
+    borderRadius: "inherit",
+  }
 });
 
 class MeshConfigComponent extends React.Component {
@@ -435,13 +445,72 @@ class MeshConfigComponent extends React.Component {
         </div>
       );
     }
+
+    const operator = (
+      <React.Fragment>
+        <div>
+          <Chip
+            // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+            label={"Operator"}
+            // onDelete={self.handleReconfigure}
+            // onClick={self.handleKubernetesClick}
+            icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
+            variant="outlined"
+            data-cy="chipContextName"
+          />
+              
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="Operator State" secondary="Active" />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="Operator Version" secondary="V0.5.0" />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="MeshSync State" secondary="Active" />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="MeshSync Version" secondary="V0.5.0" />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="NATS State" secondary="Active" />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="NATS Version" secondary="V0.5.0" />
+                </ListItem>
+              </List>
+            </Grid>
+                
+          </Grid>
+        </div>
+        <div className={classes.grey}>
+          <FormGroup>
+            <FormControlLabel
+              control={<Switch name="checkedA" color="primary"/>}
+              label="Meshery Operator"
+            />
+          </FormGroup>
+        </div>
+      </React.Fragment>
+    )
+
     if (this.props.tabs == 0) {
-      return this.meshOut(showConfigured);
+      return this.meshOut(showConfigured, operator);
     }
-    return this.meshIn(showConfigured);
+    return this.meshIn(showConfigured, operator);
   }
 
-  meshOut = (showConfigured) => {
+  meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
       k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile,
@@ -450,123 +519,134 @@ class MeshConfigComponent extends React.Component {
     return (
       <NoSsr>
         <div className={classes.root}>
-          <div className={classes.currentConfigHeading}>
-            <h4>
-              Current Configuration Details
-            </h4>
-          </div>
-          <div className={classes.changeConfigHeading}>
-            <h4>
-              Change Configuration...
-            </h4>
-          </div>
-          <div className={classes.configure}>
-            {showConfigured}
-          </div>
-          <Divider className={classes.vertical} orientation="vertical" />
-          <Divider className={classes.horizontal} orientation="horizontal" />
-          <div className={classes.changeConfigHeadingOne}>
-            <h4>
-              Change Configuration...
-            </h4>
-          </div>
-          <div className={classes.formconfig}>
-            <FormGroup>
-              <input
-                id="k8sfile"
-                type="file"
-                value={k8sfileElementVal}
-                onChange={this.handleChange('k8sfile')}
-                className={classes.fileInputStyle}
-              />
-              <TextField
-                id="k8sfileLabelText"
-                name="k8sfileLabelText"
-                className={classes.fileLabelText}
-                label="Upload kubeconfig"
-                variant="outlined"
-                fullWidth
-                value={k8sfile.replace('C:\\fakepath\\', '')}
-                onClick={() => document.querySelector('#k8sfile').click()}
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CloudUploadIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                disabled
-              />
-            </FormGroup>
-            <TextField
-              select
-              id="contextName"
-              name="contextName"
-              label="Context Name"
-              fullWidth
-              value={contextNameForForm}
-              margin="normal"
-              variant="outlined"
-              // disabled={inClusterConfigForm === true}
-              onChange={this.handleChange('contextNameForForm')}
-            >
-              {contextsFromFile && contextsFromFile.map((ct) => (
-                <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
-                  {ct.contextName}
-                  {ct.currentContext ? ' (default)' : ''}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
+          <Grid container spacing={5}>
+            <Grid item spacing={1} xs={12} md={6}>
+              <div className={classes.heading}>
+                <h4>
+              Cluster Configuration
+                </h4>
+              </div>
+              <Paper className={classes.paper}>
+                <div>
+                  {showConfigured}
+                </div>
+                <div>
+                  <FormGroup>
+                    <input
+                      id="k8sfile"
+                      type="file"
+                      value={k8sfileElementVal}
+                      onChange={this.handleChange('k8sfile')}
+                      className={classes.fileInputStyle}
+                    />
+                    <TextField
+                      id="k8sfileLabelText"
+                      name="k8sfileLabelText"
+                      className={classes.fileLabelText}
+                      label="Upload kubeconfig"
+                      variant="outlined"
+                      fullWidth
+                      value={k8sfile.replace('C:\\fakepath\\', '')}
+                      onClick={() => document.querySelector('#k8sfile').click()}
+                      margin="normal"
+                      InputProps={{
+                        readOnly: true,
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <CloudUploadIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled
+                    />
+                  </FormGroup>
+                  <TextField
+                    select
+                    id="contextName"
+                    name="contextName"
+                    label="Context Name"
+                    fullWidth
+                    value={contextNameForForm}
+                    margin="normal"
+                    variant="outlined"
+                    // disabled={inClusterConfigForm === true}
+                    onChange={this.handleChange('contextNameForForm')}
+                  >
+                    {contextsFromFile && contextsFromFile.map((ct) => (
+                      <MenuItem key={`ct_---_${ct.contextName}`} value={ct.contextName}>
+                        {ct.contextName}
+                        {ct.currentContext ? ' (default)' : ''}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </div>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={6} spacing={1}>
+              
+              <div className={classes.heading}>
+                <h4>
+              Operator Configuration
+                </h4>
+              </div>
+              <Paper className={classes.paper}>
+                {operator}
+              </Paper>
+            </Grid>
+          </Grid>
         </div>
       </NoSsr>
     );
   }
 
-  meshIn = (showConfigured) => {
+  meshIn = (showConfigured, operator) => {
     const { classes } = this.props;
 
     return (
       <NoSsr>
         <div className={classes.root}>
-          <div className={classes.currentConfigHeading}>
-            <h4>
-              Current Configuration Details
-            </h4>
-          </div>
-          <div className={classes.changeConfigHeading}>
-            <h4>
-              Change Configuration...
-            </h4>
-          </div>
-
-          <div className={classes.configure}>
-            {showConfigured}
-          </div>
-          <Divider className={classes.vertical} orientation="vertical" />
-          <Divider className={classes.horizontal} orientation="horizontal" />
-          <div className={classes.changeConfigHeadingOne}>
-            <h4>
-              Change Configuration...
-            </h4>
-          </div>
-          <div className={classes.buttonconfig}>
-            <div className={classes.buttonsCluster}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => window.location.reload(false)}
-                className={classes.button}
-                data-cy="btnDiscoverCluster"
-              >
+          <Grid container spacing={5}>
+            <Grid item spacing={1} xs={12} md={6}>
+              <div className={classes.heading}>
+                <h4>
+              Cluster Configuration
+                </h4>
+              </div>
+              <Paper className={classes.paper}>
+                <div>
+                  {showConfigured}
+                </div>
+                {/* <div className={classes.grey}> */}
+                <div className={classes.buttonsCluster}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => window.location.reload(false)}
+                    className={classes.button}
+                    data-cy="btnDiscoverCluster"
+                  >
                 Discover Cluster
-              </Button>
-            </div>
-          </div>
+                  </Button>
+                </div>
+                {/* </div> */}
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={6} spacing={1}>
+              
+              <div className={classes.heading}>
+                <h4>
+              Operator Configuration
+                </h4>
+              </div>
+              <Paper className={classes.paper}>
+                {operator}
+              </Paper>
+            </Grid>
+          </Grid>
         </div>
       </NoSsr>
     );
