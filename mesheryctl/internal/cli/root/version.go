@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/handlers"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -54,7 +53,7 @@ var versionCmd = &cobra.Command{
 		build := version
 		commitsha := commitsha
 
-		version := cfg.Version{
+		version := config.Version{
 			Build:          "unavailable",
 			CommitSHA:      "unavailable",
 			ReleaseChannel: "unavailable",
