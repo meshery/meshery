@@ -1,16 +1,5 @@
 package helpers
 
-import (
-	"time"
-
-	versionedclient "github.com/aspenmesh/istio-client-go/pkg/client/clientset/versioned"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
-)
-
 /*
 func getK8SDynamicClientSet(kubeconfig []byte, contextName string) (dynamic.Interface, error) {
 	var clientConfig *rest.Config
@@ -50,42 +39,42 @@ func getK8SDynamicClientSet(kubeconfig []byte, contextName string) (dynamic.Inte
 }
 */
 
-func getIstioClient(kubeconfig []byte, contextName string) (*versionedclient.Clientset, error) {
-	var clientConfig *rest.Config
-	var err error
-	if len(kubeconfig) == 0 {
-		clientConfig, err = rest.InClusterConfig()
-		if err != nil {
-			err = errors.Wrap(err, "unable to load in-cluster kubeconfig")
-			logrus.Error(err)
-			return nil, err
-		}
-	} else {
-		config, err := clientcmd.Load(kubeconfig)
-		if err != nil {
-			err = errors.Wrap(err, "unable to load kubeconfig")
-			logrus.Error(err)
-			return nil, err
-		}
-		if contextName != "" {
-			config.CurrentContext = contextName
-		}
-		clientConfig, err = clientcmd.NewDefaultClientConfig(*config, &clientcmd.ConfigOverrides{}).ClientConfig()
-		if err != nil {
-			err = errors.Wrap(err, "unable to create client config from config")
-			logrus.Error(err)
-			return nil, err
-		}
-	}
-	clientConfig.Timeout = 2 * time.Second
-	clientset, err := versionedclient.NewForConfig(clientConfig)
-	if err != nil {
-		err = errors.Wrap(err, "unable to create client set")
-		logrus.Error(err)
-		return nil, err
-	}
-	return clientset, nil
-}
+// func getIstioClient(kubeconfig []byte, contextName string) (*versionedclient.Clientset, error) {
+// 	var clientConfig *rest.Config
+// 	var err error
+// 	if len(kubeconfig) == 0 {
+// 		clientConfig, err = rest.InClusterConfig()
+// 		if err != nil {
+// 			err = errors.Wrap(err, "unable to load in-cluster kubeconfig")
+// 			logrus.Error(err)
+// 			return nil, err
+// 		}
+// 	} else {
+// 		config, err := clientcmd.Load(kubeconfig)
+// 		if err != nil {
+// 			err = errors.Wrap(err, "unable to load kubeconfig")
+// 			logrus.Error(err)
+// 			return nil, err
+// 		}
+// 		if contextName != "" {
+// 			config.CurrentContext = contextName
+// 		}
+// 		clientConfig, err = clientcmd.NewDefaultClientConfig(*config, &clientcmd.ConfigOverrides{}).ClientConfig()
+// 		if err != nil {
+// 			err = errors.Wrap(err, "unable to create client config from config")
+// 			logrus.Error(err)
+// 			return nil, err
+// 		}
+// 	}
+// 	clientConfig.Timeout = 2 * time.Second
+// 	clientset, err := versionedclient.NewForConfig(clientConfig)
+// 	if err != nil {
+// 		err = errors.Wrap(err, "unable to create client set")
+// 		logrus.Error(err)
+// 		return nil, err
+// 	}
+// 	return clientset, nil
+// }
 
 /*
 // ScanIstio - Runs a quick scan on kubernetes to find out the version of service meshes deployed
@@ -140,36 +129,37 @@ func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error)
 
 // ScanIstio - lists VirtualServices
 func ScanIstio(kubeconfig []byte, contextName string) (map[string]string, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
-	if err != nil {
-		return nil, err
-	}
+	return make(map[string]string), nil
+	// clientset, err := getK8SClientSet(kubeconfig, contextName)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	dclientset, err := getIstioClient(kubeconfig, contextName)
-	if err != nil {
-		return nil, err
-	}
-	result := map[string]string{}
+	// dclientset, err := getIstioClient(kubeconfig, contextName)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// result := map[string]string{}
 
-	namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
-	if err != nil {
-		err = errors.Wrap(err, "unable to get the list of namespaces")
-		logrus.Error(err)
-		return nil, err
-	}
-	for _, ns := range namespacelist.Items {
-		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
-		vsList, err := dclientset.NetworkingV1alpha3().VirtualServices(ns.GetName()).List(metav1.ListOptions{})
-		if err != nil {
-			err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns.GetName())
-			logrus.Error(err)
-			return nil, err
-		}
-		for i, vs := range vsList.Items {
-			logrus.Infof("Index: %d VirtualService Hosts: %+v\n", i, vs.Spec.GetHosts())
-			logrus.Infof("Index: %d VirtualService HTTP: %+v\n", i, vs.Spec.GetHttp())
-			// TODO: only take uri -> exact, bcoz regexes have a lot of possibilities
-		}
-	}
-	return result, nil
+	// namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+	// if err != nil {
+	// 	err = errors.Wrap(err, "unable to get the list of namespaces")
+	// 	logrus.Error(err)
+	// 	return nil, err
+	// }
+	// for _, ns := range namespacelist.Items {
+	// 	logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
+	// 	vsList, err := dclientset.NetworkingV1alpha3().VirtualServices(ns.GetName()).List(metav1.ListOptions{})
+	// 	if err != nil {
+	// 		err = errors.Wrapf(err, "unable to get vs in the %s namespace", ns.GetName())
+	// 		logrus.Error(err)
+	// 		return nil, err
+	// 	}
+	// 	for i, vs := range vsList.Items {
+	// 		logrus.Infof("Index: %d VirtualService Hosts: %+v\n", i, vs.Spec.GetHosts())
+	// 		logrus.Infof("Index: %d VirtualService HTTP: %+v\n", i, vs.Spec.GetHttp())
+	// 		// TODO: only take uri -> exact, bcoz regexes have a lot of possibilities
+	// 	}
+	// }
+	// return result, nil
 }

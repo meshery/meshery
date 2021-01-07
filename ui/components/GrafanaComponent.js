@@ -360,11 +360,13 @@ class GrafanaComponent extends Component {
               {/* <GrafanaCharts
                   boardPanelConfigs={selectedBoardsConfigs}
                   grafanaURL={grafanaURL} /> */}
-              <GrafanaCustomCharts
-                boardPanelConfigs={selectedBoardsConfigs}
-                grafanaURL={grafanaURL}
-                grafanaAPIKey={grafanaAPIKey}
-              />
+              <div style={{ padding: "0 1rem" }}>
+                <GrafanaCustomCharts
+                  boardPanelConfigs={selectedBoardsConfigs}
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey}
+                />
+              </div>
             </React.Fragment>
           );
         }
@@ -390,10 +392,14 @@ class GrafanaComponent extends Component {
       return (
         <NoSsr>
           <GrafanaConfigComponent
-            grafanaURL={grafanaURL}
+            grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
+            options={this.props.scannedGrafana.map(graf => ({ label: graf, value: graf }))}
             grafanaAPIKey={grafanaAPIKey}
             urlError={urlError}
-            handleChange={this.handleChange}
+            handleChange={(name) => {
+              // Simulating event.target.value
+              return (value) => this.handleChange(name)({ target: { value } })
+            }}
             handleGrafanaConfigure={this.handleGrafanaConfigure}
           />
         </NoSsr>
@@ -403,6 +409,7 @@ class GrafanaComponent extends Component {
 
 GrafanaComponent.propTypes = {
   classes: PropTypes.object.isRequired,
+  scannedGrafana: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => ({

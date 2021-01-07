@@ -2,11 +2,11 @@
 layout: page
 title: KinD
 permalink: es/installation/platforms/kind
-language: espanol
+language: es
 type: installation
 ---
 
-## Inicio Rápido con KinD
+# Inicio Rápido con KinD
 
 Para configurar y ejecutar Meshery en KinD:
 

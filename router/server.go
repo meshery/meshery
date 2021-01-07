@@ -26,6 +26,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
+	gMux.PathPrefix("/api/provider/extension").
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderComponentsHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler)))).
+		Methods("GET")
 	gMux.PathPrefix("/provider").
 		Handler(http.HandlerFunc(h.ProviderUIHandler)).
 		Methods("GET")
@@ -113,6 +118,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/prometheus/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPrometheusHandler))))
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
+
+	// meshsync endpoint
+	gMux.Handle("/api/v1/meshsync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshSyncHandler))))
 
 	gMux.Handle("/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)

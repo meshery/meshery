@@ -1,11 +1,9 @@
 ---
 layout: default
-title: Project
+title: Layer5 Community
 permalink: project
 description: Meshery Project
 ---
-
-## Layer5 Community
 
 The Meshery project is maintained by the [Layer5 community](https://layer5.io/community). We are an open source organization that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Our projects advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Layer5 projects forward.
 
@@ -25,12 +23,15 @@ The Meshery project is community-built and welcomes collaboration!
 Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
 If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
 
-Please see our [contributing guide](/docs/project/contributing) for more details.
-
+Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
 
 ## Presentations
 
-Past presentations of Meshery: 
+<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<div style="text-align:center;width:100%"><emphasis>Delivered at Service Mesh Day 2019</emphasis></div>
+
+Past presentations of Meshery:
 
 - [O'Reilly OSCON 2020](https://conferences.oreilly.com/oscon/oscon-or)
 - [O'Reilly Infrastructure & Ops 2020](https://conferences.oreilly.com/infrastructure-ops/io-ca/public/schedule/speaker/226795)
@@ -55,7 +56,7 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 
 <div class="wrapper">
     <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview l5-dark-yellow">Access slides and resources</div></a>
+    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview">Access slides and resources</div></a>
 </div>
 
 <!-- 
@@ -66,18 +67,18 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 <div class="row">
 <div class="column">
   <a target="_blank" href="https://layer5.io/landscape">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/landscape#tools">
-  <img class="img-thumbnail" src="/docs/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
+  <img class="img-thumbnail" src="/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/books">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
+  <img  class="img-thumbnail" src="/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
 </div>
 <div class="column">
 <a target="_blank" href="https://layer5.io/workshops">
-  <img  class="img-thumbnail" src="/docs/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
+  <img  class="img-thumbnail" src="/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
 </div>
 </div> -->

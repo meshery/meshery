@@ -3,11 +3,12 @@ layout: page
 title: Vulnerabilidades de seguridad
 permalink: es/project/security-vulnerabilities
 description: Cómo el equipo de Meshery maneja las vulnerabilidades de seguridad.
-language: espanol
+language: es
 type: project
 ---
 
-## Informar una vulnerabilidad
+# Informar una vulnerabilidad
+
 Estamos muy agradecidos con quienes investigan temas de seguridad y quienes informan
 sobre las vulnerabilidades de seguridad de Meshery. Investigamos cada informe a fondo.
 
@@ -23,7 +24,7 @@ Envíanos un informe siempre que:
 - Creas que Meshery tiene una vulnerabilidad de seguridad potencial.
 - No estás seguro de cómo una vulnerabilidad afecta a Meshery.
 - Creas que una vulnerabilidad está presente en otro proyecto que Meshery
-depende de (Docker, por ejemplo).
+  depende de (Docker, por ejemplo).
 
 ### ¿Cuándo no informar una vulnerabilidad de seguridad?
 
@@ -65,9 +66,9 @@ El día elegido para la divulgación pública, se lleva a cabo una secuencia de 
 
 - Una vez que los binarios están disponibles, se envía un anuncio en los siguientes canales:
 
-    - El [Blog de Meshery](https://meshery.io/blog/)
-    - El [Feed del Twitter de Meshery](https://twitter.com/mesheryio)
-    - El canal de #announcements en Slack
+  - El [Blog de Meshery](https://meshery.io/blog/)
+  - El [Feed del Twitter de Meshery](https://twitter.com/mesheryio)
+  - El canal de #announcements en Slack
 
 En la medida de lo posible, este anuncio será procesable e incluirá cualquier medida de mitigación que los clientes puedan tomar antes de
 actualizar a una versión fija.

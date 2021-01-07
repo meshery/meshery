@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   NoSsr, TextField, Grid, Button,
 } from '@material-ui/core';
+import ReactSelectWrapper from './ReactSelectWrapper'
 
 const grafanaStyles = (theme) => ({
   root: {
@@ -12,6 +13,10 @@ const grafanaStyles = (theme) => ({
   buttons: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  inputContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1)
   },
   button: {
     marginTop: theme.spacing(3),
@@ -22,7 +27,7 @@ const grafanaStyles = (theme) => ({
 class GrafanaConfigComponent extends Component {
     render = () => {
       const {
-        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure,
+        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options
       } = this.props;
       return (
         <NoSsr>
@@ -30,25 +35,17 @@ class GrafanaConfigComponent extends Component {
             <div className={classes.root}>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    id="grafanaURL"
-                    name="grafanaURL"
-                    label="Grafana Base URL"
-                    type="url"
-                    autoFocus
-                    fullWidth
-                    value={grafanaURL}
-                    error={urlError}
-                    margin="normal"
-                    variant="outlined"
-                    onKeyDown={(e) => {
-                      if (e.keyCode == 13) {
-                        handleGrafanaConfigure();
-                      }
-                    }}
-                    onChange={handleChange('grafanaURL')}
-                  />
+                  <div className={classes.inputContainer}>
+                    <ReactSelectWrapper
+                      onChange={(select) => handleChange('grafanaURL')(select ? select.value : '')}
+                      options={options}
+                      value={grafanaURL}
+                      label="Grafana Base URL"
+                      error={urlError}
+                      placeholder="Address of Grafana Server"
+                      noOptionsMessage="No Grafana servers discovered"
+                    />
+                  </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -89,7 +86,7 @@ class GrafanaConfigComponent extends Component {
 
 GrafanaConfigComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  grafanaURL: PropTypes.string.isRequired,
+  grafanaURL: PropTypes.object.isRequired,
   grafanaAPIKey: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleGrafanaConfigure: PropTypes.func.isRequired,

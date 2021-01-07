@@ -2,6 +2,7 @@ import NoSsr from "@material-ui/core/NoSsr";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import {
+  Button,
   withStyles,
   Grid,
   TextField,
@@ -23,6 +24,7 @@ import {
   TableHead,
   Table,
   Tooltip,
+  Typography,
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
@@ -35,6 +37,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 // import { updateSMIResults } from '../lib/store';
+import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
@@ -43,13 +46,7 @@ import MesheryResultDialog from "./MesheryResultDialog";
 
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing(10),
-    width: "100%",
-  },
-  chipGrid: {
-    padding: theme.spacing(10),
-    width: "100%",
-    paddingBottom: "0",
+    backgroundColor: "#eaeff1",
   },
   buttons: {
     width: "100%",
@@ -67,10 +64,12 @@ const styles = (theme) => ({
   },
   chip: {
     height: "40px",
-    marginRight: theme.spacing(5),
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(-5),
     fontSize: "15px",
+    position: "relative",
+    top: theme.spacing(0.5),
+    [theme.breakpoints.down("md")]: {
+      fontSize: "12px",
+    },
   },
   colorSwitchBase: {
     color: blue[300],
@@ -138,6 +137,11 @@ const styles = (theme) => ({
   secondaryTable: {
     borderRadius: 10,
     backgroundColor: "#f7f7f7",
+  },
+  paneSection: {
+    backgroundColor: "#fff",
+    padding: theme.spacing(2),
+    borderRadius: 4,
   },
 });
 
@@ -425,7 +429,7 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {*} cat
    * @param {boolean} isDelete if set to true, a delete menu will be generated
    * @param {{key: string, value: string, category?: number}[]} selectedAdapterOps is the array of the meshery adapaters
-   * 
+   *
    * @returns {JSX.Element}
    */
   generateMenu(cat, isDelete, selectedAdapterOps) {
@@ -878,6 +882,59 @@ class MesheryAdapterPlayComponent extends React.Component {
       </Card>
     );
   }
+  
+  /**
+   * renderGrafanaCustomCharts takes in the configuration and renders
+   * the grafana boards. If the configuration is empty then it renders
+   * a note directing a user to install grafana and prometheus
+   * @param {Array<{ board: any, panels: Array<any>, templateVars: Array<any>}>} boardConfigs grafana board configs
+   * @param {string} grafanaURL grafana URL
+   * @param {string} grafanaAPIKey grafana API keey
+   */
+  renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
+    const {classes} = this.props
+    if (boardConfigs?.length)
+      return (
+        <>
+          <Typography align="center" style={{ 
+            fontSize: "1.25rem",
+            margin: "0 0 1rem" 
+          }}>Service Mesh Metrics</Typography>
+          <GrafanaCustomCharts
+            enableGrafanaChip
+            boardPanelConfigs={boardConfigs || []}
+            grafanaURL={grafanaURL || ""}
+            grafanaAPIKey={grafanaAPIKey || ""}
+          />
+        </>
+      );
+
+    return (
+      <div
+        style={{
+          padding: "2rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
+          No Service Mesh Metrics Configurations Found
+        </Typography>
+        <Button
+          aria-label="Add Grafana Charts"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={() => this.props.router.push("/settings/#metrics")}
+        >
+          <AddIcon className={classes.addIcon} />
+          Configure Service Mesh Metrics
+        </Button>
+      </div>
+    );
+  }
 
   render() {
     const { classes, adapter } = this.props;
@@ -914,36 +971,55 @@ class MesheryAdapterPlayComponent extends React.Component {
           <MesheryResultDialog rowData={selectedRowData} close={self.resetSelectedRowData()} />
         )}
         <React.Fragment>
-          <div className={classes.chipGrid}>
-            <Grid container spacing={3}>
-              <Grid item xs={3}>
-                {adapterChip}
-              </Grid>
-              <Grid item xs={3}></Grid>
-              <Grid item xs={3}></Grid>
-            </Grid>
-          </div>
           <div className={classes.root}>
-            <Grid container spacing={5}>
+            <Grid container spacing={2} direction="row" alignItems="flex-start">
+              {/* SECTION 1 */}
               <Grid item xs={12}>
-                <TextField
-                  required
-                  id="namespace"
-                  name="namespace"
-                  label="Namespace"
-                  fullWidth
-                  value={namespace}
-                  error={namespaceError}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange("namespace")}
-                />
+                <div className={classes.paneSection}>
+                  <Typography align="center" style={{ 
+                    fontSize: "1.25rem",
+                    margin: "0 0 1rem" 
+                  }}>Manage Service Mesh</Typography>
+                  <Grid container spacing={2}>
+                    <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
+                      <Grid item md={8} xs={12}>
+                        <TextField
+                          required
+                          id="namespace"
+                          name="namespace"
+                          label="Namespace"
+                          fullWidth
+                          value={namespace}
+                          error={namespaceError}
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange("namespace")}
+                        />
+                      </Grid>
+                      <Grid item md={4} xs={12}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          {adapterChip}
+                        </div>
+                      </Grid>
+                    </Grid>
+                    {filteredOps.map((val, i) => (
+                      <Grid item xl={2} lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
+                        {this.generateCardForCategory(val)}
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
               </Grid>
-              {filteredOps.map((val) => (
-                <Grid item xs={12} md={4}>
-                  {this.generateCardForCategory(val)}
-                </Grid>
-              ))}
+              {/* SECTION 2 */}
+              <Grid item xs={12}>
+                <div className={classes.paneSection}>
+                  {this.renderGrafanaCustomCharts(
+                    this.props.grafana.selectedBoardsConfigs, 
+                    this.props.grafana.grafanaURL,
+                    this.props.grafana.grafanaAPIKey,
+                  )}
+                </div>
+              </Grid>
             </Grid>
           </div>
         </React.Fragment>
@@ -961,6 +1037,10 @@ MesheryAdapterPlayComponent.propTypes = {
 //   const smi_result = state.get('smi_result').toJS();
 //   return { smi_result, };
 // };
+const mapStateToProps = (st) => {
+  const grafana = st.get("grafana").toJS();
+  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
@@ -968,9 +1048,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(
-    // mapStateToProps,
-    null,
-    mapDispatchToProps
-  )(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
 );

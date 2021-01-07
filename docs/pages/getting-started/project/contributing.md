@@ -3,13 +3,12 @@ layout: page
 title: Contributing
 permalink: project/contributing
 ---
-# <a name="contributing">Contributing Overview</a>
+
 
 Please do! Thanks for your help! :balloon:
 
 This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md). 
-
-Not sure where to start? 
+## Not sure where to start? 
 
 Follow these steps and you'll be right at home.
 
@@ -165,7 +164,7 @@ Any UI changes made now will automatically be recompiled and served in the brows
 #### Running Meshery from IDE
 If you want to run Meshery from IDE like Goland, VSCode. set below environment variable
 ```
-SAAS_BASE_URL=https://meshery.layer5.io
+PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
 ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009

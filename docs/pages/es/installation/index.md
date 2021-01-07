@@ -2,15 +2,17 @@
 layout: page
 title: Installation Guide
 permalink: es/installation
-language: espanol
+language: es
 type: installation
+language: en
+list: exclude
 ---
 
 <a name="getting-started"></a>
 
 ## Inicio Rápido
 
-Poner a correr Meshery en un sistema habilitado con Docker, es fácil. Usa la interfaz de linea de comandos Meshery, `mesheryctl`, para empezar Meshery en cualquiera de sus [plataformas soportadas](/docs/installation/platforms).
+Poner a correr Meshery en un sistema habilitado con Docker, es fácil. Usa la interfaz de linea de comandos Meshery, `mesheryctl`, para empezar Meshery en cualquiera de sus [plataformas soportadas]({{ site.baseurl }}/installation/platforms).
 
 ## Usando `mesheryctl`
 

@@ -11,8 +11,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Drafts your next Release notes as Pull Requests are merged into "master"
-      - uses: release-drafter/release-drafter@v5
+      - name: Drafting release
+        id: release_drafter
+        uses: release-drafter/release-drafter@v5
         with:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+
+      - name: Checkout release notes
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: actions/checkout@v2
+
+      - name: Write release notes to markdown file
+        id: md_writer
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        run: |
+          printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+
+      - name: Create Pull Request
+        id: cpr
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
+          committer: l5io <ci@layer5.io>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: docs/automated-release-notes
+          delete-branch: true
+          title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
+          body: |
+            An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
+          labels: |
+            area/ci
+            kind/chore
+          # assignees:
+          # reviewers:
+          team-reviewers: |
+            release-team
+            maintainers
+          # milestone: 1
+          draft: false
+
+      - name: Verify PR
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
