@@ -141,7 +141,7 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 
 <p style="clear:both;">
 <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
-  <br />
+
 <h3>Service Mesh Configuration Management</h3>
 
 Assess your service mesh configuration against deployment and operational best practices with Meshery's configuration validator.
