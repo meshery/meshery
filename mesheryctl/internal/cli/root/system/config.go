@@ -33,7 +33,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// TODO: https://github.com/layer5io/meshery/issues/1022
+// TODO: https://github.com/layer5io/me shery/issues/1022
 
 const paramName = "k8sfile"
 const contextName = "contextName"
