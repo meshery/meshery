@@ -54,7 +54,7 @@ describe('Settings', () => {
 
       // cy.wait('@getAdapterPing')
 
-      cy.get('.ReactSelectWrapper-valueContainer-640')
+      cy.get('.MuiInputBase-input')
         .type('mesherylocal.layer5.io:10002{enter}')
 
       cy.get('[data-cy=btnSubmitMeshAdapter]')
