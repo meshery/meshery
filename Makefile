@@ -6,6 +6,7 @@ MESHERY_CLOUD_PROD="https://meshery.layer5.io"
 MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+RELEASE_CHANNEL="edge"
 
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
@@ -16,7 +17,7 @@ mesheryctl:
 # `make docker` builds Meshery inside of a multi-stage Docker container.
 # This method does NOT require that you have Go, NPM, etc. installed locally.
 docker:
-	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
 # Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
@@ -48,7 +49,7 @@ docker-run-cloud:
 
 run-local-cloud: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
@@ -60,7 +61,7 @@ run-local-cloud:
 #  and points to remote Meshery Cloud for user authentication.
 run-local: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \

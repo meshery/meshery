@@ -27,6 +27,7 @@ var (
 	globalTokenForAnonymousResults string
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
+	releasechannel                 = "Not Set"
 )
 
 const (
@@ -47,6 +48,10 @@ func main() {
 	viper.SetDefault("ADAPTER_URLS", "")
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("COMMITSHA", commitsha)
+	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+
+	// Get the channel
+	logrus.Info("Meshery server current channel: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
