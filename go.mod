@@ -46,7 +46,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.20.9
-	istio.io/api v0.0.0-20201123152548-197f11e4ea09
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12
