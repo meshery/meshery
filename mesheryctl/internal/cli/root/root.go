@@ -34,10 +34,11 @@ import (
 type TerminalFormatter struct{}
 
 var (
-	cfgFile     string
-	mctlCfgFile string
-	version     = "Not Set"
-	commitsha   = "Not Set"
+	cfgFile        string
+	mctlCfgFile    string
+	version        = "Not Set"
+	commitsha      = "Not Set"
+	releasechannel = "Not Set"
 )
 
 //Format is exported
