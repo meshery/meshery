@@ -24,7 +24,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var channelSet, channelSwitch, channelName string
+var channelSet, channelSwitch, channelName, currentContext string
+var alreadySubbed bool = false
 
 // configCmd represents the config command
 var channelCmd = &cobra.Command{
@@ -34,7 +35,22 @@ var channelCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if len(channelSet) < 0 && len(channelSwitch) < 0 {
+		currentContext, contextErr := ioutil.ReadFile(utils.DefaultConfigPath) 
+
+		if contextErr != nil {
+		log.Errorf("unable to read meshery config file: %v", contextErr)
+		return contextErr
+		}
+
+		if strings.Contains(string(currentContext), "stable") {
+			log.Info("Subscribed to stable channel.")
+			alreadySubbed = true
+		} else if strings.Contains(string(currentContext), "edge"){
+			log.Info("Subscribed to edge channel.")
+			alreadySubbed = true
+		}
+
+		if len(channelSet) < 0 && len(channelSwitch) < 0 && alreadySubbed {
 			log.Fatal("Provide 'stable' or 'edge' as the release channel name.")
 		}
 
