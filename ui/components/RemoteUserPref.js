@@ -23,7 +23,7 @@ const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
   return (
     <div>
       <RemoteComponent
-        startOnZoom={startOnZoom}
+        injectProps={{ handleToggle, startOnZoom }}
         handleToggle={handleToggle}
       />
     </div>
