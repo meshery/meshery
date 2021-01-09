@@ -57,6 +57,27 @@ var startCmd = &cobra.Command{
 	},
 }
 
+func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, RequestedServices []string) error {
+	valid := true
+	for _, v := range RequestedServices {
+		_, ok := CurrentServices[v]
+		if !ok {
+			valid = false
+			break
+		}
+	}
+	if !valid {
+		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
+		}
+		err := utils.ViperCompose.ReadInConfig()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -84,13 +105,23 @@ func start() error {
 	}
 
 	compose := &utils.DockerCompose{}
-	err = utils.ViperCompose.Unmarshal(compose)
+	err = utils.ViperCompose.Unmarshal(&compose)
 	if err != nil {
 		return err
 	}
 
-	services := compose.Services                              // Current Services
-	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
+	services := compose.Services                                        // Current Services
+	RequestedAdapters := mctlCfg.GetContextContent().Adapters           // Requested Adapters / Services
+	err = ValidateComposeFileForRecreation(services, RequestedAdapters) // Validates docker-compose file and recreates and sync's if required
+	if err != nil {
+		return err
+	}
+
+	err = utils.ViperCompose.Unmarshal(&compose)
+	if err != nil {
+		return err
+	}
+	services = compose.Services // Current Services
 	RequiredService := []string{"meshery", "watchtower"}
 
 	AllowedServices := map[string]utils.Service{}
