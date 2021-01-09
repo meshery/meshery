@@ -198,7 +198,7 @@ jobs:
         run: |
           mkdir /home/runner/.meshery
           cd ./meshery-consul
-          DEBUG=true go run main.go
+          DEBUG=true go run main.go &
           sleep 30
       - name: Run backend
         env:
