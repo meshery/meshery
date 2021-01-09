@@ -159,7 +159,6 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 	return generateCFG.Run()
 }
 
-
 // GenerateConfigEKS generates kube config file in .meshery/kubeconfig.yaml for an EKS cluster
 func GenerateConfigEKS(region, cluster string) error {
 	script := fmt.Sprintf(`
@@ -196,4 +195,3 @@ func GenerateConfigEKS(region, cluster string) error {
 
 	return generateCFG.Run()
 }
-
