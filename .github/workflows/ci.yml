@@ -199,8 +199,8 @@ jobs:
           mkdir /home/runner/.meshery
           cd ./meshery-consul
           go run main.go &
-          sleep 60
-          fg
+          sleep 90
+          ls -la /home/runner/.meshery
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
