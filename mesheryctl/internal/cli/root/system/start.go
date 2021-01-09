@@ -22,7 +22,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	config2 "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 
 	"github.com/pkg/errors"
@@ -64,14 +64,14 @@ func start() error {
 		}
 	}
 
-	if true {
+	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
 	}
 
 	// Get viper instance used for context
-	mctlCfg, err := config2.GetMesheryCtl(viper.GetViper())
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}

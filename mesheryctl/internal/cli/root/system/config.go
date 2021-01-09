@@ -24,7 +24,7 @@ import (
 	"os/user"
 	"path"
 
-	config2 "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -50,7 +50,7 @@ type k8sContext struct {
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
 
-	mctlCfg, err := config2.GetMesheryCtl(viper.GetViper())
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return nil, errors.Wrap(err, "error processing config")
 	}
@@ -95,7 +95,7 @@ func setContext(configFile, cname, tokenPath string) error {
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
-	mctlCfg, err := config2.GetMesheryCtl(viper.GetViper())
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
