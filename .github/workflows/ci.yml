@@ -21,7 +21,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.29
+          version: v1.32
 
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
@@ -198,8 +198,9 @@ jobs:
         run: |
           mkdir /home/runner/.meshery
           cd ./meshery-consul
-          DEBUG=true go run main.go &
-          sleep 30
+          go run main.go &
+          sleep 60
+          fg
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
