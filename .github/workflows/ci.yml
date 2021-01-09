@@ -196,6 +196,7 @@ jobs:
         run: sudo echo "127.0.0.1 mesherylocal.layer5.io" >> /etc/hosts | sudo tee -a /etc/hosts
       - name: Run meshery-consul
         run: |
+          mkdir /home/runner/.meshery
           cd ./meshery-consul
           DEBUG=true go run main.go
           sleep 30
