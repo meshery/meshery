@@ -74,6 +74,8 @@ var (
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
 	DefaultConfigPath = "config.yaml"
+	// ViperCompose is an instance of viper for docker-compose
+	ViperCompose = viper.New()
 )
 
 // ListOfAdapters returns the list of adapters available

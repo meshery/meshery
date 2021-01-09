@@ -22,6 +22,9 @@ import (
 	"os/exec"
 	"runtime"
 
+	config2 "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
+
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -42,10 +45,10 @@ var startCmd = &cobra.Command{
 	Short: "Start Meshery",
 	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use)
-	},
+	//PreRunE: func(cmd *cobra.Command, args []string) error {
+	//	//Check prerequisite
+	//	return utils.PreReqCheck(cmd.Use)
+	//},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
@@ -61,11 +64,56 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+	if true {
 		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
 	}
+
+	// Get viper instance used for context
+	mctlCfg, err := config2.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	// Viper instance used for docker compose
+	utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
+	err = utils.ViperCompose.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	compose := &utils.DockerCompose{}
+	err = utils.ViperCompose.Unmarshal(compose)
+	if err != nil {
+		return err
+	}
+
+	services := compose.Services                              // Current Services
+	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
+	RequiredService := []string{"meshery", "watchtower"}
+
+	AllowedServices := map[string]utils.Service{}
+	for _, v := range RequestedAdapters {
+		if services[v].Image == "" {
+			log.Fatalf("Invalid adapter specified %s", v)
+		}
+		AllowedServices[v] = services[v]
+	}
+	for _, v := range RequiredService {
+		AllowedServices[v] = services[v]
+	}
+
+	utils.ViperCompose.Set("services", AllowedServices)
+	err = utils.ViperCompose.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	//fmt.Println("Services", services);
+	//fmt.Println("RequiredAdapters", RequestedAdapters);
+	//fmt.Println("AllowedServices", AllowedServices);
+	//fmt.Println("version", utils.ViperCompose.GetString("version")) // Works here
 
 	//////// FLAGS
 	// Control whether to pull for new Meshery container images
