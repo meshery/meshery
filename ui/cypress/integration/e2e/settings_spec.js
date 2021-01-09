@@ -48,11 +48,11 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/mesh/manage').as('postMeshManage')
       cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
 
-      // cy.get('[data-cy=chipAdapterLocation]')
-      //   .contains('.MuiChip-label', 'mesherylocal.layer5.io:10002')
-      //   .click()
+      cy.get('[data-cy=chipAdapterLocation]')
+        .contains('.MuiChip-label', 'mesherylocal.layer5.io:10002')
+        .click()
 
-      // cy.wait('@getAdapterPing')
+      cy.wait('@getAdapterPing')
 
       cy.get('.MuiInputBase-input')
         .type('mesherylocal.layer5.io:10002{enter}')
@@ -61,7 +61,7 @@ describe('Settings', () => {
         .click()
 
       cy.wait('@postMeshManage')
-      cy.wait('@getMeshAdapters')
+      // cy.wait('@getMeshAdapters')
     })
   })
 })
