@@ -1,8 +1,19 @@
 import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
-  Badge, Drawer, Tooltip, Divider, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
+  Badge, 
+  Drawer, 
+  Tooltip, 
+  Divider, 
+  Typography, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions, 
+  Button,
 } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
@@ -14,7 +25,7 @@ import MesheryEventViewer from './MesheryEventViewer';
 // import { bindActionCreators } from 'redux';
 // import { updateSMIResults } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
-
+import { withSnackbar } from 'notistack'
 
 const styles = (theme) => ({
   sidelist: {
@@ -88,6 +99,30 @@ class MesheryNotification extends React.Component {
     };
   }
 
+  /**
+   * notificationDispatcher dispatches the notifications
+   * @param {number} type type of the event
+   * @param {string} message message to be displayed
+   */
+  notificationDispatcher(type, message) {
+    const self = this;
+    console.log(type)
+    self.props.enqueueSnackbar(message, {
+      variant: eventTypes[type]?.type || "default",
+      autoHideDuration: 5000,
+      action: (key) => (
+        <IconButton 
+          key="close" 
+          aria-label="Close" 
+          color="inherit" 
+          onClick={() => self.props.closeSnackbar(key)}
+        >
+          <CloseIcon />
+        </IconButton>
+      ),
+    });
+  }
+
   static getDerivedStateFromProps(props, state) {
     if (JSON.stringify(props.k8sConfig) !== JSON.stringify(state.k8sConfig)
         || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
@@ -123,7 +158,12 @@ class MesheryNotification extends React.Component {
     return (e) => {
       const { events } = this.state;
       const data = JSON.parse(e.data);
+
+      // Add the event to the state
       events.push(data);
+
+      // Dispatch the notification
+      self.notificationDispatcher(data.event_type || 0, data.summary)
       //Temperory Hack
       // if(data.summary==="Smi conformance test completed successfully"){
       //   self.props.updateSMIResults({smi_result: data,});
@@ -334,5 +374,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   null,
-  // mapDispatchToProps,
-)(MesheryNotification));
+)(withSnackbar(MesheryNotification)));
