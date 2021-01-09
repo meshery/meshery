@@ -16,4 +16,5 @@ type Context struct {
 	Token    Token    `yaml:"token"`
 	Platform string   `yaml:"platform"`
 	Adapters []string `yaml:"adapters,omitempty"`
+	Channel  string   `yaml:"channel"`
 }
