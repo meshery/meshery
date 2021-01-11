@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
@@ -162,4 +163,5 @@ type Provider interface {
 
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
+	GetGenericPersister() *database.Handler
 }

@@ -64,6 +64,11 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+// GetGenericPersister - to return persister
+func (l *RemoteProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}
+
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
@@ -100,6 +105,10 @@ func (l *RemoteProvider) Initialize() {
 	if err := TarXZF(l.PackageURL, loc); err != nil {
 		logrus.Errorf("[Initialize]: Failed to download provider package %s", err)
 	}
+}
+
+func (l *RemoteProvider) GetGenericPersister() database.Handler {
+	return database.Handler{}
 }
 
 // PackageLocation returns the location of where the package for the current
