@@ -41,9 +41,11 @@ module.exports = {
     "@material-ui/icons/ExpandMore": require("@material-ui/icons/ExpandMore"),
     "@material-ui/icons/ExpandLess": require("@material-ui/icons/ExpandLess"),
     "@material-ui/core/InputLabel": require("@material-ui/core/InputLabel"),
+    "@material-ui/core/Input": require("@material-ui/core/Input"),
     "@material-ui/core/MenuItem": require("@material-ui/core/MenuItem"),
     "@material-ui/core/FormControl": require("@material-ui/core/FormControl"),
     "@material-ui/core/Select": require("@material-ui/core/Select"),
     notistack: require("notistack"),
+    "relay-runtime": require("relay-runtime"),
   },
 };

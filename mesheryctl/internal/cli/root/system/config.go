@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
+	"path"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -31,7 +33,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// TODO: https://github.com/layer5io/meshery/issues/1022
+// TODO: https://github.com/layer5io/me shery/issues/1022
 
 const paramName = "k8sfile"
 const contextName = "contextName"
@@ -188,28 +190,66 @@ var configCmd = &cobra.Command{
 				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
+		case "eks":
+			log.Info("Configuring Meshery to access EKS...")
+			var regionName, clusterName string
+
+			// Prompt user for AWS region name
+			log.Info("Please enter the AWS region name:")
+			_, err := fmt.Scanf("%s", &regionName)
+			if err != nil {
+				log.Warnf("Error reading AWS region name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS region name:")
+				_, err = fmt.Scanf("%s", &regionName)
+				if err != nil {
+					log.Fatalf("Error reading AWS region name: %s", err.Error())
+				}
+			}
+
+			// Prompt user for AWS cluster name
+			log.Info("Please enter the AWS cluster name:")
+			_, err = fmt.Scanf("%s", &clusterName)
+			if err != nil {
+				log.Warnf("Error reading AWS cluster name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS cluster name:")
+				_, err = fmt.Scanf("%s", &clusterName)
+				if err != nil {
+					log.Fatalf("Error reading AWS cluster name: %s", err.Error())
+				}
+			}
+
+			// Write EKS compatible config to the filesystem
+			if err := utils.GenerateConfigEKS(regionName, clusterName); err != nil {
+				log.Fatal("Error generating kubeconfig: ", err)
+				return
+			}
 		default:
-			log.Fatal("The argument has to be one of gke | minikube | aks")
+			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
 		}
 
 		// TODO: Assumes Mac or Linux. Make arch-specific
 		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := "/tmp/meshery/kubeconfig.yaml"
-
+		configPath := ""
+		usr, err := user.Current()
+		if err != nil {
+			configPath = ".meshery/kubeconfig.yaml"
+		} else {
+			configPath = path.Join(usr.HomeDir, ".meshery/kubeconfig.yaml")
+		}
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
-			log.Fatalf("Error getting contexts : %s", err.Error())
+			log.Fatalf("Error getting context: %s", err.Error())
 		}
 
 		choosenCtx := contexts[0]
 		if len(contexts) > 1 {
-			fmt.Println("List of available contexts : ")
+			fmt.Println("List of available contexts: ")
 			for i, ctx := range contexts {
 				fmt.Printf("(%d) %s \n", i+1, ctx)
 			}
 			var choice int
-			fmt.Print("Enter choice (number) : ")
+			fmt.Print("Enter choice (number): ")
 			_, err = fmt.Scanf("%d", &choice)
 			if err != nil {
 				log.Fatalf("Error reading input:  %s", err.Error())
@@ -220,7 +260,7 @@ var configCmd = &cobra.Command{
 		log.Debugf("Chosen context : %s", choosenCtx)
 		err = setContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
-			log.Fatalf("Error setting context : %s", err.Error())
+			log.Fatalf("Error setting context: %s", err.Error())
 		}
 	},
 }
