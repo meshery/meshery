@@ -88,6 +88,7 @@ var TemplateContext = models.Context{
 	},
 	Platform: "docker",
 	Adapters: ListOfAdapters,
+	Channel:  "stable",
 }
 
 type cryptoSource struct{}

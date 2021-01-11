@@ -1,16 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import CloseIcon from '@material-ui/icons/Close';
-import green from '@material-ui/core/colors/green';
-import amber from '@material-ui/core/colors/amber';
-import IconButton from '@material-ui/core/IconButton';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import WarningIcon from '@material-ui/icons/Warning';
-import { withStyles } from '@material-ui/core/styles';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import ErrorIcon from "@material-ui/icons/Error";
+import InfoIcon from "@material-ui/icons/Info";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
+import { SnackbarContent } from 'notistack';
+import WarningIcon from "@material-ui/icons/Warning";
+import { withStyles } from "@material-ui/core/styles";
+import classnames from 'classnames';
+import Collapse from '@material-ui/core/Collapse';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -21,16 +26,16 @@ const variantIcon = {
 
 const styles = (theme) => ({
   success: {
-    backgroundColor: green[600],
+    color: "#6fbf73",
   },
   error: {
-    backgroundColor: theme.palette.error.dark,
+    color: "#ff1744",
   },
   info: {
-    backgroundColor: theme.palette.primary.dark,
+    color: "#2196f3",
   },
   warning: {
-    backgroundColor: amber[700],
+    color: "#ffc400",
   },
   icon: {
     fontSize: 20,
@@ -40,40 +45,89 @@ const styles = (theme) => ({
     marginRight: theme.spacing(1),
   },
   message: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
+  },
+  root: {
+    [theme.breakpoints.up("sm")]: {
+      minWidth: "344px !important",
+    },
+  },
+  card: {
+    backgroundColor: "rgba(50, 50, 50)",
+    width: "100%",
+  },
+  actionRoot: {
+    padding: "8px 8px 8px 16px",
+  },
+  icons: {
+    marginLeft: "auto",
+  },
+  expand: {
+    padding: "8px 8px",
+    transform: "rotate(0deg)",
+    transition: theme.transitions.create("transform", {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: "rotate(180deg)",
+  },
+  collapse: {
+    padding: 16,
+  },
+  checkIcon: {
+    fontSize: 20,
+    color: "#b3b3b3",
+    paddingRight: 4,
+  },
+  button: {
+    padding: 0,
+    textTransform: "none",
   },
 });
 
 function MesherySnackbarWrapper(props) {
-  const {
-    classes, className, message, onClose, variant, ...other
-  } = props;
+  const { classes, className, message, onClose, variant, details } = props;
   const Icon = variantIcon[variant];
 
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   return (
-    <SnackbarContent
-      className={classNames(classes[variant], className)}
-      aria-describedby="client-snackbar"
-      message={(
-        <span id="client-snackbar" className={classes.message}>
-          <Icon className={classNames(classes.icon, classes.iconVariant)} />
-          {message}
-        </span>
-      )}
-      action={[
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          className={classes.close}
-          onClick={onClose}
-        >
-          <CloseIcon className={classes.icon} />
-        </IconButton>,
-      ]}
-      {...other}
-    />
+    <SnackbarContent className={classes.root}>
+      <Card className={classNames(classes.card, classes[variant], className)}>
+        <CardActions classes={{ root: classes.actionRoot }}>
+          <Typography variant="subtitle2">
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Icon className={classNames(classes.icon, classes.iconVariant)} />
+              <div>{message}</div>
+            </div>
+          </Typography>
+          <div className={classes.icons}>
+            <IconButton
+              aria-label="Show more"
+              className={classnames(classes.expand, { [classes.expandOpen]: expanded })}
+              onClick={handleExpandClick}
+            >
+              <ExpandMoreIcon style={{ color: "#fff" }} />
+            </IconButton>
+            <IconButton className={classes.expand} onClick={onClose}>
+              <CloseIcon style={{ color: "#fff" }} />
+            </IconButton>
+          </div>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Paper className={classes.collapse}>
+            <Typography gutterBottom>Details</Typography>
+            {details}
+          </Paper>
+        </Collapse>
+      </Card>
+    </SnackbarContent>
   );
 }
 
@@ -82,12 +136,8 @@ MesherySnackbarWrapper.propTypes = {
   className: PropTypes.string,
   message: PropTypes.node,
   onClose: PropTypes.func,
-  variant: PropTypes.oneOf([
-    'success',
-    'warning',
-    'error',
-    'info',
-  ]).isRequired,
+  variant: PropTypes.oneOf(["success", "warning", "error", "info"]).isRequired,
+  details: PropTypes.string
 };
 
 export default withStyles(styles)(MesherySnackbarWrapper);

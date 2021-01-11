@@ -11,6 +11,7 @@ class MesheryDocument extends Document {
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
+          <link rel="icon" href="/static/favicon.ico" />
         </Head>
         <body>
           <Main />
