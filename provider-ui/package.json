@@ -12,7 +12,7 @@
     "export": "next export",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3001 cy:run && eslint ."
+    "test": "start-server-and-test dev http://localhost:3001 cy:run --record --key a25e3b24-8ff8-41e6-be40-5e33e33596e2 && eslint ."
   },
   "keywords": [],
   "author": "Layer5",

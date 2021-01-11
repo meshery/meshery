@@ -14,7 +14,7 @@
     "cy:open": "cypress open",
     "test": "start-server-and-test dev http://localhost:3000 cy:run && eslint .",
     "test-integration": "cypress run --spec 'cypress/integration/integration/**/*'",
-    "test-e2e": "cypress run --spec 'cypress/integration/e2e/**/*'",
+    "test-e2e": "cypress run --record --key a25e3b24-8ff8-41e6-be40-5e33e33596e2 --spec 'cypress/integration/e2e/**/*'",
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration"
   },
   "husky": {
