@@ -20,13 +20,11 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var config models.MesheryCtlConfig
 var channelSet, channelSwitch, channelName string
 
 // configCmd represents the config command
