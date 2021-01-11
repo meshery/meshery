@@ -5,12 +5,13 @@ go 1.13
 replace (
 	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
+	github.com/layer5io/meshery-operator v0.2.4 => /home/devkalra/Desktop/meshery-operator
 	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )
 
 require (
-	fortio.org/fortio v1.11.4
+	fortio.org/fortio v1.11.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
@@ -24,7 +25,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.0
+	github.com/layer5io/meshery-operator v0.2.4
 	github.com/layer5io/meshkit v0.2.0
 	github.com/layer5io/meshsync v0.1.2
 	github.com/layer5io/nighthawk-go v0.1.5
