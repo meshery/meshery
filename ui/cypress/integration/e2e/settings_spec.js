@@ -48,6 +48,9 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/mesh/manage').as('postMeshManage')
       cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
 
+      // FIXME
+      cy.wait(10000)
+
       cy.get('[data-cy=chipAdapterLocation]')
         .contains('.MuiChip-label', 'mesherylocal.layer5.io:10002')
         .click()
