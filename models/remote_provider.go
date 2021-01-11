@@ -64,6 +64,11 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+// GetGenericPersister - to return persister
+func (l *RemoteProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}
+
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {

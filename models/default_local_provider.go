@@ -29,6 +29,11 @@ type DefaultLocalProvider struct {
 	GenericPersister      database.Handler
 }
 
+// GetGenericPersister - to return persister
+func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}
+
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
 	l.ProviderName = "None"
