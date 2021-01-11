@@ -29,9 +29,10 @@ func (h *Handler) PluginHandler(w http.ResponseWriter, req *http.Request, prefOb
 }
 
 func (h *Handler) loadPlugins(w http.ResponseWriter, r *http.Request, provider models.Provider) {
-	plug, err := plugin.Open("path-to-so-file")
+	plug, err := plugin.Open("/home/devkalra/Desktop/layer5labs/meshery-extensions/graphql/graphql-meshmap.so")
 	if err != nil {
 		logrus.Printf("Cannot open plugin: %v", err)
+		return
 	}
 	symRun, err := plug.Lookup("Run")
 	if err != nil {

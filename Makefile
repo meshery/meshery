@@ -75,7 +75,7 @@ run-fast:
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
-	go run main.go;
+	go run --trimpath main.go;
 
 
 golangci-run:

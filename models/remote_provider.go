@@ -107,6 +107,10 @@ func (l *RemoteProvider) Initialize() {
 	}
 }
 
+func (l *RemoteProvider) GetGenericPersister() database.Handler {
+	return database.Handler{}
+}
+
 // PackageLocation returns the location of where the package for the current
 // provider is located
 func (l *RemoteProvider) PackageLocation() string {
