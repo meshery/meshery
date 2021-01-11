@@ -728,6 +728,7 @@ github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndr
 github.com/pquerna/cachecontrol v0.0.0-20171018203845-0dec1b30a021/go.mod h1:prYjPmNq4d1NPVmpShWobRqXY3q7Vp+80DqgxxUrUIA=
 github.com/prologic/bitcask v0.3.9 h1:GuSlzUUiIwyCOV4za7LipfjJC9FV0BgHIGbwOEcssL0=
 github.com/prologic/bitcask v0.3.9/go.mod h1:WQuqL23CGZcC83DhKuXH6KMHe1m25+Eb43s8yM3MnF0=
+github.com/prologic/bitcask v0.3.10/go.mod h1:8RKJdbHLE7HFGLYSGu9slnYXSV7DMIucwVkaIYOk9GY=
 github.com/prometheus/client_golang v0.0.0-20180209125602-c332b6f63c06/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829/go.mod h1:p2iRAGwDERtqlqzRXnrOVns+ignqQo//hLXqYxZYVNs=
