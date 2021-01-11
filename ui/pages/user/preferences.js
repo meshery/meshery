@@ -35,7 +35,8 @@ class UserPref extends React.Component {
         if (typeof result !== 'undefined') {
           this.setState({
             anonymousStats: result.anonymousUsageStats||false,
-            perfResultStats: result.anonymousPerfResults||false
+            perfResultStats: result.anonymousPerfResults||false,
+            startOnZoom: result.startOnZoom||false, //meshmap specific user preferences are not stored in any db as of now
           })
         }
       },
@@ -46,7 +47,7 @@ class UserPref extends React.Component {
   }
 
   render () {
-    const {anonymousStats,perfResultStats}=this.state;
+    const {anonymousStats, perfResultStats, startOnZoom}=this.state;
     if(anonymousStats==undefined){
       // Skip rendering till data is not loaded
       return <div></div>
@@ -57,7 +58,8 @@ class UserPref extends React.Component {
           <title>Preferences | Meshery</title>
         </Head>
         <Paper className={this.props.classes.paper}>
-          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
+          {/* {should meshmap specific user preferences be placed along with general preferences or from the remote provider} */}
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} startOnZoom={startOnZoom}/>
         </Paper>
       </NoSsr>
     );

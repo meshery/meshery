@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/pkg/database"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -405,7 +405,7 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/%s/%s", l.RemoteProviderURL, ep, resultID.String()))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resultID.String()))
 	logrus.Debugf("constructed result url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 

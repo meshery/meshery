@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/pkg/database"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -375,49 +375,52 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	if result.Error != nil {
 		return result.Error
 	}
-	fmt.Println(obj.ID)
+	fmt.Println(obj.Index.ResourceID)
 	return nil
 }
 
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
-	var objs []model.Object
-	result := l.GenericPersister.Find(&objs)
+	var indices []model.Index
+	result := l.GenericPersister.Find(&indices)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	var typemetas []model.KubernetesResourceTypeMeta
+	var typemetas []model.ResourceTypeMeta
 	result = l.GenericPersister.Find(&typemetas)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	var objectmetas []model.KubernetesResourceObjectMeta
+	var objectmetas []model.ResourceObjectMeta
 	result = l.GenericPersister.Find(&objectmetas)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	var specs []model.KubernetesResourceSpec
+	var specs []model.ResourceSpec
 	result = l.GenericPersister.Find(&specs)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	var status []model.KubernetesResourceStatus
+	var status []model.ResourceStatus
 	result = l.GenericPersister.Find(&status)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	for i, obj := range objs {
-		// obj.TypeMeta = typemetas[i]
-		obj.ObjectMeta = objectmetas[i]
-		obj.Spec = specs[i]
-		obj.Status = status[i]
-		objs[i] = obj
+	objects := make([]model.Object, 0)
+	for i, index := range indices {
+		objects = append(objects, model.Object{
+			Index:      index,
+			TypeMeta:   typemetas[i],
+			ObjectMeta: objectmetas[i],
+			Spec:       specs[i],
+			Status:     status[i],
+		})
 	}
 
-	return objs, nil
+	return objects, nil
 }
