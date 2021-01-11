@@ -21,6 +21,8 @@ import (
 )
 
 const (
+	namespace = "meshery"
+
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
@@ -108,6 +110,12 @@ func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, pref
 			status.Error = er.Error()
 			return
 		}
+
+		er = h.runMeshSync(e)
+		if er != nil {
+			status.Error = er.Error()
+			return
+		}
 	}(!enable, datach)
 
 	_, err = w.Write([]byte("ok"))
@@ -132,13 +140,6 @@ func (h *Handler) initialize(delete bool) error {
 	}
 	status.BrokerInstalled = "true"
 
-	// installMeshSync
-	err = h.applyYaml(delete, meshsyncYaml)
-	if err != nil {
-		return err
-	}
-	status.MeshsyncInstalled = "true"
-
 	return nil
 }
 
@@ -149,9 +150,9 @@ func (h *Handler) subscribeToMeshsync(datach chan *broker.Message) error {
 		return err
 	}
 
-	for i := 0; i < 10; i++ {
-		broker, err = mesheryclient.CoreV1Alpha1().Brokers("meshery").Get(context.Background(), "broker", metav1.GetOptions{})
-		if err == nil {
+	for {
+		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
+		if err == nil && broker.Status.Endpoint != "" {
 			break
 		}
 		time.Sleep(1 * time.Second)
@@ -163,12 +164,22 @@ func (h *Handler) subscribeToMeshsync(datach chan *broker.Message) error {
 		return err
 	}
 
-	err = natsClient.SubscribeWithChannel("meshsync", "meshery", datach)
+	err = natsClient.SubscribeWithChannel("meshsync", namespace, datach)
 	if err != nil {
 		return err
 	}
 
 	status.SubscriptionStarted = "true"
+	return nil
+}
+
+func (h *Handler) runMeshSync(delete bool) error {
+	// installMeshSync
+	err := h.applyYaml(delete, meshsyncYaml)
+	if err != nil {
+		return err
+	}
+	status.MeshsyncInstalled = "true"
 	return nil
 }
 
@@ -199,7 +210,7 @@ func (h *Handler) applyYaml(delete bool, file string) error {
 	}
 
 	err = h.config.KubeClient.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
-		Namespace: "meshery",
+		Namespace: namespace,
 		Update:    true,
 		Delete:    delete,
 	})
