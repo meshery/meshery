@@ -216,6 +216,11 @@ jobs:
           start: npm start
           wait-on: http://localhost:3000
           spec: cypress/integration/e2e/**/*
+          record: true
+          tag: node-${{ matrix.node }}
+        env:
+          CYPRESS_RECORD_KEY: "a25e3b24-8ff8-41e6-be40-5e33e33596e2"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
