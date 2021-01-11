@@ -21,8 +21,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/handlers"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -31,8 +30,8 @@ import (
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg    *cfg.MesheryCtl
-	mesheryCfg *cfg.Version
+	mctlCfg    *config.MesheryCtlConfig
+	mesheryCfg *config.Version
 )
 
 // versionCmd represents the version command
@@ -42,11 +41,11 @@ var versionCmd = &cobra.Command{
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		return utils.PreReqCheck(cmd.Use)
+		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -54,14 +53,15 @@ var versionCmd = &cobra.Command{
 		build := version
 		commitsha := commitsha
 
-		version := cfg.Version{
-			Build:     "unavailable",
-			CommitSHA: "unavailable",
+		version := config.Version{
+			Build:          "unavailable",
+			CommitSHA:      "unavailable",
+			ReleaseChannel: "unavailable",
 		}
 
 		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
 
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/server/version", url), nil)
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
 		if err != nil {
 			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
 			logrus.Errorf("\nUnable to get request context: %v", err)

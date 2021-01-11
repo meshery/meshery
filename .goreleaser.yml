@@ -18,6 +18,7 @@ builds:
   ldflags:
     - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version={{.Version}}
     - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha={{.Commit}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
   # Defaults are darwin and linux.
@@ -77,7 +78,7 @@ brews:
   # same kind. We will probably unify this in the next major version like it is done with scoop.
 
   # Github repository to push the tap to.
-  github:
+  tap:
     owner: layer5io
     name: homebrew-tap
   

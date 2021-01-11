@@ -22,8 +22,6 @@ main
 
 .vscode/
 
-config
-
 *.config
 
 Chart.min.js

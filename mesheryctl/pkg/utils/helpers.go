@@ -20,9 +20,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
@@ -86,6 +88,7 @@ var TemplateContext = models.Context{
 	},
 	Platform: "docker",
 	Adapters: ListOfAdapters,
+	Channel:  "stable",
 }
 
 type cryptoSource struct{}
@@ -334,8 +337,13 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
 	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", "http://localhost:9081/api/gettoken", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/gettoken", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request :")
 		return err

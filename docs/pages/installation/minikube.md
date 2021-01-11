@@ -126,6 +126,7 @@ _Note_: Make sure *current-context* is set to *minikube*.
  <div class="clipboardjs">
  kubectl config view --minify --flatten > config_minikube.yaml
  </div></div>
+</pre>
 
 <br />
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.

@@ -23,7 +23,7 @@
     "@material-ui/icons": "^4.11.2",
     "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
-    "next": "10.0.3",
+    "next": "10.0.5",
     "prop-types": "latest",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -31,10 +31,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^6.1.0",
+    "cypress": "^6.2.0",
     "eslint": "^7.16.0",
     "eslint-plugin-cypress": "^2.11.2",
-    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react": "^7.22.0",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.6",
     "start-server-and-test": "^1.11.7"
