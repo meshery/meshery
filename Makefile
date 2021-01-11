@@ -62,7 +62,7 @@ run-local-cloud:
 run-local: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build --trimpath -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
-	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
