@@ -13,8 +13,8 @@ import (
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/pkg/database"
 	"github.com/layer5io/meshery/router"
+	"github.com/layer5io/meshkit/database"
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
@@ -116,8 +116,9 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	dbHandler, err := database.New(database.GORM, database.Options{
+	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
+		Engine:   database.SQLITE,
 	})
 	if err != nil {
 		logrus.Fatal(err)

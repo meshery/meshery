@@ -49,6 +49,7 @@ This diagram outlines logical constructs within Meshery and their relationships.
 [![Object Model]({{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg)]({{ site.baseurl }}/assets/img/architecture/meshery_logical_object_model.svg)
 
 ## Meshery Operator and MeshSync
+Meshery Operator is the multi-service mesh operator (a Kubernetes custom controller) that manages MeshSync and it's messaging broker.
 
 [![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)

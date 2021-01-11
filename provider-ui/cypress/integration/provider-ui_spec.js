@@ -1,6 +1,6 @@
 describe('Provider UI', () => {
   beforeEach(() => {
-    cy.route2('GET', '/api/providers', { fixture: 'providers.json' }).as('getProviders')
+    cy.intercept('GET', '/api/providers', { fixture: 'providers.json' }).as('getProviders')
     cy.visit('/')
     cy.wait('@getProviders')
   })
