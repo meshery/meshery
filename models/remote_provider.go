@@ -402,7 +402,7 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 
 	logrus.Infof("attempting to fetch result from cloud for id: %s", resultID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/%s/%s", l.RemoteProviderURL, ep, resultID.String()))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resultID.String()))
 	logrus.Debugf("constructed result url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
