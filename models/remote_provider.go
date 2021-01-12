@@ -927,3 +927,8 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	}
 	return nil
 }
+
+// GetGenericPersister - to return persister
+func (l *RemoteProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}

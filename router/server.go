@@ -20,6 +20,9 @@ type Router struct {
 func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router {
 	gMux := mux.NewRouter()
 
+	gMux.PathPrefix("/api/plugins").
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PluginHandler))))
+
 	gMux.HandleFunc("/api/server/version", h.ServerVersionHandler).
 		Methods("GET")
 

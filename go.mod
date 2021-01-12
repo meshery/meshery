@@ -11,6 +11,7 @@ replace (
 
 require (
 	fortio.org/fortio v1.11.4
+	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
@@ -24,7 +25,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.0
+	github.com/layer5io/meshery-operator v0.2.4
 	github.com/layer5io/meshkit v0.2.0
 	github.com/layer5io/meshsync v0.1.2
 	github.com/layer5io/nighthawk-go v0.1.5
@@ -37,6 +38,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
+	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d

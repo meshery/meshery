@@ -424,3 +424,8 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 
 	return objects, nil
 }
+
+// GetGenericPersister - to return persister
+func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}
