@@ -661,8 +661,11 @@ github.com/layer5io/learn-layer5/smi-conformance v0.0.0-20201022191033-40468652a
 github.com/layer5io/meshery-adapter-library v0.1.9/go.mod h1:dxrUzS10o5qDwfJE5qvAAH/s8PzLcRHFu3L4afgSBNc=
 github.com/layer5io/meshery-operator v0.2.0 h1:u+p6veNuqe5QznLWnjZHC796p2h2bZvZRI41zhq3oDA=
 github.com/layer5io/meshery-operator v0.2.0/go.mod h1:qlGpHvdsZuwwn048LxCMYUlKYYLJnY3R2JD3/p8v71I=
+github.com/layer5io/meshery-operator v0.2.4 h1:XWtLXu9jKyka7FAG+ASJhr1Etl995BSt8XjxQLMUAY0=
+github.com/layer5io/meshery-operator v0.2.4/go.mod h1:o0nAKfI6sp98nibC9oKf4O2CGDWnU1XXTG2epyxy7lQ=
 github.com/layer5io/meshkit v0.1.30 h1:d9emBQAf+YnURkA5wZ6VbbqDfnx9G8G3xqOv6dG4n/k=
 github.com/layer5io/meshkit v0.1.30/go.mod h1:AznOL6xqpUZGyExSZJ3Bdx6EZ22UnAT9V620pm7R484=
+github.com/layer5io/meshkit v0.1.31/go.mod h1:pS3KsOqOFYXiKuHZCPGTgZRwhTuF5R9qemWm+1+KvjU=
 github.com/layer5io/meshkit v0.1.32 h1:en4T3bo/BVtO/CsPbWx/1bgObCKtRHa+0tZtoxOWISw=
 github.com/layer5io/meshkit v0.1.32/go.mod h1:IkAIh0mwGkd52xLQ6vhpJuip+XUkrImnWnGJ08Lox7Q=
 github.com/layer5io/meshkit v0.2.0 h1:TGeg+VVHTDtXQuuVe1vDh0+mGDP3QbJVRi2Hmmlj6Dk=

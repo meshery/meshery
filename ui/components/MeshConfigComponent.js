@@ -169,6 +169,15 @@ class MeshConfigComponent extends React.Component {
       configuredServer,
       k8sfileError: false,
       ts: new Date(),
+
+      operatorInstalled: false,
+      operatorVersion: "N/A",
+      meshSyncInstalled: false,
+      meshSyncVersion: "N/A",
+      NATSInstalled: false,
+      NATSVersion: "N/A",
+
+      operatorSwitch: false,
     };
   }
 
@@ -189,6 +198,38 @@ class MeshConfigComponent extends React.Component {
     }
     return {};
   }
+
+  handleOperatorSwitch = () => {
+    const self = this;
+    let url = "/api/v1/system/operator?enable="+ !self.state.operatorSwitch
+    self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+    console.log(url)
+    dataFetch(url, {
+      credentials: 'same-origin',
+    }, (result) => {
+      this.props.updateProgress({ showProgress: false });
+      if (typeof result !== 'undefined') {
+        this.props.enqueueSnackbar('Operation was successful!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        
+        this.handleOperatorClick();
+      }
+    }, self.handleError);
+
+  }
+
 
   handleChange = (name) => {
     const self = this;
@@ -323,6 +364,35 @@ class MeshConfigComponent extends React.Component {
     }, self.handleError);
   }
 
+  handleOperatorClick = () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch('/api/v1/system/operator/status', {
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, (result) => {
+      console.log(result)
+      this.setState({operatorInstalled: result["operator-installed"]=="true"?true:false, NATSInstalled: result["broker-installed"]=="true"?true:false, meshSyncInstalled: result["meshsync-installed"]=="true"?true:false})
+      this.props.updateProgress({ showProgress: false });
+      if (typeof result !== 'undefined') {
+        this.props.enqueueSnackbar('Operator was successfully pinged!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
+    }, self.handleError);
+  }
+
   handleError = (error) => {
     this.props.updateProgress({ showProgress: false });
     const self = this;
@@ -388,7 +458,7 @@ class MeshConfigComponent extends React.Component {
   configureTemplate = () => {
     const { classes } = this.props;
     const {
-      inClusterConfig, contextName, clusterConfigured, configuredServer,
+      inClusterConfig, contextName, clusterConfigured, configuredServer, operatorInstalled, operatorVersion, meshSyncInstalled, meshSyncVersion, NATSInstalled, NATSVersion, operatorSwitch
     } = this.state;
     let showConfigured = '';
     const self = this;
@@ -453,7 +523,7 @@ class MeshConfigComponent extends React.Component {
             // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
             label={"Operator"}
             // onDelete={self.handleReconfigure}
-            // onClick={self.handleKubernetesClick}
+            onClick={self.handleOperatorClick}
             icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
             variant="outlined"
             data-cy="chipContextName"
@@ -463,30 +533,30 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Operator State" secondary="Active" />
+                  <ListItemText primary="Operator State" secondary={operatorInstalled?"Active":"Disabled"} />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="Operator Version" secondary="V0.5.0" />
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <List>
-                <ListItem>
-                  <ListItemText primary="MeshSync State" secondary="Active" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="MeshSync Version" secondary="V0.5.0" />
+                  <ListItemText primary="Operator Version" secondary={operatorVersion} />
                 </ListItem>
               </List>
             </Grid>
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary="Active" />
+                  <ListItemText primary="MeshSync State" secondary={meshSyncInstalled?"Active":"Disabled"} />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="NATS Version" secondary="V0.5.0" />
+                  <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="NATS State" secondary={NATSInstalled?"Active":"Disabled"} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="NATS Version" secondary={NATSVersion} />
                 </ListItem>
               </List>
             </Grid>
@@ -496,7 +566,7 @@ class MeshConfigComponent extends React.Component {
         <div className={classes.grey}>
           <FormGroup>
             <FormControlLabel
-              control={<Switch name="checkedA" color="primary"/>}
+              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary"/>}
               label="Meshery Operator"
             />
           </FormGroup>
@@ -530,7 +600,7 @@ class MeshConfigComponent extends React.Component {
                 <div>
                   {showConfigured}
                 </div>
-                <div>
+                <div className={classes.grey}>
                   <FormGroup>
                     <input
                       id="k8sfile"
@@ -617,21 +687,21 @@ class MeshConfigComponent extends React.Component {
                 <div>
                   {showConfigured}
                 </div>
-                {/* <div className={classes.grey}> */}
-                <div className={classes.buttonsCluster}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => window.location.reload(false)}
-                    className={classes.button}
-                    data-cy="btnDiscoverCluster"
-                  >
-                Discover Cluster
-                  </Button>
+                <div className={classes.grey}>
+                  <div className={classes.buttonsCluster}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => window.location.reload(false)}
+                      className={classes.button}
+                      data-cy="btnDiscoverCluster"
+                    >
+                      Discover Cluster
+                    </Button>
+                  </div>
                 </div>
-                {/* </div> */}
               </Paper>
             </Grid>
 
