@@ -200,29 +200,30 @@ class MeshConfigComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchOperatorStatus()
+    this.timer = setInterval( () => this.fetchOperatorStatus(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
   }
 
   fetchOperatorStatus = () => {
-    this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch('/api/v1/system/operator/status', {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
-      this.props.updateProgress({ showProgress: false });
-      this.setState({
+      self.setState({
         operatorInstalled: result["operator-installed"]=="true"?true:false,
         NATSInstalled: result["broker-installed"]=="true"?true:false,
         meshSyncInstalled: result["meshsync-installed"]=="true"?true:false
       })
-    }, self.handleError("Could not fetch Operator's Status"));
+    }, console.log("Could not fetch Operator's Status"));
   }
 
   handleOperatorSwitch = () => {
     const self = this;
     let url = "/api/v1/system/operator?enable="+ !self.state.operatorSwitch
-    console.log(url)
     this.props.updateProgress({ showProgress: true })
     dataFetch(url, {
       credentials: 'same-origin',
@@ -244,8 +245,6 @@ class MeshConfigComponent extends React.Component {
           ),
         });
         self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
-        
-        this.fetchOperatorStatus();
       }
     }, self.handleError("Operator could not be reached"));
 
@@ -392,7 +391,6 @@ class MeshConfigComponent extends React.Component {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
-      console.log(result)
       this.setState({operatorInstalled: result["operator-installed"]=="true"?true:false, NATSInstalled: result["broker-installed"]=="true"?true:false, meshSyncInstalled: result["meshsync-installed"]=="true"?true:false})
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
