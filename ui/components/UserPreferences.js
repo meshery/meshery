@@ -94,7 +94,7 @@ class UserPreference extends React.Component {
       perfResultStats: props.perfResultStats,
       startOnZoom: props.startOnZoom,
       tabVal: 0,
-      userPrefs: ExtensionPointSchemaValidator("user-prefs")()
+      userPrefs: ExtensionPointSchemaValidator("user_prefs")()
     };
   }
 

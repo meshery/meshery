@@ -237,7 +237,12 @@ func (l *RemoteProvider) fetchUserDetails(tokenString string) (*User, error) {
 		return nil, err
 	}
 
-	up := &UserPref{}
+	up := &UserPref{
+		Preferences: &Preference{
+			AnonymousUsageStats:  true,
+			AnonymousPerfResults: true,
+		},
+	}
 	err = json.Unmarshal(bd, up)
 	if err != nil {
 		logrus.Errorf("unable to unmarshal user: %v", err)
