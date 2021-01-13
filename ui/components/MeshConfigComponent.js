@@ -199,17 +199,37 @@ class MeshConfigComponent extends React.Component {
     return {};
   }
 
+  componentDidMount() {
+    this.fetchOperatorStatus()
+  }
+
+  fetchOperatorStatus = () => {
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch('/api/v1/system/operator/status', {
+      credentials: 'same-origin',
+      credentials: 'include',
+    }, (result) => {
+      this.props.updateProgress({ showProgress: false });
+      this.setState({
+        operatorInstalled: result["operator-installed"]=="true"?true:false,
+        NATSInstalled: result["broker-installed"]=="true"?true:false,
+        meshSyncInstalled: result["meshsync-installed"]=="true"?true:false
+      })
+    }, self.handleError("Could not fetch Operator's Status"));
+  }
+
   handleOperatorSwitch = () => {
     const self = this;
     let url = "/api/v1/system/operator?enable="+ !self.state.operatorSwitch
-    self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
     console.log(url)
+    this.props.updateProgress({ showProgress: true })
     dataFetch(url, {
       credentials: 'same-origin',
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('Operation was successful!', {
+        this.props.enqueueSnackbar('Operator Pinged', {
           variant: 'success',
           autoHideDuration: 2000,
           action: (key) => (
@@ -223,10 +243,11 @@ class MeshConfigComponent extends React.Component {
             </IconButton>
           ),
         });
+        self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
         
-        this.handleOperatorClick();
+        this.fetchOperatorStatus();
       }
-    }, self.handleError);
+    }, self.handleError("Operator could not be reached"));
 
   }
 
@@ -291,7 +312,7 @@ class MeshConfigComponent extends React.Component {
         self.setState({ contextsFromFile: result, contextNameForForm: ctName });
         self.submitConfig();
       }
-    }, self.handleError);
+    }, self.handleError("Kubernetes config could not be validated"));
   }
 
   submitConfig = () => {
@@ -334,7 +355,7 @@ class MeshConfigComponent extends React.Component {
           },
         });
       }
-    }, self.handleError);
+    }, self.handleError("Kubernetes config could not be validated"));
   }
 
   handleKubernetesClick = () => {
@@ -361,7 +382,7 @@ class MeshConfigComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError);
+    }, self.handleError("Kubernetes config could not be validated"));
   }
 
   handleOperatorClick = () => {
@@ -390,27 +411,22 @@ class MeshConfigComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError);
+    }, self.handleError("Operator could not be pinged"));
   }
 
-  handleError = (error) => {
+  handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
     const self = this;
-    this.props.enqueueSnackbar(`Kubernetes config could not be validated: ${error}`, {
-      variant: 'error',
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant: "error",
       action: (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration: 8000,
+      autoHideDuration: 7000,
     });
-  }
+  };
 
 
   handleReconfigure = () => {
@@ -452,7 +468,7 @@ class MeshConfigComponent extends React.Component {
           ),
         });
       }
-    }, self.handleError);
+    }, self.handleError("Kubernetes config could not be validated"));
   }
 
   configureTemplate = () => {
