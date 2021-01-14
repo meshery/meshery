@@ -10,9 +10,11 @@ type: Guides
 
 ## Upgrading Meshery Server, Adapters, and UI
 
-Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components. 
+Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
 
-<a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg"><img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" width="20%" /></a>
+<a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg">
+    <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" width="20%" />
+</a>
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
 
@@ -57,7 +59,7 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <ul> 
             <li><code>system start</code> calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.</li>
             <li><code>system reset</code> retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
-            <li><code>system context<c/ode> manages config.yaml, which manages meshery.yaml. </li>
+            <li><code>system context</code> manages config.yaml, which manages meshery.yaml. </li>
             <li><code>mesheryctl</code> should generally be checking for latest release and informing user.</li>
         </ul>
         </td>
@@ -72,6 +74,8 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td> Static Extension: Integrators manage the lifecycle of their Meshery Extensions. Process is unique per provider.</td>
     </tr>
 </table>
+
+
 Sub-components deploy as a unit, however, they do not share the same version number.
 
 ### Meshery Docker Deployments
