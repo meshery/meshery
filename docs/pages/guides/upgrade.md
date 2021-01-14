@@ -55,9 +55,9 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td></td>
         <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
         <ul> 
-            <li>system start calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.</li>
-            <li>system reset retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
-            <li>system context manages config.yaml, which manages meshery.yaml. </li>
+            <li><code>system start</code> calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.</li>
+            <li><code>system reset</code> retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
+            <li><code>system context<c/ode> manages config.yaml, which manages meshery.yaml. </li>
             <li><code>mesheryctl</code> should generally be checking for latest release and informing user.</li>
         </ul>
         </td>
@@ -65,7 +65,7 @@ Docker Deployment: Watchtower updates this component in accordance with the user
     <tr>
         <td rowspan="2" class="childcomponent"><a style="color:white;" ref="/extensibility/providers">Remote Providers</a></td>
         <td>Meshery Cloud</td>
-        <td>Process Extension: Integrators manage the lifecycle of their `Remote Providers`. Process is unique per provider.</td>
+        <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. Process is unique per provider.</td>
     </tr>
     <tr>
         <td>Meshery Cloud</td>
