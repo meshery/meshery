@@ -8,28 +8,71 @@ type: Guides
 ---
 # Upgrading Meshery
 
-| Components  | Sub-component | Considering or Updating | 	 
-| ----------- | ----------- | ----------- |
-| `Meshery Adapters` | - `Istio Adapter`      | `Docker Deployment`: Watchtower updates this component in accordance with the user’s release channel subscription.|
-|                  | - `Linkerd Adapter`    |
-| `Meshery Server` |- `Meshery UI` | `Docker Deployment`: Watchtower updates this component in accordance with the user’s release channel subscription. |
-| | | Manages lifecycle of `Meshery Operator`; `Adapters`, `UI`, `Load Generators`, `Database` |
-| `Meshery Operator` | `MeshSync` | `Meshery Operator` manages the lifecycle of this component and its sub-components. |
-|  | `Meshery Broker` | `Meshery Operator` manages the lifecycle of this event bus component. | 
-| `mesheryctl`       |                | `mesheryctl` manages the lifecycle of `Meshery Server`.|
-|        |                | - system start calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.|
-|        |                | - system reset retrieving docker-compose.yaml from `GitHub` (use git tag to reset to the right `Meshery` version)|
-|        |                | - system context manages config.yaml, which manages meshery.yaml|
-|        |                | `mesheryctl` should generally be checking for latest release and informing user.|
-| `Remote Providers`  | `Meshery Cloud`  |  `Process Extension`: Integrators manage the lifecycle of their `Remote Providers`. Process is unique per provider. |    
-|   | `Meshery Extensions`  | `Static Extension`: Integrators manage the lifecycle of their `Meshery Extensions`. Process is unique per provider.
-  |
-
-As an application, Meshery is a composition of different functional components. Some of the components must be upgraded simultaneously, while others may be upgraded independently.
-
 ## Upgrading Meshery Server, Adapters, and UI
 
-Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI.
+Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components. 
+
+<a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg"><img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" width="20%" /></a>
+
+Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
+
+### Versioning of Meshery components
+
+<table class="mesherycomponents">
+    <tr>
+        <th>Components</th>
+        <th>Sub-component</th>
+        <th>Considering or Updating</th>
+    </tr>
+    <tr>
+        <td class="childcomponent">Meshery Adapters</td>
+        <td>Any and All Adapters</td>
+        <td>Docker Deployment: Watchtower updates this component in accordance with the user’s release channel subscription.</td>
+    </tr>
+    <tr>
+        <td rowspan="3" class="childcomponent">Meshery Server</td>
+        <td>Meshery UI</td>
+        <td rowspan="3">Manages lifecycle of Meshery Operator; Adapters, UI, Load Generators, Database.<br /><br />
+Docker Deployment: Watchtower updates this component in accordance with the user’s release channel subscription.</td>
+    </tr>
+    <tr>
+        <td>Load Generators</td>
+    </tr>
+    <tr>
+        <td>Database</td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="childcomponent">Meshery Operator</td>
+        <td>MeshSync</td>
+        <td>Meshery Operator manages the lifecycle of this component and its sub-components.</td>
+    </tr>
+    <tr>
+        <td>Meshery Broker</td>
+        <td>Meshery Operator manages the lifecycle of this event bus component.</td>
+    </tr>
+    <tr>
+        <td class="childcomponent">`mesheryctl`</td>
+        <td></td>
+        <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
+        <ul> 
+            <li>system start calls system update by default, which updates server and existing adapters, but doesn’t update meshery.yaml.</li>
+            <li>system reset retrieving docker-compose.yaml from GitHub (use git tag to reset to the right Meshery version).</li>
+            <li>system context manages config.yaml, which manages meshery.yaml. </li>
+            <li><code>mesheryctl</code> should generally be checking for latest release and informing user.</li>
+        </ul>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="childcomponent"><a style="color:white;" ref="/extensibility/providers">Remote Providers</a></td>
+        <td>Meshery Cloud</td>
+        <td>Process Extension: Integrators manage the lifecycle of their `Remote Providers`. Process is unique per provider.</td>
+    </tr>
+    <tr>
+        <td>Meshery Cloud</td>
+        <td> Static Extension: Integrators manage the lifecycle of their Meshery Extensions. Process is unique per provider.</td>
+    </tr>
+</table>
+Sub-components deploy as a unit, however, they do not share the same version number.
 
 ### Meshery Docker Deployments
 
