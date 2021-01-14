@@ -217,7 +217,7 @@ jobs:
           record: true
           tag: node-${{ matrix.node }}
         env:
-          CYPRESS_RECORD_KEY: "a25e3b24-8ff8-41e6-be40-5e33e33596e2"
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   mesheryctl_build:
     name: Mesheryctl build & release
