@@ -139,10 +139,12 @@ jobs:
         cd ui
         npm i
         npm run ci-test-integration
+        codecov
         cd ..
         cd provider-ui
         npm i
         npm test
+        codecov
         cd ..
   tests-ui-e2e:
     needs: [build-backend, build-ui]
