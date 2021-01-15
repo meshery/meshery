@@ -16,23 +16,25 @@ type Version struct {
 
 // MesheryCtlConfig is configuration structure of mesheryctl with contexts
 type MesheryCtlConfig struct {
-	Contexts       map[string]Context `yaml:"contexts"`
-	CurrentContext string             `yaml:"current-context"`
-	Tokens         map[string]Token   `yaml:"tokens"`
+	Contexts       map[string]Context `mapstructure:"contexts"`
+	CurrentContext string             `mapstructure:"current-context"`
+	Tokens         map[string]Token   `mapstructure:"tokens"`
 }
 
 // Token defines the structure of Token stored in mesheryctl
 type Token struct {
-	Name     string `yaml:"name"`
-	Location string `yaml:"location"`
+	Name     string `mapstructure:"name"`
+	Location string `mapstructure:"location"`
 }
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint string   `yaml:"endpoint"`
-	Token    Token    `yaml:"token"`
-	Platform string   `yaml:"platform"`
-	Adapters []string `yaml:"adapters,omitempty"`
+	Endpoint string   `mapstructure:"endpoint,omitempty"`
+	Token    Token    `mapstructure:"token,omitempty"`
+	Platform string   `mapstructure:"platform"`
+	Adapters []string `mapstructure:"adapters,omitempty"`
+	Channel  string   `mapstructure:"channel,omitempty"`
+	Version  string   `mapstructure:"version,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object.
@@ -48,7 +50,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 
 // CheckIfCurrentContextIsValid checks if current context is valid
 func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
-	currentContext := viper.GetString("current-context")
+	currentContext := mc.CurrentContext
 	if currentContext == "" {
 		return Context{}, errors.New("current context not set")
 	}

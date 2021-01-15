@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
@@ -85,7 +86,7 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+	if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
@@ -132,6 +133,16 @@ func start() error {
 		AllowedServices[v] = services[v]
 	}
 	for _, v := range RequiredService {
+		if v == "meshery" {
+			temp, ok := services[v]
+			if !ok {
+				return errors.New("unable to extract meshery version")
+			}
+			ContextContent := mctlCfg.GetContextContent()
+			spliter := strings.Split(temp.Image, ":")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+			services[v] = temp
+		}
 		AllowedServices[v] = services[v]
 	}
 

@@ -15,17 +15,22 @@
 package system
 
 import (
-	"errors"
-	"io/ioutil"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var channelSet, channelSwitch, channelName string
+var channelSet, channelSwitch, channelName, overrideContext string
+
+func PrintChannelAndVersionToStdout(ctx config.Context) {
+	log.Printf("Channel: %v", ctx.Channel)
+	log.Printf("Version: %v", ctx.Version)
+}
 
 // channelCmd represents the config command
 var channelCmd = &cobra.Command{
@@ -33,10 +38,22 @@ var channelCmd = &cobra.Command{
 	Short: "Switch between release channels",
 	Long:  `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
-		if len(channelSet) < 0 && len(channelSwitch) < 0 {
-			log.Fatal("Provide 'stable' or 'edge' as the release channel name.")
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+
+		focusedContext := mctlCfg.CurrentContext
+
+		if len(overrideContext) > 0 {
+			focusedContext = overrideContext
+		}
+
+		if len(channelSet) == 0 && len(channelSwitch) == 0 {
+			PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext])
+			return nil
 		}
 
 		if channelSet == "" {
@@ -45,90 +62,55 @@ var channelCmd = &cobra.Command{
 			channelName = channelSet
 		}
 
-		switch channelName {
+		channelNameSeperated := strings.Split(channelName, ":")
+
+		ContextContent, ok := mctlCfg.Contexts[focusedContext]
+		if !ok {
+			return errors.New("error while trying to fetch context content")
+		}
+
+		switch channelNameSeperated[0] {
 		case "stable":
-			if err := searchAndReplace(utils.DockerComposeFile, "edge", "stable"); err != nil {
-				log.Fatal("Error subscribing to release channel:", err)
-				return
+			ContextContent.Channel = channelNameSeperated[0]
+			if len(channelNameSeperated) == 1 {
+				ContextContent.Version = "latest"
+			} else {
+				ContextContent.Version = channelNameSeperated[1]
 			}
-			log.Info("Subscribed to stable channel.")
 
 		case "edge":
-			if err := searchAndReplace(utils.DockerComposeFile, "stable", "edge"); err != nil {
-				log.Fatal("Error subscribing to release channel:", err)
-				return
-			}
-
-			log.Info("Subscribed to edge channel.")
+			ContextContent.Channel = channelNameSeperated[0]
+			ContextContent.Version = "latest"
 
 		default:
-			currentChannel := getCurrentContextChannel()
+			currentChannel := mctlCfg.Contexts[focusedContext].Channel
 			if currentChannel == "" {
-				log.Fatal("No release channel subscription found. Please subscribe to either the 'stable' or 'edge' release channel.")
+				return errors.New("No release channel subscription found." +
+					"Please subscribe to either the 'stable' or 'edge' release channel")
 			}
-			log.Println("Channel subscription:", currentChannel)
 		}
+
+		mctlCfg.Contexts[focusedContext] = ContextContent
+		viper.Set("contexts", mctlCfg.Contexts)
+		err = viper.WriteConfig()
+		if err != nil {
+			return err
+		}
+		PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext])
 
 		if channelSwitch != "" {
-			if utils.IsMesheryRunning() {
-				if err := stop(); err != nil {
-					log.Fatal("Failed to stop Meshery:", err)
-					return
-				}
+			err = startCmd.RunE(cmd, nil)
+			if err != nil {
+				return err
 			}
-
-			if err := start(); err != nil {
-				log.Fatal("Failed to start Meshery:", err)
-				return
-			}
-			log.Info("Successfully switched channel...")
 		}
 
+		return nil
 	},
 }
 
 func init() {
 	channelCmd.Flags().StringVarP(&channelSet, "set", "s", "", "Release channel to be set for Meshery and its adapters.")
-	channelCmd.Flags().StringVarP(&channelSwitch, "switch", "c", "", "Release channel to be switch for Meshery and its adapters.")
-}
-
-func searchAndReplace(mesheryConfig, currentChannel, newChannel string) error {
-	fileData, err := ioutil.ReadFile(mesheryConfig)
-	if err != nil {
-		log.Errorf("unable to read meshery config file: %v", err)
-		return err
-	}
-
-	if !strings.Contains(string(fileData), currentChannel) {
-		log.Errorf("unable to switch channel with %s", newChannel)
-		return errors.New("unable to set channel")
-	}
-
-	outputFile := strings.ReplaceAll(string(fileData), currentChannel, newChannel)
-	err = ioutil.WriteFile(mesheryConfig, []byte(outputFile), 0644)
-	if err != nil {
-		log.Errorf("unable to change meshery config: %v", err)
-		return errors.New("unable to write meshery config")
-	}
-	setCurrentContextChannel(newChannel)
-	return nil
-}
-
-func getCurrentContextChannelKey() string {
-	currentContext := viper.GetString("current-context")
-	if currentContext != "" {
-		return "contexts." + currentContext + ".channel"
-	}
-	return ""
-}
-
-func getCurrentContextChannel() string {
-	return viper.GetString(getCurrentContextChannelKey())
-}
-
-func setCurrentContextChannel(desiredChannel string) {
-	viper.Set(getCurrentContextChannelKey(), desiredChannel)
-	if err := viper.WriteConfig(); err != nil {
-		log.Fatal("Error writing config to file:", err)
-	}
+	channelCmd.Flags().StringVarP(&channelSwitch, "switch", "w", "", "Release channel to be switch for Meshery and its adapters.")
+	channelCmd.Flags().StringVarP(&overrideContext, "context", "c", "", "Override specified context with current context.")
 }

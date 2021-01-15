@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -82,15 +81,16 @@ var (
 var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
-var TemplateContext = models.Context{
+var TemplateContext = config.Context{
 	Endpoint: "http://localhost:9081",
-	Token: models.Token{
+	Token: config.Token{
 		Name:     "Default",
 		Location: AuthConfigFile,
 	},
 	Platform: "docker",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
+	Version:  "latest",
 }
 
 type cryptoSource struct{}
@@ -534,8 +534,8 @@ func CreateConfigFile() error {
 }
 
 // AddContextToConfig adds context passed to it to mesheryctl config file
-func AddContextToConfig(contextName string, context models.Context, configPath string, set bool) error {
-	var currentConfig models.MesheryCtlConfig
+func AddContextToConfig(contextName string, context config.Context, configPath string, set bool) error {
+	var currentConfig config.MesheryCtlConfig
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
@@ -551,7 +551,7 @@ func AddContextToConfig(contextName string, context models.Context, configPath s
 	}
 
 	if currentConfig.Contexts == nil {
-		currentConfig.Contexts = map[string]models.Context{}
+		currentConfig.Contexts = map[string]config.Context{}
 	}
 
 	_, exists := currentConfig.Contexts[contextName]
