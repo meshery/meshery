@@ -153,6 +153,11 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 1
+      - name: Check out meshery-consul code
+        uses: actions/checkout@master
+        with:
+          repository: layer5io/meshery-consul
+          path: ./meshery-consul
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -187,6 +192,13 @@ jobs:
           npm i
           npm run build
           npm run export
+      - name: Update /etc/hosts
+        run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
+      - name: Run meshery-consul
+        run: |
+          mkdir /home/runner/.meshery
+          cd ./meshery-consul
+          go run main.go &
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
@@ -202,6 +214,11 @@ jobs:
           start: npm start
           wait-on: http://localhost:3000
           spec: cypress/integration/e2e/**/*
+          record: true
+          tag: node-${{ matrix.node }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
