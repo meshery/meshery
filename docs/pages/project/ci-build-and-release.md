@@ -96,3 +96,106 @@ We follow the commonly used semantic versioning for Meshery, Meshery Adapter and
 ### Component Versioning
 
 Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently.  Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
+
+GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3). 
+
+## Release Process
+
+Documentation of Meshery releases contains a table of releases and release notes and should be updated with each release.
+
+### Automated Releases
+
+Releases are manually triggered by a member of the release team publishing a release. Release names and release tags need to be assigned by the publishing team member. GitHub Action workflows will trigger and take care of running the required steps and publishing all artifacts (e.g., binary and docker images).
+
+### Workflow Triggers
+
+The following events will trigger one or more workflows:
+
+1. Tagged Release
+1. Commit pushed to the master branch
+1. PR opened or commit pushed to PR branch
+1. PR merged to the master branch
+
+### Release Notes
+
+While use of GitHub Actions facilitates automated builds, ReleaseDrafter is helping with facilitating automated release notes and versioning. 
+### Generating Release Notes
+
+ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action will trigger and will automatically draft release notes according to the configuration set-up. ReleaseDrafter drafts releases as soon as a commit is made into master after the previous release. The GitHub Action, ReleaseDrafter, is compatible with semantic releases and is used to auto-increment the semantic version number by looking at the previous release version. 
+
+#### Automated Release Notes Publishing
+
+The publishing of release notes to Meshery Docs is automated. Triggered by a release event, a workflow will checkout the Meshery repo, copy the auto-drafted release notes into a Jekyll collection in Meshery Docs, and generate a pull request.
+
+#### Automated Pull Request Labeler
+
+A GitHub Issue labeler bot is configured to automatically assign labels to issues based on which files have changed in which directories. For example, a pull request with changes to files in the “/docs/**” folder will receive the “area/docs” label. Presence of the “area/docs” label is used to trigger documentation builds and Netlify builds of the Meshery Docs. Similar labels are assigned and used to trigger workflows or used as conditional flags in workflows to determine which workflows or which steps in a workflows to run. 
+
+## Release Channels
+
+Artifacts of the builds for Meshery and its components are published under two different release channels, so that improved controls may be provided to both Meshery users and Meshery developers. The two release channels are *edge* and *stable* release channels.
+
+Relative to stable releases, edge releases occur much more frequently. Edge releases are made with each merge to master, unless that merge to master is for a stable release. Stable releases are made with each merge to master when a GitHub release tag is also present in the workflow.
+
+### Stable Channel
+
+The following is an example of the release channels and the docker tags used to differentiate them. The latest tag will be applied only to images in the stable release channel. Here are two releases with two different images.
+
+**Latest Stable Image**
+
+- layer5/meshery:stable-latest
+- layer5/meshery:stable-v0.4.1
+- layer5/meshery:stable-324vdgb (sha)
+
+**Older Stable Image**
+
+- layer5/meshery:stable-v0.4.0
+- layer5/meshery:stable-289d02 (sha)
+
+Every docker image built receives either the edge tags or the stable tabs. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).
+
+### Edge Channel
+
+The edge release channel generally contains code less tested, less “baked”. The primary reason for "edge" is to allow contributors and advanced users to get at features sooner than later. Some features need testing that is best facilitated by letting users with tolerance and patience try them out.
+
+Stable and edge releases are both published to the same Docker Hub repository. Docker Hub repositories differentiate release channels by image tag. The following Docker images tagging convention is followed:
+
+**Latest Edge Image**
+
+- layer5/meshery:edge-latest
+- layer5/meshery:edge-289d02 (sha)
+
+**Older Edge Image**
+
+- layer5/meshery:edge-324vdgb (sha)
+
+
+### Switching Between Meshery Release Channels
+
+Users are empowered to switch between release channels at their leisure.
+
+#### Switching Release Channels Using mesheryctl
+
+Users can use mesheryctl to switch between release channels, e.g. `mesheryctl system channel [stable|edge]`.  Alternatively, users can manually switch between channels by updating the docker image tags in their meshery.yaml / Kubernetes manifest files. This command generates a meshery.yml (a docker-compose file) with release channel-appropriate tags for the different Docker container images.
+
+#### Viewing Release Channel and Version Information in Meshery UI
+
+Users are shown their Meshery deployment’s release channel subscription enient new setting in the Preferences area of the Meshery UI, so that people can alternatively use the UI to switch between channels if they like. Version numbers for Meshery adapters are also shown in the UI.
+
+## Release Cadence
+
+Minor releases of the Meshery project are release frequently (on a monthly basis on average) with patch releases made on-demand in-between those times. The project does not have long term releases that are sustained with bug fixes, yet. Bug fixes and patches will be released as needed on the latest release version.
+
+### Release Support
+
+General community support and commercial support from Layer5 is available. Separately, third parties and partners may offer longer-term support solutions.
+
+#### Pre v1.0
+
+Project focuses on functionality, quality and adoption, while retaining the flexibility for shifts in architecture. 
+
+#### Post v1.0
+
+Once a 1.0 release has been made, Around once a month or so, the project maintainers will take one of these daily builds and run it through a number of additional qualification tests and tag the build as a Stable release. Around once a quarter or so, the project maintainers take one of these Stable releases, run through a bunch more tests and tag the build as a Long Term Support (LTS) release. Finally, if we find something wrong with an LTS release, we issue patches.
+
+The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance. 
