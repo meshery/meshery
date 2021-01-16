@@ -5,8 +5,6 @@ coverage:
       default:
         threshold: 2
       ui:
-        target: 40%
         paths: ui/
       provider_ui:
-        target: 40%
         paths: provider_ui/

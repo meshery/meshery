@@ -21,7 +21,6 @@
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
-    "codecov": "^3.8.1",
     "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
     "next": "10.0.5",
