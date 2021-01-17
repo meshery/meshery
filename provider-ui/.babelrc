@@ -1,6 +1,13 @@
 {
     "presets": ["next/babel"],
     "plugins": [
-      "istanbul"
+      [
+        "istanbul",
+        {
+          "exclude": [
+            "**/*.spec.js"
+          ]
+        }
+      ]
     ]
   }
