@@ -43,7 +43,7 @@ var (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
+	Long:  `Run 'podman-compose' to start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -166,7 +166,7 @@ func start() error {
 	}
 
 	log.Info("Starting Meshery...")
-	start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
+	start := exec.Command("podman-compose", "-f", utils.DockerComposeFile, "up", "-d")
 	start.Stdout = os.Stdout
 	start.Stderr = os.Stderr
 
@@ -228,7 +228,7 @@ func start() error {
 	//code for logs
 	if checkFlag == 1 {
 		log.Info("Starting Meshery logging . . .")
-		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+		cmdlog := exec.Command("podman-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
