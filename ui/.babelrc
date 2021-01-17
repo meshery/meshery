@@ -1,6 +1,7 @@
 {
     "presets": ["next/babel"],
     "plugins": [
-      "relay"
+      "relay",
+      "istanbul"
     ]
   }

@@ -83,7 +83,9 @@
   "devDependencies": {
     "@babel/traverse": "^7.12.12",
     "@babel/types": "^7.12.12",
+    "@cypress/code-coverage": "^3.9.2",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-istanbul": "^6.0.0",
     "cypress": "^6.2.0",
     "eslint": "^7.16.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -97,6 +99,7 @@
     "husky": "^4.3.6",
     "lint-staged": "^10.5.3",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "start-server-and-test": "^1.11.7"
   }
 }
