@@ -32,6 +32,7 @@
   "repository": "https://github.com/layer5io/meshery",
   "license": "Apache-2.0",
   "dependencies": {
+    "@cypress/code-coverage": "^3.9.2",
     "@date-io/moment": "^2.10.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
@@ -84,7 +85,6 @@
   "devDependencies": {
     "@babel/traverse": "^7.12.12",
     "@babel/types": "^7.12.12",
-    "@cypress/code-coverage": "^3.9.2",
     "babel-eslint": "^10.1.0",
     "cypress": "^6.2.0",
     "eslint": "^7.16.0",
