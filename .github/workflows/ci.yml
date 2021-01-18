@@ -219,6 +219,15 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage to Codecov (ui)
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./ui/coverage/coverage-final.json
+          directory: ./ui/coverage/lcov-report
+          flags: e2etests
+          name: codecov-meshery-ui
+          fail_ci_if_error: true
+          verbose: true
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
