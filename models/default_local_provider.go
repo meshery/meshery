@@ -10,6 +10,8 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -24,6 +26,7 @@ type DefaultLocalProvider struct {
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
+	GenericPersister      database.Handler
 }
 
 // Initialize will initialize the local provider
@@ -364,4 +367,60 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 		return err
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
+	result := l.GenericPersister.Create(&obj)
+	if result.Error != nil {
+		return result.Error
+	}
+	fmt.Println(obj.Index.ResourceID)
+	return nil
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
+	var indices []model.Index
+	result := l.GenericPersister.Find(&indices)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var typemetas []model.ResourceTypeMeta
+	result = l.GenericPersister.Find(&typemetas)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var objectmetas []model.ResourceObjectMeta
+	result = l.GenericPersister.Find(&objectmetas)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var specs []model.ResourceSpec
+	result = l.GenericPersister.Find(&specs)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var status []model.ResourceStatus
+	result = l.GenericPersister.Find(&status)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	objects := make([]model.Object, 0)
+	for i, index := range indices {
+		objects = append(objects, model.Object{
+			Index:      index,
+			TypeMeta:   typemetas[i],
+			ObjectMeta: objectmetas[i],
+			Spec:       specs[i],
+			Status:     status[i],
+		})
+	}
+
+	return objects, nil
 }

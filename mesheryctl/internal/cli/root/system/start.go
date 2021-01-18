@@ -176,7 +176,7 @@ func start() error {
 	checkFlag := 0 //flag to check
 
 	//connection to docker-client
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to create new env client"))
 	}

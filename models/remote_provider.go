@@ -20,6 +20,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -48,6 +50,7 @@ type RemoteProvider struct {
 
 	ProviderVersion    string
 	SmiResultPersister *BitCaskSmiResultsPersister
+	GenericPersister   database.Handler
 }
 
 type userSession struct {
@@ -842,6 +845,16 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 	return fmt.Errorf("error while deleting testConfig - Status code: %d, Body: %s", resp.StatusCode, testUUID)
 }
 
+// RecordMeshSyncData records the mesh sync data
+func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
+	return nil
+}
+
+// ReadMeshSyncData records the mesh sync data
+func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
+	return make([]model.Object, 0), nil
+}
+
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
 func TarXZF(srcURL, destination string) error {
@@ -917,6 +930,5 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return fmt.Errorf("unknown type: %s", string(header.Typeflag))
 		}
 	}
-
 	return nil
 }
