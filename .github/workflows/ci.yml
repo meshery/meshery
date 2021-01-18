@@ -150,6 +150,14 @@ jobs:
         npm i
         npm test
         cd ..
+    - name: Upload coverage to Codecov (ui)
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./provider-ui/coverage/coverage-summary.json
+        directory: ./provider-ui/coverage/lcov-report
+        flags: integrationtests
+        name: codecov-meshery-ui
+        fail_ci_if_error: true
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
@@ -228,12 +236,11 @@ jobs:
       - name: Upload coverage to Codecov (ui)
         uses: codecov/codecov-action@v1
         with:
-          files: ./ui/coverage/coverage-final.json
+          files: ./ui/coverage/coverage-summary.json
           directory: ./ui/coverage/lcov-report
           flags: e2etests
           name: codecov-meshery-ui
           fail_ci_if_error: true
-          verbose: true
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest
