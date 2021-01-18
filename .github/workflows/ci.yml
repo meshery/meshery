@@ -156,7 +156,6 @@ jobs:
         files: ./provider-ui/coverage/coverage-summary.json
         directory: ./provider-ui/coverage/lcov-report
         flags: integrationtests
-        name: codecov-meshery-ui
         fail_ci_if_error: true
   tests-ui-e2e:
     needs: [build-backend, build-ui]
@@ -239,7 +238,6 @@ jobs:
           files: ./ui/coverage/coverage-summary.json
           directory: ./ui/coverage/lcov-report
           flags: e2etests
-          name: codecov-meshery-ui
           fail_ci_if_error: true
   mesheryctl_build:
     name: Mesheryctl build & release
