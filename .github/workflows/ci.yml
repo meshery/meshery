@@ -124,9 +124,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
       with:
-        fetch-depth: 1
+        fetch-depth: 0
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
