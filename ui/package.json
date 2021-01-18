@@ -32,6 +32,7 @@
   "repository": "https://github.com/layer5io/meshery",
   "license": "Apache-2.0",
   "dependencies": {
+    "@cypress/code-coverage": "^3.9.2",
     "@date-io/moment": "^2.10.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
@@ -45,6 +46,7 @@
     "@paciolan/remote-component": "^2.10.3",
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-relay": "^10.1.2",
+    "babel-plugin-istanbul": "^6.0.0",
     "billboard.js": "=1.11.0",
     "caniuse-lite": "^1.0.30001171",
     "classnames": "^2.2.6",
@@ -97,6 +99,7 @@
     "husky": "^4.3.6",
     "lint-staged": "^10.5.3",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "start-server-and-test": "^1.11.7"
   }
 }
