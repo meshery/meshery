@@ -156,11 +156,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@v2
       - name: Check out meshery-consul code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
