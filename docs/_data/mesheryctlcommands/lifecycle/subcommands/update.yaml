@@ -1,0 +1,4 @@
+name: update
+description: Pull new Meshery images from Docker Hub. Does not pulls new mesheryctl client. This command may be executed while Meshery is running.
+usage: |
+    `mesheryctl system update`
