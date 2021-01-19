@@ -1,12 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Document, { Head, Main, NextScript, Html } from 'next/document';
-import flush from 'styled-jsx/server';
+import React from "react";
+import PropTypes from "prop-types";
+import Document, { Head, Main, NextScript, Html } from "next/document";
+import flush from "styled-jsx/server";
+
+/**
+ * setupGA setups up the google analtyics in meshery UI
+ * 
+ * This function may not be invoked here (server side) as "window" object does
+ * not exist on the server side. Hence this function is stringified and
+ * forced to execute on the client side only.
+ * 
+ */
+function setupGA() {
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() { 
+    dataLayer.push(arguments);
+  }
+
+  fetch("/api/user/stats", { credentials: 'include' })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res?.anonymousUsageStats) {
+        gtag("js", new Date());
+        gtag("config", "G-8Q51RLT8TZ", {
+          page_path: window.location.pathname,
+        });
+      }
+    })
+    .catch((err) => console.error(err));
+}
 
 class MesheryDocument extends Document {
-  render () {
-    const { pageContext } = this.props;
-
+  render() {
     return (
       <Html lang="en" dir="ltr">
         <Head>
@@ -14,6 +40,13 @@ class MesheryDocument extends Document {
           <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
           <link rel="alternate icon" href="/static/favicon.png" />
           <link rel="mask-icon" href="/static/safari-pinned-tab.svg" />
+
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `${"" + setupGA}; setupGA();`,
+            }}
+          />
         </Head>
         <body>
           <Main />
@@ -24,7 +57,7 @@ class MesheryDocument extends Document {
   }
 }
 
-MesheryDocument.getInitialProps = ctx => {
+MesheryDocument.getInitialProps = (ctx) => {
   // resolution order
   //
   // on the server:
@@ -49,14 +82,14 @@ MesheryDocument.getInitialProps = ctx => {
 
   // render app and page and get the context of the page with collected side effects.
   let pageContext;
-  const page = ctx.renderPage(Component => {
-    const WrappedComponent = props => {
+  const page = ctx.renderPage((Component) => {
+    const WrappedComponent = (props) => {
       pageContext = props.pageContext;
       return <Component {...props} />;
     };
 
     WrappedComponent.propTypes = {
-      pageContext: PropTypes.object.isRequired
+      pageContext: PropTypes.object.isRequired,
     };
 
     return WrappedComponent;
@@ -72,7 +105,7 @@ MesheryDocument.getInitialProps = ctx => {
     ...page,
     pageContext,
     // styles fragment is rendered after the app and page rendering finish.
-    styles:
+    styles: (
       <React.Fragment>
         <style
           id="jss-server-side"
@@ -81,7 +114,7 @@ MesheryDocument.getInitialProps = ctx => {
         />
         {flush() || null}
       </React.Fragment>
-
+    ),
   };
 };
 

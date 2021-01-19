@@ -62,7 +62,7 @@ services:
     ports:
       - "10009:10009"
   meshery-nginx-sm:
-    image: layer5/meshery-nginx-sm:stable-latest
+    image: local/meshery-nginx-sm:stable-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
