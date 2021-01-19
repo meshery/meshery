@@ -43,6 +43,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10004:10004"
+  meshery-traefik-mesh:
+    image: layer5/meshery-traefik-mesh:stable-latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "10006:10006"
   meshery-kuma:
     image: layer5/meshery-kuma:stable-latest
     labels:
