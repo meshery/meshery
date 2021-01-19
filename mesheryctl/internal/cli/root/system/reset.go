@@ -17,12 +17,14 @@ package system
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // resetCmd represents the reset command
@@ -38,6 +40,19 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	currentContext := mctlCfg.CurrentContext
+
+	if currentContext == "" {
+
+	} else {
+
+	}
+
 	log.Info("Meshery resetting...")
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
