@@ -11,7 +11,9 @@ class MesheryDocument extends Document {
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="icon" href="/static/favicon.ico" />
+          <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+          <link rel="alternate icon" href="/static/favicon.png" />
+          <link rel="mask-icon" href="/static/safari-pinned-tab.svg" />
         </Head>
         <body>
           <Main />
