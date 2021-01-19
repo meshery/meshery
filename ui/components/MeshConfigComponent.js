@@ -540,7 +540,7 @@ class MeshConfigComponent extends React.Component {
             onClick={self.handleOperatorClick}
             icon={<img src="/static/img/meshery-operator.svg" className={classes.icon} />}
             variant="outlined"
-            data-cy="chipContextName"
+            data-cy="chipOperator"
           />
               
           <Grid container spacing={1}>
