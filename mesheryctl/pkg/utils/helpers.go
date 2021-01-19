@@ -200,12 +200,15 @@ func SetFileLocation() error {
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck(subcommand string) error {
+func PreReqCheck(subcommand string, focusedContext string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	if mctlCfg.GetContextContent().Platform == "docker" {
+	if focusedContext == "" {
+		focusedContext = mctlCfg.CurrentContext
+	}
+	if mctlCfg.Contexts[focusedContext].Platform == "docker" {
 		//Check whether docker daemon is running or not
 		if err := exec.Command("docker", "ps").Run(); err != nil {
 			log.Info("Docker is not running.")
@@ -230,6 +233,8 @@ func PreReqCheck(subcommand string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
+	} else {
+		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
 	}
 	return nil
 }
