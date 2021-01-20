@@ -22,7 +22,12 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider models.Provider) error {
-	plug, err := plugin.Open(path.Join(provider.PackageLocation(), provider.GetProviderProperties().Extensions.GraphQL[0].Path))
+	packagePath := ""
+	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
+		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
+	}
+
+	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
 	if err != nil {
 		return err
 	}
