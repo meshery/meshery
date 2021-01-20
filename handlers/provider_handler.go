@@ -72,5 +72,19 @@ func (h *Handler) ProviderComponentsHandler(
 ) {
 	reqBasePath := "/api/provider/extension"
 
-	ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+	if r.URL.Path == reqBasePath {
+		ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+
+		err := h.LoadExtensionFromPackage(w, r, provider)
+		if err != nil {
+			http.Error(w, "unable to load extensions", http.StatusInternalServerError)
+			return
+		}
+
+		_, _ = w.Write([]byte("Initialized"))
+		return
+	} else {
+		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
+		return
+	}
 }
