@@ -40,6 +40,8 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
+	log.Info("Meshery resetting...")
+
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
@@ -54,11 +56,11 @@ func resetMesheryConfig() error {
 	if currChannel == "edge" {
 		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	} else if currChannel == "stable" {
-		// TODO: Use GitHub API to fetch file from the required version
+		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
 		log.Printf(currChannel, currVersion)
+		log.Printf(fileURL)
 	}
 
-	log.Info("Meshery resetting...")
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 	}
