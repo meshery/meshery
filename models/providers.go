@@ -4,9 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
+
+// ExtensionInput - input for a plugin
+type ExtensionInput struct {
+	DBHandler *database.Handler
+}
+
+// Router
+type Router struct {
+	HTTPHandler http.Handler
+	Path        string
+}
+
+// ExtensionOutput - output for a plugin
+type ExtensionOutput struct {
+	Router *Router
+}
 
 // ProviderType - for representing provider types
 type ProviderType string
@@ -26,6 +43,7 @@ type ProviderProperties struct {
 type Extensions struct {
 	Navigator NavigatorExtensions `json:"navigator,omitempty"`
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
+	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -33,6 +51,15 @@ type NavigatorExtensions []NavigatorExtension
 
 // UserPrefsExtensions is a collection of UserPrefsExtension
 type UserPrefsExtensions []UserPrefsExtension
+
+// GraphQLExtensions is a collection of GraphQLExtension endpoints
+type GraphQLExtensions []GraphQLExtension
+
+// GraphQLExtension describes the graphql server extension point in the backend
+type GraphQLExtension struct {
+	Component string `json:"component,omitempty"`
+	Path      string `json:"path,omitempty"`
+}
 
 // NavigatorExtension describes the Navigator extension point in the UI
 type NavigatorExtension struct {
@@ -162,4 +189,5 @@ type Provider interface {
 
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
+	GetGenericPersister() *database.Handler
 }

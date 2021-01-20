@@ -79,6 +79,9 @@ type HandlerInterface interface {
 	MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

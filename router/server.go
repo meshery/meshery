@@ -12,7 +12,7 @@ import (
 
 // Router represents Meshery router
 type Router struct {
-	s    *mux.Router
+	S    *mux.Router
 	port int
 }
 
@@ -173,7 +173,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 
 	return &Router{
-		s:    gMux,
+		S:    gMux,
 		port: port,
 	}
 }
@@ -189,5 +189,5 @@ func (r *Router) Run() error {
 	// 	IdleTimeout:    0, //time.Second,
 	// }
 	// return s.ListenAndServe()
-	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.s)
+	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.S)
 }
