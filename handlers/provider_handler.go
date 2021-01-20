@@ -82,9 +82,7 @@ func (h *Handler) ProviderComponentsHandler(
 		}
 
 		_, _ = w.Write([]byte("Initialized"))
-		return
 	} else {
 		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
-		return
 	}
 }
