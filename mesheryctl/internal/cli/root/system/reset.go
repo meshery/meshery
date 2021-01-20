@@ -57,7 +57,8 @@ func resetMesheryConfig() error {
 		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	} else if currChannel == "stable" {
 		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
-		log.Printf(currChannel, currVersion)
+		log.Printf(currChannel)
+		log.Printf(currVersion)
 		log.Printf(fileURL)
 	}
 
