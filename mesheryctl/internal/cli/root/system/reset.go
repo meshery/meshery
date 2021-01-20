@@ -46,11 +46,16 @@ func resetMesheryConfig() error {
 	}
 
 	currentContext := mctlCfg.CurrentContext
+	currChannel := mctlCfg.Contexts[currentContext].Channel
+	currVersion := mctlCfg.Contexts[currentContext].Version
 
-	if currentContext == "" {
+	fileURL := ""
 
-	} else {
-
+	if currChannel == "edge" {
+		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	} else if currChannel == "stable" {
+		// TODO: Use GitHub API to fetch file from the required version
+		log.Printf(currChannel, currVersion)
 	}
 
 	log.Info("Meshery resetting...")
