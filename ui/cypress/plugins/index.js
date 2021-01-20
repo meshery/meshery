@@ -16,6 +16,11 @@
  * @type {Cypress.PluginConfig}
  */
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+  require('@cypress/code-coverage/task')(on, config)
+
+  // tell Cypress to use .babelrc file and instrument the specs files
+  // more about this on: https://docs.cypress.io/guides/tooling/code-coverage.html#E2E-and-unit-code-coverage
+  on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
+
+  return config
 }

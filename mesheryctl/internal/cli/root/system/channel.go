@@ -27,7 +27,7 @@ import (
 
 var channelSet, channelSwitch, channelName string
 
-// configCmd represents the config command
+// channelCmd represents the config command
 var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",

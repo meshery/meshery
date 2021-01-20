@@ -118,7 +118,7 @@ func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, pref
 		}
 	}(!enable, datach)
 
-	_, err = w.Write([]byte("ok"))
+	_, err = w.Write([]byte(`{"response": "ok"}`))
 	if err != nil {
 		fmt.Println(err)
 		return

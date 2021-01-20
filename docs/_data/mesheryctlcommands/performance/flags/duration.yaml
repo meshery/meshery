@@ -1,0 +1,4 @@
+name: --duration(optional)
+description: Duration of the test.
+usage: |
+    `10s, 5m, 2h`

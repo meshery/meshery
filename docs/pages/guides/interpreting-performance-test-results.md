@@ -6,7 +6,7 @@ permalink: guides/interpreting-performance-test-results
 type: guides
 ---
 
-Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Service Mesh Performance]({{ site.baseurl }}/service-mesh-performance) (SMP) format.
+Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Service Mesh Performance](https://smp-spec.io/) (SMP) format.
 
 ## Graphical View
 

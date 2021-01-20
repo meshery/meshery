@@ -123,7 +123,7 @@ const styles = (theme) => ({
  * @param {string} str - string to be capitalized
  */
 function capitalize(str) {
-  return `${str.charAt(0).toUpperCase()}${str.substring(1)}`
+  return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`
 }
 
 class DashboardComponent extends React.Component {
