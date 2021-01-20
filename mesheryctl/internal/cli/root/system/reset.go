@@ -57,10 +57,12 @@ func resetMesheryConfig() error {
 		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	} else if currChannel == "stable" {
 		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
-		log.Printf(currChannel)
-		log.Printf(currVersion)
-		log.Printf(fileURL)
 	}
+
+	log.Printf("Current Context: %s", currentContext)
+	log.Printf("Current Channel: %s", currChannel)
+	log.Printf("Current Version: %s", currVersion)
+	log.Printf("File URL: %s", fileURL)
 
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
