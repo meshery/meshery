@@ -326,6 +326,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 onClick={self.handleClick(adapter.adapter_location)}
                 icon={logoIcon}
                 variant="outlined"
+                data-cy="chipAdapterLocation"
               />
             );
           })}
@@ -359,6 +360,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 size="large"
                 onClick={this.handleSubmit}
                 className={classes.button}
+                data-cy="btnSubmitMeshAdapter"
               >
                 Submit
               </Button>

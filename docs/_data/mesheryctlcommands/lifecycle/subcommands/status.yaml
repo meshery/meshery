@@ -1,0 +1,4 @@
+name: status
+description: Displays the status of Meshery’s containers (server and adapters).
+usage: |
+    `mesheryctl system status`

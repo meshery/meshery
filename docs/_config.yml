@@ -93,6 +93,10 @@ collections:
   releases:
     output: true
     permalink: project/:collection/:path
+  mesheryctlcommands:
+    output: true
+    permalink: reference/mesheryctl/:collection/:path
+    name: mesheryctlcommands
 
 # Defaults
 defaults:

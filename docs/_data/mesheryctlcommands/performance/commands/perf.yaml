@@ -1,0 +1,4 @@
+name: perf
+description: Performance management - baselining and testing.
+usage: |
+    `mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --load-generator wrk2`

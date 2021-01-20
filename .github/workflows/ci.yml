@@ -10,6 +10,12 @@ on:
       - 'master'
     paths-ignore:
       - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
 
 jobs:
   golangci:
@@ -118,9 +124,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
       with:
-        fetch-depth: 1
+        fetch-depth: 0
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ secrets.NODE_VERSION }}
@@ -144,15 +150,27 @@ jobs:
         npm i
         npm test
         cd ..
+    - name: Upload coverage to Codecov (ui)
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./provider-ui/coverage/coverage-summary.json
+        directory: ./provider-ui/coverage/lcov-report
+        flags: integrationtests
+        fail_ci_if_error: true
   tests-ui-e2e:
     needs: [build-backend, build-ui]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+      - name: Check out meshery-consul code
+        uses: actions/checkout@v2
+        with:
+          repository: layer5io/meshery-consul
+          path: ./meshery-consul
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -187,6 +205,14 @@ jobs:
           npm i
           npm run build
           npm run export
+      - name: Update /etc/hosts
+        run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
+      - name: Run meshery-consul
+        run: |
+          mkdir /home/runner/.meshery
+          cd ./meshery-consul
+          go run main.go &
+          sleep 10
       - name: Run backend
         env:
           PROVIDER_BASE_URLS: https://meshery.layer5.io
@@ -202,6 +228,18 @@ jobs:
           start: npm start
           wait-on: http://localhost:3000
           spec: cypress/integration/e2e/**/*
+          record: true
+          tag: node-${{ matrix.node }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage to Codecov (ui)
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./ui/coverage/coverage-summary.json
+          directory: ./ui/coverage/lcov-report
+          flags: e2etests
+          fail_ci_if_error: true
   mesheryctl_build:
     name: Mesheryctl build & release
     runs-on: macos-latest

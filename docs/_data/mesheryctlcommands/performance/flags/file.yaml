@@ -1,0 +1,4 @@
+name: --file (optional)
+description: URI of the service mesh performance test configuration file. (default) empty string
+usage: |
+    `--file soak-test-clusterA.yaml`

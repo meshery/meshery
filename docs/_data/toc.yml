@@ -10,6 +10,8 @@
           url: project/contributing
         - title: Releases
           url: project/releases
+        - title: Build & Release (CI)
+          url: project/build-and-release
         - title: Vulnerabilities
           url: project/security-vulnerabilities
         - title: FAQ

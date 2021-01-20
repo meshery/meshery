@@ -22,6 +22,9 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
+
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -54,6 +57,27 @@ var startCmd = &cobra.Command{
 	},
 }
 
+func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, RequestedServices []string) error {
+	valid := true
+	for _, v := range RequestedServices {
+		_, ok := CurrentServices[v]
+		if !ok {
+			valid = false
+			break
+		}
+	}
+	if !valid {
+		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
+		}
+		err := utils.ViperCompose.ReadInConfig()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -61,11 +85,66 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
 	}
+
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	// Viper instance used for docker compose
+	utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
+	err = utils.ViperCompose.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	compose := &utils.DockerCompose{}
+	err = utils.ViperCompose.Unmarshal(&compose)
+	if err != nil {
+		return err
+	}
+
+	services := compose.Services                                        // Current Services
+	RequestedAdapters := mctlCfg.GetContextContent().Adapters           // Requested Adapters / Services
+	err = ValidateComposeFileForRecreation(services, RequestedAdapters) // Validates docker-compose file and recreates and sync's if required
+	if err != nil {
+		return err
+	}
+
+	err = utils.ViperCompose.Unmarshal(&compose)
+	if err != nil {
+		return err
+	}
+	services = compose.Services // Current Services
+	RequiredService := []string{"meshery", "watchtower"}
+
+	AllowedServices := map[string]utils.Service{}
+	for _, v := range RequestedAdapters {
+		if services[v].Image == "" {
+			log.Fatalf("Invalid adapter specified %s", v)
+		}
+		AllowedServices[v] = services[v]
+	}
+	for _, v := range RequiredService {
+		AllowedServices[v] = services[v]
+	}
+
+	utils.ViperCompose.Set("services", AllowedServices)
+	err = utils.ViperCompose.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	//fmt.Println("Services", services);
+	//fmt.Println("RequiredAdapters", RequestedAdapters);
+	//fmt.Println("AllowedServices", AllowedServices);
+	//fmt.Println("version", utils.ViperCompose.GetString("version")) // Works here
 
 	//////// FLAGS
 	// Control whether to pull for new Meshery container images

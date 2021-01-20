@@ -1,0 +1,4 @@
+name: --url (required)
+description: URL of the endpoint send load to during testing.
+usage: |
+    <a>`http://my-service/api/v1/test`</a>
