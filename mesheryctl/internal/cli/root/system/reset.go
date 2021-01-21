@@ -40,7 +40,7 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
-	log.Info("Meshery resetting...")
+	log.Info("Meshery resetting...\n")
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -61,12 +61,12 @@ func resetMesheryConfig() error {
 
 	log.Printf("Current Context: %s", currentContext)
 	log.Printf("Channel: %s", currChannel)
-	log.Printf("Version: %s", currVersion)
-	log.Printf("File URL: %s", fileURL)
+	log.Printf("Version: %s\n", currVersion)
+	log.Printf("Fetching default docker-compose file at version: %s...\n", currVersion)
 
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 	}
-	log.Info("Meshery config (" + utils.DockerComposeFile + ") reset to default settings.")
+	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	return nil
 }
