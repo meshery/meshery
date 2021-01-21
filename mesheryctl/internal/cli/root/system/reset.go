@@ -60,8 +60,8 @@ func resetMesheryConfig() error {
 	}
 
 	log.Printf("Current Context: %s", currentContext)
-	log.Printf("Current Channel: %s", currChannel)
-	log.Printf("Current Version: %s", currVersion)
+	log.Printf("Channel: %s", currChannel)
+	log.Printf("Version: %s", currVersion)
 	log.Printf("File URL: %s", fileURL)
 
 	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
