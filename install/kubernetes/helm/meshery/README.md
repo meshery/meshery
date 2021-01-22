@@ -1,6 +1,6 @@
 # meshery
 
-![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
+![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
 Meshery chart for deploying Meshery and Meshery's adapters.
 
@@ -16,12 +16,12 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | meshery-consul | 2.0.0 |
-|  | meshery-istio | 2.0.0 |
-|  | meshery-kuma | 1.0.0 |
-|  | meshery-linkerd | 2.0.0 |
-|  | meshery-nsm | 1.0.0 |
-|  | meshery-osm | 1.0.0 |
+|  | meshery-consul | 2.0.1 |
+|  | meshery-istio | 2.0.1 |
+|  | meshery-kuma | 1.0.1 |
+|  | meshery-linkerd | 2.0.1 |
+|  | meshery-nsm | 1.0.1 |
+|  | meshery-osm | 1.0.1 |
 
 ## Values
 
@@ -31,6 +31,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | annotations | object | `{}` |  |
 | env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004"` |  |
 | env.EVENT | string | `"mesheryLocal"` |  |
+| env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
 | env.SAAS_BASE_URL | string | `"https://meshery.layer5.io"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
