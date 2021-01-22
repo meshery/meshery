@@ -47,7 +47,6 @@ func resetMesheryConfig() error {
 	if res == "n" || res == "N" {
 		log.Info("Aborting reset...")
 	} else if res == "y" || res == "Y" {
-
 		log.Info("Meshery resetting...\n")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
