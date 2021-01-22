@@ -40,33 +40,44 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
-	log.Info("Meshery resetting...\n")
+	log.Info("Meshery config file will be reset to system defaults. Are you sure you want to continue [y/n]?")
+	res := ""
+	fmt.Scanf("%s", &res)
 
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
+	if res == "n" || res == "N" {
+		log.Info("Aborting reset...")
+	} else if res == "y" || res == "Y" {
+
+		log.Info("Meshery resetting...\n")
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+
+		currentContext := mctlCfg.CurrentContext
+		currChannel := mctlCfg.Contexts[currentContext].Channel
+		currVersion := mctlCfg.Contexts[currentContext].Version
+
+		fileURL := ""
+
+		if currChannel == "edge" {
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+		} else if currChannel == "stable" {
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
+		}
+
+		log.Printf("Current Context: %s", currentContext)
+		log.Printf("Channel: %s", currChannel)
+		log.Printf("Version: %s\n", currVersion)
+		log.Printf("Fetching default docker-compose file at version: %s...\n", currVersion)
+
+		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
+		}
+		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+	} else {
+		log.Error("Invalid response! Please try again.")
 	}
-
-	currentContext := mctlCfg.CurrentContext
-	currChannel := mctlCfg.Contexts[currentContext].Channel
-	currVersion := mctlCfg.Contexts[currentContext].Version
-
-	fileURL := ""
-
-	if currChannel == "edge" {
-		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-	} else if currChannel == "stable" {
-		fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
-	}
-
-	log.Printf("Current Context: %s", currentContext)
-	log.Printf("Channel: %s", currChannel)
-	log.Printf("Version: %s\n", currVersion)
-	log.Printf("Fetching default docker-compose file at version: %s...\n", currVersion)
-
-	if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-		return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-	}
-	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	return nil
 }
