@@ -27,6 +27,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var tempContext string
+
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
@@ -53,9 +55,19 @@ func resetMesheryConfig() error {
 		}
 
 		currentContext := mctlCfg.CurrentContext
+
+		if _, val := mctlCfg.Contexts[tempContext]; val {
+			currentContext = tempContext
+		} else {
+			log.Errorf("The specified context does not exist. The available contexts are:")
+			for context := range mctlCfg.Contexts {
+				log.Errorf("%s", context)
+			}
+			return nil
+		}
+
 		currChannel := mctlCfg.Contexts[currentContext].Channel
 		currVersion := mctlCfg.Contexts[currentContext].Version
-
 		fileURL := ""
 
 		if currChannel == "edge" {
@@ -75,4 +87,8 @@ func resetMesheryConfig() error {
 		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	}
 	return nil
+}
+
+func init() {
+	resetCmd.Flags().StringVarP(&tempContext, "context", "c", "", "context to reset from temporarily.")
 }
