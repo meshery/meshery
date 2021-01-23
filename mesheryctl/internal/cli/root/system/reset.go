@@ -42,6 +42,7 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
+	// ask user for confirmation
 	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 
 	if !userResponse {
@@ -56,20 +57,26 @@ func resetMesheryConfig() error {
 
 		currentContext := mctlCfg.CurrentContext
 
-		if _, val := mctlCfg.Contexts[tempContext]; val {
-			currentContext = tempContext
-		} else {
-			log.Errorf("The specified context does not exist. The available contexts are:")
-			for context := range mctlCfg.Contexts {
-				log.Errorf("%s", context)
+		// if the user has mentioned a temporary context in the -c flag, change the context and proceed to reset
+		if tempContext != "" {
+			if _, val := mctlCfg.Contexts[tempContext]; val {
+				currentContext = tempContext
+			} else {
+				// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
+				log.Errorf("The specified context does not exist. The available contexts are:")
+				for context := range mctlCfg.Contexts {
+					log.Errorf("%s", context)
+				}
+				return nil
 			}
-			return nil
 		}
 
+		// get the channel and the version of the current context
 		currChannel := mctlCfg.Contexts[currentContext].Channel
 		currVersion := mctlCfg.Contexts[currentContext].Version
 		fileURL := ""
 
+		// pull the docker-compose.yaml file corresponding to the current context
 		if currChannel == "edge" {
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 		} else if currChannel == "stable" {
