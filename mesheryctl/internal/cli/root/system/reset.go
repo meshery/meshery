@@ -40,13 +40,11 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
-	log.Info("Meshery config file will be reset to system defaults. Are you sure you want to continue [y/n]?")
-	res := ""
-	fmt.Scanf("%s", &res)
+	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 
-	if res == "n" || res == "N" {
+	if !userResponse {
 		log.Info("Aborting reset...")
-	} else if res == "y" || res == "Y" {
+	} else {
 		log.Info("Meshery resetting...\n")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -75,8 +73,6 @@ func resetMesheryConfig() error {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
 		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
-	} else {
-		log.Error("Invalid response! Please try again.")
 	}
 	return nil
 }

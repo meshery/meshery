@@ -505,7 +505,7 @@ func AskForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("%s [y/n]: ", s)
+		fmt.Printf("%s [y/n]? ", s)
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
