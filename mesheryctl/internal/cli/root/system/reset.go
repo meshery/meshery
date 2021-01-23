@@ -43,7 +43,7 @@ func resetMesheryConfig() error {
 	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 
 	if !userResponse {
-		log.Info("Aborting reset...")
+		log.Info("Reset aborted.")
 	} else {
 		log.Info("Meshery resetting...\n")
 
