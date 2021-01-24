@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshery/store"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/broker"
 	"github.com/layer5io/meshsync/pkg/broker/nats"
@@ -54,6 +55,8 @@ func main() {
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+
+	store.Initialize()
 
 	// Get the channel
 	logrus.Info("Meshery server current channel: ", releasechannel)

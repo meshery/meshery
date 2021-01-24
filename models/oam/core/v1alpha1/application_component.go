@@ -14,9 +14,9 @@ type Component struct {
 
 // ComponentSpec is the structure for the core OAM Application Component Spec
 type ComponentSpec struct {
-	Type       string                 `json:"type,omitempty"`
-	Settings   map[string]interface{} `json:"settings,omitempty"`
-	Parameters []ComponentParameter   `json:"parameters,omitempty"`
+	Type       string                 `json:"type"`
+	Settings   map[string]interface{} `json:"settings"`
+	Parameters []ComponentParameter   `json:"parameters"`
 }
 
 // ComponentParameter is the structure for the core OAM Application Component
@@ -26,9 +26,4 @@ type ComponentParameter struct {
 	FieldPaths  []string `json:"fieldPaths"`
 	Required    *bool    `json:"required,omitempty"`
 	Description *string  `json:"description,omitempty"`
-}
-
-// Type returns the type of the component
-func (comp *Component) Type() string {
-	return comp.Spec.Type
 }

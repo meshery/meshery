@@ -25,6 +25,7 @@ type ConfigurationSpecComponent struct {
 	Scopes        []ConfigurationSpecComponentScope
 }
 
+// ConfigurationSpecComponentTrait is the struct
 type ConfigurationSpecComponentTrait struct {
 	Name       string
 	Properties map[string]interface{}

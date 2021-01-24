@@ -78,6 +78,7 @@ type HandlerInterface interface {
 	MeshSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

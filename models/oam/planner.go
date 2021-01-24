@@ -3,9 +3,6 @@ package oam
 import (
 	"fmt"
 	"sync"
-	"time"
-
-	"github.com/layer5io/meshery/helpers/oam/core/v1alpha1"
 )
 
 // Plan struct represents a node of an execution plan
@@ -21,24 +18,8 @@ func (p *Plan) IsFeasible() bool {
 
 // Execute traverses the plan and calls the callback function
 // on each of the node
-func (p *Plan) Execute(cb func(v1alpha1.Component) bool) error {
-	comps, err := p.Data.ToApplicationComponents()
-	if err != nil {
-		return err
-	}
-
-	p.Traverse(func(node string, svc Service) bool {
-		time.Sleep(1 * time.Second)
-
-		for _, comp := range comps {
-			if comp.Name == node {
-				return cb(comp)
-			}
-		}
-
-		return true
-	})
-
+func (p *Plan) Execute(cb func(string, Service) bool) error {
+	p.Traverse(cb)
 	return nil
 }
 
@@ -47,8 +28,10 @@ func CreatePlan(pattern Pattern, policies [][2]string) (*Plan, error) {
 	g := NewGraph()
 
 	for name, svc := range pattern.Services {
-		g.AddNode(name, svc)
+		g.AddNode(name, *svc)
+	}
 
+	for name, svc := range pattern.Services {
 		for _, deps := range svc.DependsOn {
 			g.AddEdge(deps, name)
 		}
