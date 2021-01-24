@@ -48,7 +48,6 @@ func resetMesheryConfig() error {
 	if !userResponse {
 		log.Info("Aborting reset...")
 	} else {
-		log.Info("Meshery resetting...\n")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -63,7 +62,7 @@ func resetMesheryConfig() error {
 				currentContext = tempContext
 			} else {
 				// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-				log.Errorf("The specified context does not exist. The available contexts are:")
+				log.Errorf("\n\"%s\" context does not exist. The available contexts are:", tempContext)
 				for context := range mctlCfg.Contexts {
 					log.Errorf("%s", context)
 				}
@@ -75,6 +74,8 @@ func resetMesheryConfig() error {
 		currChannel := mctlCfg.Contexts[currentContext].Channel
 		currVersion := mctlCfg.Contexts[currentContext].Version
 		fileURL := ""
+
+		log.Info("Meshery resetting...\n")
 
 		// pull the docker-compose.yaml file corresponding to the current context
 		if currChannel == "edge" {
