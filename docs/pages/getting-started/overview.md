@@ -12,7 +12,7 @@ Meshery features can be categorized by:
 
 1. Service Mesh Performance Management
    - Workload and service mesh benchmarking
-   - Prometheus and Grafana integration
+   - Prometheus and Grafana integration.
 1. Service Mesh Configuration Management
    - Configuration best practices
 1. Service Mesh Lifecycle Management
