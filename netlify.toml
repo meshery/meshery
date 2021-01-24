@@ -1,5 +1,5 @@
 [build]
   base = "docs/"
-  publish = "docs/_site"
+  publish = "_site"
   command = "make build"
   ignore = "! git diff --quiet HEAD^ HEAD -- docs/"
