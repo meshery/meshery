@@ -2,4 +2,4 @@
   base = "docs/"
   publish = "_site"
   command = "make build"
-  ignore = "git diff --quiet master docs/"
+  ignore = "git diff --quiet master -- docs/"
