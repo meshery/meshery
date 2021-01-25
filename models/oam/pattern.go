@@ -32,7 +32,17 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 	for _, svc := range af.Services {
 		svc.Settings = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
 		svc.Traits = RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
+
+		if svc.Settings == nil {
+			svc.Settings = map[string]interface{}{}
+		}
+		if svc.Traits == nil {
+			svc.Traits = map[string]interface{}{}
+		}
+
+		fmt.Printf("%+#v\n\n", svc)
 	}
+
 	return
 }
 
@@ -65,11 +75,11 @@ func (af *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, e
 	}
 
 	// Create configs for each component
-	for _, v := range af.Services {
+	for k, v := range af.Services {
 		// Indicates that map for properies is not empty
 		if len(v.Traits) > 0 {
 			specComp := v1alpha1.ConfigurationSpecComponent{
-				ComponentName: v.Type,
+				ComponentName: k,
 			}
 
 			for k2, v2 := range v.Traits {
@@ -95,30 +105,58 @@ func (af *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, e
 	return config, nil
 }
 
+// GetServiceType returns the type of the service
+func (af *Pattern) GetServiceType(name string) string {
+	return af.Services[name].Type
+}
+
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
 func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
-	interfaceMap := make(map[interface{}]interface{})
-
-	for k, v := range in {
-		interfaceMap[k] = v
+	res := ConvertMapI2MapS(in)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
 	}
 
-	return CastMapInterfaceInterfaceToMapStringInterface(interfaceMap)
+	return out
 }
 
 // CastMapInterfaceInterfaceToMapStringInterface tries to convert map[interface{}]interface{} => map[string]interface{}
 func CastMapInterfaceInterfaceToMapStringInterface(in map[interface{}]interface{}) map[string]interface{} {
-	out := make(map[string]interface{})
-
-	for k, v := range in {
-		switch v2 := v.(type) {
-		case map[interface{}]interface{}:
-			out[fmt.Sprint(k)] = CastMapInterfaceInterfaceToMapStringInterface(v2)
-		default:
-			out[fmt.Sprint(k)] = v
-		}
+	res := ConvertMapI2MapS(in)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
 	}
 
 	return out
+}
+
+func ConvertMapI2MapS(v interface{}) interface{} {
+	switch x := v.(type) {
+	case map[interface{}]interface{}:
+		m := map[string]interface{}{}
+		for k, v2 := range x {
+			switch k2 := k.(type) {
+			case string:
+				m[k2] = ConvertMapI2MapS(v2)
+			default:
+				m[fmt.Sprint(k)] = ConvertMapI2MapS(v2)
+			}
+		}
+		v = m
+
+	case []interface{}:
+		for i, v2 := range x {
+			x[i] = ConvertMapI2MapS(v2)
+		}
+
+	case map[string]interface{}:
+		for k, v2 := range x {
+			x[k] = ConvertMapI2MapS(v2)
+		}
+	}
+
+	return v
 }

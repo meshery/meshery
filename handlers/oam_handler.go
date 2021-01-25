@@ -126,15 +126,15 @@ func (h *Handler) PatternFileHandler(
 		return true
 	})
 
+	// Check if there were some errors recorded during traversing the components
+	if internalErr != nil {
+		return
+	}
+
 	// Check if the adapter is still not set, fail immediately
 	if adapter == "" {
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "something went wrong")
-		return
-	}
-
-	// Check if there were some errors recorded during traversing the components
-	if internalErr != nil {
 		return
 	}
 
@@ -162,7 +162,7 @@ func (h *Handler) PatternFileHandler(
 				return
 			}
 
-			trait, err := oam.ValidateTrait(traitDef, comps)
+			trait, err := oam.ValidateTrait(traitDef, comps, patternFile)
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				fmt.Fprintf(rw, "invalid Pattern: %s", err)

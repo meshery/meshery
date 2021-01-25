@@ -45,7 +45,11 @@ func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*Work
 // the trait DOES EXIST in the ApplicationConfiguration
 //
 // After checking if the applied trait is legal or not it will validate the schema of the trait
-func ValidateTrait(trait interface{}, configSpecComp v1alpha1.ConfigurationSpecComponent) (*TraitCapability, error) {
+func ValidateTrait(
+	trait interface{},
+	configSpecComp v1alpha1.ConfigurationSpecComponent,
+	af Pattern,
+) (*TraitCapability, error) {
 	castedTrait, ok := trait.(TraitCapability)
 	if !ok {
 		return nil, fmt.Errorf("instance is not of type TraitCapability")
@@ -58,7 +62,7 @@ func ValidateTrait(trait interface{}, configSpecComp v1alpha1.ConfigurationSpecC
 	}
 
 	// Check if the trait applied to the component is legal or not
-	compTrait, isLegal := isLegalTrait(castedTrait, configSpecComp)
+	compTrait, isLegal := isLegalTrait(castedTrait, configSpecComp, af)
 	if !isLegal {
 		return &castedTrait, fmt.Errorf(
 			"%s trait is not applicable to %s",
@@ -92,6 +96,7 @@ func ValidateTrait(trait interface{}, configSpecComp v1alpha1.ConfigurationSpecC
 func isLegalTrait(
 	trait TraitCapability,
 	configSpecComp v1alpha1.ConfigurationSpecComponent,
+	af Pattern,
 ) (v1alpha1.ConfigurationSpecComponentTrait, bool) {
 	for _, tr := range configSpecComp.Traits {
 		if tr.Name == trait.OAMDefinition.Name {
@@ -104,7 +109,7 @@ func isLegalTrait(
 			// Check if it's applicable
 			for _, validType := range trait.OAMDefinition.Spec.AppliesToWorkloads {
 				// Found the match
-				if configSpecComp.ComponentName == validType {
+				if af.GetServiceType(configSpecComp.ComponentName) == validType {
 					return tr, true
 				}
 			}
