@@ -27,6 +27,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var tempContext string
+
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
@@ -40,24 +42,41 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config
 func resetMesheryConfig() error {
+	// ask user for confirmation
 	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 
 	if !userResponse {
 		log.Info("Reset aborted.")
 	} else {
-		log.Info("Meshery resetting...\n")
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
 
 		currentContext := mctlCfg.CurrentContext
+
+		// if the user has mentioned a temporary context in the -c flag, change the context and proceed to reset
+		if tempContext != "" {
+			if _, val := mctlCfg.Contexts[tempContext]; val {
+				currentContext = tempContext
+			} else {
+				// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
+				log.Errorf("\n\"%s\" context does not exist. The available contexts are:", tempContext)
+				for context := range mctlCfg.Contexts {
+					log.Errorf("%s", context)
+				}
+				return nil
+			}
+		}
+
+		// get the channel and the version of the current context
 		currChannel := mctlCfg.Contexts[currentContext].Channel
 		currVersion := mctlCfg.Contexts[currentContext].Version
-
 		fileURL := ""
 
+		log.Info("Meshery resetting...\n")
+
+		// pull the docker-compose.yaml file corresponding to the current context
 		if currChannel == "edge" {
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 		} else if currChannel == "stable" {
@@ -75,4 +94,8 @@ func resetMesheryConfig() error {
 		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	}
 	return nil
+}
+
+func init() {
+	resetCmd.Flags().StringVarP(&tempContext, "context", "c", "", "context to reset from temporarily.")
 }

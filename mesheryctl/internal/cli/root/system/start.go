@@ -57,6 +57,7 @@ var startCmd = &cobra.Command{
 	},
 }
 
+// ValidateComposeFileForRecreation validates the docker-compose.yaml file
 func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, RequestedServices []string) error {
 	valid := true
 	for _, v := range RequestedServices {
