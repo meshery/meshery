@@ -105,7 +105,7 @@ func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, pref
 			return
 		}
 
-		er = h.subscribeToMeshsync(d)
+		er = h.subscribeToBroker(d)
 		if er != nil {
 			status.Error = er.Error()
 			return
@@ -143,7 +143,7 @@ func (h *Handler) initialize(delete bool) error {
 	return nil
 }
 
-func (h *Handler) subscribeToMeshsync(datach chan *broker.Message) error {
+func (h *Handler) subscribeToBroker(datach chan *broker.Message) error {
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&h.config.KubeClient.RestConfig)
 	if err != nil {
@@ -152,14 +152,14 @@ func (h *Handler) subscribeToMeshsync(datach chan *broker.Message) error {
 
 	for {
 		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
-		if err == nil && broker.Status.Endpoint != "" {
+		if err == nil && broker.Status.Endpoint.External != "" {
 			break
 		}
 		time.Sleep(1 * time.Second)
 	}
 
 	// subscribing to nats
-	natsClient, err := nats.New(broker.Status.Endpoint)
+	natsClient, err := nats.New(broker.Status.Endpoint.External)
 	if err != nil {
 		return err
 	}

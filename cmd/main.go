@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/database"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
@@ -120,6 +121,17 @@ func main() {
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
 	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	err = dbHandler.AutoMigrate(
+		meshsyncmodel.Index{},
+		meshsyncmodel.ResourceTypeMeta{},
+		meshsyncmodel.ResourceObjectMeta{},
+		meshsyncmodel.ResourceSpec{},
+		meshsyncmodel.ResourceStatus{},
+	)
 	if err != nil {
 		logrus.Fatal(err)
 	}

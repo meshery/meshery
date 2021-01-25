@@ -371,18 +371,39 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
+	result := l.GenericPersister.Create(&obj.Index)
 	if result.Error != nil {
 		return result.Error
 	}
+
+	result = l.GenericPersister.Create(&obj.TypeMeta)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	result = l.GenericPersister.Create(&obj.ObjectMeta)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	result = l.GenericPersister.Create(&obj.Spec)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	result = l.GenericPersister.Create(&obj.Status)
+	if result.Error != nil {
+		return result.Error
+	}
+
 	fmt.Println(obj.Index.ResourceID)
 	return nil
 }
 
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
-	var indices []model.Index
-	result := l.GenericPersister.Find(&indices)
+	var index []model.Index
+	result := l.GenericPersister.Find(&index)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -412,7 +433,7 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	}
 
 	objects := make([]model.Object, 0)
-	for i, index := range indices {
+	for i, index := range index {
 		objects = append(objects, model.Object{
 			Index:      index,
 			TypeMeta:   typemetas[i],
