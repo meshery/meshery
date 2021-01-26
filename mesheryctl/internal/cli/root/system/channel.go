@@ -34,10 +34,8 @@ var err error
 
 var showForAllContext bool
 
-func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) {
-	log.Printf("Context: %v", contextName)
-	log.Printf("Channel: %v", ctx.Channel)
-	log.Printf("Version: %v", ctx.Version)
+func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
+	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }
 
 func IsBetaOrStable(str string) bool {
@@ -62,13 +60,12 @@ var viewCmd = &cobra.Command{
 
 		if showForAllContext {
 			for k, v := range mctlCfg.Contexts {
-				PrintChannelAndVersionToStdout(v, k)
-				log.Println()
+				log.Println(PrintChannelAndVersionToStdout(v, k))
 			}
 			log.Printf("Current Context: %v", focusedContext)
 			return nil
 		}
-		PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext], focusedContext)
+		log.Print(PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext], focusedContext))
 		return nil
 	},
 }

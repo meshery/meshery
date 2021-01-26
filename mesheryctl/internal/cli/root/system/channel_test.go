@@ -12,7 +12,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestViewWithoutAnyParameter(t *testing.T) {
+var b *bytes.Buffer
+
+func SetupFunc(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		t.Error("unable to locate meshery directory")
@@ -21,7 +23,7 @@ func TestViewWithoutAnyParameter(t *testing.T) {
 	//fmt.Println(viper.ConfigFileUsed())
 	err = viper.ReadInConfig()
 	if err != nil {
-		t.Error("unable to read configuration from TestConfig.yaml", err)
+		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}
 
 	mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -30,10 +32,14 @@ func TestViewWithoutAnyParameter(t *testing.T) {
 	}
 
 	//fmt.Println(viper.AllKeys())
-	b := bytes.NewBufferString("")
+	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	logrus.SetFormatter(&utils.OnlyStringFormatterForLogrus{})
 	SystemCmd.SetOut(b)
+}
+
+func TestViewWithoutAnyParameter(t *testing.T) {
+	SetupFunc(t)
 	SystemCmd.SetArgs([]string{"channel", "view"})
 	err = SystemCmd.Execute()
 	if err != nil {
@@ -41,7 +47,27 @@ func TestViewWithoutAnyParameter(t *testing.T) {
 	}
 
 	actualResponse := b.String()
-	expectedResponse := fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v\n", "local", mctlCfg.GetContextContent().Channel, mctlCfg.GetContextContent().Version)
+	expectedResponse := PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n"
+
+	if expectedResponse != actualResponse {
+		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+	}
+}
+
+func TestViewWithAllFlag(t *testing.T) {
+	SetupFunc(t)
+	SystemCmd.SetArgs([]string{"channel", "view", "--all"})
+	err = SystemCmd.Execute()
+	if err != nil {
+		t.Error(err)
+	}
+
+	actualResponse := b.String()
+	expectedResponse := ""
+	for k, v := range mctlCfg.Contexts {
+		expectedResponse += PrintChannelAndVersionToStdout(v, k) + "\n"
+	}
+	expectedResponse += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
 
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
