@@ -130,8 +130,15 @@ func initConfig() {
 	} else {
 		if _, err := os.Stat(utils.DefaultConfigPath); os.IsNotExist(err) {
 			log.Printf("Missing Meshery config file.")
-			userResponse := utils.AskForConfirmation("Create default config now")
-
+			// Check if Meshery config file needs to be created or not
+			// If silent flag is provided, create by default
+			// ortherwise ask for confirmation from user
+			userResponse := false
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				userResponse = utils.AskForConfirmation("Create default config now?")
+			}
 			// Check for Meshery existence and permission of application folder
 			if userResponse {
 				if _, err := os.Stat(utils.MesheryFolder); err != nil {
