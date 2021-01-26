@@ -76,6 +76,8 @@ var (
 	DefaultConfigPath = "config.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// SilentFlag skips waiting for user input and proceeds with default options
+	SilentFlag bool
 )
 
 // ListOfAdapters returns the list of adapters available

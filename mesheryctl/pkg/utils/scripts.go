@@ -172,10 +172,6 @@ func GenerateConfigEKS(region, cluster string) error {
 	REGION_NAME=%s
 	CLUSTER_NAME="%s"
 
-	create_target_folder() {
-		mkdir -p "${TARGET_FOLDER}"
-	}
-
 	create_update_kubeconfig() {
 		echo -e "\\nGenerating kubeconfig for EKS cluster ${CLUSTER_NAME}..."
 		aws eks --region ${REGION_NAME} update-kubeconfig --name ${CLUSTER_NAME} --kubeconfig ${KUBECONFIG} >/dev/null 2>&1 || \
