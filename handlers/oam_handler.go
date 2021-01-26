@@ -216,6 +216,9 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	if method == "GET" {
+		GETOAMRegisterHandler(typ, rw)
+	}
 }
 
 // POSTOAMRegisterHandler handles registering OMA objects
@@ -239,110 +242,35 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	return nil
 }
 
-// fmt.Println("COMPONENT:", acomp.Spec.Type)
+// GETOAMRegisterHandler handles the get requests for the OAM objects
+func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+	if typ == "workload" {
+		res := OAM.GetWorkloads()
 
-// 		if acomp.Spec.Type == "ServiceMesh" {
-// 			mesh, ok := acomp.Spec.Settings["variant"].(string)
-// 			if !ok {
-// 				rw.WriteHeader(http.StatusBadRequest)
-// 				fmt.Fprintf(rw, "invalid Pattern, invalid ServiceMesh variant: %s", err)
-// 				return false
-// 			}
-// 			fmt.Println("REQUESTED MESH NAME: ", mesh)
+		enc := json.NewEncoder(rw)
+		if err := enc.Encode(res); err != nil {
+			logrus.Error("failed to encode workload definitions")
+		}
+	}
 
-// 			if err := executeAction(r.Context(), prefObj, mesh, acomp.Namespace, mesh, user.UserID, isDel); err != nil {
-// 				rw.WriteHeader(http.StatusInternalServerError)
-// 				fmt.Fprintf(rw, "failed to execute action: %s", err)
-// 				return false
-// 			}
-// 		}
+	if typ == "trait" {
+		res := OAM.GetTraits()
 
-// 		if acomp.Spec.Type == "ServiceMeshAddon" {
-// 			variant, ok := acomp.Spec.Settings["variant"].(string)
-// 			fmt.Println("VARIANT:", variant)
-// 			if !ok {
-// 				rw.WriteHeader(http.StatusBadRequest)
-// 				fmt.Fprintf(rw, "invalid Pattern, invalid ServiceMeshAddon variant: %s", err)
-// 				return false
-// 			}
+		enc := json.NewEncoder(rw)
+		if err := enc.Encode(res); err != nil {
+			logrus.Error("failed to encode trait definitions")
+		}
+	}
 
-// 			mesh, ok := acomp.Spec.Settings["dependsOn"].([]string)
-// 			if !ok {
-// 				rw.WriteHeader(http.StatusBadRequest)
-// 				fmt.Fprintf(rw, "invalid Pattern, invalid ServiceMeshAddon dependency: %s", err)
-// 				return false
-// 			}
+	if typ == "scope" {
+		res := OAM.GetScopes()
 
-// 			if err := executeAction(
-// 				r.Context(),
-// 				prefObj, variant+"-addon",
-// 				acomp.Namespace,
-// 				mesh[0],
-// 				user.UserID,
-// 				isDel,
-// 			); err != nil {
-// 				rw.WriteHeader(http.StatusInternalServerError)
-// 				fmt.Fprintf(rw, "failed to execute action: %s", err)
-// 				return false
-// 			}
-// 		}
-// Apply application configuration
-// for _, comp := range aConfig.Spec.Components {
-// 	// Istio
-// 	if comp.ComponentName == "istio" {
-// 		for _, trait := range comp.Traits {
-// 			// mTLS
-// 			if trait.Name == "mTLS" {
-// 				policy, ok := trait.Properties["policy"].(string)
-// 				if !ok {
-// 					// fallback to strict
-// 					policy = "strict"
-// 				}
-
-// 				// create name of the operation
-// 				opName := fmt.Sprintf("%s-mtls-policy-operation", policy)
-
-// 				if err := executeAction(
-// 					r.Context(),
-// 					prefObj,
-// 					opName,
-// 					aConfig.Namespace,
-// 					comp.ComponentName,
-// 					user.UserID,
-// 					isDel,
-// 				); err != nil {
-// 					rw.WriteHeader(http.StatusInternalServerError)
-// 					fmt.Fprintf(rw, "failed to execute action: %s", err)
-// 				}
-// 			}
-
-// 			// automaticSidecarInjection
-// 			if trait.Name == "automaticSidecarInjection" {
-// 				ns, ok := trait.Properties["namespace"].(string)
-// 				if !ok {
-// 					// fallback to default
-// 					ns = "default"
-// 				}
-
-// 				// create name of the operation
-// 				opName := "label-namespace"
-
-// 				if err := executeAction(
-// 					r.Context(),
-// 					prefObj,
-// 					opName,
-// 					ns,
-// 					comp.ComponentName,
-// 					user.UserID,
-// 					isDel,
-// 				); err != nil {
-// 					rw.WriteHeader(http.StatusInternalServerError)
-// 					fmt.Fprintf(rw, "failed to execute action: %s", err)
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+		enc := json.NewEncoder(rw)
+		if err := enc.Encode(res); err != nil {
+			logrus.Error("failed to encode scope definitions")
+		}
+	}
+}
 
 func executeAction(
 	ctx context.Context,

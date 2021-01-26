@@ -116,3 +116,48 @@ func RegisterScope(data []byte) (err error) {
 
 	return
 }
+
+// GetWorkloads return all of the workloads
+func GetWorkloads() (caps []WorkloadCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/WorkloadDefinition"
+
+	res := store.PrefixMatch(key)
+	for _, wc := range res {
+		casted, ok := wc.(WorkloadCapability)
+		if ok {
+			caps = append(caps, casted)
+		}
+	}
+
+	return
+}
+
+// GetTraits return all of the traits
+func GetTraits() (traits []TraitCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/TraitDefinition"
+
+	res := store.PrefixMatch(key)
+	for _, wc := range res {
+		casted, ok := wc.(TraitCapability)
+		if ok {
+			traits = append(traits, casted)
+		}
+	}
+
+	return
+}
+
+// GetScopes return all of the scopes
+func GetScopes() (scopes []ScopeCapability) {
+	key := "/meshery/registry/definition/core.oam.dev/v1alpha1/ScopesDefinition"
+
+	res := store.PrefixMatch(key)
+	for _, wc := range res {
+		casted, ok := wc.(ScopeCapability)
+		if ok {
+			scopes = append(scopes, casted)
+		}
+	}
+
+	return
+}
