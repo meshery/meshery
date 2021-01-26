@@ -39,6 +39,7 @@ var (
 	version        = "Not Set"
 	commitsha      = "Not Set"
 	releasechannel = "Not Set"
+	verbose        = false
 )
 
 //Format is exported
@@ -65,19 +66,6 @@ var RootCmd = &cobra.Command{
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		b, err := cmd.Flags().GetBool("version")
-		if err != nil {
-			return err
-		}
-
-		if b {
-			versionCmd.Run(nil, nil)
-			return nil
-		}
-
-		return nil
-	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -85,7 +73,7 @@ var RootCmd = &cobra.Command{
 func Execute() {
 	log.SetLevel(log.InfoLevel)
 
-	if debug, err := RootCmd.Flags().GetBool("debug"); err == nil && debug {
+	if verbose, err := RootCmd.Flags().GetBool("verbose"); err == nil && verbose {
 		log.SetLevel(log.DebugLevel)
 	}
 
@@ -106,8 +94,8 @@ func init() {
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
 
-	RootCmd.Flags().BoolP("version", "v", false, "Version flag")
-	RootCmd.Flags().BoolP("debug", "d", false, "Debug flag")
+	// global verbose flag for verbose logs
+	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
