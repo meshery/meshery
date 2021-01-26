@@ -39,6 +39,7 @@ var (
 	version        = "Not Set"
 	commitsha      = "Not Set"
 	releasechannel = "Not Set"
+	verbose        = false
 )
 
 //Format is exported
@@ -65,30 +66,11 @@ var RootCmd = &cobra.Command{
 		}
 		return nil
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		b, err := cmd.Flags().GetBool("version")
-		if err != nil {
-			return err
-		}
-
-		if b {
-			versionCmd.Run(nil, nil)
-			return nil
-		}
-
-		return nil
-	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
-	log.SetLevel(log.InfoLevel)
-
-	if debug, err := RootCmd.Flags().GetBool("debug"); err == nil && debug {
-		log.SetLevel(log.DebugLevel)
-	}
-
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 	_ = RootCmd.Execute()
@@ -100,14 +82,15 @@ func init() {
 		log.Fatal(err)
 	}
 	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(setVerbose)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
 
-	RootCmd.Flags().BoolP("version", "v", false, "Version flag")
-	RootCmd.Flags().BoolP("debug", "d", false, "Debug flag")
+	// global verbose flag for verbose logs
+	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
@@ -184,5 +167,14 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+// setVerbose sets the log level to debug if the -v flag is set
+func setVerbose() {
+	log.SetLevel(log.InfoLevel)
+
+	if verbose {
+		log.SetLevel(log.DebugLevel)
 	}
 }
