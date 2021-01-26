@@ -71,12 +71,6 @@ var RootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
-	log.SetLevel(log.InfoLevel)
-
-	if verbose, err := RootCmd.Flags().GetBool("verbose"); err == nil && verbose {
-		log.SetLevel(log.DebugLevel)
-	}
-
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 	_ = RootCmd.Execute()
@@ -88,6 +82,7 @@ func init() {
 		log.Fatal(err)
 	}
 	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(setVerbose)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
@@ -165,5 +160,14 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Debug("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+// setVerbose sets the log level to debug if the -v flag is set
+func setVerbose() {
+	log.SetLevel(log.InfoLevel)
+
+	if verbose {
+		log.SetLevel(log.DebugLevel)
 	}
 }
