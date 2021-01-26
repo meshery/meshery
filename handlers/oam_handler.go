@@ -188,10 +188,13 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// Execute the action
-	if err = executeAction(r.Context(), prefObj, adapter, user.UserID, isDel, comps, string(jsonConfig)); err != nil {
+	msg, err := executeAction(r.Context(), prefObj, adapter, user.UserID, isDel, comps, string(jsonConfig))
+	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "%s", err)
 	}
+
+	fmt.Fprintf(rw, "%s", msg)
 }
 
 // OAMRegisterHandler handles OAM registry related operations
@@ -280,30 +283,27 @@ func executeAction(
 	delete bool,
 	oamComps []string,
 	oamConfig string,
-) error {
+) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		return fmt.Errorf("no valid kubernetes config found")
+		return "", fmt.Errorf("no valid kubernetes config found")
 	}
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, adapter)
 	if err != nil {
-		return fmt.Errorf("error creating a mesh client: %v", err)
+		return "", fmt.Errorf("error creating a mesh client: %v", err)
 	}
 	defer func() {
 		_ = mClient.Close()
 	}()
 
-	_, err = mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
+	resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
 		Username:  userID,
 		DeleteOp:  delete,
 		OamComps:  oamComps,
 		OamConfig: oamConfig,
 	})
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return resp.GetMessage(), err
 }

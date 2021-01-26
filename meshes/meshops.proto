@@ -85,4 +85,6 @@ message ProcessOAMRequest {
     string oam_config = 4;
 }
 
-message ProcessOAMResponse {}
+message ProcessOAMResponse {
+    string message = 1;
+}
