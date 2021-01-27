@@ -978,7 +978,8 @@ class MesheryAdapterPlayComponent extends React.Component {
                 <div className={classes.paneSection}>
                   <Typography align="center" style={{ 
                     fontSize: "1.25rem",
-                    margin: "0 0 1rem" 
+                    margin: "0 0 1rem" ,
+                    fontWeight: "bold"
                   }}>Manage Service Mesh</Typography>
                   <Grid container spacing={2}>
                     <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
