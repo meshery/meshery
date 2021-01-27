@@ -15,7 +15,7 @@ import (
 
 var b *bytes.Buffer
 
-func SetupFunc(t *testing.T) {
+func SetupContextEnv(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		t.Error("unable to locate meshery directory")
@@ -32,7 +32,9 @@ func SetupFunc(t *testing.T) {
 	if err != nil {
 		t.Error("error processing config", err)
 	}
+}
 
+func SetupFunc(t *testing.T) {
 	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -48,61 +50,57 @@ func setFlagValueAsUndefined(flag *pflag.Flag) {
 	_ = flag.Value.Set("")
 }
 
-func TestViewWithoutAnyParameter(t *testing.T) {
-	SetupFunc(t)
-	SystemCmd.SetArgs([]string{"channel", "view"})
-	err = SystemCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n"
-
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-	}
-	BreakupFunc(t)
+type CmdTestInput struct {
+	Name             string
+	Args             []string
+	ExpectedResponse string
 }
 
-func TestViewWithCorrectContextOverride(t *testing.T) {
-	SetupFunc(t)
-	SystemCmd.SetArgs([]string{"channel", "view", "-c", "gke"})
-	err = SystemCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n"
-
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-	}
-	BreakupFunc(t)
-}
-
-func TestViewWithAllFlag(t *testing.T) {
-	SetupFunc(t)
-	SystemCmd.SetArgs([]string{"channel", "view", "--all"})
-	err = SystemCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := ""
+func TestViewCmd(t *testing.T) {
+	SetupContextEnv(t)
+	expectedResponseForAll := ""
 	for k, v := range mctlCfg.Contexts {
-		expectedResponse += PrintChannelAndVersionToStdout(v, k) + "\n"
+		expectedResponseForAll += PrintChannelAndVersionToStdout(v, k) + "\n"
 	}
-	expectedResponse += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
+	expectedResponseForAll += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
 
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+	tests := []CmdTestInput{
+		{
+			Name:             "view without any parameter",
+			Args:             []string{"channel", "view"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n",
+		},
+		{
+			Name:             "view with context override",
+			Args:             []string{"channel", "view", "-c", "gke"},
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n",
+		},
+		{
+			Name:             "view with all flag",
+			Args:             []string{"channel", "view", "--all"},
+			ExpectedResponse: expectedResponseForAll,
+		},
 	}
-	BreakupFunc(t)
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			SetupFunc(t)
+			SystemCmd.SetArgs(tt.Args)
+			err = SystemCmd.Execute()
+			if err != nil {
+				t.Error(err)
+			}
+
+			actualResponse := b.String()
+			expectedResponse := tt.ExpectedResponse
+
+			if expectedResponse != actualResponse {
+				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+			}
+			BreakupFunc(t)
+		})
+	}
 }
-
 func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 	SetupFunc(t)
 	SystemCmd.SetArgs([]string{"channel"})
