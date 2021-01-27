@@ -60,7 +60,7 @@ func TestViewCmd(t *testing.T) {
 	SetupContextEnv(t)
 	expectedResponseForAll := ""
 	for k, v := range mctlCfg.Contexts {
-		expectedResponseForAll += PrintChannelAndVersionToStdout(v, k) + "\n"
+		expectedResponseForAll += PrintChannelAndVersionToStdout(v, k) + "\n\n"
 	}
 	expectedResponseForAll += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
 
@@ -68,12 +68,12 @@ func TestViewCmd(t *testing.T) {
 		{
 			Name:             "view without any parameter",
 			Args:             []string{"channel", "view"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["local"], "local") + "\n\n",
 		},
 		{
 			Name:             "view with context override",
 			Args:             []string{"channel", "view", "-c", "gke"},
-			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n",
+			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
 		},
 		{
 			Name:             "view with all flag",
@@ -111,7 +111,7 @@ func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 
 	actualResponse := b.String()
 	expectedResponse := ""
-	expectedResponse += PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n"
+	expectedResponse += PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n\n"
 	expectedResponse += channelCmd.UsageString()
 
 	if expectedResponse != actualResponse {

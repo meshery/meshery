@@ -61,11 +61,13 @@ var viewCmd = &cobra.Command{
 		if showForAllContext {
 			for k, v := range mctlCfg.Contexts {
 				log.Println(PrintChannelAndVersionToStdout(v, k))
+				log.Println()
 			}
 			log.Printf("Current Context: %v", focusedContext)
 			return nil
 		}
 		log.Print(PrintChannelAndVersionToStdout(mctlCfg.Contexts[focusedContext], focusedContext))
+		log.Println()
 		return nil
 	},
 }

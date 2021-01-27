@@ -133,19 +133,28 @@ func start() error {
 		if services[v].Image == "" {
 			log.Fatalf("Invalid adapter specified %s", v)
 		}
+		temp, ok := services[v]
+		if !ok {
+			return errors.New("unable to extract adapter version")
+		}
+		ContextContent := mctlCfg.GetContextContent()
+		spliter := strings.Split(temp.Image, ":")
+		temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+		services[v] = temp
 		AllowedServices[v] = services[v]
 	}
 	for _, v := range RequiredService {
-		if v == "meshery" {
-			temp, ok := services[v]
-			if !ok {
-				return errors.New("unable to extract meshery version")
-			}
-			ContextContent := mctlCfg.GetContextContent()
-			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
-			services[v] = temp
+		temp, ok := services[v]
+		if !ok {
+			return errors.New("unable to extract meshery version")
 		}
+		ContextContent := mctlCfg.GetContextContent()
+		spliter := strings.Split(temp.Image, ":")
+		temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+		if v == "meshery" {
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+		}
+		services[v] = temp
 		AllowedServices[v] = services[v]
 	}
 
