@@ -144,6 +144,10 @@ func start() error {
 		AllowedServices[v] = services[v]
 	}
 	for _, v := range RequiredService {
+		if v == "watchtower" {
+			AllowedServices[v] = services[v]
+			continue
+		}
 		temp, ok := services[v]
 		if !ok {
 			return errors.New("unable to extract meshery version")
