@@ -61,6 +61,7 @@ var startCmd = &cobra.Command{
 	},
 }
 
+// ValidateComposeFileForRecreation validates the docker-compose.yaml file
 func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, RequestedServices []string) error {
 	valid := true
 	for _, v := range RequestedServices {
@@ -203,7 +204,7 @@ func start() error {
 	checkFlag := 0 //flag to check
 
 	//connection to docker-client
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return errors.Wrap(err, utils.SystemError("failed to create new env client"))
 	}
@@ -279,4 +280,5 @@ func start() error {
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
 }

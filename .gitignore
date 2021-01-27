@@ -1,4 +1,4 @@
-# Meshery
+# mesheryctl
 mesheryctl/cmd/mesheryctl/mesheryctl
 mesheryctl/.meshery/
 mesheryctl/mesheryctl
@@ -54,3 +54,5 @@ yarn.lock
 # Generated binaries
 **/bin
 *.Identifier
+
+default.profraw

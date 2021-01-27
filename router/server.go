@@ -12,7 +12,7 @@ import (
 
 // Router represents Meshery router
 type Router struct {
-	s    *mux.Router
+	S    *mux.Router
 	port int
 }
 
@@ -119,8 +119,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
 
-	// meshsync endpoint
-	gMux.Handle("/api/v1/meshsync", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshSyncHandler))))
+	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")
+	gMux.Handle("/api/system/operator", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorHandler)))).Methods("GET")
+	// experimental
+	gMux.Handle("/api/system/operator/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshSyncDataHandler)))).Methods("GET")
 
 	gMux.Handle("/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
@@ -171,7 +173,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 
 	return &Router{
-		s:    gMux,
+		S:    gMux,
 		port: port,
 	}
 }
@@ -187,5 +189,5 @@ func (r *Router) Run() error {
 	// 	IdleTimeout:    0, //time.Second,
 	// }
 	// return s.ListenAndServe()
-	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.s)
+	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.S)
 }

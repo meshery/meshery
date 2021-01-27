@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/models"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,6 +13,46 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
+
+func NewKubeClient(kubeconfig []byte) (*mesherykube.Client, error) {
+	var (
+		restConfig *rest.Config
+		err        error
+	)
+
+	if len(kubeconfig) > 0 {
+		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		restConfig, err = rest.InClusterConfig()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// To perform operations faster
+	restConfig.QPS = float32(50)
+	restConfig.Burst = int(100)
+
+	clientset, err := kubernetes.NewForConfig(restConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	// dynamicClient, err := dynamic.NewForConfig(restConfig)
+	// if err != nil {
+	// 	return ErrClientSet(err)
+	// }
+
+	client, err := mesherykube.New(clientset, *restConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
 
 func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clientset, error) {
 	var clientConfig *rest.Config

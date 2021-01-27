@@ -18,11 +18,11 @@ type SMPMeshes struct {
 // GetSMPServiceMeshes handles the available meshes request
 func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, r *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	meshes := SMPMeshes{
-		AvailableMeshes: make([]string, 0, len(SMP.ServiceMeshes_Type_name)),
+		AvailableMeshes: make([]string, 0, len(SMP.ServiceMesh_Type_name)),
 	}
 
-	for _, v := range SMP.ServiceMeshes_Type_name {
-		if v != SMP.ServiceMeshes_INVALID_MESH.String() {
+	for _, v := range SMP.ServiceMesh_Type_name {
+		if v != SMP.ServiceMesh_INVALID_MESH.String() {
 			meshes.AvailableMeshes = append(meshes.AvailableMeshes, strings.Title(strings.ToLower(strings.ReplaceAll(v, "_", " "))))
 		}
 	}
