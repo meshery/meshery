@@ -1,4 +1,4 @@
 name: verbose
 description: (optional) Sets the log level to debug for verbose output.
 usage: |
-    `mesheryctl system <command> --verbose`
+    `mesheryctl <command> --verbose`
