@@ -45,7 +45,10 @@ func BreakupFunc(t *testing.T) {
 }
 
 func setFlagValueAsUndefined(flag *pflag.Flag) {
-	flag.Value.Set("")
+	err = flag.Value.Set("")
+	if err != nil {
+		logrus.Fatal("unable to set flag value")
+	}
 }
 
 func TestViewWithoutAnyParameter(t *testing.T) {
@@ -96,23 +99,6 @@ func TestViewWithAllFlag(t *testing.T) {
 		expectedResponse += PrintChannelAndVersionToStdout(v, k) + "\n"
 	}
 	expectedResponse += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
-
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-	}
-	BreakupFunc(t)
-}
-
-func TestViewWithoutAnyParameterTemp(t *testing.T) {
-	SetupFunc(t)
-	SystemCmd.SetArgs([]string{"channel", "view"})
-	err = SystemCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n"
 
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
