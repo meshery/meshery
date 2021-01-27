@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -36,13 +37,21 @@ func SetupFunc(t *testing.T) {
 	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
 	logrus.SetFormatter(&utils.OnlyStringFormatterForLogrus{})
+	SystemCmd.SetOut(b)
+}
+
+func BreakupFunc(t *testing.T) {
+	SystemCmd.Flags().VisitAll(setFlagValueAsUndefined)
+}
+
+func setFlagValueAsUndefined(flag *pflag.Flag) {
+	flag.Value.Set(flag.DefValue)
 }
 
 func TestViewWithoutAnyParameter(t *testing.T) {
 	SetupFunc(t)
-	viewCmd.SetOut(b)
-	viewCmd.SetArgs([]string{})
-	err = viewCmd.Execute()
+	SystemCmd.SetArgs([]string{"channel", "view"})
+	err = SystemCmd.Execute()
 	if err != nil {
 		t.Error(err)
 	}
@@ -53,13 +62,13 @@ func TestViewWithoutAnyParameter(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
+	BreakupFunc(t)
 }
 
 func TestViewWithCorrectContextOverride(t *testing.T) {
 	SetupFunc(t)
-	viewCmd.SetOut(b)
-	viewCmd.SetArgs([]string{"-c", "gke"})
-	err = viewCmd.Execute()
+	SystemCmd.SetArgs([]string{"channel", "view", "-c", "gke"})
+	err = SystemCmd.Execute()
 	if err != nil {
 		t.Error(err)
 	}
@@ -70,13 +79,13 @@ func TestViewWithCorrectContextOverride(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
+	BreakupFunc(t)
 }
 
 func TestViewWithAllFlag(t *testing.T) {
 	SetupFunc(t)
-	viewCmd.SetOut(b)
-	viewCmd.SetArgs([]string{"--all"})
-	err = viewCmd.Execute()
+	SystemCmd.SetArgs([]string{"channel", "view", "--all"})
+	err = SystemCmd.Execute()
 	if err != nil {
 		t.Error(err)
 	}
@@ -91,21 +100,5 @@ func TestViewWithAllFlag(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
-}
-
-func TestViewWithoutAnyParameterTemp(t *testing.T) {
-	SetupFunc(t)
-	viewCmd.SetOut(b)
-	viewCmd.SetArgs([]string{"channel", "view"})
-	err = viewCmd.Execute()
-	if err != nil {
-		t.Error(err)
-	}
-
-	actualResponse := b.String()
-	expectedResponse := PrintChannelAndVersionToStdout(mctlCfg.GetContextContent(), "local") + "\n"
-
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-	}
+	BreakupFunc(t)
 }
