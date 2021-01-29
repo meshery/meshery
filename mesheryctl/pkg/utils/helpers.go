@@ -76,6 +76,8 @@ var (
 	DefaultConfigPath = "config.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// SilentFlag skips waiting for user input and proceeds with default options
+	SilentFlag bool
 )
 
 // ListOfAdapters returns the list of adapters available
@@ -505,7 +507,7 @@ func AskForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("%s [y/n]: ", s)
+		fmt.Printf("%s [y/n]? ", s)
 
 		response, err := reader.ReadString('\n')
 		if err != nil {

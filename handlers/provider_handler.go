@@ -6,6 +6,7 @@ import (
 	"time"
 
 	models "github.com/layer5io/meshery/models"
+	"github.com/sirupsen/logrus"
 )
 
 // ProviderHandler - handles the choice of provider
@@ -70,7 +71,17 @@ func (h *Handler) ProviderComponentsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	reqBasePath := "/api/provider/extension"
+	reqBasePath := "/api/provider/extension/"
 
-	ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+	if r.URL.Path == reqBasePath {
+		ServeReactComponentFromPackage(w, r, reqBasePath, provider)
+
+		err := h.LoadExtensionFromPackage(w, r, provider)
+		if err != nil {
+			logrus.Error(err)
+			return
+		}
+	} else {
+		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
+	}
 }

@@ -1,0 +1,4 @@
+name : system
+description: 
+usage: |
+    `mesheryctl system`

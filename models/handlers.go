@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -75,10 +76,15 @@ type HandlerInterface interface {
 
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	MeshSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
+
+	MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -94,6 +100,7 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	KubeConfigFolder string
+	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient
