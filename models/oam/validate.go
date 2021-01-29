@@ -31,7 +31,7 @@ func ValidateWorkload(workload interface{}, component v1alpha1.Component) (*Work
 	// Validate the json against the schema
 	errs, err := rs.ValidateBytes(context.TODO(), jsonSettings)
 	if err != nil {
-		return &castedWorklod, fmt.Errorf("error occured during schema validation: %s", err)
+		return &castedWorklod, fmt.Errorf("error occurred during schema validation: %s", err)
 	}
 	if len(errs) > 0 {
 		return &castedWorklod, fmt.Errorf("invalid settings: %s", errs)
@@ -84,7 +84,7 @@ func ValidateTrait(
 	// Validate the json against the schema
 	errs, err := rs.ValidateBytes(context.TODO(), jsonCompTraitProp)
 	if err != nil {
-		return &castedTrait, fmt.Errorf("error occured during schema validation: %s", err)
+		return &castedTrait, fmt.Errorf("error occurred during schema validation: %s", err)
 	}
 	if len(errs) > 0 {
 		return &castedTrait, fmt.Errorf("invalid traits: %s", errs)

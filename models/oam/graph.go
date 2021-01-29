@@ -27,7 +27,7 @@ func NewGraph() *Graph {
 	}
 }
 
-// VisitFn is the function defintion for the visitor function
+// VisitFn is the function definition for the visitor function
 type VisitFn func(name string, node Service) bool
 
 // AddNode adds a node to the graph

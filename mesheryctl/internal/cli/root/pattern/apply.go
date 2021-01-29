@@ -21,6 +21,9 @@ var applyCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
 
 		// Read file
 		fileReader, err := os.Open(file)

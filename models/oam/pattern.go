@@ -76,7 +76,7 @@ func (af *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, e
 
 	// Create configs for each component
 	for k, v := range af.Services {
-		// Indicates that map for properies is not empty
+		// Indicates that map for properties is not empty
 		if len(v.Traits) > 0 {
 			specComp := v1alpha1.ConfigurationSpecComponent{
 				ComponentName: k,

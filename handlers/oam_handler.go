@@ -12,7 +12,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/oam"
 	OAM "github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshery/store"
@@ -49,7 +48,7 @@ func (h *Handler) PatternFileHandler(
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
-	patternFile, err := oam.NewPatternFile(body)
+	patternFile, err := OAM.NewPatternFile(body)
 	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
@@ -57,7 +56,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	// Get execution plan
-	plan, err := oam.CreatePlan(patternFile, policies)
+	plan, err := OAM.CreatePlan(patternFile, policies)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "failed to create an execution plan: %s", err)
@@ -107,7 +106,7 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 		if err := POSTOAMRegisterHandler(typ, r); err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			logrus.Debug(err)
-			rw.Write([]byte(err.Error()))
+			_, _ = rw.Write([]byte(err.Error()))
 			return
 		}
 	}
@@ -183,7 +182,7 @@ func createCompConfigPairsAndExecuteAction(
 		return "", err
 	}
 
-	plan.Execute(func(svcName string, _ oam.Service) bool {
+	_ = plan.Execute(func(svcName string, _ OAM.Service) bool {
 		compcon := compConfigPair{
 			Hosts: make(map[string]bool),
 		}
@@ -203,7 +202,7 @@ func createCompConfigPairsAndExecuteAction(
 		}
 
 		// Validate the configuration against the workloadDefinition schema
-		workloadCap, err := oam.ValidateWorkload(workload, comp)
+		workloadCap, err := OAM.ValidateWorkload(workload, comp)
 		if err != nil {
 			internalErrs = append(internalErrs, fmt.Errorf("invalid Pattern: %s", err))
 			return false
@@ -232,7 +231,7 @@ func createCompConfigPairsAndExecuteAction(
 				return false
 			}
 
-			traitCap, err := oam.ValidateTrait(traitDef, configComp, patternFile)
+			traitCap, err := OAM.ValidateTrait(traitDef, configComp, patternFile)
 			if err != nil {
 				internalErrs = append(internalErrs, err)
 				return false
@@ -268,7 +267,6 @@ func handleCompConfigPairAction(
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
-
 		return "", fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
