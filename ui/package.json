@@ -48,7 +48,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^10.1.2",
     "billboard.js": "=1.11.0",
-    "caniuse-lite": "^1.0.30001171",
+    "caniuse-lite": "^1.0.30001181",
     "classnames": "^2.2.6",
     "codemirror": "^5.59.1",
     "eslint-loader": "^4.0.2",
