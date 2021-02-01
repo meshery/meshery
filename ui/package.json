@@ -52,7 +52,7 @@
     "classnames": "^2.2.6",
     "codemirror": "^5.59.1",
     "eslint-loader": "^4.0.2",
-    "graphql": "^15.4.0",
+    "graphql": "^15.5.0",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.1.0",
     "js-yaml": "^3.14.1",
