@@ -20,12 +20,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@cypress/code-coverage": "^3.9.2",
-    "@material-ui/core": "^4.11.2",
+    "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "babel-plugin-istanbul": "^6.0.0",
     "isomorphic-unfetch": "^3.1.0",
     "jss": "latest",
-    "next": "10.0.5",
+    "next": "10.0.6",
     "prop-types": "latest",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -33,13 +33,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^6.2.0",
+    "cypress": "^6.3.0",
     "eslint": "^7.19.0",
     "eslint-plugin-cypress": "^2.11.2",
     "eslint-plugin-react": "^7.22.0",
     "http-proxy": "^1.18.1",
-    "nodemon": "^2.0.6",
+    "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
-    "start-server-and-test": "^1.11.7"
+    "start-server-and-test": "^1.12.0"
   }
 }
