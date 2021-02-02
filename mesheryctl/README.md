@@ -8,11 +8,13 @@ Please refer the [Meshery Contributing Guidelines](https://github.com/layer5io/m
 
 ## Building and running `mesheryctl`
 
-The `~/meshery/mesheryctl` folder contains the complete code for `mesheryctl`.
+The [`/mesheryctl`](https://github.com/layer5io/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
+
+Refer the [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
 
 ## `mesheryctl` command reference
 
@@ -40,3 +42,5 @@ A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/con
 For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
 
 `mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
+
+All contributors are invited to review [pull requests](https://github.com/layer5io/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
