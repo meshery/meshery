@@ -86,7 +86,7 @@
     "@babel/traverse": "^7.12.12",
     "@babel/types": "^7.12.12",
     "babel-eslint": "^10.1.0",
-    "cypress": "^6.2.0",
+    "cypress": "^6.4.0",
     "eslint": "^7.16.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-google": "^0.14.0",
