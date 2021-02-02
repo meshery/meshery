@@ -48,7 +48,6 @@ var viewCmd = &cobra.Command{
 	Long:  `View release channel and version of context in focus`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
