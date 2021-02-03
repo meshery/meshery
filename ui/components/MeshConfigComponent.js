@@ -209,7 +209,7 @@ class MeshConfigComponent extends React.Component {
 
   fetchOperatorStatus = () => {
     const self = this;
-    dataFetch('/api/v1/system/operator/status', {
+    dataFetch('/api/system/operator/status', {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
@@ -223,7 +223,7 @@ class MeshConfigComponent extends React.Component {
 
   handleOperatorSwitch = () => {
     const self = this;
-    let url = "/api/v1/system/operator?enable="+ !self.state.operatorSwitch
+    let url = "/api/system/operator?enable="+ !self.state.operatorSwitch
     this.props.updateProgress({ showProgress: true })
     dataFetch(url, {
       credentials: 'same-origin',
@@ -387,7 +387,7 @@ class MeshConfigComponent extends React.Component {
   handleOperatorClick = () => {
     this.props.updateProgress({ showProgress: true });
     const self = this;
-    dataFetch('/api/v1/system/operator/status', {
+    dataFetch('/api/system/operator/status', {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
