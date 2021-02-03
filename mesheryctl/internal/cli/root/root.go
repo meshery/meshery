@@ -120,7 +120,7 @@ func initConfig() {
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Create default config now?")
+				userResponse = utils.AskForConfirmation("Create default config now")
 			}
 			// Check for Meshery existence and permission of application folder
 			if userResponse {
