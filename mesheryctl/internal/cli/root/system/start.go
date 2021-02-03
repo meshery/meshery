@@ -86,7 +86,7 @@ func start() error {
 		}
 	}
 
-	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+	if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
 		}
