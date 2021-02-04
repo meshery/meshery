@@ -35,7 +35,7 @@
     "@cypress/code-coverage": "^3.9.2",
     "@date-io/moment": "^2.10.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
-    "@fortawesome/free-brands-svg-icons": "^5.15.1",
+    "@fortawesome/free-brands-svg-icons": "^5.15.2",
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.14",
