@@ -43,7 +43,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.8",
-    "@paciolan/remote-component": "^2.10.3",
+    "@paciolan/remote-component": "^2.11.0",
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^10.1.3",
