@@ -33,6 +33,9 @@ import (
 	"github.com/docker/docker/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"k8s.io/client-go/kubernetes"
 )
 
 var (
@@ -94,9 +97,8 @@ func start() error {
 
 	currentContext := mctlCfg.CurrentContext
 
-	// get the platform, channel and the version of the current context
 	// TODO: Centralise docker-compose.yaml file pull for this and reset
-
+	// get the platform, channel and the version of the current context
 	currPlatform := mctlCfg.Contexts[currentContext].Platform
 	// currChannel := mctlCfg.Contexts[currentContext].Channel
 	// currVersion := mctlCfg.Contexts[currentContext].Version
@@ -262,6 +264,57 @@ func start() error {
 		}
 
 	case "kubernetes":
+
+		nginx := `apiVersion: apps/v1
+		kind: Deployment
+		metadata:
+		  name: nginx-deployment
+		spec:
+		  selector:
+			matchLabels:
+			  app: nginx
+		  replicas: 2 # tells deployment to run 2 pods matching the template
+		  template:
+			metadata:
+			  labels:
+				app: nginx
+			spec:
+			  containers:
+			  - name: nginx
+				image: nginx:1.14.2
+				ports:
+				- containerPort: 80
+		`
+
+		config, err := meshkitkube.DetectKubeConfig()
+
+		if err != nil {
+			return errors.Wrap(err, "failed to detect Kube Config file")
+		}
+
+		clientSet, err := kubernetes.NewForConfig(config)
+
+		if err != nil {
+			return errors.Wrap(err, "error setting clientset")
+		}
+
+		client, err := meshkitkube.New(clientSet, *config)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to create new client")
+		}
+
+		err = client.ApplyManifest([]byte(nginx), meshkitkube.ApplyOptions{
+			Namespace: "default",
+			Update:    true,
+			Delete:    false,
+		})
+
+		if err != nil {
+			return errors.Wrap(err, "failed to apply manifests")
+		}
+
+		log.Info("Applied manifests!")
 	}
 
 	return nil
