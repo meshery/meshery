@@ -123,6 +123,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/experimental/patternfile/export/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExportPatternFile)))).
 		Methods("POST")
+	gMux.Handle("/api/experimental/patternfile/import/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportPatternFile)))).
+		Methods("POST")
 	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
 	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")

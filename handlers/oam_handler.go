@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/oam"
 	OAM "github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshery/store"
@@ -153,10 +154,44 @@ func (h *Handler) ExportPatternFile(
 
 	rw.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(rw).Encode(cyjs); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
+		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
 		return
 	}
+}
+
+// ImportPatternFile converts a cytoscapeJS JSON into
+// a PatternFile
+func (h *Handler) ImportPatternFile(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	// Read the PatternFile
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+
+	pf, err := oam.NewPatternFileFromCytoscapeJSJSON(body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "%s", err)
+		return
+	}
+
+	pfByt, err := pf.ToYAML()
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(rw, "%s", err)
+		return
+	}
+
+	fmt.Fprintf(rw, "%s", pfByt)
 }
 
 // POSTOAMRegisterHandler handles registering OMA objects

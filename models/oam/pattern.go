@@ -1,6 +1,7 @@
 package oam
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -156,6 +157,56 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 	}
 
 	return cy, nil
+}
+
+// ToYAML converts a patternfile to yaml
+func (p *Pattern) ToYAML() ([]byte, error) {
+	return yaml.Marshal(p)
+}
+
+// NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
+// and creates a PatternFile from it
+func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
+	// Unmarshal data into cytoscape struct
+	var cy cytoscapejs.GraphElem
+	if err := json.Unmarshal(byt, &cy); err != nil {
+
+	}
+
+	// Convert cytoscape struct to patternfile
+	pf := Pattern{
+		Name:     "MesheryGeneratedPatternFile",
+		Services: make(map[string]*Service),
+	}
+	for _, elem := range cy.Elements {
+		// Try to create Service object from the elem.scratch's _data field
+		// if this fails then immediately fail the process and return an error
+		castedScratch, ok := elem.Scratch.(map[string]interface{})
+		if !ok {
+			return pf, fmt.Errorf("empty scratch field is not allowed, must containe \"_data\" field holding metadata")
+		}
+
+		data, ok := castedScratch["_data"]
+		if !ok {
+			return pf, fmt.Errorf("\"_data\" cannot be empty")
+		}
+
+		// Convert data to JSON for easy serialization
+		svcByt, err := json.Marshal(&data)
+		if err != nil {
+			return pf, fmt.Errorf("failed to serialize service from the metadata in the scratch")
+		}
+
+		// Unmarshal the JSON into a service
+		var svc Service
+		if err := json.Unmarshal(svcByt, &svc); err != nil {
+			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
+		}
+
+		pf.Services[elem.Data.ID] = &svc
+	}
+
+	return pf, nil
 }
 
 func notIn(name string, prohibited []string) bool {
