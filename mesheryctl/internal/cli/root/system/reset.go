@@ -81,7 +81,6 @@ func resetMesheryConfig() error {
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 		} else if currChannel == "stable" {
 			if currVersion == "" {
-				log.Info("Version unspecified, fetching latest stable release...\n")
 				currVersion, err = utils.GetLatestStableReleaseTag()
 				if err != nil {
 					return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
