@@ -591,3 +591,24 @@ func ValidateURL(URL string) error {
 	}
 	return nil
 }
+
+// GetLatestStableReleaseTag fetch and return latest stable release tag
+func GetLatestStableReleaseTag() (string, error) {
+	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	var dat map[string]interface{}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read response body")
+	}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		return "", errors.Wrap(err, "failed to unmarshal json into object")
+	}
+
+	return dat["tag_name"].(string), nil
+}
