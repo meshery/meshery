@@ -82,6 +82,10 @@ func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, 
 	return nil
 }
 
+func applyManifests() {
+
+}
+
 func start() error {
 	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
@@ -95,14 +99,13 @@ func start() error {
 		return errors.Wrap(err, "error processing config")
 	}
 
-	currentContext := mctlCfg.CurrentContext
-
 	// TODO: Centralise docker-compose.yaml file pull for this and reset
 	// get the platform, channel and the version of the current context
-	currPlatform := mctlCfg.Contexts[currentContext].Platform
+	currPlatform := mctlCfg.GetContextContent().Platform
+	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
 	// currChannel := mctlCfg.Contexts[currentContext].Channel
 	// currVersion := mctlCfg.Contexts[currentContext].Version
-	fileURL := ""
+	// fileURL := ""
 
 	switch currPlatform {
 	case "docker":
@@ -127,7 +130,6 @@ func start() error {
 		}
 
 		services := compose.Services                                        // Current Services
-		RequestedAdapters := mctlCfg.GetContextContent().Adapters           // Requested Adapters / Services
 		err = ValidateComposeFileForRecreation(services, RequestedAdapters) // Validates docker-compose file and recreates and sync's if required
 		if err != nil {
 			return err
@@ -268,24 +270,23 @@ func start() error {
 		nginx := `apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+	name: nginx-deployment
 spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 2 # tells deployment to run 2 pods matching the template
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
+	selector:
+	matchLabels:
+		app: nginx
+	replicas: 2 # tells deployment to run 2 pods matching the template
+	template:
+	metadata:
+		labels:
+		app: nginx
+	spec:
+		containers:
+		- name: nginx
+		image: nginx:1.14.2
+		ports:
+		- containerPort: 80
 `
-
 		config, err := meshkitkube.DetectKubeConfig()
 
 		if err != nil {
@@ -302,6 +303,18 @@ spec:
 
 		if err != nil {
 			return errors.Wrap(err, "failed to create new client")
+		}
+
+		manifests, err := utils.ListManifests(manifestsURL)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+
+		err = utils.DownloadManifests(manifests, rawManifestsURL)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to download manifests")
 		}
 
 		err = client.ApplyManifest([]byte(nginx), meshkitkube.ApplyOptions{

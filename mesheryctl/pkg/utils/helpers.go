@@ -70,6 +70,8 @@ var (
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
+	// ManifestsFolder is where the Kubernetes manifests are stored
+	ManifestsFolder = "manifests"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
@@ -588,6 +590,56 @@ func ValidateURL(URL string) error {
 	}
 	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
 		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+	}
+	return nil
+}
+
+// ListManifests lists the manifest files stored in GitHub
+func ListManifests(url string) ([]Manifest, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	var manLis ManifestList
+
+	json.Unmarshal([]byte(body), &manLis)
+	// log.Info(manLis.Tree[3].Path)
+	return manLis.Tree, nil
+}
+
+// GetManifestURL returns the URLs for the manifest files
+func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
+	var manifestURL string
+
+	if manifest.Typ == "blob" {
+		manifestURL = rawManifestsURL + manifest.Path
+		return manifestURL
+	}
+	return ""
+}
+
+// DownloadManifests downloads all the Kubernetes manifest files
+func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
+	if _, err := os.Stat(MesheryFolder); os.IsNotExist(err) {
+		if err := os.Mkdir(MesheryFolder, 0777); err != nil {
+			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", MesheryFolder)))
+		}
+	}
+	for _, manifest := range manifestArr {
+		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
+			filepath := MesheryFolder + "/" + manifest.Path
+			log.Info(manifestFile, "\t", filepath, "\n")
+			if err := DownloadFile(filepath, manifestFile); err != nil {
+				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
+			}
+		}
 	}
 	return nil
 }
