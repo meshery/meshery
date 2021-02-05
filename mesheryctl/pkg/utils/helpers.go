@@ -237,13 +237,14 @@ func PreReqCheck(subcommand string) error {
 }
 
 func startdockerdaemon(subcommand string) error {
+	userResponse := false
 	// read user input on whether to start Docker daemon or not.
-	var userinput string
-	fmt.Printf("Start Docker now [y/n]? ")
-	fmt.Scan(&userinput)
-	userinput = strings.TrimSpace(userinput)
-	userinput = strings.ToLower(userinput)
-	if userinput == "n" || userinput == "no" {
+	if SilentFlag {
+		userResponse = true
+	} else {
+		userResponse = AskForConfirmation("Start Docker now")
+	}
+	if userResponse != true {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 
