@@ -95,25 +95,41 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 		return
 	}
 
+	depSuccessCount := 0
+	depFailCount := 0
+
 	for {
 		select {
 		case <-v.DepCancleCh:
-			// Abort the processing
-			logrus.Debug("REVCEIVED ABORT:", v.Name)
+			// Increment a dep failure
+			depFailCount++
+
+			logrus.Debug("REVCEIVED DEP FAILURE:", v.Name)
 
 			// Send the appropriate signal
 			// Propagate the abort
 			sendSignalToDeps(deps, false)
-			return
+
+			// Now that we know that some of the deps have completed
+			// successfully while some have failed we can proceed
+			// to shut down this node
+			if depFailCount+depSuccessCount == v.DepCount {
+				return
+			}
 		case <-v.DepUpdateCh:
-			v.DepCount--
-			if v.DepCount == 0 {
+			// Increment a dep success
+			depSuccessCount++
+
+			// If all of the deps were successfull then
+			// proceed to execute current node's function
+			// and upon completion send the appropriate signal
+			// to the dependent nodes
+			if depSuccessCount == v.DepCount {
 				logrus.Debug("Now deps 0 hence:", v.Name)
 				ok := fn(v.Name, v.Data.Data)
 
 				// Send the appropriate signal
 				sendSignalToDeps(deps, ok)
-
 				return
 			}
 		}
