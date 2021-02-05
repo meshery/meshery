@@ -124,6 +124,41 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ExportPatternFile converts a patternfile into
+// cytoscapejs notation
+func (h *Handler) ExportPatternFile(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	// Read the PatternFile
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+
+	// Generate the pattern file object
+	patternFile, err := OAM.NewPatternFile(body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+		return
+	}
+
+	cyjs, _ := patternFile.ToCytoscapeJS()
+
+	rw.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(rw).Encode(cyjs); err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to convert PatternFile to Cytoscape object: %s", err)
+		return
+	}
+}
+
 // POSTOAMRegisterHandler handles registering OMA objects
 func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body

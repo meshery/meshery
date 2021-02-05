@@ -119,8 +119,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
 
-	gMux.Handle("/api/experimental/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
+	gMux.Handle("/api/experimental/patternfile/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
 		Methods("POST", "DELETE")
+	gMux.Handle("/api/experimental/patternfile/export/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExportPatternFile)))).
+		Methods("POST")
 	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
 	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")
