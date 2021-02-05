@@ -10,7 +10,7 @@ list: include
 
 # Service Mesh Lifecycle Management
 
-Meshery supports a number of [different service meshes](https://docs.meshersy.io/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
+Meshery supports a number of [different service meshes](https://docs.meshery.io/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
 `
 ## Deploying a service mesh
 
