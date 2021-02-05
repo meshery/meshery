@@ -592,7 +592,7 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// GetLatestStableReleaseTag fetch and return latest stable release tag
+// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
 	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
 	resp, err := http.Get(url)
