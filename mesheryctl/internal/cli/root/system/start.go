@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -83,8 +84,29 @@ func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, 
 	return nil
 }
 
-func applyManifests() {
+// ApplyManifests applies all the required manifests into the Kubernetes cluster
+func ApplyManifests(requestedAdapters []string, client *meshkitkube.Client) error {
+	log.Info(requestedAdapters)
 
+	for _, adapter := range requestedAdapters {
+		adapterFile := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder, adapter)
+		adapterDeployment := adapterFile + "-deployment.yaml"
+		// adapterService := adapterFile + "-service.yaml"
+		log.Info(adapterDeployment)
+		manifest, err := ioutil.ReadFile(adapterDeployment)
+		log.Info(manifest)
+		err = client.ApplyManifest(manifest, meshkitkube.ApplyOptions{
+			Namespace: "default",
+			Update:    true,
+			Delete:    false,
+		})
+
+		if err != nil {
+			return errors.Wrap(err, "failed to apply manifests")
+		}
+	}
+	log.Info("Applied manifests!")
+	return nil
 }
 
 func start() error {
@@ -268,26 +290,6 @@ func start() error {
 
 	case "kubernetes":
 
-		nginx := `apiVersion: apps/v1
-kind: Deployment
-metadata:
-	name: nginx-deployment
-spec:
-	selector:
-	matchLabels:
-		app: nginx
-	replicas: 2 # tells deployment to run 2 pods matching the template
-	template:
-	metadata:
-		labels:
-		app: nginx
-	spec:
-		containers:
-		- name: nginx
-		image: nginx:1.14.2
-		ports:
-		- containerPort: 80
-`
 		config, err := meshkitkube.DetectKubeConfig()
 
 		if err != nil {
@@ -325,17 +327,7 @@ spec:
 			return errors.Wrap(err, "failed to download manifests")
 		}
 
-		err = client.ApplyManifest([]byte(nginx), meshkitkube.ApplyOptions{
-			Namespace: "default",
-			Update:    true,
-			Delete:    false,
-		})
-
-		if err != nil {
-			return errors.Wrap(err, "failed to apply manifests")
-		}
-
-		log.Info("Applied manifests!")
+		err = ApplyManifests(RequestedAdapters, client)
 	}
 
 	return nil

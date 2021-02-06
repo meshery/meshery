@@ -631,11 +631,16 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 	for _, manifest := range manifestArr {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			log.Info(manifestFile, "\t", filepath, "\n")
+			// log.Info(manifestFile, "\t", filepath, "\n")
 			if err := DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
 		}
 	}
 	return nil
+}
+
+// ReadFileToString reads a file and stores into a string variable
+func ReadFileToString(filepath string) ([]byte, error) {
+	return ioutil.ReadFile(filepath)
 }
