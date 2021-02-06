@@ -639,8 +639,3 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 	}
 	return nil
 }
-
-// ReadFileToString reads a file and stores into a string variable
-func ReadFileToString(filepath string) ([]byte, error) {
-	return ioutil.ReadFile(filepath)
-}

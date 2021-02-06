@@ -84,26 +84,38 @@ func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, 
 	return nil
 }
 
-// ApplyManifests applies all the required manifests into the Kubernetes cluster
-func ApplyManifests(requestedAdapters []string, client *meshkitkube.Client) error {
+func applyManifest(manifest []byte, client *meshkitkube.Client) error {
+	err := client.ApplyManifest(manifest, meshkitkube.ApplyOptions{
+		Namespace: "default",
+		Update:    true,
+		Delete:    false,
+	})
+
+	if err != nil {
+		return errors.Wrap(err, "failed to apply manifests")
+	}
+	return nil
+}
+
+// ApplyManifestFiles applies all the required manifests into the Kubernetes cluster
+func ApplyManifestFiles(requestedAdapters []string, client *meshkitkube.Client) error {
 	log.Info(requestedAdapters)
-
+	manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 	for _, adapter := range requestedAdapters {
-		adapterFile := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder, adapter)
+		adapterFile := filepath.Join(manifestFiles, adapter)
 		adapterDeployment := adapterFile + "-deployment.yaml"
-		// adapterService := adapterFile + "-service.yaml"
+		adapterService := adapterFile + "-service.yaml"
 		log.Info(adapterDeployment)
-		manifest, err := ioutil.ReadFile(adapterDeployment)
-		log.Info(manifest)
-		err = client.ApplyManifest(manifest, meshkitkube.ApplyOptions{
-			Namespace: "default",
-			Update:    true,
-			Delete:    false,
-		})
-
+		manifestDepl, err := ioutil.ReadFile(adapterDeployment)
 		if err != nil {
-			return errors.Wrap(err, "failed to apply manifests")
+			return errors.Wrap(err, "failed to read manifest files")
 		}
+		manifestService, err := ioutil.ReadFile(adapterService)
+		if err != nil {
+			return errors.Wrap(err, "failed to read manifest files")
+		}
+		applyManifest(manifestDepl, client)
+		log.Info(manifestService)
 	}
 	log.Info("Applied manifests!")
 	return nil
@@ -327,7 +339,7 @@ func start() error {
 			return errors.Wrap(err, "failed to download manifests")
 		}
 
-		err = ApplyManifests(RequestedAdapters, client)
+		err = ApplyManifestFiles(RequestedAdapters, client)
 	}
 
 	return nil
