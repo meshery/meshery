@@ -433,7 +433,6 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 	}
 	logrus.Errorf("error while fetching smi results: %s", bdr)
 	return nil, fmt.Errorf("error while fetching smi results - Status code: %d, Body: %s", resp.StatusCode, bdr)
-
 }
 
 // GetResult - fetches result from provider backend for the given result id
