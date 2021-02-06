@@ -77,6 +77,12 @@ var (
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
 	DefaultConfigPath = "config.yaml"
+	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryService = "meshery-service.yaml"
+	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
@@ -611,7 +617,6 @@ func ListManifests(url string) ([]Manifest, error) {
 	var manLis ManifestList
 
 	json.Unmarshal([]byte(body), &manLis)
-	// log.Info(manLis.Tree[3].Path)
 	return manLis.Tree, nil
 }
 
@@ -630,8 +635,8 @@ func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
 func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 	for _, manifest := range manifestArr {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
+			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			// log.Info(manifestFile, "\t", filepath, "\n")
 			if err := DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
 			}
