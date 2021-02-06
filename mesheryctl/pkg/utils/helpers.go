@@ -643,6 +643,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		}
 	}
 	return nil
+}
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
