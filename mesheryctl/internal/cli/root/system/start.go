@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -309,6 +310,13 @@ spec:
 
 		if err != nil {
 			return errors.Wrap(err, "failed to make GET request")
+		}
+
+		if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
+			if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
+			}
+			log.Info("created folder")
 		}
 
 		err = utils.DownloadManifests(manifests, rawManifestsURL)

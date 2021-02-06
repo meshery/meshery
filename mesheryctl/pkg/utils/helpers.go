@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -627,14 +628,9 @@ func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
 
 // DownloadManifests downloads all the Kubernetes manifest files
 func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
-	if _, err := os.Stat(MesheryFolder); os.IsNotExist(err) {
-		if err := os.Mkdir(MesheryFolder, 0777); err != nil {
-			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", MesheryFolder)))
-		}
-	}
 	for _, manifest := range manifestArr {
 		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
-			filepath := MesheryFolder + "/" + manifest.Path
+			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
 			log.Info(manifestFile, "\t", filepath, "\n")
 			if err := DownloadFile(filepath, manifestFile); err != nil {
 				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
