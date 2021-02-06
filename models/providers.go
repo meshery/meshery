@@ -103,7 +103,9 @@ const (
 
 	PersistResult Feature = "persist-result" // /result
 
-	PersistSMIResult Feature = "persist-smi-result" // /smi/results
+	PersistSMIResults Feature = "persist-smi-results" // /smi/results
+
+	PersistSMIResult Feature = "persist-smi-result" // /smi/result
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
