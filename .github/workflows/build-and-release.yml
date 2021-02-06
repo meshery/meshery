@@ -30,8 +30,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-        
     - name: goreleaser with tag
-      uses: goreleaser/goreleaser-action@v1
-      if: success() && startsWith(github.ref, 'refs/tags/')
+      uses: goreleaser/goreleaser-action@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_PAT }}
         RELEASE_CHANNEL: "stable"
