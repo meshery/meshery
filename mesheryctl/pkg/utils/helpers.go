@@ -616,7 +616,11 @@ func ListManifests(url string) ([]Manifest, error) {
 
 	var manLis ManifestList
 
-	json.Unmarshal([]byte(body), &manLis)
+	err = json.Unmarshal([]byte(body), &manLis)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
 	return manLis.Tree, nil
 }
 

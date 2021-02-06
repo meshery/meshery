@@ -1,17 +1,17 @@
 package utils
 
 type ManifestList struct {
-	SHA       string     `json:"sha"`
-	URL       string     `json:"url"`
-	Tree      []Manifest `json:"tree"`
-	Truncated bool       `json:"truncated"`
+	SHA       string     `json:"sha,omitempty"`
+	URL       string     `json:"url,omitempty"`
+	Tree      []Manifest `json:"tree,omitempty"`
+	Truncated bool       `json:"truncated,omitempty"`
 }
 
 type Manifest struct {
-	Path string `json:"path"`
-	Mode string `json:"mode"`
-	Typ  string `json:"type"`
-	SHA  string `json:"sha"`
-	Size string `json:"size"`
-	URL  string `json:"url"`
+	Path string `json:"path,omitempty"`
+	Mode string `json:"mode,omitempty"`
+	Typ  string `json:"type,omitempty"`
+	SHA  string `json:"sha,omitempty"`
+	Size string `json:"size,omitempty"`
+	URL  string `json:"url,omitempty"`
 }

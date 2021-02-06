@@ -116,8 +116,12 @@ func ApplyManifestFiles(requestedAdapters []string, client *meshkitkube.Client) 
 	}
 
 	// apply the manifest files
-	applyManifest(mesheryServiceManifest, client)
-	applyManifest(serviceAccountManifest, client)
+	if err = applyManifest(mesheryServiceManifest, client); err != nil {
+		log.Error(err)
+	}
+	if err = applyManifest(serviceAccountManifest, client); err != nil {
+		log.Error(err)
+	}
 
 	// loop through the required adapters as specified in the config.yaml file and apply each
 	for _, adapter := range requestedAdapters {
@@ -137,8 +141,12 @@ func ApplyManifestFiles(requestedAdapters []string, client *meshkitkube.Client) 
 			return errors.Wrap(err, "failed to read manifest files")
 		}
 
-		applyManifest(manifestDepl, client)
-		applyManifest(manifestService, client)
+		if err = applyManifest(manifestDepl, client); err != nil {
+			log.Error(err)
+		}
+		if err = applyManifest(manifestService, client); err != nil {
+			log.Error(err)
+		}
 	}
 	// TODO: Add better logs
 	log.Info("Applied manifests!")
@@ -158,7 +166,7 @@ func start() error {
 		return errors.Wrap(err, "error processing config")
 	}
 
-	// TODO: Centralise docker-compose.yaml file pull for this and reset
+	// TODO: Centralize docker-compose.yaml file pull for this and reset
 	// get the platform, channel and the version of the current context
 	currPlatform := mctlCfg.GetContextContent().Platform
 	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
@@ -373,6 +381,10 @@ func start() error {
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = ApplyManifestFiles(RequestedAdapters, client)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to apply manifests")
+		}
 	}
 
 	return nil
