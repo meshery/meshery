@@ -126,11 +126,8 @@ func main() {
 	}
 
 	err = dbHandler.AutoMigrate(
-		meshsyncmodel.Index{},
-		meshsyncmodel.ResourceTypeMeta{},
-		meshsyncmodel.ResourceObjectMeta{},
-		meshsyncmodel.ResourceSpec{},
-		meshsyncmodel.ResourceStatus{},
+		meshsyncmodel.KeyValue{},
+		meshsyncmodel.Object{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
