@@ -369,6 +369,16 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
 
+// SaveMesheryPattern saves given pattern with the provider
+func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) error {
+	return fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPatterns gives the patterns stored with the provider
+func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	result := l.GenericPersister.Create(&obj.Index)

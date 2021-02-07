@@ -103,11 +103,13 @@ const (
 
 	PersistResult Feature = "persist-result" // /result
 
-	PersistSMIResult Feature = "persist-smi-result" // /smi/results
+	PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config
+
+	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
 )
 
 const (
