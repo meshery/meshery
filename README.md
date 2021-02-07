@@ -82,7 +82,9 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </tr>
         <tr colspan="2"><td class="stable-adapters"></td></tr>
         <tr>
-          <td rowspan="5" class="beta-adapters">beta</td>
+          <td rowspan="7" class="beta-adapters">beta</td>
+        </tr>
+         <tr>
           <td><a href="https://github.com/layer5io/meshery-cpx">
             <img src='https://docs.meshery.io/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
@@ -102,9 +104,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='https://docs.meshery.io/assets/img/service-meshes/traefik-mesh.svg' alt='Traefik Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Traefik Mesh</a>
           </td>
         </tr>
+           <tr>
+          <td><a href="https://github.com/layer5io/meshery-nginx-sm">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
+          </td>
+        </tr>
         <tr colspan="2"><td class="beta-adapters"></td></tr>
         <tr>
-          <td rowspan="4" class="alpha-adapters">alpha</td>
+          <td rowspan="3" class="alpha-adapters">alpha</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-tanzu-sm">
@@ -114,11 +121,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         <tr>
           <td><a href="https://github.com/layer5io/meshery-app-mesh">
             <img src='https://docs.meshery.io/assets/img/service-meshes/app-mesh.svg' alt='AWS App Mesh Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for App Mesh</a>
-          </td>
-        </tr>
-        <tr>
-          <td><a href="https://github.com/layer5io/meshery-nginx-sm">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/nginx-sm.svg' alt='NGINX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Nginx Service Mesh</a>
           </td>
         </tr>
         <tr colspan="2"><td class="alpha-adapters"></td></tr>
