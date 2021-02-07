@@ -27,9 +27,11 @@ import (
 )
 
 const (
+	// TODO: `context` support for `system start` change the docker URL to dynamic URL
 	fileURL         = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
 	manifestsURL    = "https://api.github.com/repos/layer5io/meshery/git/trees/3ba314a0870d5291be6216b4d60d2bc9675a39b2"
 	rawManifestsURL = "https://raw.githubusercontent.com/layer5io/meshery/master/install/deployment_yamls/k8s/"
+	gitHubFolder    = "https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s"
 )
 
 var (

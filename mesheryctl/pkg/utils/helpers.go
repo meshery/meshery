@@ -77,6 +77,9 @@ var (
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
 	DefaultConfigPath = "config.yaml"
+	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryDeployment = "meshery-deployment.yaml"
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
@@ -144,6 +147,9 @@ func SafeClose(co io.Closer) {
 		log.Error(cerr)
 	}
 }
+
+// TODO: Use the same DownloadFile function from MeshKit instead of the function below
+// and change all it's occurrences
 
 // DownloadFile from url and save to configured file location
 func DownloadFile(filepath string, url string) error {

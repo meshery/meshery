@@ -1,5 +1,7 @@
 package utils
 
+import "encoding/json"
+
 type ManifestList struct {
 	SHA       string     `json:"sha,omitempty"`
 	URL       string     `json:"url,omitempty"`
@@ -8,10 +10,10 @@ type ManifestList struct {
 }
 
 type Manifest struct {
-	Path string `json:"path,omitempty"`
-	Mode string `json:"mode,omitempty"`
-	Typ  string `json:"type,omitempty"`
-	SHA  string `json:"sha,omitempty"`
-	Size string `json:"size,omitempty"`
-	URL  string `json:"url,omitempty"`
+	Path string      `json:"path,omitempty"`
+	Mode string      `json:"mode,omitempty"`
+	Typ  string      `json:"type,omitempty"`
+	SHA  string      `json:"sha,omitempty"`
+	Size json.Number `json:"size,omitempty"`
+	URL  string      `json:"url,omitempty"`
 }
