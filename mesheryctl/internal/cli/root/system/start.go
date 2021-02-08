@@ -38,7 +38,6 @@ import (
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/plugin/pkg/client/auth"
 )
 
 var (
