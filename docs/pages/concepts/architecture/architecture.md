@@ -23,6 +23,7 @@ Meshery and its components are written using the following languages and technol
 | Meshery Remote Providers | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility}}) |
 | Meshery Operator         | Golang, NATS                                                                      |
 | MeshSync                 | Golang                                                                            |
+| Meshery Database         | Golang, SQL                                                                       |
 
 ## Deployments
 
@@ -53,6 +54,15 @@ Meshery Operator is the multi-service mesh operator (a Kubernetes custom control
 
 [![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
+
+See the [**Operator**]({{ site.baseurl }}/architecture/operator) section for more information on the function of an operator and [**MeshSync**]({{ site.baseurl }}/architecture/meshsync) section for more information on the function of meshsync.
+
+## Meshery Database
+Meshery Database is responsible to persist and manage the state of meshery and its components.
+
+[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
+
+See the [**Database**]({{ site.baseurl }}/architecture/database) section for more information on the function of the database.
 
 ### **Network Ports**
 
