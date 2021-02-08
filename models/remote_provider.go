@@ -879,75 +879,27 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 
 // RecordMeshSyncData records the mesh sync data
 func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj.Index)
+	result := l.GenericPersister.Create(&obj)
 	if result.Error != nil {
 		return result.Error
 	}
-
-	result = l.GenericPersister.Create(&obj.TypeMeta)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.ObjectMeta)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.Spec)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.Status)
-	if result.Error != nil {
-		return result.Error
-	}
-
 	return nil
 }
 
 // ReadMeshSyncData records the mesh sync data
 func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	var index []model.Index
-	result := l.GenericPersister.Find(&index)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var typemetas []model.ResourceTypeMeta
-	result = l.GenericPersister.Find(&typemetas)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var objectmetas []model.ResourceObjectMeta
-	result = l.GenericPersister.Find(&objectmetas)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var specs []model.ResourceSpec
-	result = l.GenericPersister.Find(&specs)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var status []model.ResourceStatus
-	result = l.GenericPersister.Find(&status)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
 	objects := make([]model.Object, 0)
-	for i, idx := range index {
-		objects = append(objects, model.Object{
-			Index:      idx,
-			TypeMeta:   typemetas[i],
-			ObjectMeta: objectmetas[i],
-			Spec:       specs[i],
-			Status:     status[i],
-		})
+	result := l.GenericPersister.
+		Preload("TypeMeta").
+		Preload("ObjectMeta").
+		Preload("ObjectMeta.Labels").
+		Preload("ObjectMeta.Annotations").
+		Preload("Spec").
+		Preload("Status").
+		Find(&objects)
+
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	return objects, nil
 }

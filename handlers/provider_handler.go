@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	models "github.com/layer5io/meshery/models"
@@ -71,17 +72,19 @@ func (h *Handler) ProviderComponentsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	reqBasePath := "/api/provider/extension/"
+	uiReqBasePath := "/api/provider/extension"
+	serverReqBasePath := "/api/provider/extension/server/"
+	loadReqBasePath := "/api/provider/extension/"
 
-	if r.URL.Path == reqBasePath {
-		ServeReactComponentFromPackage(w, r, reqBasePath, provider)
-
+	if strings.HasPrefix(r.URL.Path, serverReqBasePath) {
+		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
+	} else if r.URL.Path == loadReqBasePath {
 		err := h.LoadExtensionFromPackage(w, r, provider)
 		if err != nil {
 			logrus.Error(err)
 			return
 		}
 	} else {
-		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
+		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
 	}
 }
