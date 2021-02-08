@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^6.3.0",
+    "cypress": "^6.4.0",
     "eslint": "^7.19.0",
     "eslint-plugin-cypress": "^2.11.2",
     "eslint-plugin-react": "^7.22.0",
