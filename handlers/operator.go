@@ -101,19 +101,19 @@ func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, pref
 	go func(e bool, d chan *broker.Message) {
 		er := h.initialize(e)
 		if er != nil {
-			status.Error = er.Error()
+			status.Error += er.Error()
 			return
 		}
 
 		er = h.subscribeToBroker(d)
 		if er != nil {
-			status.Error = er.Error()
+			status.Error += er.Error()
 			return
 		}
 
 		er = h.runMeshSync(e)
 		if er != nil {
-			status.Error = er.Error()
+			status.Error += er.Error()
 			return
 		}
 	}(!enable, datach)
@@ -189,15 +189,16 @@ func (h *Handler) handleEvents(datach chan *broker.Message, provider models.Prov
 		select {
 		case msg := <-datach:
 			objectJSON, _ := utils.Marshal(msg.Object)
-			var object model.Object
+			object := model.Object{}
 			err := utils.Unmarshal(string(objectJSON), &object)
 			if err != nil {
-				status.Error = err.Error()
+				status.Error += err.Error()
 			}
+
 			// persist the object
 			err = provider.RecordMeshSyncData(object)
 			if err != nil {
-				status.Error = err.Error()
+				status.Error += err.Error()
 			}
 		}
 	}
