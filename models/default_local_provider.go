@@ -370,12 +370,22 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 }
 
 // SaveMesheryPattern saves given pattern with the provider
-func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) error {
-	return fmt.Errorf("function not supported by local provider")
+func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
+	return nil, fmt.Errorf("function not supported by local provider")
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
 func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPattern gets pattern for the given patternID
+func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	return []byte{}, fmt.Errorf("function not supported by local provider")
 }
 
