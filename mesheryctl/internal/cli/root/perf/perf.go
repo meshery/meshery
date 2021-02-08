@@ -53,7 +53,7 @@ var PerfCmd = &cobra.Command{
 	Args:    cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use)
+		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Importing SMP Configuration from the file
