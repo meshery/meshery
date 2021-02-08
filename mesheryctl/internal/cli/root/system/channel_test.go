@@ -75,11 +75,11 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"channel", "view", "-c", "gke"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
 		},
-		{
-			Name:             "view with all flag",
-			Args:             []string{"channel", "view", "--all"},
-			ExpectedResponse: expectedResponseForAll,
-		},
+		// {
+		// 	Name:             "view with all flag",
+		// 	Args:             []string{"channel", "view", "--all"},
+		// 	ExpectedResponse: expectedResponseForAll,
+		// },
 	}
 
 	for _, tt := range tests {
