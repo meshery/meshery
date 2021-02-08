@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
+	"github.com/layer5io/meshery/store"
 	"github.com/layer5io/meshkit/database"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -50,6 +51,8 @@ func main() {
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+
+	store.Initialize()
 
 	// Get the channel
 	logrus.Info("Meshery server current channel: ", releasechannel)
@@ -126,11 +129,8 @@ func main() {
 	}
 
 	err = dbHandler.AutoMigrate(
-		meshsyncmodel.Index{},
-		meshsyncmodel.ResourceTypeMeta{},
-		meshsyncmodel.ResourceObjectMeta{},
-		meshsyncmodel.ResourceSpec{},
-		meshsyncmodel.ResourceStatus{},
+		meshsyncmodel.KeyValue{},
+		meshsyncmodel.Object{},
 	)
 	if err != nil {
 		logrus.Fatal(err)

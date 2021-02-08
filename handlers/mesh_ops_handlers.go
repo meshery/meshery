@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -194,6 +195,14 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
+
+	if provider.GetProviderType() == models.RemoteProviderType {
+		token, err := provider.GetProviderToken(req)
+
+		if err == nil {
+			viper.SetDefault("opt-token", token)
+		}
+	}
 
 	meshAdapters := prefObj.MeshAdapters
 	if meshAdapters == nil {

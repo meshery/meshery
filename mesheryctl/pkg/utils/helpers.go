@@ -241,13 +241,14 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 }
 
 func startdockerdaemon(subcommand string) error {
+	userResponse := false
 	// read user input on whether to start Docker daemon or not.
-	var userinput string
-	fmt.Printf("Start Docker now [y/n]? ")
-	fmt.Scan(&userinput)
-	userinput = strings.TrimSpace(userinput)
-	userinput = strings.ToLower(userinput)
-	if userinput == "n" || userinput == "no" {
+	if SilentFlag {
+		userResponse = true
+	} else {
+		userResponse = AskForConfirmation("Start Docker now")
+	}
+	if userResponse != true {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
 	}
 
@@ -592,4 +593,25 @@ func ValidateURL(URL string) error {
 		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
 	}
 	return nil
+}
+
+// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+func GetLatestStableReleaseTag() (string, error) {
+	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	var dat map[string]interface{}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read response body")
+	}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		return "", errors.Wrap(err, "failed to unmarshal json into object")
+	}
+
+	return dat["tag_name"].(string), nil
 }

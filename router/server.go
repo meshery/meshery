@@ -28,7 +28,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 	gMux.PathPrefix("/api/provider/extension").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderComponentsHandler)))).
-		Methods("GET")
+		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler)))).
 		Methods("GET")
 	gMux.PathPrefix("/provider").
@@ -118,6 +118,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/prometheus/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPrometheusHandler))))
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
+
+	gMux.Handle("/api/experimental/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
+		Methods("POST", "DELETE")
+	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
 	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")
 	gMux.Handle("/api/system/operator", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorHandler)))).Methods("GET")
