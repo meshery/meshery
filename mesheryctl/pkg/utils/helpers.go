@@ -77,6 +77,8 @@ var (
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
 	DefaultConfigPath = "config.yaml"
+	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
+	MesheryNamespace = "meshery"
 	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryDeployment = "meshery-deployment.yaml"
@@ -674,4 +676,15 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 
 	return dat["tag_name"].(string), nil
+}
+
+// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
+func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
+	for _, v := range manifestArr {
+		if v.Path == adapterManifest {
+			return true
+		}
+	}
+
+	return false
 }
