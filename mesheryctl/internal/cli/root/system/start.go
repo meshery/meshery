@@ -416,7 +416,7 @@ func start() error {
 
 	// switch to default case if the platform specified is not supported
 	default:
-		log.Errorf("the platform %s is not supported currently. The supported platforms are:\nDocker\nKubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
+		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
 	}
 
 	return nil
