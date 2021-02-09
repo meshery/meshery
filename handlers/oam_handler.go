@@ -24,6 +24,15 @@ type compConfigPair struct {
 	Hosts         map[string]bool
 }
 
+// patternCallType is custom type for pattern
+// based calls on the adapter
+type patternCallType string
+
+const (
+	rawAdapter patternCallType = "raw-adapter"
+	oamAdapter patternCallType = ""
+)
+
 // policies are hardcoded here BUT they should be
 // fetched from a "service registry" as soon as we have
 // one
@@ -282,12 +291,18 @@ func handleCompConfigPairAction(
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(10 * time.Microsecond)
 
+		callType := oamAdapter
+		if strings.HasPrefix(host, "<raw-adapter>") {
+			callType = rawAdapter
+		}
+
 		msg, err := executeAction(
 			ctx,
 			prefObj,
 			host,
 			user.UserID,
 			isDel,
+			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
 		)
@@ -354,6 +369,7 @@ func executeAction(
 	adapter,
 	userID string,
 	delete bool,
+	callType patternCallType,
 	oamComps []string,
 	oamConfig string,
 ) (string, error) {
@@ -373,14 +389,29 @@ func executeAction(
 		_ = mClient.Close()
 	}()
 
-	resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
-		Username:  userID,
-		DeleteOp:  delete,
-		OamComps:  oamComps,
-		OamConfig: oamConfig,
-	})
+	if callType == rawAdapter {
+		resp, err := mClient.MClient.ApplyOperation(ctx, &meshes.ApplyRuleRequest{
+			Username:  userID,
+			DeleteOp:  delete,
+			OpName:    "custom",
+			Namespace: "",
+		})
 
-	return resp.GetMessage(), err
+		return resp.String(), err
+	}
+
+	if callType == oamAdapter {
+		resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
+			Username:  userID,
+			DeleteOp:  delete,
+			OamComps:  oamComps,
+			OamConfig: oamConfig,
+		})
+
+		return resp.GetMessage(), err
+	}
+
+	return "", fmt.Errorf("invalid")
 }
 
 func mergeErrors(errs []error) error {
