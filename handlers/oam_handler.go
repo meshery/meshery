@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	OAM "github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshery/store"
 	"github.com/sirupsen/logrus"
 )
 

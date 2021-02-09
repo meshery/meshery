@@ -1,0 +1,33 @@
+type Subscription {
+    controlPlane(filter: ControlPlaneFilter): [ControlPlane!]!
+}
+
+input ControlPlaneFilter {
+    type: MeshType
+}
+
+type ControlPlane {
+	type: String!
+	members: [ControlPlaneMember!]!
+}
+
+type ControlPlaneMember {
+	name: String!
+	status: String!
+}
+
+enum MeshType {
+	ALL
+	NONE
+
+	ISTIO
+	LINKERD
+	CONSUL
+	OCTARINE
+	TRAEFIK
+	OPENSERVICEMESH
+	KUMA
+	NGINXSM
+	NETWORKSM
+	CITRIXSM
+}

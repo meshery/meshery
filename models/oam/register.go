@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshery/store"
 	"github.com/sirupsen/logrus"
 )
 
