@@ -251,6 +251,8 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
+	} else if mctlCfg.Contexts[focusedContext].Platform == "kubernetes" {
+
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
 	}
