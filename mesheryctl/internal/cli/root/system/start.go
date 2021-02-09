@@ -22,6 +22,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
@@ -52,7 +53,10 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use)
+		if overrideContext != "" {
+			return utils.PreReqCheck(cmd.Use, overrideContext)
+		}
+		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
@@ -227,9 +231,32 @@ func start() error {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
+			temp, ok := services[v]
+			if !ok {
+				return errors.New("unable to extract adapter version")
+			}
+			ContextContent := mctlCfg.GetContextContent()
+			spliter := strings.Split(temp.Image, ":")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
 		for _, v := range RequiredService {
+			if v == "watchtower" {
+				AllowedServices[v] = services[v]
+				continue
+			}
+			temp, ok := services[v]
+			if !ok {
+				return errors.New("unable to extract meshery version")
+			}
+			ContextContent := mctlCfg.GetContextContent()
+			spliter := strings.Split(temp.Image, ":")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			if v == "meshery" {
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+			}
+			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
 

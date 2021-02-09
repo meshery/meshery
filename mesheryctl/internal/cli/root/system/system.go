@@ -37,6 +37,7 @@ const (
 var (
 	availableSubcommands = []*cobra.Command{}
 	url                  = ""
+	overrideContext      = ""
 )
 
 // SystemCmd represents Meshery Lifecycle Management cli commands
@@ -72,5 +73,6 @@ func init() {
 		completionCmd,
 		channelCmd,
 	}
+	SystemCmd.PersistentFlags().StringVarP(&overrideContext, "context", "c", "", "Override specified context with current context.")
 	SystemCmd.AddCommand(availableSubcommands...)
 }

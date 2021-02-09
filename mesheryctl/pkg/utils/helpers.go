@@ -22,11 +22,9 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -98,15 +96,16 @@ var (
 var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
 
 // TemplateContext is the template context provided when creating a config file
-var TemplateContext = models.Context{
+var TemplateContext = config.Context{
 	Endpoint: "http://localhost:9081",
-	Token: models.Token{
+	Token: config.Token{
 		Name:     "Default",
 		Location: AuthConfigFile,
 	},
 	Platform: "docker",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
+	Version:  "latest",
 }
 
 type cryptoSource struct{}
@@ -219,12 +218,15 @@ func SetFileLocation() error {
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck(subcommand string) error {
+func PreReqCheck(subcommand string, focusedContext string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	if mctlCfg.GetContextContent().Platform == "docker" {
+	if focusedContext == "" {
+		focusedContext = mctlCfg.CurrentContext
+	}
+	if mctlCfg.Contexts[focusedContext].Platform == "docker" {
 		//Check whether docker daemon is running or not
 		if err := exec.Command("docker", "ps").Run(); err != nil {
 			log.Info("Docker is not running.")
@@ -249,6 +251,8 @@ func PreReqCheck(subcommand string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
+	} else {
+		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
 	}
 	return nil
 }
@@ -554,42 +558,41 @@ func CreateConfigFile() error {
 }
 
 // AddContextToConfig adds context passed to it to mesheryctl config file
-func AddContextToConfig(contextName string, context models.Context, configPath string, set bool) error {
-	var currentConfig models.MesheryCtlConfig
+func AddContextToConfig(contextName string, context config.Context, configPath string, set bool) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}
 
-	file, err := ioutil.ReadFile(configPath)
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
 	if err != nil {
 		return err
 	}
 
-	err = yaml.Unmarshal(file, &currentConfig)
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error processing config")
 	}
 
-	if currentConfig.Contexts == nil {
-		currentConfig.Contexts = map[string]models.Context{}
+	if mctlCfg.Contexts == nil {
+		mctlCfg.Contexts = map[string]config.Context{}
 	}
 
-	_, exists := currentConfig.Contexts[contextName]
+	_, exists := mctlCfg.Contexts[contextName]
 	if exists {
 		return errors.New("error adding context: a context with same name already exists")
 	}
 
-	currentConfig.Contexts[contextName] = context
+	mctlCfg.Contexts[contextName] = context
 	if set {
-		currentConfig.CurrentContext = contextName
+		mctlCfg.CurrentContext = contextName
 	}
 
-	content, err := yaml.Marshal(currentConfig)
-	if err != nil {
-		return err
-	}
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
 
-	err = ioutil.WriteFile(configPath, content, 0644)
+	err = viper.WriteConfig()
 	if err != nil {
 		return err
 	}
