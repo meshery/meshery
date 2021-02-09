@@ -59,13 +59,23 @@ Perform the following steps in order:
 
 ### 2. Install Meshery
 
-Follow the [installation steps](/guides/mesheryctl) to setup the mesheryctl CLI and install Meshery.
+Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
 
-**Note**: If you are using docker driver, after completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server :
+**Users using docker driver**: 
+
+After completing meshery installation steps execute below command to establish connectivity between Meshery and Kubernetes server :
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  docker network connect bridge meshery_meshery_1
+ </div></div>
+ </pre>
+
+To establish connectivity between a particular Meshery Adapter and Kubernetes server, use *"docker ps"* to identify the name of the desired container, and execute the following command:
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ docker network connect bridge <container name of the desired adapter>
  </div></div>
  </pre>
 
@@ -81,12 +91,16 @@ Follow the [installation steps](/guides/mesheryctl) to setup the mesheryctl CLI 
  mesheryctl system config minikube -t ~/Downloads/auth.json
  </div></div>
  </pre>
-<br />
+**Optionally configure Meshery to use minikube through the Web UI** :
+1. Run the below command to generate the *"config_minikube.yaml"* file for your cluster:
+
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  kubectl config view --minify --flatten > config_minikube.yaml
  </div></div>
  </pre>
+ 
+2. Upload the generated config file by navigating to *Settings > Environment > Out of Cluster Deployment* in the Web UI and using the *"Upload kubeconfig"* option.
 
 ### Manual Steps
 
