@@ -106,14 +106,13 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 
 			logrus.Debug("REVCEIVED DEP FAILURE:", v.Name)
 
-			// Send the appropriate signal
-			// Propagate the abort
-			sendSignalToDeps(deps, false)
-
 			// Now that we know that some of the deps have completed
 			// successfully while some have failed we can proceed
 			// to shut down this node
 			if depFailCount+depSuccessCount == v.DepCount {
+				// Send the appropriate signal
+				// Propagate the abort
+				sendSignalToDeps(deps, false)
 				return
 			}
 		case <-v.DepUpdateCh:
