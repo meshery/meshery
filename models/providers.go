@@ -105,6 +105,8 @@ const (
 
 	PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
+	PersistSMIResult Feature = "persist-smi-result" // /smi/result
+
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config

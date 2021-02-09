@@ -14,7 +14,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -25,6 +24,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
 
@@ -381,22 +381,58 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 }
 
 // FetchSmiResults - fetches results from provider backend
-//
-// Assuming that every remote provider will support this feature
 func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	pg, err := strconv.ParseUint(page, 10, 32)
+	if !l.Capabilities.IsSupported(PersistSMIResults) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistSMIResults, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
+
+	logrus.Infof("attempting to fetch SMI results from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed smi results url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page number")
-		logrus.Error(err)
+		logrus.Errorf("unable to get token: %v", err)
 		return nil, err
 	}
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = errors.Wrapf(err, "unable to parse page size")
-		logrus.Error(err)
+		logrus.Errorf("unable to get smi results: %v", err)
 		return nil, err
 	}
-	return l.SmiResultPersister.GetResults(pg, pgs)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("results successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching smi results: %s", bdr)
+	return nil, fmt.Errorf("error while fetching smi results - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // GetResult - fetches result from provider backend for the given result id
@@ -525,11 +561,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	tokenString, err := l.GetToken(nil)
-	if err != nil {
-		logrus.Errorf("unable to get results: %v", err)
-		return "", err
-	}
+	tokenString := viper.GetString("opt-token")
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		logrus.Errorf("unable to send results: %v", err)
@@ -1038,75 +1070,27 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 
 // RecordMeshSyncData records the mesh sync data
 func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj.Index)
+	result := l.GenericPersister.Create(&obj)
 	if result.Error != nil {
 		return result.Error
 	}
-
-	result = l.GenericPersister.Create(&obj.TypeMeta)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.ObjectMeta)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.Spec)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = l.GenericPersister.Create(&obj.Status)
-	if result.Error != nil {
-		return result.Error
-	}
-
 	return nil
 }
 
 // ReadMeshSyncData records the mesh sync data
 func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	var index []model.Index
-	result := l.GenericPersister.Find(&index)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var typemetas []model.ResourceTypeMeta
-	result = l.GenericPersister.Find(&typemetas)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var objectmetas []model.ResourceObjectMeta
-	result = l.GenericPersister.Find(&objectmetas)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var specs []model.ResourceSpec
-	result = l.GenericPersister.Find(&specs)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	var status []model.ResourceStatus
-	result = l.GenericPersister.Find(&status)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
 	objects := make([]model.Object, 0)
-	for i, idx := range index {
-		objects = append(objects, model.Object{
-			Index:      idx,
-			TypeMeta:   typemetas[i],
-			ObjectMeta: objectmetas[i],
-			Spec:       specs[i],
-			Status:     status[i],
-		})
+	result := l.GenericPersister.
+		Preload("TypeMeta").
+		Preload("ObjectMeta").
+		Preload("ObjectMeta.Labels").
+		Preload("ObjectMeta.Annotations").
+		Preload("Spec").
+		Preload("Status").
+		Find(&objects)
+
+	if result.Error != nil {
+		return nil, result.Error
 	}
 	return objects, nil
 }

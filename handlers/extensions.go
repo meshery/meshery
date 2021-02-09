@@ -32,6 +32,7 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 		return err
 	}
 
+	// Run function
 	symRun, err := plug.Lookup("Run")
 	if err != nil {
 		return err
@@ -41,6 +42,23 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 	output, err := runFunction(&models.ExtensionInput{
 		DBHandler: provider.GetGenericPersister(),
 	})
+	if err != nil {
+		return err
+	}
+
+	// Add http endpoint to serve
+	if output.Router != nil {
+		extendedEndpoints[output.Router.Path] = output.Router
+	}
+
+	// Run Playground function
+	symRunPlayground, err := plug.Lookup("RunPlayground")
+	if err != nil {
+		return err
+	}
+	runPlaygroundFunction := symRunPlayground.(func() (*models.ExtensionOutput, error))
+
+	output, err = runPlaygroundFunction()
 	if err != nil {
 		return err
 	}
