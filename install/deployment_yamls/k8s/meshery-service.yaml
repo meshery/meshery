@@ -15,6 +15,6 @@ spec:
     targetPort: 8080
   selector:
     io.kompose.service: meshery
-  type: LoadBalancer
+  type: NodePort
 
   
