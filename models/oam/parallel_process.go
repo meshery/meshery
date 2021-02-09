@@ -120,7 +120,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			// Increment a dep success
 			depSuccessCount++
 
-			// If all of the deps were successfull then
+			// If all of the deps were successful then
 			// proceed to execute current node's function
 			// and upon completion send the appropriate signal
 			// to the dependent nodes

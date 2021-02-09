@@ -170,7 +170,7 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
-
+		return Pattern{}, err
 	}
 
 	// Convert cytoscape struct to patternfile

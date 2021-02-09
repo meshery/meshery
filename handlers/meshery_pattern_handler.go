@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshery/models/oam"
 	OAM "github.com/layer5io/meshery/models/oam"
 )
 
@@ -29,7 +28,7 @@ func (h *Handler) ImportPatternFile(
 		return
 	}
 
-	pf, err := oam.NewPatternFileFromCytoscapeJSJSON(body)
+	pf, err := OAM.NewPatternFileFromCytoscapeJSJSON(body)
 	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "%s", err)
@@ -98,10 +97,6 @@ func (h *Handler) PatternFileRequestHandler(
 	if r.Method == http.MethodPost {
 		h.SavePatternFile(rw, r, prefObj, user, provider)
 		return
-	}
-
-	if r.Method == http.MethodDelete {
-
 	}
 }
 
