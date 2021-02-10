@@ -13,6 +13,8 @@ list: include
 
 The Meshery Database offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats. 
 
+[![Architecture Diagram]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
+
 ## Components Involved:
 
 Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
