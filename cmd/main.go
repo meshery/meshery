@@ -13,6 +13,7 @@ import (
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshery/store"
 	"github.com/layer5io/meshkit/database"
@@ -53,6 +54,15 @@ func main() {
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 
 	store.Initialize()
+
+	// Register local OAM traits and workloads
+	if err := oam.RegisterMesheryOAMTraits(); err != nil {
+		logrus.Error(err)
+	}
+	if err := oam.RegisterMesheryOAMWorkloads(); err != nil {
+		logrus.Error(err)
+	}
+	logrus.Info("Registerend Meshery local Capabilities")
 
 	// Get the channel
 	logrus.Info("Meshery server current channel: ", releasechannel)

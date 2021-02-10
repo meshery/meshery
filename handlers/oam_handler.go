@@ -29,7 +29,8 @@ type compConfigPair struct {
 type patternCallType string
 
 const (
-	rawAdapter patternCallType = "raw-adapter"
+	rawAdapter patternCallType = "<raw-adapter>"
+	noneLocal  patternCallType = "<none-local>"
 	oamAdapter patternCallType = ""
 )
 
@@ -147,10 +148,12 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
 func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
 	if typ == "workload" {
 		res := OAM.GetWorkloads()
 
-		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			logrus.Error("failed to encode workload definitions")
 		}
@@ -292,8 +295,11 @@ func handleCompConfigPairAction(
 		time.Sleep(10 * time.Microsecond)
 
 		callType := oamAdapter
-		if strings.HasPrefix(host, "<raw-adapter>") {
+		if strings.HasPrefix(host, string(rawAdapter)) {
 			callType = rawAdapter
+		}
+		if strings.HasPrefix(host, string(noneLocal)) {
+			callType = noneLocal
 		}
 
 		msg, err := executeAction(
@@ -379,6 +385,10 @@ func executeAction(
 		!prefObj.K8SConfig.InClusterConfig &&
 			(prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
 		return "", fmt.Errorf("no valid kubernetes config found")
+	}
+
+	if callType == noneLocal {
+		return "success", nil
 	}
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, adapter)
