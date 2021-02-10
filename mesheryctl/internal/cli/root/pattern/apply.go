@@ -32,7 +32,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/experimental/deploy", fileReader)
+		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/experimental/patternfile/deploy", fileReader)
 		if err != nil {
 			return err
 		}

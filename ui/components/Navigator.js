@@ -279,6 +279,24 @@ const categories = [
     ],
   },
   {
+    id: "Configuration",
+    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
+    href: "/configuration",
+    title: "Meshery Configurations",
+    show: false,
+    link: false,
+    children: [
+      {
+        id: "Patterns",
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/patterns",
+        title: "Meshery Patterns",
+        show: false,
+        link: true,
+      },
+    ],
+  },
+  {
     id: "Management",
     icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
     href: "/management",
@@ -413,7 +431,9 @@ class Navigator extends React.Component {
       // ExtensionPointSchemaValidator will return a navigator schema
       // decoder which in turn will return an empty array when there is no content
       // passed into it
-      navigator: ExtensionPointSchemaValidator("navigator")()
+      navigator: ExtensionPointSchemaValidator("navigator")(),
+
+      capabilities: []
     };
   }
 
@@ -428,7 +448,8 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           this.setState({ 
-            navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator)
+            navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
+            capabilities: result?.capabilities || []
           })
         }
       },
@@ -517,6 +538,21 @@ class Navigator extends React.Component {
           categories[ind].children[ind1].icon = icon;
           categories[ind].children[ind1].children = cr;
         });
+      }
+
+      if (cat.id === "Configuration") {
+        let show = false
+        cat.children?.forEach(ch => {
+          if (ch.id === "Patterns") {
+            const idx = self.state.capabilities.findIndex(cap => cap.feature === "persist-meshery-patterns")
+            if (idx != -1) {
+              ch.show = true
+              show = true
+            }
+          }
+        })
+
+        cat.show = show
       }
     });
   }
