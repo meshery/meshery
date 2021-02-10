@@ -62,7 +62,7 @@ func main() {
 	if err := oam.RegisterMesheryOAMWorkloads(); err != nil {
 		logrus.Error(err)
 	}
-	logrus.Info("Registerend Meshery local Capabilities")
+	logrus.Info("Registered Meshery local Capabilities")
 
 	// Get the channel
 	logrus.Info("Meshery server current channel: ", releasechannel)

@@ -181,8 +181,8 @@ func RegisterMesheryOAMWorkloads() error {
 // registerMesheryServerOAM will read the oam definition file and its corresponding schema file
 // and then will call given regFn for registering the serialized data
 //
-// registerMesheryServerOAM expects that if a construct called "meshmap" is given then a defintion
-// file like "meshmap_defintion.json" and "meshmap.meshery.layer5.io.schema.json" will be present
+// registerMesheryServerOAM expects that if a construct called "meshmap" is given then a definition
+// file like "meshmap_definition.json" and "meshmap.meshery.layer5.io.schema.json" will be present
 // in the given rootPath
 func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([]byte) error) error {
 	var errs []string
@@ -213,7 +213,7 @@ func registerMesheryServerOAM(rootPath string, constructs []string, regFn func([
 			continue
 		}
 
-		// Create the psuedo structure for serializing data
+		// Create the pseudo structure for serializing data
 		data := map[string]interface{}{
 			"oam_ref_schema": string(schemaFile),
 			"oam_definition": tempDef,
