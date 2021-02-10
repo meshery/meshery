@@ -14,7 +14,7 @@ image: /assets/img/platforms/minikube.png
 **To Setup and run Meshery on Minikube** :
 
 1. [Start Minikube](#1-start-minikube)
-1. [Configure Meshery to use minkube](#2-configure-meshery-to-use-minikube)
+1. [Configure Meshery to use minikube](#2-configure-meshery-to-use-minikube)
 1. [Run Meshery](#3-set-up-meshery)
 
 ##### Compatibility
@@ -23,7 +23,7 @@ The following minimum component versions are required:
 <table id="compatibility-table">
   <tr>
     <th id="model">Name</th>
-    <th id="model">Version</th> 
+    <th id="model">Version</th>
   </tr>
   <tr>
     <td><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a></td>
@@ -92,7 +92,7 @@ Follow the [installation steps](/guides/mesheryctl) to setup the mesheryctl CLI 
 
 You may also manually generate and load the kubeconfig file for Meshery to use:
 
-**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** : 
+**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** :
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
