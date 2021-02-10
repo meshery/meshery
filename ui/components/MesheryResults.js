@@ -14,6 +14,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
   updateResultsSelection, clearResultsSelection, updateProgress,
 } from '../lib/store';
+import TableSortLabel from '@material-ui/core/TableSortLabel'
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
@@ -24,6 +25,10 @@ import MesheryResultDialog from './MesheryResultDialog';
 const styles = (theme) => ({
   grid: {
     padding: theme.spacing(2),
+  },
+  tableHeader: {
+    fontWeight: 'bolder',
+    fontSize: 18,
   },
   chartContent: {
     // minHeight: window.innerHeight * 0.7,
@@ -49,6 +54,7 @@ class MesheryResults extends Component {
       // results_selection,
 
       selectedRowData: null,
+
     };
   }
 
@@ -59,7 +65,7 @@ class MesheryResults extends Component {
 
     componentDidMount = () => {
       const {
-        page, pageSize, search, sortOrder,
+        page, pageSize, search, sortOrder, 
       } = this.state;
       this.fetchResults(page, pageSize, search, sortOrder);
     }
@@ -80,6 +86,7 @@ class MesheryResults extends Component {
         method: 'GET',
         credentials: 'include',
       }, (result) => {
+        console.log("Results API",`/api/perf/results${query}`)
         self.props.updateProgress({ showProgress: false });
         // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
@@ -161,6 +168,15 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
+            customHeadRender: ({index, ...column}, sortColumn) => {
+              return (
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
+                </TableCell>
+              )
+            },
           },
         },
         {
@@ -170,15 +186,33 @@ class MesheryResults extends Component {
             filter: false,
             sort: true,
             searchable: true,
+            customHeadRender: ({index, ...column}, sortColumn) => {
+              return (
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
+                </TableCell>
+              )
+            },
           },
         },
         {
           name: 'test_start_time',
-          label: 'StartTime',
+          label: 'Start Time',
           options: {
             filter: false,
             sort: true,
-            searchable: false,
+            searchable: true,
+            customHeadRender: ({index, ...column}, sortColumn) => {
+              return (
+                <TableCell key={index} onClick={() => sortColumn(index)}>
+                  <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc" }>
+                    <b>{column.label}</b>
+                  </TableSortLabel>
+                </TableCell>
+              )
+            },
             customBodyRender: (value) => (
               <Moment format="LLLL">{value}</Moment>
             ),
@@ -191,6 +225,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
         {
@@ -200,6 +241,13 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+              )
+            },
           },
         },
 
@@ -210,6 +258,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
           },
         },
 
@@ -220,6 +276,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
           },
         },
         {
@@ -228,6 +292,14 @@ class MesheryResults extends Component {
             filter: false,
             sort: false,
             searchable: false,
+            customHeadRender: ({index, ...column}) => {
+              return (
+                <TableCell key={index}>
+                  <b>{column.label}</b>
+                </TableCell>
+                
+              )
+            },
             customBodyRender: (value, tableMeta) => (
               <IconButton
                 aria-label="more"
@@ -256,7 +328,8 @@ class MesheryResults extends Component {
           });
         } else {
           Object.keys(results_selection[page]).forEach((ind) => {
-            rowsSelected.push(ind);
+            const val = parseInt(ind)
+            rowsSelected.push(val);
           });
         }
       });
@@ -267,8 +340,8 @@ class MesheryResults extends Component {
         search: !(user && user.user_id === 'meshery'),
         filterType: 'textField',
         responsive: 'scrollFullHeight',
-        // resizableColumns: true,
-        // selectableRows: true,
+        resizableColumns: true,
+        selectableRows: true,
         serverSide: true,
         count,
         rowsPerPage: pageSize,
@@ -377,7 +450,7 @@ class MesheryResults extends Component {
                   close={self.resetSelectedRowData()}
                 />
               )}
-          <MUIDataTable title="Performance Test Results" data={resultsForDisplay} columns={columns} options={options} />
+          <MUIDataTable title={<div className={classes.tableHeader}>Performance Test Results</div>} data={resultsForDisplay} columns={columns} options={options} />
         </NoSsr>
       );
     }

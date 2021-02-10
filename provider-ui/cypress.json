@@ -1,1 +1,9 @@
-{}
+{
+  "baseUrl": "http://localhost:3001",
+  "projectId": "gpe84y",
+  "env": {
+    "codeCoverage": {
+      "url": "/api/__coverage__"
+    }
+  }
+}

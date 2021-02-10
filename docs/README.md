@@ -1,7 +1,7 @@
 # Meshery Docs
 
 ![assets/img/docs-screenshot.png](assets/img/docs-screenshot.png)
-*Check out the [Meshery Docs](https://meshery.layer5.io/docs/)!*
+*Check out the [Meshery Docs](https://docs.meshery.io/)!*
 
 ## Contributing to the Meshery Documentation
 
@@ -11,9 +11,13 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 * *The Meshery Docs site is built using Jekyll - a simple static site generator! You can learn more about Jekyll and setting up your development environment in the [Jekyll Docs](https://jekyllrb.com/docs/).*
 
-Note: Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
-
 * First [install Ruby](https://jekyllrb.com/docs/installation/), then install Jekyll and Bundler.
+
+**Note:** Windows users can run Jekyll by following the [Windows Installation Guide](https://jekyllrb.com/docs/installation/windows/) and also installing Ruby Version Manager [RVM](https://rvm.io). RVM is a command-line tool which allows you to work with multiple Ruby environments on your local machine. Alternatively, if you're running Windows 10 version 1903 Build 18362 or higher, you can upgrade to Windows Subsystem for Linux [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and run Jekyll in Linux instead.
+
+  Alternatively, if you are running Windows 10, you may install the Windows Subsystem for Linux:
+
+  -  [WSL1](https://docs.microsoft.com/en-us/windows/wsl/install-win10)  for Windows build version 1607 or higher.
 
 ### 2. Get the code
 
@@ -36,7 +40,7 @@ Note: Windows users can run Jekyll by following the [Windows Installation Guide]
   ```bash
   $ make site
   ```
-  *Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`*
+  *Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production.*
 
 ### 4. Create a Pull Request
 

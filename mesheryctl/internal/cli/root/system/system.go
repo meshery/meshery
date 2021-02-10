@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,27 @@ package system
 import (
 	"fmt"
 
+	config "github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/context"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const (
-	url     = "http://localhost:9081"
-	fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	// TODO: `context` support for `system start` change the docker URL to dynamic URL
+	fileURL         = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+	manifestsURL    = "https://api.github.com/repos/layer5io/meshery/git/trees/3ba314a0870d5291be6216b4d60d2bc9675a39b2"
+	rawManifestsURL = "https://raw.githubusercontent.com/layer5io/meshery/master/install/deployment_yamls/k8s/"
+	gitHubFolder    = "https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s"
 )
 
 var (
 	availableSubcommands = []*cobra.Command{}
+	url                  = ""
+	overrideContext      = ""
 )
 
 // SystemCmd represents Meshery Lifecycle Management cli commands
@@ -41,6 +50,11 @@ var SystemCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+		url = mctlCfg.GetBaseMesheryURL()
 		return nil
 	},
 }
@@ -55,6 +69,10 @@ func init() {
 		statusCmd,
 		updateCmd,
 		configCmd,
+		context.ContextCmd,
+		completionCmd,
+		channelCmd,
 	}
+	SystemCmd.PersistentFlags().StringVarP(&overrideContext, "context", "c", "", "Override specified context with current context.")
 	SystemCmd.AddCommand(availableSubcommands...)
 }

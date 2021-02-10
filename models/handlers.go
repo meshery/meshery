@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -19,6 +20,8 @@ type HandlerInterface interface {
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
+	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ProviderComponentsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
@@ -31,10 +34,13 @@ type HandlerInterface interface {
 	InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	CollectStaticMetrics(config *SubmitMetricsConfig) error
 	FetchResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -69,6 +75,21 @@ type HandlerInterface interface {
 	UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ExportPatternFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ImportPatternFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
+	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -78,15 +99,13 @@ type HandlerConfig struct {
 
 	// SessionStore sessions.Store
 
-	// SaaSTokenName string
-	// SaaSBaseURL   string
-
 	AdapterTracker AdaptersTrackerInterface
 	QueryTracker   QueryTrackerInterface
 
 	Queue taskq.Queue
 
 	KubeConfigFolder string
+	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient

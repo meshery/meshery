@@ -10,9 +10,9 @@ metadata:
   name: meshery-osm
 spec:
   ports:
-    - name: "10010"
-      port: 10010
-      targetPort: 10010
+    - name: "10009"
+      port: 10009
+      targetPort: 10009
   selector:
     io.kompose.service: meshery-osm
 status:

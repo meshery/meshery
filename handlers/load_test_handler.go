@@ -17,15 +17,15 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/encoding/protojson"
-	v1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
-// LoadTestUsingSMPSHandler runs the load test with the given parameters and SMPS
-func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
+func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -49,7 +49,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
-	perfTest := &SMPS.PerformanceTestConfig{}
+	perfTest := &SMP.PerformanceTestConfig{}
 	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
 		msg := "unable to parse the provided input"
 		err = errors.Wrapf(err, msg)
@@ -72,7 +72,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 
 	testDuration, err := time.ParseDuration(perfTest.Duration)
 	if err != nil {
-		msg := "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management"
+		msg := "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"
 		err = errors.Wrapf(err, msg)
 		logrus.Error(err)
 		http.Error(w, msg, http.StatusBadRequest)
@@ -87,7 +87,7 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	testClient := perfTest.Clients[0]
 
 	// TODO: consider the multiple endpoints
-	loadTestOptions.URL = testClient.EndpointUrl[0]
+	loadTestOptions.URL = testClient.EndpointUrls[0]
 	loadTestOptions.HTTPNumThreads = int(testClient.Connections)
 	loadTestOptions.HTTPQPS = float64(testClient.Rps)
 
@@ -112,6 +112,8 @@ func (h *Handler) LoadTestUsingSMPSHandler(w http.ResponseWriter, req *http.Requ
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
@@ -218,6 +220,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	switch loadGenerator {
 	case models.Wrk2LG.Name():
 		loadTestOptions.LoadGenerator = models.Wrk2LG
+	case models.NighthawkLG.Name():
+		loadTestOptions.LoadGenerator = models.NighthawkLG
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
@@ -317,10 +321,12 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Message: "Load test completed, fetching metadata now",
 	}
 
+	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
+
 	if prefObj.K8SConfig != nil {
 		nodesChan := make(chan []*models.K8SNode)
 		versionChan := make(chan string)
-		installedMeshesChan := make(chan map[string][]v1.Deployment)
+		installedMeshesChan := make(chan map[string][]corev1.Pod)
 
 		go func() {
 			var nodes []*models.K8SNode
@@ -431,7 +437,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	}
 }
 
-// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to SaaS
+// CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
 	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()

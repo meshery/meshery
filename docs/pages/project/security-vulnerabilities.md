@@ -1,16 +1,17 @@
 ---
-layout: page
+layout: default
 title: Security Vulnerabilities
 permalink: project/security-vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
 ---
 
-# Reporting a vulnerability
+## Reporting a vulnerability
+
 We are very grateful to the security researchers and users that report
 back Meshery security vulnerabilities. We investigate every report thoroughly.
 
 To make a report, send an email to the private
-[meshery-security-vulns-reports@layer5.io](mailto:meshery-security-vulns-reports@layer5.io)
+[meshery-security-vulns-reports@meshery.dev](mailto:meshery-security-vulns-reports@meshery.dev)
 mailing list with the vulnerability details. For normal product bugs
 unrelated to latent security vulnerabilities, please head to
 the appropriate repository and submit a [new issue](https://github.com/layer5io/meshery/issues/new/choose).
@@ -32,7 +33,9 @@ Don't send a vulnerability report if:
 - You need help applying security related updates.
 - Your issue is not security related.
 
-## Evaluation
+Instead, join the [Layer5 Slack community](http://slack.layer5.io/) and ask questions.
+
+### Evaluation
 
 The Meshery team acknowledges and analyzes each vulnerability report within 10 working days.
 
@@ -42,19 +45,19 @@ projects. We only share the information as needed to fix the issue.
 
 We keep the reporter updated as the status of the security issue is addressed.
 
-## Fixing the issue
+### Fixing the issue
 
 Once a security vulnerability has been fully characterized, a fix is developed by the Meshery team.
 The development and testing for the fix happens in a private GitHub repository in order to prevent
 premature disclosure of the vulnerability.
 
-## Early disclosure
+### Early disclosures
 
 The Meshery project maintains a mailing list for private early disclosure of security vulnerabilities. 
 The list is used to provide actionable information to close Meshery partners. The list is not intended 
 for individuals to find out about security issues.
 
-## Public disclosure
+### Public disclosures
 
 On the day chosen for public disclosure, a sequence of activities takes place as quickly as possible:
 
@@ -64,10 +67,8 @@ branches.
 - Meshery team ensures all necessary binaries are promptly built and published.
 
 - Once the binaries are available, an announcement is sent out on the following channels:
+  - The [Meshery blog](https://meshery.io/blog/)
+  - The [Meshery Twitter feed](https://twitter.com/mesheryio)
+  - The [#announcements](https://layer5io.slack.com/archives/CSF3PSZT9) channel on [Layer5 Slack](http://slack.layer5.io/)
 
-    - The [Meshery blog](https://meshery.io/blog/)
-    - The [Meshery Twitter feed](https://twitter.com/mesheryio)
-    - The #announcements channel on Slack
-
-As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to
-upgrading to a fixed version. 
+As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version.

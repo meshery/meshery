@@ -1,4 +1,4 @@
-// Copyright 2019 The Meshery Authors
+// Copyright 2020 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,10 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return utils.PreReqCheck()
+		if overrideContext != "" {
+			return utils.PreReqCheck(cmd.Use, overrideContext)
+		}
+		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Stopping Meshery...")

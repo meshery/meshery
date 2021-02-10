@@ -11,7 +11,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// FetchResultsHandler fetchs pages of results from SaaS and presents it to the UI
+// FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
@@ -75,4 +75,21 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 	_, _ = w.Write(b)
+}
+
+// GetSmiResultsHandler gets the results of all the smi conformance tests
+func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	w.Header().Set("content-type", "application/json")
+	err := req.ParseForm()
+	if err != nil {
+		logrus.Errorf("Error: unable to parse form: %v", err)
+		http.Error(w, fmt.Sprintf(`{"error":"unable to process the received data","details":"%s"}`, err.Error()), http.StatusForbidden)
+	}
+	q := req.Form
+
+	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	if err != nil {
+		http.Error(w, fmt.Sprintf(`{"error":"error while getting smi test results","details":"%s"}`, err.Error()), http.StatusInternalServerError)
+	}
+	_, _ = w.Write(bdr)
 }

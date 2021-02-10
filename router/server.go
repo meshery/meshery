@@ -12,7 +12,7 @@ import (
 
 // Router represents Meshery router
 type Router struct {
-	s    *mux.Router
+	S    *mux.Router
 	port int
 }
 
@@ -25,6 +25,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
+		Methods("GET")
+	gMux.PathPrefix("/api/provider/extension").
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderComponentsHandler)))).
+		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
+	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler)))).
 		Methods("GET")
 	gMux.PathPrefix("/provider").
 		Handler(http.HandlerFunc(h.ProviderUIHandler)).
@@ -53,13 +58,18 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/perf/load-test", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestHandler)))).
 		Methods("GET", "POST")
-	gMux.Handle("/api/perf/load-test-smps", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestUsingSMPSHandler)))).
+	gMux.Handle("/api/perf/load-test-smps", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestUsingSMPHandler)))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/perf/load-test-prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LoadTestPrefencesHandler)))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/perf/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchResultsHandler)))).
 		Methods("GET")
 	gMux.Handle("/api/perf/result", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetResultHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/mesh", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSMPServiceMeshes)))).
+		Methods("GET")
+
+	gMux.Handle("/api/smi/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchSmiResultsHandler)))).
 		Methods("GET")
 
 	gMux.Handle("/api/mesh/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshAdapterConfigHandler))))
@@ -108,6 +118,25 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/prometheus/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPrometheusHandler))))
 
 	gMux.Handle("/api/promGrafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanPromGrafanaHandler))))
+
+	gMux.Handle("/api/experimental/patternfile/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
+		Methods("POST", "DELETE")
+	gMux.Handle("/api/experimental/patternfile/export/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExportPatternFile)))).
+		Methods("POST")
+	gMux.Handle("/api/experimental/patternfile/import/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportPatternFile)))).
+		Methods("POST")
+	gMux.Handle("/api/experimental/patternfile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
+		Methods("POST", "GET")
+	gMux.Handle("/api/experimental/patternfile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/experimental/patternfile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
+		Methods("DELETE")
+	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
+
+	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")
+	gMux.Handle("/api/system/operator", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorHandler)))).Methods("GET")
+	// experimental
+	gMux.Handle("/api/system/operator/results", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshSyncDataHandler)))).Methods("GET")
 
 	gMux.Handle("/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
@@ -158,7 +187,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 
 	return &Router{
-		s:    gMux,
+		S:    gMux,
 		port: port,
 	}
 }
@@ -174,5 +203,5 @@ func (r *Router) Run() error {
 	// 	IdleTimeout:    0, //time.Second,
 	// }
 	// return s.ListenAndServe()
-	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.s)
+	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.S)
 }

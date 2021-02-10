@@ -96,4 +96,4 @@ fi
 printf "Removing installation files and opening Meshery..."
 rm -rf meshery.zip LICENSE README.md
 
-mesheryctl system start
+mesheryctl system start --silent

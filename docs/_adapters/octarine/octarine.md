@@ -1,23 +1,34 @@
 ---
-layout: page
-title: Octarine Adapter
+layout: default
+title: Octarine
 name: Meshery Adapter for Octarine
 mesh_name: Octarine
 version: v1.0
 port: 10003/tcp
 project_status: stable
 github_link: https://github.com/layer5io/meshery-octarine
-image: /docs/assets/img/service-meshes/octarine.svg
+image: /assets/img/service-meshes/octarine.svg
+permalink: service-meshes/adapters/octarine
 ---
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
-
-### Lifecycle Management
+## Lifecycle Management
 
 The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}} service mesh. A number of sample applications for {{page.mesh_name}} can also be installed using Meshery.
+
+### Install {{ page.mesh_name }}
+
+##### **Choose the Meshery Adapter for {{ page.mesh_name }}**
+
+<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-adapter.png" />
+</a>
+
+##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
+
+<a href="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png">
+  <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/octarine/octarine-install.png" />
+</a>
 
 ### Features
 
@@ -51,20 +62,20 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 #### Control Plane
 
-![Alt text](./octarine_cparch.jpg?raw=true "Octarine Control Plane")
+[![Octarine Control Plane](./octarine_cparch.jpg?raw=true)](./octarine_cparch.jpg?raw=true)
 
 #### Data Plane
 
-![Alt text](./octarine_dparch.jpg?raw=true "Octarine Data Plane")
-
-### Suggested Topics
-
-- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
-- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
+[![Octarine Data Plane](./octarine_dparch.jpg?raw=true)](./octarine_dparch.jpg?raw=true)
 
 ### Sample Applications 
 
 The {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
 
-- [Istio BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
-    - This application is a polyglot composition of microservices are written in different languages and sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+    - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+
+### Suggested Topics
+
+- Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
+- Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).

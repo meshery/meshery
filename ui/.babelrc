@@ -1,3 +1,15 @@
 {
-    "presets": ["next/babel"]
+    "presets": ["next/babel"],
+    "plugins": [
+      "relay",
+      [
+        "istanbul",
+        {
+          "exclude": [
+            "**/*.spec.js",
+            "pages/_document.js"
+          ]
+        }
+      ]
+    ]
   }

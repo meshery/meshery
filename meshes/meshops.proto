@@ -10,6 +10,8 @@ service MeshService {
     rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
+
+    rpc ProcessOAM(ProcessOAMRequest) returns (ProcessOAMResponse) {}
 }
 
 message CreateMeshInstanceRequest {
@@ -49,7 +51,7 @@ message SupportedOperationsResponse {
 message SupportedOperation {
     string key = 1;
     string value = 2;
-    OpCategory category = 3; 
+    OpCategory category = 3;
 }
 
 enum OpCategory {
@@ -73,4 +75,16 @@ message EventsResponse {
     string summary = 2;
     string details = 3;
     string operation_id = 4;
+}
+
+message ProcessOAMRequest {
+    string username = 1;
+    bool delete_op = 2;
+
+    repeated string oam_comps = 3;
+    string oam_config = 4;
+}
+
+message ProcessOAMResponse {
+    string message = 1;
 }

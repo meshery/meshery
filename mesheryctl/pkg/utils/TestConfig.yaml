@@ -1,0 +1,23 @@
+contexts:
+  local:
+    endpoint: http://localhost:9081
+    token:
+      name: Default
+      location: auth.json
+    platform: docker
+    adapters:
+      - meshery-istio
+    channel: stable
+    version: v0.5.0-beta-1
+  gke:
+    endpoint: http://localhost:9081
+    token:
+      name: Default
+      location: auth.json
+    platform: gke
+    adapters:
+      - meshery-istio
+    channel: stable
+    version: v0.4.2
+
+current-context: local

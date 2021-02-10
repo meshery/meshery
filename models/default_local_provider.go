@@ -10,46 +10,73 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	SMPS "github.com/layer5io/service-mesh-performance-specification/spec"
+	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshsync/pkg/model"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
-	SaaSBaseURL           string
+	ProviderProperties
+	ProviderBaseURL       string
 	ResultPersister       *BitCaskResultsPersister
+	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
+	GenericPersister      database.Handler
+}
+
+// Initialize will initialize the local provider
+func (l *DefaultLocalProvider) Initialize() {
+	l.ProviderName = "None"
+	l.ProviderDescription = []string{
+		"Ephemeral sessions",
+		"Environment setup not saved",
+		"No performance test result history",
+		"Free Use",
+	}
+	l.ProviderType = LocalProviderType
+	l.PackageVersion = viper.GetString("BUILD")
+	l.PackageURL = ""
+	l.Extensions = Extensions{}
+	l.Capabilities = Capabilities{}
 }
 
 // Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
-	return "None"
+	return l.ProviderName
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
-func (l *DefaultLocalProvider) Description() string {
-	return `Provider: None
-	- ephemeral sessions
-	- environment setup not saved
-	- no performance test result history
-	- free use`
+func (l *DefaultLocalProvider) Description() []string {
+	return l.ProviderDescription
 }
 
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
-	return LocalProviderType
+	return l.ProviderType
 }
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
-	var result ProviderProperties
-	result.ProviderType = l.GetProviderType()
-	result.DisplayName = l.Name()
-	result.Description = l.Description()
-	result.Capabilities = make([]Capability, 0)
-	return result
+	return l.ProviderProperties
+}
+
+// PackageLocation returns an empty string as there is no extension package for
+// the local provider
+func (l *DefaultLocalProvider) PackageLocation() string {
+	return ""
+}
+
+// GetProviderCapabilities returns all of the provider properties
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(l.ProviderProperties); err != nil {
+		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+	}
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -157,10 +184,44 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	return key.String(), nil
 }
 
+// FetchSmiResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+	return l.SmiResultPersister.GetResults(pg, pgs)
+}
+
+// PublishSmiResults - publishes results to the provider backend synchronously
+func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, error) {
+	key, _ := uuid.NewV4()
+	result.ID = key
+	data, err := json.Marshal(result)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for persisting"))
+		return "", err
+	}
+
+	if err := l.SmiResultPersister.WriteResult(key, data); err != nil {
+		return "", err
+	}
+
+	return key.String(), nil
+}
+
 func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -178,7 +239,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		return "", nil
 	}
 	if resp.StatusCode == http.StatusCreated {
-		// logrus.Infof("results successfully published to SaaS")
+		// logrus.Infof("results successfully published to reomote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Warnf("unable to unmarshal body: %v", err)
@@ -205,8 +266,8 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
-	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -215,7 +276,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
+		logrus.Infof("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {
@@ -255,8 +316,8 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// SMPSTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig *SMPS.PerformanceTestConfig) (string, error) {
+// SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
+func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
@@ -271,8 +332,8 @@ func (l *DefaultLocalProvider) SMPSTestConfigStore(req *http.Request, perfConfig
 	return uid.String(), l.TestProfilesPersister.WriteTestConfig(uid, data)
 }
 
-// SMPSTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID string) (*SMPS.PerformanceTestConfig, error) {
+// SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
+func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
@@ -281,8 +342,8 @@ func (l *DefaultLocalProvider) SMPSTestConfigGet(req *http.Request, testUUID str
 	return l.TestProfilesPersister.GetTestConfig(uid)
 }
 
-// SMPSTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
-func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+// SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
+func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -298,12 +359,66 @@ func (l *DefaultLocalProvider) SMPSTestConfigFetch(req *http.Request, page, page
 	return l.TestProfilesPersister.GetTestConfigs(pg, pgs)
 }
 
-// SMPSTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPSTestConfigDelete(req *http.Request, testUUID string) error {
+// SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
+func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
 		return err
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
+}
+
+// SaveMesheryPattern saves given pattern with the provider
+func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
+	return nil, fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPatterns gives the patterns stored with the provider
+func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPattern gets pattern for the given patternID
+func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
+	result := l.GenericPersister.Create(&obj)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
+	objects := make([]model.Object, 0)
+	result := l.GenericPersister.
+		Preload("TypeMeta").
+		Preload("ObjectMeta").
+		Preload("ObjectMeta.Labels").
+		Preload("ObjectMeta.Annotations").
+		Preload("Spec").
+		Preload("Status").
+		Find(&objects)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return objects, nil
+}
+
+// GetGenericPersister - to return persister
+func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
 }
