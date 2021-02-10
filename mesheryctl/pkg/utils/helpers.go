@@ -693,3 +693,37 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 
 	return false
 }
+
+// CheckDockerComposeFile check if docker-compose.yaml exists, if not fetches the file based on current-context
+func CheckDockerComposeFile() error {
+	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+
+		currentContext := mctlCfg.CurrentContext
+
+		// get the channel and the version of the current context
+		currChannel := mctlCfg.Contexts[currentContext].Channel
+		currVersion := mctlCfg.Contexts[currentContext].Version
+		fileURL := ""
+
+		if currChannel == "edge" {
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+		} else if currChannel == "stable" {
+			if currVersion == "" {
+				currVersion, err = GetLatestStableReleaseTag()
+				if err != nil {
+					return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
+				}
+			}
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
+		}
+
+		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
+		}
+	}
+	return nil
+}
