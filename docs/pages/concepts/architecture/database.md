@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-## What are Meshery Adapters?
+## What is the Meshery Database?
 
 The Meshery Database offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats. 
 
