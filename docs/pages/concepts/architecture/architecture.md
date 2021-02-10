@@ -58,7 +58,8 @@ Meshery Operator is the multi-service mesh operator (a Kubernetes custom control
 See the [**Operator**]({{ site.baseurl }}/architecture/operator) section for more information on the function of an operator and [**MeshSync**]({{ site.baseurl }}/architecture/meshsync) section for more information on the function of meshsync.
 
 ## Meshery Database
-Meshery Database is responsible to persist and manage the state of meshery and its components.
+Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
+
 
 [![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
 
