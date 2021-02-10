@@ -69,14 +69,15 @@ See the [**Database**]({{ site.baseurl }}/architecture/database) section for mor
 
 Meshery uses the following list of network ports to interface with its various components:
 
-| Component                |    Port    |
-| :----------------------- | :--------: |
-| Meshery REST API         |  9081/tcp  |
-| Meshery GraphQL          |  9081/tcp  |
-| Meshery Operator NATS    |  4222/tcp  |
-| Learn Layer5 Application | 10011/tcp  |
-| Meshery Adapters         | 10000+/tcp |
-| Meshery Remote Providers |  443/tcp   |
+|       Component          |             Port                |
+| :----------------------- | :-----------------------------: |
+| Meshery REST API         |        9081/tcp                 |
+| Meshery GraphQL          |        9081/tcp                 |
+| Meshery Broker           |  4222/tcp, 6222/tcp, 8222/tcp   |
+|                          |  7777/tcp, 7422/tcp, 7522/tcp   |
+| Learn Layer5 Application |        10011/tcp                |
+| Meshery Adapters         |        10000+/tcp               |
+| Meshery Remote Providers |        443/tcp                  |
 
 ### **Adapter Ports**
 
