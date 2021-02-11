@@ -50,15 +50,15 @@ func resetMesheryConfig() error {
 		}
 
 		log.Info("Meshery resetting...\n")
-		log.Printf("Current Context: %s", currCtxName)
-		log.Printf("Channel: %s", currCtx.Channel)
-		log.Printf("Version: %s\n", currCtx.Version)
-		log.Printf("Fetching default docker-compose file at version: %s...\n", currCtx.Version)
-
-		err = utils.DownloadDockerComposeFile(tempContext, true)
+		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", currCtxName)
+		currVersion, err := utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
 			return errors.Wrap(err, "failed to fetch docker-compose file")
 		}
+
+		log.Printf("Current Context: %s", currCtxName)
+		log.Printf("Channel: %s", currCtx.Channel)
+		log.Printf("Version: %s\n", currVersion)
 
 		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	}
