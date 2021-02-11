@@ -694,19 +694,38 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 	return false
 }
 
-// CheckDockerComposeFile check if docker-compose.yaml exists, if not fetches the file based on current-context
-func CheckDockerComposeFile() error {
-	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+// GetCurrentContext returns the current context name and context struct
+func GetCurrentContext(tempContext string) (string, config.Context, error) {
+	// if the user has mentioned a temporary context in the -c flag, change the context and proceed to reset
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return "", config.Context{}, errors.Wrap(err, "error processing config")
+	}
+
+	if tempContext == "" {
+		return mctlCfg.CurrentContext, mctlCfg.Contexts[mctlCfg.CurrentContext], nil
+	}
+	if tempCtxtStruct, val := mctlCfg.Contexts[tempContext]; val {
+		return tempContext, tempCtxtStruct, nil
+	}
+	// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
+	log.Errorf("\n\"%s\" context does not exist. The available contexts are:", tempContext)
+	for context := range mctlCfg.Contexts {
+		log.Errorf("%s", context)
+	}
+	return "", config.Context{}, errors.Errorf("\n\"%s\" context does not exist", tempContext)
+}
+
+// DownloadDockerComposeFile check if docker-compose.yaml exists, if not fetches the correct file based on current-context
+func DownloadDockerComposeFile(tempContext string, force bool) error {
+	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
+		_, currCtx, err := GetCurrentContext(tempContext)
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return errors.Wrap(err, "failed to retrieve current-context")
 		}
-
-		currentContext := mctlCfg.CurrentContext
-
 		// get the channel and the version of the current context
-		currChannel := mctlCfg.Contexts[currentContext].Channel
-		currVersion := mctlCfg.Contexts[currentContext].Version
+		currChannel := currCtx.Channel
+		currVersion := currCtx.Version
 		fileURL := ""
 
 		if currChannel == "edge" {
@@ -719,6 +738,8 @@ func CheckDockerComposeFile() error {
 				}
 			}
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
+		} else {
+			return errors.Errorf("unknown channel %s", currChannel)
 		}
 
 		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
