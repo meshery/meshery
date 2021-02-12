@@ -34,6 +34,7 @@ RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 FROM ubuntu
 RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates
+COPY ./oam /app/oam
 COPY --from=meshery-server /meshery /app/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=ui /out /app/ui/out
