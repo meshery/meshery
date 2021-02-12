@@ -694,36 +694,39 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 	return false
 }
 
-// GetCurrentContext returns the current context name and context struct
+// GetCurrentContext returns the current context name and context struct.
+// If the user mentions a temporary context(tempCtxName) with -c flag, change the current-context and proceed to temporary-context
 func GetCurrentContext(tempCtxName string) (string, config.Context, error) {
-	// if the user has mentioned a temporary context in the -c flag, change the context and proceed to reset
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return "", config.Context{}, errors.Wrap(err, "error processing config")
 	}
 
-	if tempCtxName == "" {
-		return mctlCfg.CurrentContext, mctlCfg.Contexts[mctlCfg.CurrentContext], nil
+	if tempCtxName != "" {
+		mctlCfg.CurrentContext = tempCtxName
 	}
-	if tempCtxtStruct, val := mctlCfg.Contexts[tempCtxName]; val {
-		return tempCtxName, tempCtxtStruct, nil
+
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+	if err != nil {
+		// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
+		log.Errorf("\n\"%s\" context does not exist. The available contexts are:", mctlCfg.CurrentContext)
+		for context := range mctlCfg.Contexts {
+			log.Errorf("%s", context)
+		}
+		return "", config.Context{}, errors.New("context does not exist")
 	}
-	// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-	log.Errorf("\n\"%s\" context does not exist. The available contexts are:", tempCtxName)
-	for context := range mctlCfg.Contexts {
-		log.Errorf("%s", context)
-	}
-	return "", config.Context{}, errors.Errorf("\n\"%s\" context does not exist", tempCtxName)
+	return mctlCfg.CurrentContext, currCtx, nil
 }
 
-// DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists
+// DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
+// Use force to override download anyway
 func DownloadDockerComposeFile(ctx config.Context, force bool) (string, error) {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-			ctx.Version = "edge"
+			ctx.Version = "latest"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "" {
 				ctx.Version, err = GetLatestStableReleaseTag()
