@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -68,10 +69,23 @@ var (
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
+	// ManifestsFolder is where the Kubernetes manifests are stored
+	ManifestsFolder = "manifests"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
 	DefaultConfigPath = "config.yaml"
+	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
+	MesheryNamespace = "meshery"
+	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryDeployment = "meshery-deployment.yaml"
+	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryService = "meshery-service.yaml"
+	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
@@ -134,6 +148,9 @@ func SafeClose(co io.Closer) {
 		log.Error(cerr)
 	}
 }
+
+// TODO: Use the same DownloadFile function from MeshKit instead of the function below
+// and change all it's occurrences
 
 // DownloadFile from url and save to configured file location
 func DownloadFile(filepath string, url string) error {
@@ -234,6 +251,8 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
+	} else if mctlCfg.Contexts[focusedContext].Platform == "kubernetes" {
+
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
 	}
@@ -595,6 +614,54 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
+// ListManifests lists the manifest files stored in GitHub
+func ListManifests(url string) ([]Manifest, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	var manLis ManifestList
+
+	err = json.Unmarshal([]byte(body), &manLis)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	return manLis.Tree, nil
+}
+
+// GetManifestURL returns the URLs for the manifest files
+func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
+	var manifestURL string
+
+	if manifest.Typ == "blob" {
+		manifestURL = rawManifestsURL + manifest.Path
+		return manifestURL
+	}
+	return ""
+}
+
+// DownloadManifests downloads all the Kubernetes manifest files
+func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
+	for _, manifest := range manifestArr {
+		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
+			// download the manifest files to ~/.meshery/manifests folder
+			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
+			if err := DownloadFile(filepath, manifestFile); err != nil {
+				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
+			}
+		}
+	}
+	return nil
+}
+
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
 	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
@@ -614,4 +681,15 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 
 	return dat["tag_name"].(string), nil
+}
+
+// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
+func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
+	for _, v := range manifestArr {
+		if v.Path == adapterManifest {
+			return true
+		}
+	}
+
+	return false
 }
