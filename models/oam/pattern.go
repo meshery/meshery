@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -44,8 +45,6 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 		if svc.Traits == nil {
 			svc.Traits = map[string]interface{}{}
 		}
-
-		fmt.Printf("%+#v\n\n", svc)
 	}
 
 	return
@@ -132,16 +131,11 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 			continue
 		}
 
-		rand.Seed(time.Now().UnixNano())
-
 		elemData := cytoscapejs.ElemData{
 			ID: name, // Assuming that the service names are unique
 		}
 
-		elemPosition := cytoscapejs.Position{
-			X: float64(rand.Intn(100)),
-			Y: float64(rand.Intn(100)),
-		}
+		elemPosition := getCytoscapeJSPosition(svc)
 
 		elem := cytoscapejs.Element{
 			Data:       elemData,
@@ -203,10 +197,75 @@ func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
 			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
 		}
 
+		// Add other meshmap specific data into service
+		svc.Traits["meshmap"] = map[string]map[string]float64{
+			"position": {
+				"posX": elem.Position.X,
+				"posY": elem.Position.Y,
+			},
+		}
+
 		pf.Services[elem.Data.ID] = &svc
 	}
 
 	return pf, nil
+}
+
+func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
+	// Check if the service has "meshmap" as a trait
+	mpi, ok := svc.Traits["meshmap"]
+	if !ok {
+		rand.Seed(time.Now().UnixNano())
+		pos.X = float64(rand.Intn(100))
+		pos.Y = float64(rand.Intn(100))
+
+		return
+	}
+
+	mpStrInterface, ok := mpi.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		return
+	}
+
+	posInterface, ok := mpStrInterface["position"]
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface)
+		return
+	}
+
+	posMap, ok := posInterface.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %+#v", posInterface)
+		return
+	}
+
+	pos.X, ok = posMap["posX"].(float64)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+
+		// Attempt to cast as int
+		intX, ok := posMap["posX"].(int)
+		if !ok {
+			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+		}
+
+		pos.X = float64(intX)
+	}
+	pos.Y, ok = posMap["posY"].(float64)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+
+		// Attempt to cast as int
+		intY, ok := posMap["posY"].(int)
+		if !ok {
+			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+		}
+
+		pos.Y = float64(intY)
+	}
+
+	return
 }
 
 func notIn(name string, prohibited []string) bool {
