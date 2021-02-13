@@ -263,6 +263,8 @@ func start() error {
 							return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 						}
 					}
+				} else {
+					return errors.Errorf("unknown channel %s", ContextContent.Channel)
 				}
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
 			}
