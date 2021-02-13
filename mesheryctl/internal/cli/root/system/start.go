@@ -181,22 +181,21 @@ func start() error {
 		return errors.Wrap(err, "error processing config")
 	}
 
-	// TODO: Centralize docker-compose.yaml file pull for this and reset
 	// get the platform, channel and the version of the current context
-	currPlatform := mctlCfg.GetContextContent().Platform
-	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
-	// TODO: Context support for system start
-	// currChannel := mctlCfg.Contexts[currentContext].Channel
-	// currVersion := mctlCfg.Contexts[currentContext].Version
-	// fileURL := ""
+	// if a temp context is set using the -c flag, use it as the current context
+
+	currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
+	currPlatform := mctlCfg.Contexts[currCtxName].Platform
+	RequestedAdapters := mctlCfg.Contexts[currCtxName].Adapters // Requested Adapters / Services
 
 	// Deploy to platform specified in the config.yaml
 	switch currPlatform {
 	case "docker":
 
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
+			// download the docker-compose.yaml file corresponding to the current version
+			if _, err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
 			}
 		}
 
@@ -465,4 +464,5 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
+	startCmd.Flags().StringVarP(&tempContext, "context", "c", "", "(optional) set context to use temporarily.")
 }
