@@ -50,12 +50,13 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 
 // CheckIfCurrentContextIsValid checks if current context is valid
 func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
-	currentContext := mc.CurrentContext
-	if currentContext == "" {
+	if mc.CurrentContext == "" {
 		return Context{}, errors.New("current context not set")
 	}
-
-	return mc.Contexts[currentContext], nil
+	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
+		return ctx, nil
+	}
+	return Context{}, errors.New("current context:" + mc.CurrentContext + "does not exist")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
