@@ -693,3 +693,55 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 
 	return false
 }
+
+// GetCurrentContext returns the current context name and context struct.
+// If the user mentions a temporary context(tempCtxName) with -c flag, change the current-context and proceed to temporary-context
+func GetCurrentContext(tempCtxName string) (string, config.Context, error) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return "", config.Context{}, errors.Wrap(err, "error processing config")
+	}
+
+	if tempCtxName != "" {
+		mctlCfg.CurrentContext = tempCtxName
+	}
+
+	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
+	if err != nil {
+		// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
+		log.Errorf("\n\"%s\" context does not exist. The available contexts are:", mctlCfg.CurrentContext)
+		for context := range mctlCfg.Contexts {
+			log.Errorf("%s", context)
+		}
+		return "", config.Context{}, errors.New("context does not exist")
+	}
+	return mctlCfg.CurrentContext, currCtx, nil
+}
+
+// DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
+// Use force to override download anyway
+func DownloadDockerComposeFile(ctx config.Context, force bool) (string, error) {
+	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
+		fileURL := ""
+
+		if ctx.Channel == "edge" {
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+			ctx.Version = "latest"
+		} else if ctx.Channel == "stable" {
+			if ctx.Version == "" {
+				ctx.Version, err = GetLatestStableReleaseTag()
+				if err != nil {
+					return "", errors.Wrapf(err, SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
+				}
+			}
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
+		} else {
+			return "", errors.Errorf("unknown channel %s", ctx.Channel)
+		}
+
+		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+			return "", errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
+		}
+	}
+	return ctx.Version, nil
+}
