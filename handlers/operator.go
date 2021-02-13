@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 	"github.com/layer5io/meshsync/pkg/broker"
 	"github.com/layer5io/meshsync/pkg/broker/nats"
 	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/sirupsen/logrus"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -38,6 +40,25 @@ var (
 		Error:               "none",
 	}
 )
+
+type OperatorStatus string
+
+const (
+	// LoadTestError - respresents an error status
+	OperatorError OperatorStatus = "error"
+
+	// LoadTestInfo - represents a info status
+	OperatorInfo OperatorStatus = "info"
+
+	// LoadTestSuccess - represents a success status
+	OperatorSuccess OperatorStatus = "success"
+)
+
+type OperatorResponse struct {
+	Status  OperatorStatus `json:"status,omitempty"`
+	Message string         `json:"message,omitempty"`
+	Result  *Status        `json:"result,omitempty"`
+}
 
 type Status struct {
 	OperatorInstalled   string `json:"operator-installed,omitempty"`
@@ -81,11 +102,81 @@ func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request
 }
 
 func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	log := logrus.WithField("file", "operator_handler")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		log.Error("Event streaming not supported.")
+		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	notify := req.Context()
+	respChan := make(chan *OperatorResponse, 100)
+	endChan := make(chan struct{})
+	defer close(endChan)
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("Recovered from panic: %v.", r)
+			}
+		}()
+		for data := range respChan {
+			bd, err := json.Marshal(data)
+			if err != nil {
+				logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
+				http.Error(w, "error while invoking meshery Operator", http.StatusInternalServerError)
+				return
+			}
+
+			log.Debug("received new data on response channel")
+			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+			if flusher != nil {
+				flusher.Flush()
+				log.Debugf("Flushed the messages on the wire...")
+			}
+		}
+		endChan <- struct{}{}
+		log.Debug("response channel closed")
+	}()
+	go func() {
+		ctx := context.Background()
+		h.OperatorHandlerHelper(ctx, w, req, prefObj, user, provider, respChan)
+		close(respChan)
+	}()
+	select {
+	case <-notify.Done():
+		log.Debugf("received signal to close connection and channels")
+		break
+	case <-endChan:
+		log.Debugf("load test completed")
+	}
+
+}
+
+func (h *Handler) OperatorHandlerHelper(ctx context.Context, w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider, respChan chan *OperatorResponse) {
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Initiating Operator Execution . . . ",
+	}
 	datach := make(chan *broker.Message)
 
 	client, err := helpers.NewKubeClient(prefObj.K8SConfig.Config)
 	if err != nil {
 		fmt.Println(err)
+		respChan <- &OperatorResponse{
+			Status:  OperatorInfo,
+			Message: "Error Kube . . . ",
+		}
 		return
 	}
 	h.config.KubeClient = client
@@ -98,40 +189,61 @@ func (h *Handler) OperatorHandler(w http.ResponseWriter, req *http.Request, pref
 
 	go h.handleEvents(datach, provider)
 
-	go func(e bool, d chan *broker.Message) {
-		er := h.initialize(e)
-		if er != nil {
-			status.Error += er.Error()
-			return
+	er := h.initialize(!enable, respChan)
+	if er != nil {
+		status.Error = er.Error()
+		respChan <- &OperatorResponse{
+			Status:  OperatorError,
+			Message: "Error initialize...",
 		}
-
-		er = h.subscribeToBroker(d)
-		if er != nil {
-			status.Error += er.Error()
-			return
-		}
-
-		er = h.runMeshSync(e)
-		if er != nil {
-			status.Error += er.Error()
-			return
-		}
-	}(!enable, datach)
-
-	_, err = w.Write([]byte(`{"response": "ok"}`))
-	if err != nil {
-		fmt.Println(err)
 		return
+	}
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Install Operator...",
+	}
+
+	er = h.subscribeToBroker(datach, respChan)
+	if er != nil {
+		status.Error = er.Error()
+		respChan <- &OperatorResponse{
+			Status:  OperatorError,
+			Message: "Sub Error...",
+		}
+		return
+	}
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Sub Operator...",
+	}
+
+	er = h.runMeshSync(!enable, respChan)
+	if er != nil {
+		status.Error = er.Error()
+		respChan <- &OperatorResponse{
+			Status:  OperatorError,
+			Message: "Syync Error Operator...",
+		}
+		return
+	}
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Sync Operator...",
 	}
 }
 
-func (h *Handler) initialize(delete bool) error {
+func (h *Handler) initialize(delete bool, respChan chan *OperatorResponse) error {
 	// installOperator
 	err := h.applyYaml(delete, operatorYaml)
 	if err != nil {
 		return err
 	}
-	status.OperatorInstalled = "true"
+	status.OperatorInstalled = strconv.FormatBool(!delete)
+
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Install Operator...",
+	}
 
 	// installBroker
 	err = h.applyYaml(delete, brokerYaml)
@@ -143,11 +255,19 @@ func (h *Handler) initialize(delete bool) error {
 	return nil
 }
 
-func (h *Handler) subscribeToBroker(datach chan *broker.Message) error {
+func (h *Handler) subscribeToBroker(datach chan *broker.Message, respChan chan *OperatorResponse) error {
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "SubBroker Started...",
+	}
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&h.config.KubeClient.RestConfig)
 	if err != nil {
 		return err
+	}
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "MesehryClient Started...",
 	}
 
 	for {
@@ -170,16 +290,24 @@ func (h *Handler) subscribeToBroker(datach chan *broker.Message) error {
 	}
 
 	status.SubscriptionStarted = "true"
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Sub Started...",
+	}
 	return nil
 }
 
-func (h *Handler) runMeshSync(delete bool) error {
+func (h *Handler) runMeshSync(delete bool, respChan chan *OperatorResponse) error {
 	// installMeshSync
 	err := h.applyYaml(delete, meshsyncYaml)
 	if err != nil {
 		return err
 	}
 	status.MeshsyncInstalled = "true"
+	respChan <- &OperatorResponse{
+		Status:  OperatorInfo,
+		Message: "Install Operator...",
+	}
 	return nil
 }
 
