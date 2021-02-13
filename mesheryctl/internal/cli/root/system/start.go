@@ -254,6 +254,18 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
 			if v == "meshery" {
+				if ContextContent.Channel == "edge" {
+					ContextContent.Version = "latest"
+				} else if ContextContent.Channel == "stable" {
+					if ContextContent.Version == "" {
+						ContextContent.Version, err = utils.GetLatestStableReleaseTag()
+						if err != nil {
+							return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+						}
+					}
+				} else {
+					return errors.Errorf("unknown channel %s", ContextContent.Channel)
+				}
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
 			}
 			services[v] = temp
