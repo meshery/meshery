@@ -1,0 +1,111 @@
+- title: Documentation
+  url: ""
+  links:
+    - title: Overview
+      url: overview
+    - title: Project
+      url: project
+      children:
+        - title: Contributing
+          url: project/contributing
+        - title: Releases
+          url: project/releases
+        - title: Build & Release (CI)
+          url: project/build-and-release
+        - title: Vulnerabilities
+          url: project/security-vulnerabilities
+        - title: FAQ
+          url: project/faq
+    - title: Quick Start
+      url: installation/quick-start
+    - title: Supported Platforms
+      url: installation/platforms
+      children:
+        - title: AKS
+          url: installation/platforms/aks
+        - title: Docker
+          url: installation/platforms/docker
+        - title: EKS
+          url: installation/platforms/eks
+        - title: GKE
+          url: installation/platforms/gke
+        - title: KinD
+          url: installation/platforms/kind
+        - title: Kubernetes
+          url: installation/platforms/kubernetes
+        - title: Minikube
+          url: installation/platforms/minikube
+        - title: Windows
+          url: installation/platforms/windows
+    - title: Installing mesheryctl
+      url: installation/platforms/brew
+- title: Concepts
+  url: concepts
+  links:
+    - title: Architecture
+      url: concepts/architecture
+    - title: Adapters
+      url: concepts/architecture/adapters
+- title: Functionality
+  url: functionality
+  links:
+    - title: Lifecycle Management
+      url: functionality/lifecycle-management
+    - title: Performance Management
+      url: functionality/performance-management
+    - title: Service Mesh Interface (SMI)
+      url: functionality/service-mesh-interface
+- title: Service Meshes
+  url: service-meshes
+  links:
+    - title: App Mesh
+      url: service-meshes/adapters/app-mesh
+    - title: Citrix Service Mesh
+      url: service-meshes/adapters/cpx
+    - title: Consul
+      url: service-meshes/adapters/consul
+    - title: Istio
+      url: service-meshes/adapters/istio
+    - title: Kuma
+      url: service-meshes/adapters/kuma
+    - title: Linkerd
+      url: service-meshes/adapters/linkerd
+    - title: Network Service Mesh
+      url: service-meshes/adapters/nsm
+    - title: NGINX Service Mesh
+      url: service-meshes/adapters/nginx-sm
+    - title: Octarine
+      url: service-meshes/adapters/octarine
+    - title: Open Service Mesh
+      url: service-meshes/adapters/osm
+    - title: Tanzu
+      url: service-meshes/adapters/tanzu-sm
+    - title: Traefik Mesh
+      url: service-meshes/adapters/traefik-mesh
+- title: Guides
+  url: guides
+  links:
+    - title: Deploying Sample Applications
+      url: guides/sample-apps
+    - title: Integrating Prometheus and Grafana
+      url: guides/meshery-metrics
+    - title: Upgrading Meshery
+      url: guides/upgrade
+    - title: Using mesheryctl
+      url: guides/mesheryctl
+    - title: Using Multiple Meshery Adapters
+      url: guides/multiple-adapters
+- title: Extensibility
+  url: extensibility
+  links:
+    - title: "Service Mesh Adapters"
+      url: extensibility/adapters
+    - title: "Load Generators"
+      url: extensibility/load-generators
+    - title: "Providers"
+      url: extensibility/providers
+- title: Reference
+  url: reference
+  links:
+    - title: mesheryctl Command Reference
+      url: reference/mesheryctl
