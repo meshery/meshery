@@ -23,8 +23,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var tempContext string
-
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
@@ -63,8 +61,4 @@ func resetMesheryConfig() error {
 		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	}
 	return nil
-}
-
-func init() {
-	resetCmd.Flags().StringVarP(&tempContext, "context", "c", "", "context to reset from temporarily.")
 }
