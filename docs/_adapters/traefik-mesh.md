@@ -9,6 +9,9 @@ project_status: beta
 github_link: https://github.com/layer5io/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
+language: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

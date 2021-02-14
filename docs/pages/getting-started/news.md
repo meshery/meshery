@@ -1,6 +1,9 @@
 ---
 title: News
-permalink: /news/
+permalink: news/
+language: en
+lang: en
+categories: en
 excluded_in_search: true
 ---
 

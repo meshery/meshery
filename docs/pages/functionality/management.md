@@ -4,13 +4,15 @@ title: Lifecycle Management
 permalink: functionality/lifecycle-management
 type: functionality
 language: en
+lang: en
+categories: en
 list: include
 ---
 <a name="lifecycle-management"></a>
 
 # Service Mesh Lifecycle Management
 
-Meshery supports a number of [different service meshes]({{ site.baseurl }}/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
+Meshery supports a number of [different service meshes](installation/adapters), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
 
 ## Deploying a service mesh
 

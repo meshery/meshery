@@ -1,0 +1,15 @@
+global:
+  tagline: Русский
+  about: О нас
+  twitter: layer5
+  github: layer5io
+langs:
+  en: English
+  es: Español
+  tr: Turkish
+pages:
+  example: пример
+  docker_espanol: docker_espanol
+  includeexample: Следующий текст содержит изменяющийся тег-пареметр Jekyll
+titles:
+  pagination: Страницы

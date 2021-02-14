@@ -4,6 +4,9 @@ title: SOFAmesh
 name: Meshery Adapter for SOFAmesh
 project_status: 
 visibility: hidden
+language: en
+lang: en
+categories: en
 ---
 {% include adapter-status.html %}
 

@@ -6,6 +6,8 @@ type: Reference
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
 language: en
+lang: en
+categories: en
 list: include
 ---
 

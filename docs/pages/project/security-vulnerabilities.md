@@ -2,6 +2,9 @@
 layout: default
 title: Security Vulnerabilities
 permalink: project/security-vulnerabilities
+language: en
+lang: en
+categories: en
 description: How the Meshery team handles security vulnerabilities.
 ---
 

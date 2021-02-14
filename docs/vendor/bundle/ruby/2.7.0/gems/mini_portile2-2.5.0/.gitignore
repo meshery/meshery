@@ -1,0 +1,6 @@
+pkg
+tmp
+Gemfile.lock
+.bundle
+ports
+concourse/private.yml

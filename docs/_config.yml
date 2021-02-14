@@ -64,12 +64,14 @@ accentColor: red # purple, green, etc.
 themeColor: red # purple, green, blue, orange, purple, grey
 fixedNav: 'true' # true or false
 
-permalink: /:year/:title/
+# permalink: /:year/:title/ old
+permalink: /:categories/:title/
 markdown: kramdown
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 
 plugins:
   - jekyll-redirect-from
+#NO Plugins - jekyll-multiple-languages-plugin
 
 sass:
     sass_dir: _sass
@@ -87,16 +89,22 @@ collections:
   guides:
     output: true
     permalink: /:collection/:path
-  es:
-    output: true
-    permalink: /:collection/:path
+  # es:
+  #   output: true
+  #   permalink: _i18n/es/pages/:collection/:path
+  # en:
+  #   output: true
+  #   permalink: /:collection/:path
+  # tr:
+  #   output: true
+  #   permalink: _i18n/tr/pages/:collection/:path
   releases:
     output: true
     permalink: project/:collection/:path
-  mesheryctlcommands:
-    output: true
-    permalink: reference/mesheryctl/:collection/:path
-    name: mesheryctlcommands
+#   mesheryctlcommands:
+#     output: true
+#     permalink: reference/mesheryctl/:collection/:path
+#     name: mesheryctlcommands
 
 # Defaults
 defaults:
@@ -117,4 +125,9 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      
+
+
+
+# jekyll-multiple-languages-plugin settings:
+languages: ["en", "es", "tr"]
+exclude_from_localizations: ["javascript", "images"]

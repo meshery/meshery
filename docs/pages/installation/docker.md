@@ -1,10 +1,12 @@
 ---
 layout: default
 title: Docker
-permalink: installation/platforms/docker
 type: installation
 display-title: "false"
+permalink: installation/platforms/docker
 language: en
+lang: en
+categories: en
 list: include
 image: /assets/img/platforms/docker.svg
 ---

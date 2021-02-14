@@ -1,0 +1,69 @@
+% require "common_prelude.rb"
+
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+resources:
+<%= erbify_file "common_resources.yml" -%>
+  - name: mini_portile-pr
+    type: pull-request
+    source:
+      repo: flavorjones/mini_portile
+      access_token: ((github-repo-status-access-token))
+      ignore_paths: <%= $common_ignore_paths %>
+
+jobs:
+  - name: pr-pending
+    public: true
+    plan:
+      - get: ci
+      - get: mini_portile-pr
+        trigger: true
+        version: every
+      - put: mini_portile-pr
+        params: {path: mini_portile-pr, status: pending}
+
+% RUBIES[:mri].last(2).each do |ruby_version|
+  - name: ruby-<%= ruby_version %>-pr
+    public: true
+    serial_groups: [pr]
+    plan:
+      - get: ci
+      - get: mini_portile-pr
+        trigger: true
+        version: every
+        passed: [pr-pending]
+      - task: rake-test
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: ruby, tag: "<%= ruby_version %>"}
+          inputs:
+            - name: ci
+            - name: mini_portile-pr
+              path: mini_portile
+          run:
+            path: ci/concourse/tasks/rake-test/task.sh
+        on_failure:
+          put: mini_portile-pr
+          params: {path: mini_portile-pr, status: failure}
+% end
+
+  - name: pr-success
+    public: true
+    serial_groups: [pr]
+    disable_manual_trigger: true
+    plan:
+      - get: mini_portile-pr
+        trigger: true
+        version: every
+        passed:
+% RUBIES[:mri].last(2).each do |ruby_version|
+          - ruby-<%= ruby_version %>-pr
+% end
+      - put: mini_portile-pr
+        params: {path: mini_portile-pr, status: success}

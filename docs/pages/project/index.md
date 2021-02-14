@@ -2,6 +2,9 @@
 layout: default
 title: Layer5 Community
 permalink: project
+language: en
+lang: en
+categories: en
 description: Meshery Project
 ---
 

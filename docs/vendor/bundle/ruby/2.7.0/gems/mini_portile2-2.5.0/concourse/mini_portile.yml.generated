@@ -1,0 +1,50 @@
+
+resources:
+  - name: ci
+    type: git
+    source:
+      uri: https://github.com/flavorjones/mini_portile/
+      branch: master
+      disable_ci_skip: true # always get the latest pipeline configuration
+  - name: mini_portile
+    type: git
+    source:
+      uri: https://github.com/flavorjones/mini_portile/
+      branch: master
+      ignore_paths: ["CHANGELOG.md","README.md","concourse/**"]
+
+jobs:
+  - name: ruby-2.6
+    public: true
+    plan:
+      - get: ci
+      - get: mini_portile
+        trigger: true
+      - task: rake-test
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: ruby, tag: "2.6"}
+          inputs:
+            - name: ci
+            - name: mini_portile
+          run:
+            path: ci/concourse/tasks/rake-test/task.sh
+  - name: ruby-2.7
+    public: true
+    plan:
+      - get: ci
+      - get: mini_portile
+        trigger: true
+      - task: rake-test
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: ruby, tag: "2.7"}
+          inputs:
+            - name: ci
+            - name: mini_portile
+          run:
+            path: ci/concourse/tasks/rake-test/task.sh

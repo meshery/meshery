@@ -3,6 +3,9 @@ layout: default
 title: Using mesheryctl
 description: How to use mesheryctl
 permalink: guides/mesheryctl 
+language: en
+lang: en
+categories: en
 type: Guides
 ---
 

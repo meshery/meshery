@@ -1,0 +1,15 @@
+global:
+  tagline: English
+  about: About
+  twitter: layer5
+  github: layer5io
+langs:
+  en: English
+  es: Spanish
+  tr: Turkish
+pages:
+  example: example
+  docker_espanol: docker_espanol
+  includeexample: The following text is a Jekyll include liquid tag parameter
+titles:
+  pagination: Pagination

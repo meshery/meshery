@@ -4,6 +4,8 @@ title: Performance Management
 permalink: functionality/performance-management
 type: functionality
 language: en
+lang: en
+categories: en
 list: include
 ---
 

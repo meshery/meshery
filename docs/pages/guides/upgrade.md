@@ -3,9 +3,13 @@ layout: default
 title: Upgrade `mesheryctl` and Meshery
 description: How to Meshery and all of its components
 permalink: guides/upgrade
+language: en
+lang: en
+categories: en
 display-title: "false"
 type: Guides
 ---
+
 # Upgrading Meshery
 
 ## Upgrading Meshery Server, Adapters, and UI
@@ -74,7 +78,6 @@ Docker Deployment: Watchtower updates this component in accordance with the user
         <td> Static Extension: Integrators manage the lifecycle of their Meshery Extensions. Process is unique per provider.</td>
     </tr>
 </table>
-
 
 Sub-components deploy as a unit, however, they do not share the same version number.
 

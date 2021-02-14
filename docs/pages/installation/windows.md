@@ -5,6 +5,8 @@ permalink: installation/platforms/windows
 type: installation
 display-title: "false"
 language: en
+lang: en
+categories: en
 list: include
 image: /assets/img/platforms/wsl2.png
 ---

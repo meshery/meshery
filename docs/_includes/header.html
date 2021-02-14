@@ -1,9 +1,8 @@
 <header>
-  <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
-    <a class="navbar-brand" href="{{ site.baseurl }}/">
-      <div class="navbar-logo">
-        {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom"
-          >{{ site.title }}</span
+    <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="{{ site.baseurl }}/">
+            <div class="navbar-logo">
+                {% include meshery-logo-text.svg %}<span class="font-weight-bold" style="vertical-align: bottom">{{ site.title }}</span
         >
       </div>
     </a>
@@ -12,25 +11,23 @@
         <!-- {% if site.repo %}
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
         <a class="nav-link" href="{{ site.repo }}" target="_blank"><span>GitHub</span></a>
-      </li>{% endif %}  -->
+        </li>{% endif %} -->
 
         <!-- Internal links -->
         {% for link in site.data.navigation %}
         <li class="nav-item mr-4 mb-2 mb-lg-0">
-          <a
-            class="nav-link"
-            href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"
-            ><span>{{ link.title }}</span></a
+            <a class="nav-link" href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"><span>{{ link.title }}</span></a
           >
         </li>
         {% endfor %}
-      </ul>
-    </div>
 
-    <!--Search Bar
+        </ul>
+        </div>
+
+        <!--Search Bar
     <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
 
-    <!-- meshery-custom-begin
+        <!-- meshery-custom-begin
 
 	<div class="navbar-nav d-none d-lg-block">
           <a class="gh-source" data-gh-source="github" href="{{ site.repo }}" title="Go to repository" data-md-state="done">
@@ -38,11 +35,25 @@
             <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
             {{ site.github_user }}/{{ site.github_repo }}
           <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
-        </div>
-      </div>
+            </div>
+            </div>
 
-meshery-custom-end -->
-  </nav>
+            meshery-custom-end -->
+            <!-- LANG dropdown -->
+            <div class="version" class="nav-item  ml-md-auto ">
+                <span class="text-white text-bold">{% if site.data.languages.language_word == blank %}Language{% else %}{{ site.data.language.language_word }}{% endif %} </span>
+                <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="langSelection" id="langSelection">
+                <!-- TODO: poner la palabra language en el idioma que esté seleccionado -->
+                <option value="">lang</option>
+                <!-- {% assign sorted_versions = site.data.languages | sort: 'versioning' | reverse %} -->
+                {% for link in site.data.languages%}
+                  <option value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+                      <span>{{ link.title }}</span>
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+    </nav>
 </header>
 
 <!-- meshery-custom-begin
@@ -50,7 +61,7 @@ meshery-custom-end -->
 <script>
 $(document).ready(function() {
   var url = "https://api.github.com/search/repositories?q={{ site.github_user }}/{{ site.github_repo }}";
-  fetch(url, { 
+  fetch(url, {
       headers: {"Accept":"application/vnd.github.preview"}
   }).then(function(e) {
     return e.json()

@@ -9,6 +9,9 @@ project_status: alpha
 github_link: https://github.com/layer5io/meshery-tanzu-sm
 image: /assets/img/service-meshes/tanzu.svg
 permalink: service-meshes/adapters/tanzu-sm
+language: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

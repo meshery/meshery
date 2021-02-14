@@ -3,6 +3,9 @@ layout: default
 title: Using Metrics in Meshery
 description: How to connect and use Prometheus and Grafana metrics in Meshery
 permalink: guides/meshery-metrics
+language: en
+lang: en
+categories: en
 type: Guides
 ---
 

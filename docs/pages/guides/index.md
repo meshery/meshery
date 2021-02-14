@@ -3,10 +3,12 @@ layout: default
 title: Operation Guides
 permalink: guides
 language: en
+lang: en
+categories: en
 list: exclude
 ---
 
-Guides to using Meshery's various features and components. 
+Guides to using Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 

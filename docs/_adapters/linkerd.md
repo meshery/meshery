@@ -10,6 +10,9 @@ lab: linkerd-meshery-adapter
 github_link: https://github.com/layer5io/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
+language: en
+lang: en
+categories: en
 ---
 {% include adapter-status.html %}
 

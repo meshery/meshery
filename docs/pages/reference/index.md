@@ -3,6 +3,8 @@ layout: default
 title: Reference
 permalink: reference
 language: en
+lang: en
+categories: en
 list: exclude
 ---
 References for using Meshery's various features and components.

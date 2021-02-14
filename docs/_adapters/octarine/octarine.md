@@ -9,6 +9,9 @@ project_status: stable
 github_link: https://github.com/layer5io/meshery-octarine
 image: /assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
+language: en
+lang: en
+categories: en
 ---
 {% include adapter-status.html %}
 

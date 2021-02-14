@@ -10,6 +10,9 @@ lab: nsm-meshery-adapter
 github_link: https://github.com/layer5io/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
+language: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}
