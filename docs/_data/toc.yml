@@ -37,6 +37,8 @@
           url: installation/platforms/minikube
         - title: Windows
           url: installation/platforms/windows
+    - title: Installing mesheryctl
+      url: installation/platforms/brew
 - title: Concepts
   url: concepts
   links:
