@@ -194,11 +194,9 @@ func start() error {
 	switch currPlatform {
 	case "docker":
 
-		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			// download the docker-compose.yaml file corresponding to the current version
-			if _, err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
-			}
+		// download the docker-compose.yaml file corresponding to the current version
+		if _, err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
 		}
 
 		// Viper instance used for docker compose

@@ -15,9 +15,6 @@
 package system
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -41,11 +38,6 @@ var updateCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-			}
-		}
 		err := resetMesheryConfig()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
