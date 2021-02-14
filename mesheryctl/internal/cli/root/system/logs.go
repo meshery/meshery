@@ -43,6 +43,9 @@ var logsCmd = &cobra.Command{
 
 		// download(don't force) the docker-compose.yaml file corresponding to the current version
 		_, currCtx, err := utils.GetCurrentContext(tempContext)
+		if err != nil {
+			return errors.Wrap(err, "failed to retrieve current-context")
+		}
 		if _, err := utils.DownloadDockerComposeFile(currCtx, false); err != nil {
 			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
 		}
