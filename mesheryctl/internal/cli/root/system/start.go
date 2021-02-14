@@ -181,22 +181,23 @@ func start() error {
 		return errors.Wrap(err, "error processing config")
 	}
 
-	// TODO: Centralize docker-compose.yaml file pull for this and reset
 	// get the platform, channel and the version of the current context
-	currPlatform := mctlCfg.GetContextContent().Platform
-	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
-	// TODO: Context support for system start
-	// currChannel := mctlCfg.Contexts[currentContext].Channel
-	// currVersion := mctlCfg.Contexts[currentContext].Version
-	// fileURL := ""
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
+	if err != nil {
+		return err
+	}
+	currPlatform := mctlCfg.Contexts[currCtxName].Platform
+	RequestedAdapters := mctlCfg.Contexts[currCtxName].Adapters // Requested Adapters / Services
 
 	// Deploy to platform specified in the config.yaml
 	switch currPlatform {
 	case "docker":
 
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
+			// download the docker-compose.yaml file corresponding to the current version
+			if _, err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
 			}
 		}
 
@@ -235,9 +236,8 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract adapter version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -250,11 +250,26 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+				// if channel is edge, pick the edge-latest images
+				if currCtx.Channel == "edge" {
+					currCtx.Version = "latest"
+				} else if currCtx.Channel == "stable" {
+					// if the channel is stable, pick the image corresponding to version
+					// if no version is specified, pick the version of the latest stable release
+					if currCtx.Version == "" {
+						// pick the tag of the latest stable release
+						currCtx.Version, err = utils.GetLatestStableReleaseTag()
+						if err != nil {
+							return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+						}
+					}
+				} else {
+					return errors.Errorf("unknown channel %s", currCtx.Channel)
+				}
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -453,4 +468,5 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
+	startCmd.Flags().StringVarP(&tempContext, "context", "c", "", "(optional) set context to use temporarily.")
 }
