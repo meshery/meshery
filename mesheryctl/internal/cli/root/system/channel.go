@@ -52,7 +52,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err, "error processing config")
 		}
-		focusedContext := overrideContext
+		focusedContext := tempContext
 		if focusedContext == "" {
 			focusedContext = mctlCfg.CurrentContext
 		}
@@ -85,8 +85,8 @@ var setCmd = &cobra.Command{
 
 		focusedContext := mctlCfg.CurrentContext
 
-		if len(overrideContext) > 0 {
-			focusedContext = overrideContext
+		if len(tempContext) > 0 {
+			focusedContext = tempContext
 		}
 
 		channelVersion := args[0]
@@ -141,8 +141,8 @@ var switchCmd = &cobra.Command{
 	Long:  `Switch release channel and version of context in focus`,
 	Args:  cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if overrideContext != "" {
-			return utils.PreReqCheck(cmd.Use, overrideContext)
+		if tempContext != "" {
+			return utils.PreReqCheck(cmd.Use, tempContext)
 		}
 		return utils.PreReqCheck(cmd.Use, "")
 	},

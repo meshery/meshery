@@ -53,8 +53,8 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if overrideContext != "" {
-			return utils.PreReqCheck(cmd.Use, overrideContext)
+		if tempContext != "" {
+			return utils.PreReqCheck(cmd.Use, tempContext)
 		}
 		return utils.PreReqCheck(cmd.Use, "")
 	},
@@ -468,5 +468,4 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
-	startCmd.Flags().StringVarP(&tempContext, "context", "c", "", "(optional) set context to use temporarily.")
 }
