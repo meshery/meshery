@@ -183,7 +183,6 @@ func start() error {
 
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-
 	currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
 	currPlatform := mctlCfg.Contexts[currCtxName].Platform
 	RequestedAdapters := mctlCfg.Contexts[currCtxName].Adapters // Requested Adapters / Services
@@ -234,9 +233,8 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract adapter version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -249,23 +247,26 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
-				if ContextContent.Channel == "edge" {
-					ContextContent.Version = "latest"
-				} else if ContextContent.Channel == "stable" {
-					if ContextContent.Version == "" {
-						ContextContent.Version, err = utils.GetLatestStableReleaseTag()
+				// if channel is edge, pick the edge-latest images
+				if currCtx.Channel == "edge" {
+					currCtx.Version = "latest"
+				} else if currCtx.Channel == "stable" {
+					// if the channel is stable, pick the image corresponding to version
+					// if no version is specified, pick the version of the latest stable release
+					if currCtx.Version == "" {
+						// pick the tag of the latest stable release
+						currCtx.Version, err = utils.GetLatestStableReleaseTag()
 						if err != nil {
 							return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 						}
 					}
 				} else {
-					return errors.Errorf("unknown channel %s", ContextContent.Channel)
+					return errors.Errorf("unknown channel %s", currCtx.Channel)
 				}
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
