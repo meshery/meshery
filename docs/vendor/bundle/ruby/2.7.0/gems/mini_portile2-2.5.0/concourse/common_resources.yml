@@ -1,6 +1,0 @@
-  - name: ci
-    type: git
-    source:
-      uri: https://github.com/flavorjones/mini_portile/
-      branch: master
-      disable_ci_skip: true # always get the latest pipeline configuration
