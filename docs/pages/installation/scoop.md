@@ -10,7 +10,7 @@ list: include
 
 {% include installation_prerequisites.html %}
 
-Meshery can now be installed via Scoop (a package manager for Windows, just like apt for Ubuntu) You need to have `scoop` installed on your Windows system to perform these actions.
+Meshery can now be installed via Scoop (a package manager for Windows, just like apt for Ubuntu) You need to have `scoop` installed on your Windows to perform these actions.
 
 ### Install Meshery using Scoop
 To install `mesheryctl` using Scoop, execute the following commands.
