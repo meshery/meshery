@@ -12,6 +12,7 @@ import (
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshery/internal/graphql"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/router"
@@ -143,6 +144,12 @@ func main() {
 		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
 		GenericPersister:       dbHandler,
+		GraphqlHandler: graphql.New(graphql.Options{
+			DBHandler: &dbHandler,
+		}),
+		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
+			URL: "/api/system/graphql/query",
+		}),
 	}
 	lProv.Initialize()
 	provs[lProv.Name()] = lProv
@@ -170,6 +177,12 @@ func main() {
 			ProviderVersion:            "v0.3.14",
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
+			GraphqlHandler: graphql.New(graphql.Options{
+				DBHandler: &dbHandler,
+			}),
+			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
+				URL: "/api/system/graphql/query",
+			}),
 		}
 
 		cp.Initialize()

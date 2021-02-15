@@ -1,0 +1,9 @@
+type OperatorStatus {
+	core: Status
+	controllers: [OperatorComponentStatus!]!
+}
+
+type OperatorComponentStatus {
+	name: String
+	status: Status
+}

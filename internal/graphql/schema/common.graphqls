@@ -1,0 +1,32 @@
+enum MeshType {
+	ALL
+	NONE
+
+	ISTIO
+	LINKERD
+	CONSUL
+	OCTARINE
+	TRAEFIK
+	OPENSERVICEMESH
+	KUMA
+	NGINXSM
+	NETWORKSM
+	CITRIXSM
+}
+
+enum Status {
+	ENABLED
+	DISABLED
+	UNKNOWN
+}
+
+enum Result {
+	SUCCEEDED
+	FAILED
+}
+
+type StatusResponse {
+	state: Status
+	result: Result
+	description: String!
+}

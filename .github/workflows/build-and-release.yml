@@ -84,3 +84,15 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+  trigger:
+    name: trigger publish actions
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: trigger packages publish
+      uses: kumarabd/trigger-remote-action@master
+      with:
+        name: "Build and Publish"
+        repo: layer5labs/meshery-extensions
+        token: ${{ secrets.GLOBAL_PAT }}
+        version: ${GITHUB_REF/refs\/tags\//}

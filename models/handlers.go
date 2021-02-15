@@ -79,6 +79,7 @@ type HandlerInterface interface {
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 
+	GraphqlSystemHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

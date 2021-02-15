@@ -1,33 +1,15 @@
+type Query {
+	getAvailableAddons(selector: MeshType): [AddonList!]!
+    getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
+}
+
+type Mutation {
+	changeAddonStatus(selector: MeshType, targetStatus: Status): StatusResponse
+	changeOperatorStatus(targetStatus: Status): StatusResponse
+}
+
 type Subscription {
-    controlPlane(filter: ControlPlaneFilter): [ControlPlane!]!
-}
-
-input ControlPlaneFilter {
-    type: MeshType
-}
-
-type ControlPlane {
-	type: String!
-	members: [ControlPlaneMember!]!
-}
-
-type ControlPlaneMember {
-	name: String!
-	status: String!
-}
-
-enum MeshType {
-	ALL
-	NONE
-
-	ISTIO
-	LINKERD
-	CONSUL
-	OCTARINE
-	TRAEFIK
-	OPENSERVICEMESH
-	KUMA
-	NGINXSM
-	NETWORKSM
-	CITRIXSM
+    listenToAddonEvents(selector: MeshType): [AddonList!]!
+    listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToOperatorEvents: [OperatorStatus!]!
 }

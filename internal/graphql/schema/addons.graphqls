@@ -1,0 +1,17 @@
+enum AddonSelector {
+	PROMETHEUS
+	GRAFANA
+	ZIPKIN
+	JAEGER
+}
+
+type AddonList {
+	type: AddonSelector
+	status: Status
+	config: [AddonConfig!]!
+}
+
+type AddonConfig {
+	serviceName: String!
+	endpoint: String!
+}

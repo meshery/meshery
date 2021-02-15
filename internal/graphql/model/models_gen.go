@@ -8,8 +8,20 @@ import (
 	"strconv"
 )
 
+type AddonConfig struct {
+	ServiceName string `json:"serviceName"`
+	Endpoint    string `json:"endpoint"`
+}
+
+type AddonList struct {
+	Type   *AddonSelector `json:"type"`
+	Status *Status        `json:"status"`
+	Config []*AddonConfig `json:"config"`
+}
+
 type ControlPlane struct {
-	Type    string                `json:"type"`
+	Name    *MeshType             `json:"name"`
+	Version string                `json:"version"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
@@ -18,8 +30,69 @@ type ControlPlaneFilter struct {
 }
 
 type ControlPlaneMember struct {
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	Component string  `json:"component"`
+	Status    *Status `json:"status"`
+}
+
+type OperatorComponentStatus struct {
+	Name   *string `json:"name"`
+	Status *Status `json:"status"`
+}
+
+type OperatorStatus struct {
+	Core        *Status                    `json:"core"`
+	Controllers []*OperatorComponentStatus `json:"controllers"`
+}
+
+type StatusResponse struct {
+	State       *Status `json:"state"`
+	Result      *Result `json:"result"`
+	Description string  `json:"description"`
+}
+
+type AddonSelector string
+
+const (
+	AddonSelectorPrometheus AddonSelector = "PROMETHEUS"
+	AddonSelectorGrafana    AddonSelector = "GRAFANA"
+	AddonSelectorZipkin     AddonSelector = "ZIPKIN"
+	AddonSelectorJaeger     AddonSelector = "JAEGER"
+)
+
+var AllAddonSelector = []AddonSelector{
+	AddonSelectorPrometheus,
+	AddonSelectorGrafana,
+	AddonSelectorZipkin,
+	AddonSelectorJaeger,
+}
+
+func (e AddonSelector) IsValid() bool {
+	switch e {
+	case AddonSelectorPrometheus, AddonSelectorGrafana, AddonSelectorZipkin, AddonSelectorJaeger:
+		return true
+	}
+	return false
+}
+
+func (e AddonSelector) String() string {
+	return string(e)
+}
+
+func (e *AddonSelector) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AddonSelector(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AddonSelector", str)
+	}
+	return nil
+}
+
+func (e AddonSelector) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type MeshType string
@@ -80,5 +153,89 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Result string
+
+const (
+	ResultSucceeded Result = "SUCCEEDED"
+	ResultFailed    Result = "FAILED"
+)
+
+var AllResult = []Result{
+	ResultSucceeded,
+	ResultFailed,
+}
+
+func (e Result) IsValid() bool {
+	switch e {
+	case ResultSucceeded, ResultFailed:
+		return true
+	}
+	return false
+}
+
+func (e Result) String() string {
+	return string(e)
+}
+
+func (e *Result) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Result(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Result", str)
+	}
+	return nil
+}
+
+func (e Result) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Status string
+
+const (
+	StatusEnabled  Status = "ENABLED"
+	StatusDisabled Status = "DISABLED"
+	StatusUnknown  Status = "UNKNOWN"
+)
+
+var AllStatus = []Status{
+	StatusEnabled,
+	StatusDisabled,
+	StatusUnknown,
+}
+
+func (e Status) IsValid() bool {
+	switch e {
+	case StatusEnabled, StatusDisabled, StatusUnknown:
+		return true
+	}
+	return false
+}
+
+func (e Status) String() string {
+	return string(e)
+}
+
+func (e *Status) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Status(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Status", str)
+	}
+	return nil
+}
+
+func (e Status) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

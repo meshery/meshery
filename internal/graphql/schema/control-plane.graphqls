@@ -1,0 +1,14 @@
+input ControlPlaneFilter {
+    type: MeshType
+}
+
+type ControlPlane {
+	name: MeshType
+	version: String!
+	members: [ControlPlaneMember!]!
+}
+
+type ControlPlaneMember {
+	component: String!
+	status: Status
+}

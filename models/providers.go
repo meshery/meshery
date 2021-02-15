@@ -192,4 +192,6 @@ type Provider interface {
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
+	GetGraphqlHandler() http.Handler
+	GetGraphqlPlayground() http.Handler
 }
