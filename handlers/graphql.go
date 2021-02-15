@@ -7,7 +7,6 @@ import (
 )
 
 func (h *Handler) GraphqlSystemHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-
 	queryEndpoint := "/api/system/graphql/query"
 	playgroundEndpoint := "/api/system/graphql/playground"
 
