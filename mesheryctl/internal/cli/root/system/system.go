@@ -37,7 +37,8 @@ const (
 var (
 	availableSubcommands = []*cobra.Command{}
 	url                  = ""
-	overrideContext      = ""
+	// flag to change the current context to a temporary context
+	tempContext = ""
 )
 
 // SystemCmd represents Meshery Lifecycle Management cli commands
@@ -73,6 +74,7 @@ func init() {
 		completionCmd,
 		channelCmd,
 	}
-	SystemCmd.PersistentFlags().StringVarP(&overrideContext, "context", "c", "", "Override specified context with current context.")
+	// --context flag to temporarily change context. This is global to all system commands
+	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")
 	SystemCmd.AddCommand(availableSubcommands...)
 }
