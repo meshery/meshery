@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-MeshSync is a custom kubernetes controller that empowers synchronization of the state of the cluster with Meshery server.
+MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes cluster, service meshes, and their workloads.
 
 ## What are its core responsibilities?
 

@@ -34,8 +34,8 @@ var updateCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if overrideContext != "" {
-			return utils.PreReqCheck(cmd.Use, overrideContext)
+		if tempContext != "" {
+			return utils.PreReqCheck(cmd.Use, tempContext)
 		}
 		return utils.PreReqCheck(cmd.Use, "")
 	},

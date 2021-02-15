@@ -1,9 +1,15 @@
 package oam
 
 import (
+	"encoding/json"
 	"fmt"
+	"math/rand"
+	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	"github.com/sirupsen/logrus"
+	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -39,8 +45,6 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 		if svc.Traits == nil {
 			svc.Traits = map[string]interface{}{}
 		}
-
-		fmt.Printf("%+#v\n\n", svc)
 	}
 
 	return
@@ -48,8 +52,8 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 
 // GetApplicationComponent generates OAM Application Components from the
 // the given Pattern file
-func (af *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, error) {
-	svc, ok := af.Services[name]
+func (p *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, error) {
+	svc, ok := p.Services[name]
 	if !ok {
 		return v1alpha1.Component{}, fmt.Errorf("invalid service name")
 	}
@@ -68,14 +72,14 @@ func (af *Pattern) GetApplicationComponent(name string) (v1alpha1.Component, err
 
 // GenerateApplicationConfiguration generates OAM Application Configuration from the
 // the given Pattern file for a particular deploymnet
-func (af *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, error) {
+func (p *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, error) {
 	config := v1alpha1.Configuration{
 		TypeMeta:   v1.TypeMeta{Kind: "ApplicationConfiguration", APIVersion: "core.oam.dev/v1alpha2"},
-		ObjectMeta: v1.ObjectMeta{Name: af.Name},
+		ObjectMeta: v1.ObjectMeta{Name: p.Name},
 	}
 
 	// Create configs for each component
-	for k, v := range af.Services {
+	for k, v := range p.Services {
 		// Indicates that map for properties is not empty
 		if len(v.Traits) > 0 {
 			specComp := v1alpha1.ConfigurationSpecComponent{
@@ -106,49 +110,170 @@ func (af *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, e
 }
 
 // GetServiceType returns the type of the service
-func (af *Pattern) GetServiceType(name string) string {
-	return af.Services[name].Type
+func (p *Pattern) GetServiceType(name string) string {
+	return p.Services[name].Type
 }
 
-// RecursiveCastMapStringInterfaceToMapStringInterface will convert a
-// map[string]interface{} recursively => map[string]interface{}
-func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(in)
-	out, ok := res.(map[string]interface{})
+// ToCytoscapeJS converts pattern file into cytoscape object
+func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
+	var cy cytoscapejs.GraphElem
+
+	// Not specifying any cytoscapejs layout
+	// should fallback to "default" layout
+
+	// Not specifying styles, may get applied on the
+	// client side
+
+	// Set up the nodes
+	for name, svc := range p.Services {
+		// Skip if type is either prometheus or grafana
+		if !notIn(svc.Type, []string{"prometheus", "grafana"}) {
+			continue
+		}
+
+		elemData := cytoscapejs.ElemData{
+			ID: name, // Assuming that the service names are unique
+		}
+
+		elemPosition := getCytoscapeJSPosition(svc)
+
+		elem := cytoscapejs.Element{
+			Data:       elemData,
+			Position:   &elemPosition,
+			Selectable: true,
+			Grabbable:  true,
+			Scratch: map[string]Service{
+				"_data": *svc,
+			},
+		}
+
+		cy.Elements = append(cy.Elements, elem)
+	}
+
+	return cy, nil
+}
+
+// ToYAML converts a patternfile to yaml
+func (p *Pattern) ToYAML() ([]byte, error) {
+	return yaml.Marshal(p)
+}
+
+// NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
+// and creates a PatternFile from it
+func NewPatternFileFromCytoscapeJSJSON(byt []byte) (Pattern, error) {
+	// Unmarshal data into cytoscape struct
+	var cy cytoscapejs.GraphElem
+	if err := json.Unmarshal(byt, &cy); err != nil {
+		return Pattern{}, err
+	}
+
+	// Convert cytoscape struct to patternfile
+	pf := Pattern{
+		Name:     "MesheryGeneratedPatternFile",
+		Services: make(map[string]*Service),
+	}
+	for _, elem := range cy.Elements {
+		// Try to create Service object from the elem.scratch's _data field
+		// if this fails then immediately fail the process and return an error
+		castedScratch, ok := elem.Scratch.(map[string]interface{})
+		if !ok {
+			return pf, fmt.Errorf("empty scratch field is not allowed, must containe \"_data\" field holding metadata")
+		}
+
+		data, ok := castedScratch["_data"]
+		if !ok {
+			return pf, fmt.Errorf("\"_data\" cannot be empty")
+		}
+
+		// Convert data to JSON for easy serialization
+		svcByt, err := json.Marshal(&data)
+		if err != nil {
+			return pf, fmt.Errorf("failed to serialize service from the metadata in the scratch")
+		}
+
+		// Unmarshal the JSON into a service
+		var svc Service
+		if err := json.Unmarshal(svcByt, &svc); err != nil {
+			return pf, fmt.Errorf("failed to create service from the metadata in the scratch")
+		}
+
+		// Add other meshmap specific data into service
+		svc.Traits["meshmap"] = map[string]map[string]float64{
+			"position": {
+				"posX": elem.Position.X,
+				"posY": elem.Position.Y,
+			},
+		}
+
+		pf.Services[elem.Data.ID] = &svc
+	}
+
+	return pf, nil
+}
+
+func getCytoscapeJSPosition(svc *Service) (pos cytoscapejs.Position) {
+	// Check if the service has "meshmap" as a trait
+	mpi, ok := svc.Traits["meshmap"]
 	if !ok {
-		fmt.Println("failed to cast")
+		rand.Seed(time.Now().UnixNano())
+		pos.X = float64(rand.Intn(100))
+		pos.Y = float64(rand.Intn(100))
+
+		return
 	}
 
-	return out
+	mpStrInterface, ok := mpi.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		return
+	}
+
+	posInterface, ok := mpStrInterface["position"]
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface)
+		return
+	}
+
+	posMap, ok := posInterface.(map[string]interface{})
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %+#v", posInterface)
+		return
+	}
+
+	pos.X, ok = posMap["posX"].(float64)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+
+		// Attempt to cast as int
+		intX, ok := posMap["posX"].(int)
+		if !ok {
+			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+		}
+
+		pos.X = float64(intX)
+	}
+	pos.Y, ok = posMap["posY"].(float64)
+	if !ok {
+		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+
+		// Attempt to cast as int
+		intY, ok := posMap["posY"].(int)
+		if !ok {
+			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+		}
+
+		pos.Y = float64(intY)
+	}
+
+	return
 }
 
-// ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
-//
-// It will also convert []interface{} => []string
-func ConvertMapInterfaceMapString(v interface{}) interface{} {
-	switch x := v.(type) {
-	case map[interface{}]interface{}:
-		m := map[string]interface{}{}
-		for k, v2 := range x {
-			switch k2 := k.(type) {
-			case string:
-				m[k2] = ConvertMapInterfaceMapString(v2)
-			default:
-				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2)
-			}
-		}
-		v = m
-
-	case []interface{}:
-		for i, v2 := range x {
-			x[i] = ConvertMapInterfaceMapString(v2)
-		}
-
-	case map[string]interface{}:
-		for k, v2 := range x {
-			x[k] = ConvertMapInterfaceMapString(v2)
+func notIn(name string, prohibited []string) bool {
+	for _, p := range prohibited {
+		if strings.HasPrefix(strings.ToLower(name), p) {
+			return false
 		}
 	}
 
-	return v
+	return true
 }

@@ -24,6 +24,16 @@ type compConfigPair struct {
 	Hosts         map[string]bool
 }
 
+// patternCallType is custom type for pattern
+// based calls on the adapter
+type patternCallType string
+
+const (
+	rawAdapter patternCallType = "<raw-adapter>"
+	noneLocal  patternCallType = "<none-local>"
+	oamAdapter patternCallType = ""
+)
+
 // policies are hardcoded here BUT they should be
 // fetched from a "service registry" as soon as we have
 // one
@@ -138,10 +148,12 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
 func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
 	if typ == "workload" {
 		res := OAM.GetWorkloads()
 
-		enc := json.NewEncoder(rw)
 		if err := enc.Encode(res); err != nil {
 			logrus.Error("failed to encode workload definitions")
 		}
@@ -282,12 +294,21 @@ func handleCompConfigPairAction(
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(10 * time.Microsecond)
 
+		callType := oamAdapter
+		if strings.HasPrefix(host, string(rawAdapter)) {
+			callType = rawAdapter
+		}
+		if strings.HasPrefix(host, string(noneLocal)) {
+			callType = noneLocal
+		}
+
 		msg, err := executeAction(
 			ctx,
 			prefObj,
 			host,
 			user.UserID,
 			isDel,
+			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
 		)
@@ -354,6 +375,7 @@ func executeAction(
 	adapter,
 	userID string,
 	delete bool,
+	callType patternCallType,
 	oamComps []string,
 	oamConfig string,
 ) (string, error) {
@@ -365,6 +387,10 @@ func executeAction(
 		return "", fmt.Errorf("no valid kubernetes config found")
 	}
 
+	if callType == noneLocal {
+		return "success", nil
+	}
+
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, adapter)
 	if err != nil {
 		return "", fmt.Errorf("error creating a mesh client: %v", err)
@@ -373,14 +399,29 @@ func executeAction(
 		_ = mClient.Close()
 	}()
 
-	resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
-		Username:  userID,
-		DeleteOp:  delete,
-		OamComps:  oamComps,
-		OamConfig: oamConfig,
-	})
+	if callType == rawAdapter {
+		resp, err := mClient.MClient.ApplyOperation(ctx, &meshes.ApplyRuleRequest{
+			Username:  userID,
+			DeleteOp:  delete,
+			OpName:    "custom",
+			Namespace: "",
+		})
 
-	return resp.GetMessage(), err
+		return resp.String(), err
+	}
+
+	if callType == oamAdapter {
+		resp, err := mClient.MClient.ProcessOAM(ctx, &meshes.ProcessOAMRequest{
+			Username:  userID,
+			DeleteOp:  delete,
+			OamComps:  oamComps,
+			OamConfig: oamConfig,
+		})
+
+		return resp.GetMessage(), err
+	}
+
+	return "", fmt.Errorf("invalid")
 }
 
 func mergeErrors(errs []error) error {
