@@ -74,7 +74,7 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- docker network connect bridge <container name of the desired adapter>
+ docker network connect bridge &lt container name of the desired adapter &gt
  </div></div>
  </pre>
 
@@ -91,7 +91,7 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  </div></div>
  </pre>
 **Optionally configure Meshery to use minikube through the Web UI** :
-1. Run the below command to generate the *"config_minikube.yaml"* file for your cluster:
+* Run the below command to generate the *"config_minikube.yaml"* file for your cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -99,7 +99,7 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  </div></div>
  </pre>
  
-2. Upload the generated config file by navigating to *Settings > Environment > Out of Cluster Deployment* in the Web UI and using the *"Upload kubeconfig"* option.
+* Upload the generated config file by navigating to *Settings > Environment > Out of Cluster Deployment* in the Web UI and using the *"Upload kubeconfig"* option.
 
 ### Manual Steps
 
