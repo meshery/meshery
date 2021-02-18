@@ -34,20 +34,13 @@ type ControlPlaneMember struct {
 	Status    *Status `json:"status"`
 }
 
-type OperatorComponentStatus struct {
+type OperatorControllerStatus struct {
 	Name   *string `json:"name"`
 	Status *Status `json:"status"`
 }
 
 type OperatorStatus struct {
-	Core        *Status                    `json:"core"`
-	Controllers []*OperatorComponentStatus `json:"controllers"`
-}
-
-type StatusResponse struct {
-	State       *Status `json:"state"`
-	Result      *Result `json:"result"`
-	Description string  `json:"description"`
+	Status *Status `json:"status"`
 }
 
 type AddonSelector string
@@ -153,47 +146,6 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type Result string
-
-const (
-	ResultSucceeded Result = "SUCCEEDED"
-	ResultFailed    Result = "FAILED"
-)
-
-var AllResult = []Result{
-	ResultSucceeded,
-	ResultFailed,
-}
-
-func (e Result) IsValid() bool {
-	switch e {
-	case ResultSucceeded, ResultFailed:
-		return true
-	}
-	return false
-}
-
-func (e Result) String() string {
-	return string(e)
-}
-
-func (e *Result) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Result(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Result", str)
-	}
-	return nil
-}
-
-func (e Result) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

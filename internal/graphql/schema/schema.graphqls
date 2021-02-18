@@ -1,15 +1,17 @@
 type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
+    getOperatorStatus: Status
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status): StatusResponse
-	changeOperatorStatus(targetStatus: Status): StatusResponse
+	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
+	changeOperatorStatus(targetStatus: Status): Status
 }
 
 type Subscription {
     listenToAddonEvents(selector: MeshType): [AddonList!]!
     listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
-    listenToOperatorEvents: [OperatorStatus!]!
+    listenToOperatorEvents: OperatorStatus!
+    subscribeToMeshSync: OperatorControllerStatus!
 }

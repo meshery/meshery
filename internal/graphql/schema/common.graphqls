@@ -19,14 +19,3 @@ enum Status {
 	DISABLED
 	UNKNOWN
 }
-
-enum Result {
-	SUCCEEDED
-	FAILED
-}
-
-type StatusResponse {
-	state: Status
-	result: Result
-	description: String!
-}
