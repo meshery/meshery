@@ -86,7 +86,7 @@ func stop() error {
 
 	// Reset Meshery config file to default settings
 	if utils.ResetFlag {
-		err := resetMesheryConfig()
+		err := resetMesheryConfig(false)
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
 		}

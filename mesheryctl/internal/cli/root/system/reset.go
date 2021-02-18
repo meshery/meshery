@@ -30,35 +30,37 @@ var resetCmd = &cobra.Command{
 	Long:  `Reset Meshery to it's default configuration.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return resetMesheryConfig()
+		return resetMesheryConfig(false)
 	},
 }
 
-// resets meshery config
-func resetMesheryConfig() error {
+// resets meshery config, skips conirmation if skipConfirmation is true
+func resetMesheryConfig(skipConfirmation bool) error {
 	// ask user for confirmation
-	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-
-	if !userResponse {
-		log.Info("Reset aborted.")
-	} else {
-		currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
-		if err != nil {
-			return errors.Wrap(err, "failed to retrieve current-context")
+	if !skipConfirmation {
+		userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		if !userResponse {
+			log.Info("Reset aborted.")
+			return nil
 		}
-
-		log.Info("Meshery resetting...\n")
-		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", currCtxName)
-		currVersion, err := utils.DownloadDockerComposeFile(currCtx, true)
-		if err != nil {
-			return errors.Wrap(err, "failed to fetch docker-compose file")
-		}
-
-		log.Printf("Current Context: %s", currCtxName)
-		log.Printf("Channel: %s", currCtx.Channel)
-		log.Printf("Version: %s\n", currVersion)
-
-		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	}
+
+	currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
+	if err != nil {
+		return errors.Wrap(err, "failed to retrieve current-context")
+	}
+
+	log.Info("Meshery resetting...\n")
+	log.Printf("Fetching default docker-compose file as per current-context: %s...\n", currCtxName)
+	err = utils.DownloadDockerComposeFile(currCtx, true)
+	if err != nil {
+		return errors.Wrap(err, "failed to fetch docker-compose file")
+	}
+
+	log.Printf("Current Context: %s", currCtxName)
+	log.Printf("Channel: %s", currCtx.Channel)
+	log.Printf("Version: %s\n", currCtx.Version)
+
+	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	return nil
 }

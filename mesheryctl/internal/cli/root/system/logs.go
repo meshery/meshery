@@ -17,6 +17,7 @@ package system
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/pkg/errors"
@@ -41,13 +42,10 @@ var logsCmd = &cobra.Command{
 
 		log.Info("Starting Meshery logging...")
 
-		// download(don't force) the docker-compose.yaml file corresponding to the current version
-		_, currCtx, err := utils.GetCurrentContext(tempContext)
-		if err != nil {
-			return errors.Wrap(err, "failed to retrieve current-context")
-		}
-		if _, err := utils.DownloadDockerComposeFile(currCtx, false); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
+		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+			log.Errorf("%s does not exists", utils.DockerComposeFile)
+			log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+			return nil
 		}
 
 		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")

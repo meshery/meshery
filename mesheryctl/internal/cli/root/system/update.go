@@ -37,8 +37,12 @@ var updateCmd = &cobra.Command{
 		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		err := resetMesheryConfig()
+		userResponse := utils.AskForConfirmation("Meshery container images are going to be updated. Are you sure you want to continue")
+		if !userResponse {
+			log.Info("Update aborted.")
+			return nil
+		}
+		err := resetMesheryConfig(true)
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 		}
