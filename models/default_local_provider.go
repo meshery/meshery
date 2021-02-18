@@ -389,6 +389,26 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 	return []byte{}, fmt.Errorf("function not supported by local provider")
 }
 
+// SavePerformanceProfile saves given performance profile with the provider
+func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
+	return nil, fmt.Errorf("function not supported by local provider")
+}
+
+// GetPerformanceProfiles gives the performance profiles stored with the provider
+func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetPerformanceProfile gets performance profile for the given performance profileID
+func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// DeletePerformanceProfile deletes a meshery performance profile with the given id
+func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	result := l.GenericPersister.Create(&obj)

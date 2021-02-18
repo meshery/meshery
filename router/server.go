@@ -133,6 +133,15 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("DELETE")
 	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
+	gMux.Handle("/api/user/performance/profiles", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetPerformanceProfilesHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/user/performance/profiles/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetPerformanceProfileHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/user/performance/profiles/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeletePerformanceProfileHandler)))).
+		Methods("DELETE")
+	gMux.Handle("/api/user/performance/profiles", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SavePerformanceProfileHandler)))).
+		Methods("POST")
+
 	gMux.Handle("/api/system/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler)))).Methods("GET")
 	gMux.Handle("/api/system/operator", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorHandler)))).Methods("GET")
 	// experimental

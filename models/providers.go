@@ -112,6 +112,8 @@ const (
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
+
+	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 )
 
 const (
@@ -199,4 +201,9 @@ type Provider interface {
 	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+
+	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
+	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
+	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 }

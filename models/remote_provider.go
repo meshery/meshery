@@ -832,6 +832,197 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// SavePerformanceProfile saves a performance profile into the remote provider
+func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *PerformanceProfile) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
+
+	data, err := json.Marshal(pp)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return nil, err
+	}
+
+	logrus.Debugf("performance profile: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save performance profile to remote provider")
+	bf := bytes.NewBuffer(data)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	if err != nil {
+		logrus.Errorf("unable to get performance profile: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send performance profile: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("performance profile successfully sent to remote provider: %s", string(bdr))
+		return bdr, nil
+	}
+
+	logrus.Errorf("error while sending performance profile: %s", bdr)
+	return bdr, fmt.Errorf("error while sending performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetPerformanceProfiles gives the performance profiles stored with the provider
+func (l *RemoteProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
+
+	logrus.Infof("attempting to fetch performance profiles from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed performance profiles url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get performance profiles: %v", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get performance profiles: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("performance profiles successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching performance profiles: %s", bdr)
+	return nil, fmt.Errorf("error while fetching performance profiles - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetPerformanceProfile gets performance profile for the given the performanceProfileID
+func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
+
+	logrus.Infof("attempting to fetch performace profile from cloud for id: %s", performanceProfileID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, performanceProfileID))
+	logrus.Debugf("constructed performace profile url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get performace profiles: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get performace profiles: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("performance profile successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching performance profile: %s", bdr)
+	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// DeletePerformanceProfile deletes a performance profile with the given performanceProfileID
+func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
+
+	logrus.Infof("attempting to fetch performance profile from cloud for id: %s", performanceProfileID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, performanceProfileID))
+	logrus.Debugf("constructed performance profile url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to delete performance profiles: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete performance profiles: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("performance profile successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching performance profile: %s", bdr)
+	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // RecordPreferences - records the user preference
 func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	if !l.Capabilities.IsSupported(SyncPrefs) {
