@@ -114,6 +114,8 @@ const (
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
 
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
+
+	PersistSchedules Feature = "persist-schedules" // /user/schedules
 )
 
 const (
@@ -206,4 +208,9 @@ type Provider interface {
 	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
 	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
+
+	SaveSchedule(tokenString string, s *Schedule) ([]byte, error)
+	GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error)
+	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
+	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 }

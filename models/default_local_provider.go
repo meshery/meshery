@@ -409,6 +409,26 @@ func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, perfo
 	return []byte{}, fmt.Errorf("function not supported by local provider")
 }
 
+// SaveSchedule saves a schedule
+func (l *DefaultLocalProvider) SaveSchedule(tokenString string, schedule *Schedule) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetSchedules gets the schedules stored by the current user
+func (l *DefaultLocalProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetSchedule gets a schedule with the given id
+func (l *DefaultLocalProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// DeleteSchedule deletes a schedule with the given id
+func (l *DefaultLocalProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
 // RecordMeshSyncData records the mesh sync data
 func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	result := l.GenericPersister.Create(&obj)
@@ -419,7 +439,7 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
-// RecordMeshSyncData records the mesh sync data
+// ReadMeshSyncData reads the mesh sync data
 func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 	objects := make([]model.Object, 0)
 	result := l.GenericPersister.

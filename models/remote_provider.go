@@ -1023,6 +1023,194 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// SaveSchedule saves a SaveSchedule into the remote provider
+func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSchedules) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistSchedules, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
+
+	data, err := json.Marshal(s)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal schedule for shipping"))
+		return nil, err
+	}
+
+	logrus.Debugf("schedule: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save schedule to remote provider")
+	bf := bytes.NewBuffer(data)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	if err != nil {
+		logrus.Errorf("unable to get schedule: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send schedule: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("schedule successfully sent to remote provider: %s", string(bdr))
+		return bdr, nil
+	}
+
+	logrus.Errorf("error while sending schedule: %s", bdr)
+	return bdr, fmt.Errorf("error while sending schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetSchedules gives the schedules stored with the provider
+func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSchedules) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
+
+	logrus.Infof("attempting to fetch schedules from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed schedules url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get schedules: %v", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get schedules: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("schedules successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching schedules: %s", bdr)
+	return nil, fmt.Errorf("error while fetching schedules - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetSchedule gets schedule for the given the scheduleID
+func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSchedules) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
+
+	logrus.Infof("attempting to fetch schedule from cloud for id: %s", scheduleID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, scheduleID))
+	logrus.Debugf("constructed schedule url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get schedules: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get schedules: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("schedule successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching schedule: %s", bdr)
+	return nil, fmt.Errorf("error while getting schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// DeleteSchedule deletes a schedule with the given scheduleID
+func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistSchedules) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistSchedules, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSchedules)
+
+	logrus.Infof("attempting to fetch schedule from cloud for id: %s", scheduleID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, scheduleID))
+	logrus.Debugf("constructed schedule url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to delete schedules: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete schedules: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("schedule successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching schedule: %s", bdr)
+	return nil, fmt.Errorf("error while getting schedule - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // RecordPreferences - records the user preference
 func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
 	if !l.Capabilities.IsSupported(SyncPrefs) {
