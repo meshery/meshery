@@ -64,7 +64,7 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 		}
 		return ctx, nil
 	}
-	return Context{}, errors.New("current context:" + mc.CurrentContext + "does not exist")
+	return Context{}, errors.New("current context:" + mc.CurrentContext + " does not exist")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
@@ -77,14 +77,30 @@ func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	return currentContext.Endpoint
 }
 
-// GetContextContent returns contents of the current context
-func (mc *MesheryCtlConfig) GetContextContent() Context {
+// GetCurrentContext returns contents of the current context
+func (mc *MesheryCtlConfig) GetCurrentContext() Context {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return currentContext
+}
+
+// SetCurrentContext sets current context and returns contents of the current context
+func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, error) {
+	if contextName != "" {
+		mc.CurrentContext = contextName
+	}
+	currCtx, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Errorf("\nCurrent Context does not exists. The available contexts are:")
+		for context := range mc.Contexts {
+			log.Errorf("%s", context)
+		}
+	}
+
+	return currCtx, err
 }
 
 // GetBuild returns the build number for the binary
@@ -137,28 +153,4 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 
 	return dat["tag_name"].(string), nil
-}
-
-// GetCurrentContext returns the current context name and context struct.
-// If the user mentions a temporary context(tempCtxName) with -c flag, change the current-context and proceed to temporary-context
-func GetCurrentContext(tempCtxName string) (string, Context, error) {
-	mctlCfg, err := GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return "", Context{}, errors.Wrap(err, "error processing config")
-	}
-
-	if tempCtxName != "" {
-		mctlCfg.CurrentContext = tempCtxName
-	}
-
-	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
-	if err != nil {
-		// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-		log.Errorf("\n\"%s\" context does not exist. The available contexts are:", mctlCfg.CurrentContext)
-		for context := range mctlCfg.Contexts {
-			log.Errorf("%s", context)
-		}
-		return "", Context{}, errors.New("context does not exist")
-	}
-	return mctlCfg.CurrentContext, currCtx, nil
 }

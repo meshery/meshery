@@ -223,10 +223,12 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	if focusedContext == "" {
-		focusedContext = mctlCfg.CurrentContext
+	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
+	if err != nil {
+		return err
 	}
-	if mctlCfg.Contexts[focusedContext].Platform == "docker" {
+
+	if currCtx.Platform == "docker" {
 		//Check whether docker daemon is running or not
 		if err := exec.Command("docker", "ps").Run(); err != nil {
 			log.Info("Docker is not running.")
@@ -251,10 +253,10 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
-	} else if mctlCfg.Contexts[focusedContext].Platform == "kubernetes" {
+	} else if currCtx.Platform == "kubernetes" {
 
 	} else {
-		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
+		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
 	}
 	return nil
 }

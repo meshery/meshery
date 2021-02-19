@@ -33,6 +33,7 @@ import (
 	"github.com/docker/docker/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -151,9 +152,14 @@ func start() error {
 		}
 	}
 
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	_, currCtx, err := config.GetCurrentContext(tempContext)
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
 		return err
 	}
