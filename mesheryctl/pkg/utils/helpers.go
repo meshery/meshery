@@ -694,45 +694,6 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 	return false
 }
 
-// GetCurrentContext returns the current context name and context struct.
-// If the user mentions a temporary context(tempCtxName) with -c flag, change the current-context and proceed to temporary-context
-func GetCurrentContext(tempCtxName string) (string, config.Context, error) {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return "", config.Context{}, errors.Wrap(err, "error processing config")
-	}
-
-	if tempCtxName != "" {
-		mctlCfg.CurrentContext = tempCtxName
-	}
-
-	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
-	if err != nil {
-		// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-		log.Errorf("\n\"%s\" context does not exist. The available contexts are:", mctlCfg.CurrentContext)
-		for context := range mctlCfg.Contexts {
-			log.Errorf("%s", context)
-		}
-		return "", config.Context{}, errors.New("context does not exist")
-	}
-	if currCtx.Version == "" {
-		// if no version is specified, pick latest imgaes based on channel
-		if currCtx.Channel == "edge" {
-			// if channel is edge, pick the edge-latest images
-			currCtx.Version = "latest"
-		} else if currCtx.Channel == "stable" {
-			// if the channel is stable, pick the version of the latest stable release
-			currCtx.Version, err = GetLatestStableReleaseTag()
-			if err != nil {
-				return "", config.Context{}, errors.Wrapf(err, SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
-			}
-		} else {
-			return "", config.Context{}, errors.Errorf("unknown channel %s", currCtx.Channel)
-		}
-	}
-	return mctlCfg.CurrentContext, currCtx, nil
-}
-
 // DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
 // Use force to override download anyway
 func DownloadDockerComposeFile(ctx config.Context, force bool) error {

@@ -15,6 +15,7 @@
 package system
 
 import (
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
@@ -45,7 +46,7 @@ func resetMesheryConfig(skipConfirmation bool) error {
 		}
 	}
 
-	currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
+	currCtxName, currCtx, err := config.GetCurrentContext(tempContext)
 	if err != nil {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}

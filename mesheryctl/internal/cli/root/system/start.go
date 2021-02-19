@@ -26,6 +26,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
@@ -152,7 +153,7 @@ func start() error {
 
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
-	_, currCtx, err := utils.GetCurrentContext(tempContext)
+	_, currCtx, err := config.GetCurrentContext(tempContext)
 	if err != nil {
 		return err
 	}
