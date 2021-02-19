@@ -40,21 +40,9 @@ func (r *subscriptionResolver) listenToOperatorEvents(ctx context.Context) (<-ch
 	return nil, nil
 }
 
-func (r *subscriptionResolver) subscribeToMeshSync(ctx context.Context) (status <-chan *model.OperatorControllerStatus, err error) {
-
-	// datach := make(chan *broker.Message)
-
-	// err = subscribeToBroker(r.KubeClient, datach)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// err = runMeshSync(del)
-	// if er != nil {
-	// 	return nil, err
-	// }
-
-	return
+func (r *subscriptionResolver) subscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+	channel := make(chan *model.OperatorControllerStatus)
+	return channel, nil
 }
 
 func initialize(client *mesherykube.Client, delete bool) error {
