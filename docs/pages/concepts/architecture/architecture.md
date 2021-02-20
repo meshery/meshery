@@ -61,7 +61,7 @@ See the [**Operator**]({{ site.baseurl }}/architecture/operator) section for mor
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
 
-[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
+[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database-new.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database-new.svg)
 
 See the [**Database**]({{ site.baseurl }}/architecture/database) section for more information on the function of the database.
 
