@@ -1,8 +1,10 @@
 package resolver
 
 import (
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshsync/pkg/broker"
 )
 
 // This file will not be regenerated automatically.
@@ -12,4 +14,7 @@ import (
 type Resolver struct {
 	DBHandler  *database.Handler
 	KubeClient *mesherykube.Client
+
+	operatorChannel chan *model.OperatorStatus
+	meshsyncChannel chan *broker.Message
 }

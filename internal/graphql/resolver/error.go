@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	errCode               = "test_code"
 	ErrInvalidRequestCode = "test_code"
 )
 

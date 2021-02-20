@@ -19,3 +19,8 @@ enum Status {
 	DISABLED
 	UNKNOWN
 }
+
+type Error {
+	code: String!
+	description: String!
+}
