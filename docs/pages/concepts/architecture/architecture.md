@@ -23,7 +23,7 @@ Meshery and its components are written using the following languages and technol
 | Meshery Remote Providers                      | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility}}) |
 | Meshery Operator                              | Golang, NATS                                                                      |
 | MeshSync                                      | Golang                                                                            |
-| [Meshery Database](#database)    | Golang, SQL                                                                       |
+| [Meshery Database](#database)                 | Golang, SQL                                                                       |
 
 ## Deployments
 
