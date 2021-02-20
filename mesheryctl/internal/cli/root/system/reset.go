@@ -15,12 +15,14 @@
 package system
 
 import (
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // resetCmd represents the reset command
@@ -34,31 +36,38 @@ var resetCmd = &cobra.Command{
 	},
 }
 
-// resets meshery config
+// resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
 	// ask user for confirmation
 	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-
 	if !userResponse {
 		log.Info("Reset aborted.")
-	} else {
-		currCtxName, currCtx, err := utils.GetCurrentContext(tempContext)
-		if err != nil {
-			return errors.Wrap(err, "failed to retrieve current-context")
-		}
-
-		log.Info("Meshery resetting...\n")
-		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", currCtxName)
-		currVersion, err := utils.DownloadDockerComposeFile(currCtx, true)
-		if err != nil {
-			return errors.Wrap(err, "failed to fetch docker-compose file")
-		}
-
-		log.Printf("Current Context: %s", currCtxName)
-		log.Printf("Channel: %s", currCtx.Channel)
-		log.Printf("Version: %s\n", currVersion)
-
-		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+		return nil
 	}
+
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+	// get the platform, channel and the version of the current context
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return errors.Wrap(err, "failed to retrieve current-context")
+	}
+
+	log.Info("Meshery resetting...\n")
+	log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
+	err = utils.DownloadDockerComposeFile(currCtx, true)
+	if err != nil {
+		return errors.Wrap(err, "failed to fetch docker-compose file")
+	}
+
+	log.Printf("Current Context: %s", mctlCfg.CurrentContext)
+	log.Printf("Channel: %s", currCtx.Channel)
+	log.Printf("Version: %s\n", currCtx.Version)
+
+	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
 	return nil
 }
