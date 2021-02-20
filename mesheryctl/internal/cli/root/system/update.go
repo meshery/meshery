@@ -17,10 +17,12 @@ package system
 import (
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // updateCmd represents the update command
@@ -37,14 +39,31 @@ var updateCmd = &cobra.Command{
 		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		userResponse := utils.AskForConfirmation("Meshery container images are going to be updated. Are you sure you want to continue")
-		if !userResponse {
-			log.Info("Update aborted.")
-			return nil
-		}
-		err := resetMesheryConfig(true)
+		// Get viper instance used for context
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+			return errors.Wrap(err, "error processing config")
+		}
+		// get the platform, channel and the version of the current context
+		// if a temp context is set using the -c flag, use it as the current context
+		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return err
+		}
+		if currCtx.Version != "latest" {
+			// ask confirmation if user has pinned the version in config
+			log.Infof("You have pinned version: %s in your current conext", currCtx.Version)
+			userResponse := utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+			if !userResponse {
+				log.Info("Update aborted.")
+				return nil
+			}
+			currCtx.Version = "latest"
+		}
+		log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
+		err = utils.DownloadDockerComposeFile(currCtx, true)
+		if err != nil {
+			return errors.Wrap(err, "failed to fetch docker-compose file")
 		}
 
 		err = utils.UpdateMesheryContainers()

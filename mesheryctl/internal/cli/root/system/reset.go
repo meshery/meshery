@@ -32,19 +32,17 @@ var resetCmd = &cobra.Command{
 	Long:  `Reset Meshery to it's default configuration.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return resetMesheryConfig(false)
+		return resetMesheryConfig()
 	},
 }
 
 // resets meshery config, skips conirmation if skipConfirmation is true
-func resetMesheryConfig(skipConfirmation bool) error {
+func resetMesheryConfig() error {
 	// ask user for confirmation
-	if !skipConfirmation {
-		userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-		if !userResponse {
-			log.Info("Reset aborted.")
-			return nil
-		}
+	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+	if !userResponse {
+		log.Info("Reset aborted.")
+		return nil
 	}
 
 	// Get viper instance used for context

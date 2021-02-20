@@ -1,11 +1,6 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
@@ -59,8 +54,8 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 		return Context{}, errors.New("current context not set")
 	}
 	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
-		if err := ctx.SetDefaultVersion(); err != nil {
-			return ctx, err
+		if ctx.Version == "" {
+			ctx.Version = "latest"
 		}
 		return ctx, nil
 	}
@@ -111,46 +106,4 @@ func (v *Version) GetBuild() string {
 // GetCommitSHA returns the commit sha for the binary
 func (v *Version) GetCommitSHA() string {
 	return v.CommitSHA
-}
-
-// SetDefaultVersion sets version of config if not specified
-func (ctx *Context) SetDefaultVersion() error {
-	if ctx.Version == "" {
-		// if no version is specified, pick latest imgaes based on channel
-		if ctx.Channel == "edge" {
-			// if channel is edge, pick the edge-latest images
-			ctx.Version = "latest"
-		} else if ctx.Channel == "stable" {
-			// if the channel is stable, pick the version of the latest stable release
-			version, err := GetLatestStableReleaseTag()
-			ctx.Version = version
-			if err != nil {
-				return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
-			}
-		} else {
-			return errors.Errorf("unknown channel %s", ctx.Channel)
-		}
-	}
-	return nil
-}
-
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer resp.Body.Close()
-
-	var dat map[string]interface{}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
-	}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		return "", errors.Wrap(err, "failed to unmarshal json into object")
-	}
-
-	return dat["tag_name"].(string), nil
 }

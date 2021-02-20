@@ -246,7 +246,7 @@ func start() error {
 
 		// Reset Meshery config file to default settings
 		if utils.ResetFlag {
-			err := resetMesheryConfig(false)
+			err := resetMesheryConfig()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to reset meshery config"))
 			}
