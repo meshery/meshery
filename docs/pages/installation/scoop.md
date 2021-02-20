@@ -27,6 +27,14 @@ scoop install mesheryctl
 </div></div>
 </pre>
 
+You're ready to run Meshery. To do so, execute the following command.
+
+<pre class="codeblock-pre clipboardjs codeblock"><div class="codeblock">
+<div class="clipboardjs">
+mesheryctl system start
+
+</div></div>
+</pre>
 ### Upgrade
 
 To upgrade `mesheryctl`, just execute the following command.
