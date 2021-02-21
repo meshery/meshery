@@ -11,11 +11,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func (r *mutationResolver) changeAddonStatus(ctx context.Context) (*model.Status, error) {
+func (r *Resolver) changeAddonStatus(ctx context.Context) (*model.Status, error) {
 	return nil, nil
 }
 
-func (r *queryResolver) getAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
+func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
 	addonlist := make([]*model.AddonList, 0)
 	objects := make([]meshsyncmodel.Object, 0)
 	status := model.StatusEnabled
@@ -81,19 +81,19 @@ func (r *queryResolver) getAvailableAddons(ctx context.Context, selector *model.
 	return addonlist, nil
 }
 
-func (r *subscriptionResolver) listenToAddonEvents(ctx context.Context) (<-chan []*model.AddonList, error) {
-	channel := make(chan []*model.AddonList, 0)
+func (r *Resolver) listenToAddonEvents(ctx context.Context) (<-chan []*model.AddonList, error) {
+	r.addonChannel = make(chan []*model.AddonList, 0)
 
-	// go func() {
-	// 	select {
-	// 	case <-r.meshsyncChannel:
-	// 		status, err := r.getAvailableAddons(ctx, nil)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		r.operatorChannel <- status
-	// 	}
-	// }()
+	go func() {
+		select {
+		case <-r.meshsyncChannel:
+			status, err := r.getAvailableAddons(ctx, nil)
+			if err != nil {
+				return
+			}
+			r.addonChannel <- status
+		}
+	}()
 
-	return channel, nil
+	return r.addonChannel, nil
 }

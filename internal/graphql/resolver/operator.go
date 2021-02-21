@@ -23,7 +23,7 @@ const (
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
-func (r *mutationResolver) changeOperatorStatus(ctx context.Context, status *model.Status) (*model.Status, error) {
+func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Status) (*model.Status, error) {
 	delete := true
 	if *status == model.StatusEnabled {
 		delete = false
@@ -76,7 +76,7 @@ func (r *mutationResolver) changeOperatorStatus(ctx context.Context, status *mod
 	return status, nil
 }
 
-func (r *queryResolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
+func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 
 	obj, err := getOperator(r.DBHandler)
@@ -101,19 +101,19 @@ func (r *queryResolver) getOperatorStatus(ctx context.Context) (*model.OperatorS
 	}, nil
 }
 
-func (r *subscriptionResolver) listenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error) {
+func (r *Resolver) listenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error) {
 	r.operatorChannel = make(chan *model.OperatorStatus)
 
-	// go func() {
-	// 	select {
-	// 	case <-r.meshsyncChannel:
-	// 		status, err := r.getOperatorStatus(ctx)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		r.operatorChannel <- status
-	// 	}
-	// }()
+	go func() {
+		select {
+		case <-r.meshsyncChannel:
+			status, err := r.getOperatorStatus(ctx)
+			if err != nil {
+				return
+			}
+			r.operatorChannel <- status
+		}
+	}()
 
 	return r.operatorChannel, nil
 }

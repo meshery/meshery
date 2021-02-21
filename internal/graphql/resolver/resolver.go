@@ -17,4 +17,5 @@ type Resolver struct {
 
 	operatorChannel chan *model.OperatorStatus
 	meshsyncChannel chan *broker.Message
+	addonChannel    chan []*model.AddonList
 }
