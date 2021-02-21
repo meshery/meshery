@@ -1,13 +1,17 @@
 ---
 layout: default
-title: Install mesheryctl using Homebrew
-permalink: installation/platforms/brew
+title: Install mesheryctl
+permalink: installation/mesheryctl
 type: installation
 display-title: "true"
 language: en
 list: include
-image: /assets/img/platforms/brew.png
+# image: /assets/img/platforms/brew.png
 ---
+
+Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
+
+## Homebrew
 
 ### Installation Commands
 
@@ -46,7 +50,12 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> No dependents found!
 ```
 
+### Bash
 
-See [Meshery Documentation](https://docs.meshery.io/installation/quick-start) for additional usage.
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
 
-
+Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platform).
