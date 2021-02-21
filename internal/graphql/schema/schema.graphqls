@@ -1,3 +1,80 @@
+# ================= COMMONS =========================
+enum MeshType {
+	ALL
+	NONE
+
+	ISTIO
+	LINKERD
+	CONSUL
+	OCTARINE
+	TRAEFIK
+	OPENSERVICEMESH
+	KUMA
+	NGINXSM
+	NETWORKSM
+	CITRIXSM
+}
+
+enum Status {
+	ENABLED
+	DISABLED
+	UNKNOWN
+}
+
+type Error {
+	code: String!
+	description: String!
+}
+
+# =================== ADDONS =====================
+enum AddonSelector {
+	PROMETHEUS
+	GRAFANA
+	ZIPKIN
+	JAEGER
+}
+
+type AddonList {
+	type: AddonSelector
+	status: Status
+	config: [AddonConfig!]!
+}
+
+type AddonConfig {
+	serviceName: String!
+	endpoint: String!
+}
+
+# ============== CONTROL PLANE =======================
+input ControlPlaneFilter {
+    type: MeshType
+}
+
+type ControlPlane {
+	name: MeshType
+	version: String!
+	members: [ControlPlaneMember!]!
+}
+
+type ControlPlaneMember {
+	component: String!
+	namespace: String!
+	status: Status
+}
+
+# ============== OPERATOR =============================
+type OperatorStatus {
+	status: Status
+	error: Error
+}
+
+type OperatorControllerStatus {
+	name: String
+	status: Status
+	error: Error
+}
+
+# ============== ROOT =================================
 type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
