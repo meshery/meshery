@@ -7,15 +7,15 @@ import (
 )
 
 // GenerateConfigMinikube generates kube config file in ~/.meshery/kubeconfig.yaml for a Minikube cluster
-func GenerateConfigMinikube() error {
-	script := `set -e
+func GenerateConfigMinikube(configPath string) error {
+	script := fmt.Sprintf(`
+	set -e
 	set -o pipefail
 
-	TARGET_FOLDER="$HOME/.meshery"
-	TARGET_FILE="$TARGET_FOLDER/kubeconfig.yaml"
+	TARGET_FILE="%s"
 
-	mkdir -p $TARGET_FOLDER
-	kubectl config view --minify --flatten > $TARGET_FILE`
+	kubectl config view --minify --flatten > ${TARGET_FILE}
+	`, configPath)
 
 	generateCFG := exec.Command("bash", "-c", script)
 	generateCFG.Stdout = os.Stdout
@@ -25,22 +25,15 @@ func GenerateConfigMinikube() error {
 }
 
 // GenerateConfigGKE generates kube config file in ~/.meshery/kubeconfig.yaml for a GKE cluster
-func GenerateConfigGKE(SAName, namespc string) error {
+func GenerateConfigGKE(configPath, SAName, namespc string) error {
 	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
 
+	KUBECFG_FILE_NAME="%s"
 	SERVICE_ACCOUNT_NAME=%s
 	NAMESPACE="%s"
-	TARGET_FOLDER="$HOME/.meshery/"
-	KUBECFG_FILE_NAME="$TARGET_FOLDER/kubeconfig.yaml"
-	# TARGET_FOLDER="./"
-
-	create_target_folder() {
-		echo -n "Creating target directory to hold files in ${TARGET_FOLDER}..."
-		mkdir -p "${TARGET_FOLDER}"
-		printf "done"
-	}
+	TARGET_FOLDER=$(dirname ${KUBECFG_FILE_NAME})
 
 	create_service_account() {
 		echo -e "\\nCreating a service account in ${NAMESPACE} namespace: ${SERVICE_ACCOUNT_NAME}"
@@ -106,7 +99,6 @@ func GenerateConfigGKE(SAName, namespc string) error {
 		--kubeconfig="${KUBECFG_FILE_NAME}"
 	}
 
-	create_target_folder
 	create_service_account
 	get_secret_name_from_service_account
 	extract_ca_crt_from_secret
@@ -117,7 +109,7 @@ func GenerateConfigGKE(SAName, namespc string) error {
 	echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
 	echo "you should not have any permissions by default - you have just created the authentication part"
 	echo "You will need to create RBAC permissions"
-	`, SAName, namespc)
+	`, configPath, SAName, namespc)
 
 	generateCFG := exec.Command("sh", "-c", script)
 	generateCFG.Stdout = os.Stdout
@@ -127,30 +119,23 @@ func GenerateConfigGKE(SAName, namespc string) error {
 }
 
 // GenerateConfigAKS generates kube config file in ~/.meshery/kubeconfig.yaml for a AKS cluster
-func GenerateConfigAKS(resourceGroup, clusterName string) error {
+func GenerateConfigAKS(configPath, resourceGroup, clusterName string) error {
 	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
 
-	TARGET_FOLDER="$HOME/.meshery"
-	TARGET_FILE="$TARGET_FOLDER/kubeconfig.yaml"
-
+	TARGET_FILE="%s"
 	Resource_Group="%s"
 	Cluster_Name="%s"
-
-	create_target_folder() {
-		mkdir -p "${TARGET_FOLDER}"
-	}
 
 	fetch_aks_script() {
 		printf "\n"
 		az aks get-credentials --resource-group "${Resource_Group}" --name "${Cluster_Name}" --file "${TARGET_FILE}"
 	}
 
-	create_target_folder
 	fetch_aks_script
 	"
-	`, resourceGroup, clusterName)
+	`, configPath, resourceGroup, clusterName)
 
 	generateCFG := exec.Command("bash", "-c", script)
 	generateCFG.Stdout = os.Stdout
@@ -160,17 +145,15 @@ func GenerateConfigAKS(resourceGroup, clusterName string) error {
 }
 
 // GenerateConfigEKS generates kube config file in .meshery/kubeconfig.yaml for an EKS cluster
-func GenerateConfigEKS(region, cluster string) error {
+func GenerateConfigEKS(configPath, region, cluster string) error {
 	script := fmt.Sprintf(`
 	set -e
 	set -o pipefail
 
-	TARGET_FOLDER="$HOME/.meshery/"
-	KUBECFG_FILE_NAME="$TARGET_FOLDER/kubeconfig.yaml"
-	KUBECONFIG=${KUBECFG_FILE_NAME}
-
+	KUBECFG_FILE_NAME="%s"
 	REGION_NAME=%s
 	CLUSTER_NAME="%s"
+	KUBECONFIG=${KUBECFG_FILE_NAME}
 
 	create_update_kubeconfig() {
 		echo -e "\\nGenerating kubeconfig for EKS cluster ${CLUSTER_NAME}..."
@@ -179,11 +162,10 @@ func GenerateConfigEKS(region, cluster string) error {
 		aws --version >/dev/null 2>&1)
 	}
 
-	create_target_folder
 	create_update_kubeconfig
 
 	echo -e "\\nEKS kubeconfig ready for use by Meshery: "${KUBECFG_FILE_NAME}
-	`, region, cluster)
+	`, configPath, region, cluster)
 
 	generateCFG := exec.Command("sh", "-c", script)
 	generateCFG.Stdout = os.Stdout
