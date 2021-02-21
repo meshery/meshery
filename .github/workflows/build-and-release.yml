@@ -84,8 +84,8 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-  trigger:
-    name: trigger publish actions
+  notify-providers:
+    name: Notify Remote Providers
     needs: docker
     runs-on: ubuntu-latest
     steps:
