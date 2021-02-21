@@ -10,27 +10,27 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
 export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type meshAddonsQueryVariables = {|
+export type AddonEventsSubscriptionVariables = {|
   selector?: ?MeshType
 |};
-export type meshAddonsQueryResponse = {|
-  +addons: $ReadOnlyArray<{|
+export type AddonEventsSubscriptionResponse = {|
+  +listenToAddonEvents: $ReadOnlyArray<{|
     +type: string,
     +status: ?Status,
   |}>
 |};
-export type meshAddonsQuery = {|
-  variables: meshAddonsQueryVariables,
-  response: meshAddonsQueryResponse,
+export type AddonEventsSubscription = {|
+  variables: AddonEventsSubscriptionVariables,
+  response: AddonEventsSubscriptionResponse,
 |};
 */
 
 
 /*
-query meshAddonsQuery(
+subscription AddonEventsSubscription(
   $selector: MeshType
 ) {
-  addons: getAvailableAddons(selector: $selector) {
+  listenToAddonEvents(selector: $selector) {
     type
     status
   }
@@ -47,7 +47,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "addons",
+    "alias": null,
     "args": [
       {
         "kind": "Variable",
@@ -57,7 +57,7 @@ v1 = [
     ],
     "concreteType": "AddonList",
     "kind": "LinkedField",
-    "name": "getAvailableAddons",
+    "name": "listenToAddonEvents",
     "plural": true,
     "selections": [
       {
@@ -83,29 +83,29 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "meshAddonsQuery",
+    "name": "AddonEventsSubscription",
     "selections": (v1/*: any*/),
-    "type": "Query",
+    "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "meshAddonsQuery",
+    "name": "AddonEventsSubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "314252e7605fba0b066544645d53fbd0",
+    "cacheID": "de2fe45019d12d94969793bd803ec58d",
     "id": null,
     "metadata": {},
-    "name": "meshAddonsQuery",
-    "operationKind": "query",
-    "text": "query meshAddonsQuery(\n  $selector: MeshType\n) {\n  addons: getAvailableAddons(selector: $selector) {\n    type\n    status\n  }\n}\n"
+    "name": "AddonEventsSubscription",
+    "operationKind": "subscription",
+    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  listenToAddonEvents(selector: $selector) {\n    type\n    status\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0a3dc6f1355047de53ceaa6f27261105';
+(node/*: any*/).hash = 'ec53be7e58e9ad99e7c1ab34e3612d5d';
 
 module.exports = node;

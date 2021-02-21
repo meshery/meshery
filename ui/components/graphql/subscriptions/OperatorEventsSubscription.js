@@ -13,10 +13,11 @@ const operatorEventsSubscription = graphql`
   }
 `;
 
-export default function subscribeOperatorEvents() {
+export default function subscribeOperatorEvents(updater) {
   requestSubscription(environment, {
     subscription: operatorEventsSubscription,
     variables: {},
+    updater: updater,
     onError: (error) => console.log(`An error occured:`, error),
   });
 }

@@ -11,7 +11,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
 export type mesheryOperatorStatusQueryVariables = {||};
 export type mesheryOperatorStatusQueryResponse = {|
-  +getOperatorStatus: ?{|
+  +operator: ?{|
     +status: ?Status,
     +error: ?{|
       +code: string,
@@ -28,7 +28,7 @@ export type mesheryOperatorStatusQuery = {|
 
 /*
 query mesheryOperatorStatusQuery {
-  getOperatorStatus {
+  operator: getOperatorStatus {
     status
     error {
       code
@@ -41,7 +41,7 @@ query mesheryOperatorStatusQuery {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
-    "alias": null,
+    "alias": "operator",
     "args": null,
     "concreteType": "OperatorStatus",
     "kind": "LinkedField",
@@ -102,16 +102,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "b1df2690e84fd34bb2de197eb2c0931d",
+    "cacheID": "0e7003f2d4816ecf4e6864a84333f5a8",
     "id": null,
     "metadata": {},
     "name": "mesheryOperatorStatusQuery",
     "operationKind": "query",
-    "text": "query mesheryOperatorStatusQuery {\n  getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "query mesheryOperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f2d7c46cded67905ada8739f4c61621f';
+(node/*: any*/).hash = '800b4e252bc857ec45413b673f1c8a0d';
 
 module.exports = node;

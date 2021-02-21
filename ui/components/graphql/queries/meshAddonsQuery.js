@@ -3,17 +3,17 @@ import environment from "../../../lib/relayEnvironment";
 
 export default function fetchAvailableAddons(variables) {
   const vars = {
-    selector: variables.serviceMesh
-  }
+    selector: variables.serviceMesh,
+  };
 
   const query = graphql`
-        query meshAddonsQuery($meshType: MeshType){
-            getAvailableAddons(selector: $meshType) {
-              type
-              status
-            }
-        }
-    `;
+    query meshAddonsQuery($selector: MeshType) {
+      addons: getAvailableAddons(selector: $selector) {
+        type
+        status
+      }
+    }
+  `;
 
-  return fetchQuery(environment, query, vars)
+  return fetchQuery(environment, query, vars);
 }

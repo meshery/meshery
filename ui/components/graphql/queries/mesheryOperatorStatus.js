@@ -4,7 +4,7 @@ import environment from "../../../lib/relayEnvironment";
 export default function fetchMesheryOperatorStatus() {
   const query = graphql`
         query mesheryOperatorStatusQuery{
-          getOperatorStatus {
+          operator: getOperatorStatus {
             status
             error {
               code
