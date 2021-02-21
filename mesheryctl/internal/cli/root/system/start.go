@@ -277,11 +277,11 @@ func start() error {
 		for _, container := range containers {
 			if container.Names[0] == "/meshery_meshery_1" {
 				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
-
+				
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
 					// Meshery running on Windows host
-					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
@@ -291,13 +291,13 @@ func start() error {
 					if err != nil {
 						break
 					}
-					err = exec.Command("xdg-open", url).Start()
+					err = exec.Command("xdg-open", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
 				} else {
 					// Assume Meshery running on MacOS host
-					err = exec.Command("open", url).Start()
+					err = exec.Command("open", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
