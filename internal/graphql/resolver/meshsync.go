@@ -16,7 +16,7 @@ var (
 	meshsyncYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
-func (r *subscriptionResolver) subscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+func (r *Resolver) subscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
 	status := model.StatusUnknown
 
