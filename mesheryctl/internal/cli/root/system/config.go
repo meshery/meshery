@@ -22,7 +22,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
-	"path"
+	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
@@ -38,6 +38,7 @@ import (
 
 const paramName = "k8sfile"
 const contextName = "contextName"
+const kubeConfigYaml = "kubeconfig.yaml"
 
 var tokenPath string
 
@@ -138,16 +139,33 @@ var configCmd = &cobra.Command{
 		if tokenPath == "" {
 			log.Fatal("Token path invalid")
 		}
+		// Define the path where the kubeconfig.yaml will be written to
+		configPath := ""
+		usr, err := user.Current()
+		if err != nil {
+			configPath = filepath.Join(".meshery", kubeConfigYaml)
+		} else {
+			configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
+		}
+		// create the .meshery folder where the kubeconfig.yaml will be written to
+		configDir := filepath.Dir(configPath)
+		if _, err = os.Stat(configDir); err != nil {
+			err = os.Mkdir(configDir, os.ModeDir)
+			if err != nil {
+				log.Fatal("Error while creating .meshery folder for config:", err)
+				return
+			}
+		}
 
 		switch args[0] {
 		case "minikube":
-			if err := utils.GenerateConfigMinikube(); err != nil {
+			if err := utils.GenerateConfigMinikube(configPath); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
 		case "gke":
 			SAName := "sa-meshery-" + utils.StringWithCharset(8)
-			if err := utils.GenerateConfigGKE(SAName, "default"); err != nil {
+			if err := utils.GenerateConfigGKE(configPath, SAName, "default"); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
@@ -187,7 +205,7 @@ var configCmd = &cobra.Command{
 			}
 
 			// Write AKS compatible config to the filesystem
-			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
+			if err := utils.GenerateConfigAKS(configPath, resourceGroup, aksName); err != nil {
 				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
@@ -220,7 +238,7 @@ var configCmd = &cobra.Command{
 			}
 
 			// Write EKS compatible config to the filesystem
-			if err := utils.GenerateConfigEKS(regionName, clusterName); err != nil {
+			if err := utils.GenerateConfigEKS(configPath, regionName, clusterName); err != nil {
 				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
@@ -228,15 +246,6 @@ var configCmd = &cobra.Command{
 			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
 		}
 
-		// TODO: Assumes Mac or Linux. Make arch-specific
-		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := ""
-		usr, err := user.Current()
-		if err != nil {
-			configPath = ".meshery/kubeconfig.yaml"
-		} else {
-			configPath = path.Join(usr.HomeDir, ".meshery/kubeconfig.yaml")
-		}
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
