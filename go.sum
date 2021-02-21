@@ -288,6 +288,8 @@ github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG
 github.com/go-logr/logr v0.1.0/go.mod h1:ixOQHD9gLJUVQQ2ZOR7zLEifBX6tGkNJF4QyIY7sIas=
 github.com/go-logr/logr v0.3.0 h1:q4c+kbcR0d5rSurhBR8dIgieOaYpXtsdTYfx22Cu6rs=
 github.com/go-logr/logr v0.3.0/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
+github.com/go-logr/logr v0.4.0 h1:K7/B1jt6fIBQVd4Owv2MqGQClcgf0R266+7C/QjRcLc=
+github.com/go-logr/logr v0.4.0/go.mod h1:z6/tIYblkpsD+a4lm/fGIIU9mZ+XfAiaFtq7xTgseGU=
 github.com/go-logr/zapr v0.1.0/go.mod h1:tabnROwaDl0UNxkVeFRbY8bwB37GwRv0P8lg6aAiEnk=
 github.com/go-openapi/analysis v0.0.0-20180825180245-b006789cd277/go.mod h1:k70tL6pCuVxPJOHXQ+wIac1FUrvNkHolPie/cLEU6hI=
 github.com/go-openapi/analysis v0.17.0/go.mod h1:IowGgpVeD0vNm45So8nr+IcQ3pxVtpRoBWb8PVZO0ik=
@@ -617,8 +619,8 @@ github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTU
 github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f/go.mod h1:UmrVd7x+bNVKrpmKgTtfRiTKHZeNPcMjQproJ0vGwhE=
 github.com/layer5io/learn-layer5/smi-conformance v0.0.0-20201022191033-40468652a54f/go.mod h1:LpewBZnN0QDRcC2fDiBVK+iByfFyf2HJM1B2h0rTMZo=
 github.com/layer5io/meshery-adapter-library v0.1.9/go.mod h1:dxrUzS10o5qDwfJE5qvAAH/s8PzLcRHFu3L4afgSBNc=
-github.com/layer5io/meshery-operator v0.2.7 h1:yLTRmC5pufF2dNLaNtZ6ybbv9zp/KI7oFUcUDDsL1aY=
-github.com/layer5io/meshery-operator v0.2.7/go.mod h1:S27v55Nl1OtqAZEGq3YUGybA3K+FcTaLAxinCCauoR4=
+github.com/layer5io/meshery-operator v0.2.9 h1:Eg7UNkY0dxoV4AJwQRbMK2PFXZ904w5nc0hxnEn8HKY=
+github.com/layer5io/meshery-operator v0.2.9/go.mod h1:Ow+0qw+44vEwamEP0+H0IbDg45oqIfEPsw0TrsYM7CY=
 github.com/layer5io/meshkit v0.1.30 h1:d9emBQAf+YnURkA5wZ6VbbqDfnx9G8G3xqOv6dG4n/k=
 github.com/layer5io/meshkit v0.1.30/go.mod h1:AznOL6xqpUZGyExSZJ3Bdx6EZ22UnAT9V620pm7R484=
 github.com/layer5io/meshkit v0.2.0 h1:TGeg+VVHTDtXQuuVe1vDh0+mGDP3QbJVRi2Hmmlj6Dk=

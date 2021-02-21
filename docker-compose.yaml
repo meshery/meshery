@@ -67,12 +67,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "10009:10009"
-  meshery-nginx-sm:
-    image: layer5/meshery-nginx-sm:stable-latest
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "10010:10010"
+  # meshery-nginx-sm:
+  #   image: layer5/meshery-nginx-sm:stable-latest
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #   ports:
+  #     - "10010:10010"
   # TODO (kushthedude): Revamp the nighthawk image inclusion approach
   # nighthawk-lg:
   #   image: envoyproxy/nighthawk-dev:latest
