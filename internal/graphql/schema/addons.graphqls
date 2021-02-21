@@ -3,12 +3,13 @@ enum AddonSelector {
 	GRAFANA
 	ZIPKIN
 	JAEGER
+	KIALI
 }
 
 type AddonList {
-	type: AddonSelector
+	type: String!
 	status: Status
-	config: [AddonConfig!]!
+	config: AddonConfig!
 }
 
 type AddonConfig {

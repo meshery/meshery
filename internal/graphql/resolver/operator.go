@@ -7,10 +7,12 @@ import (
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/broker"
 	"github.com/layer5io/meshsync/pkg/broker/nats"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -75,12 +77,72 @@ func (r *mutationResolver) changeOperatorStatus(ctx context.Context, status *mod
 }
 
 func (r *queryResolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
-	return nil, nil
+	status := model.StatusUnknown
+
+	obj, err := getOperator(r.DBHandler)
+	if err != nil {
+		return &model.OperatorStatus{
+			Status: &status,
+			Error: &model.Error{
+				Code:        errCode,
+				Description: err.Error(),
+			},
+		}, nil
+	}
+
+	if len(obj) > 0 {
+		status = model.StatusEnabled
+	} else {
+		status = model.StatusDisabled
+	}
+
+	return &model.OperatorStatus{
+		Status: &status,
+	}, nil
 }
 
 func (r *subscriptionResolver) listenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error) {
 	r.operatorChannel = make(chan *model.OperatorStatus)
+
+	// go func() {
+	// 	select {
+	// 	case <-r.meshsyncChannel:
+	// 		status, err := r.getOperatorStatus(ctx)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		r.operatorChannel <- status
+	// 	}
+	// }()
+
 	return r.operatorChannel, nil
+}
+
+func getOperator(handler *database.Handler) ([]string, error) {
+	objects := make([]meshsyncmodel.Object, 0)
+
+	subquery1 := handler.Select("id").Where("key = ? AND value = ?", "app", "meshery").Table("key_values")
+	subquery2 := handler.Select("id").Where("id IN (?) AND key = ? AND value = ?", subquery1, "component", "operator").Table("key_values")
+	result := handler.
+		Preload("TypeMeta", "kind = ?", "Deployment").
+		Preload("ObjectMeta").
+		Preload("ObjectMeta.Labels").
+		Preload("ObjectMeta.Annotations").
+		Preload("Spec").
+		Preload("Status").
+		Find(&objects, "id IN (?)", subquery2)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	deploys := []string{}
+	for _, obj := range objects {
+		if obj.TypeMeta != nil && obj.ObjectMeta != nil && obj.Spec != nil && obj.Status != nil {
+			deploys = append(deploys, obj.ObjectMeta.Name)
+		}
+	}
+
+	return deploys, nil
 }
 
 func initialize(client *mesherykube.Client, delete bool) error {
