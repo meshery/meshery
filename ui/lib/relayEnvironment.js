@@ -1,4 +1,4 @@
-import { Environment, Network, RecordSource, Store } from "relay-runtime";
+import { Environment, Network, Observable, RecordSource, Store } from "relay-runtime";
 import { promisifiedDataFetch } from "./data-fetch";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
@@ -19,12 +19,20 @@ function fetchQuery(operation, variables) {
 function setupSubscription(config, variables, cacheConfig, observer) {
   const query = config.text;
 
-  const subscriptionClient = new SubscriptionClient("/api/system/graphql/query", {
+  const subscriptionClient = new SubscriptionClient("ws://localhost:9081/api/system/graphql/query", {
     reconnect: true,
   });
-  subscriptionClient.subscribe({ query, variables }, (error, result) => {
+
+  const subscribeObservable = subscriptionClient.request({ query, variables }, (error, result) => {
+    if (error) {
+      console.error(error);
+      return
+    }
+
     observer.onNext({ data: result });
   });
+
+  return Observable.from(subscribeObservable);
 }
 
 const environment = new Environment({
