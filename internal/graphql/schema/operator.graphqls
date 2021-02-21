@@ -1,8 +1,10 @@
 type OperatorStatus {
 	status: Status
+	error: Error
 }
 
 type OperatorControllerStatus {
 	name: String
 	status: Status
+	error: Error
 }

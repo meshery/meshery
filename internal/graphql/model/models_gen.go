@@ -31,16 +31,24 @@ type ControlPlaneFilter struct {
 
 type ControlPlaneMember struct {
 	Component string  `json:"component"`
+	Namespace string  `json:"namespace"`
 	Status    *Status `json:"status"`
+}
+
+type Error struct {
+	Code        string `json:"code"`
+	Description string `json:"description"`
 }
 
 type OperatorControllerStatus struct {
 	Name   *string `json:"name"`
 	Status *Status `json:"status"`
+	Error  *Error  `json:"error"`
 }
 
 type OperatorStatus struct {
 	Status *Status `json:"status"`
+	Error  *Error  `json:"error"`
 }
 
 type AddonSelector string

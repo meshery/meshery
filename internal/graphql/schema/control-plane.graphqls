@@ -10,5 +10,6 @@ type ControlPlane {
 
 type ControlPlaneMember {
 	component: String!
+	namespace: String!
 	status: Status
 }

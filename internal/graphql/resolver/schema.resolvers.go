@@ -42,7 +42,7 @@ func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.Cont
 	return nil, ErrInvalidRequest
 }
 
-func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.Status, error) {
+func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
 	return r.getOperatorStatus(ctx)
 }
 

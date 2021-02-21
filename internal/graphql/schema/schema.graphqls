@@ -1,7 +1,7 @@
 type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
-    getOperatorStatus: Status
+    getOperatorStatus: OperatorStatus
 }
 
 type Mutation {
