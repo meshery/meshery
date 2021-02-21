@@ -9,13 +9,15 @@ language: en
 list: include
 ---
 
-## What is the Meshery Database?
+## What are the Meshery Databases?
 
-The Meshery Database offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats. 
+Meshery Databases function as repositories for [MeshSync](/architecture/meshsync), user preferences and system settings. Both databases are considered ephemeral and should be treated as caches. Data retention is tethered to the lifetime of their Meshery Server instance. [Remote Providers](/extensibility/providers) may offer long-term data persistence. Meshery's APIs offer mechansims for clients, like [`mesheryctl`](/reference/mesheryctl) and Meshery UI to retrieve data.
+
+See the figure below for addtional details of the data formats supported and type of data stored.
 
 [![Architecture Diagram]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
 
-## Components Involved:
+### Components
 
 Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
