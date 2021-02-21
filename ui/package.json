@@ -82,6 +82,7 @@
     "redux-thunk": "^2.3.0",
     "relay-runtime": "^10.1.3",
     "styled-jsx": "latest",
+    "subscriptions-transport-ws": "^0.9.18",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

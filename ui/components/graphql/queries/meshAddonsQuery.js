@@ -1,14 +1,17 @@
 import { graphql, fetchQuery } from "react-relay";
-import environment from "../environment";
+import environment from "../../../lib/relayEnvironment";
 
-export function fetchAvailableAddons(variables) {
+export default function fetchAvailableAddons(variables) {
   const vars = {
     selector: variables.serviceMesh
   }
 
   const query = graphql`
         query getAvailableAddonsQuery{
-            getAvailableAddons($selector: )
+            getAvailableAddons($selector: MeshType) {
+              type
+              status
+            }
         }
     `;
 
