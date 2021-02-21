@@ -143,9 +143,9 @@ var configCmd = &cobra.Command{
 		configPath := ""
 		usr, err := user.Current()
 		if err != nil {
-			configPath = filepath.Join(utils.MesheryFolder, kubeConfigYaml)
+			configPath = filepath.Join(".meshery", kubeConfigYaml)
 		} else {
-			configPath = filepath.Join(usr.HomeDir, utils.MesheryFolder, kubeConfigYaml)
+			configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
 		}
 		// create the .meshery folder where the kubeconfig.yaml will be written to
 		configDir := filepath.Dir(configPath)
