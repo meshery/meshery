@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/database"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
@@ -131,6 +132,7 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
+	mesheryKubeClient := mesherykube.Client{}
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
@@ -155,7 +157,8 @@ func main() {
 		TestProfilesPersister:  testConfigPersister,
 		GenericPersister:       dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
-			DBHandler: &dbHandler,
+			DBHandler:  &dbHandler,
+			KubeClient: &mesheryKubeClient,
 		}),
 		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 			URL: "/api/system/graphql/query",
@@ -188,7 +191,8 @@ func main() {
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
 			GraphqlHandler: graphql.New(graphql.Options{
-				DBHandler: &dbHandler,
+				DBHandler:  &dbHandler,
+				KubeClient: &mesheryKubeClient,
 			}),
 			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 				URL: "/api/system/graphql/query",

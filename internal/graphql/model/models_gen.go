@@ -14,9 +14,9 @@ type AddonConfig struct {
 }
 
 type AddonList struct {
-	Type   *AddonSelector `json:"type"`
-	Status *Status        `json:"status"`
-	Config []*AddonConfig `json:"config"`
+	Type   string       `json:"type"`
+	Status *Status      `json:"status"`
+	Config *AddonConfig `json:"config"`
 }
 
 type ControlPlane struct {
@@ -58,6 +58,7 @@ const (
 	AddonSelectorGrafana    AddonSelector = "GRAFANA"
 	AddonSelectorZipkin     AddonSelector = "ZIPKIN"
 	AddonSelectorJaeger     AddonSelector = "JAEGER"
+	AddonSelectorKiali      AddonSelector = "KIALI"
 )
 
 var AllAddonSelector = []AddonSelector{
@@ -65,11 +66,12 @@ var AllAddonSelector = []AddonSelector{
 	AddonSelectorGrafana,
 	AddonSelectorZipkin,
 	AddonSelectorJaeger,
+	AddonSelectorKiali,
 }
 
 func (e AddonSelector) IsValid() bool {
 	switch e {
-	case AddonSelectorPrometheus, AddonSelectorGrafana, AddonSelectorZipkin, AddonSelectorJaeger:
+	case AddonSelectorPrometheus, AddonSelectorGrafana, AddonSelectorZipkin, AddonSelectorJaeger, AddonSelectorKiali:
 		return true
 	}
 	return false

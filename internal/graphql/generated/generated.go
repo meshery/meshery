@@ -439,12 +439,13 @@ var sources = []*ast.Source{
 	GRAFANA
 	ZIPKIN
 	JAEGER
+	KIALI
 }
 
 type AddonList {
-	type: AddonSelector
+	type: String!
 	status: Status
-	config: [AddonConfig!]!
+	config: AddonConfig!
 }
 
 type AddonConfig {
@@ -775,11 +776,14 @@ func (ec *executionContext) _AddonList_type(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.AddonSelector)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOAddonSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonSelector(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AddonList_status(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
@@ -844,9 +848,9 @@ func (ec *executionContext) _AddonList_config(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.AddonConfig)
+	res := resTmp.(*model.AddonConfig)
 	fc.Result = res
-	return ec.marshalNAddonConfig2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfigᚄ(ctx, field.Selections, res)
+	return ec.marshalNAddonConfig2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfig(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ControlPlane_name(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
@@ -2902,6 +2906,9 @@ func (ec *executionContext) _AddonList(ctx context.Context, sel ast.SelectionSet
 			out.Values[i] = graphql.MarshalString("AddonList")
 		case "type":
 			out.Values[i] = ec._AddonList_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "status":
 			out.Values[i] = ec._AddonList_status(ctx, field, obj)
 		case "config":
@@ -3444,43 +3451,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAddonConfig2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfigᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AddonConfig) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNAddonConfig2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfig(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNAddonConfig2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfig(ctx context.Context, sel ast.SelectionSet, v *model.AddonConfig) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3917,22 +3887,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalOAddonSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonSelector(ctx context.Context, v interface{}) (*model.AddonSelector, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(model.AddonSelector)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOAddonSelector2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonSelector(ctx context.Context, sel ast.SelectionSet, v *model.AddonSelector) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

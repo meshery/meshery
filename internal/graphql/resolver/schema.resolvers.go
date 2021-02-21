@@ -28,7 +28,7 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, targetStatu
 
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
 	if selector != nil {
-		return r.getAvailableAddons(ctx)
+		return r.getAvailableAddons(ctx, selector)
 	}
 
 	return nil, ErrInvalidRequest
