@@ -7,8 +7,8 @@ export default function fetchAvailableAddons(variables) {
   }
 
   const query = graphql`
-        query getAvailableAddonsQuery{
-            getAvailableAddons($selector: MeshType) {
+        query meshAddonsQuery($meshType: MeshType){
+            getAvailableAddons(selector: $meshType) {
               type
               status
             }
