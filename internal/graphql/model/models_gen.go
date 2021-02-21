@@ -31,6 +31,7 @@ type ControlPlaneFilter struct {
 
 type ControlPlaneMember struct {
 	Component string  `json:"component"`
+	Namespace string  `json:"namespace"`
 	Status    *Status `json:"status"`
 }
 

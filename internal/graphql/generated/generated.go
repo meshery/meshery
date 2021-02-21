@@ -64,6 +64,7 @@ type ComplexityRoot struct {
 
 	ControlPlaneMember struct {
 		Component func(childComplexity int) int
+		Namespace func(childComplexity int) int
 		Status    func(childComplexity int) int
 	}
 
@@ -195,6 +196,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ControlPlaneMember.Component(childComplexity), true
+
+	case "ControlPlaneMember.namespace":
+		if e.complexity.ControlPlaneMember.Namespace == nil {
+			break
+		}
+
+		return e.complexity.ControlPlaneMember.Namespace(childComplexity), true
 
 	case "ControlPlaneMember.status":
 		if e.complexity.ControlPlaneMember.Status == nil {
@@ -482,6 +490,7 @@ type ControlPlane {
 
 type ControlPlaneMember {
 	component: String!
+	namespace: String!
 	status: Status
 }`, BuiltIn: false},
 	{Name: "schema/operator.graphqls", Input: `type OperatorStatus {
@@ -961,6 +970,41 @@ func (ec *executionContext) _ControlPlaneMember_component(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Component, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ControlPlaneMember_namespace(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ControlPlaneMember",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2923,6 +2967,11 @@ func (ec *executionContext) _ControlPlaneMember(ctx context.Context, sel ast.Sel
 			out.Values[i] = graphql.MarshalString("ControlPlaneMember")
 		case "component":
 			out.Values[i] = ec._ControlPlaneMember_component(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "namespace":
+			out.Values[i] = ec._ControlPlaneMember_namespace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
