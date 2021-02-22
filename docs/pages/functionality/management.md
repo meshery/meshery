@@ -4,6 +4,8 @@ title: Lifecycle Management
 permalink: functionality/lifecycle-management
 type: functionality
 language: en
+lang: en
+categories: en
 list: include
 ---
 <a name="lifecycle-management"></a>

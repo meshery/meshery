@@ -1,12 +1,15 @@
 ---
 layout: page
 title: Meshery Documentation
+language: en
+lang: en
+categories: en
 permalink: /
 display-title: "false"
 ---
 
-{% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
-
+<!-- {% assign sorted_pages = site.pages | sort: "name" | alphabetical %} -->
+{% assign sorted_pages = site.pages | where: "language", "en" | sort: "name" | alphabetical %}
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
     <a href="https://layer5.io/meshery">

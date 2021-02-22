@@ -11,6 +11,11 @@ github_link: https://github.com/layer5io/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 {% include adapter-status.html %}
 

@@ -6,6 +6,8 @@ type: concepts
 redirect_from: architecture/database
 abstract: "Meshery offers support for internal caching with the help of file databases. This has been implemented with several libraries that supports different kinds of data formats."
 language: en
+lang: en
+categories: en
 list: include
 ---
 

@@ -2,6 +2,9 @@
 layout: default
 title: Releases
 permalink: project/releases
+language: en
+lang: en
+categories: en
 ---
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
 <table>

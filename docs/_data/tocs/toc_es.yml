@@ -1,0 +1,110 @@
+#  crear un toc_es.yml, etc por cada lang
+- title: Documentación
+  url: "es/"
+  links:
+    - title: Vista General
+      url: es/overview
+    - title: Proyecto
+      url: es/project
+      children:
+        - title: Contribuyendo
+          url: es/project/contributing
+        - title: Liberaciones
+          url: es/project/releases
+        - title: Construir Y Liberal (CI)
+          url: es/project/build-and-release
+        - title: Vulnerabilidades
+          url: es/project/security-vulnerabilities
+        - title: FAQ
+          url: es/project/faq
+    - title: Inicio Rápido
+      url: es/installation/quick-start
+    - title: Plataformas Suportadas
+      url: es/installation/platforms
+      children:
+        - title: AKS
+          url: es/installation/platforms/aks
+        - title: Docker
+          url: es/installation/platforms/docker
+        - title: EKS
+          url: es/installation/platforms/eks
+        - title: GKE
+          url: es/installation/platforms/gke
+        - title: KinD
+          url: es/installation/platforms/kind
+        - title: Kubernetes
+          url: es/installation/platforms/kubernetes
+        - title: Minikube
+          url: es/installation/platforms/minikube
+        - title: Windows
+          url: es/installation/platforms/windows
+- title: Conceptos
+  url: es/concepts
+  links:
+    - title: Arquitectura
+      url: es/concepts/architecture
+    - title: Adaptadores
+      url: es/concepts/architecture/adapters
+- title: Functionalidad
+  url: es/functionality
+  links:
+    - title: Administración del Ciclo de Vida
+      url: es/functionality/lifecycle-management
+    - title: Administración del Desempeño
+      url: es/functionality/performance-management
+    - title: Interface de Malla de Servicio (SMI)
+      url: es/functionality/service-mesh-interface
+- title: Malla de Servicio
+  url: es/service-meshes
+  links:
+    - title: Malla de Aplicaciones
+      url: es/service-meshes/adapters/app-mesh
+    - title: Malla de Servicio Citrix
+      url: es/service-meshes/adapters/cpx
+    - title: Consul
+      url: es/service-meshes/adapters/consul
+    - title: Istio
+      url: es/service-meshes/adapters/istio
+    - title: Kuma
+      url: es/service-meshes/adapters/kuma
+    - title: Linkerd
+      url: es/service-meshes/adapters/linkerd
+    - title: Malla de Servicio de Red
+      url: es/service-meshes/adapters/nsm
+    - title: Malla de Servicio de NGINX
+      url: es/service-meshes/adapters/nginx-sm
+    - title: Octarine
+      url: es/service-meshes/adapters/octarine
+    - title: Malla de Servicio Abierta
+      url: es/service-meshes/adapters/osm
+    - title: Tanzu
+      url: es/service-meshes/adapters/tanzu-sm
+    - title: Malla de Traefik
+      url: es/service-meshes/adapters/traefik-mesh
+- title: Guias
+  url: es/guides
+  links:
+    - title: Desplegando Aplicaciones de Prueba
+      url: es/guides/sample-apps
+    - title: Integrando Prometheus y Grafana
+      url: es/guides/meshery-metrics
+    - title: Actualizando Meshery
+      url: es/guides/upgrade
+    - title: Usando mesheryctl
+      url: es/guides/mesheryctl
+    - title: Usando Multiples Adaptadores Meshery
+      url: es/guides/multiple-adapters
+- title: Extensibilidad
+  url: es/extensibility
+  links:
+    - title: "Adaptadores Meshery de Servicio"
+      url: es/extensibility/adapters
+    - title: "Carga de Generadores"
+      url: es/extensibility/load-generators
+    - title: "Proveedores"
+      url: es/extensibility/providers
+- title: Referencia
+  url: es/reference
+  links:
+    - title: Referencia del Comando mesheryctl
+      url: es/reference/mesheryctl

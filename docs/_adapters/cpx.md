@@ -8,6 +8,11 @@ port: 10008/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-cpx
 image: /assets/img/service-meshes/citrix.svg
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

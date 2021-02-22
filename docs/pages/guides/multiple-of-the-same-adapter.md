@@ -3,6 +3,9 @@ layout: default
 title: Using Multiple Adapters
 permalink: guides/multiple-adapters
 type: Guides
+language: en
+lang: en
+categories: en
 ---
 
 ## Advanced Configuration

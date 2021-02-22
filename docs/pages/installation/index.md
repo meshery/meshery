@@ -4,6 +4,8 @@ title: Quick Start Guide
 permalink: installation/quick-start
 redirect_from: installation
 language: en
+lang: en
+categories: en
 list: exclude
 ---
 

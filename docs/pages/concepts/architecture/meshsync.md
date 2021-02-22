@@ -6,6 +6,8 @@ type: concepts
 redirect_from: architecture/meshsync
 abstract: "Meshery offers support for kubernetes cluster/service mesh state synchronization with the help of MeshSync."
 language: en
+lang: en
+categories: en
 list: include
 ---
 

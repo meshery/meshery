@@ -2,6 +2,9 @@
 layout: page
 title: Contributing
 permalink: project/contributing
+language: en
+lang: en
+categories: en
 ---
 
 

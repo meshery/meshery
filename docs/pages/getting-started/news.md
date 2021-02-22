@@ -2,6 +2,9 @@
 title: News
 permalink: /news/
 excluded_in_search: true
+language: en
+lang: en
+categories: en
 ---
 
 # News

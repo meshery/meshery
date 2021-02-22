@@ -9,6 +9,11 @@ project_status: beta
 github_link: https://github.com/layer5io/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 {% include adapter-status.html %}
 

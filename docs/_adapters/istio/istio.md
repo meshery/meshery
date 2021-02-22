@@ -10,6 +10,11 @@ lab: istio-meshery-adapter
 github_link: https://github.com/layer5io/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

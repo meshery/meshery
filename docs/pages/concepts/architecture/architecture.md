@@ -6,6 +6,8 @@ redirect_from: architecture
 type: concepts
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.
 language: en
+lang: en
+categories: en
 list: include
 ---
 

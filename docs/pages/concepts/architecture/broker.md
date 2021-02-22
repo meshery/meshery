@@ -6,6 +6,8 @@ type: concepts
 redirect_from: architecture/broker
 abstract: "Meshery broker component fascilitates data streaming between kubernetes cluster components and outside world."
 language: en
+lang: en
+categories: en
 list: include
 ---
 

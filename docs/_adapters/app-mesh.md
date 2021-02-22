@@ -9,6 +9,11 @@ project_status: alpha
 github_link: https://github.com/layer5io/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

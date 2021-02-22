@@ -2,6 +2,9 @@
 layout: default
 title: Functionality
 permalink: functionality
+language: en
+lang: en
+categories: en
 ---
 
 These sections provide user guides to the functionality Meshery offers.

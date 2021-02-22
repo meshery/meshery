@@ -10,6 +10,11 @@ lab: kuma-meshery-adapter
 github_link: https://github.com/layer5io/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

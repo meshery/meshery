@@ -1,0 +1,17 @@
+{% comment %} MULTILINGUAL: define the `t` variable for localization and set the
+language of the page. {% endcomment %}
+
+{% assign t = site.data.translations %}
+{% assign lang_default = site.lang[0] %}
+{% if page.lang != nil %}
+  {% assign lang = page.lang %}
+{% else %}
+  {% assign lang = lang_default %}
+{% endif %}
+
+{% comment %} MULTILINGUAL: prepare multilingual links. {% endcomment %}
+
+{% assign t_url_prefix = '' %}
+{% if lang != lang_default %}
+  {% assign t_url_prefix = lang | prepend: '/' %}
+{% endif %}

@@ -7,6 +7,9 @@ redirect_from:
  - guides/mesheryctl
  - guides/mesheryctl-commands
 type: Reference
+language: en
+lang: en
+categories: en
 ---
 ## Categories and Command Structure
 

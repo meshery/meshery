@@ -2,6 +2,9 @@
 layout: default
 title: Build & Release (CI)
 permalink: project/build-and-release
+language: en
+lang: en
+categories: en
 ---
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.

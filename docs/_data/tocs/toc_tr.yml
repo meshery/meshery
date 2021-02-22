@@ -1,0 +1,110 @@
+# crear un toc_es.yml, etc por cada lang
+- title: Dokümantasyon
+  url: "tr"
+  links:
+    - title: Genel Bakış
+      url: tr/overview
+    - title: Proje
+      url: tr/project
+      children:
+        - title: Katkı
+          url: tr/project/contributing
+        - title: Salıverme
+          url: tr/project/releases
+        - title: Derleme ve Yayınlama (CI)
+          url: tr/project/build-and-release
+        - title: Güvenlik açıkları
+          url: tr/project/security-vulnerabilities
+        - title: SSS(FAQ)
+          url: tr/project/faq
+    - title: Hızlı başlangıç
+      url: tr/installation/quick-start
+    - title: Desteklenen Platformlar
+      url: tr/installation/platforms
+      children:
+        - title: AKS
+          url: tr/installation/platforms/aks
+        - title: Docker
+          url: tr/installation/platforms/docker
+        - title: EKS
+          url: tr/installation/platforms/eks
+        - title: GKE
+          url: tr/installation/platforms/gke
+        - title: KinD
+          url: tr/installation/platforms/kind
+        - title: Kubernetes
+          url: tr/installation/platforms/kubernetes
+        - title: Minikube
+          url: tr/installation/platforms/minikube
+        - title: Windows
+          url: tr/installation/platforms/windows
+- title: Kavramlar
+  url: tr/concepts
+  links:
+    - title: Mimari
+      url: tr/concepts/architecture
+    - title: Adaptörler
+      url: tr/concepts/architecture/adapters
+- title: İşlevsellik
+  url: tr/functionality
+  links:
+    - title: Yaşam döngüsü yönetimi
+      url: tr/functionality/lifecycle-management
+    - title: Performans Yönetimi
+      url: tr/functionality/performance-management
+    - title: Servis Mesh Arayüzü (SMI)
+      url: tr/functionality/service-mesh-interface
+- title: Servis Ağları
+  url: tr/service-meshes
+  links:
+    - title: Mesh Uygulaması
+      url: tr/service-meshes/adapters/app-mesh
+    - title: Citrix Hizmet Ağı
+      url: tr/service-meshes/adapters/cpx
+    - title: Consul
+      url: tr/service-meshes/adapters/consul
+    - title: Istio
+      url: tr/service-meshes/adapters/istio
+    - title: Kuma
+      url: tr/service-meshes/adapters/kuma
+    - title: Linkerd
+      url: tr/service-meshes/adapters/linkerd
+    - title: Ağ Hizmeti Mesh
+      url: tr/service-meshes/adapters/nsm
+    - title: NGINX Hizmet Ağı
+      url: tr/service-meshes/adapters/nginx-sm
+    - title: Octarine
+      url: tr/service-meshes/adapters/octarine
+    - title: Servis Ağını Aç
+      url: tr/service-meshes/adapters/osm
+    - title: Tanzu
+      url: tr/service-meshes/adapters/tanzu-sm
+    - title: Traefik Mesh
+      url: tr/service-meshes/adapters/traefik-mesh
+- title: Kılavuzlar
+  url: tr/guides
+  links:
+    - title: Örnek Uygulamaları Dağıtma
+      url: tr/guides/sample-apps
+    - title: Prometheus ve Grafana'nın entegrasyonu
+      url: tr/guides/meshery-metrics
+    - title: Meshery'i Yükseltme
+      url: tr/guides/upgrade
+    - title: Mesheryctl kullanma
+      url: tr/guides/mesheryctl
+    - title: Çoklu Meshery Adaptörlerini Kullanma
+      url: tr/guides/multiple-adapters
+- title: Genişletilebilirlik
+  url: tr/extensibility
+  links:
+    - title: "Servis Mesh Adaptörleri"
+      url: tr/extensibility/adapters
+    - title: "Yük Jeneratörleri"
+      url: tr/extensibility/load-generators
+    - title: "Sağlayıcılar"
+      url: tr/extensibility/providers
+- title: Referans
+  url: tr/reference
+  links:
+    - title: mesheryctl Komut Referansı
+      url: tr/reference/mesheryctl

@@ -9,6 +9,11 @@ project_status: stable
 github_link: https://github.com/layer5io/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
+language: en
+lang: en
+categories: en
+lang: en
+categories: en
 ---
 
 {% include adapter-status.html %}

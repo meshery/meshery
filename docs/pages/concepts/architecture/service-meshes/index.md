@@ -4,6 +4,9 @@ title: Service Meshes
 permalink: service-meshes
 type: service-mesh
 list: exclude
+language: en
+lang: en
+categories: en
 ---
 
 

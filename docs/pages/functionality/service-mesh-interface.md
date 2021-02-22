@@ -3,6 +3,9 @@ layout: default
 title: Meshery and Service Mesh Interface (SMI)
 permalink: functionality/service-mesh-interface
 type: functionality
+language: en
+lang: en
+categories: en
 ---
 
 ## Conformance
