@@ -34,10 +34,12 @@ var err error
 
 var showForAllContext bool
 
+// PrintChannelAndVersionToStdout to return curren release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }
 
+// IsBetaOrStable to determine which release channel is being used
 func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
