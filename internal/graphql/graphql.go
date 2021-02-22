@@ -12,19 +12,22 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/resolver"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"k8s.io/client-go/dynamic"
 )
 
 type Options struct {
-	DBHandler  *database.Handler
-	KubeClient *mesherykube.Client
-	URL        string
+	DBHandler        *database.Handler
+	GetKubeClient    func() (*mesherykube.Client, error)
+	GetDynamicClient func() (dynamic.Interface, error)
+	URL              string
 }
 
 // New returns a graphql handler instance
 func New(opts Options) http.Handler {
 	resolver := &resolver.Resolver{
-		DBHandler:  opts.DBHandler,
-		KubeClient: opts.KubeClient,
+		DBHandler:        opts.DBHandler,
+		GetKubeClient:    opts.GetKubeClient,
+		GetDynamicClient: opts.GetDynamicClient,
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{
