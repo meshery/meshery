@@ -5,7 +5,7 @@ permalink: installation/mesheryctl
 type: installation
 display-title: "true"
 language: en
-list: include
+list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
