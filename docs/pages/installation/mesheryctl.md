@@ -13,6 +13,8 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 
 ## Bash
 
+**Install**
+
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
  curl -L https://git.io/meshery | bash -
@@ -65,7 +67,7 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 `mesheryctl` can be installed via Scoop (a package manager for Windows, just like apt for Ubuntu). To install `mesheryctl` using Scoop, execute the following commands.
 
 **Install**
-<pre class="codeblock-pre clipboardjs codeblock"><div class="codeblock">
+<pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
 scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
 scoop install mesheryctl
@@ -77,7 +79,7 @@ You need to have `scoop` installed on your Windows system to perform these actio
 
 You're ready to run Meshery. To do so, execute the following command.
 
-<pre class="codeblock-pre clipboardjs codeblock"><div class="codeblock">
+<pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
 mesheryctl system start
 
