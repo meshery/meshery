@@ -882,7 +882,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       </Card>
     );
   }
-  
+
   /**
    * renderGrafanaCustomCharts takes in the configuration and renders
    * the grafana boards. If the configuration is empty then it renders
@@ -892,13 +892,12 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {string} grafanaAPIKey grafana API keey
    */
   renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
-    const {classes} = this.props
+    const { classes } = this.props
     if (boardConfigs?.length)
       return (
         <>
-          <Typography align="center" style={{ 
-            fontSize: "1.25rem",
-            margin: "0 0 1rem" 
+          <Typography align="center" variant="h6" style={{
+            margin: "0 0 2.5rem 0"
           }}>Service Mesh Metrics</Typography>
           <GrafanaCustomCharts
             enableGrafanaChip
@@ -976,10 +975,8 @@ class MesheryAdapterPlayComponent extends React.Component {
               {/* SECTION 1 */}
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
-                  <Typography align="center" style={{ 
-                    fontSize: "1.25rem",
-                    margin: "0 0 1rem" ,
-                    fontWeight: "bold"
+                  <Typography align="center" variant="h6" style={{
+                    margin: "0 0 2.5rem 0"
                   }}>Manage Service Mesh</Typography>
                   <Grid container spacing={2}>
                     <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
@@ -1015,7 +1012,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
                   {this.renderGrafanaCustomCharts(
-                    this.props.grafana.selectedBoardsConfigs, 
+                    this.props.grafana.selectedBoardsConfigs,
                     this.props.grafana.grafanaURL,
                     this.props.grafana.grafanaAPIKey,
                   )}
