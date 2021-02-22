@@ -30,7 +30,19 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Statu
 	}
 
 	go func(del bool) {
-		er := initialize(r.KubeClient, del)
+		kubeClient, err := r.GetKubeClient()
+		if err != nil {
+			r.operatorChannel <- &model.OperatorStatus{
+				Status: status,
+				Error: &model.Error{
+					Code:        errCode,
+					Description: "failed to create meshkube client",
+				},
+			}
+			return
+		}
+
+		er := initialize(kubeClient, del)
 		if er != nil {
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
@@ -43,7 +55,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Statu
 		}
 
 		r.meshsyncChannel = make(chan *broker.Message)
-		err := subscribeToBroker(r.KubeClient, r.meshsyncChannel)
+		err = subscribeToBroker(kubeClient, r.meshsyncChannel)
 		if err != nil {
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
@@ -56,7 +68,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Statu
 		}
 
 		// installMeshsync
-		err = runMeshSync(r.KubeClient, del)
+		err = runMeshSync(kubeClient, del)
 		if err != nil {
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
