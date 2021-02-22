@@ -11,6 +11,9 @@ export default function fetchAvailableAddons(variables) {
       addons: getAvailableAddons(selector: $selector) {
         type
         status
+        config {
+        serviceName
+        }
       }
     }
   `;

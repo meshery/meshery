@@ -3,20 +3,23 @@ import environment from "../../../lib/relayEnvironment";
 
 const addonEventsSubscription = graphql`
   subscription AddonEventsSubscription($selector: MeshType) {
-    listenToAddonEvents(selector: $selector) {
+    addonEvent: listenToAddonEvents(selector: $selector) {
       type
       status
+      config {
+        serviceName
+      }
     }
   }
 `;
 
-export default function subscribeOperatorEvents(updater, variables) {
+export default function subscribeOperatorEvents(dataCB, variables) {
   requestSubscription(environment, {
     subscription: addonEventsSubscription,
     variables: {
       selector: variables.serviceMesh
     },
-    updater: updater,
+    onNext: dataCB,
     onError: (error) => console.log(`An error occured:`, error),
   });
 }

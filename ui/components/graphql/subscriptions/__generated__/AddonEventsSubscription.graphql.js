@@ -14,9 +14,12 @@ export type AddonEventsSubscriptionVariables = {|
   selector?: ?MeshType
 |};
 export type AddonEventsSubscriptionResponse = {|
-  +listenToAddonEvents: $ReadOnlyArray<{|
+  +addonEvent: $ReadOnlyArray<{|
     +type: string,
     +status: ?Status,
+    +config: {|
+      +serviceName: string
+    |},
   |}>
 |};
 export type AddonEventsSubscription = {|
@@ -30,9 +33,12 @@ export type AddonEventsSubscription = {|
 subscription AddonEventsSubscription(
   $selector: MeshType
 ) {
-  listenToAddonEvents(selector: $selector) {
+  addonEvent: listenToAddonEvents(selector: $selector) {
     type
     status
+    config {
+      serviceName
+    }
   }
 }
 */
@@ -47,7 +53,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
+    "alias": "addonEvent",
     "args": [
       {
         "kind": "Variable",
@@ -73,6 +79,24 @@ v1 = [
         "kind": "ScalarField",
         "name": "status",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "AddonConfig",
+        "kind": "LinkedField",
+        "name": "config",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "serviceName",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -96,16 +120,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "de2fe45019d12d94969793bd803ec58d",
+    "cacheID": "3bd191d555f561b79be8da77b06e1a99",
     "id": null,
     "metadata": {},
     "name": "AddonEventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  listenToAddonEvents(selector: $selector) {\n    type\n    status\n  }\n}\n"
+    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  addonEvent: listenToAddonEvents(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ec53be7e58e9ad99e7c1ab34e3612d5d';
+(node/*: any*/).hash = '1ecd4940edf0697c34d3f94a931ddb1d';
 
 module.exports = node;

@@ -17,6 +17,9 @@ export type meshAddonsQueryResponse = {|
   +addons: $ReadOnlyArray<{|
     +type: string,
     +status: ?Status,
+    +config: {|
+      +serviceName: string
+    |},
   |}>
 |};
 export type meshAddonsQuery = {|
@@ -33,6 +36,9 @@ query meshAddonsQuery(
   addons: getAvailableAddons(selector: $selector) {
     type
     status
+    config {
+      serviceName
+    }
   }
 }
 */
@@ -73,6 +79,24 @@ v1 = [
         "kind": "ScalarField",
         "name": "status",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "AddonConfig",
+        "kind": "LinkedField",
+        "name": "config",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "serviceName",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -96,16 +120,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "314252e7605fba0b066544645d53fbd0",
+    "cacheID": "358de11af88770b3cf9e6c5899f357cb",
     "id": null,
     "metadata": {},
     "name": "meshAddonsQuery",
     "operationKind": "query",
-    "text": "query meshAddonsQuery(\n  $selector: MeshType\n) {\n  addons: getAvailableAddons(selector: $selector) {\n    type\n    status\n  }\n}\n"
+    "text": "query meshAddonsQuery(\n  $selector: MeshType\n) {\n  addons: getAvailableAddons(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0a3dc6f1355047de53ceaa6f27261105';
+(node/*: any*/).hash = 'fdb358edef8fb4bf80b55772537eab80';
 
 module.exports = node;
