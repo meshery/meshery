@@ -139,6 +139,12 @@ func initConfig() {
 					log.Fatal(err)
 				}
 
+				// Add Token to context file
+				err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+				if err != nil {
+					log.Fatal(err)
+				}
+
 				// Add Context to context file
 				err = utils.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
 				if err != nil {
