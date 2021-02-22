@@ -18,6 +18,8 @@ import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
 import { updateK8SConfig, updateProgress } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
+import subscribeOperatorEvents from './graphql/subscriptions/OperatorEventsSubscription';
+import fetchOperatorStatus from './graphql/queries/mesheryOperatorStatus';
 
 const styles = (theme) => ({
   root: {
@@ -200,25 +202,34 @@ class MeshConfigComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval( () => this.fetchOperatorStatus(), 1000);
-  }
+    // Subscribe to the operator events
+    subscribeOperatorEvents(data => console.log(data))
 
-  componentWillUnmount() {
-    clearInterval(this.timer)
-  }
+    // Query the current state
+    fetchOperatorStatus()
+      .then(res => {
+        if (res.operator?.error) {
+          this.handleError(res.operator?.error?.description || "Operator could not be reached")
+          return
+        }
 
-  fetchOperatorStatus = () => {
-    const self = this;
-    dataFetch('/api/system/operator/status', {
-      credentials: 'same-origin',
-      credentials: 'include',
-    }, (result) => {
-      self.setState({
-        operatorInstalled: result["operator-installed"]=="true"?true:false,
-        NATSInstalled: result["broker-installed"]=="true"?true:false,
-        meshSyncInstalled: result["meshsync-installed"]=="true"?true:false
+        if (res.operator?.status === "ENABLED") {
+          this.setState({
+            operatorInstalled: true,
+            NATSInstalled: true,
+            meshSyncInstalled: true,
+          })
+
+          return
+        }
+
+        this.setState({
+          operatorInstalled: false,
+          NATSInstalled: false,
+          meshSyncInstalled: false,
+        })
       })
-    }, console.log("Could not fetch Operator's Status"));
+      .catch(err => console.error(err))
   }
 
   handleOperatorSwitch = () => {
