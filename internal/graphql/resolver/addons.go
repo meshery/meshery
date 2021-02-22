@@ -129,7 +129,7 @@ func (r *Resolver) listenToAddonEvents(ctx context.Context) (<-chan []*model.Add
 	}
 
 	go func() {
-		wi, err := watchResource(
+		wi, _ := watchResource(
 			ctx,
 			dynamicClient,
 			"",
@@ -140,9 +140,6 @@ func (r *Resolver) listenToAddonEvents(ctx context.Context) (<-chan []*model.Add
 				"metadata.annotations.meshery/component-type = control-plane",
 			},
 		)
-		if err != nil {
-			// Do nothing
-		}
 
 		for {
 			select {
