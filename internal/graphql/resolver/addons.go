@@ -28,9 +28,9 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	res, err := getResource(
 		ctx,
 		dynamicClient,
-		"apps",
+		"",
 		"v1",
-		"deployments",
+		"services",
 		"",
 		[]string{
 			fmt.Sprintf("metadata.annotations.meshery/maintainer = %s", strings.ToLower(sel)),
@@ -44,8 +44,9 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	tempAddonList := []*model.AddonList{}
 	tempStatus := model.StatusEnabled
 	for _, obj := range res {
+		typ := obj.GetAnnotations()["meshery/maintainer"]
 		tempAddonList = append(tempAddonList, &model.AddonList{
-			Type:   sel,
+			Type:   strings.ToUpper(typ),
 			Status: &tempStatus,
 			Config: &model.AddonConfig{
 				ServiceName: obj.GetName(),
@@ -131,9 +132,9 @@ func (r *Resolver) listenToAddonEvents(ctx context.Context) (<-chan []*model.Add
 		wi, err := watchResource(
 			ctx,
 			dynamicClient,
-			"apps",
+			"",
 			"v1",
-			"deployments",
+			"services",
 			"",
 			[]string{
 				"metadata.annotations.meshery/component-type = control-plane",
