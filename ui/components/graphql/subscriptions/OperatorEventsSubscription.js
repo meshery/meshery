@@ -18,7 +18,6 @@ export default function subscribeOperatorEvents(dataCB) {
     subscription: operatorEventsSubscription,
     variables: {},
     onNext: dataCB,
-    updater: updater,
     onError: (error) => console.log(`An error occured:`, error),
   });
 }
