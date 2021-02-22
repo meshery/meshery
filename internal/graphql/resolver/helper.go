@@ -80,13 +80,10 @@ func watchResource(
 			select {
 			case ev := <-ch:
 				// Serialize to map
-				byt, err := json.Marshal(ev.Object)
-				if err != nil {
-					// Do nothing for now
-				}
+				byt, _ := json.Marshal(ev.Object)
 
 				mp := map[string]interface{}{}
-				json.Unmarshal(byt, &mp)
+				_ = json.Unmarshal(byt, &mp)
 
 				if isValidResource(queries, flattenJSON(mp)) {
 					mc <- ev
