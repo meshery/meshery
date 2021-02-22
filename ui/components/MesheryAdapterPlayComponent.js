@@ -48,6 +48,7 @@ import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
+import subscribeAddonEvents from './graphql/subscriptions/AddonEventsSubscription';
 
 const styles = (theme) => ({
   root: {
@@ -174,6 +175,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       });
     }
 
+    this.activeMesh = adapter.name
+
     this.state = {
       selectedOp: "",
       cmEditorValAdd: "",
@@ -204,6 +207,32 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder: "",
       pageSize: 10,
     };
+  }
+
+  componentDidMount() {
+    const meshname = this.mapAdapterNameToMeshName(this.activeMesh) 
+    subscribeAddonEvents(data => {
+      console.log(data)
+      data?.addonEvent?.forEach(addon => {
+        if (addon.type === meshname) {
+          this.setState(state => {
+            const name = addon.config.serviceName !== "jaeger-collector" ? addon.config.serviceName : "jaeger"
+            return {
+              addonSwitchGroup: { 
+                ...state.addonSwitchGroup, 
+                [`${name}-addon`]: addon.status === "ENABLED"
+              }
+            }
+          })
+        }
+      })
+    }, { serviceMesh: meshname })
+  }
+
+  mapAdapterNameToMeshName(name) {
+    if (name?.toLowerCase() === "istio") return "ISTIO";
+
+    return "ALL";
   }
 
   handleChange = (name, isDelete = false) => {
@@ -924,7 +953,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 control={
                   <Switch
                     color="primary"
-                    checked={self.addonSwitchGroup[ops.key]}
+                    checked={!!self.addonSwitchGroup[ops.key]}
                     onChange={(ev) => {
                       this.setState(
                         {
