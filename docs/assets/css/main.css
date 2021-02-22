@@ -96,7 +96,6 @@ excluded_in_search: true
     border: 1px solid  rgba(0, 0, 0, .26);
     border-radius: 5px;
     margin-left: 0.4rem;
-	overflow:hidden;
 }
 
 .toggle-button:hover {
