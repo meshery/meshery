@@ -31,4 +31,10 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     .catch(errorFn);
 }
 
+export function promisifiedDataFetch(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    dataFetch(url, options, result => resolve(result), err => reject(err))
+  })
+}
+
 export default dataFetch;

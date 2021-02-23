@@ -1,9 +1,9 @@
 package config
 
 import (
-	"errors"
-	"log"
+	log "github.com/sirupsen/logrus"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -54,9 +54,12 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 		return Context{}, errors.New("current context not set")
 	}
 	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
+		if ctx.Version == "" {
+			ctx.Version = "latest"
+		}
 		return ctx, nil
 	}
-	return Context{}, errors.New("current context:" + mc.CurrentContext + "does not exist")
+	return Context{}, errors.New("current context:" + mc.CurrentContext + " does not exist")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
@@ -69,14 +72,30 @@ func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	return currentContext.Endpoint
 }
 
-// GetContextContent returns contents of the current context
-func (mc *MesheryCtlConfig) GetContextContent() Context {
+// GetCurrentContext returns contents of the current context
+func (mc *MesheryCtlConfig) GetCurrentContext() Context {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return currentContext
+}
+
+// SetCurrentContext sets current context and returns contents of the current context
+func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, error) {
+	if contextName != "" {
+		mc.CurrentContext = contextName
+	}
+	currCtx, err := mc.CheckIfCurrentContextIsValid()
+	if err != nil {
+		log.Errorf("\nCurrent Context does not exists. The available contexts are:")
+		for context := range mc.Contexts {
+			log.Errorf("%s", context)
+		}
+	}
+
+	return currCtx, err
 }
 
 // GetBuild returns the build number for the binary
