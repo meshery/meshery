@@ -13,8 +13,6 @@ permalink: service-meshes/adapters/kuma
 language: en
 lang: en
 categories: en
-lang: en
-categories: en
 ---
 
 {% include adapter-status.html %}

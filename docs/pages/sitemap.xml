@@ -10,6 +10,7 @@ permalink: /sitemap.xml
      <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>
      <changefreq>daily</changefreq>
     </url>
+       <!-- TODO: crear var para identificar el toc por cada lang -->
 {% for section in site.data.toc %}<url>
      <loc>{{ site.baseurl }}{{ section.url }}/</loc>
      <lastmod>{{ "now" | date: "%Y-%m-%d" }}</lastmod>

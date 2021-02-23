@@ -168,7 +168,7 @@ Si desea que los comandos `mesheryctl` se completen automáticamente para usarlo
  </div></div>
  </pre>
 
-## Autocompletion para zsh
+## Autocompletado para zsh
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

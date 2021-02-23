@@ -32,6 +32,6 @@ Find installation instructions for the Supported Platforms in the compatibility 
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/openshift.svg" width="20" height="20" /> OpenShift                                             |      In Progress      |
 | <img src="/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac]({{ site.baseurl }}/installation#mac-or-linux)              |                       |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/homebrew.png" width="20" height="20" /> [Mac - Homebrew]({{ site.baseurl }}/installation#mac-or-linux)      | macOS 10.12 - 10.15, 11 |
-| &nbsp;&nbsp;&nbsp; [Scoop]({{ site.baseurl }}/installation/platforms/scoop)                                                                                                |                       |
+| &nbsp;&nbsp;&nbsp; [Scoop]({{ site.baseurl }}/installation#windows)                                                                                                |                       |
 | &nbsp;&nbsp;&nbsp;<img src="/assets/img/platforms/wsl2.png" width="20" height="20" /> [Windows]({{ site.baseurl }}/installation/platforms/windows)                  | Build 18917 and above |
 | <img src="/assets/img/platforms/raspberry-pi.png" width="20" height="20" /> Raspberry Pi                                                         |      In Progress      |

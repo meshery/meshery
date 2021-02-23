@@ -7,8 +7,6 @@ visibility: hidden
 language: en
 lang: en
 categories: en
-lang: en
-categories: en
 ---
 {% include adapter-status.html %}
 

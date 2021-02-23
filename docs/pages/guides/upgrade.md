@@ -78,7 +78,6 @@ Docker Deployment: Watchtower updates this component in accordance with the user
     </tr>
 </table>
 
-
 Sub-components deploy as a unit, however, they do not share the same version number.
 
 ### Meshery Docker Deployments

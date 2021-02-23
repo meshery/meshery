@@ -2,6 +2,9 @@
 layout: page
 title: Articles
 permalink: /archive/
+language: en
+lang: en
+categories: en
 excluded_in_search: true
 ---
 # News Archive

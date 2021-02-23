@@ -12,8 +12,6 @@ permalink: service-meshes/adapters/nginx-sm
 language: en
 lang: en
 categories: en
-lang: en
-categories: en
 ---
 {% include adapter-status.html %}
 

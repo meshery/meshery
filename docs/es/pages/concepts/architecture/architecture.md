@@ -12,6 +12,7 @@ type: concepts
 # Arquitectura
 
 #### La arquitectura de Meshery puede ser vista desde dos perspectivas:
+<<<<<<< HEAD:docs/es/pages/concepts/architecture/architecture.md
 
 ##### 1. [**Clientes**](#1-arquitectura-del-cliente)
 ##### 2. [**Proveedores**](#2-arquitectura-del-proveedor)
@@ -19,6 +20,15 @@ type: concepts
 ![Meshery architecture](/assets/img/architecture/Meshery-architecture.svg)
 
 ### 1. **Arquitectura del Cliente**
+=======
+ 
+##### 1. [**Clientes**](#1-client-architecture)
+##### 2. [**Proveedores**](#2-provider-architecture)
+
+![Meshery architecture](/assets/img/architecture/Meshery-architecture-diagram.png)
+
+### 1. **Arquitectura del Client**
+>>>>>>> eeee05d74c581db13f6d140c9d76626331b5100c:docs/pages/es/architecture.md
 
 ![Client architecture](/assets/img/architecture/Meshery-client-architecture.svg)
 

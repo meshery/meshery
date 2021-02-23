@@ -1,7 +1,7 @@
 ---
 layout: page
 title: AKS
-permalink: installation/platforms/aks
+permalink: /installation/platforms/aks
 type: installation
 display-title: "false"
 language: en
@@ -13,11 +13,11 @@ image: /assets/img/platforms/aks.svg
 
 {% include installation_prerequisites.html %}
 
-## To set up and run Meshery on AKS:
+## To set up and run Meshery on AKS (en/ site):
 
 - Connect Meshery to your AKS cluster
-  * [Meshery CLI (mesheryctl)](#connect-meshery-to-azure-kubernetes-cluster)
-  * [Azure CLI (az)](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+  - [Meshery CLI (mesheryctl)](#connect-meshery-to-azure-kubernetes-cluster)
+  - [Azure CLI (az)](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - [Install Meshery on your AKS cluster](#install-meshery-into-your-aks-cluster)
 - [Access Meshery's UI](#port-forward-to-the-meshery-ui)
 
@@ -36,29 +36,29 @@ The following set of instructions expects you to have created a AKS cluster in y
 Alternatively, you may execute the following steps to manually configure Meshery to connect to your AKS cluster.
 
 - Install [Azure CLI(az)](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), and login
-to your azure account using *az login*.
+  to your azure account using _az login_.
 
 - After successfull login, you have to select the subscription with which your AKS is associated with
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- az account set --subscription {{SUBSCRIPTION_ID}}
- </div></div>
- </pre>
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+az account set --subscription {{SUBSCRIPTION_ID}}
+</div></div>
+</pre>
 - Get the kubeconfig from your AKS cluster
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_NAME}}
- </div></div>
- </pre>
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+az aks get-credentials --resource-group {{RESOURCE_GROUP}} --name {{AKS_SERVICE_NAME}}
+</div></div>
+</pre>
 - Set your cluster context and check your cluster-info
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- kubectl set-context {{AKS_SERVICE_NAME}}
- kubectl cluster-info
- </div></div>
- </pre>
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+kubectl set-context {{AKS_SERVICE_NAME}}
+kubectl cluster-info
+</div></div>
+</pre>
 
-### Install Meshery into your AKS cluster 
+### Install Meshery into your AKS cluster
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

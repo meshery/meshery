@@ -6,6 +6,7 @@ type: functionality
 language: tr
 lang: tr
 categories: tr
+
 ---
 
 # Gestión del ciclo de vida del service mesh

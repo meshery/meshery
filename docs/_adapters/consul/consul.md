@@ -14,8 +14,6 @@ permalink: service-meshes/adapters/consul
 language: en
 lang: en
 categories: en
-lang: en
-categories: en
 ---
 {% include adapter-status.html %}
 

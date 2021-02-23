@@ -11,8 +11,6 @@ image: /assets/img/service-meshes/citrix.svg
 language: en
 lang: en
 categories: en
-lang: en
-categories: en
 ---
 
 {% include adapter-status.html %}
