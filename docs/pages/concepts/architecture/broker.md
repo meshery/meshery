@@ -11,6 +11,10 @@ categories: en
 list: include
 ---
 
+Broker is a custom kubernetes controller that empowers data streaming across different components of meshery, which are either inside or outside of the kubernetes cluster.
+
+### Broker FAQs
+=======
 Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.
 
 ### Broker FAQs

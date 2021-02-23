@@ -7,7 +7,7 @@ display-title: "false"
 language: en
 lang: en
 categories: en
-list: include
+list: exclude
 ---
 
 {% include installation_prerequisites.html %}

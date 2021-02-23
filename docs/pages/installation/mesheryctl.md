@@ -7,15 +7,25 @@ display-title: "true"
 language: en
 lang: en
 categories: en
-list: include
+list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
 Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
 
+## Bash
+
+**Install**
+
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ curl -L https://git.io/meshery | bash -
+ </div></div>
+ </pre>
+
 ## Homebrew
 
-### Installation Commands
+**Install**
 
 To install `mesheryctl` using homebrew, execute the following commands.
 
@@ -26,7 +36,9 @@ To install `mesheryctl` using homebrew, execute the following commands.
  </div></div>
 </pre>
 
-### Upgrading
+You need to have `brew` installed on your Mac or Linux system to perform these actions.
+
+**Upgrade**
 
 To upgrade `mesheryctl`, execute the following command.
 
@@ -52,12 +64,40 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> No dependents found!
 ```
 
-### Bash
+## Scoop
 
- <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
- </div></div>
- </pre>
+`mesheryctl` can be installed via Scoop (a package manager for Windows, just like apt for Ubuntu). To install `mesheryctl` using Scoop, execute the following commands.
+
+**Install**
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+scoop install mesheryctl
+
+</div></div>
+</pre>
+
+You need to have `scoop` installed on your Windows system to perform these actions.
+
+You're ready to run Meshery. To do so, execute the following command.
+
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+mesheryctl system start
+
+</div></div>
+</pre>
+
+**Upgrade**
+
+To upgrade `mesheryctl`, just execute the following command.
+
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+scoop update mesheryctl
+
+</div></div>
+</pre>
 
 Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platform).
+

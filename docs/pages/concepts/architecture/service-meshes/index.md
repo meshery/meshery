@@ -3,14 +3,15 @@ layout: default
 title: Service Meshes
 permalink: service-meshes
 type: service-mesh
+lang: es
+language: es
+categories: es
 list: exclude
-language: en
-lang: en
-categories: en
 ---
 
 
-As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
+As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world. Learn more about [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters) in the Architecture section.
+
 ## Support for Service Meshes
 
 | Service Mesh  | Service Mesh Version  |
