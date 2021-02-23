@@ -4,26 +4,26 @@ title: "Extensibilidad: Generadores de Carga"
 permalink: es/extensibility/load-generators
 type: Reference
 #redirect_from: architecture/adapters
-abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
+abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es
 lang: es
 categories: es
 list: include
 ---
 
-Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a `load generator interface` (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure their own preference of load generator different that the default load generator.
+Los usuarios pueden preferir usar un generador de carga sobre el siguiente dada la diferencia de capacidades entre los generadores de carga, por lo que Meshery proporciona una "interfaz de generador de carga" (una interfaz gRPC) detrás de la cual se puede implementar un generador de carga. Meshery ofrece a los usuarios la opción de elegir qué generador de carga prefieren utilizar para una prueba de rendimiento determinada. Los usuarios pueden configurar su propia preferencia de generador de carga diferente al generador de carga predeterminado.
 
-### What function do load generators in Meshery provide? 
+### ¿Qué función cumplen los generadores de carga en Meshery?
 
-Load generators will provide the capability to run load tests from Meshery. As of today the load generators are embedded as libraries in Meshery and Meshery invokes the load generators APIs with the right load test options to run the load test. At the moment, Meshery has support for HTTP load generators. Support for GRPC and TCP load testing is on the roadmap. Meshery has functional integration with fortio, wrk2, and nighthawk.
+Los generadores de carga proporcionarán la capacidad de ejecutar pruebas de carga desde Meshery. A partir de hoy, los generadores de carga están integrados como bibliotecas en Meshery y Meshery invoca las API de los generadores de carga con las opciones de prueba de carga adecuadas para ejecutar la prueba de carga. Por el momento, Meshery tiene soporte para generadores de carga HTTP. El soporte para pruebas de carga de GRPC y TCP está en la hoja de ruta. Meshery tiene integración funcional con fortio, wrk2 y nighthawk.
 
-### Why support multiple load generators?
+### ¿Por qué admitir varios generadores de carga?
 
-Different use cases and different opinions call for different approaches to statistical analysis of the performance results. For example, wrk2 accounts for a concept called Coordinated Omission.
+Diferentes casos de uso y diferentes opiniones requieren diferentes enfoques para el análisis estadístico de los resultados de rendimiento. Por ejemplo, wrk2 da cuenta de un concepto llamado Omisión Coordinada.
 
-### Which load generators does Meshery support?
+### ¿Qué generadores de carga admite Meshery?
 
-1. [fortio](https://github.com/fortio/fortio) - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats.
-1. [wrk2](https://github.com/giltene/wrk2) - A constant throughput, correct latency recording variant of wrk.
-1. [nighthawk](https://github.com/envoyproxy/nighthawk) - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.
-  - See the GetNighthawk project.
+1. [fortio](https://github.com/fortio/fortio) - Biblioteca de pruebas de carga Fortio, herramienta de línea de comandos, servidor de eco avanzado y UI web en go (golang). Permite especificar una carga establecida de consulta por segundo y registrar histogramas de latencia y otras estadísticas útiles.
+1. [wrk2](https://github.com/giltene/wrk2) - Un rendimiento constante, una variante de wrk de grabación de latencia correcta.
+1. [nighthawk](https://github.com/envoyproxy/nighthawk) - Permite a los usuarios ejecutar pruebas de rendimiento distribuidas para imitar mejor los escenarios de sistemas distribuidos del mundo real.
+  - Vea el proyecto GetNighthawk.

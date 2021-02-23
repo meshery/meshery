@@ -3,82 +3,82 @@ layout: default
 title: "Extensibilidad: adaptadores de malla de servicio"
 permalink: es/extensibility/adapters
 type: Reference
-abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
+abstract: 'La arquitectura Meshery es extensible. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de <a href="extensibility#adapters">adaptadores</a>, <a href="extensibility#load-generators"> generadores de carga</a> and <a href="extensibility#providers">providers</a>.'
 #redirect_from: extensibility
 language: es
 lang: es
 categories: es
 ---
-**What are Meshery Adapters?**
+**¿Qué son los Adaptadores Meshery?**
 
-Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](service-meshes/adapters). See the [Meshery Architecture](architecture) diagrams for visuals on how adapters relate to other Meshery components.
+Los adaptadores permiten a Meshery interactuar con las diferentes mallas de servicio. Revise la lista de todos los disponibles[adaptadores de malla de servicios](service-meshes/adapters). Ver los diagramas de [Arquitectura Meshery](/es/architecture) para visualizar sobre como los adaptadores se relacionan a otros componentes Meshery.
 
-Meshery upholds the following guiding principles for adapter design:
+Meshery mantiene los siguientes principios rectores para el diseño de adaptadores:
 
-1. **Adapters allow Meshery to interface with the different service meshes, exposing their differentiated value to users.**
-  - Service mesh projects should be encouraged to maintain their own adapters. Allowing them to expose their differentiated capabilities encourages this.
-1. **Adapters should avoid wheel reinvention, but seek to leverage the functionality provided by service meshes under management.**
-  - This both reduces sustaining costs and improves reliability.
+1. **Los adaptadores permiten a Meshery interactuar con las diferentes mallas de servicio, exponiendo su valor diferenciado a los usuarios.**
+   - Se debe alentar a los proyectos de mallas de servicios a mantener sus propios adaptadores. Permitirles exponer sus capacidades diferenciadas fomenta esto.
+1. **Los adaptadores deben evitar la reinvención de las ruedas, pero deben buscar aprovechar la funcionalidad proporcionada por las mallas de servicio bajo administración.**
+   - Esto reduce los costos de mantenimiento y mejora la confiabilidad.
 
 
 
-### Adapter Capabilities
-Meshery communicates with adapters over grpc. Adapters establish communication with the service mesh. Adapters have a predefined set of operations which are grouped based on predefined operation types. 
+### Capacidades de los Adaptadores
+Meshery se comunica con los adaptadores a través de grpc. Los adaptadores establecen comunicación con la malla de servicios. Los adaptadores tienen un conjunto predefinido de operaciones que se agrupan en función de tipos de operaciones predefinidos.
 
-The predefined operation types are:
+Los tipos de operación predefinidos son:
 
-- Install
-- Sample application
-- Config
-- Validate
-- Custom
+- Instalar en pc
+- Aplicación de muestra
+- Configuración
+- Validar
+- Personalizado
 
-### How to create new adapter?
+### ¿Cómo crear un nuevo adaptador?
 
-Meshery uses adapters to manage and interact with different service meshes. Meshery adapters are written in Go. Whether you are creating a new adapter or modifying an existing adapter, be sure to read the [Meshery Adapters](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#) design specification. 
+Meshery usa adaptadores para administrar e interactuar con diferentes mallas de servicio. Los adaptadores Meshery están escritos en Go. Ya sea que esté creando un nuevo adaptador o modificando un adaptador existente, asegúrese de leer la especificación de diseño de [Adaptadores Meshery](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#). 
 
-Tip: The [Meshery Adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery Adapter.
+Tip: El [Adaptador Meshery para Istio](https://github.com/layer5io/meshery-istio) es un buen adaptador de referencia para usar como ejemplo de un adaptador Meshery.
 
-### Meshery Adapter Codebase Overview
+### Descripción general de la base de código del adaptador Meshery
 
-[Common libraries](https://docs.google.com/presentation/d/1uQU7e_evJ8IMIzlLoBi3jQSRvpKsl_-K1COVGjJVs30/edit#) are used to avoid code duplication and apply DRY.
+[Librerías Comunes](https://docs.google.com/presentation/d/1uQU7e_evJ8IMIzlLoBi3jQSRvpKsl_-K1COVGjJVs30/edit#) se utilizan para evitar la duplicación de códigos y aplicar DRY (Don't Repeat Yourself).
 
 #### [MeshKit](https://github.com/layer5io/meshkit)
 
-The code hierarchy is pluggable and independent from one another. There can be N number of packages depending upon the use case.
-- `errors/` - holds the implementations and the error handlers and error codes which are used across projects.
-- `logger/` - holds the implementations of logging handler and custom attributes to add if any.
-- `utils/` - holds all the utility functions that are specific to meshery projects and are to be used generically across all of them.
-- `tracing/` - holds the implementations of tracing handlers with different tracing providers like jaeger,newrelic, etc.
+La jerarquía de código es conectable e independiente entre sí. Puede haber N cantidad de paquetes dependiendo del caso de uso.
+- `errors/` - contiene las implementaciones y los controladores de errores y códigos de error que se utilizan en los proyectos.
+- `logger/` - contiene las implementaciones del controlador de registro y los atributos personalizados para agregar, si corresponde.
+- `utils/` -contiene todas las funciones de utilidad que son específicas de los proyectos de malla y se deben utilizar de forma genérica en todos ellos.
+- `tracing/` - contiene las implementaciones de los controladores de rastreo con diferentes proveedores de rastreo como jaeger, newrelic, etc.
 
-Each package inside a meshkit is a handler interface implementation, the implementation could be from any third-party packages or the go-kit.
+Cada paquete dentro de un meshkit es una implementación de interfaz de controlador, la implementación podría ser de cualquier paquete de terceros o del go-kit.
 
-#### [Meshery Adapter Libary](https://github.com/layer5io/meshery-adapter-library)
+#### [Biblioteca de Adaptadores de Meshery](https://github.com/layer5io/meshery-adapter-library)
 
-This section contains a high level overview of the meshery-adapter-library, its purpose and architecture. For details, the reader is referred to the documentation and the code in the repository.
+Esta sección contiene una descripción general de alto nivel de la biblioteca de adaptadores de malla, su propósito y arquitectura. Para obtener más detalles, se remite al lector a la documentación y al código del repositorio.
 
-The main purpose of the meshery-adapter-library is to:
-- provide a set of interfaces, some with default implementations, to be used and extended by adapters.
-- implement common cross cutting concerns like logging, errors, and tracing
-- provide a mini framework implementing the gRPC server that allows plugging in the mesh specific configuration and - operations implemented in the adapters.
-- provide middleware extension points
+El propósito principal de la biblioteca de adaptadores de meshery es:
+- proporcionar un conjunto de interfaces, algunas con implementaciones predeterminadas, para ser utilizadas y extendidas por adaptadores.
+- Implementar preocupaciones transversales comunes como registro, errores y rastreo.
+- proporcionar un mini framework que implemente el servidor gRPC que permite conectar la configuración específica de la malla y - las operaciones implementadas en los adaptadores.
+- proporcionar puntos de extensión de middleware
 
-#### Overview and Usage
-The library consists of interfaces and default implementations for the main and common functionality of an adapter. It also provides a mini-framework that runs the gRPC adapter service, calling the functions of handlers injected by the adapter code. This is represented in an UML-ish style in the figure below. The library is used in all of Meshery's adapters.
+#### Descripción general y uso
+La biblioteca consta de interfaces e implementaciones predeterminadas para la funcionalidad principal y común de un adaptador. También proporciona un mini-framework que ejecuta el servicio del adaptador gRPC, llamando a las funciones de los controladores inyectados por el código del adaptador. Esto se representa en un estilo similar a UML en la siguiente figura. La biblioteca se utiliza en todos los adaptadores de Meshery.
 
-#### Meshery Adapter for XXX Service Mesh
+#### Adaptador Meshery para Malla de Servicio XXX
 
-### Development Process
-With the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build & Release Strategy, otherwise, the corresponding action’s default version is used.
+### Proceso de Desarrollo
+Con el [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) en mente, Comprenda que el desarrollo sigue el flujo de trabajo de solicitud de bifurcación y extracción habitual que se describe aquí, consulte también Proceso de GitHub. Al bifurcar, GitHub desactiva todos los flujos de trabajo. Es una buena práctica y seguro activarlos de manera que el código se valide en cada inserción. Esto requiere que el filtro de ramas para "al enviar" esté configurado en "**" para que se active también en las ramas que contengan "/" en su nombre. Las acciones se parametrizan utilizando secretos (consulte Estrategia de creación y lanzamiento). La imagen de Docker solo se crea y se envía a Docker Hub si se inserta una etiqueta y se configura la información de autenticación correspondiente. El único secreto que debe establecerse en cada bifurcación es GO_VERSION, especificado en la estrategia de compilación y lanzamiento; de lo contrario, se usa la versión predeterminada de la acción correspondiente.
 
-Each commit has to be signed off, see Contributing Overview.
+Cada 'commit' debe estar firmado, consulte Descripción general de la contribución.
 
-#### Running an adapter as a container
-Testing your local changes running as a container can be accomplished in two ways:
+#### Ejecutando un adaptador como contenedor
+La prueba de los cambios locales que se ejecutan como un contenedor se puede lograr de dos maneras:
 
-1. Define the adapter’s address in the UI: Unless the running container is named as specified in the docker-run target in the Makefile, the container has to be removed manually first. Then, run `make docker` followed by `make docker-run`. Then, connect to the adapter in the UI in “Settings>Service Meshes” using `localhost:<port>` if the meshery server is running as a binary, or <docker IP address>:<port> if it is running as a docker container.
-1. Using mesheryctl: In `~/.meshery/meshery.yaml`, change the tag specifying the image of the adapter to “latest”. Run make docker, followed by `mesheryctl system start --skip-update`. This assumes mesheryctl system start has been executed at least once before.
+1. Defina la dirección del adaptador en la interfaz de usuario: a menos que el contenedor en ejecución tenga el nombre especificado en el destino de ejecución de la ventana acoplable en el Makefile, el contenedor debe eliminarse manualmente primero. Luego, ejecute `make docker` seguido de`make docker-run`. Luego, conéctese al adaptador en la interfaz de usuario en "Configuración> Mallas de servicio" usando `localhost:<puerto>` si el servidor de malla se ejecuta como binario, o <dirección IP docker>:<puerto> si se ejecuta como contenedor docker.
+1. Usando mesheryctl: En `~/.meshery/meshery.yaml`, cambie la etiqueta que especifica la imagen del adaptador a“ más reciente ”. Ejecute make docker, seguido de `mesheryctl system start --skip-update`. Esto supone que el inicio del sistema mesheryctl se ha ejecutado al menos una vez antes.
 
-#### Running an adapter as a process
+#### Ejecutar un adaptador como proceso
 
-Another way to test your local changes is to run the adapter as a process. To do this, clone the meshery repository, and start meshery using make run-local-cloud. Start the adapter from your IDE, or by executing make run. Then, in the meshery interface, add the adapter using “localhost:<PORT>”.
+Otra forma de probar los cambios locales es ejecutar el adaptador como un proceso. Para hacer esto, clone el repositorio de meshery e inicie meshery usando make run-local-cloud. Inicie el adaptador desde su IDE o ejecutando make run. Luego, en la interfaz de malla, agregue el adaptador usando “localhost:<PUERTO>”.

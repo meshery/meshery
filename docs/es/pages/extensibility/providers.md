@@ -4,126 +4,126 @@ title: "Extensibilidad: Proveedores"
 permalink: es/extensibility/providers
 type: Reference
 #redirect_from: architecture/adapters
-abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
+abstract: "Meshery ofrece soporte para más adaptadores que cualquier otro proyecto o producto en el mundo. Meshery utiliza adaptadores para gestionar las distintas mallas de servicio."
 language: es
 lang: es
 categories: es
 list: include
 ---
-Meshery offers Providers as a point of extensibility. With a built-in Local Provider (named "None"), Meshery Remote Providers are designed to be pluggable. Remote Providers offer points of extension to users / integrators to deliver enhanced functionality, using Meshery as a platform.
+Meshery ofrece a los proveedores como un punto de extensibilidad. Con un proveedor local integrado (llamado "None"), los proveedores remotos de Meshery están diseñados para ser conectables. Los proveedores remotos ofrecen puntos de extensión a los usuarios / integradores para ofrecer una funcionalidad mejorada, utilizando Meshery como plataforma.
 
-1. **Extensibility points offer clean separation of open vs closed source capabilities.**
-   - Meshmap is an example of a feature to be delivered via Remote Provider. 
-1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
-   - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
+1. **Los puntos de extensibilidad ofrecen una separación clara de las capacidades de código abierto y cerrado.**
+   - Meshmap es un ejemplo de una función que se entregará a través de un proveedor remoto. 
+1. **Los Proveedores Remotos deben poder ofrecer RBAC personalizado, componentes de Interfaz de Usuario (UI) personalizados y componentes de backend personalizados**
+   - Es necesario identificar o crear marcos cargables dinámicamente para cumplir con cada uno de estos propósitos.
 
-### Design Principles: Meshery Remote Provider Framework
+### Principios de diseño: marco de proveedor remoto de Meshery
 
-Meshery's Remote Provider extensbility framework is designed to enable:
+El marco de extensibilidad del proveedor remoto de Meshery está diseñado para permitir:
 
-1. **Pluggable UI Functionality:**
-   - Out-of-tree custom UI components with seamless user experience.
-   - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
+1. **Funcionalidad de interfaz de usuario conectable:**
+    - Componentes de interfaz de usuario personalizados fuera del árbol con una experiencia de usuario perfecta.
+    - Un sistema de recuperación remota de paquetes de extensión (componentes ReactJS y binarios Golang).
 
-1. **Pluggable Backend Functionality:**
-   - Remote Providers have any number of capabilities unbeknownst to Meshery.
+1. **Funcionalidad backend conectable:**
+    - Los proveedores remotos tienen una cantidad de capacidades desconocidas para Meshery.
 
-1. **Pluggable AuthZ**
-   - Design an extensible role based access control system such that Remote Providers can determine their own set of controls. Remote Providers to return JWTs with custom roles, permission keys and permission keychains.
+1. **AuthZ Conectable**
+   - Diseñe un sistema de control de acceso extensible basado en roles de modo que los proveedores remotos puedan determinar su propio conjunto de controles. Proveedores remotos para devolver JWT con roles personalizados, claves de permisos y llaveros de permisos.
 
-![Providers](/assets/img/providers/provider_screenshot.png)
+![Proveedoress](/assets/img/providers/provider_screenshot.png)
 
-### What functionality do Providers perform?
+### ¿Qué funcionalidad realizan los proveedores?
 
-What a given Remote Provider offers might vary broadly between providers. Meshery offers extension points that Remote Providers are able to use to inject different functionality - functionality specific to that provider.
+Lo que ofrece un proveedor remoto determinado puede variar ampliamente entre proveedores. Meshery ofrece puntos de extensión que los proveedores remotos pueden usar para inyectar diferentes funcionalidades, una funcionalidad específica para ese proveedor.
 
-- **Authentication and Authorization**
-  - Examples: session management, two factor authentication, LDAP integration.
-- **Long-Term Persistence**
-  - Examples: Storage and retrieval of performance test results.
-  - Examples: Storage and retrieval of user preferences.
-- **Enhanced Visualization**
+- **Autenticación and Autorización**
+  - Ejemplos: gestión de sesiones, autenticación de dos factores, integración LDAP.
+- **Persistencia a Largo Plazo**
+  - Ejemplos: almacenamiento y recuperación de resultados de pruebas de rendimiento.
+  - Ejemplos: almacenamiento y recuperación de las preferencias del usuario.
+- **Visualización Mejorada**
   - Examples: Creation of a visual service mesh topology.
   - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
-- **Reporting**
-  - Examples: Using Meshery's GraphQL server to compose new dashboards.
+- **Reporteo**
+  - Ejemplos: usar el servidor GraphQL de Meshery para crear nuevos paneles.
 
-## Types of providers
+## Typos of proveedores
 
-Two types of providers are defined in Meshery: `local` and `remote`. The Local provider is built-into Meshery. Remote providers are may be implemented by anyone or organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
+En Meshery se definen dos tipos de proveedores: `local` y `remoto`. El proveedor local está integrado en Meshery. Los proveedores remotos pueden ser implementados por cualquier persona u organización que desee integrarse con Meshery. Cualquier número de proveedores remotos puede estar disponible en su implementación de Meshery.
 
-### Remote Providers
+### Proveedores Remotos
 
-Use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. Use a Remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people).
+El uso de un proveedor remoto pone a Meshery en modo multiusuario y requiere autenticación de usuario. Utilice un proveedor remoto cuando su uso de Meshery sea continuo o se utilice en un entorno de equipo (utilizado por varias personas).
 
-Name: **“Meshery”** (default)
+Nombre: **“Meshery”** (default)
 
-- Enforces user authentication.
-- Long-term term persistence of test results.
-- Save environment setup.
-- Retrieve performance test results.
-- Retrieve conformance test results.
-- Free to use.
+- Refuerza la autenticación del usuario.
+- Persistencia a largo plazo de los resultados de las pruebas.
+- Guarde la configuración del entorno.
+- Recupere los resultados de las pruebas de rendimiento.
+- Recuperar los resultados de las pruebas de conformidad.
+- De uso gratuito.
 
-### Local Provider
+### Proveedor Local
 
-Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
+El uso del proveedor local, "None", pone a Meshery en modo de usuario único y no requiere autenticación. Utilice el proveedor local cuando su uso de Meshery esté destinado a ser de corta duración.
 
-Name: **“None”**
+Nombre: **“None”**
 
-- No user authentication.
-- Container-local storage of test results. Ephemeral.
-- Environment setup not saved.
-- No performance test result history.
-- No conformance test result history.
-- Free to use.
+- Sin autenticación de usuario.
+- Almacenamiento en contenedor de los resultados de las pruebas. Efímero.
+- Configuración del entorno no guardada.
+- Sin historial de resultados de pruebas de rendimiento.
+- Sin historial de resultados de pruebas de conformidad.
+- De uso gratuito.
 
-## Building a Provider
+## Construyendo un Proveedor
 
-Meshery interfaces with Providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
+Meshery interactúa con los proveedores a través de una interfaz Go. Las implementaciones del proveedor deben colocarse en el código y compilarse juntas hoy. Deberá inyectarse una instancia de proveedor en Meshery cuando se inicie el programa.
 
-Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
+Meshery mantiene la implementación de los proveedores remotos por separado para que se introduzcan a través de un proceso separado y se inyecten en Meshery en tiempo de ejecución (OR) y cambien la forma en que funciona el código para que los proveedores invoquen a Meshery.
 
-### Remote Provider Extension Points
+### Puntos de extensión de proveedor remoto
 
-Interwoven into Meshery’s web-based, user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
+Entretejidos en la interfaz de usuario basada en web de Meshery hay una variedad de puntos de extensión. Cada punto de extensión está cuidadosamente diseñado para ofrecer una experiencia de usuario perfecta. Cada punto de extensión se identifica con un nombre y un tipo. Los siguientes puntos de extensión de la interfaz de usuario de Meshery están disponibles:
 
-- **Name:** navigator 
-   **Type:** Menu Items
-  **Description:** This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.
+- **Nombre:** navigator 
+   **Tipo:** Elementos de Menú
+  **Descripción:** Se supone que es una extensión de página completa que obtendrá un punto final dedicado en la interfaz de usuario de meshery. Y aparecerá en la barra lateral / navegador de la interfaz de usuario de Meshery. Los elementos del menú pueden referirse a extensiones de página completa.
 
 **Name:** user_prefs 
-**Type:** Single Component
-**Description:** This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.
+**Type:** Componente Único
+**Description:** Se supone que son componentes de reacción remota que se colocarán en una página preexistente y no tendrán un punto final dedicado. A partir de ahora, el único lugar donde se puede cargar esta extensión es la sección "Preferencias del usuario" en la configuración de malla.
 
-**Name:** /extension/<your name here>
-**Type:** Full Page
+**Name:** /extension/<su nombre aquí>
+**Type:** Página Completa
 Description: 
 
-The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.
+El paquete Provider se descomprime en el sistema de archivos del servidor Meshery en `/app/provider-pkg/<package-name>`.
 
-Remote Providers must fulfill the following endpoints:
+Los proveedores remotos deben cumplir con los siguientes puntos finales:
 
-1. `/login` - return valid token
-1. `/logout` - invalidating token
-1. `/capabilities` - return capabilities.json
+1. `/login` - regresa token válido
+1. `/logout` - invalida el token
+1. `/capabilities` - regresa capabilities.json
 
-## UI Extension Points
+## Puntos de extensión de la interfaz de usuario
 
-All UI extensions will be hosted under the endpoint <mesheryserver:port/provider>
+Todas las extensiones de la interfaz de usuario se alojarán en el punto final. <servidormeshery:puerto/proveedor>
 
 ### UserPrefs
 
-The UserPrefs extension point expects and loads a component to be displayed into /userpreferences page.
+El punto de extensión UserPrefs espera y carga un componente para que se muestre en la página /userpreferences.
 
 ### Navigator
 
-The Navigator extension point loads a set of menu items to be displayed in the menu bar on the left hand side of the Meshery UI.
+El punto de extensión Navigator carga un conjunto de elementos de menú que se mostrarán en la barra de menú en el lado izquierdo de la interfaz de usuario de Meshery.
 
 
-## Capabilities Endpoint Example
+## Ejemplo de Punto Final de Capacidades
 
-Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the "capabilities" section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
+Meshery Seerver enviará todas las solicitudes a los puntos finales del proveedor remoto. Los  endpoints (puntos finales) se determinan e identifican dinámicamente en la sección "capacidades" del punto final `/capabilities`. Los proveedores como objeto tienen los siguientes atributos (esto debe devolverse como una respuesta al endpoint `/capabilities`):
 
 ```json
 {
@@ -182,15 +182,15 @@ Meshery Seerver will proxy all requests to remote provider endpoints. Endpoints 
 
 ```
 
-Meshery enables you as a service mesh owner to customize your service mesh deployment.
+Meshery le permite, como propietario de la malla de servicios, personalizar la implementación de su malla de servicios.
 
-## Managing your Remote Provider Extension Code
+## Administrar su Código de Extensión de Proveedor Remoto
 
-Remote Provider extensions are kept out-of-tree from Meshery (server and UI). You might need to build your extensions under the same environment and set of dependencies as Meshery. The Meshery framework of extensibility has been designed such that in-tree extensions can be safely avoided while still providing a robust platform from which to extend Meshery’s functionality. Often, herein lies the delineation of open vs. closed functionality within Meshery. Remote Providers can bring (plugin) what functionality that they want behind this extensible interface (more about Meshery extensibility), at least that is up to the point that Meshery has provided a way to plug that feature in.
+Las extensiones de proveedor remoto se mantienen fuera del árbol de Meshery (servidor e interfaz de usuario). Es posible que deba crear sus extensiones en el mismo entorno y conjunto de dependencias que Meshery. El marco de extensibilidad de Meshery se ha diseñado de manera que las extensiones en el árbol se pueden evitar de forma segura y, al mismo tiempo, proporcionar una plataforma sólida desde la que extender la funcionalidad de Meshery. A menudo, aquí se encuentra la delimitación de la funcionalidad abierta frente a la cerrada dentro de Meshery. Los proveedores remotos pueden traer (complemento) qué funcionalidad desean detrás de esta interfaz extensible (más sobre la extensibilidad de Meshery), al menos hasta el punto en que Meshery ha proporcionado una forma de conectar esa característica.
 
-Offering out-of-tree support for Meshery extensions means that:
+Ofrecer soporte fuera del árbol para extensiones de Meshery significa que:
 
-1. source code to your Meshery extensions are not required to be open source, 
-1. liability to Meshery’s stability is significantly reduced, avoiding potential bugs in extended components. 
+1. No es necesario que el código fuente de las extensiones de Meshery sea de código abierto,
+1. La responsabilidad por la estabilidad de Meshery se reduce significativamente, evitando errores potenciales en componentes extendidos. 
 
-Through clearly defined extension points, Meshery extensions may be offered as closed source capabilities that plug into open source Meshery code. To facilitate integration of your Meshery extensions, you might automate the building and releasing of your separate, but interdependent code repositories. You will be responsible for sustaining both your ReactJS and Golang-based extensions.
+A través de puntos de extensión claramente definidos, las extensiones de Meshery pueden ofrecerse como capacidades de código cerrado que se conectan al código de Meshery de código abierto. Para facilitar la integración de sus extensiones de Meshery, puede automatizar la construcción y liberación de sus repositorios de código separados pero interdependientes. Usted será responsable de mantener sus extensiones basadas en ReactJS y Golang.

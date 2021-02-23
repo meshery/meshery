@@ -3,36 +3,36 @@ layout: default
 title: Extensibilidad
 permalink: es/extensibility
 type: Reference
-abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
+abstract: 'La arquitectura Meshery es extensible. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de <a href="extensibility#adapters">adaptadores</a>, <a href="extensibility#load-generators">generadores de carga</a> and <a href="extensibility#providers">providers</a>.'
 redirect_from: reference/extensibility
 language: es
 lang: es
 categories: es
 ---
 
-Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different service meshes via [adapters](#adapters), different [load generators](#load-generators) and different [providers](#providers). Meshery also offers a REST API.
+Meshery tiene una arquitectura extensible con varios puntos de extensión. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de [adaptadores](#adapters), diferentes [generadores de carga](#load-generators) y diferentes [proveedores](#providers). Meshery también ofrece un REST API.
 
-**Guiding Principles for Extensibility**
+**Principios rectores de la extensibilidad**
 
-The following principles are upheld in the design of Meshery's extensibility.
+Los siguientes principios se mantienen en el diseño de la extensibilidad de Meshery.
 
-1. Recognize that different deployment environments have different systems to integrate with.
-1. Offer a default experience that provides the optimal user experience.
+1. Reconozca que los diferentes entornos de implementación tienen diferentes sistemas para integrarse.
+1. Ofrezca una experiencia predeterminada que proporcione la experiencia de usuario óptima.
 
-## Extension Points
+## Puntos de Extensión
 
-Meshery is not just an application. It is a set of microservices where the central component is itself called Meshery. Integrators may extend Meshery by taking advantage of designated Extension Points. Extension points come in various forms and are available through Meshery’s architecture.
+Meshery no es solo una aplicación. Es un conjunto de microservicios donde el componente central se llama Meshery. Los integradores pueden extender Meshery aprovechando los puntos de extensión designados. Los puntos de extensión vienen en varias formas y están disponibles a través de la arquitectura de Meshery.
 
-![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
+![Puntos de Extensión de Meshery ]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
 
-_Figure: Extension points available throughout Meshery_
+_Figura: Puntos de extensión disponibles en Meshery_
 
-The following points of extension are currently incorporated into Meshery.
+Los siguientes puntos de extensión están incorporados actualmente a Meshery.
 
-## Types of Extension Points
+## Tipos de Puntos de Extensión
 
-1. [Providers]({{site.baseurl}}/extensibility/providers)
-1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
-1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-1. [REST API](/extensibility/api#rest)
-1. [GraphQL API](/extensibility/api#graphql)
+1. [Proveedores]({{site.baseurl}}/extensibility/providers)
+1. [Generadores de Carga]({{site.baseurl}}/extensibility/load-generators)
+1. [Adaptadores]({{site.baseurl}}/extensibility/adapters)
+1. [API REST](/extensibility/api#rest)
+1. [API GraphQL](/extensibility/api#graphql)

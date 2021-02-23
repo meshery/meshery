@@ -3,34 +3,34 @@ layout: default
 title: "Extensibilidad: APIs"
 permalink: es/extensibility/api
 type: Reference
-abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
+abstract: 'La arquitectura Meshery es extensible y ofrece una variedad de puntos de extensión y API REST y GraphQL.'
 #redirect_from: extensibility
 language: es
 lang: es
 categories: es
 ---
-## Meshery's APIs
+## APIs de Meshery
 
-Each of Meshery's APIs are subject to the following authentication and authorization system.
+Cada una de las API de Meshery está sujeta al siguiente sistema de autenticación y autorización.
 
-### Authentication
+### Autenticación
 
-Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
+Las solicitudes a cualquiera de los puntos finales de la API deben estar autenticadas e incluir un token de acceso JWT válido en los encabezados HTTP. El tipo de autenticación está determinado por el [Proveedor](#providers). Use el Provider Local, "None", pone Meshery en modo de usuario-único y no requiere autenticación.
 
-### Authorization
+### Autorización
 
-Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
+Actualmente, Meshery solo requiere un token válido para permitir que los clientes invoquen sus API.
 
-### Endpoints
+### Endpoints (puntos finales del API)
 
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+Cada uno de los puntos finales de la API se expone a través de [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Los puntos finales se agrupan por función (p.ej. /api/mesh or /api/perf).
 
-Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Alternativamente, [Proveedores Remotos](./providers) pueden extender los puntos finales de Meshery detrás del endpoint `/api/extensions/`.
 
 ## GraphQL
 
-Meshery provides a GraphQl API available through the default port of `/tcp`.
+Meshery proporciona una API GraphQl disponible a través del puerto predeterminado de `/tcp`.
 
 ## REST
 
-Meshery provides a REST API available through the default port of `9081/tcp`.
+Meshery proporciona una API REST disponible a través del puerto predeterminado de `9081/tcp`.
