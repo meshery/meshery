@@ -46,8 +46,7 @@ var ContextCmd = &cobra.Command{
 			}
 
 			log.Printf("Current context: %s\n", currentContext)
-			cmd.Help()
-			return nil
+			return cmd.Help()
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
