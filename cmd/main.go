@@ -2,18 +2,23 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"path"
 	"time"
 
-	"github.com/layer5io/meshery/helpers"
-	"github.com/layer5io/meshery/nats"
-
 	"github.com/layer5io/meshery/handlers"
+	"github.com/layer5io/meshery/helpers"
+	"github.com/layer5io/meshery/internal/graphql"
+	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/router"
+	"github.com/layer5io/meshkit/database"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
@@ -26,6 +31,12 @@ var (
 	globalTokenForAnonymousResults string
 	version                        = "Not Set"
 	commitsha                      = "Not Set"
+	releasechannel                 = "Not Set"
+)
+
+const (
+	// DefaultProviderURL is the provider url for the "none" provider
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {
@@ -41,6 +52,21 @@ func main() {
 	viper.SetDefault("ADAPTER_URLS", "")
 	viper.SetDefault("BUILD", version)
 	viper.SetDefault("COMMITSHA", commitsha)
+	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+
+	store.Initialize()
+
+	// Register local OAM traits and workloads
+	if err := oam.RegisterMesheryOAMTraits(); err != nil {
+		logrus.Error(err)
+	}
+	if err := oam.RegisterMesheryOAMWorkloads(); err != nil {
+		logrus.Error(err)
+	}
+	logrus.Info("Registered Meshery local Capabilities")
+
+	// Get the channel
+	logrus.Info("Meshery server current channel: ", releasechannel)
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
@@ -105,14 +131,39 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	saasBaseURL := viper.GetString("SAAS_BASE_URL")
+	dbHandler, err := database.New(database.Options{
+		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
+		Engine:   database.SQLITE,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	err = dbHandler.AutoMigrate(
+		meshsyncmodel.KeyValue{},
+		meshsyncmodel.Object{},
+	)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
 	lProv := &models.DefaultLocalProvider{
-		SaaSBaseURL:            saasBaseURL,
+		ProviderBaseURL:        DefaultProviderURL,
 		MapPreferencePersister: preferencePersister,
 		ResultPersister:        resultPersister,
 		SmiResultPersister:     smiResultPersister,
 		TestProfilesPersister:  testConfigPersister,
+		GenericPersister:       dbHandler,
+		GraphqlHandler: graphql.New(graphql.Options{
+			DBHandler:        &dbHandler,
+			GetKubeClient:    helpers.NewKubeClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+			GetDynamicClient: helpers.NewDynamicClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+		}),
+		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
+			URL: "/api/system/graphql/query",
+		}),
 	}
+	lProv.Initialize()
 	provs[lProv.Name()] = lProv
 
 	cPreferencePersister, err := models.NewBitCaskPreferencePersister(viper.GetString("USER_DATA_FOLDER"))
@@ -121,22 +172,39 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	if saasBaseURL == "" {
-		logrus.Fatalf("SAAS_BASE_URL environment variable not set.")
+	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
+	for _, providerurl := range RemoteProviderURLs {
+		parsedURL, err := url.Parse(providerurl)
+		if err != nil {
+			logrus.Error(providerurl, "is invalid url skipping provider")
+			continue
+		}
+		cp := &models.RemoteProvider{
+			RemoteProviderURL:          parsedURL.String(),
+			RefCookieName:              parsedURL.Host + "_ref",
+			SessionName:                parsedURL.Host,
+			TokenStore:                 make(map[string]string),
+			LoginCookieDuration:        1 * time.Hour,
+			BitCaskPreferencePersister: cPreferencePersister,
+			ProviderVersion:            "v0.3.14",
+			SmiResultPersister:         smiResultPersister,
+			GenericPersister:           dbHandler,
+			GraphqlHandler: graphql.New(graphql.Options{
+				DBHandler:        &dbHandler,
+				GetKubeClient:    helpers.NewKubeClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+				GetDynamicClient: helpers.NewDynamicClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+			}),
+			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
+				URL: "/api/system/graphql/query",
+			}),
+		}
+
+		cp.Initialize()
+
+		cp.SyncPreferences()
+		defer cp.StopSyncPreferences()
+		provs[cp.Name()] = cp
 	}
-	cp := &models.MesheryRemoteProvider{
-		SaaSBaseURL:                saasBaseURL,
-		RefCookieName:              "meshery_ref",
-		SessionName:                "meshery",
-		TokenStore:                 make(map[string]string),
-		LoginCookieDuration:        1 * time.Hour,
-		BitCaskPreferencePersister: cPreferencePersister,
-		ProviderVersion:            "v0.3.14",
-		SmiResultPersister:         smiResultPersister,
-	}
-	cp.SyncPreferences()
-	defer cp.StopSyncPreferences()
-	provs[cp.Name()] = cp
 
 	h := handlers.NewHandlerInstance(&models.HandlerConfig{
 		Providers:              provs,
@@ -162,21 +230,6 @@ func main() {
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-
-	// subscribing to nats
-	natsClient, err := nats.New("<server-url>")
-	if err != nil {
-		logrus.Printf("Nats client create error %v", err)
-	} else {
-		err = natsClient.Subscribe("cluster")
-		if err != nil {
-			logrus.Printf("Error subscribing to cluster %v", err)
-		}
-		err = natsClient.Subscribe("istio")
-		if err != nil {
-			logrus.Printf("Error subscribing to istio %v", err)
-		}
-	}
 
 	go func() {
 		logrus.Infof("Starting Server listening on :%d", port)

@@ -301,7 +301,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/citrix.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
-              case "open service mesh":
+              case "osm":
                 image = "/static/img/osm.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
@@ -313,6 +313,10 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/nginx-sm.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
+              case "traefik mesh":
+                image = "/static/img/traefik-mesh.svg";
+                logoIcon = <img src={image} className={classes.icon} />;
+                break;
             }
 
             return (
@@ -322,6 +326,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 onClick={self.handleClick(adapter.adapter_location)}
                 icon={logoIcon}
                 variant="outlined"
+                data-cy="chipAdapterLocation"
               />
             );
           })}
@@ -355,6 +360,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 size="large"
                 onClick={this.handleSubmit}
                 className={classes.button}
+                data-cy="btnSubmitMeshAdapter"
               >
                 Submit
               </Button>

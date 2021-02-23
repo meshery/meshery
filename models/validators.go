@@ -14,7 +14,7 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return errors.Errorf("Error: name field is blank")
 	}
 	if _, err := time.ParseDuration(perfTest.Duration); err != nil {
-		return errors.Wrapf(err, "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management")
+		return errors.Wrapf(err, "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management")
 	}
 
 	if len(perfTest.Clients) < 1 {

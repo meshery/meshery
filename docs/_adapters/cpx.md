@@ -7,7 +7,7 @@ version: "1.0"
 port: 10008/tcp
 project_status: beta
 github_link: https://github.com/layer5io/meshery-cpx
-image: /docs/assets/img/service-meshes/citrix.svg
+image: /assets/img/service-meshes/citrix.svg
 ---
 
 {% include adapter-status.html %}
@@ -17,13 +17,13 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 ### Install {{ page.mesh_name }}
 
-##### **Choose the Meshery Adapter for Citrix**
+##### Choose the Meshery Adapter for Citrix
 
 <a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-adapter.png">
 </a>
 
-##### **Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.**
+##### Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service mesh.
 
 <a href="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
   <img style="width:500px;" src="{{ site.baseurl }}/assets/img/adapters/citrix/citrix-install.png">
@@ -38,11 +38,11 @@ The {{page.name}} can install **{{page.version}}** of the {{page.mesh_name}}.
 
 The {{ page.name }} includes a handful of sample applications. Some of these applications are from other service meshes and some of these sample applications are general-purpose examples. Use Meshery to deploy any of these sample applications.
 
-- [Bookinfo](/docs/guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
     - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
-- [Httpbin](/docs/guides/sample-apps#httpbin)
+- [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Hipster](/docs/guides/sample-apps#hipster)
+- [Hipster]({{ site.baseurl }}/guides/sample-apps#hipster)
     - Hipster Shop Application is a web-based, e-commerce demo application from the Google Cloud Platform.
 
 ### Suggested Topics

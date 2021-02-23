@@ -6,9 +6,9 @@ language: es
 type: installation
 ---
 
-## Inicio rápido con el Servicio Kubernetes de Azure (AKS)
+# Inicio rápido con el Servicio Kubernetes de Azure (AKS)
 
-### Kubernetes administrado
+## Kubernetes administrado
 
 Para ejecutar Meshery en un ambiente administrado de Kubernetes, deberá asignar una `ServiceAccount` existente o crear una nueva `ServiceAccount`:
 

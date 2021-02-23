@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system/context"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -28,6 +30,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = []*cobra.Command{mesh.MeshCmd}
+	availableSubcommands = []*cobra.Command{mesh.MeshCmd, context.ContextCmd, pattern.PatternCmd}
 	ExpCmd.AddCommand(availableSubcommands...)
 }

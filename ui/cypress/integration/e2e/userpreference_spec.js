@@ -1,17 +1,17 @@
 describe('User Preferences', () => {
   describe('Analytics and Improvement Program', () => {
     beforeEach(() => {
-      cy.route2('GET', '/api/user/stats').as('getUserStats')
+      cy.intercept('GET', '/api/user/stats').as('getUserStats')
 
       cy.selectProviderNone()
 
-      cy.visit('/userpreference')
+      cy.visit('/user/preferences')
       cy.get('.MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program')
       cy.wait('@getUserStats')
     })
 
     it('deactivates "Send Anonymous Usage Statistics"', () => {
-      cy.route2('POST', '/api/user/stats').as('postUserStats')
+      cy.intercept('POST', '/api/user/stats').as('postUserStats')
 
       cy.get('[data-cy="UsageStatsPreference"]').click()
       cy.wait('@postUserStats')
@@ -19,7 +19,7 @@ describe('User Preferences', () => {
     })
 
     it('activates "Send Anonymous Usage Statistics"', () => {
-      cy.route2('POST', '/api/user/stats').as('postUserStats')
+      cy.intercept('POST', '/api/user/stats').as('postUserStats')
 
       cy.get('[data-cy="UsageStatsPreference"]').click()
       cy.wait('@postUserStats')
@@ -27,7 +27,7 @@ describe('User Preferences', () => {
     })
 
     it('deactivates "Send Anonymous Performance Results"', () => {
-      cy.route2('POST', '/api/user/stats').as('postUserStats')
+      cy.intercept('POST', '/api/user/stats').as('postUserStats')
 
       cy.get('[data-cy="PerfResultPreference"]').click()
       cy.wait('@postUserStats')
@@ -35,7 +35,7 @@ describe('User Preferences', () => {
     })
 
     it('activates "Send Anonymous Performance Results"', () => {
-      cy.route2('POST', '/api/user/stats').as('postUserStats')
+      cy.intercept('POST', '/api/user/stats').as('postUserStats')
 
       cy.get('[data-cy="PerfResultPreference"]').click()
       cy.wait('@postUserStats')

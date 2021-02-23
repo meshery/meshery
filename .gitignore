@@ -1,7 +1,8 @@
-# Meshery
+# mesheryctl
 mesheryctl/cmd/mesheryctl/mesheryctl
 mesheryctl/.meshery/
 mesheryctl/mesheryctl
+mesheryctl/default.profraw
 main
 
 # Binaries for programs and plugins
@@ -20,8 +21,6 @@ main
 .DS_Store
 
 .vscode/
-
-config
 
 *.config
 
@@ -48,12 +47,12 @@ dist/
 
 */npm-debug.log
 
-Gemfile.lock
-
 **/.idea
-docs/Gemfile.lock
 
 yarn.lock
 
 # Generated binaries
 **/bin
+*.Identifier
+
+default.profraw

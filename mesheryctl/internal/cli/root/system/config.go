@@ -21,23 +21,24 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// TODO: https://github.com/layer5io/meshery/issues/1022
-
-// GETCONTEXTS endpoint points to the URL return the contexts available
-const GETCONTEXTS = "http://localhost:9081/api/k8sconfig/contexts"
-
-// SETCONTEXT endpoint points to set context
-const SETCONTEXT = "http://localhost:9081/api/k8sconfig"
+// TODO: https://github.com/layer5io/me shery/issues/1022
 
 const paramName = "k8sfile"
 const contextName = "contextName"
+const kubeConfigYaml = "kubeconfig.yaml"
 
 var tokenPath string
 
@@ -49,6 +50,14 @@ type k8sContext struct {
 
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return nil, errors.Wrap(err, "error processing config")
+	}
+
+	// GETCONTEXTS endpoint points to the URL return the contexts available
+	GETCONTEXTS := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig/contexts"
 
 	req, err := utils.UploadFileWithParams(GETCONTEXTS, nil, paramName, configFile)
 	if err != nil {
@@ -87,6 +96,13 @@ func setContext(configFile, cname, tokenPath string) error {
 	extraParams1 := map[string]string{
 		"contextName": cname,
 	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	// SETCONTEXT endpoint points to set context
+	SETCONTEXT := mctlCfg.GetBaseMesheryURL() + "/api/k8sconfig"
 	req, err := utils.UploadFileWithParams(SETCONTEXT, extraParams1, paramName, configFile)
 	if err != nil {
 		return err
@@ -123,16 +139,33 @@ var configCmd = &cobra.Command{
 		if tokenPath == "" {
 			log.Fatal("Token path invalid")
 		}
+		// Define the path where the kubeconfig.yaml will be written to
+		configPath := ""
+		usr, err := user.Current()
+		if err != nil {
+			configPath = filepath.Join(".meshery", kubeConfigYaml)
+		} else {
+			configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
+		}
+		// create the .meshery folder where the kubeconfig.yaml will be written to
+		configDir := filepath.Dir(configPath)
+		if _, err = os.Stat(configDir); err != nil {
+			err = os.Mkdir(configDir, os.ModeDir)
+			if err != nil {
+				log.Fatal("Error while creating .meshery folder for config:", err)
+				return
+			}
+		}
 
 		switch args[0] {
 		case "minikube":
-			if err := utils.GenerateConfigMinikube(); err != nil {
+			if err := utils.GenerateConfigMinikube(configPath); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
 		case "gke":
 			SAName := "sa-meshery-" + utils.StringWithCharset(8)
-			if err := utils.GenerateConfigGKE(SAName, "default"); err != nil {
+			if err := utils.GenerateConfigGKE(configPath, SAName, "default"); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
@@ -172,32 +205,61 @@ var configCmd = &cobra.Command{
 			}
 
 			// Write AKS compatible config to the filesystem
-			if err := utils.GenerateConfigAKS(resourceGroup, aksName); err != nil {
+			if err := utils.GenerateConfigAKS(configPath, resourceGroup, aksName); err != nil {
+				log.Fatal("Error generating kubeconfig: ", err)
+				return
+			}
+		case "eks":
+			log.Info("Configuring Meshery to access EKS...")
+			var regionName, clusterName string
+
+			// Prompt user for AWS region name
+			log.Info("Please enter the AWS region name:")
+			_, err := fmt.Scanf("%s", &regionName)
+			if err != nil {
+				log.Warnf("Error reading AWS region name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS region name:")
+				_, err = fmt.Scanf("%s", &regionName)
+				if err != nil {
+					log.Fatalf("Error reading AWS region name: %s", err.Error())
+				}
+			}
+
+			// Prompt user for AWS cluster name
+			log.Info("Please enter the AWS cluster name:")
+			_, err = fmt.Scanf("%s", &clusterName)
+			if err != nil {
+				log.Warnf("Error reading AWS cluster name: %s", err.Error())
+				log.Info("Let's try again. Please enter the AWS cluster name:")
+				_, err = fmt.Scanf("%s", &clusterName)
+				if err != nil {
+					log.Fatalf("Error reading AWS cluster name: %s", err.Error())
+				}
+			}
+
+			// Write EKS compatible config to the filesystem
+			if err := utils.GenerateConfigEKS(configPath, regionName, clusterName); err != nil {
 				log.Fatal("Error generating kubeconfig: ", err)
 				return
 			}
 		default:
-			log.Fatal("The argument has to be one of gke | minikube | aks")
+			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
 		}
-
-		// TODO: Assumes Mac or Linux. Make arch-specific
-		// Issue: https://github.com/layer5io/meshery/issues/1894
-		configPath := "/tmp/meshery/kubeconfig.yaml"
 
 		log.Info(tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
-			log.Fatalf("Error getting contexts : %s", err.Error())
+			log.Fatalf("Error getting context: %s", err.Error())
 		}
 
 		choosenCtx := contexts[0]
 		if len(contexts) > 1 {
-			fmt.Println("List of available contexts : ")
+			fmt.Println("List of available contexts: ")
 			for i, ctx := range contexts {
 				fmt.Printf("(%d) %s \n", i+1, ctx)
 			}
 			var choice int
-			fmt.Print("Enter choice (number) : ")
+			fmt.Print("Enter choice (number): ")
 			_, err = fmt.Scanf("%d", &choice)
 			if err != nil {
 				log.Fatalf("Error reading input:  %s", err.Error())
@@ -208,7 +270,7 @@ var configCmd = &cobra.Command{
 		log.Debugf("Chosen context : %s", choosenCtx)
 		err = setContext(configPath, choosenCtx, tokenPath)
 		if err != nil {
-			log.Fatalf("Error setting context : %s", err.Error())
+			log.Fatalf("Error setting context: %s", err.Error())
 		}
 	},
 }

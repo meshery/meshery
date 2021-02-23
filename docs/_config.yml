@@ -19,13 +19,13 @@ email: community@layer5.io
 author: Layer5
 description: > # this means to ignore newlines until "baseurl:"
   Documentation for Meshery, the multi-service mesh management plane for Istio,
-  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Maesh, App Mesh, Citrix Service Mesh and other service meshes.
+  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
 
 # DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh
-baseurl: "/docs" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 
 # This is mostly for testing
-url: "https://meshery.layer5.io/docs" # the base hostname & protocol for your site
+url: "https://docs.meshery.io" # the base hostname & protocol for your site
 
 # Social (First three Required)
 repo: "https://github.com/layer5io/meshery"
@@ -71,6 +71,10 @@ exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 plugins:
   - jekyll-redirect-from
 
+sass:
+    sass_dir: _sass
+    style: compact
+
 # Collections
 collections:
   docs:
@@ -86,6 +90,13 @@ collections:
   es:
     output: true
     permalink: /:collection/:path
+  releases:
+    output: true
+    permalink: project/:collection/:path
+  mesheryctlcommands:
+    output: true
+    permalink: reference/mesheryctl/:collection/:path
+    name: mesheryctlcommands
 
 # Defaults
 defaults:

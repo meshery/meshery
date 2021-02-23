@@ -6,7 +6,7 @@ language: es
 type: installation
 ---
 
-## Inicio rápido con Google Kubernetes Engine (GKE)
+# Inicio rápido con Google Kubernetes Engine (GKE)
 
 Para otorgar a Meshery el acceso necesario a su instancia de Kubernetes administrada,
 Meshery deberá tener asignada una `ServiceAccount` ( Cuenta de servicio ). Se puede utilizar una `ServiceAccount` existente o crear una nueva. Asegúrese de que la `ServiceAccount` que utilize tenga asignada el rol de `cluster-admin`.
@@ -48,4 +48,4 @@ Si el procedimiento [Configuración automática](#configuración-automática-rec
 1. En su navegador, navegue hasta Meshery (por ejemplo,, `http://localhost:9081`) e inicie su sesión.
 1. En la sección Settings-->Environment, introduzca el archivo generado (`config-cluster-admin-sa-gke-default.yaml`) como el archivo kubeconfig.
 
-Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Entre a visualizar las [guías Meshery](/docs/guides) para que obtenga consejos de uso avanzado.
+Meshery ahora debería estar conectado con su instancia administrada de Kubernetes. Entre a visualizar las [guías Meshery]({{ site.baseurl }}/guides) para que obtenga consejos de uso avanzado.

@@ -20,9 +20,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/cfg"
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -42,8 +42,6 @@ var (
 	loadGenerator      = ""
 	filePath           = ""
 	tokenPath          = ""
-
-	mctlCfg *cfg.MesheryCtl
 )
 
 // PerfCmd represents the Performance Management CLI command
@@ -54,13 +52,8 @@ var PerfCmd = &cobra.Command{
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		var err error
-		mctlCfg, err = cfg.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return errors.Wrap(err, "error processing config")
-		}
 		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use)
+		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Importing SMP Configuration from the file
@@ -72,7 +65,12 @@ var PerfCmd = &cobra.Command{
 				return err
 			}
 
-			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestSmpURL(), bytes.NewBuffer(smpConfig))
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				return errors.Wrap(err, "error processing config")
+			}
+
+			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/load-test-smp", bytes.NewBuffer(smpConfig))
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}
@@ -95,7 +93,13 @@ var PerfCmd = &cobra.Command{
 			if !validURL {
 				return errors.New(utils.PerfError("please enter a valid test URL"))
 			}
-			req, err = http.NewRequest("POST", mctlCfg.GetPerf().GetLoadTestURL(), nil)
+
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				return errors.Wrap(err, "error processing config")
+			}
+
+			req, err = http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/perf/load-test", nil)
 			if err != nil {
 				return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 			}

@@ -3,14 +3,15 @@ layout: default
 title: EKS
 permalink: installation/platforms/eks
 type: installation
+display-title: "false"
 language: en
 list: include
-image: /docs/assets/img/platforms/eks.png
+image: /assets/img/platforms/eks.png
 ---
 
 {% include installation_prerequisites.html %}
 
-<!--**To set up and run Meshery on EKS** 
+<!--To set up and run Meshery on EKS 
 
 In order to provide Meshery with the necessary access to your managed Kubernetes instance, 
 Meshery will need to be assigned a *ServiceAccount*. An existing ServiceAccount can be used or a new one created. 
@@ -21,10 +22,10 @@ Meshery will need to be assigned a *ServiceAccount*. An existing ServiceAccount 
 
 _Note: Make sure you are able to access EKS with *kubectl* by following the [EKS Guide.](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html){:target="_blank"}_
 
-#### **Automatic Configuration (Recommended)**
+#### Automatic Configuration (Recommended)
 
 1. In your browser, navigate to Meshery (e.g. `http://localhost:9081`) and login.
-1. Download your Meshery authentication token by clicking **Get Token** under your user profile.
+1. Download your Meshery authentication token by clicking Get Token under your user profile.
 1. Use this authentication token to execute the following command:
 
     ```$ mesheryctl system config eks --token <PATH TO TOKEN>```
@@ -34,7 +35,7 @@ Once configured, proceed with using Meshery:
 
 `mesheryctl system start`
 
-#### **Manual Configuration (Optional)**
+#### Manual Configuration (Optional)
 
 If the [Automatic Configuration](#automatic-configuration-recommended) procedure fails or you would like to manually prepare your kubeconfig file to provide Meshery with the necessary access to your managed Kubernetes instance, perform the following actions:
 
@@ -42,7 +43,7 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     
     ```$ kubectl create serviceaccount meshery```
 
-1. Adding/Binding *cluster-admin* role to new service account **meshery**
+1. Adding/Binding *cluster-admin* role to new service account meshery
     
     ```$ kubectl create clusterrolebinding meshery-binding --clusterrole=cluster-admin\--serviceaccount=default:meshery```
 
@@ -58,7 +59,7 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     </div></div>
     </pre>
 
-    _Note: Here the secret name is **meshery-token-5z9xj**_
+    _Note: Here the secret name is meshery-token-5z9xj_
 1. Get secret/token:
 
     <pre class="codeblock-pre">
@@ -108,6 +109,6 @@ If the [Automatic Configuration](#automatic-configuration-recommended) procedure
     </div></div>
     </pre>
 
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides](/docs/guides) for advanced usage tips.-->
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.-->
 
 *Coming soon*

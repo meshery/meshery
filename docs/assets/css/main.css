@@ -92,6 +92,17 @@ excluded_in_search: true
     vertical-align: middle;
 }
 
+.toggle-button {
+    border: 1px solid  rgba(0, 0, 0, .26);
+    border-radius: 5px;
+    margin-left: 0.4rem;
+}
+
+.toggle-button:hover {
+    background-color:  rgb(44, 164, 243);
+  }
+  
+
 
 /*!* Bootstrap v4.1.3 (https://getbootstrap.com/)
 * Copyright 2011-2018 The Bootstrap Authors
@@ -187,18 +198,8 @@ hr {
     overflow: visible
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin-top: .5rem;
-    margin-bottom: .5rem
-}
-
 p {
-    margin-top: 0;
+    margin-top: .25rem;
     margin-bottom: 1rem
 }
 
@@ -275,16 +276,16 @@ sup {
 }
 
 a {
-    color: #778899;
+    color: #00B39F;
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects
 }
 
 a:hover {
-    color: #00b39f;
+    /* color: #00b39f; */
     font-weight: normal;
-    text-decoration: none
+    text-decoration: underline;
 }
 
 a:not([href]):not([tabindex]) {
@@ -482,9 +483,9 @@ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,
 .h5,
 .h6 {
     margin-bottom: .5rem;
+    margin-top: .9rem;
     font-family: inherit;
     font-weight: 500;
-    line-height: 1.2;
     color: inherit
 }
 
@@ -18723,6 +18724,7 @@ footer {
     font-weight: bold;
     background: rgba(5, 165, 146, 0.3);
     margin-top: 10px;
+    display: none;
   }
 
 #post h1, #post h2, #post h3, #post h4 {
@@ -18737,45 +18739,6 @@ footer {
     padding: 10px 15px;
     margin-bottom: 0px;
     border-radius: 3px 3px 0px 0px;
-}
-
-pre.codeblock-pre{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    margin: 0;
-    padding: 0 1rem 0 1rem;
-    border-radius: 0.3rem;
-}
-
-.codeblock {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-}
-
-.clipboardjs {
-    display: block;
-    overflow-x: auto;
-    margin: 0;
-}
-
-.btn-copy-wrap {
-    display: flex;
-    align-self: flex-start;
-    margin-top: 0.7rem;
-}
-
-.btn {
-    display: block;
-    width: 10px;
-    padding: 0;
-    background-color: transparent;
-    color: white;
-    font-size: 20px;
 }
 
 /*image-thumbnail-grid*/
@@ -18825,7 +18788,7 @@ div.overview {
     width: auto;
     /* width: calc(100% / 3.4); */
     overflow-wrap: break-word;
-    border-radius: 25px;
+    border-radius: 2rem;
     justify-content:space-evenly;
     align-content: stretch;
 }

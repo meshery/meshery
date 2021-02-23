@@ -13,7 +13,7 @@ const styles = (theme) => ({
     fontSize: 20,
   },
   root: {
-    padding: theme.spacing(10),
+    padding: theme.spacing(0),
   },
   buttons: {
     display: "flex",
@@ -152,7 +152,7 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/citrix.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
-        case "open service mesh":
+        case "osm":
           image = "/static/img/osm.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
@@ -164,6 +164,10 @@ class MesheryPlayComponent extends React.Component {
           image = "/static/img/nginx-sm.svg";
           imageIcon = <img src={image} className={classes.expTitleIcon} />;
           break;
+        case "traefik mesh":
+          image = "/static/img/traefikmesh.svg";
+          imageIcon = <img src={image} className={classes.expTitleIcon} />;
+          break; 
       }
     }
     return imageIcon;
@@ -243,7 +247,7 @@ class MesheryPlayComponent extends React.Component {
                   select
                   id="adapter_id"
                   name="adapter_name"
-                  label="Select the Adapter"
+                  label="Select Service Mesh Type"
                   fullWidth
                   value={adapter && adapter.adapter_location ? adapter.adapter_location : ""}
                   margin="normal"

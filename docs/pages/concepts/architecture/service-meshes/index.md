@@ -5,8 +5,11 @@ permalink: service-meshes
 type: service-mesh
 list: exclude
 ---
+
+
+As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world. Learn more about [Meshery Adapters]({{ site.baseurl }}/concepts/architecture/adapters) in the Architecture section.
+
 ## Support for Service Meshes
-As the multi-mesh manager, Meshery offers support for more adapters than any other project or product in the world.
 
 | Service Mesh  | Service Mesh Version  |
 | :------------ | :------------: |
@@ -16,4 +19,4 @@ As the multi-mesh manager, Meshery offers support for more adapters than any oth
 {% endif -%}
 {% endfor %}
 
-Meshery supports the following service meshes. It uses both abstraction APIs and service mesh-specific adapters to interface with and manage service meshes. Review the full list of Meshery [adapters](/docs/architecture/adapters).
+Meshery supports the following service meshes. It uses both abstraction APIs and service mesh-specific adapters to interface with and manage service meshes. Review the full list of Meshery [adapters]({{ site.baseurl }}/architecture/adapters).

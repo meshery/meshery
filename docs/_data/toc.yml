@@ -1,5 +1,5 @@
 - title: Documentation
-  url: ''
+  url: ""
   links:
     - title: Overview
       url: overview
@@ -8,14 +8,19 @@
       children:
         - title: Contributing
           url: project/contributing
-        - title: FAQ
-          url: project/faq
         - title: Releases
           url: project/releases
+        - title: Build & Release (CI)
+          url: project/build-and-release
         - title: Vulnerabilities
-          url: project/security-vulnerabilities          
+          url: project/security-vulnerabilities
+        - title: FAQ
+          url: project/faq
     - title: Quick Start
       url: installation/quick-start
+      children:
+        - title: Installing mesheryctl
+          url: installation/mesheryctl
     - title: Supported Platforms
       url: installation/platforms
       children:
@@ -49,8 +54,8 @@
       url: functionality/lifecycle-management
     - title: Performance Management
       url: functionality/performance-management
-    - title: SMI Conformance
-      url: functionality/smi-conformance
+    - title: Service Mesh Interface (SMI)
+      url: functionality/service-mesh-interface
 - title: Service Meshes
   url: service-meshes
   links:
@@ -66,8 +71,6 @@
       url: service-meshes/adapters/kuma
     - title: Linkerd
       url: service-meshes/adapters/linkerd
-    - title: Maesh
-      url: service-meshes/adapters/maesh
     - title: Network Service Mesh
       url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
@@ -78,6 +81,8 @@
       url: service-meshes/adapters/osm
     - title: Tanzu
       url: service-meshes/adapters/tanzu-sm
+    - title: Traefik Mesh
+      url: service-meshes/adapters/traefik-mesh
 - title: Guides
   url: guides
   links:
@@ -91,10 +96,17 @@
       url: guides/mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
+- title: Extensibility
+  url: extensibility
+  links:
+    - title: "Service Mesh Adapters"
+      url: extensibility/adapters
+    - title: "Load Generators"
+      url: extensibility/load-generators
+    - title: "Providers"
+      url: extensibility/providers
 - title: Reference
   url: reference
   links:
     - title: mesheryctl Command Reference
       url: reference/mesheryctl
-    - title: Extensibility
-      url: reference/extensibility

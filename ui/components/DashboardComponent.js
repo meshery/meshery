@@ -2,11 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import { 
   NoSsr, 
   Chip, 
@@ -25,7 +20,9 @@ import {
   TableCell,
   Paper,
   Select,
-  MenuItem
+  MenuItem,
+  Link,
+  Box
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
@@ -120,6 +117,15 @@ const styles = (theme) => ({
   }
 });
 
+/**
+ * capitalize takes in a string and returns
+ * capitalized string
+ * @param {string} str - string to be capitalized
+ */
+function capitalize(str) {
+  return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`
+}
+
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -144,7 +150,13 @@ class DashboardComponent extends React.Component {
       grafana,
       prometheus,
 
-      versionDetail: { build: "", latest: "", outdated: false, commitsha: "" },
+      versionDetail: { 
+        build: "", 
+        latest: "", 
+        outdated: false, 
+        commitsha: "",
+        release_channel: "NA" 
+      },
 
       meshScan: {},
       activeMeshScanNamespace: {},
@@ -733,7 +745,7 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/citrix.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
-                  case "open service mesh":
+                  case "osm":
                     image = "/static/img/osm.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
@@ -745,6 +757,10 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/nginx-sm.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
+                  case "traefik mesh":
+                    image = "/static/img/traefikmesh.svg";
+                    logoIcon = <img src={image} className={classes.icon} />;
+                    break; 
                 }
               }
             });
@@ -897,53 +913,69 @@ class DashboardComponent extends React.Component {
 
     /**
      * getMesheryVersionText returs a well formatted version text
-     * @param {string} type type of version could be "latest" or "current"
+     * 
+     * If the meshery is running latest version then and is using "edge" channel
+     * then it will just show "edge-latest". However, if the meshery is on edge and
+     * is running an outdated version then it will return "edge-$version".
+     * 
+     * If on stable channel, then it will always show "stable-$version"
      */
-    const getMesheryVersionText = (type) => {
-      const {build, latest, outdated} = this.state.versionDetail
+    const getMesheryVersionText = () => {
+      const { build, outdated, release_channel } = this.state.versionDetail
 
-      if (type === "current") {
-        if (outdated) return `Currently Running: stable-${build}`
-        if (build === "Unknown") return "Unknown"
-        
-        let ver = `Running Latest: stable-${build}`
-        //let showSHA = "Unknown";
-        // let tip = <Tooltip title={`SHA: ${commitsha}`}>{ver}</Tooltip>;
-        // showSHA = <div className={classes.alignRight}>{tip}</div>;
-        
-        return ver
-      }
-
-      if (type === "latest") {
-        if (outdated) return `Latest Available: stable-${latest}`
-      }
+      // If the version is outdated then no matter what the 
+      // release channel is, specify the build
+      if (outdated) return `${release_channel}-${build}`;
+     
+      if (release_channel === "edge") return `${release_channel}-latest`;
+      if (release_channel === "stable") return `${release_channel}-${build}`;
 
       return ``
     };
 
+    /**
+     * versionUpdateMsg returns the appropriate message
+     * based on the meshery's current running version and latest available
+     * version.
+     * 
+     * @returns {React.ReactNode} react component to display
+     */
+    const versionUpdateMsg = () => {
+      const { outdated, latest } = this.state.versionDetail;
+
+      if (outdated) 
+        return (
+          <>
+            Newer version of Meshery available:{" "}
+            <Link href={`https://docs.meshery.io/project/releases/${latest}`}>{`stable-${latest}`}</Link>
+          </>
+        );
+      
+      return <>Running latest Meshery version.</>
+    }
+
     const showRelease = (
-      <Grid container justify="space-between" spacing={1}>
-        <Grid item xs={12} md={6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" style={{ fontWeight: "bold" }}>
-            Channel
-            </FormLabel>
-            <RadioGroup aria-label="release_channel_option" name="release_channel">
-              <FormControlLabel value="stable_channel" disabled control={<Radio checked={true} />} label="Stable Channel" />
-              <FormControlLabel value="edge_channel" disabled control={<Radio />} label="Edge Channel" />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} md={6} style={{padding: "0"}}>
-          <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>
-          <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
-            {getMesheryVersionText("current")}
-          </Typography>
-          <Typography style={{paddingTop: "8px"}}>
-            {getMesheryVersionText("latest")}
-          </Typography>
-        </Grid>
-      </ Grid>
+      <>
+        <Grid container justify="space-between" spacing={1}>
+          <Grid item xs={12} md={6}>
+            <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Channel Subscription</Typography>
+            <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+              {capitalize(this.state.versionDetail.release_channel)}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6} style={{padding: "0"}}>
+            <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>
+            <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+              {getMesheryVersionText()}
+            </Typography>
+          </Grid>
+        </ Grid>
+        <Typography component="div" style={{ marginTop: "1.5rem" }}>
+          <Box fontStyle="italic" fontSize={14}>
+            {versionUpdateMsg()}
+          </Box>
+        </Typography>
+      </>
     );
 
     return (

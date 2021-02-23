@@ -1,0 +1,4 @@
+name: config
+description: configures Meshery with the kubeconfig, generated with the help of user details, to provide cluster access for public clouds(GKE/EKS).
+usage: |
+    `mesheryctl system config gke --token "PATH TO TOKEN"`
