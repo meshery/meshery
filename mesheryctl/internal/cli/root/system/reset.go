@@ -15,8 +15,6 @@
 package system
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -26,8 +24,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
-
-var tempContext string
 
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
@@ -40,68 +36,38 @@ var resetCmd = &cobra.Command{
 	},
 }
 
-// resets meshery config
+// resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
 	// ask user for confirmation
 	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-
 	if !userResponse {
 		log.Info("Reset aborted.")
-	} else {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return errors.Wrap(err, "error processing config")
-		}
-
-		currentContext := mctlCfg.CurrentContext
-
-		// if the user has mentioned a temporary context in the -c flag, change the context and proceed to reset
-		if tempContext != "" {
-			if _, val := mctlCfg.Contexts[tempContext]; val {
-				currentContext = tempContext
-			} else {
-				// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-				log.Errorf("\n\"%s\" context does not exist. The available contexts are:", tempContext)
-				for context := range mctlCfg.Contexts {
-					log.Errorf("%s", context)
-				}
-				return nil
-			}
-		}
-
-		// get the channel and the version of the current context
-		currChannel := mctlCfg.Contexts[currentContext].Channel
-		currVersion := mctlCfg.Contexts[currentContext].Version
-		fileURL := ""
-
-		log.Info("Meshery resetting...\n")
-
-		// pull the docker-compose.yaml file corresponding to the current context
-		if currChannel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-		} else if currChannel == "stable" {
-			if currVersion == "" {
-				currVersion, err = utils.GetLatestStableReleaseTag()
-				if err != nil {
-					return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
-				}
-			}
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + currVersion + "/docker-compose.yaml"
-		}
-
-		log.Printf("Current Context: %s", currentContext)
-		log.Printf("Channel: %s", currChannel)
-		log.Printf("Version: %s\n", currVersion)
-		log.Printf("Fetching default docker-compose file at version: %s...\n", currVersion)
-
-		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-		}
-		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+		return nil
 	}
-	return nil
-}
 
-func init() {
-	resetCmd.Flags().StringVarP(&tempContext, "context", "c", "", "context to reset from temporarily.")
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+	// get the platform, channel and the version of the current context
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return errors.Wrap(err, "failed to retrieve current-context")
+	}
+
+	log.Info("Meshery resetting...\n")
+	log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
+	err = utils.DownloadDockerComposeFile(currCtx, true)
+	if err != nil {
+		return errors.Wrap(err, "failed to fetch docker-compose file")
+	}
+
+	log.Printf("Current Context: %s", mctlCfg.CurrentContext)
+	log.Printf("Channel: %s", currCtx.Channel)
+	log.Printf("Version: %s\n", currCtx.Version)
+
+	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+	return nil
 }

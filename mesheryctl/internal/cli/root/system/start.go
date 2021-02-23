@@ -24,17 +24,16 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/spf13/viper"
-
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -53,8 +52,8 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if overrideContext != "" {
-			return utils.PreReqCheck(cmd.Use, overrideContext)
+		if tempContext != "" {
+			return utils.PreReqCheck(cmd.Use, tempContext)
 		}
 		return utils.PreReqCheck(cmd.Use, "")
 	},
@@ -64,28 +63,6 @@ var startCmd = &cobra.Command{
 		}
 		return nil
 	},
-}
-
-// ValidateComposeFileForRecreation validates the docker-compose.yaml file
-func ValidateComposeFileForRecreation(CurrentServices map[string]utils.Service, RequestedServices []string) error {
-	valid := true
-	for _, v := range RequestedServices {
-		_, ok := CurrentServices[v]
-		if !ok {
-			valid = false
-			break
-		}
-	}
-	if !valid {
-		if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-		}
-		err := utils.ViperCompose.ReadInConfig()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // applyManifest is a wrapper function for client.ApplyManifest
@@ -180,24 +157,22 @@ func start() error {
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-
-	// TODO: Centralize docker-compose.yaml file pull for this and reset
 	// get the platform, channel and the version of the current context
-	currPlatform := mctlCfg.GetContextContent().Platform
-	RequestedAdapters := mctlCfg.GetContextContent().Adapters // Requested Adapters / Services
-	// TODO: Context support for system start
-	// currChannel := mctlCfg.Contexts[currentContext].Channel
-	// currVersion := mctlCfg.Contexts[currentContext].Version
-	// fileURL := ""
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return err
+	}
+	currPlatform := currCtx.Platform
+	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
 
 	// Deploy to platform specified in the config.yaml
 	switch currPlatform {
 	case "docker":
 
-		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-			}
+		// download the docker-compose.yaml file corresponding to the current version
+		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file", utils.DockerComposeFile)))
 		}
 
 		// Viper instance used for docker compose
@@ -212,18 +187,7 @@ func start() error {
 		if err != nil {
 			return err
 		}
-
-		services := compose.Services                                        // Current Services
-		err = ValidateComposeFileForRecreation(services, RequestedAdapters) // Validates docker-compose file and recreates and sync's if required
-		if err != nil {
-			return err
-		}
-
-		err = utils.ViperCompose.Unmarshal(&compose)
-		if err != nil {
-			return err
-		}
-		services = compose.Services // Current Services
+		services := compose.Services // Current Services
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
@@ -235,9 +199,8 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract adapter version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -250,11 +213,10 @@ func start() error {
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
-			ContextContent := mctlCfg.GetContextContent()
 			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, "latest")
+			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
-				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], ContextContent.Channel, ContextContent.Version)
+				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, currCtx.Version)
 			}
 			services[v] = temp
 			AllowedServices[v] = services[v]
@@ -319,7 +281,7 @@ func start() error {
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
 					// Meshery running on Windows host
-					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
@@ -329,13 +291,13 @@ func start() error {
 					if err != nil {
 						break
 					}
-					err = exec.Command("xdg-open", url).Start()
+					err = exec.Command("xdg-open", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}
 				} else {
 					// Assume Meshery running on MacOS host
-					err = exec.Command("open", url).Start()
+					err = exec.Command("open", currCtx.Endpoint).Start()
 					if err != nil {
 						return errors.Wrap(err, utils.SystemError("failed to exec command"))
 					}

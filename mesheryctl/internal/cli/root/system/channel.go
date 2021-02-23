@@ -34,10 +34,12 @@ var err error
 
 var showForAllContext bool
 
+// PrintChannelAndVersionToStdout to return curren release channel details
 func PrintChannelAndVersionToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nChannel: %v\nVersion: %v", contextName, ctx.Channel, ctx.Version)
 }
 
+// IsBetaOrStable to determine which release channel is being used
 func IsBetaOrStable(str string) bool {
 	return str == "edge" || str == "stable"
 }
@@ -52,7 +54,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err, "error processing config")
 		}
-		focusedContext := overrideContext
+		focusedContext := tempContext
 		if focusedContext == "" {
 			focusedContext = mctlCfg.CurrentContext
 		}
@@ -85,8 +87,8 @@ var setCmd = &cobra.Command{
 
 		focusedContext := mctlCfg.CurrentContext
 
-		if len(overrideContext) > 0 {
-			focusedContext = overrideContext
+		if len(tempContext) > 0 {
+			focusedContext = tempContext
 		}
 
 		channelVersion := args[0]
@@ -141,8 +143,8 @@ var switchCmd = &cobra.Command{
 	Long:  `Switch release channel and version of context in focus`,
 	Args:  cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if overrideContext != "" {
-			return utils.PreReqCheck(cmd.Use, overrideContext)
+		if tempContext != "" {
+			return utils.PreReqCheck(cmd.Use, tempContext)
 		}
 		return utils.PreReqCheck(cmd.Use, "")
 	},
