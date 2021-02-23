@@ -14,6 +14,7 @@ const styles = (theme) => ({
   },
   root: {
     padding: theme.spacing(0),
+    marginBottom: theme.spacing(2),
   },
   buttons: {
     display: "flex",
@@ -73,6 +74,11 @@ const styles = (theme) => ({
     display: "inline",
     verticalAlign: "middle",
     marginLeft: theme.spacing(1),
+  },
+  paneSection: {
+    backgroundColor: "#fff",
+    padding: theme.spacing(2.5),
+    borderRadius: 4,
   },
 });
 
@@ -241,8 +247,8 @@ class MesheryPlayComponent extends React.Component {
       <NoSsr>
         <React.Fragment>
           <div className={classes.root}>
-            <Grid container spacing={5}>
-              <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} className={classes.paneSection}>
                 <TextField
                   select
                   id="adapter_id"
