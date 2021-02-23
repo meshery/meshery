@@ -11,7 +11,7 @@ categories: es
 ---
 **¿Qué son los Adaptadores Meshery?**
 
-Los adaptadores permiten a Meshery interactuar con las diferentes mallas de servicio. Revise la lista de todos los disponibles[adaptadores de malla de servicios](service-meshes/adapters). Ver los diagramas de [Arquitectura Meshery](/es/architecture) para visualizar sobre como los adaptadores se relacionan a otros componentes Meshery.
+Los adaptadores permiten a Meshery interactuar con las diferentes mallas de servicio. Revise la lista de todos los disponibles [adaptadores de malla de servicios]({{site.baseurl}}/es/service-meshes/adapters). Ver los diagramas de [Arquitectura Meshery]({{site.baseurl}}/es/concepts/architecture) para visualizar sobre como los adaptadores se relacionan a otros componentes Meshery.
 
 Meshery mantiene los siguientes principios rectores para el diseño de adaptadores:
 

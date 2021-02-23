@@ -10,7 +10,7 @@ lang: es
 categories: es
 ---
 
-Meshery tiene una arquitectura extensible con varios puntos de extensión. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de [adaptadores](#adapters), diferentes [generadores de carga](#load-generators) y diferentes [proveedores](#providers). Meshery también ofrece un REST API.
+Meshery tiene una arquitectura extensible con varios puntos de extensión. Meshery proporciona varios puntos de extensión para trabajar con diferentes mallas de servicio a través de [adaptadores]({{site.baseurl}}/es/extensibility/adapters), diferentes [generadores de carga]({{site.baseurl}}/es/extensibility/load-generators) y diferentes [proveedores]({{site.baseurl}}/es/extensibility/providers). Meshery también ofrece un REST API.
 
 **Principios rectores de la extensibilidad**
 
@@ -31,8 +31,8 @@ Los siguientes puntos de extensión están incorporados actualmente a Meshery.
 
 ## Tipos de Puntos de Extensión
 
-1. [Proveedores]({{site.baseurl}}/extensibility/providers)
-1. [Generadores de Carga]({{site.baseurl}}/extensibility/load-generators)
-1. [Adaptadores]({{site.baseurl}}/extensibility/adapters)
-1. [API REST](/extensibility/api#rest)
-1. [API GraphQL](/extensibility/api#graphql)
+1. [Proveedores]({{site.baseurl}}/es/extensibility/providers)
+1. [Generadores de Carga]({{site.baseurl}}/es/extensibility/load-generators)
+1. [Adaptadores]({{site.baseurl}}/es/extensibility/adapters)
+1. [API REST]({{site.baseurl}}/es/extensibility/api#rest)
+1. [API GraphQL]({{site.baseurl}}/es/extensibility/api#graphql)

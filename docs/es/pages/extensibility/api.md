@@ -29,7 +29,7 @@ Alternativamente, [Proveedores Remotos](./providers) pueden extender los puntos 
 
 ## GraphQL
 
-Meshery proporciona una API GraphQl disponible a través del puerto predeterminado de `/tcp`.
+Meshery proporciona una API GraphQL disponible a través del puerto predeterminado de `/tcp`.
 
 ## REST
 
