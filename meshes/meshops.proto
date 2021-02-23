@@ -12,6 +12,8 @@ service MeshService {
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
 
     rpc ProcessOAM(ProcessOAMRequest) returns (ProcessOAMResponse) {}
+
+    rpc ComponentInfo(ComponentInfoRequest) returns(ComponentInfoResponse) {}
 }
 
 message CreateMeshInstanceRequest {
@@ -87,4 +89,15 @@ message ProcessOAMRequest {
 
 message ProcessOAMResponse {
     string message = 1;
+}
+
+// The idea is that all components' gRPC endpoint would provide a ComponentInfo function.
+message ComponentInfoRequest {}
+
+message ComponentInfoResponse {
+  string type = 1; // the component type, e.g. "adapter", as all components might provide a ComponentInfo function
+  string name = 2; // the component name, e.g. "kuma"
+  string version = 3; // the component version, e.g. v0.1.5
+  string git_sha = 4; // the git commit sha
+  map<string, string> properties = 5; // any other properties of interest
 }
