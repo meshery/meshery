@@ -216,7 +216,7 @@ const styles = {
   },
   drawerCollapsed: {
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7) + 1,
+      width: theme.spacing(8.4) + 1,
     },
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
