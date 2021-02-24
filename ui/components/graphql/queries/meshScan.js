@@ -1,4 +1,4 @@
-import environment from "../relayEnvironment";
+import environment from "../../../lib/relayEnvironment";
 import { fetchQuery, graphql } from "relay-runtime";
 
 function meshScanQuery(variables) {
