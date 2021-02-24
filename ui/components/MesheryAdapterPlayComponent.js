@@ -149,6 +149,12 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
     borderRadius: 4,
   },
+  chipNamespace: {
+    margin: "0px 60px 0px 20px",
+  },
+  cardMesh: {
+    margin: "-8px 0px",
+  }
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -1074,8 +1080,13 @@ class MesheryAdapterPlayComponent extends React.Component {
                     fontWeight: "bold"
                   }}>Manage Service Mesh</Typography>
                   <Grid container spacing={4}>
-                    <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
-                      <Grid item md={8} xs={12}>
+                    <Grid container item xs={12} alignItems="center" justify="center" className={classes.chipNamespace}>
+                      <Grid item md={3} xs={12}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          {adapterChip}
+                        </div>
+                      </Grid>
+                      <Grid item md={9} xs={12}>
                         <TextField
                           required
                           id="namespace"
@@ -1089,16 +1100,11 @@ class MesheryAdapterPlayComponent extends React.Component {
                           onChange={this.handleChange("namespace")}
                         />
                       </Grid>
-                      <Grid item md={4} xs={12}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                          {adapterChip}
-                        </div>
-                      </Grid>
                     </Grid>
                     <Grid container spacing={1}>
-                      <Grid container item lg={10} xs={12} spacing={2}>
+                      <Grid container item lg={(!(this.extractAddonOperations(2)).length) ? 12 : 10} xs={12} spacing={2} className={classes.cardMesh}>
                         {filteredOps.map((val, i) => (
-                          <Grid item xl={2} lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
+                          <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
                             {this.generateCardForCategory(val)}
                           </Grid>
                         ))}

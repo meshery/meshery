@@ -82,8 +82,11 @@ func (h *Handler) ProviderComponentsHandler(
 		err := h.LoadExtensionFromPackage(w, r, provider)
 		if err != nil {
 			logrus.Error(err)
+			http.Error(w, "Failed to Load Extensions from Package", http.StatusInternalServerError)
 			return
 		}
+		w.Header().Set("content-type", "application/json")
+		_, _ = w.Write([]byte("{}"))
 	} else {
 		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
 	}
