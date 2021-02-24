@@ -6,17 +6,20 @@ permalink: guides/upgrade
 display-title: "false"
 type: Guides
 ---
-# Upgrading Meshery
+# Upgrade Guide
 
 ## Upgrading Meshery Server, Adapters, and UI
 
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
-
+<p style="text-align:center">
 <a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg">
-    <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" align="right" width="40%" />
-</a>
+    <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" style="margin: 1rem;" width="50%" />
+</a><br /><i><small>Figure: Meshery components</small></i>
+</p>
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
+
+
 
 ### Versioning of Meshery components
 
@@ -84,7 +87,7 @@ In order to upgrade Meshery Server, Adapters, and UI, execute the following comm
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system upgrade
+ mesheryctl system update
  </div></div>
  </pre>
 
@@ -92,9 +95,9 @@ In order to upgrade Meshery Server, Adapters, and UI, execute the following comm
 
 Use `kubectl apply` or `helm` to upgrade the Meshery application manifests in your Kubernetes cluster.
 
-## Upgrading `mesheryctl`
+## Upgrading Meshery CLI
 
-The Meshery command line client is available in different package managers. Use the instructions relevant to your environment.
+The Meshery command line client, `mesheryctl`, is available in different package managers. Use the instructions relevant to your environment.
 
 ### Upgrading `mesheryctl` using Homebrew
 
