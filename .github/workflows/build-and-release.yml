@@ -84,3 +84,16 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+  notify-providers:
+    name: Notify Remote Providers
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: trigger packages publish
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      uses: kumarabd/trigger-remote-action@master
+      with:
+        name: "Build and Publish"
+        repo: layer5labs/meshery-extensions
+        token: ${{ secrets.GLOBAL_PAT }}
+        version: ${GITHUB_REF/refs\/tags\//}
