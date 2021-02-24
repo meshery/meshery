@@ -7,6 +7,7 @@ package meshes;
 service MeshService {
     rpc CreateMeshInstance(CreateMeshInstanceRequest) returns (CreateMeshInstanceResponse) {}
     rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
+    rpc MeshVersions(MeshVersionsRequest) returns (MeshVersionsResponse) {}
     rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
@@ -89,6 +90,12 @@ message ProcessOAMRequest {
 
 message ProcessOAMResponse {
     string message = 1;
+}
+
+message MeshVersionsRequest {}
+
+message MeshVersionsResponse {
+ repeated string version = 1;
 }
 
 // The idea is that all components' gRPC endpoint would provide a ComponentInfo function.
