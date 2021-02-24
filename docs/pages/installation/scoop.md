@@ -5,7 +5,7 @@ permalink: installation/platforms/scoop
 type: installation
 display-title: "false"
 language: en
-list: include
+list: exclude
 ---
 
 {% include installation_prerequisites.html %}

@@ -27,6 +27,8 @@ type DefaultLocalProvider struct {
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
 	GenericPersister      database.Handler
+	GraphqlHandler        http.Handler
+	GraphqlPlayground     http.Handler
 }
 
 // Initialize will initialize the local provider
@@ -421,4 +423,14 @@ func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
 // GetGenericPersister - to return persister
 func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
 	return &l.GenericPersister
+}
+
+// GetGraphqlHandler - to return graphql handler instance
+func (l *DefaultLocalProvider) GetGraphqlHandler() http.Handler {
+	return l.GraphqlHandler
+}
+
+// GetGraphqlPlayground - to return graphql playground instance
+func (l *DefaultLocalProvider) GetGraphqlPlayground() http.Handler {
+	return l.GraphqlPlayground
 }
