@@ -25,6 +25,11 @@ import {
   Table,
   Tooltip,
   Typography,
+  FormLabel,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
@@ -43,6 +48,7 @@ import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
+import subscribeAddonEvents from './graphql/subscriptions/AddonEventsSubscription';
 
 const styles = (theme) => ({
   root: {
@@ -143,6 +149,12 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
     borderRadius: 4,
   },
+  chipNamespace: {
+    margin: "0px 60px 0px 20px",
+  },
+  cardMesh: {
+    margin: "-8px 0px",
+  }
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -169,6 +181,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       });
     }
 
+    this.activeMesh = adapter.name
+
     this.state = {
       selectedOp: "",
       cmEditorValAdd: "",
@@ -190,6 +204,8 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       menuState, // category: {add: 1, delete: 0}
 
+      addonSwitchGroup: {},
+
       smi_result: [],
       selectedRowData: null,
       page: 0,
@@ -197,6 +213,32 @@ class MesheryAdapterPlayComponent extends React.Component {
       sortOrder: "",
       pageSize: 10,
     };
+  }
+
+  componentDidMount() {
+    const meshname = this.mapAdapterNameToMeshName(this.activeMesh) 
+    subscribeAddonEvents(data => {
+      console.log(data)
+      data?.addonEvent?.forEach(addon => {
+        if (addon.type === meshname) {
+          this.setState(state => {
+            const name = addon.config.serviceName !== "jaeger-collector" ? addon.config.serviceName : "jaeger"
+            return {
+              addonSwitchGroup: { 
+                ...state.addonSwitchGroup, 
+                [`${name}-addon`]: addon.status === "ENABLED"
+              }
+            }
+          })
+        }
+      })
+    }, { serviceMesh: meshname })
+  }
+
+  mapAdapterNameToMeshName(name) {
+    if (name?.toLowerCase() === "istio") return "ISTIO";
+
+    return "ALL";
   }
 
   handleChange = (name, isDelete = false) => {
@@ -819,7 +861,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const { classes, adapter } = this.props;
     // const expanded = false;
 
-    const selectedAdapterOps =
+    let selectedAdapterOps =
       adapter && adapter.ops
         ? adapter.ops.filter(({ category }) => (typeof category === "undefined" && cat === 0) || category === cat)
         : [];
@@ -839,6 +881,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       case 2:
         content = "Apply Service Mesh Configuration";
         description = "Configure your service mesh using some pre-defined options.";
+        selectedAdapterOps = selectedAdapterOps.filter(ops => !ops.value.startsWith("Add-on:"))
         break;
 
       case 3:
@@ -881,6 +924,61 @@ class MesheryAdapterPlayComponent extends React.Component {
         </CardActions>
       </Card>
     );
+  }
+
+  /**
+   * extractAddonOperations returns an array of operations
+   * which have a prefix "Addon:"
+   * @param {number} addonOpsCat category for addon operations
+   * @returns {{category: number, key: string, value: string}[]}
+   */
+  extractAddonOperations(addonOpsCat) {
+    return this.props.adapter.ops.filter(
+      ({ category, value }) => category === addonOpsCat && value?.startsWith("Add-on:")
+    );
+  }
+
+  /**
+   * generateAddonSwitches creates a switch based ui for the addon operations
+   * @param {{category: number, key: string, value: string}[]} selectedAdapterOps available adapter operations
+   * @returns {JSX.Element}
+   */
+  generateAddonSwitches(selectedAdapterOps) {
+    if (!selectedAdapterOps.length) return null;
+
+    const self = this.state;
+    return (
+      <FormControl component="fieldset" style={{padding: "1rem"}}>
+        <FormLabel component="legend">Customize Addons</FormLabel>
+        <FormGroup>
+          {selectedAdapterOps
+            .map((ops) => ({ ...ops, value: ops.value.replace("Add-on:", "") }))
+            .sort((ops1, ops2) => ops1.value.localeCompare(ops2.value))
+            .map((ops) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    color="primary"
+                    checked={!!self.addonSwitchGroup[ops.key]}
+                    onChange={(ev) => {
+                      this.setState(
+                        {
+                          addonSwitchGroup: { ...self.addonSwitchGroup, [ev.target.name]: ev.target.checked },
+                        },
+                        () => {
+                          this.submitOp(ops.category, ops.key, !!self.addonSwitchGroup[ops.key]);
+                        }
+                      );
+                    }}
+                    name={ops.key}
+                  />
+                }
+                label={ops.value}
+              />
+            ))}
+        </FormGroup>
+      </FormControl>
+    )
   }
   
   /**
@@ -981,9 +1079,14 @@ class MesheryAdapterPlayComponent extends React.Component {
                     margin: "0 0 1rem" ,
                     fontWeight: "bold"
                   }}>Manage Service Mesh</Typography>
-                  <Grid container spacing={2}>
-                    <Grid container item xs={12} spacing={3} alignItems="center" justify="center">
-                      <Grid item md={8} xs={12}>
+                  <Grid container spacing={4}>
+                    <Grid container item xs={12} alignItems="center" justify="center" className={classes.chipNamespace}>
+                      <Grid item md={3} xs={12}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                          {adapterChip}
+                        </div>
+                      </Grid>
+                      <Grid item md={9} xs={12}>
                         <TextField
                           required
                           id="namespace"
@@ -997,17 +1100,21 @@ class MesheryAdapterPlayComponent extends React.Component {
                           onChange={this.handleChange("namespace")}
                         />
                       </Grid>
-                      <Grid item md={4} xs={12}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                          {adapterChip}
-                        </div>
+                    </Grid>
+                    <Grid container spacing={1}>
+                      <Grid container item lg={(!(this.extractAddonOperations(2)).length) ? 12 : 10} xs={12} spacing={2} className={classes.cardMesh}>
+                        {filteredOps.map((val, i) => (
+                          <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
+                            {this.generateCardForCategory(val)}
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Grid container item lg={2} xs={12}>
+                        <Grid item xs={12} md={4}>
+                          {this.generateAddonSwitches(this.extractAddonOperations(2))}
+                        </Grid>
                       </Grid>
                     </Grid>
-                    {filteredOps.map((val, i) => (
-                      <Grid item xl={2} lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
-                        {this.generateCardForCategory(val)}
-                      </Grid>
-                    ))}
                   </Grid>
                 </div>
               </Grid>
