@@ -34,7 +34,7 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import fetchMeshScan from "../lib/queries/meshScan";
+import fetchMeshScan from "../components/graphql/queries/meshScan";
 
 const styles = (theme) => ({
   root: {

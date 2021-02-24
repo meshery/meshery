@@ -2,12 +2,12 @@ import environment from "../relayEnvironment";
 import { fetchQuery, graphql } from "relay-runtime";
 
 function meshScanQuery(variables) {
-    let filter_variables = {
-        "filter": {
-            "type": variables.type,
-        }
+  let filter_variables = {
+    "filter": {
+      "type": variables.type,
     }
-    let query = graphql`
+  }
+  let query = graphql`
       query meshScanQuery(
         $filter : ControlPlaneFilter
         ) {
@@ -23,8 +23,8 @@ function meshScanQuery(variables) {
         }
       }
     `;
-    const data = fetchQuery(environment, query, filter_variables);
-    return data;
+  const data = fetchQuery(environment, query, filter_variables);
+  return data;
 }
 
 export default meshScanQuery;
