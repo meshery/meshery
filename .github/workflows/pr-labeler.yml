@@ -1,4 +1,4 @@
-name: Pull Request Messenger
+name: Pull Request Labeler
 on:
   pull_request_target:
     types: [opened]
@@ -6,12 +6,12 @@ on:
       - 'docs/**'
 
 jobs:
-  comment:
+  path-labeler:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.GH_ACCESS_TOKEN}}
           script: |
             # Get pull request description
 
