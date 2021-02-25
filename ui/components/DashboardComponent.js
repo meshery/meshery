@@ -1074,7 +1074,7 @@ class DashboardComponent extends React.Component {
         return (
           <>
             Newer version of Meshery available:{" "}
-            <Link href={`https://docs.meshery.io/project/releases/${latest}`}>{`stable-${latest}`}</Link>
+            <Link href={`https://docs.meshery.io/project/releases/${latest}`}>{`${latest}`}</Link>
           </>
         );
 

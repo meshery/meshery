@@ -926,6 +926,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
+
   /**
    * extractAddonOperations returns an array of operations
    * which have a prefix "Addon:"
@@ -990,13 +991,12 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {string} grafanaAPIKey grafana API keey
    */
   renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
-    const {classes} = this.props
+    const { classes } = this.props
     if (boardConfigs?.length)
       return (
         <>
-          <Typography align="center" style={{ 
-            fontSize: "1.25rem",
-            margin: "0 0 1rem" 
+          <Typography align="center" variant="h6" style={{
+            margin: "0 0 2.5rem 0"
           }}>Service Mesh Metrics</Typography>
           <GrafanaCustomCharts
             enableGrafanaChip
@@ -1074,10 +1074,8 @@ class MesheryAdapterPlayComponent extends React.Component {
               {/* SECTION 1 */}
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
-                  <Typography align="center" style={{ 
-                    fontSize: "1.25rem",
-                    margin: "0 0 1rem" ,
-                    fontWeight: "bold"
+                  <Typography align="center" variant="h6" style={{
+                    margin: "0 0 2.5rem 0"
                   }}>Manage Service Mesh</Typography>
                   <Grid container spacing={4}>
                     <Grid container item xs={12} alignItems="center" justify="center" className={classes.chipNamespace}>
@@ -1122,7 +1120,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
                   {this.renderGrafanaCustomCharts(
-                    this.props.grafana.selectedBoardsConfigs, 
+                    this.props.grafana.selectedBoardsConfigs,
                     this.props.grafana.grafanaURL,
                     this.props.grafana.grafanaAPIKey,
                   )}

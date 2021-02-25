@@ -97,14 +97,17 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint: "http://localhost:9081",
-	Token: config.Token{
-		Name:     "Default",
-		Location: AuthConfigFile,
-	},
+	Token:    "Default",
 	Platform: "docker",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",
+}
+
+// TemplateToken is the template token provided when creating a config file
+var TemplateToken = config.Token{
+	Name:     "Default",
+	Location: AuthConfigFile,
 }
 
 type cryptoSource struct{}
@@ -557,6 +560,47 @@ func CreateConfigFile() error {
 			return err
 		}
 	}
+	return nil
+}
+
+// AddTokenToConfig adds token passed to it to mesheryctl config file
+func AddTokenToConfig(token config.Token, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Tokens == nil {
+		mctlCfg.Tokens = []config.Token{}
+	}
+
+	for i := range mctlCfg.Tokens {
+		if mctlCfg.Tokens[i].Name == token.Name {
+			return errors.New("error adding token: a token with same name already exists")
+		}
+	}
+
+	mctlCfg.Tokens = append(mctlCfg.Tokens, token)
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
