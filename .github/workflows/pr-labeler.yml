@@ -1,0 +1,24 @@
+name: Pull Request Messenger
+on:
+  pull_request_target:
+    types: [opened]
+    paths:
+      - 'docs/**'
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            # Get pull request description
+
+              # Add 'new submission' label
+              github.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['area/docs']
+              })
