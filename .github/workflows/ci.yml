@@ -283,3 +283,16 @@ jobs:
       run: |
         DOCKER_BUILDKIT=1 docker build --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::7} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
         docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::7}
+    - name: Docker edge push
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      run: |
+        docker push ${{ secrets.IMAGE_NAME }}:edge-latest
+        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
+        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::7}
+    - name: Docker Hub Description
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      uses: peter-evans/dockerhub-description@v2.0.0
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
