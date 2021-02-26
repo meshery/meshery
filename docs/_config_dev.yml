@@ -1,0 +1,120 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing these this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+
+title: Documentation
+email: community@layer5.io
+author: Layer5
+description: > # this means to ignore newlines until "baseurl:"
+  Documentation for Meshery, the multi-service mesh management plane for Istio,
+  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
+
+# DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh
+baseurl: "" # the subpath of your site, e.g. /blog
+
+# This is mostly for testing
+url: "https://docs.meshery.io" # the base hostname & protocol for your site
+
+# Social (First three Required)
+repo: "https://github.com/layer5io/meshery"
+github_user: "layer5io"
+github_repo: "meshery"
+project: https://meshery.io
+
+# Optional
+twitter: layer5
+linkedin: layer5
+dockerhub: layer5
+
+# Should there be feedback buttons at the bottom of pages?
+feedback: false
+
+# Link to a privacy policy in footer, uncomment and define if wanted
+# privacy: https://domain.com/privacy
+
+google-analytics: UA-2969471-4
+# Image and (square) dimension for logo (don't start with /)
+# If commented, will use material hat theme
+# logo: "assets/img/logo/SRCC-square-red.png"
+logo_pixels: 34
+color: "#3C494F" #"#647881" # "#30638e"
+# color: "#8c1515" # primary color for header, buttons
+
+# Build settings
+markdown: kramdown
+
+# If you add tags to pages, define this variable to link them to some external search
+# If you want to link to tags locally on the site, leave this commented out
+# tag_search_endpoint: https://ask.cyberinfrastructure.org/search?q=
+tag_color: primary # danger, success, warning, primary, info, secondary
+
+accentColor: red # purple, green, etc.
+themeColor: red # purple, green, blue, orange, purple, grey
+fixedNav: 'true' # true or false
+
+permalink: /:year/:title/
+markdown: kramdown
+exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
+
+# plugins:
+#   - jekyll-redirect-from
+
+sass:
+    sass_dir: _sass
+    style: compact
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:path
+  adapters:
+    output: true
+    permalink: /service-meshes/:collection/:path
+    name: adapters
+  guides:
+    output: true
+    permalink: /:collection/:path
+  es:
+    output: true
+    permalink: /:collection/:path
+  releases:
+    output: true
+    permalink: project/:collection/:path
+  mesheryctlcommands:
+    output: true
+    permalink: reference/mesheryctl/:collection/:path
+    name: mesheryctlcommands
+
+# Defaults
+defaults:
+  - scope:
+      path: "_docs"
+      type: "docs"
+    values:
+      layout: page
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+  -
+    scope:
+      path: "posts"
+      type: "posts"
+    values:
+      layout: "post"
+      

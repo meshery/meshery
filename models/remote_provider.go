@@ -51,6 +51,8 @@ type RemoteProvider struct {
 	ProviderVersion    string
 	SmiResultPersister *BitCaskSmiResultsPersister
 	GenericPersister   database.Handler
+	GraphqlHandler     http.Handler
+	GraphqlPlayground  http.Handler
 }
 
 type userSession struct {
@@ -67,9 +69,34 @@ type UserPref struct {
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
-	// Get the capabilities
+	// Get the capabilities with no token
+	// assuming that this will help get basic info
+	// of the provider
+	l.loadCapabilities("")
+}
+
+// loadCapabilities loads the capabilities of the remote provider
+//
+// It takes in "token" string of the user for loading the capbilities
+// if an empty string is provided then it will try to make a request
+// with no token, however a remote provider is free to refuse to
+// serve requests with no token
+func (l *RemoteProvider) loadCapabilities(token string) {
+	var resp *http.Response
+	var err error
+
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/capabilities")
-	resp, err := http.Get(remoteProviderURL.String())
+	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	// If not token is provided then make a simple GET request
+	if token == "" {
+		c := &http.Client{}
+		resp, err = c.Do(req)
+	} else {
+		// Proceed to make a request with the token
+		resp, err = l.DoRequest(req, token)
+	}
+
 	if err != nil || resp.StatusCode != http.StatusOK {
 		logrus.Errorf("[Initialize Provider]: Failed to get capabilities %s", err)
 		return
@@ -81,11 +108,17 @@ func (l *RemoteProvider) Initialize() {
 		}
 	}()
 
+	// Clear the previous capabilities before writing new one
+	l.ProviderProperties = ProviderProperties{}
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&l.ProviderProperties); err != nil {
 		logrus.Errorf("[Initialize]: Failed to decode provider properties %s", err)
 	}
+}
 
+// downloadProviderExtensionPackage will download the remote provider extensions
+// package
+func (l *RemoteProvider) downloadProviderExtensionPackage() {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -860,6 +893,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fr
 		HttpOnly: true,
 	}
 	http.SetCookie(w, ck)
+
+	// Get new capabilities
+	// Doing this here is important so that
+	l.loadCapabilities(tokenString)
+
+	// Download the package for the user
+	l.downloadProviderExtensionPackage()
+
+	// Proceed to redirect once the capabilities has loaded
+	// and the package has been downloaded
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
@@ -1176,4 +1219,14 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 // GetGenericPersister - to return persister
 func (l *RemoteProvider) GetGenericPersister() *database.Handler {
 	return &l.GenericPersister
+}
+
+// GetGraphqlHandler - to return graphql handler instance
+func (l *RemoteProvider) GetGraphqlHandler() http.Handler {
+	return l.GraphqlHandler
+}
+
+// GetGraphqlPlayground - to return graphql playground instance
+func (l *RemoteProvider) GetGraphqlPlayground() http.Handler {
+	return l.GraphqlPlayground
 }

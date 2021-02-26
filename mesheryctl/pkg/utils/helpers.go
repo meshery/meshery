@@ -15,7 +15,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -93,19 +92,22 @@ var (
 )
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-nginx-sm"}
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint: "http://localhost:9081",
-	Token: config.Token{
-		Name:     "Default",
-		Location: AuthConfigFile,
-	},
+	Token:    "Default",
 	Platform: "docker",
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",
+}
+
+// TemplateToken is the template token provided when creating a config file
+var TemplateToken = config.Token{
+	Name:     "Default",
+	Location: AuthConfigFile,
 }
 
 type cryptoSource struct{}
@@ -210,10 +212,10 @@ func SetFileLocation() error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get users home directory")
 	}
-	MesheryFolder = path.Join(home, MesheryFolder)
-	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
-	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
-	DefaultConfigPath = path.Join(MesheryFolder, DefaultConfigPath)
+	MesheryFolder = filepath.Join(home, MesheryFolder)
+	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 	return nil
 }
 
@@ -223,10 +225,12 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 	if err != nil {
 		return errors.Wrap(err, "error processing config")
 	}
-	if focusedContext == "" {
-		focusedContext = mctlCfg.CurrentContext
+	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
+	if err != nil {
+		return err
 	}
-	if mctlCfg.Contexts[focusedContext].Platform == "docker" {
+
+	if currCtx.Platform == "docker" {
 		//Check whether docker daemon is running or not
 		if err := exec.Command("docker", "ps").Run(); err != nil {
 			log.Info("Docker is not running.")
@@ -251,10 +255,10 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
 		}
-	} else if mctlCfg.Contexts[focusedContext].Platform == "kubernetes" {
+	} else if currCtx.Platform == "kubernetes" {
 
 	} else {
-		return errors.New(fmt.Sprintf("%v platform not supported", mctlCfg.Contexts[focusedContext].Platform))
+		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
 	}
 	return nil
 }
@@ -559,6 +563,47 @@ func CreateConfigFile() error {
 	return nil
 }
 
+// AddTokenToConfig adds token passed to it to mesheryctl config file
+func AddTokenToConfig(token config.Token, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Tokens == nil {
+		mctlCfg.Tokens = []config.Token{}
+	}
+
+	for i := range mctlCfg.Tokens {
+		if mctlCfg.Tokens[i].Name == token.Name {
+			return errors.New("error adding token: a token with same name already exists")
+		}
+	}
+
+	mctlCfg.Tokens = append(mctlCfg.Tokens, token)
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // AddContextToConfig adds context passed to it to mesheryctl config file
 func AddContextToConfig(contextName string, context config.Context, configPath string, set bool) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -694,54 +739,29 @@ func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
 	return false
 }
 
-// GetCurrentContext returns the current context name and context struct.
-// If the user mentions a temporary context(tempCtxName) with -c flag, change the current-context and proceed to temporary-context
-func GetCurrentContext(tempCtxName string) (string, config.Context, error) {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return "", config.Context{}, errors.Wrap(err, "error processing config")
-	}
-
-	if tempCtxName != "" {
-		mctlCfg.CurrentContext = tempCtxName
-	}
-
-	currCtx, err := mctlCfg.CheckIfCurrentContextIsValid()
-	if err != nil {
-		// if the user specifies a context that is not in the config.yaml file, throw an error and show the available contexts
-		log.Errorf("\n\"%s\" context does not exist. The available contexts are:", mctlCfg.CurrentContext)
-		for context := range mctlCfg.Contexts {
-			log.Errorf("%s", context)
-		}
-		return "", config.Context{}, errors.New("context does not exist")
-	}
-	return mctlCfg.CurrentContext, currCtx, nil
-}
-
 // DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
 // Use force to override download anyway
-func DownloadDockerComposeFile(ctx config.Context, force bool) (string, error) {
+func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-			ctx.Version = "latest"
 		} else if ctx.Channel == "stable" {
-			if ctx.Version == "" {
+			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
 				if err != nil {
-					return "", errors.Wrapf(err, SystemError(fmt.Sprintf("failed to fetch latest stable release tag")))
+					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 				}
 			}
 			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
 		} else {
-			return "", errors.Errorf("unknown channel %s", ctx.Channel)
+			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
 
 		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
-			return "", errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
+			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
 		}
 	}
-	return ctx.Version, nil
+	return nil
 }

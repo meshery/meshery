@@ -18,6 +18,9 @@
           url: project/faq
     - title: Quick Start
       url: installation/quick-start
+      children:
+        - title: Installing mesheryctl
+          url: installation/mesheryctl
     - title: Supported Platforms
       url: installation/platforms
       children:

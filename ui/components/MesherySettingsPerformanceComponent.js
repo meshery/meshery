@@ -21,7 +21,7 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 const loadGenerators = [
   'fortio',
   'wrk2',
-  'nighthawk',
+  // 'nighthawk',
 ];
 
 const styles = (theme) => ({

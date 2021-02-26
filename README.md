@@ -1,4 +1,4 @@
-<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/layer5io/layer5/master/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
+<p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><img align="center" style="margin-bottom:20px;" src="https://raw.githubusercontent.com/layer5io/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png"  width="70%" /></a><br /><br /></p>
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/layer5/meshery.svg)](https://hub.docker.com/r/layer5/meshery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/layer5io/meshery)](https://goreportcard.com/report/github.com/layer5io/meshery)
@@ -53,7 +53,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
         </thead>
         <tbody>
         <tr>
-          <td rowspan="7" class="stable-adapters">stable</td>
+          <td rowspan="9" class="stable-adapters">stable</td>
         </tr>
         <tr>
           <td><a href="https://github.com/layer5io/meshery-istio">
@@ -80,15 +80,6 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
             <img src='https://docs.meshery.io/assets/img/service-meshes/nsm.svg' alt='Network Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Network Service Mesh</a>
           </td>
         </tr>
-        <tr colspan="2"><td class="stable-adapters"></td></tr>
-        <tr>
-          <td rowspan="7" class="beta-adapters">beta</td>
-        </tr>
-         <tr>
-          <td><a href="https://github.com/layer5io/meshery-cpx">
-            <img src='https://docs.meshery.io/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
-          </td>
-        </tr>
          <tr>
            <td><a href="https://github.com/layer5io/meshery-kuma">
              <img src='https://docs.meshery.io/assets/img/service-meshes/kuma.svg' alt='Kuma Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Kuma</a>
@@ -97,6 +88,15 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
           <tr>
           <td><a href="https://github.com/layer5io/meshery-osm">
             <img src='https://docs.meshery.io/assets/img/service-meshes/osm.svg' alt='Open Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Open Service Mesh</a>
+          </td>
+        </tr>
+        <tr colspan="2"><td class="stable-adapters"></td></tr>
+        <tr>
+          <td rowspan="5" class="beta-adapters">beta</td>
+        </tr>
+         <tr>
+          <td><a href="https://github.com/layer5io/meshery-cpx">
+            <img src='https://docs.meshery.io/assets/img/service-meshes/citrix.svg' alt='Citrix CPX Service Mesh' align="middle" hspace="5px" vspace="5px" height="30px" width="30px">Meshery adapter for Citrix CPX</a>
           </td>
         </tr>
         <tr>
