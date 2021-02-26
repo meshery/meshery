@@ -34,7 +34,7 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import fetchMeshScan from "../components/graphql/queries/meshScan";
+import meshScanSubscription from "../components/graphql/subscriptions/meshScanSubscription";
 
 const styles = (theme) => ({
   root: {
@@ -190,7 +190,10 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    this.fetchMeshScanData();
+    meshScanSubscription(data => {
+      console.log(data);
+      this.setMeshScanData(data);
+    }, { type: "ALL" });
   };
 
   fetchAvailableAdapters = () => {
@@ -246,265 +249,63 @@ class DashboardComponent extends React.Component {
     );
   };
 
-  fetchMeshScanData = () => {
+  setMeshScanData = (data) => {
     const self = this;
     self.props.updateProgress({ showProgress: true });
     const namespaces = {};
     const activeNamespaces = {};
 
-    //istio
-    let data = fetchMeshScan({ type: "ISTIO" });
-    console.log(data);
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
+    data?.listenToControlPlaneEvents?.map(mesh => {
+      mesh?.members?.map(member => {
+        if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
+        else namespaces[mesh.name] = new Set([member.namespace])
       })
-      const istioData = data.getControlPlanes.map(iter => {
+      namespaces[mesh.name] = [...namespaces[mesh.name]]
+      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+      const meshData = mesh?.members?.map(member => {
         const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
+          name: member.component,
+          component: member.component,
+          version: mesh.version,
+          namespace: member.namespace
         }
         return compData;
       })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch istio data.");
-    }
 
-    //linkerd
-    data = fetchMeshScan({type: "LINKERD"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const linkerdData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch linkerd data.");
-    }
-
-    //consul
-    data = fetchMeshScan({type: "CONSUL"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const consulData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch consul data.");
-    }
-
-    //osm
-    data = fetchMeshScan({type: "OPENSERVICEMESH"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const osmData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch osm data.");
-    }
-
-    //nsm
-    data = fetchMeshScan({type: "NETWORKSM"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const nsmData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch nsm data.");
-    }
-
-    //octarine
-    data = fetchMeshScan({type: "OCTARINE"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const octarineData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Octarine: octarineData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch octarine data.");
-    }
-
-    //traefik
-    data = fetchMeshScan({type: "TRAEFIK"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const traefikData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Traefik: traefikData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch traefik data.");
-    }
-
-    //kuma
-    data = fetchMeshScan({type: "KUMA"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const kumaData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Kuma: kumaData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch kuma data.");
-    }
-
-    //nginx
-    data = fetchMeshScan({type: "NGINXSM"});
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const nginxData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Nginx: nginxData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch nginx data.");
-    }
-
-    //citrix
-    data = fetchMeshScan({type: "CITRIXSM"})
-    if (data.getControlPlanes) {
-      data.getControlPlanes.map(iter => {
-        if (iter.members) {
-          if (namespaces[iter.name]) namespaces[iter.name].add(iter.members.namespace)
-          else namespaces[iter.name] = new Set([iter.members.namespace])
-        }
-        namespaces[iter.name] = [...namespaces[iter.name]]
-        activeNamespaces[iter.name] = namespaces[iter.name][0] || "";
-      })
-      const citrixData = data.getControlPlanes.map(iter => {
-        const compData = {
-          name: iter.members.component,
-          component: iter.members.component,
-          version: iter.version,
-          namespace: iter.members.namespace
-        }
-        return compData;
-      })
-      self.setState(state => ({ meshScan: { ...state.meshScan, Citrix: citrixData } }));
-    } else {
-      self.redirectErrorToConsole("Unable to fetch citrix data.");
-    }
-
+      switch (mesh.name) {
+        case 'ISTIO':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Istio: meshData } }));
+          break;
+        case 'LINKERD':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: meshData } }));
+          break;
+        case 'CONSUL':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Consul: meshData } }));
+          break;
+        case 'OPENSERVICEMESH':
+          self.setState(state => ({ meshScan: { ...state.meshScan, osm: meshData } }));
+          break;
+        case 'NETWORKSM':
+          self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": meshData } }));
+          break;
+        case 'OCTARINE':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Octarine: meshData } }));
+          break;
+        case 'TRAEFIK':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Traefik: meshData } }));
+          break;
+        case 'KUMA':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Kuma: meshData } }));
+          break;
+        case 'NGINXSM':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Nginx: meshData } }));
+          break;
+        case 'CITRIXSM':
+          self.setState(state => ({ meshScan: { ...state.meshScan, Citrix: meshData } }));
+          break;
+      }
+    })
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
-    
   }
 
   /**

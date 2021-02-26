@@ -19,6 +19,7 @@ function meshScanQuery(variables) {
           members {
             component
             status
+            namespace
           }
         }
       }

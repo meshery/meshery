@@ -13,11 +13,11 @@ export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
 export type ControlPlaneFilter = {|
   type?: ?MeshType
 |};
-export type meshScanQueryVariables = {|
+export type meshScanSubscriptionVariables = {|
   filter?: ?ControlPlaneFilter
 |};
-export type meshScanQueryResponse = {|
-  +getControlPlanes: $ReadOnlyArray<{|
+export type meshScanSubscriptionResponse = {|
+  +listenToControlPlaneEvents: $ReadOnlyArray<{|
     +name: ?MeshType,
     +version: string,
     +members: $ReadOnlyArray<{|
@@ -27,18 +27,18 @@ export type meshScanQueryResponse = {|
     |}>,
   |}>
 |};
-export type meshScanQuery = {|
-  variables: meshScanQueryVariables,
-  response: meshScanQueryResponse,
+export type meshScanSubscription = {|
+  variables: meshScanSubscriptionVariables,
+  response: meshScanSubscriptionResponse,
 |};
 */
 
 
 /*
-query meshScanQuery(
+subscription meshScanSubscription(
   $filter: ControlPlaneFilter
 ) {
-  getControlPlanes(filter: $filter) {
+  listenToControlPlaneEvents(filter: $filter) {
     name
     version
     members {
@@ -70,7 +70,7 @@ v1 = [
     ],
     "concreteType": "ControlPlane",
     "kind": "LinkedField",
-    "name": "getControlPlanes",
+    "name": "listenToControlPlaneEvents",
     "plural": true,
     "selections": [
       {
@@ -128,29 +128,29 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "meshScanQuery",
+    "name": "meshScanSubscription",
     "selections": (v1/*: any*/),
-    "type": "Query",
+    "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "meshScanQuery",
+    "name": "meshScanSubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e6e6230af67c35e191c1e10f5451acfd",
+    "cacheID": "610f5d659d8674ba54168d715e9ec97b",
     "id": null,
     "metadata": {},
-    "name": "meshScanQuery",
-    "operationKind": "query",
-    "text": "query meshScanQuery(\n  $filter: ControlPlaneFilter\n) {\n  getControlPlanes(filter: $filter) {\n    name\n    version\n    members {\n      component\n      status\n      namespace\n    }\n  }\n}\n"
+    "name": "meshScanSubscription",
+    "operationKind": "subscription",
+    "text": "subscription meshScanSubscription(\n  $filter: ControlPlaneFilter\n) {\n  listenToControlPlaneEvents(filter: $filter) {\n    name\n    version\n    members {\n      component\n      status\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ea95368731b9b984d27bef1748d71bd3';
+(node/*: any*/).hash = '82a586a9835603dc4769821bfd5173e0';
 
 module.exports = node;
