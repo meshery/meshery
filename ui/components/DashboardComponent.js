@@ -35,6 +35,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import meshScanSubscription from "../components/graphql/subscriptions/meshScanSubscription";
+import meshScanQuery from "../components/graphql/queries/meshScan";
 
 const styles = (theme) => ({
   root: {
@@ -194,6 +195,12 @@ class DashboardComponent extends React.Component {
       console.log(data);
       this.setMeshScanData(data);
     }, { type: "ALL" });
+    meshScanQuery({ type: "ALL" })
+      .then(res => {
+        console.log(res);
+        this.setMeshScanData(res);
+      })
+      .catch(err => console.error(err))
   };
 
   fetchAvailableAdapters = () => {
