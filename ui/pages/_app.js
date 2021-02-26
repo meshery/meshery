@@ -184,16 +184,6 @@ theme = {
   },
   mixins: {
     ...theme.mixins,
-    toolbar1: {
-      minHeight: 58,
-      paddingLeft:20,
-      paddingRight:20,
-      [theme.breakpoints.between(620,732)]: {
-        minHeight: 58,
-        paddingLeft:20,
-        paddingRight:20,
-      },
-    },
   },
 };
 
@@ -446,7 +436,7 @@ class MesheryApp extends App {
                     maxSnack={10}
                   >
                     <MesheryProgressBar />
-                    <Header onDrawerToggle={this.handleDrawerToggle} isDrawerCollapsed={isDrawerCollapsed}/>
+                    <Header onDrawerToggle={this.handleDrawerToggle} onDrawerCollapse={isDrawerCollapsed}/>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
                         <Component pageContext={this.pageContext} {...pageProps} />

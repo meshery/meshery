@@ -99,12 +99,12 @@ const styles = (theme) => ({
 
 class Header extends React.Component {
   render() {
-    const { classes, title, onDrawerToggle ,isDrawerCollapsed} = this.props;
+    const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
     return (
       <NoSsr>
         <React.Fragment>
-          <AppBar color="primary" position="sticky" elevation={0} className={isDrawerCollapsed?classes.appBarOnDrawerClosed:classes.appBarOnDrawerOpen}>
-            <Toolbar className={isDrawerCollapsed?classes.toolbarOnDrawerClosed:classes.toolbarOnDrawerOpen}>
+          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}>
+            <Toolbar className={onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen}>
               <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item>
