@@ -244,9 +244,17 @@ const categories = [
     link: true,
     children: [
       {
+        id: "Profiles",
+        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        href: "/performance/profiles",
+        title: "Performance Profiles",
+        show: true,
+        link: true,
+      },
+      {
         id: "Results",
         icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
-        href: "/results",
+        href: "/performance/results",
         title: "View & Compare Results",
         show: true,
         link: true,

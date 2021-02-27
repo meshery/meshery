@@ -1,10 +1,10 @@
 import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import MesheryResults from "../components/MesheryResults";
-import { updatepagepath } from "../lib/store";
+import MesheryPerformanceComponent from "../../components/MesheryPerformanceComponent";
+import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 import Head from 'next/head';
-import { getPath } from "../lib/path";
+import { getPath } from "../../lib/path";
 
 const styles = {
   paper: {
@@ -13,8 +13,7 @@ const styles = {
     overflow: 'hidden',
   }
 }
-
-class Results extends React.Component {
+class Performance extends React.Component {
   componentDidMount () {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path: getPath() });
@@ -24,10 +23,10 @@ class Results extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Results | Meshery</title>
+          <title>Performance | Meshery</title>
         </Head>
         <Paper className={this.props.classes.paper}>
-          <MesheryResults />
+          <MesheryPerformanceComponent />
         </Paper>
       </NoSsr>
     );
@@ -41,4 +40,4 @@ const mapDispatchToProps = dispatch => ({
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(Results));
+)(Performance));

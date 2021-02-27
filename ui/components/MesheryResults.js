@@ -81,12 +81,14 @@ class MesheryResults extends Component {
       }
       query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
       self.props.updateProgress({ showProgress: true });
-      dataFetch(`/api/perf/results${query}`, {
+
+      const endpoint = self.props.endpoint || "/api/perf/results";
+      dataFetch(`${endpoint}${query}`, {
         credentials: 'same-origin',
         method: 'GET',
         credentials: 'include',
       }, (result) => {
-        console.log("Results API",`/api/perf/results${query}`)
+        console.log("Results API",`${endpoint}${query}`)
         self.props.updateProgress({ showProgress: false });
         // console.log(`received results: ${JSON.stringify(result)}`);
         if (typeof result !== 'undefined') {
@@ -450,7 +452,12 @@ class MesheryResults extends Component {
                   close={self.resetSelectedRowData()}
                 />
               )}
-          <MUIDataTable title={<div className={classes.tableHeader}>Performance Test Results</div>} data={resultsForDisplay} columns={columns} options={options} />
+          <MUIDataTable 
+            title={this.props.customHeader || <div className={classes.tableHeader}>Performance Test Results</div>} 
+            data={resultsForDisplay} 
+            columns={columns} 
+            options={options} 
+          />
         </NoSsr>
       );
     }
