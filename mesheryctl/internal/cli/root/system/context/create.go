@@ -11,6 +11,7 @@ var (
 	url       = ""
 	tokenPath = ""
 	set       = false
+	adapters  = []string{}
 )
 
 // createContextCmd represents the update command
@@ -27,6 +28,9 @@ var createContextCmd = &cobra.Command{
 			return err
 		}
 		tempContext.Endpoint = url
+		if len(adapters) >= 1 {
+			tempContext.Adapters = adapters
+		}
 
 		err = utils.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
 		if err != nil {
@@ -41,4 +45,5 @@ var createContextCmd = &cobra.Command{
 func init() {
 	createContextCmd.Flags().StringVarP(&url, "url", "u", "https://localhost:9081", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
+	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "list of adapters")
 }
