@@ -325,7 +325,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 }
 
 // FetchResults - fetches results from provider backend
-func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistResults, l.ProviderName)
@@ -335,7 +335,8 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 
 	logrus.Infof("attempting to fetch results from cloud")
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL)
+	remoteProviderURL.Path = path.Join(ep, profileID, "results")
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -484,13 +485,13 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 }
 
 // PublishResults - publishes results to the provider backend synchronously
-func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
-	if !l.Capabilities.IsSupported(PersistResult) {
+func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
+	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistResult, l.ProviderName)
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistResults, l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResult)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResults)
 
 	data, err := json.Marshal(result)
 	if err != nil {
@@ -502,7 +503,8 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 	logrus.Infof("attempting to publish results to remote provider")
 	bf := bytes.NewBuffer(data)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL)
+	remoteProviderURL.Path = path.Join(ep, profileID, "results")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {

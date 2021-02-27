@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -18,6 +19,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	// 	return
 	// }
 	// TODO: may be force login if token not found?????
+	profileID := mux.Vars(req)["id"]
 
 	err := req.ParseForm()
 	if err != nil {
@@ -27,7 +29,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return

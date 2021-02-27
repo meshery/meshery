@@ -182,8 +182,8 @@ type Provider interface {
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request)
 	Logout(http.ResponseWriter, *http.Request)
-	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	PublishResults(req *http.Request, result *MesheryResult) (string, error)
+	FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error)
+	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error

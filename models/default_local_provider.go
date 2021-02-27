@@ -125,7 +125,7 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order, providerID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -151,7 +151,7 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 }
 
 // PublishResults - publishes results to the provider backend synchronously
-func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult) (string, error) {
+func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, providerID string) (string, error) {
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
