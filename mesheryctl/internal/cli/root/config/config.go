@@ -18,7 +18,7 @@ type Version struct {
 type MesheryCtlConfig struct {
 	Contexts       map[string]Context `mapstructure:"contexts"`
 	CurrentContext string             `mapstructure:"current-context"`
-	Tokens         map[string]Token   `mapstructure:"tokens"`
+	Tokens         []Token            `mapstructure:"tokens"`
 }
 
 // Token defines the structure of Token stored in mesheryctl
@@ -30,7 +30,7 @@ type Token struct {
 // Context defines a meshery environment
 type Context struct {
 	Endpoint string   `mapstructure:"endpoint,omitempty"`
-	Token    Token    `mapstructure:"token,omitempty"`
+	Token    string   `mapstructure:"token,omitempty"`
 	Platform string   `mapstructure:"platform"`
 	Adapters []string `mapstructure:"adapters,omitempty"`
 	Channel  string   `mapstructure:"channel,omitempty"`

@@ -9,6 +9,7 @@ language: en
 lang: en
 categories: en
 ---
+
 # Upgrading Meshery
 
 ## Upgrading Meshery Server, Adapters, and UI
