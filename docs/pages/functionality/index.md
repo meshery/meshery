@@ -11,7 +11,7 @@ These sections provide user guides to the functionality Meshery offers.
 
 <ul>
     {% for item in sorted_functionality %}
-    {% if item.type=="functionality" -%}
+    {% if item.type=="functionality" and item.list!="exclude" and item.language !="es"  -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}

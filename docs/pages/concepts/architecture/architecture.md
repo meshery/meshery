@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Meshery Architecture
+title: Architecture
 permalink: concepts/architecture
 redirect_from: architecture
 type: concepts
