@@ -1,0 +1,10 @@
+- title: Inicio Rápido
+  url: "installation/quick-start"
+- title: Todas las Plataformas
+  url: "installation/platforms"
+- title: Proyecto
+  external_url: https://meshery.io
+- title: Slack
+  external_url: http://slack.layer5.io
+- title: GitHub
+  external_url: https://github.com/layer5io/meshery

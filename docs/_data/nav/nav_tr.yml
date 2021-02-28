@@ -1,0 +1,10 @@
+- title: Hızlı başlangıç
+  url: "installation/quick-start"
+- title: Tüm Platformlar
+  url: "installation/platforms"
+- title: Proje
+  external_url: https://meshery.io
+- title: Slack
+  external_url: http://slack.layer5.io
+- title: GitHub
+  external_url: https://github.com/layer5io/meshery

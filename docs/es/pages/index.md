@@ -27,7 +27,7 @@ display-title: "false"
   <!-- QUICK START -->
   <div>
     <a href="{{ site.baseurl }}/es/installation/quick-start">
-        <div class="overview">Inicio&nbsp;Rapido</div>
+        <div class="overview">Inicio&nbsp;Rápido</div>
     </a>
     <ul><b>Empezando</b>
         <li><a href="{{ site.baseurl }}/es/overview">Presentando Meshery</a></li>

@@ -14,7 +14,9 @@
         </li>{% endif %} -->
 
         <!-- Internal links -->
-        {% for link in site.data.navigation %}
+        <!--lang is the variable that holds the lang abreviation ["en", "es", "tr"] -->
+        <!-- for each lang value, we have a specific toc_lang.yml with the titles-->
+        {% if lang == "en" %} {% assign nav_lang = site.data.nav.nav_en %} {% elsif lang == "es" %} {% assign nav_lang = site.data.nav.nav_es %} {% elsif lang == "tr" %} {% assign nav_lang = site.data.nav.nav_tr %} {% endif %} {% for link in nav_lang %}
         <li class="nav-item mr-4 mb-2 mb-lg-0">
             <a class="nav-link" href="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}"><span>{{ link.title }}</span></a
           >
@@ -44,10 +46,15 @@
                 <span class="text-white text-bold">{% if site.data.languages.language_word == blank %}Language{% else %}{{ site.data.language.language_word }}{% endif %} </span>
                 <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="langSelection" id="langSelection">
                 <!-- TODO: poner la palabra language en el idioma que esté seleccionado -->
-                <option value="">lang</option>
-                <!-- {% assign sorted_versions = site.data.languages | sort: 'versioning' | reverse %} -->
+                <!--for all the langs -->
                 {% for link in site.data.languages%}
-                  <option value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+                <!-- we get the lang selected, and put it to the right option  -->
+                   {%- if lang==link.url -%}
+                      {%- assign optionSelected = "selected" -%}
+                      {%- else -%}
+                      {%- assign optionSelected = "" -%}                      
+                   {%- endif -%}
+                  <option {{ optionSelected }} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
                       <span>{{ link.title }}</span>
                   </option>
                 {% endfor %}

@@ -1,10 +1,21 @@
-<strong>Tools</strong>
+<!-- for all the langs in editable -->
+{%- if lang=="en" -%} {%- assign editable_lang = site.data.editables.editable_en -%} {%- elsif lang=="es" -%} {%- assign editable_lang = site.data.editables.editable_es -%} {%- elsif lang=="tr" -%} {%- assign editable_lang = site.data.editables.editable_tr-%}
+{%- endif -%}
+<!-- for all the langs in editable -->
+{%- for editable in editable_lang -%} {%- if editable.title=="tools" -%} {%- assign tools = editable.word -%} {%- endif -%} {%- if editable.title=="createDocIssue" -%} {%- assign createDocIssue = editable.word -%} {%- endif-%} {%- if editable.title=="editThisPage"-%}
+{%- assign editThisPage = editable.word -%} {%- endif -%} {%- if editable.title=="contents" -%} {%- assign contents = editable.word -%} {%- endif -%} {%- endfor -%}
+
+<strong>{{ tools }}</strong>
+<a href="{{ site.repo }}/issues/new?assignees=&labels=area/docs&template=documentation.md&title=&#91;Docs&#93;" target="_blank"><i class="fab fa-github fa-fw"></i> {{ createDocIssue }}</a>
+<a href="{{ site.repo }}/blob/master/docs/{{ page.path }}" target="_blank"><i class="fa fa-edit fa-fw"></i> {{ editThisPage }}</a>
+<strong>{{ contents }}</strong>
+
+<!-- <strong>Tools</strong>
 <a href="{{ site.repo }}/issues/new?assignees=&labels=area/docs&template=documentation.md&title=&#91;Docs&#93;" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
 <a href="{{ site.repo }}/blob/master/docs/{{ page.path }}" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<strong>Contents</strong>
+<strong>Contents</strong> -->
 
 
 <!-- this will parse through the header fields and add a button to open
      an issue / ask a question on Github. The editable field should be in
      the post frontend matter, and refer to the label to open the issue for -->
-     
