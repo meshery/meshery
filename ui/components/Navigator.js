@@ -251,14 +251,6 @@ const categories = [
         show: true,
         link: true,
       },
-      {
-        id: "Results",
-        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
-        href: "/performance/results",
-        title: "View & Compare Results",
-        show: true,
-        link: true,
-      },
     ],
   },
   {
