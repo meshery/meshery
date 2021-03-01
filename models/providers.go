@@ -198,6 +198,8 @@ type Provider interface {
 	RecordMeshSyncData(model.Object) error
 	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
+	GetGraphqlHandler() http.Handler
+	GetGraphqlPlayground() http.Handler
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)

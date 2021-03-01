@@ -91,7 +91,7 @@ function generatePerformanceProfile(data) {
 const loadGenerators = [
   'fortio',
   'wrk2',
-  'nighthawk',
+  // 'nighthawk',
 ];
 
 const styles = (theme) => ({
