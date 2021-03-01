@@ -29,6 +29,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SaveIcon from '@material-ui/icons/Save';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { 
   updateLoadTestData, 
   updateStaticPrometheusBoardConfig, 
@@ -140,9 +141,9 @@ class MesheryPerformanceComponent extends React.Component {
       testName = "", 
       meshName = "", 
       url = "", 
-      qps, 
-      c, 
-      t, 
+      qps = "0", 
+      c = "0", 
+      t = "30s", 
       result, 
       staticPrometheusBoardConfig, 
       performanceProfileID,
@@ -285,6 +286,37 @@ class MesheryPerformanceComponent extends React.Component {
     })
 
     this.handleProfileUpload(profile, true, cb)
+  }
+
+  deleteProfile = (id) => {
+    dataFetch("/api/user/performance/profiles/"+id, {
+      method: 'DELETE',
+      credentials: 'include',
+    }, () => {
+      this.props.updateProgress({ showProgress: false });
+      
+      this.props.enqueueSnackbar("Performance Profile Successfully Deleted!", {
+        variant: "success",
+        autoHideDuration: 2000,
+        action: (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+      });
+    }, (err) => {
+      console.error(err);
+      this.props.updateProgress({ showProgress: false });
+      this.props.enqueueSnackbar("Failed to delete profile", {
+        variant: "error",
+        autoHideDuration: 2000,
+        action: (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+      });
+    });
   }
 
   handleProfileUpload = (body, generateNotif, cb) => {
@@ -870,6 +902,23 @@ class MesheryPerformanceComponent extends React.Component {
             </Grid>
             <React.Fragment>
               <div className={classes.buttons}>
+                {
+                  this.props.loadAsPerformanceProfile
+                  ?
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => this.deleteProfile(this.state.performanceProfileID)}
+                    className={classes.button}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete Profile
+                  </Button>
+                  :
+                  null
+                }
                 <Button
                   type="submit"
                   variant="contained"

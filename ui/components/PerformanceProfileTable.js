@@ -385,7 +385,10 @@ function MesheryTestProfiles({ updateProgress, enqueueSnackbar, closeSnackbar, u
             />
           </Paper>
         }
-        handleClose={() => setProfileForModal(undefined)}
+        handleClose={() => {
+          fetchTestProfiles(page, pageSize, search, sortOrder);
+          setProfileForModal(undefined);
+        }}
       />
     </NoSsr>
   );
