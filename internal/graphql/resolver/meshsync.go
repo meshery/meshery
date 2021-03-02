@@ -79,7 +79,7 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 			return ErrCreateData(result.Error)
 		}
 	case broker.Update:
-		result := handler.Update(&object)
+		result := handler.Save(&object)
 		if result.Error != nil {
 			return ErrUpdateData(result.Error)
 		}
