@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -27,10 +26,6 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, targetStatu
 	return nil, ErrInvalidRequest
 }
 
-func (r *mutationResolver) ChangeMeshSyncStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
 	if selector != nil {
 		return r.getAvailableAddons(ctx, selector)
@@ -41,7 +36,7 @@ func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.
 
 func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
 	if filter != nil {
-		return r.getControlPlanes(ctx)
+		return r.getControlPlanes(ctx, filter)
 	}
 
 	return nil, ErrInvalidRequest
@@ -49,10 +44,6 @@ func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.Cont
 
 func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
 	return r.getOperatorStatus(ctx)
-}
-
-func (r *queryResolver) GetMeshSyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
-	return r.getMeshSyncStatus(ctx)
 }
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
@@ -65,7 +56,7 @@ func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector 
 
 func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
 	if filter != nil {
-		return r.listenToControlPlaneState(ctx)
+		return r.listenToControlPlaneState(ctx, filter)
 	}
 
 	return nil, ErrInvalidRequest

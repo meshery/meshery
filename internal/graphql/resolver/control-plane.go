@@ -16,7 +16,7 @@ var (
 	}
 )
 
-func (r *Resolver) getControlPlanes(ctx context.Context) ([]*model.ControlPlane, error) {
+func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 	controlplanelist := make([]*model.ControlPlane, 0)
 
@@ -59,13 +59,13 @@ func (r *Resolver) getControlPlanes(ctx context.Context) ([]*model.ControlPlane,
 	return controlplanelist, nil
 }
 
-func (r *Resolver) listenToControlPlaneState(ctx context.Context) (<-chan []*model.ControlPlane, error) {
+func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
 	r.controlPlaneChannel = make(chan []*model.ControlPlane)
 
 	go func() {
 		select {
 		case <-r.meshsyncChannel:
-			status, err := r.getControlPlanes(ctx)
+			status, err := r.getControlPlanes(ctx, filter)
 			if err != nil {
 				r.Log.Error(err)
 				return

@@ -18,10 +18,6 @@ var (
 	meshsyncYaml    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
 )
 
-func (r *Resolver) getMeshSyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
-	return nil, nil
-}
-
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
 	status := model.StatusUnknown
