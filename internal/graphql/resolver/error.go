@@ -19,3 +19,11 @@ var (
 func ErrCreateData(err error) error {
 	return errors.NewDefault(ErrCreateDataCode, "Error while writing meshsync data", err.Error())
 }
+
+func ErrUpdateData(err error) error {
+	return errors.NewDefault(ErrCreateDataCode, "Error while updating meshsync data", err.Error())
+}
+
+func ErrDeleteData(err error) error {
+	return errors.NewDefault(ErrCreateDataCode, "Error while deleting meshsync data", err.Error())
+}

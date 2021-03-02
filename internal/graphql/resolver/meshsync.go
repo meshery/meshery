@@ -50,14 +50,6 @@ func runMeshSync(client *mesherykube.Client, delete bool) error {
 	return nil
 }
 
-func recordMeshSyncData(handler *database.Handler, object meshsyncmodel.Object) error {
-	result := handler.Create(&object)
-	if result.Error != nil {
-		return ErrCreateData(result.Error)
-	}
-	return nil
-}
-
 func listernToEvents(handler *database.Handler, datach chan *broker.Message) error {
 	for {
 		select {
@@ -70,10 +62,34 @@ func listernToEvents(handler *database.Handler, datach chan *broker.Message) err
 			}
 
 			// persist the object
-			err = recordMeshSyncData(handler, object)
+			err = recordMeshSyncData(msg.EventType, handler, object)
 			if err != nil {
 				return err
 			}
 		}
 	}
+}
+
+func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object meshsyncmodel.Object) error {
+
+	switch eventtype {
+	case broker.Add:
+		result := handler.Create(&object)
+		if result.Error != nil {
+			return ErrCreateData(result.Error)
+		}
+	case broker.Update:
+		result := handler.Update(&object)
+		if result.Error != nil {
+			return ErrUpdateData(result.Error)
+		}
+	case broker.Delete:
+		result := handler.Delete(&object)
+		if result.Error != nil {
+			return ErrDeleteData(result.Error)
+		}
+	case broker.Error:
+		return nil
+	}
+	return nil
 }
