@@ -137,7 +137,6 @@ func DeleteManifestFiles(manifestArr []utils.Manifest, requestedAdapters []strin
 }
 
 func stop() error {
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -219,7 +218,6 @@ func stop() error {
 		if err != nil {
 			return err
 		}
-
 	}
 
 	log.Info("Meshery is stopped.")
