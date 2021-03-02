@@ -131,6 +131,12 @@ func main() {
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
+	performanceProfilePersister, err := models.NewBitCaskPerformanceProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer performanceProfilePersister.ClosePerformanceProfilePersister()
+
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
@@ -148,12 +154,13 @@ func main() {
 	}
 
 	lProv := &models.DefaultLocalProvider{
-		ProviderBaseURL:        DefaultProviderURL,
-		MapPreferencePersister: preferencePersister,
-		ResultPersister:        resultPersister,
-		SmiResultPersister:     smiResultPersister,
-		TestProfilesPersister:  testConfigPersister,
-		GenericPersister:       dbHandler,
+		ProviderBaseURL:              DefaultProviderURL,
+		MapPreferencePersister:       preferencePersister,
+		ResultPersister:              resultPersister,
+		SmiResultPersister:           smiResultPersister,
+		TestProfilesPersister:        testConfigPersister,
+		PerformanceProfilesPersister: performanceProfilePersister,
+		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			DBHandler:        &dbHandler,
 			GetKubeClient:    helpers.NewKubeClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),

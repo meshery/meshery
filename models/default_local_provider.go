@@ -22,13 +22,14 @@ import (
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	ProviderProperties
-	ProviderBaseURL       string
-	ResultPersister       *BitCaskResultsPersister
-	SmiResultPersister    *BitCaskSmiResultsPersister
-	TestProfilesPersister *BitCaskTestProfilesPersister
-	GenericPersister      database.Handler
-	GraphqlHandler        http.Handler
-	GraphqlPlayground     http.Handler
+	ProviderBaseURL              string
+	ResultPersister              *BitCaskResultsPersister
+	SmiResultPersister           *BitCaskSmiResultsPersister
+	TestProfilesPersister        *BitCaskTestProfilesPersister
+	PerformanceProfilesPersister *BitCaskPerformanceProfilesPersister
+	GenericPersister             database.Handler
+	GraphqlHandler               http.Handler
+	GraphqlPlayground            http.Handler
 }
 
 // Initialize will initialize the local provider
@@ -127,7 +128,7 @@ func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) 
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order, providerID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -140,7 +141,7 @@ func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, s
 		logrus.Error(err)
 		return nil, err
 	}
-	return l.ResultPersister.GetResults(pg, pgs)
+	return l.ResultPersister.GetResults(pg, pgs, profileID)
 }
 
 // GetResult - fetches result from provider backend for the given result id
@@ -153,7 +154,14 @@ func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) 
 }
 
 // PublishResults - publishes results to the provider backend synchronously
-func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, providerID string) (string, error) {
+func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
+	profileUUID, err := uuid.FromString(profileID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - invalid performance profile id"))
+		return "", err
+	}
+
+	result.PerformanceProfile = &profileUUID
 	data, err := json.Marshal(result)
 	if err != nil {
 		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery result for shipping"))
@@ -393,22 +401,79 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
-	return nil, fmt.Errorf("function not supported by local provider")
+	var uid uuid.UUID
+	if performanceProfile.ID != nil {
+		uid = *performanceProfile.ID
+	} else {
+		var err error
+		uid, err = uuid.NewV4()
+		if err != nil {
+			logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+			return nil, err
+		}
+		performanceProfile.ID = &uid
+	}
+
+	data, err := json.Marshal(performanceProfile)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal performance profile for persisting"))
+		return nil, err
+	}
+
+	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(uid, performanceProfile)
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
 func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.PerformanceProfilesPersister.GetPerformanceProfiles(pg, pgs)
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
 func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	uid, err := uuid.FromString(performanceProfileID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return nil, err
+	}
+
+	profile, err := l.PerformanceProfilesPersister.GetPerformanceProfile(uid)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to get performance profile"))
+		return nil, err
+	}
+
+	profileJSON, err := json.Marshal(profile)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal performance profile"))
+		return nil, err
+	}
+
+	return profileJSON, nil
 }
 
 // DeletePerformanceProfile deletes a meshery performance profile with the given id
 func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	uid, err := uuid.FromString(performanceProfileID)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to generate new UUID"))
+		return nil, err
+	}
+
+	return l.PerformanceProfilesPersister.DeletePeformanceProfile(uid)
 }
 
 // SaveSchedule saves a schedule

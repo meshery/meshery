@@ -56,7 +56,7 @@ func NewBitCaskResultsPersister(folderName string) (*BitCaskResultsPersister, er
 }
 
 // GetResults - gets result for the page and pageSize
-func (s *BitCaskResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
+func (s *BitCaskResultsPersister) GetResults(page, pageSize uint64, profileID string) ([]byte, error) {
 	if s.db == nil {
 		return nil, errors.New("connection to DB does not exist")
 	}
@@ -75,6 +75,13 @@ RETRY:
 	}()
 
 	total := s.db.Len()
+
+	profileUUID, err := uuid.FromString(profileID)
+	if err != nil {
+		err = errors.Wrapf(err, "Invalid performance profile id")
+		logrus.Error(err)
+		return nil, err
+	}
 
 	results := []*MesheryResult{}
 
@@ -103,7 +110,10 @@ RETRY:
 					logrus.Error(err)
 					return nil, err
 				}
-				results = append(results, result)
+
+				if result.PerformanceProfile != nil && *result.PerformanceProfile == profileUUID {
+					results = append(results, result)
+				}
 			}
 		}
 		localIndex++
