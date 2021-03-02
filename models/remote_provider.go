@@ -983,20 +983,20 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
 
-	logrus.Infof("attempting to fetch performace profile from cloud for id: %s", performanceProfileID)
+	logrus.Infof("attempting to fetch performance profile from cloud for id: %s", performanceProfileID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, performanceProfileID))
-	logrus.Debugf("constructed performace profile url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed performance profile url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get performace profiles: %v", err)
+		logrus.Errorf("unable to get performance profiles: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		logrus.Errorf("unable to get performace profiles: %v", err)
+		logrus.Errorf("unable to get performance profiles: %v", err)
 		return nil, err
 	}
 	defer func() {
