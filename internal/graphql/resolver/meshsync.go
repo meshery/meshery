@@ -53,7 +53,7 @@ func runMeshSync(client *mesherykube.Client, delete bool) error {
 func recordMeshSyncData(handler *database.Handler, object meshsyncmodel.Object) error {
 	result := handler.Create(&object)
 	if result.Error != nil {
-		return result.Error
+		return ErrCreateData(result.Error)
 	}
 	return nil
 }

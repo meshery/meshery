@@ -53,8 +53,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Statu
 		}
 		r.Log.Info("Initialized")
 
-		r.meshsyncChannel = make(chan *broker.Message)
-
 		endpoint, err := subscribeToBroker(kubeclient, r.meshsyncChannel)
 		if err != nil {
 			r.Log.Error(err)
@@ -125,6 +123,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 
 func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
 	r.operatorChannel = make(chan *model.OperatorStatus)
+	r.meshsyncChannel = make(chan *broker.Message)
 
 	go func() {
 		select {
