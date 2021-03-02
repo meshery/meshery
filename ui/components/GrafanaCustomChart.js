@@ -13,7 +13,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
-import bb, {area, areaStep, line, selection} from 'billboard.js'
+import bb, {area} from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
   root: {

@@ -5,7 +5,7 @@ import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 
-import bb, {areaStep, line, selection} from 'billboard.js'
+import bb, {areaStep, line} from 'billboard.js'
 
 const styles = (theme) => ({
   title: {
