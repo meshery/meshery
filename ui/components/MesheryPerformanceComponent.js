@@ -68,7 +68,7 @@ function generatePerformanceProfile(data) {
     testName
   } = data;
 
-  const performanceProfileName = name || `${testName}_${Date.now()}`;
+  const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh)
 
   return {
     ...(id && { id }),
@@ -351,6 +351,15 @@ class MesheryPerformanceComponent extends React.Component {
     }, (err) => {
       console.error(err);
       this.props.updateProgress({ showProgress: false });
+      this.props.enqueueSnackbar("Failed to create performance profile", {
+        variant: "error",
+        autoHideDuration: 2000,
+        action: (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+            <CloseIcon />
+          </IconButton>
+        ),
+      });
     });
   }
 
@@ -358,16 +367,30 @@ class MesheryPerformanceComponent extends React.Component {
     this.setState(state => ({ performanceProfileModal: !state.performanceProfileModal }))
   }
 
+  /**
+   * generateTestName takes in test name and service mesh name
+   * and generates a random name (if test name is an empty string or is falsy) or
+   * will return the given name
+   * 
+   * @param {string} name
+   * @param {string} meshName
+   * @returns {string}
+   */
+  static generateTestName = (name, meshName) => {
+    if (!name || name.trim() === '') {
+      const mesh = meshName === '' || meshName === 'None' ? 'No mesh' : meshName;
+      return `${mesh}_${(new Date()).getTime()}`
+    }
+
+    return name
+  }
+
   submitLoadTest = (id) => {
     const {
       testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType
     } = this.state;
 
-    let computedTestName = testName;
-    if (testName.trim() === '') {
-      const mesh = meshName === '' || meshName === 'None' ? 'No mesh' : meshName;
-      computedTestName = `${mesh}_${(new Date()).getTime()}`;
-    }
+    const computedTestName = MesheryPerformanceComponent.generateTestName(testName, meshName)
     this.setState({testName: computedTestName});
 
     const t1 = t.substring(0, t.length - 1);

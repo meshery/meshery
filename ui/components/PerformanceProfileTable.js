@@ -119,12 +119,6 @@ function MesheryTestProfiles({ updateProgress, enqueueSnackbar, closeSnackbar, u
     });
   }
 
-  // function resetSelectedRowData() {
-  //   return () => {
-  //     setSelectedRowData(null);
-  //   };
-  // }
-
   const columns = [
     {
       name: "name",
@@ -182,27 +176,27 @@ function MesheryTestProfiles({ updateProgress, enqueueSnackbar, closeSnackbar, u
         },
       },
     },
-    {
-      name: "next_run",
-      label: "Next Run",
-      options: {
-        filter: false,
-        sort: true,
-        searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
-          return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
-          );
-        },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
-        },
-      },
-    },
+    // {
+    //   name: "next_run",
+    //   label: "Next Run",
+    //   options: {
+    //     filter: false,
+    //     sort: true,
+    //     searchable: true,
+    //     customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+    //       return (
+    //         <TableCell key={index} onClick={() => sortColumn(index)}>
+    //           <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+    //             <b>{column.label}</b>
+    //           </TableSortLabel>
+    //         </TableCell>
+    //       );
+    //     },
+    //     customBodyRender: function CustomBody(value) {
+    //       return <Moment format="LLLL">{value}</Moment>;
+    //     },
+    //   },
+    // },
     {
       name: "Actions",
       options: {
