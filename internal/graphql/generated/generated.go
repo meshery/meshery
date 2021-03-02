@@ -75,6 +75,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus *model.Status) int
+		ChangeMeshSyncStatus func(childComplexity int, targetStatus *model.Status) int
 		ChangeOperatorStatus func(childComplexity int, targetStatus *model.Status) int
 	}
 
@@ -92,31 +93,34 @@ type ComplexityRoot struct {
 	Query struct {
 		GetAvailableAddons func(childComplexity int, selector *model.MeshType) int
 		GetControlPlanes   func(childComplexity int, filter *model.ControlPlaneFilter) int
+		GetMeshSyncStatus  func(childComplexity int) int
 		GetOperatorStatus  func(childComplexity int) int
 	}
 
 	Subscription struct {
-		ListenToAddonEvents        func(childComplexity int, selector *model.MeshType) int
-		ListenToControlPlaneEvents func(childComplexity int, filter *model.ControlPlaneFilter) int
-		ListenToOperatorEvents     func(childComplexity int) int
-		SubscribeToMeshSync        func(childComplexity int) int
+		ListenToAddonState        func(childComplexity int, selector *model.MeshType) int
+		ListenToControlPlaneState func(childComplexity int, filter *model.ControlPlaneFilter) int
+		ListenToMeshSyncEvents    func(childComplexity int) int
+		ListenToOperatorState     func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
 	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus *model.Status) (*model.Status, error)
 	ChangeOperatorStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error)
+	ChangeMeshSyncStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error)
 	GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error)
+	GetMeshSyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error)
 }
 type SubscriptionResolver interface {
-	ListenToAddonEvents(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
-	ListenToControlPlaneEvents(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
-	ListenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error)
-	SubscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
+	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
+	ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
+	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
+	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
 }
 
 type executableSchema struct {
@@ -237,6 +241,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(*model.Status)), true
 
+	case "Mutation.changeMeshSyncStatus":
+		if e.complexity.Mutation.ChangeMeshSyncStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_changeMeshSyncStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ChangeMeshSyncStatus(childComplexity, args["targetStatus"].(*model.Status)), true
+
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
 			break
@@ -308,6 +324,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetControlPlanes(childComplexity, args["filter"].(*model.ControlPlaneFilter)), true
 
+	case "Query.getMeshSyncStatus":
+		if e.complexity.Query.GetMeshSyncStatus == nil {
+			break
+		}
+
+		return e.complexity.Query.GetMeshSyncStatus(childComplexity), true
+
 	case "Query.getOperatorStatus":
 		if e.complexity.Query.GetOperatorStatus == nil {
 			break
@@ -315,43 +338,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetOperatorStatus(childComplexity), true
 
-	case "Subscription.listenToAddonEvents":
-		if e.complexity.Subscription.ListenToAddonEvents == nil {
+	case "Subscription.listenToAddonState":
+		if e.complexity.Subscription.ListenToAddonState == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_listenToAddonEvents_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_listenToAddonState_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ListenToAddonEvents(childComplexity, args["selector"].(*model.MeshType)), true
+		return e.complexity.Subscription.ListenToAddonState(childComplexity, args["selector"].(*model.MeshType)), true
 
-	case "Subscription.listenToControlPlaneEvents":
-		if e.complexity.Subscription.ListenToControlPlaneEvents == nil {
+	case "Subscription.listenToControlPlaneState":
+		if e.complexity.Subscription.ListenToControlPlaneState == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_listenToControlPlaneEvents_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_listenToControlPlaneState_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ListenToControlPlaneEvents(childComplexity, args["filter"].(*model.ControlPlaneFilter)), true
+		return e.complexity.Subscription.ListenToControlPlaneState(childComplexity, args["filter"].(*model.ControlPlaneFilter)), true
 
-	case "Subscription.listenToOperatorEvents":
-		if e.complexity.Subscription.ListenToOperatorEvents == nil {
+	case "Subscription.listenToMeshSyncEvents":
+		if e.complexity.Subscription.ListenToMeshSyncEvents == nil {
 			break
 		}
 
-		return e.complexity.Subscription.ListenToOperatorEvents(childComplexity), true
+		return e.complexity.Subscription.ListenToMeshSyncEvents(childComplexity), true
 
-	case "Subscription.subscribeToMeshSync":
-		if e.complexity.Subscription.SubscribeToMeshSync == nil {
+	case "Subscription.listenToOperatorState":
+		if e.complexity.Subscription.ListenToOperatorState == nil {
 			break
 		}
 
-		return e.complexity.Subscription.SubscribeToMeshSync(childComplexity), true
+		return e.complexity.Subscription.ListenToOperatorState(childComplexity), true
 
 	}
 	return 0, false
@@ -434,26 +457,8 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "schema/addons.graphqls", Input: `enum AddonSelector {
-	PROMETHEUS
-	GRAFANA
-	ZIPKIN
-	JAEGER
-	KIALI
-}
-
-type AddonList {
-	type: String!
-	status: Status
-	config: AddonConfig!
-}
-
-type AddonConfig {
-	serviceName: String!
-	endpoint: String!
-}
-`, BuiltIn: false},
-	{Name: "schema/common.graphqls", Input: `enum MeshType {
+	{Name: "schema/schema.graphqls", Input: `# ================= COMMONS =========================
+enum MeshType {
 	ALL
 	NONE
 
@@ -472,14 +477,37 @@ type AddonConfig {
 enum Status {
 	ENABLED
 	DISABLED
+	PROCESSING
 	UNKNOWN
 }
 
 type Error {
 	code: String!
 	description: String!
-}`, BuiltIn: false},
-	{Name: "schema/control-plane.graphqls", Input: `input ControlPlaneFilter {
+}
+
+# =================== ADDONS =====================
+enum AddonSelector {
+	PROMETHEUS
+	GRAFANA
+	ZIPKIN
+	JAEGER
+	KIALI
+}
+
+type AddonList {
+	type: String!
+	status: Status
+	config: AddonConfig!
+}
+
+type AddonConfig {
+	serviceName: String!
+	endpoint: String!
+}
+
+# ============== CONTROL PLANE =======================
+input ControlPlaneFilter {
     type: MeshType
 }
 
@@ -493,8 +521,10 @@ type ControlPlaneMember {
 	component: String!
 	namespace: String!
 	status: Status
-}`, BuiltIn: false},
-	{Name: "schema/operator.graphqls", Input: `type OperatorStatus {
+}
+
+# ============== OPERATOR =============================
+type OperatorStatus {
 	status: Status
 	error: Error
 }
@@ -503,23 +533,27 @@ type OperatorControllerStatus {
 	name: String
 	status: Status
 	error: Error
-}`, BuiltIn: false},
-	{Name: "schema/schema.graphqls", Input: `type Query {
+}
+
+# ============== ROOT =================================
+type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+    getMeshSyncStatus: OperatorControllerStatus
 }
 
 type Mutation {
 	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
 	changeOperatorStatus(targetStatus: Status): Status
+	changeMeshSyncStatus(targetStatus: Status): Status
 }
 
 type Subscription {
-    listenToAddonEvents(selector: MeshType): [AddonList!]!
-    listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
-    listenToOperatorEvents: OperatorStatus!
-    subscribeToMeshSync: OperatorControllerStatus!
+    listenToAddonState(selector: MeshType): [AddonList!]!
+    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToOperatorState: OperatorStatus!
+    listenToMeshSyncEvents: OperatorControllerStatus!
 }
 `, BuiltIn: false},
 }
@@ -550,6 +584,21 @@ func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Co
 		}
 	}
 	args["targetStatus"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_changeMeshSyncStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.Status
+	if tmp, ok := rawArgs["targetStatus"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
+		arg0, err = ec.unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["targetStatus"] = arg0
 	return args, nil
 }
 
@@ -613,7 +662,7 @@ func (ec *executionContext) field_Query_getControlPlanes_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_listenToAddonEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_listenToAddonState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.MeshType
@@ -628,7 +677,7 @@ func (ec *executionContext) field_Subscription_listenToAddonEvents_args(ctx cont
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_listenToControlPlaneEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_listenToControlPlaneState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.ControlPlaneFilter
@@ -1205,6 +1254,45 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_changeMeshSyncStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_changeMeshSyncStatus_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ChangeMeshSyncStatus(rctx, args["targetStatus"].(*model.Status))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Status)
+	fc.Result = res
+	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _OperatorControllerStatus_name(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1481,6 +1569,38 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getMeshSyncStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMeshSyncStatus(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.OperatorControllerStatus)
+	fc.Result = res
+	return ec.marshalOOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1552,7 +1672,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1569,7 +1689,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_listenToAddonEvents_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_listenToAddonState_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -1577,7 +1697,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToAddonEvents(rctx, args["selector"].(*model.MeshType))
+		return ec.resolvers.Subscription().ListenToAddonState(rctx, args["selector"].(*model.MeshType))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1604,7 +1724,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 	}
 }
 
-func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToControlPlaneState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1621,7 +1741,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_listenToControlPlaneEvents_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_listenToControlPlaneState_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -1629,7 +1749,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToControlPlaneEvents(rctx, args["filter"].(*model.ControlPlaneFilter))
+		return ec.resolvers.Subscription().ListenToControlPlaneState(rctx, args["filter"].(*model.ControlPlaneFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1656,7 +1776,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 	}
 }
 
-func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1674,7 +1794,7 @@ func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToOperatorEvents(rctx)
+		return ec.resolvers.Subscription().ListenToOperatorState(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1701,7 +1821,7 @@ func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Con
 	}
 }
 
-func (ec *executionContext) _Subscription_subscribeToMeshSync(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1719,7 +1839,7 @@ func (ec *executionContext) _Subscription_subscribeToMeshSync(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeToMeshSync(rctx)
+		return ec.resolvers.Subscription().ListenToMeshSyncEvents(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3046,6 +3166,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_changeAddonStatus(ctx, field)
 		case "changeOperatorStatus":
 			out.Values[i] = ec._Mutation_changeOperatorStatus(ctx, field)
+		case "changeMeshSyncStatus":
+			out.Values[i] = ec._Mutation_changeMeshSyncStatus(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3165,6 +3287,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_getOperatorStatus(ctx, field)
 				return res
 			})
+		case "getMeshSyncStatus":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMeshSyncStatus(ctx, field)
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -3193,14 +3326,14 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "listenToAddonEvents":
-		return ec._Subscription_listenToAddonEvents(ctx, fields[0])
-	case "listenToControlPlaneEvents":
-		return ec._Subscription_listenToControlPlaneEvents(ctx, fields[0])
-	case "listenToOperatorEvents":
-		return ec._Subscription_listenToOperatorEvents(ctx, fields[0])
-	case "subscribeToMeshSync":
-		return ec._Subscription_subscribeToMeshSync(ctx, fields[0])
+	case "listenToAddonState":
+		return ec._Subscription_listenToAddonState(ctx, fields[0])
+	case "listenToControlPlaneState":
+		return ec._Subscription_listenToControlPlaneState(ctx, fields[0])
+	case "listenToOperatorState":
+		return ec._Subscription_listenToOperatorState(ctx, fields[0])
+	case "listenToMeshSyncEvents":
+		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -3942,6 +4075,13 @@ func (ec *executionContext) marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesher
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OperatorControllerStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorStatus) graphql.Marshaler {

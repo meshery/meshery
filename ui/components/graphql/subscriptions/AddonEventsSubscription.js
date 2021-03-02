@@ -3,7 +3,7 @@ import environment from "../../../lib/relayEnvironment";
 
 const addonEventsSubscription = graphql`
   subscription AddonEventsSubscription($selector: MeshType) {
-    addonEvent: listenToAddonEvents(selector: $selector) {
+    addonEvent: listenToAddonState(selector: $selector) {
       type
       status
       config {

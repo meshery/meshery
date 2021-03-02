@@ -18,6 +18,7 @@ enum MeshType {
 enum Status {
 	ENABLED
 	DISABLED
+	PROCESSING
 	UNKNOWN
 }
 
@@ -80,16 +81,18 @@ type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+    getMeshSyncStatus: OperatorControllerStatus
 }
 
 type Mutation {
 	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
 	changeOperatorStatus(targetStatus: Status): Status
+	changeMeshSyncStatus(targetStatus: Status): Status
 }
 
 type Subscription {
-    listenToAddonEvents(selector: MeshType): [AddonList!]!
-    listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
-    listenToOperatorEvents: OperatorStatus!
-    subscribeToMeshSync: OperatorControllerStatus!
+    listenToAddonState(selector: MeshType): [AddonList!]!
+    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToOperatorState: OperatorStatus!
+    listenToMeshSyncEvents: OperatorControllerStatus!
 }

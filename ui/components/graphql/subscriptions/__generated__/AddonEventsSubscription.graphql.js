@@ -9,7 +9,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type AddonEventsSubscriptionVariables = {|
   selector?: ?MeshType
 |};
@@ -33,7 +33,7 @@ export type AddonEventsSubscription = {|
 subscription AddonEventsSubscription(
   $selector: MeshType
 ) {
-  addonEvent: listenToAddonEvents(selector: $selector) {
+  addonEvent: listenToAddonState(selector: $selector) {
     type
     status
     config {
@@ -63,7 +63,7 @@ v1 = [
     ],
     "concreteType": "AddonList",
     "kind": "LinkedField",
-    "name": "listenToAddonEvents",
+    "name": "listenToAddonState",
     "plural": true,
     "selections": [
       {
@@ -120,16 +120,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "3bd191d555f561b79be8da77b06e1a99",
+    "cacheID": "27ff7ae444667c5c1f04bb29f0561d7f",
     "id": null,
     "metadata": {},
     "name": "AddonEventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  addonEvent: listenToAddonEvents(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n    }\n  }\n}\n"
+    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  addonEvent: listenToAddonState(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '1ecd4940edf0697c34d3f94a931ddb1d';
+(node/*: any*/).hash = 'd86361368b9f65a9bd86474f016d604a';
 
 module.exports = node;

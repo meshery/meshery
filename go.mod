@@ -26,11 +26,12 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.9
-	github.com/layer5io/meshkit v0.2.0
-	github.com/layer5io/meshsync v0.1.6
+	github.com/layer5io/meshery-operator v0.2.11
+	github.com/layer5io/meshkit v0.2.3
+	github.com/layer5io/meshsync v0.1.9
 	github.com/layer5io/nighthawk-go v0.1.5
 	github.com/layer5io/service-mesh-performance v0.3.3
+	github.com/nats-io/nats.go v1.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
 	github.com/prometheus/client_golang v1.9.0

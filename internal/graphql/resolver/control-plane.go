@@ -10,6 +10,6 @@ func (r *Resolver) getControlPlanes(ctx context.Context) ([]*model.ControlPlane,
 	return nil, nil
 }
 
-func (r *Resolver) listenToControlPlaneEvents(ctx context.Context) (<-chan []*model.ControlPlane, error) {
+func (r *Resolver) listenToControlPlaneState(ctx context.Context) (<-chan []*model.ControlPlane, error) {
 	return nil, nil
 }

@@ -162,20 +162,22 @@ func (e MeshType) MarshalGQL(w io.Writer) {
 type Status string
 
 const (
-	StatusEnabled  Status = "ENABLED"
-	StatusDisabled Status = "DISABLED"
-	StatusUnknown  Status = "UNKNOWN"
+	StatusEnabled    Status = "ENABLED"
+	StatusDisabled   Status = "DISABLED"
+	StatusProcessing Status = "PROCESSING"
+	StatusUnknown    Status = "UNKNOWN"
 )
 
 var AllStatus = []Status{
 	StatusEnabled,
 	StatusDisabled,
+	StatusProcessing,
 	StatusUnknown,
 }
 
 func (e Status) IsValid() bool {
 	switch e {
-	case StatusEnabled, StatusDisabled, StatusUnknown:
+	case StatusEnabled, StatusDisabled, StatusProcessing, StatusUnknown:
 		return true
 	}
 	return false

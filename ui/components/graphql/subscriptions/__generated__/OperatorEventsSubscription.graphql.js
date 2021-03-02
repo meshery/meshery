@@ -8,10 +8,10 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type OperatorEventsSubscriptionVariables = {||};
 export type OperatorEventsSubscriptionResponse = {|
-  +listenToOperatorEvents: {|
+  +listenToOperatorState: {|
     +status: ?Status,
     +error: ?{|
       +code: string,
@@ -28,7 +28,7 @@ export type OperatorEventsSubscription = {|
 
 /*
 subscription OperatorEventsSubscription {
-  listenToOperatorEvents {
+  listenToOperatorState {
     status
     error {
       code
@@ -45,7 +45,7 @@ var v0 = [
     "args": null,
     "concreteType": "OperatorStatus",
     "kind": "LinkedField",
-    "name": "listenToOperatorEvents",
+    "name": "listenToOperatorState",
     "plural": false,
     "selections": [
       {
@@ -102,16 +102,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "2af0544985213b071fb9ad4f4506c899",
+    "cacheID": "c90f4010bcc9c128c7d827d834e52bd6",
     "id": null,
     "metadata": {},
     "name": "OperatorEventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription OperatorEventsSubscription {\n  listenToOperatorEvents {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription OperatorEventsSubscription {\n  listenToOperatorState {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8e686bdd1aab4653b7d89df935c29d4c';
+(node/*: any*/).hash = 'a223a9f1efab40e805723e9e4ad5a6ce';
 
 module.exports = node;

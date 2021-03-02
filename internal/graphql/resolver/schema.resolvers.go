@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/layer5io/meshery/internal/graphql/generated"
 	"github.com/layer5io/meshery/internal/graphql/model"
@@ -24,6 +25,10 @@ func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, targetStatu
 	}
 
 	return nil, ErrInvalidRequest
+}
+
+func (r *mutationResolver) ChangeMeshSyncStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
@@ -46,28 +51,32 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 	return r.getOperatorStatus(ctx)
 }
 
-func (r *subscriptionResolver) ListenToAddonEvents(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
+func (r *queryResolver) GetMeshSyncStatus(ctx context.Context) (*model.OperatorControllerStatus, error) {
+	return r.getMeshSyncStatus(ctx)
+}
+
+func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	if selector != nil {
-		return r.listenToAddonEvents(ctx)
+		return r.listenToAddonState(ctx)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToControlPlaneEvents(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
+func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error) {
 	if filter != nil {
-		return r.listenToControlPlaneEvents(ctx)
+		return r.listenToControlPlaneState(ctx)
 	}
 
 	return nil, ErrInvalidRequest
 }
 
-func (r *subscriptionResolver) ListenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error) {
-	return r.listenToOperatorEvents(ctx)
+func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
+	return r.listenToOperatorState(ctx)
 }
 
-func (r *subscriptionResolver) SubscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
-	return r.subscribeToMeshSync(ctx)
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
+	return r.listenToMeshSyncEvents(ctx)
 }
 
 // Mutation returns generated.MutationResolver implementation.
