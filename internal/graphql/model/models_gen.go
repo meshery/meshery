@@ -21,7 +21,6 @@ type AddonList struct {
 
 type ControlPlane struct {
 	Name    *MeshType             `json:"name"`
-	Version string                `json:"version"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
@@ -30,9 +29,9 @@ type ControlPlaneFilter struct {
 }
 
 type ControlPlaneMember struct {
-	Component string  `json:"component"`
-	Namespace string  `json:"namespace"`
-	Status    *Status `json:"status"`
+	Component string `json:"component"`
+	Version   string `json:"version"`
+	Namespace string `json:"namespace"`
 }
 
 type Error struct {

@@ -54,14 +54,13 @@ input ControlPlaneFilter {
 
 type ControlPlane {
 	name: MeshType
-	version: String!
 	members: [ControlPlaneMember!]!
 }
 
 type ControlPlaneMember {
 	component: String!
+	version: String!
 	namespace: String!
-	status: Status
 }
 
 # ============== OPERATOR =============================

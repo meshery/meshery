@@ -59,13 +59,12 @@ type ComplexityRoot struct {
 	ControlPlane struct {
 		Members func(childComplexity int) int
 		Name    func(childComplexity int) int
-		Version func(childComplexity int) int
 	}
 
 	ControlPlaneMember struct {
 		Component func(childComplexity int) int
 		Namespace func(childComplexity int) int
-		Status    func(childComplexity int) int
+		Version   func(childComplexity int) int
 	}
 
 	Error struct {
@@ -187,13 +186,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlPlane.Name(childComplexity), true
 
-	case "ControlPlane.version":
-		if e.complexity.ControlPlane.Version == nil {
-			break
-		}
-
-		return e.complexity.ControlPlane.Version(childComplexity), true
-
 	case "ControlPlaneMember.component":
 		if e.complexity.ControlPlaneMember.Component == nil {
 			break
@@ -208,12 +200,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlPlaneMember.Namespace(childComplexity), true
 
-	case "ControlPlaneMember.status":
-		if e.complexity.ControlPlaneMember.Status == nil {
+	case "ControlPlaneMember.version":
+		if e.complexity.ControlPlaneMember.Version == nil {
 			break
 		}
 
-		return e.complexity.ControlPlaneMember.Status(childComplexity), true
+		return e.complexity.ControlPlaneMember.Version(childComplexity), true
 
 	case "Error.code":
 		if e.complexity.Error.Code == nil {
@@ -513,14 +505,13 @@ input ControlPlaneFilter {
 
 type ControlPlane {
 	name: MeshType
-	version: String!
 	members: [ControlPlaneMember!]!
 }
 
 type ControlPlaneMember {
 	component: String!
+	version: String!
 	namespace: String!
-	status: Status
 }
 
 # ============== OPERATOR =============================
@@ -934,41 +925,6 @@ func (ec *executionContext) _ControlPlane_name(ctx context.Context, field graphq
 	return ec.marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ControlPlane_version(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ControlPlane",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Version, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ControlPlane_members(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1039,6 +995,41 @@ func (ec *executionContext) _ControlPlaneMember_component(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ControlPlaneMember_version(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ControlPlaneMember",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ControlPlaneMember_namespace(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1072,38 +1063,6 @@ func (ec *executionContext) _ControlPlaneMember_namespace(ctx context.Context, f
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ControlPlaneMember_status(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ControlPlaneMember",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Status)
-	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Error_code(ctx context.Context, field graphql.CollectedField, obj *model.Error) (ret graphql.Marshaler) {
@@ -3060,11 +3019,6 @@ func (ec *executionContext) _ControlPlane(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("ControlPlane")
 		case "name":
 			out.Values[i] = ec._ControlPlane_name(ctx, field, obj)
-		case "version":
-			out.Values[i] = ec._ControlPlane_version(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "members":
 			out.Values[i] = ec._ControlPlane_members(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3097,13 +3051,16 @@ func (ec *executionContext) _ControlPlaneMember(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "version":
+			out.Values[i] = ec._ControlPlaneMember_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "namespace":
 			out.Values[i] = ec._ControlPlaneMember_namespace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "status":
-			out.Values[i] = ec._ControlPlaneMember_status(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

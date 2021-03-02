@@ -66,7 +66,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 			}
 
 			objspec := corev1.ServiceSpec{}
-			err = utils.Unmarshal(obj.Spec.Attribute, &objstatus)
+			err = utils.Unmarshal(obj.Spec.Attribute, &objspec)
 			if err != nil {
 				r.Log.Error(err)
 				return nil, err

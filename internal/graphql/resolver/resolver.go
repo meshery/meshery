@@ -17,7 +17,8 @@ type Resolver struct {
 	DBHandler  *database.Handler
 	KubeClient *mesherykube.Client
 
-	operatorChannel chan *model.OperatorStatus
-	meshsyncChannel chan *broker.Message
-	addonChannel    chan []*model.AddonList
+	operatorChannel     chan *model.OperatorStatus
+	meshsyncChannel     chan *broker.Message
+	addonChannel        chan []*model.AddonList
+	controlPlaneChannel chan []*model.ControlPlane
 }
