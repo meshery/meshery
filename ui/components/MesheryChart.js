@@ -5,10 +5,7 @@ import {
   fortioResultToJsChartData, makeChart, makeOverlayChart, makeMultiChart,
 } from '../lib/chartjs-formatter';
 
-let bb;
-if (typeof window !== 'undefined') {
-  bb = require('billboard.js');
-}
+import bb, {areaStep, line, selection} from 'billboard.js'
 
 const styles = (theme) => ({
   title: {
@@ -64,7 +61,7 @@ class MesheryChart extends React.Component {
             if (ds.cubicInterpolationMode) {
               // types[ds.label] = "spline";
             } else {
-              types[ds.label] = 'area-step';
+              types[ds.label] = areaStep();
             }
             colors[ds.label] = ds.borderColor; // not sure which is better border or background
           });
@@ -134,6 +131,7 @@ class MesheryChart extends React.Component {
           //   text: chartData.options.title.text.join('\n'),
           // },
           bindto: self.chartRef,
+          type: line(),
           data: {
             // x: 'x',
             xs: xAxisTracker,
@@ -166,9 +164,10 @@ class MesheryChart extends React.Component {
         if (!self.props.hideTitle) {
           self.titleRef.innerText = chartData.options.title.text.join('\n');
         }
-        self.chart = bb.bb.generate(chartConfig);
+        self.chart = bb.generate(chartConfig);
       } else {
-        self.chart = bb.bb.generate({
+        self.chart = bb.generate({
+          type: line(),
           data: {
             columns: [
             ],
@@ -361,7 +360,7 @@ class MesheryChart extends React.Component {
         if (!self.props.hideTitle) {
           self.titleRef.innerText = chartData.options.title.text.join('\n');
         }
-        self.chart = bb.bb.generate(chartConfig);
+        self.chart = bb.generate(chartConfig);
       }
     }
   }
