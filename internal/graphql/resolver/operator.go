@@ -54,9 +54,11 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Statu
 		r.Log.Info("Initialized")
 
 		r.meshsyncChannel = make(chan *broker.Message)
+
 		endpoint, err := subscribeToBroker(kubeclient, r.meshsyncChannel)
 		if err != nil {
 			r.Log.Error(err)
+			r.Log.Info(endpoint)
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
 				Error: &model.Error{
@@ -207,32 +209,35 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 		MaxReconnect:   5,
 	})
 	// Hack for minikube based clusters
-	if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
-		var er error
-		port := strings.Split(broker.Status.Endpoint.External, ":")[1]
-		address := strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
-		endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)
-		natsClient, er = nats.New(nats.Options{
-			URLS:           []string{endpoint},
-			ConnectionName: "meshery",
-			Username:       "",
-			Password:       "",
-			ReconnectWait:  2 * time.Second,
-			MaxReconnect:   5,
-		})
-		if er != nil {
-			return "", er
+	if err != nil {
+		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
+			var er error
+			port := strings.Split(broker.Status.Endpoint.External, ":")[1]
+			address := strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
+			endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)
+			natsClient, er = nats.New(nats.Options{
+				URLS:           []string{endpoint},
+				ConnectionName: "meshery",
+				Username:       "",
+				Password:       "",
+				ReconnectWait:  2 * time.Second,
+				MaxReconnect:   5,
+			})
+			if er != nil {
+				return endpoint, er
+			}
 		}
-	} else if err != nil {
-		return "", err
+
+		return endpoint, err
 	}
 
 	err = natsClient.SubscribeWithChannel(meshsyncSubject, meshsyncQueue, datach)
 	if err != nil {
-		return "", err
+		return endpoint, err
 	}
 
 	return endpoint, nil
+
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
