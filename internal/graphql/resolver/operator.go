@@ -226,9 +226,9 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 			if er != nil {
 				return endpoint, er
 			}
+		} else {
+			return endpoint, err
 		}
-
-		return endpoint, err
 	}
 
 	err = natsClient.SubscribeWithChannel(meshsyncSubject, meshsyncQueue, datach)
@@ -237,7 +237,6 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 	}
 
 	return endpoint, nil
-
 }
 
 func applyYaml(client *mesherykube.Client, delete bool, file string) error {
