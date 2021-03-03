@@ -153,7 +153,7 @@ func getOperator(handler *database.Handler) ([]string, error) {
 		Preload("Status").
 		Find(&objects, "id IN (?) AND kind = ?", subquery2, "Deployment")
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, ErrQuery(result.Error)
 	}
 
 	deploys := []string{}

@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -23,9 +24,8 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 	status := model.StatusUnknown
 
 	go func(ch chan *model.OperatorControllerStatus) {
-		err := listernToEvents(r.DBHandler, r.meshsyncChannel)
+		err := listernToEvents(r.Log, r.DBHandler, r.meshsyncChannel)
 		if err != nil {
-			r.Log.Error(err)
 			ch <- &model.OperatorControllerStatus{
 				Name:   &meshsyncName,
 				Status: &status,
@@ -50,7 +50,7 @@ func runMeshSync(client *mesherykube.Client, delete bool) error {
 	return nil
 }
 
-func listernToEvents(handler *database.Handler, datach chan *broker.Message) error {
+func listernToEvents(log logger.Handler, handler *database.Handler, datach chan *broker.Message) error {
 	for {
 		select {
 		case msg := <-datach:
@@ -58,13 +58,13 @@ func listernToEvents(handler *database.Handler, datach chan *broker.Message) err
 			object := meshsyncmodel.Object{}
 			err := utils.Unmarshal(string(objectJSON), &object)
 			if err != nil {
-				return err
+				log.Error(err)
 			}
 
 			// persist the object
 			err = recordMeshSyncData(msg.EventType, handler, object)
 			if err != nil {
-				return err
+				log.Error(err)
 			}
 		}
 	}
@@ -73,15 +73,10 @@ func listernToEvents(handler *database.Handler, datach chan *broker.Message) err
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object meshsyncmodel.Object) error {
 
 	switch eventtype {
-	case broker.Add:
-		result := handler.Create(&object)
-		if result.Error != nil {
-			return ErrCreateData(result.Error)
-		}
-	case broker.Update:
+	case broker.Add, broker.Update:
 		result := handler.Save(&object)
 		if result.Error != nil {
-			return ErrUpdateData(result.Error)
+			return ErrCreateData(result.Error)
 		}
 	case broker.Delete:
 		result := handler.Delete(&object)

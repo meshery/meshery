@@ -9,6 +9,7 @@ const (
 	ErrInvalidRequestCode = "test_code"
 	ErrNilClientCode      = "test_code"
 	ErrCreateDataCode     = "test_code"
+	ErrQueryCode          = "test_code"
 )
 
 var (
@@ -26,4 +27,8 @@ func ErrUpdateData(err error) error {
 
 func ErrDeleteData(err error) error {
 	return errors.NewDefault(ErrCreateDataCode, "Error while deleting meshsync data", err.Error())
+}
+
+func ErrQuery(err error) error {
+	return errors.NewDefault(ErrQueryCode, "Error while querying data", err.Error())
 }

@@ -145,6 +145,7 @@ func main() {
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
+		Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)
