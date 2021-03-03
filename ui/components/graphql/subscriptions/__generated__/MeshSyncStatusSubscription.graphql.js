@@ -9,9 +9,10 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorEventsSubscriptionVariables = {||};
-export type OperatorEventsSubscriptionResponse = {|
-  +listenToOperatorState: {|
+export type MeshSyncStatusSubscriptionVariables = {||};
+export type MeshSyncStatusSubscriptionResponse = {|
+  +listenToMeshSyncEvents: {|
+    +name: ?string,
     +status: ?Status,
     +error: ?{|
       +code: string,
@@ -19,16 +20,17 @@ export type OperatorEventsSubscriptionResponse = {|
     |},
   |}
 |};
-export type OperatorEventsSubscription = {|
-  variables: OperatorEventsSubscriptionVariables,
-  response: OperatorEventsSubscriptionResponse,
+export type MeshSyncStatusSubscription = {|
+  variables: MeshSyncStatusSubscriptionVariables,
+  response: MeshSyncStatusSubscriptionResponse,
 |};
 */
 
 
 /*
-subscription OperatorEventsSubscription {
-  listenToOperatorState {
+subscription MeshSyncStatusSubscription {
+  listenToMeshSyncEvents {
+    name
     status
     error {
       code
@@ -43,11 +45,18 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "OperatorStatus",
+    "concreteType": "OperatorControllerStatus",
     "kind": "LinkedField",
-    "name": "listenToOperatorState",
+    "name": "listenToMeshSyncEvents",
     "plural": false,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -89,7 +98,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "OperatorEventsSubscription",
+    "name": "MeshSyncStatusSubscription",
     "selections": (v0/*: any*/),
     "type": "Subscription",
     "abstractKey": null
@@ -98,20 +107,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "OperatorEventsSubscription",
+    "name": "MeshSyncStatusSubscription",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "c90f4010bcc9c128c7d827d834e52bd6",
+    "cacheID": "e330914ffe44d508e311f3dd7d625aa9",
     "id": null,
     "metadata": {},
-    "name": "OperatorEventsSubscription",
+    "name": "MeshSyncStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription OperatorEventsSubscription {\n  listenToOperatorState {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription MeshSyncStatusSubscription {\n  listenToMeshSyncEvents {\n    name\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a223a9f1efab40e805723e9e4ad5a6ce';
+(node/*: any*/).hash = 'e0210af501e9bd9864ea6444ea6a5db2';
 
 module.exports = node;

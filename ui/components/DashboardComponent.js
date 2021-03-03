@@ -34,8 +34,6 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import meshScanSubscription from "../components/graphql/subscriptions/meshScanSubscription";
-import meshScanQuery from "../components/graphql/queries/meshScan";
 
 const styles = (theme) => ({
   root: {
@@ -330,17 +328,17 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    meshScanSubscription(data => {
-      console.log(data);
-      this.setMeshScanData(data);
-    }, { type: "ALL" });
-    meshScanQuery({ type: "ALL" })
-      .then(res => {
-        console.log(res);
-        // this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
-      })
-      .catch(err => console.error(err))
-    this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
+    // meshScanSubscription(data => {
+    //   console.log(data);
+    //   this.setMeshScanData(data);
+    // }, { type: "ALL" });
+    // meshScanQuery({ type: "ALL" })
+    //   .then(res => {
+    //     console.log(res);
+    //     // this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
+    //   })
+    //   .catch(err => console.error(err))
+    // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
   fetchAvailableAdapters = () => {

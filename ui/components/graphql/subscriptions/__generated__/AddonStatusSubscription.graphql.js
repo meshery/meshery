@@ -9,42 +9,37 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type ControlPlaneFilter = {|
-  type?: ?MeshType
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type AddonStatusSubscriptionVariables = {|
+  selector?: ?MeshType
 |};
-export type meshScanSubscriptionVariables = {|
-  filter?: ?ControlPlaneFilter
-|};
-export type meshScanSubscriptionResponse = {|
-  +listenToControlPlaneEvents: $ReadOnlyArray<{|
-    +name: ?MeshType,
-    +version: string,
-    +members: $ReadOnlyArray<{|
-      +component: string,
-      +status: ?Status,
-      +namespace: string,
-    |}>,
+export type AddonStatusSubscriptionResponse = {|
+  +addonEvent: $ReadOnlyArray<{|
+    +type: string,
+    +status: ?Status,
+    +config: {|
+      +serviceName: string,
+      +endpoint: string,
+    |},
   |}>
 |};
-export type meshScanSubscription = {|
-  variables: meshScanSubscriptionVariables,
-  response: meshScanSubscriptionResponse,
+export type AddonStatusSubscription = {|
+  variables: AddonStatusSubscriptionVariables,
+  response: AddonStatusSubscriptionResponse,
 |};
 */
 
 
 /*
-subscription meshScanSubscription(
-  $filter: ControlPlaneFilter
+subscription AddonStatusSubscription(
+  $selector: MeshType
 ) {
-  listenToControlPlaneEvents(filter: $filter) {
-    name
-    version
-    members {
-      component
-      status
-      namespace
+  addonEvent: listenToAddonState(selector: $selector) {
+    type
+    status
+    config {
+      serviceName
+      endpoint
     }
   }
 }
@@ -55,65 +50,58 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "filter"
+    "name": "selector"
   }
 ],
 v1 = [
   {
-    "alias": null,
+    "alias": "addonEvent",
     "args": [
       {
         "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
+        "name": "selector",
+        "variableName": "selector"
       }
     ],
-    "concreteType": "ControlPlane",
+    "concreteType": "AddonList",
     "kind": "LinkedField",
-    "name": "listenToControlPlaneEvents",
+    "name": "listenToAddonState",
     "plural": true,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "name",
+        "name": "type",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "version",
+        "name": "status",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "ControlPlaneMember",
+        "concreteType": "AddonConfig",
         "kind": "LinkedField",
-        "name": "members",
-        "plural": true,
+        "name": "config",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "component",
+            "name": "serviceName",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "namespace",
+            "name": "endpoint",
             "storageKey": null
           }
         ],
@@ -128,7 +116,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "meshScanSubscription",
+    "name": "AddonStatusSubscription",
     "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
@@ -137,20 +125,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "meshScanSubscription",
+    "name": "AddonStatusSubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "610f5d659d8674ba54168d715e9ec97b",
+    "cacheID": "f249e651031639a7146c1ba3e0f3f592",
     "id": null,
     "metadata": {},
-    "name": "meshScanSubscription",
+    "name": "AddonStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription meshScanSubscription(\n  $filter: ControlPlaneFilter\n) {\n  listenToControlPlaneEvents(filter: $filter) {\n    name\n    version\n    members {\n      component\n      status\n      namespace\n    }\n  }\n}\n"
+    "text": "subscription AddonStatusSubscription(\n  $selector: MeshType\n) {\n  addonEvent: listenToAddonState(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '82a586a9835603dc4769821bfd5173e0';
+(node/*: any*/).hash = '08f8b6677edf887e93a65b89731a649e';
 
 module.exports = node;

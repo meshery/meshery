@@ -1,23 +1,22 @@
 import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-const meshScanSubscription = graphql`
-  subscription meshScanSubscription($filter: ControlPlaneFilter) {
-    listenToControlPlaneEvents(filter: $filter) {
+const controlPlaneSubscription = graphql`
+  subscription ControlPlaneSubscription($filter: ControlPlaneFilter) {
+    listenToControlPlaneState(filter: $filter) {
         name
-        version
         members {
+          version
           component
-          status
           namespace
         }
       }
   }
 `;
 
-export default function subscribeMeshScanEvents(dataCB, variables) {
+export default function subscribeControlPlaneEvents(dataCB, variables) {
   requestSubscription(environment, {
-    subscription: meshScanSubscription,
+    subscription: controlPlaneSubscription,
     variables: {
       filter: variables
     },

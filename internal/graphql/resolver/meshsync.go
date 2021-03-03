@@ -10,6 +10,8 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -71,10 +73,9 @@ func listernToEvents(log logger.Handler, handler *database.Handler, datach chan 
 }
 
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object meshsyncmodel.Object) error {
-
 	switch eventtype {
 	case broker.Add, broker.Update:
-		result := handler.Save(&object)
+		result := handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&object)
 		if result.Error != nil {
 			return ErrCreateData(result.Error)
 		}

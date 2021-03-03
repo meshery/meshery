@@ -16,10 +16,10 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import { updateK8SConfig, updateProgress } from '../lib/store';
+import { updateK8SConfig, updateProgress } from "../lib/store";
 import dataFetch from '../lib/data-fetch';
-import subscribeOperatorEvents from './graphql/subscriptions/OperatorEventsSubscription';
-import fetchOperatorStatus from './graphql/queries/mesheryOperatorStatus';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 
 const styles = (theme) => ({
   root: {
@@ -203,33 +203,34 @@ class MeshConfigComponent extends React.Component {
 
   componentDidMount() {
     // Subscribe to the operator events
-    subscribeOperatorEvents(data => console.log(data))
+    subscribeOperatorStatusEvents(res => {
+      if (res.operator?.error) {
+        this.handleError(res.operator?.error?.description || "Operator could not be reached")
+        return
+      }
 
-    // Query the current state
-    fetchOperatorStatus()
-      .then(res => {
-        if (res.operator?.error) {
-          this.handleError(res.operator?.error?.description || "Operator could not be reached")
-          return
-        }
-
-        if (res.operator?.status === "ENABLED") {
-          this.setState({
-            operatorInstalled: true,
-            NATSInstalled: true,
-            meshSyncInstalled: true,
-          })
-
-          return
-        }
-
+      if (res.operator?.status === "ENABLED") {
         this.setState({
-          operatorInstalled: false,
-          NATSInstalled: false,
-          meshSyncInstalled: false,
+          operatorInstalled: true,
+          NATSInstalled: true,
+          meshSyncInstalled: true,
         })
+        return
+      }
+
+      this.setState({
+        operatorInstalled: false,
+        NATSInstalled: false,
+        meshSyncInstalled: false,
       })
-      .catch(err => console.error(err))
+    })
+
+    subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        this.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    })
   }
 
   handleOperatorSwitch = () => {

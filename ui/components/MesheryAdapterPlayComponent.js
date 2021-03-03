@@ -48,7 +48,7 @@ import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
-import subscribeAddonEvents from './graphql/subscriptions/AddonEventsSubscription';
+import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
 
 const styles = (theme) => ({
   root: {
@@ -217,7 +217,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   componentDidMount() {
     const meshname = this.mapAdapterNameToMeshName(this.activeMesh) 
-    subscribeAddonEvents(data => {
+    subscribeAddonStatusEvents(data => {
       console.log(data)
       data?.addonEvent?.forEach(addon => {
         if (addon.type === meshname) {
