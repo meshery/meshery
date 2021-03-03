@@ -34,8 +34,8 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import meshScanSubscription from "../components/graphql/subscriptions/meshScanSubscription";
-import meshScanQuery from "../components/graphql/queries/meshScan";
+import controlPlaneSubscription from "../components/graphql/subscriptions/ControlPlaneSubscription";
+import fetchControlPlanes from "../components/graphql/queries/ControlPlanesQuery";
 
 const styles = (theme) => ({
   root: {
@@ -330,17 +330,17 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    meshScanSubscription(data => {
+    controlPlaneSubscription(data => {
       console.log(data);
       this.setMeshScanData(data);
-    }, { type: "ALL" });
-    meshScanQuery({ type: "ALL" })
+    }, { serviceMesh: "ALL" });
+    fetchControlPlanes({ serviceMesh: "ALL" })
       .then(res => {
         console.log(res);
-        // this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
+        this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
       })
       .catch(err => console.error(err))
-    this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
+    // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
   fetchAvailableAdapters = () => {
@@ -399,8 +399,8 @@ class DashboardComponent extends React.Component {
     self.props.updateProgress({ showProgress: true });
     const namespaces = {};
     const activeNamespaces = {};
-
-    data?.listenToControlPlaneEvents?.map(mesh => {
+    let meshScanData = data.listenToControlPlaneEvents || data.controlPlanes;
+    meshScanData?.map(mesh => {
       mesh?.members?.map(member => {
         if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
         else namespaces[mesh.name] = new Set([member.namespace])
