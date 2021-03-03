@@ -46,7 +46,6 @@ var stopCmd = &cobra.Command{
 		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Stopping Meshery...")
 		if err := stop(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}
@@ -166,6 +165,8 @@ func stop() error {
 			}
 		}
 
+		log.Info("Stopping Meshery...")
+
 		// Stop all Docker containers
 		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
 		stop.Stdout = os.Stdout
@@ -192,6 +193,13 @@ func stop() error {
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 
+		// ask user for confirmation
+		userResponse := utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+		if !userResponse {
+			log.Info("Stop aborted.")
+			return nil
+		}
+
 		// create an kubernetes client
 		client, err := utils.CreateKubeClient()
 
@@ -211,6 +219,8 @@ func stop() error {
 		if err != nil {
 			return errors.Wrap(err, "failed to make GET request")
 		}
+
+		log.Info("Stopping Meshery...")
 
 		// delete the Meshery deployment using the manifest files to stop Meshery
 		err = DeleteManifestFiles(manifests, RequestedAdapters, client)
