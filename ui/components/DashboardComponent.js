@@ -2,21 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { 
-  NoSsr, 
-  Chip, 
-  IconButton, 
-  Button, 
-  Card, 
-  CardContent, 
-  Typography, 
-  CardHeader, 
+import {
+  NoSsr,
+  Chip,
+  IconButton,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  CardHeader,
   Tooltip,
   TableContainer,
   Table,
   TableHead,
   TableBody,
-  TableRow, 
+  TableRow,
   TableCell,
   Paper,
   Select,
@@ -152,12 +152,12 @@ class DashboardComponent extends React.Component {
       grafana,
       prometheus,
 
-      versionDetail: { 
-        build: "", 
-        latest: "", 
-        outdated: false, 
+      versionDetail: {
+        build: "",
+        latest: "",
+        outdated: false,
         commitsha: "",
-        release_channel: "NA" 
+        release_channel: "NA"
       },
 
       meshScan: {},
@@ -382,12 +382,14 @@ class DashboardComponent extends React.Component {
         if (typeof result !== "undefined") {
           this.setState({ versionDetail: result });
         } else {
-          this.setState({versionDetail: {
-            build: "Unknown",
-            latest: "Unknown",
-            outdated: false,
-            commitsha: "Unkown"
-          }});
+          this.setState({
+            versionDetail: {
+              build: "Unknown",
+              latest: "Unknown",
+              outdated: false,
+              commitsha: "Unknown"
+            }
+          });
         }
       },
       self.handleError("Unable to fetch Meshery version.")
@@ -465,10 +467,10 @@ class DashboardComponent extends React.Component {
     const str = (custom || podname)
     return {
       full: podname,
-      trimmed: str.substring(0, (hash ? str.indexOf(hash) :  str.length) - 1)
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1)
     }
   }
-  
+
   /**
    * generateMeshScanVersion takes in the string from which version
    * is to be extracted and returns the version. If the version string
@@ -481,7 +483,7 @@ class DashboardComponent extends React.Component {
 
     const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
     if (!matchResult) return "NA";
-    
+
     // Add "v" iff we have a valid match result
     return `v${matchResult[0]}`;
   }
@@ -643,24 +645,24 @@ class DashboardComponent extends React.Component {
     const self = this;
     if (Array.isArray(components) && components.length)
       return (
-        <Paper elevation={1} style={{padding: "2rem", marginTop: "1rem"}}>
+        <Paper elevation={1} style={{ padding: "2rem", marginTop: "1rem" }}>
           <Grid container justify="space-between" spacing={1}>
             <Grid item>
-              <div style={{display: "flex", alignItems: "center", marginBottom: "1rem"}}>
-                <img src={mesh.icon} className={this.props.classes.icon} style={{marginRight: "0.75rem"}}/>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight: "0.75rem" }} />
                 <Typography variant="h6">{mesh.name}</Typography>
               </div>
             </Grid>
             <Grid item>
-              <Select 
-                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]} 
-                onChange={(e) => self.setState(state => ({ 
-                  activeMeshScanNamespace: {...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value} 
+              <Select
+                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]}
+                onChange={(e) => self.setState(state => ({
+                  activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value }
                 }))}
               >
                 {
-                  self.state.meshScanNamespaces[mesh.tag || mesh.name] 
-                  && 
+                  self.state.meshScanNamespaces[mesh.tag || mesh.name]
+                  &&
                   self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
                 }
               </Select>
@@ -682,7 +684,7 @@ class DashboardComponent extends React.Component {
                     <TableRow key={component.name.full}>
                       <TableCell scope="row" align="center">
                         <Tooltip title={component.name.full}>
-                          <div style={{textAlign: "center"}}>
+                          <div style={{ textAlign: "center" }}>
                             {component.name.trimmed}
                           </div>
                         </Tooltip>
@@ -832,7 +834,7 @@ class DashboardComponent extends React.Component {
                   case "traefik mesh":
                     image = "/static/img/traefikmesh.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
-                    break; 
+                    break;
                 }
               }
             });
@@ -944,26 +946,26 @@ class DashboardComponent extends React.Component {
               {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
               {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
               {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
-              {self.Meshcard({ 
-                name: "Open Service Mesh", 
-                icon: "/static/img/osm.svg", 
-                tag: "osm" 
+              {self.Meshcard({
+                name: "Open Service Mesh",
+                icon: "/static/img/osm.svg",
+                tag: "osm"
               }, self.state.meshScan.osm)}
-              {self.Meshcard({ 
-                name: "Network Service Mesh", 
-                icon: "/static/img/nsm.svg" 
+              {self.Meshcard({
+                name: "Network Service Mesh",
+                icon: "/static/img/nsm.svg"
               }, self.state.meshScan["Network Service Mesh"])}
             </>
             :
             <div style={{
-              padding: "2rem", 
-              display: "flex", 
-              justifyContent: "center", 
+              padding: "2rem",
+              display: "flex",
+              justifyContent: "center",
               alignItems: "center",
               flexDirection: "column"
             }}>
-              <Typography 
-                style={{fontSize: "1.5rem", marginBottom: "2rem"}} 
+              <Typography
+                style={{ fontSize: "1.5rem", marginBottom: "2rem" }}
                 align="center"
                 color="textSecondary">
                 No service meshes detected in the {self.state.contextName} cluster.
@@ -998,7 +1000,7 @@ class DashboardComponent extends React.Component {
       // If the version is outdated then no matter what the 
       // release channel is, specify the build
       if (outdated) return `${release_channel}-${build}`;
-     
+
       if (release_channel === "edge") return `${release_channel}-latest`;
       if (release_channel === "stable") return `${release_channel}-${build}`;
 
@@ -1015,14 +1017,14 @@ class DashboardComponent extends React.Component {
     const versionUpdateMsg = () => {
       const { outdated, latest } = this.state.versionDetail;
 
-      if (outdated) 
+      if (outdated)
         return (
           <>
             Newer version of Meshery available:{" "}
             <Link href={`https://docs.meshery.io/project/releases/${latest}`}>{`${latest}`}</Link>
           </>
         );
-      
+
       return <>Running latest Meshery version.</>
     }
 
@@ -1030,14 +1032,14 @@ class DashboardComponent extends React.Component {
       <>
         <Grid container justify="space-between" spacing={1}>
           <Grid item xs={12} md={6}>
-            <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Channel Subscription</Typography>
-            <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+            <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Channel Subscription</Typography>
+            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
               {capitalize(this.state.versionDetail.release_channel)}
             </Typography>
           </Grid>
-          <Grid item xs={12} md={6} style={{padding: "0"}}>
-            <Typography style={{fontWeight: "bold", paddingBottom: "4px"}}>Version</Typography>
-            <Typography style={{paddingTop: "2px", paddingBottom: "8px"}}>
+          <Grid item xs={12} md={6} style={{ padding: "0" }}>
+            <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Version</Typography>
+            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
               {getMesheryVersionText()}
             </Typography>
           </Grid>
@@ -1057,7 +1059,7 @@ class DashboardComponent extends React.Component {
             <Grid item xs={12} md={6}>
               <div className={classes.dashboardSection}>
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Service Mesh 
+                  Service Mesh
                 </Typography>
                 {showServiceMesh}
               </div>
@@ -1068,7 +1070,7 @@ class DashboardComponent extends React.Component {
                   Connection Status
                 </Typography>
                 <div>{self.showCard("Kubernetes", showConfigured)}</div>
-                <div>{self.showCard("Adapters", showAdapters)}</div>   
+                <div>{self.showCard("Adapters", showAdapters)}</div>
                 <div>{self.showCard("Metrics", showMetrics)}</div>
                 <div>{self.showCard("Release", showRelease)}</div>
               </div>
