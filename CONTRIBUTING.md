@@ -157,6 +157,17 @@ Meshery uses adapters to provision and interact with different service meshes. F
 
 _Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
+#### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
+**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
+
+1. Fork [Meshery-Istio](https://github.com/layer5io/meshery-istio)
+2. Clone your fork locally
+3. Run this command from the root directory of **meshery-istio**
+   ```sh
+   make run
+   ```
+4. Try connecting to port 10000 as Meshery Adapter URL
+   
 ## <a name="contributing-ui">UI Contribution Flow</a>
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React, Billboard.js and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
