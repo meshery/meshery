@@ -68,7 +68,7 @@ var startCmd = &cobra.Command{
 func applyManifest(manifest []byte, client *meshkitkube.Client) error {
 	// ApplyManifest applies the given manifest file to the Kubernetes cluster
 	err := client.ApplyManifest(manifest, meshkitkube.ApplyOptions{
-		Namespace: "meshery",
+		Namespace: utils.MesheryNamespace,
 		Update:    true,
 		Delete:    false,
 	})
