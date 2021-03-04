@@ -1,8 +1,6 @@
 describe("Settings", () => {
     describe("Service Meshe", () => {
-      beforeEach(() => {
-        cy.selectProviderNone()
-  
+      beforeEach(() => {  
         cy.visit("/settings");
   
         cy.get('[data-cy="tabServiceMeshes"]').click();
