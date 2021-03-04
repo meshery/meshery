@@ -34,6 +34,8 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
+import controlPlaneSubscription from "../components/graphql/subscriptions/ControlPlaneSubscription";
+import fetchControlPlanes from "../components/graphql/queries/ControlPlanesQuery";
 
 const styles = (theme) => ({
   root: {
@@ -328,16 +330,16 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    // meshScanSubscription(data => {
-    //   console.log(data);
-    //   this.setMeshScanData(data);
-    // }, { type: "ALL" });
-    // meshScanQuery({ type: "ALL" })
-    //   .then(res => {
-    //     console.log(res);
-    //     // this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
-    //   })
-    //   .catch(err => console.error(err))
+    controlPlaneSubscription(data => {
+      console.log(data);
+      this.setMeshScanData(data);
+    }, { serviceMesh: "ALL" });
+    fetchControlPlanes({ serviceMesh: "ALL" })
+      .then(res => {
+        console.log(res);
+        this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
+      })
+      .catch(err => console.error(err))
     // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
@@ -385,7 +387,7 @@ class DashboardComponent extends React.Component {
               build: "Unknown",
               latest: "Unknown",
               outdated: false,
-              commitsha: "Unkown"
+              commitsha: "Unknown"
             }
           });
         }
@@ -399,8 +401,8 @@ class DashboardComponent extends React.Component {
     self.props.updateProgress({ showProgress: true });
     const namespaces = {};
     const activeNamespaces = {};
-
-    data?.listenToControlPlaneEvents?.map(mesh => {
+    let meshScanData = data.listenToControlPlaneEvents || data.controlPlanes;
+    meshScanData?.map(mesh => {
       mesh?.members?.map(member => {
         if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
         else namespaces[mesh.name] = new Set([member.namespace])
@@ -680,14 +682,13 @@ class DashboardComponent extends React.Component {
                   .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
                   .map((component) => (
                     <TableRow key={component.name.full}>
-                      {/* <TableCell scope="row" align="center">
+                      <TableCell scope="row" align="center">
                         <Tooltip title={component.name.full}>
                           <div style={{ textAlign: "center" }}>
                             {component.name.trimmed}
                           </div>
                         </Tooltip>
-                      </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
+                      </TableCell>
                       <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
                     </TableRow>)
