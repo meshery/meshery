@@ -176,6 +176,7 @@ class MeshAdapterConfigComponent extends React.Component {
           self.setState({ meshAdapters: result, meshLocationURL: "" });
           self.props.enqueueSnackbar("Adapter was successfully configured!", {
             variant: "success",
+            "data-cy":"adapterSuccessSnackbar",
             autoHideDuration: 2000,
             action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
