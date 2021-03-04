@@ -16,7 +16,7 @@ export type ControlPlaneSubscriptionVariables = {|
   filter?: ?ControlPlaneFilter
 |};
 export type ControlPlaneSubscriptionResponse = {|
-  +listenToControlPlaneState: $ReadOnlyArray<{|
+  +controlPlaneState: $ReadOnlyArray<{|
     +name: ?MeshType,
     +members: $ReadOnlyArray<{|
       +version: string,
@@ -36,7 +36,7 @@ export type ControlPlaneSubscription = {|
 subscription ControlPlaneSubscription(
   $filter: ControlPlaneFilter
 ) {
-  listenToControlPlaneState(filter: $filter) {
+  controlPlaneState: listenToControlPlaneState(filter: $filter) {
     name
     members {
       version
@@ -57,7 +57,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
+    "alias": "controlPlaneState",
     "args": [
       {
         "kind": "Variable",
@@ -131,16 +131,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "43ea5e5f46bb37e5ad389cd2db5b3043",
+    "cacheID": "e603d5419390b27be8917ab9f45c2e55",
     "id": null,
     "metadata": {},
     "name": "ControlPlaneSubscription",
     "operationKind": "subscription",
-    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlaneState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4de52f8e59b0d8768dba3ada886d029d';
+(node/*: any*/).hash = '1ab5f631eb5a0f1d660458b7c13cb122';
 
 module.exports = node;
