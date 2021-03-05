@@ -19,6 +19,7 @@ export type ControlPlanesQueryResponse = {|
   +controlPlanesState: $ReadOnlyArray<{|
     +name: ?MeshType,
     +members: $ReadOnlyArray<{|
+      +name: string,
       +version: string,
       +component: string,
       +namespace: string,
@@ -39,6 +40,7 @@ query ControlPlanesQuery(
   controlPlanesState: getControlPlanes(filter: $filter) {
     name
     members {
+      name
       version
       component
       namespace
@@ -55,7 +57,14 @@ var v0 = [
     "name": "filter"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": "controlPlanesState",
     "args": [
@@ -70,13 +79,7 @@ v1 = [
     "name": "getControlPlanes",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -85,6 +88,7 @@ v1 = [
         "name": "members",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -119,7 +123,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ControlPlanesQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -128,19 +132,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ControlPlanesQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "201a5360248793dda91a8787d69c1376",
+    "cacheID": "81a16f9e33537974469a4c1f541dab63",
     "id": null,
     "metadata": {},
     "name": "ControlPlanesQuery",
     "operationKind": "query",
-    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '90d386dc85c45565e02cc6dbceb98da8';
+(node/*: any*/).hash = '7749867bb95be6f805c7da4520e1fc1f';
 
 module.exports = node;

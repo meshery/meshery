@@ -126,15 +126,32 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 	r.meshsyncChannel = make(chan *broker.Message)
 
 	go func() {
+		r.Log.Info("Operator subscription started")
+		endpoint, err := subscribeToBroker(r.KubeClient, r.meshsyncChannel)
+		if err != nil {
+			r.Log.Error(ErrOperatorSubscription(err))
+			disabledStatus := model.StatusDisabled
+			r.operatorChannel <- &model.OperatorStatus{
+				Status: &disabledStatus,
+				Error: &model.Error{
+					Code:        "",
+					Description: err.Error(),
+				},
+			}
+			return
+		}
+		r.Log.Info("Connected to broker at:", endpoint)
+
 		select {
 		case <-r.meshsyncChannel:
 			status, err := r.getOperatorStatus(ctx)
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrOperatorSubscription(err))
 				return
 			}
 			r.operatorChannel <- status
 		}
+
 	}()
 
 	return r.operatorChannel, nil
@@ -189,11 +206,13 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 		return "", err
 	}
 
-	for {
+	timeout := 60
+	for timeout > 0 {
 		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
 		if err == nil && broker.Status.Endpoint.External != "" {
 			break
 		}
+		timeout -= 1
 		time.Sleep(1 * time.Second)
 	}
 
@@ -211,7 +230,10 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 	if err != nil {
 		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
 			var er error
-			port := strings.Split(broker.Status.Endpoint.External, ":")[1]
+			port := ""
+			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 0 {
+				port = strings.Split(broker.Status.Endpoint.External, ":")[1]
+			}
 			address := strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
 			endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)
 			natsClient, er = nats.New(nats.Options{

@@ -44,6 +44,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 				}
 
 				members = append(members, &model.ControlPlaneMember{
+					Name:      obj.ObjectMeta.Name,
 					Component: obj.ObjectMeta.Name,
 					Version:   strings.Split(objspec.Containers[0].Image, ":")[1],
 					Namespace: obj.ObjectMeta.Namespace,
@@ -63,11 +64,12 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.
 	r.controlPlaneChannel = make(chan []*model.ControlPlane)
 
 	go func() {
+		r.Log.Info("Control Plane subscription started")
 		select {
 		case <-r.meshsyncChannel:
 			status, err := r.getControlPlanes(ctx, filter)
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrControlPlaneSubscription(err))
 				return
 			}
 			r.controlPlaneChannel <- status

@@ -57,6 +57,7 @@ type ControlPlane {
 }
 
 type ControlPlaneMember {
+	name: String!
 	component: String!
 	version: String!
 	namespace: String!

@@ -28,7 +28,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	objects := make([]meshsyncmodel.Object, 0)
 
 	selectors := make([]string, 0)
-	if selector == nil {
+	if selector == nil || *selector == model.MeshTypeAll {
 		for _, obj := range model.AllAddonSelector {
 			selectors = append(selectors, strings.ToLower(obj.String()))
 		}
@@ -102,11 +102,12 @@ func (r *Resolver) listenToAddonState(ctx context.Context) (<-chan []*model.Addo
 	r.addonChannel = make(chan []*model.AddonList, 0)
 
 	go func() {
+		r.Log.Info("Addons subscription started")
 		select {
 		case <-r.meshsyncChannel:
 			status, err := r.getAvailableAddons(ctx, nil)
 			if err != nil {
-				r.Log.Error(err)
+				r.Log.Error(ErrAddonSubscription(err))
 				return
 			}
 			r.addonChannel <- status

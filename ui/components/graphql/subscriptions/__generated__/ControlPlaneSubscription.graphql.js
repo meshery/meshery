@@ -19,6 +19,7 @@ export type ControlPlaneSubscriptionResponse = {|
   +controlPlanesState: $ReadOnlyArray<{|
     +name: ?MeshType,
     +members: $ReadOnlyArray<{|
+      +name: string,
       +version: string,
       +component: string,
       +namespace: string,
@@ -39,6 +40,7 @@ subscription ControlPlaneSubscription(
   controlPlanesState: listenToControlPlaneState(filter: $filter) {
     name
     members {
+      name
       version
       component
       namespace
@@ -55,7 +57,14 @@ var v0 = [
     "name": "filter"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
   {
     "alias": "controlPlanesState",
     "args": [
@@ -70,13 +79,7 @@ v1 = [
     "name": "listenToControlPlaneState",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -85,6 +88,7 @@ v1 = [
         "name": "members",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -119,7 +123,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ControlPlaneSubscription",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
@@ -128,19 +132,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ControlPlaneSubscription",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "652fbb5e4d46bc229505bf750cb789b4",
+    "cacheID": "9594693970a688ad58d2d0f0743439f8",
     "id": null,
     "metadata": {},
     "name": "ControlPlaneSubscription",
     "operationKind": "subscription",
-    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8b7a49944af3388717d7b0199999b03a';
+(node/*: any*/).hash = '99ef876152bb6036ee3741e1ccce209c';
 
 module.exports = node;
