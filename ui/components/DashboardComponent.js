@@ -198,154 +198,19 @@ class DashboardComponent extends React.Component {
     };
 
     const self = this;
+    fetchControlPlanes(ALL_MESH)
+      .then(res => {
+        self.setMeshScanData(res)
+      }
+      )
+      .catch((err) => console.error(err))
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
-    self.setMeshScanData(fetchControlPlanes(ALL_MESH))
-  }
-
-  // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
-  fetchMeshScanData = () => {
-    const self = this;
-    self.props.updateProgress({ showProgress: true });
-    dataFetch(
-      "/api/mesh/scan",
-      {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress: false });
-        if (result) {
-          // Extract all the unique namespaces in the mesh scan
-          const namespaces = {};
-          const activeNamespaces = {};
-          Object.keys(result).forEach(mesh => {
-            if (Array.isArray(result[mesh])) {
-              result[mesh].forEach(comp => {
-                if (comp.metadata) {
-                  if (namespaces[mesh]) namespaces[mesh].add(comp.metadata.namespace)
-                  else namespaces[mesh] = new Set([comp.metadata.namespace])
-                }
-              })
-              namespaces[mesh] = [...namespaces[mesh]]
-              activeNamespaces[mesh] = namespaces[mesh][0] || "";
-            }
-          })
-          self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
-
-          // Check if Istio data is present in the scan
-          if (Array.isArray(result.Istio)) {
-            const istioData = result.Istio.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
-          }
-
-          // Check if Linkerd data is present in the scan
-          if (Array.isArray(result.Linkerd)) {
-            const linkerdData = result.Linkerd.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels["linkerd.io/control-plane-component"],
-                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
-          }
-
-          // Check if Consul data is present in the scan
-          if (Array.isArray(result.Consul)) {
-            const consulData = result.Consul.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                // Extracting consul version name from the command with which consul containers 
-                // were spinned up.
-                // There are a bunch of commands in there so splitting the string on "\\\n"
-                // and then looking for the string which has "consul-image"
-                // Once the string is found, we match it against the regex to extract version
-                // If any of this fails, it will fallback to "NA"
-                version: self.generateMeshScanVersion(
-                  comp.spec.containers?.[0]?.command[2]
-                    .split("\\\n")
-                    .find(str => str.includes("consul-image"))
-                ),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
-          }
-
-          // Check if OSM data is present in the scan
-          if (Array.isArray(result.osm)) {
-            const osmData = result.osm.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                version: self.generateMeshScanVersion(
-                  comp.spec.containers?.[0]?.args
-                    ?.find(str => str.includes("openservicemesh/init"))
-                ),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
-          }
-
-          // Check if NSM data is present in the scan
-          if (Array.isArray(result["Network Service Mesh"])) {
-            const nsmData = result["Network Service Mesh"].map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app || comp.metadata.name,
-                version: `v0.2.0`,
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
-          }
-        }
-      },
-      self.redirectErrorToConsole("Unable to fetch mesh scan data.")
-    );
   }
 
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
     this.initMeshSyncControlPlaneSubscription();
-    // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
   fetchAvailableAdapters = () => {
@@ -392,7 +257,7 @@ class DashboardComponent extends React.Component {
               build: "Unknown",
               latest: "Unknown",
               outdated: false,
-              commitsha: "Unkown"
+              commitsha: "Unknown"
             }
           });
         }
@@ -402,12 +267,11 @@ class DashboardComponent extends React.Component {
   };
 
   setMeshScanData = (data) => {
-    console.log("control plane data: "+JSON.stringify(data))
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
 
-    data?.controlPlaneState?.map(mesh => {
+    data?.controlPlanesState?.map(mesh => {
       mesh?.members?.map(member => {
         if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
         else namespaces[mesh.name] = new Set([member.namespace])
@@ -417,9 +281,9 @@ class DashboardComponent extends React.Component {
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
 
       const meshData = mesh?.members?.map(member => ({
-        name: member.component,
+        name: member.name,
         component: member.component,
-        version: mesh.version,
+        version: member.version,
         namespace: member.namespace,
       }))
 
@@ -662,18 +526,20 @@ class DashboardComponent extends React.Component {
               </div>
             </Grid>
             <Grid item>
-              <Select
-                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]}
-                onChange={(e) => self.setState(state => ({
-                  activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value }
-                }))}
-              >
-                {
-                  self.state.meshScanNamespaces[mesh.tag || mesh.name]
-                  &&
-                  self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
-                }
-              </Select>
+              {self.state.activeMeshScanNamespace[mesh.name] &&
+                <Select
+                  value={self.state.activeMeshScanNamespace[mesh.name]}
+                  onChange={(e) => self.setState(state => ({
+                    activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.name]: e.target.value }
+                  }))}
+                >
+                  {
+                    self.state.meshScanNamespaces[mesh.name]
+                    &&
+                    self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                  }
+                </Select>
+              }
             </Grid>
           </Grid>
           <TableContainer>
@@ -687,7 +553,7 @@ class DashboardComponent extends React.Component {
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => (
                     <TableRow key={component.name.full}>
                       {/* <TableCell scope="row" align="center">
@@ -952,18 +818,16 @@ class DashboardComponent extends React.Component {
           Object.keys(self.state.meshScan).length
             ?
             <>
-              {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
-              {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
-              {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
-              {self.Meshcard({
-                name: "Open Service Mesh",
-                icon: "/static/img/osm.svg",
-                tag: "osm"
-              }, self.state.meshScan.osm)}
-              {self.Meshcard({
-                name: "Network Service Mesh",
-                icon: "/static/img/nsm.svg"
-              }, self.state.meshScan["Network Service Mesh"])}
+              {self.Meshcard({ name: "CONSUL", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
+              {self.Meshcard({ name: "ISTIO", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
+              {self.Meshcard({ name: "LINKERD", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ name: "OPENSERVICEMESH", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
+              {self.Meshcard({ name: "NETWORKSM", icon: "/static/img/nsm.svg" }, self.state.meshScan["Network Service Mesh"])}
+              {self.Meshcard({ name: "OCTARINE", icon: "/static/img/octarine.svg" }, self.state.meshScan.Octarine)}
+              {self.Meshcard({ name: "TRAEFIK", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.Traefik)}
+              {self.Meshcard({ name: "KUMA", icon: "/static/img/kuma.svg" }, self.state.meshScan.Kuma)}
+              {self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.Nginx)}
+              {self.Meshcard({ name: "CITRIX", icon: "/static/img/citrix.svg" }, self.state.meshScan.Citrix)}
             </>
             :
             <div style={{

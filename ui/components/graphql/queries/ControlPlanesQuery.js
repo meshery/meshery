@@ -13,6 +13,7 @@ export default function fetchControlPlanes(variables) {
       controlPlanesState: getControlPlanes(filter: $filter) {
         name
         members {
+          name
           version
           component
           namespace
