@@ -198,8 +198,13 @@ class DashboardComponent extends React.Component {
     };
 
     const self = this;
+    fetchControlPlanes(ALL_MESH)
+      .then(res => {
+        self.setMeshScanData(res)
+      }
+      )
+      .catch((err) => console.error(err))
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
-    self.setMeshScanData(fetchControlPlanes(ALL_MESH))
   }
 
   // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
@@ -402,12 +407,12 @@ class DashboardComponent extends React.Component {
   };
 
   setMeshScanData = (data) => {
-    console.log("control plane data: "+JSON.stringify(data))
+    console.log("control plane data: " + JSON.stringify(data))
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
 
-    data?.controlPlaneState?.map(mesh => {
+    data?.controlPlanesState?.map(mesh => {
       mesh?.members?.map(member => {
         if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
         else namespaces[mesh.name] = new Set([member.namespace])
@@ -419,7 +424,7 @@ class DashboardComponent extends React.Component {
       const meshData = mesh?.members?.map(member => ({
         name: member.component,
         component: member.component,
-        version: mesh.version,
+        version: member.version,
         namespace: member.namespace,
       }))
 
@@ -662,18 +667,20 @@ class DashboardComponent extends React.Component {
               </div>
             </Grid>
             <Grid item>
-              <Select
-                value={self.state.activeMeshScanNamespace[mesh.tag || mesh.name]}
-                onChange={(e) => self.setState(state => ({
-                  activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.tag || mesh.name]: e.target.value }
-                }))}
-              >
-                {
-                  self.state.meshScanNamespaces[mesh.tag || mesh.name]
-                  &&
-                  self.state.meshScanNamespaces[mesh.tag || mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
-                }
-              </Select>
+              {self.state.activeMeshScanNamespace[mesh.name] &&
+                <Select
+                  value={self.state.activeMeshScanNamespace[mesh.name]}
+                  onChange={(e) => self.setState(state => ({
+                    activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.name]: e.target.value }
+                  }))}
+                >
+                  {
+                    self.state.meshScanNamespaces[mesh.name]
+                    &&
+                    self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                  }
+                </Select>
+              }
             </Grid>
           </Grid>
           <TableContainer>
@@ -687,16 +694,17 @@ class DashboardComponent extends React.Component {
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.tag || mesh.name])
+                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => (
                     <TableRow key={component.name.full}>
-                      <TableCell scope="row" align="center">
+                      {/* <TableCell scope="row" align="center">
                         <Tooltip title={component.name.full}>
                           <div style={{ textAlign: "center" }}>
                             {component.name.trimmed}
                           </div>
                         </Tooltip>
-                      </TableCell>
+                      </TableCell> */}
+                      <TableCell align="center">{component.name}</TableCell>
                       <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
                     </TableRow>)
@@ -951,18 +959,16 @@ class DashboardComponent extends React.Component {
           Object.keys(self.state.meshScan).length
             ?
             <>
-              {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
-              {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
-              {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
-              {self.Meshcard({
-                name: "Open Service Mesh",
-                icon: "/static/img/osm.svg",
-                tag: "osm"
-              }, self.state.meshScan.osm)}
-              {self.Meshcard({
-                name: "Network Service Mesh",
-                icon: "/static/img/nsm.svg"
-              }, self.state.meshScan["Network Service Mesh"])}
+              {self.Meshcard({ name: "CONSUL", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
+              {self.Meshcard({ name: "ISTIO", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
+              {self.Meshcard({ name: "LINKERD", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
+              {self.Meshcard({ name: "OPENSERVICEMESH", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
+              {self.Meshcard({ name: "NETWORKSM", icon: "/static/img/nsm.svg" }, self.state.meshScan["Network Service Mesh"])}
+              {self.Meshcard({ name: "OCTARINE", icon: "/static/img/octarine.svg" }, self.state.meshScan.Octarine)}
+              {self.Meshcard({ name: "TRAEFIK", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.Traefik)}
+              {self.Meshcard({ name: "KUMA", icon: "/static/img/kuma.svg" }, self.state.meshScan.Kuma)}
+              {self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.Nginx)}
+              {self.Meshcard({ name: "CITRIX", icon: "/static/img/citrix.svg" }, self.state.meshScan.Citrix)}
             </>
             :
             <div style={{

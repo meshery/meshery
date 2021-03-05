@@ -3,7 +3,7 @@ import environment from "../../../lib/relayEnvironment";
 
 const controlPlaneSubscription = graphql`
   subscription ControlPlaneSubscription($filter: ControlPlaneFilter) {
-    controlPlaneState: listenToControlPlaneState(filter: $filter) {
+    controlPlanesState: listenToControlPlaneState(filter: $filter) {
       name
       members {
         version
