@@ -14,7 +14,7 @@ export type AddonsStatusQueryVariables = {|
   selector?: ?MeshType
 |};
 export type AddonsStatusQueryResponse = {|
-  +addons: $ReadOnlyArray<{|
+  +addonEvent: $ReadOnlyArray<{|
     +type: string,
     +status: ?Status,
     +config: {|
@@ -34,7 +34,7 @@ export type AddonsStatusQuery = {|
 query AddonsStatusQuery(
   $selector: MeshType
 ) {
-  addons: getAvailableAddons(selector: $selector) {
+  addonEvent: getAvailableAddons(selector: $selector) {
     type
     status
     config {
@@ -55,7 +55,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "addons",
+    "alias": "addonEvent",
     "args": [
       {
         "kind": "Variable",
@@ -129,16 +129,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a0e1ea9e2b4df21ed735fcd2dd472dd7",
+    "cacheID": "e5474f0162a1b2e57213bce5015ffb60",
     "id": null,
     "metadata": {},
     "name": "AddonsStatusQuery",
     "operationKind": "query",
-    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addons: getAvailableAddons(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
+    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonEvent: getAvailableAddons(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4cec6d07aadb1179ffa543b0f83d3acc';
+(node/*: any*/).hash = '6097bc0607bc6dc016b5cbd97a46e934';
 
 module.exports = node;

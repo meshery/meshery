@@ -16,7 +16,7 @@ export type ControlPlanesQueryVariables = {|
   filter?: ?ControlPlaneFilter
 |};
 export type ControlPlanesQueryResponse = {|
-  +controlPlanes: $ReadOnlyArray<{|
+  +controlPlanesState: $ReadOnlyArray<{|
     +name: ?MeshType,
     +members: $ReadOnlyArray<{|
       +version: string,
@@ -36,7 +36,7 @@ export type ControlPlanesQuery = {|
 query ControlPlanesQuery(
   $filter: ControlPlaneFilter
 ) {
-  controlPlanes: getControlPlanes(filter: $filter) {
+  controlPlanesState: getControlPlanes(filter: $filter) {
     name
     members {
       version
@@ -57,7 +57,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "controlPlanes",
+    "alias": "controlPlanesState",
     "args": [
       {
         "kind": "Variable",
@@ -131,16 +131,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "8b30084d2eace5f46a03bf67d84d6bdd",
+    "cacheID": "201a5360248793dda91a8787d69c1376",
     "id": null,
     "metadata": {},
     "name": "ControlPlanesQuery",
     "operationKind": "query",
-    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanes: getControlPlanes(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
+    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3ebb8d0143a532e01026ce24b04927d7';
+(node/*: any*/).hash = '90d386dc85c45565e02cc6dbceb98da8';
 
 module.exports = node;

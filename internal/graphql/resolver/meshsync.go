@@ -64,6 +64,7 @@ func listernToEvents(log logger.Handler, handler *database.Handler, datach chan 
 			}
 
 			// persist the object
+			log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
 			err = recordMeshSyncData(msg.EventType, handler, object)
 			if err != nil {
 				log.Error(err)
@@ -75,9 +76,12 @@ func listernToEvents(log logger.Handler, handler *database.Handler, datach chan 
 func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object meshsyncmodel.Object) error {
 	switch eventtype {
 	case broker.Add, broker.Update:
-		result := handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&object)
+		result := handler.Create(&object)
 		if result.Error != nil {
-			return ErrCreateData(result.Error)
+			result = handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&object)
+			if result.Error != nil {
+				return ErrCreateData(result.Error)
+			}
 		}
 	case broker.Delete:
 		result := handler.Delete(&object)

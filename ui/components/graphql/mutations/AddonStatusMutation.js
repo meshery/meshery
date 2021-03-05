@@ -14,8 +14,8 @@ export default function changeAddonStatus(onComplete, variables) {
   };
 
   commitMutation(environment,{
-    addonStatusMutation,
-    vars,
+    mutation: addonStatusMutation,
+    variables: vars,
     onCompleted: onComplete,
     onError: error => console.log(`An error occured:`, error),
   });

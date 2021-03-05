@@ -13,8 +13,8 @@ export default function changeOperatorState(onComplete, variables) {
   };
 
   commitMutation(environment,{
-    operatorStatusMutation,
-    vars,
+    mutation: operatorStatusMutation,
+    variables: vars,
     onCompleted: onComplete,
     onError: error => console.log(`An error occured:`, error),
   });

@@ -34,8 +34,8 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import controlPlaneSubscription from "../components/graphql/subscriptions/ControlPlaneSubscription";
-import fetchControlPlanes from "../components/graphql/queries/ControlPlanesQuery";
+import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
+import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
 
 const styles = (theme) => ({
   root: {
@@ -188,6 +188,20 @@ class DashboardComponent extends React.Component {
     return st;
   }
 
+  initMeshSyncControlPlaneSubscription = () => {
+    /**
+     * ALL_MESH indicates that we are interested in control plane
+     * component of all of the service meshes supported by meshsync v2
+     */
+    const ALL_MESH = {
+      type: "ALL"
+    };
+
+    const self = this;
+    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
+    self.setMeshScanData(fetchControlPlanes(ALL_MESH))
+  }
+
   // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   fetchMeshScanData = () => {
     const self = this;
@@ -330,16 +344,7 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
-    controlPlaneSubscription(data => {
-      console.log(data);
-      this.setMeshScanData(data);
-    }, { serviceMesh: "ALL" });
-    fetchControlPlanes({ serviceMesh: "ALL" })
-      .then(res => {
-        console.log(res);
-        this.setMeshScanData(res);  //uncomment this when control plane resolvers are ready
-      })
-      .catch(err => console.error(err))
+    this.initMeshSyncControlPlaneSubscription();
     // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
@@ -397,61 +402,64 @@ class DashboardComponent extends React.Component {
   };
 
   setMeshScanData = (data) => {
+    console.log("control plane data: "+JSON.stringify(data))
     const self = this;
-    self.props.updateProgress({ showProgress: true });
     const namespaces = {};
     const activeNamespaces = {};
-    let meshScanData = data.listenToControlPlaneEvents || data.controlPlanes;
-    meshScanData?.map(mesh => {
+
+    data?.controlPlaneState?.map(mesh => {
       mesh?.members?.map(member => {
         if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
         else namespaces[mesh.name] = new Set([member.namespace])
       })
+
       namespaces[mesh.name] = [...namespaces[mesh.name]]
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
-      const meshData = mesh?.members?.map(member => {
-        const compData = {
-          name: member.component,
-          component: member.component,
-          version: mesh.version,
-          namespace: member.namespace
-        }
-        return compData;
-      })
 
+      const meshData = mesh?.members?.map(member => ({
+        name: member.component,
+        component: member.component,
+        version: mesh.version,
+        namespace: member.namespace,
+      }))
+
+      let meshName = ""
       switch (mesh.name) {
         case 'ISTIO':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Istio: meshData } }));
+          meshName = "Istio";
           break;
         case 'LINKERD':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: meshData } }));
+          meshName = "Linkerd";
           break;
         case 'CONSUL':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Consul: meshData } }));
+          meshName = "Consul";
           break;
         case 'OPENSERVICEMESH':
-          self.setState(state => ({ meshScan: { ...state.meshScan, osm: meshData } }));
+          meshName = "osm";
           break;
         case 'NETWORKSM':
-          self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": meshData } }));
+          meshName = "Network Service Mesh";
           break;
         case 'OCTARINE':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Octarine: meshData } }));
+          meshName = "Octarine";
           break;
         case 'TRAEFIK':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Traefik: meshData } }));
+          meshName = "Traefik";
           break;
         case 'KUMA':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Kuma: meshData } }));
+          meshName = "Kuma";
           break;
         case 'NGINXSM':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Nginx: meshData } }));
+          meshName = "Nginx";
           break;
         case 'CITRIXSM':
-          self.setState(state => ({ meshScan: { ...state.meshScan, Citrix: meshData } }));
+          meshName = "Citrix";
           break;
       }
-    })
+
+      self.setState(state => ({ meshScan: { ...state.meshScan, [meshName]: meshData } }));
+    });
+
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   }
 
