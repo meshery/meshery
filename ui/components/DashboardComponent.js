@@ -207,150 +207,10 @@ class DashboardComponent extends React.Component {
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
   }
 
-  // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
-  fetchMeshScanData = () => {
-    const self = this;
-    self.props.updateProgress({ showProgress: true });
-    dataFetch(
-      "/api/mesh/scan",
-      {
-        credentials: "same-origin",
-        method: "GET",
-        credentials: "include",
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress: false });
-        if (result) {
-          // Extract all the unique namespaces in the mesh scan
-          const namespaces = {};
-          const activeNamespaces = {};
-          Object.keys(result).forEach(mesh => {
-            if (Array.isArray(result[mesh])) {
-              result[mesh].forEach(comp => {
-                if (comp.metadata) {
-                  if (namespaces[mesh]) namespaces[mesh].add(comp.metadata.namespace)
-                  else namespaces[mesh] = new Set([comp.metadata.namespace])
-                }
-              })
-              namespaces[mesh] = [...namespaces[mesh]]
-              activeNamespaces[mesh] = namespaces[mesh][0] || "";
-            }
-          })
-          self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
-
-          // Check if Istio data is present in the scan
-          if (Array.isArray(result.Istio)) {
-            const istioData = result.Istio.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Istio: istioData } }));
-          }
-
-          // Check if Linkerd data is present in the scan
-          if (Array.isArray(result.Linkerd)) {
-            const linkerdData = result.Linkerd.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels["linkerd.io/control-plane-component"],
-                version: self.generateMeshScanVersion(comp.spec.containers?.[0]?.image),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Linkerd: linkerdData } }));
-          }
-
-          // Check if Consul data is present in the scan
-          if (Array.isArray(result.Consul)) {
-            const consulData = result.Consul.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                // Extracting consul version name from the command with which consul containers 
-                // were spinned up.
-                // There are a bunch of commands in there so splitting the string on "\\\n"
-                // and then looking for the string which has "consul-image"
-                // Once the string is found, we match it against the regex to extract version
-                // If any of this fails, it will fallback to "NA"
-                version: self.generateMeshScanVersion(
-                  comp.spec.containers?.[0]?.command[2]
-                    .split("\\\n")
-                    .find(str => str.includes("consul-image"))
-                ),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, Consul: consulData } }));
-          }
-
-          // Check if OSM data is present in the scan
-          if (Array.isArray(result.osm)) {
-            const osmData = result.osm.map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app,
-                version: self.generateMeshScanVersion(
-                  comp.spec.containers?.[0]?.args
-                    ?.find(str => str.includes("openservicemesh/init"))
-                ),
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, osm: osmData } }));
-          }
-
-          // Check if NSM data is present in the scan
-          if (Array.isArray(result["Network Service Mesh"])) {
-            const nsmData = result["Network Service Mesh"].map(comp => {
-              const compData = {
-                name: self.generateMeshScanPodName(
-                  comp.metadata.name,
-                  comp.metadata.labels["pod-template-hash"],
-                  comp.metadata.generateName
-                ).trimmed,
-                component: comp.metadata.labels?.app || comp.metadata.name,
-                version: `v0.2.0`,
-                namespace: comp.metadata.namespace
-              }
-              return compData;
-            })
-            self.setState(state => ({ meshScan: { ...state.meshScan, "Network Service Mesh": nsmData } }));
-          }
-        }
-      },
-      self.redirectErrorToConsole("Unable to fetch mesh scan data.")
-    );
-  }
-
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
     this.initMeshSyncControlPlaneSubscription();
-    // this.fetchMeshScanData(); // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
   };
 
   fetchAvailableAdapters = () => {
@@ -407,7 +267,6 @@ class DashboardComponent extends React.Component {
   };
 
   setMeshScanData = (data) => {
-    console.log("control plane data: " + JSON.stringify(data))
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
@@ -422,7 +281,7 @@ class DashboardComponent extends React.Component {
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
 
       const meshData = mesh?.members?.map(member => ({
-        name: member.component,
+        name: member.name,
         component: member.component,
         version: member.version,
         namespace: member.namespace,

@@ -6,6 +6,7 @@ const controlPlaneSubscription = graphql`
     controlPlanesState: listenToControlPlaneState(filter: $filter) {
       name
       members {
+        name
         version
         component
         namespace
