@@ -38,7 +38,6 @@ enum AddonSelector {
 
 type AddonList {
 	type: String!
-	status: Status
 	config: AddonConfig!
 }
 

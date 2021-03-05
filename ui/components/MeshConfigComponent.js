@@ -204,38 +204,49 @@ class MeshConfigComponent extends React.Component {
   }
 
   componentDidMount() {
-    setOperatorState(fetchMesheryOperatorStatus)
+    const self = this;
     // Subscribe to the operator events
-    subscribeOperatorStatusEvents(setOperatorState)
+    subscribeOperatorStatusEvents(self.setOperatorState)
 
     subscribeMeshSyncStatusEvents(res => {
       if (res.meshsync?.error) {
-        this.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
         return
       }
     })
+
+    fetchMesheryOperatorStatus()
+      .then(res => {
+        self.setOperatorState(res)
+      }
+      )
+      .catch(err =>
+        console.log("error at operator scan")
+      )
   }
 
   setOperatorState = (res) => {
-    console.log("opertor status: "+JSON.Stringify(res))
+    const self = this;
     if (res.operator?.error) {
-      this.handleError(res.operator?.error?.description || "Operator could not be reached")
+      self.handleError(res.operator?.error?.description || "Operator could not be reached")
       return
     }
 
     if (res.operator?.status === "ENABLED") {
-      this.setState({
+      self.setState({
         operatorInstalled: true,
         NATSInstalled: true,
         meshSyncInstalled: true,
+        operatorSwitch: true,
       })
       return
     }
 
-    this.setState({
+    self.setState({
       operatorInstalled: false,
       NATSInstalled: false,
       meshSyncInstalled: false,
+      operatorSwitch: false,
     })
   }
 

@@ -15,7 +15,6 @@ type AddonConfig struct {
 
 type AddonList struct {
 	Type   string       `json:"type"`
-	Status *Status      `json:"status"`
 	Config *AddonConfig `json:"config"`
 }
 

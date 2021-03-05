@@ -28,7 +28,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"k8s.io/client-go/kubernetes"
 )
 
 const (
@@ -773,28 +772,8 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 func CreateKubeClient() (*meshkitkube.Client, error) {
 	log.Debug("detecting kubeconfig file...")
 
-	// Detect user's kubeconfig file for the Kubernetes cluster
-	config, err := meshkitkube.DetectKubeConfig()
-
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to detect kubeconfig file")
-	}
-
-	// To avoid the timeout error from getting printed
-	config.QPS = float32(50)
-	config.Burst = int(100)
-
-	log.Debug("creating new Clientset...")
-	// Create a new Clientset for given config
-	clientSet, err := kubernetes.NewForConfig(config)
-
-	if err != nil {
-		return nil, errors.Wrap(err, "error setting clientset")
-	}
-
 	// Create a new client
-	client, err := meshkitkube.New(clientSet, *config)
-
+	client, err := meshkitkube.New(nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new client")
 	}
