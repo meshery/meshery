@@ -26,7 +26,6 @@ func (r *Resolver) changeAddonStatus(ctx context.Context) (*model.Status, error)
 func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
 	addonlist := make([]*model.AddonList, 0)
 	objects := make([]meshsyncmodel.Object, 0)
-	status := model.StatusEnabled
 
 	selectors := make([]string, 0)
 	if selector == nil {
@@ -87,8 +86,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 			}
 
 			addonlist = append(addonlist, &model.AddonList{
-				Type:   strings.ToLower(selector.String()),
-				Status: &status,
+				Type: strings.ToLower(selector.String()),
 				Config: &model.AddonConfig{
 					ServiceName: obj.ObjectMeta.Name,
 					Endpoint:    fmt.Sprintf("%s:%d", endpoint.External.Address, port),

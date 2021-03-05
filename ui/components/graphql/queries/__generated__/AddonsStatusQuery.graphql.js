@@ -9,14 +9,12 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type AddonsStatusQueryVariables = {|
   selector?: ?MeshType
 |};
 export type AddonsStatusQueryResponse = {|
-  +addonEvent: $ReadOnlyArray<{|
+  +addonsState: $ReadOnlyArray<{|
     +type: string,
-    +status: ?Status,
     +config: {|
       +serviceName: string,
       +endpoint: string,
@@ -34,9 +32,8 @@ export type AddonsStatusQuery = {|
 query AddonsStatusQuery(
   $selector: MeshType
 ) {
-  addonEvent: getAvailableAddons(selector: $selector) {
+  addonsState: getAvailableAddons(selector: $selector) {
     type
-    status
     config {
       serviceName
       endpoint
@@ -55,7 +52,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "addonEvent",
+    "alias": "addonsState",
     "args": [
       {
         "kind": "Variable",
@@ -73,13 +70,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "type",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "status",
         "storageKey": null
       },
       {
@@ -129,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e5474f0162a1b2e57213bce5015ffb60",
+    "cacheID": "11ad80c9023c8fef3cfdfbded25b1aaf",
     "id": null,
     "metadata": {},
     "name": "AddonsStatusQuery",
     "operationKind": "query",
-    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonEvent: getAvailableAddons(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
+    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonsState: getAvailableAddons(selector: $selector) {\n    type\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6097bc0607bc6dc016b5cbd97a46e934';
+(node/*: any*/).hash = '2e64dec408918ae250f67433d7f3fc46';
 
 module.exports = node;

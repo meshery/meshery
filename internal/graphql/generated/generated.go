@@ -52,7 +52,6 @@ type ComplexityRoot struct {
 
 	AddonList struct {
 		Config func(childComplexity int) int
-		Status func(childComplexity int) int
 		Type   func(childComplexity int) int
 	}
 
@@ -153,13 +152,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AddonList.Config(childComplexity), true
-
-	case "AddonList.status":
-		if e.complexity.AddonList.Status == nil {
-			break
-		}
-
-		return e.complexity.AddonList.Status(childComplexity), true
 
 	case "AddonList.type":
 		if e.complexity.AddonList.Type == nil {
@@ -466,7 +458,6 @@ enum AddonSelector {
 
 type AddonList {
 	type: String!
-	status: Status
 	config: AddonConfig!
 }
 
@@ -784,38 +775,6 @@ func (ec *executionContext) _AddonList_type(ctx context.Context, field graphql.C
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AddonList_status(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AddonList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Status)
-	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AddonList_config(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
@@ -2877,8 +2836,6 @@ func (ec *executionContext) _AddonList(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "status":
-			out.Values[i] = ec._AddonList_status(ctx, field, obj)
 		case "config":
 			out.Values[i] = ec._AddonList_config(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
