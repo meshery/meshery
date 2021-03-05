@@ -3,7 +3,7 @@ import environment from "../../../lib/relayEnvironment";
 
 const operatorStatusSubscription = graphql`
   subscription OperatorStatusSubscription {
-    listenToOperatorState {
+    operator: listenToOperatorState {
       status
       error {
         code

@@ -148,10 +148,10 @@ func getOperator(handler *database.Handler) ([]string, error) {
 	result := handler.
 		Preload("ObjectMeta").
 		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
+		Preload("ObjectMeta.Annotations", "id IN (?)", subquery2).
 		Preload("Spec").
 		Preload("Status").
-		Find(&objects, "id IN (?) AND kind = ?", subquery2, "Deployment")
+		Find(&objects, "kind = ?", "Deployment")
 	if result.Error != nil {
 		return nil, ErrQuery(result.Error)
 	}

@@ -4,13 +4,13 @@ import environment from "../../../lib/relayEnvironment";
 export default function fetchControlPlanes(variables) {
   const vars = {
     filter: {
-      "type": variables.serviceMesh
+      "type": variables.type
     }
   };
 
   const query = graphql`
     query ControlPlanesQuery($filter: ControlPlaneFilter) {
-      controlPlanes: getControlPlanes(filter: $filter) {
+      controlPlanesState: getControlPlanes(filter: $filter) {
         name
         members {
           version

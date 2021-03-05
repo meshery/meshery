@@ -35,6 +35,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
+import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
 
 const styles = (theme) => ({
   root: {
@@ -192,10 +193,13 @@ class DashboardComponent extends React.Component {
      * ALL_MESH indicates that we are interested in control plane
      * component of all of the service meshes supported by meshsync v2
      */
-    const ALL_MESH = "ALL";
-    const self = this;
+    const ALL_MESH = {
+      type: "ALL"
+    };
 
+    const self = this;
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
+    self.setMeshScanData(fetchControlPlanes(ALL_MESH))
   }
 
   // using '/api/mesh/scan' as of now. To be removed after control plane resolvers are in place.
@@ -398,6 +402,7 @@ class DashboardComponent extends React.Component {
   };
 
   setMeshScanData = (data) => {
+    console.log("control plane data: "+JSON.stringify(data))
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};

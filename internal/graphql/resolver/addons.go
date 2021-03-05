@@ -42,15 +42,15 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 		names = append(names, strings.ToLower(addon.String()))
 	}
 
-	subquery1 := r.DBHandler.Select("id").Where("key = ? AND value IN ?", "meshery/maintainer", selectors).Table("key_values")
+	subquery1 := r.DBHandler.Select("id").Where("key = ? AND value IN (?)", "meshery/maintainer", selectors).Table("key_values")
 	subquery2 := r.DBHandler.Select("id").Where("id IN (?) AND key = ? AND value = ?", subquery1, "meshery/component-type", "control-plane").Table("key_values")
 	result := r.DBHandler.
 		Preload("ObjectMeta", "name IN ?", names).
 		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
+		Preload("ObjectMeta.Annotations", "id IN (?)", subquery2).
 		Preload("Spec").
 		Preload("Status").
-		Find(&objects, "id IN (?) AND kind = ?", subquery2, "Service")
+		Find(&objects, "kind = ?", "Service")
 	if result.Error != nil {
 		r.Log.Error(result.Error)
 		return nil, result.Error
@@ -60,14 +60,14 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 		if meshsyncmodel.IsObject(obj) {
 			objstatus := corev1.ServiceStatus{}
 			err := utils.Unmarshal(obj.Status.Attribute, &objstatus)
-			if err != nil {
+			if err != nil && len(obj.Status.Attribute) > 0 {
 				r.Log.Error(err)
 				return nil, err
 			}
 
 			objspec := corev1.ServiceSpec{}
 			err = utils.Unmarshal(obj.Spec.Attribute, &objspec)
-			if err != nil {
+			if err != nil && len(obj.Spec.Attribute) > 0 {
 				r.Log.Error(err)
 				return nil, err
 			}
