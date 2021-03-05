@@ -66,6 +66,13 @@ var RootCmd = &cobra.Command{
 		}
 		return nil
 	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s\n", latest)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
