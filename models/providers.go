@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
@@ -196,6 +197,9 @@ type Provider interface {
 	GetGenericPersister() *database.Handler
 	GetGraphqlHandler() http.Handler
 	GetGraphqlPlayground() http.Handler
+
+	SetKubeClient(client *mesherykube.Client)
+	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)

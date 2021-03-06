@@ -16,10 +16,12 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
 import CloseIcon from '@material-ui/icons/Close';
-import { updateK8SConfig, updateProgress } from '../lib/store';
+import { updateK8SConfig, updateProgress } from "../lib/store";
 import dataFetch from '../lib/data-fetch';
-import subscribeOperatorEvents from './graphql/subscriptions/OperatorEventsSubscription';
-import fetchOperatorStatus from './graphql/queries/mesheryOperatorStatus';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
+import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
 
 const styles = (theme) => ({
   root: {
@@ -202,63 +204,80 @@ class MeshConfigComponent extends React.Component {
   }
 
   componentDidMount() {
+    const self = this;
     // Subscribe to the operator events
-    subscribeOperatorEvents(data => console.log(data))
+    subscribeOperatorStatusEvents(self.setOperatorState)
 
-    // Query the current state
-    fetchOperatorStatus()
+    subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    })
+
+    fetchMesheryOperatorStatus()
       .then(res => {
-        if (res.operator?.error) {
-          this.handleError(res.operator?.error?.description || "Operator could not be reached")
-          return
-        }
+        self.setOperatorState(res)
+      }
+      )
+      .catch(err =>
+        console.log("error at operator scan: "+err)
+      )
+  }
 
-        if (res.operator?.status === "ENABLED") {
-          this.setState({
-            operatorInstalled: true,
-            NATSInstalled: true,
-            meshSyncInstalled: true,
-          })
+  setOperatorState = (res) => {
+    const self = this;
+    if (res.operator?.error) {
+      self.handleError(res.operator?.error?.description || "Operator could not be reached")
+      return
+    }
 
-          return
-        }
-
-        this.setState({
-          operatorInstalled: false,
-          NATSInstalled: false,
-          meshSyncInstalled: false,
-        })
+    if (res.operator?.status === "ENABLED") {
+      self.setState({
+        operatorInstalled: true,
+        NATSInstalled: true,
+        meshSyncInstalled: true,
+        operatorSwitch: true,
       })
-      .catch(err => console.error(err))
+      return
+    }
+
+    self.setState({
+      operatorInstalled: false,
+      NATSInstalled: false,
+      meshSyncInstalled: false,
+      operatorSwitch: false,
+    })
   }
 
   handleOperatorSwitch = () => {
     const self = this;
-    let url = "/api/system/operator?enable="+ !self.state.operatorSwitch
-    this.props.updateProgress({ showProgress: true })
-    dataFetch(url, {
-      credentials: 'same-origin',
-    }, (result) => {
-      this.props.updateProgress({ showProgress: false });
-      if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('Operator Pinged', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
-        self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
-      }
-    }, self.handleError("Operator could not be reached"));
+    const variables = {
+      status: `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED" }`,
+    } 
+    self.props.updateProgress({ showProgress: true })
 
+    changeOperatorState((response, errors) => {
+      self.props.updateProgress({ showProgress: false });
+      if(errors !== undefined) {
+        self.handleError("Operator action failed")
+      }
+      self.props.enqueueSnackbar('Operator '+response, {
+        variant: 'success',
+        autoHideDuration: 2000,
+        action: (key) => (
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => self.props.closeSnackbar(key)}
+          >
+            <CloseIcon />
+          </IconButton>
+        ),
+      });
+      self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+    }, variables);
   }
 
 

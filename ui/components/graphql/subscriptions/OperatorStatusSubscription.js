@@ -1,9 +1,9 @@
 import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-const operatorEventsSubscription = graphql`
-  subscription OperatorEventsSubscription {
-    listenToOperatorEvents {
+const operatorStatusSubscription = graphql`
+  subscription OperatorStatusSubscription {
+    operator: listenToOperatorState {
       status
       error {
         code
@@ -13,9 +13,9 @@ const operatorEventsSubscription = graphql`
   }
 `;
 
-export default function subscribeOperatorEvents(dataCB) {
+export default function subscribeOperatorStatusEvents(dataCB) {
   requestSubscription(environment, {
-    subscription: operatorEventsSubscription,
+    subscription: operatorStatusSubscription,
     variables: {},
     onNext: dataCB,
     onError: (error) => console.log(`An error occured:`, error),

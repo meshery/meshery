@@ -8,10 +8,10 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type mesheryOperatorStatusQueryVariables = {||};
-export type mesheryOperatorStatusQueryResponse = {|
-  +operator: ?{|
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type OperatorStatusSubscriptionVariables = {||};
+export type OperatorStatusSubscriptionResponse = {|
+  +operator: {|
     +status: ?Status,
     +error: ?{|
       +code: string,
@@ -19,16 +19,16 @@ export type mesheryOperatorStatusQueryResponse = {|
     |},
   |}
 |};
-export type mesheryOperatorStatusQuery = {|
-  variables: mesheryOperatorStatusQueryVariables,
-  response: mesheryOperatorStatusQueryResponse,
+export type OperatorStatusSubscription = {|
+  variables: OperatorStatusSubscriptionVariables,
+  response: OperatorStatusSubscriptionResponse,
 |};
 */
 
 
 /*
-query mesheryOperatorStatusQuery {
-  operator: getOperatorStatus {
+subscription OperatorStatusSubscription {
+  operator: listenToOperatorState {
     status
     error {
       code
@@ -45,7 +45,7 @@ var v0 = [
     "args": null,
     "concreteType": "OperatorStatus",
     "kind": "LinkedField",
-    "name": "getOperatorStatus",
+    "name": "listenToOperatorState",
     "plural": false,
     "selections": [
       {
@@ -89,29 +89,29 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "mesheryOperatorStatusQuery",
+    "name": "OperatorStatusSubscription",
     "selections": (v0/*: any*/),
-    "type": "Query",
+    "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "mesheryOperatorStatusQuery",
+    "name": "OperatorStatusSubscription",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "0e7003f2d4816ecf4e6864a84333f5a8",
+    "cacheID": "ee07f84c0887b3172099db3261faa84e",
     "id": null,
     "metadata": {},
-    "name": "mesheryOperatorStatusQuery",
-    "operationKind": "query",
-    "text": "query mesheryOperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "name": "OperatorStatusSubscription",
+    "operationKind": "subscription",
+    "text": "subscription OperatorStatusSubscription {\n  operator: listenToOperatorState {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '800b4e252bc857ec45413b673f1c8a0d';
+(node/*: any*/).hash = '1946f24deab962396e84e4a0b9f1ec86';
 
 module.exports = node;
