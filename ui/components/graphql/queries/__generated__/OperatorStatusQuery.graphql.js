@@ -8,10 +8,10 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type OperatorEventsSubscriptionVariables = {||};
-export type OperatorEventsSubscriptionResponse = {|
-  +listenToOperatorEvents: {|
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type OperatorStatusQueryVariables = {||};
+export type OperatorStatusQueryResponse = {|
+  +operator: ?{|
     +status: ?Status,
     +error: ?{|
       +code: string,
@@ -19,16 +19,16 @@ export type OperatorEventsSubscriptionResponse = {|
     |},
   |}
 |};
-export type OperatorEventsSubscription = {|
-  variables: OperatorEventsSubscriptionVariables,
-  response: OperatorEventsSubscriptionResponse,
+export type OperatorStatusQuery = {|
+  variables: OperatorStatusQueryVariables,
+  response: OperatorStatusQueryResponse,
 |};
 */
 
 
 /*
-subscription OperatorEventsSubscription {
-  listenToOperatorEvents {
+query OperatorStatusQuery {
+  operator: getOperatorStatus {
     status
     error {
       code
@@ -41,11 +41,11 @@ subscription OperatorEventsSubscription {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
-    "alias": null,
+    "alias": "operator",
     "args": null,
     "concreteType": "OperatorStatus",
     "kind": "LinkedField",
-    "name": "listenToOperatorEvents",
+    "name": "getOperatorStatus",
     "plural": false,
     "selections": [
       {
@@ -89,29 +89,29 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "OperatorEventsSubscription",
+    "name": "OperatorStatusQuery",
     "selections": (v0/*: any*/),
-    "type": "Subscription",
+    "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "OperatorEventsSubscription",
+    "name": "OperatorStatusQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "2af0544985213b071fb9ad4f4506c899",
+    "cacheID": "ed65e93adf8349ea7d5a4e47f08bd16f",
     "id": null,
     "metadata": {},
-    "name": "OperatorEventsSubscription",
-    "operationKind": "subscription",
-    "text": "subscription OperatorEventsSubscription {\n  listenToOperatorEvents {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "name": "OperatorStatusQuery",
+    "operationKind": "query",
+    "text": "query OperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '8e686bdd1aab4653b7d89df935c29d4c';
+(node/*: any*/).hash = '1c2d4cc73e3bbacd3ad55c6f2fb8c4bd';
 
 module.exports = node;
