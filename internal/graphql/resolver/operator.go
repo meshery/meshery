@@ -151,7 +151,6 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 			}
 			r.operatorChannel <- status
 		}
-
 	}()
 
 	return r.operatorChannel, nil
@@ -212,7 +211,7 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 		if err == nil && broker.Status.Endpoint.External != "" {
 			break
 		}
-		timeout -= 1
+		timeout--
 		time.Sleep(1 * time.Second)
 	}
 
