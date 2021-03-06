@@ -35,6 +35,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
 
 const styles = (theme) => ({
@@ -198,13 +199,20 @@ class DashboardComponent extends React.Component {
     };
 
     const self = this;
+    subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    })
+    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
+
     fetchControlPlanes(ALL_MESH)
       .then(res => {
         self.setMeshScanData(res)
       }
       )
       .catch((err) => console.error(err))
-    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
   }
 
   componentDidMount = () => {

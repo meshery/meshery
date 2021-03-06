@@ -49,6 +49,7 @@ import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
 import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 
 const styles = (theme) => ({
@@ -222,6 +223,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     const variables = { 
       serviceMesh: meshname
     }
+    subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    })
+    subscribeAddonStatusEvents(self.setAddonsState, variables)
+
     fetchAvailableAddons(variables)
       .then(res => {
         self.setAddonsState(res)
@@ -230,8 +239,6 @@ class MesheryAdapterPlayComponent extends React.Component {
       .catch(err =>
         console.log("error at addon fetch: "+err)
       )
-    
-    subscribeAddonStatusEvents(self.setAddonsState, variables)
   }
 
   mapAdapterNameToMeshName(name) {

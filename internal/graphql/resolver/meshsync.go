@@ -23,6 +23,7 @@ var (
 
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
+	r.meshsyncChannel = make(chan *broker.Message)
 	status := model.StatusUnknown
 
 	go func(ch chan *model.OperatorControllerStatus) {
