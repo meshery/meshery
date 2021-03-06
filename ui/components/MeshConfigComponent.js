@@ -221,7 +221,7 @@ class MeshConfigComponent extends React.Component {
       }
       )
       .catch(err =>
-        console.log("error at operator scan")
+        console.log("error at operator scan: "+err)
       )
   }
 

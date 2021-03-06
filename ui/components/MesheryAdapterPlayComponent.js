@@ -228,7 +228,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       }
       )
       .catch(err =>
-        console.log("error at addon fetch")
+        console.log("error at addon fetch: "+err)
       )
     
     subscribeAddonStatusEvents(self.setAddonsState, variables)
@@ -250,7 +250,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         localState[`${name}-addon`] = true
       }
     })
-    self.setState(state => {
+    self.setState(() => {
       return {
         addonSwitchGroup: localState
       }
