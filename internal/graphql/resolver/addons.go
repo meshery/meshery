@@ -98,18 +98,34 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	return addonlist, nil
 }
 
-func (r *Resolver) listenToAddonState(ctx context.Context) (<-chan []*model.AddonList, error) {
+func (r *Resolver) listenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	r.addonChannel = make(chan []*model.AddonList, 0)
 
 	go func() {
 		r.Log.Info("Addons subscription started")
+		endpoint, err := subscribeToBroker(r.KubeClient, r.meshsyncChannel)
+		if err != nil {
+			r.Log.Error(ErrAddonSubscription(err))
+			disabledStatus := model.StatusDisabled
+			r.operatorChannel <- &model.OperatorStatus{
+				Status: &disabledStatus,
+				Error: &model.Error{
+					Code:        "",
+					Description: err.Error(),
+				},
+			}
+			return
+		}
+		r.Log.Info("Connected to broker at:", endpoint)
+
 		select {
 		case <-r.meshsyncChannel:
-			status, err := r.getAvailableAddons(ctx, nil)
+			status, err := r.getAvailableAddons(ctx, selector)
 			if err != nil {
 				r.Log.Error(ErrAddonSubscription(err))
 				return
 			}
+			r.Log.Info("Addons status updated")
 			r.addonChannel <- status
 		}
 	}()
