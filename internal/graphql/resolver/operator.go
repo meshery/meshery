@@ -230,10 +230,10 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
 			var er error
 			var port, address string
-			if &broker.Status != nil && &broker.Status.Endpoint != nil && len(strings.Split(broker.Status.Endpoint.External, ":")) > 1 {
+			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 1 {
 				port = strings.Split(broker.Status.Endpoint.External, ":")[1]
 			}
-			if &mesheryKubeClient.RestConfig != nil && len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
+			if len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
 				address = strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
 			}
 			endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)

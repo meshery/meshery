@@ -48,7 +48,7 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	if selector != nil {
-		return r.listenToAddonState(ctx)
+		return r.listenToAddonState(ctx, selector)
 	}
 
 	return nil, ErrInvalidRequest

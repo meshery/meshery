@@ -98,7 +98,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	return addonlist, nil
 }
 
-func (r *Resolver) listenToAddonState(ctx context.Context) (<-chan []*model.AddonList, error) {
+func (r *Resolver) listenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	r.addonChannel = make(chan []*model.AddonList, 0)
 
 	go func() {
@@ -120,8 +120,7 @@ func (r *Resolver) listenToAddonState(ctx context.Context) (<-chan []*model.Addo
 
 		select {
 		case <-r.meshsyncChannel:
-			selector := model.MeshTypeAll
-			status, err := r.getAvailableAddons(ctx, &selector)
+			status, err := r.getAvailableAddons(ctx, selector)
 			if err != nil {
 				r.Log.Error(ErrAddonSubscription(err))
 				return
