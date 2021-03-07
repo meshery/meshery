@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -29,6 +30,7 @@ type DefaultLocalProvider struct {
 	GenericPersister      database.Handler
 	GraphqlHandler        http.Handler
 	GraphqlPlayground     http.Handler
+	KubeClient            *mesherykube.Client
 }
 
 // Initialize will initialize the local provider
@@ -433,4 +435,14 @@ func (l *DefaultLocalProvider) GetGraphqlHandler() http.Handler {
 // GetGraphqlPlayground - to return graphql playground instance
 func (l *DefaultLocalProvider) GetGraphqlPlayground() http.Handler {
 	return l.GraphqlPlayground
+}
+
+// SetKubeClient - to set meshery kubernetes client
+func (l *DefaultLocalProvider) SetKubeClient(client *mesherykube.Client) {
+	l.KubeClient = client
+}
+
+// GetKubeClient - to get meshery kubernetes client
+func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
+	return l.KubeClient
 }
