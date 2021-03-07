@@ -202,7 +202,10 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
-		return "", err
+		if mesheryclient == nil {
+			return "", ErrMesheryClient(nil)
+		}
+		return "", ErrMesheryClient(err)
 	}
 
 	timeout := 60
@@ -235,8 +238,11 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 			}
 			if len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
 				address = strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
+				if len(address) > 0 {
+					address = address[:len(address)-1]
+				}
 			}
-			endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)
+			endpoint = fmt.Sprintf("%s:%s", address, port)
 			natsClient, er = nats.New(nats.Options{
 				URLS:           []string{endpoint},
 				ConnectionName: "meshery",
