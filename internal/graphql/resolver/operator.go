@@ -123,7 +123,6 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 
 func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
 	r.operatorChannel = make(chan *model.OperatorStatus)
-	r.meshsyncChannel = make(chan *broker.Message)
 
 	go func() {
 		r.Log.Info("Operator subscription started")
@@ -149,6 +148,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 				r.Log.Error(ErrOperatorSubscription(err))
 				return
 			}
+			r.Log.Info("Operator status updated")
 			r.operatorChannel <- status
 		}
 	}()
@@ -202,7 +202,10 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
-		return "", err
+		if mesheryclient == nil {
+			return "", ErrMesheryClient(nil)
+		}
+		return "", ErrMesheryClient(err)
 	}
 
 	timeout := 60
@@ -229,12 +232,17 @@ func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broke
 	if err != nil {
 		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
 			var er error
-			port := ""
-			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 0 {
+			var port, address string
+			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 1 {
 				port = strings.Split(broker.Status.Endpoint.External, ":")[1]
 			}
-			address := strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
-			endpoint = fmt.Sprintf("%s:%s", address[:len(address)-1], port)
+			if len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
+				address = strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
+				if len(address) > 0 {
+					address = address[:len(address)-1]
+				}
+			}
+			endpoint = fmt.Sprintf("%s:%s", address, port)
 			natsClient, er = nats.New(nats.Options{
 				URLS:           []string{endpoint},
 				ConnectionName: "meshery",

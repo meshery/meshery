@@ -14,6 +14,7 @@ const (
 	ErrOperatorSubscriptionCode     = "test_code"
 	ErrAddonSubscriptionCode        = "test_code"
 	ErrControlPlaneSubscriptionCode = "test_code"
+	ErrMesheryClientCode            = "test_code"
 )
 
 var (
@@ -51,4 +52,11 @@ func ErrAddonSubscription(err error) error {
 
 func ErrControlPlaneSubscription(err error) error {
 	return errors.NewDefault(ErrControlPlaneSubscriptionCode, "Control Plane Subscription failed", err.Error())
+}
+
+func ErrMesheryClient(err error) error {
+	if err != nil {
+		return errors.NewDefault(ErrMesheryClientCode, "Meshery kubernetes client not initialized", err.Error())
+	}
+	return errors.NewDefault(ErrMesheryClientCode, "Meshery kubernetes client not initialized")
 }

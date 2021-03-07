@@ -65,6 +65,21 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.
 
 	go func() {
 		r.Log.Info("Control Plane subscription started")
+		endpoint, err := subscribeToBroker(r.KubeClient, r.meshsyncChannel)
+		if err != nil {
+			r.Log.Error(ErrControlPlaneSubscription(err))
+			disabledStatus := model.StatusDisabled
+			r.operatorChannel <- &model.OperatorStatus{
+				Status: &disabledStatus,
+				Error: &model.Error{
+					Code:        "",
+					Description: err.Error(),
+				},
+			}
+			return
+		}
+		r.Log.Info("Connected to broker at:", endpoint)
+
 		select {
 		case <-r.meshsyncChannel:
 			status, err := r.getControlPlanes(ctx, filter)
@@ -72,6 +87,7 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.
 				r.Log.Error(ErrControlPlaneSubscription(err))
 				return
 			}
+			r.Log.Info("Controlplane status updated")
 			r.controlPlaneChannel <- status
 		}
 	}()

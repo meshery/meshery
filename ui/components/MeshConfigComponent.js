@@ -206,8 +206,6 @@ class MeshConfigComponent extends React.Component {
   componentDidMount() {
     const self = this;
     // Subscribe to the operator events
-    subscribeOperatorStatusEvents(self.setOperatorState)
-
     subscribeMeshSyncStatusEvents(res => {
       if (res.meshsync?.error) {
         self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
@@ -215,6 +213,7 @@ class MeshConfigComponent extends React.Component {
       }
     })
 
+    subscribeOperatorStatusEvents(self.setOperatorState)
     fetchMesheryOperatorStatus()
       .then(res => {
         self.setOperatorState(res)
