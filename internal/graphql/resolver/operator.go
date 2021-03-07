@@ -201,8 +201,11 @@ func initialize(client *mesherykube.Client, delete bool) error {
 func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broker.Message) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
-	if err != nil || mesheryclient == nil {
-		return "", err
+	if err != nil {
+		if mesheryclient == nil {
+			return "", ErrMesheryClient(nil)
+		}
+		return "", ErrMesheryClient(err)
 	}
 
 	timeout := 60
