@@ -1,21 +1,21 @@
 import { graphql, requestSubscription } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
-const addonEventsSubscription = graphql`
-  subscription AddonEventsSubscription($selector: MeshType) {
-    addonEvent: listenToAddonEvents(selector: $selector) {
+const addonStatusSubscription = graphql`
+  subscription AddonStatusSubscription($selector: MeshType) {
+    addonsState: listenToAddonState(selector: $selector) {
       type
-      status
       config {
         serviceName
+        endpoint
       }
     }
   }
 `;
 
-export default function subscribeOperatorEvents(dataCB, variables) {
+export default function subscribeAddonStatusEvents(dataCB, variables) {
   requestSubscription(environment, {
-    subscription: addonEventsSubscription,
+    subscription: addonStatusSubscription,
     variables: {
       selector: variables.serviceMesh
     },
