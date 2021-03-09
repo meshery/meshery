@@ -25,19 +25,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		err := listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
-		if err != nil {
-			r.Log.Error(ErrMeshsyncSubscription(err))
-			ch <- &model.OperatorControllerStatus{
-				Name:   &meshsyncName,
-				Status: model.StatusUnknown,
-				Error: &model.Error{
-					Code:        "",
-					Description: ErrMeshsyncSubscription(err).Error(),
-				},
-			}
-			return
-		}
+		listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
 		// extension to notify other channel when data comes in
 	}(channel)
 

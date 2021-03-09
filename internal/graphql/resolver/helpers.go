@@ -15,18 +15,16 @@ func listernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
-) error {
+) {
 	var wg sync.WaitGroup
 	for {
 		select {
 		case msg := <-datach:
 			wg.Add(1)
 			go persistData(*msg, log, handler, meshsyncCh, &wg)
-
 		}
+		wg.Wait()
 	}
-	wg.Wait()
-	return nil
 }
 
 // persistData - scale this function with the number of events to persist
