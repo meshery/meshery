@@ -19,8 +19,8 @@ var (
 	}
 )
 
-func (r *Resolver) changeAddonStatus(ctx context.Context) (*model.Status, error) {
-	return nil, nil
+func (r *Resolver) changeAddonStatus(ctx context.Context) (model.Status, error) {
+	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {
@@ -99,33 +99,29 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 }
 
 func (r *Resolver) listenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
-	r.addonChannel = make(chan []*model.AddonList, 0)
+	if r.addonChannel == nil {
+		r.addonChannel = make(chan []*model.AddonList, 0)
+	}
 
 	go func() {
 		r.Log.Info("Addons subscription started")
-		endpoint, err := subscribeToBroker(r.KubeClient, r.meshsyncChannel)
+		err := r.connectToBroker(context.TODO())
 		if err != nil {
-			r.Log.Error(ErrAddonSubscription(err))
-			disabledStatus := model.StatusDisabled
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: &disabledStatus,
-				Error: &model.Error{
-					Code:        "",
-					Description: err.Error(),
-				},
+			if err == ErrNoMeshSync {
+				r.Log.Warn(err)
+			} else {
+				r.Log.Error(err)
+				return
 			}
-			return
 		}
-		r.Log.Info("Connected to broker at:", endpoint)
 
 		select {
-		case <-r.meshsyncChannel:
+		case <-r.MeshSyncChannel:
 			status, err := r.getAvailableAddons(ctx, selector)
 			if err != nil {
 				r.Log.Error(ErrAddonSubscription(err))
 				return
 			}
-			r.Log.Info("Addons status updated")
 			r.addonChannel <- status
 		}
 	}()

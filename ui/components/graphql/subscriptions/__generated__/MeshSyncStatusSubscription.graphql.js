@@ -13,7 +13,7 @@ export type MeshSyncStatusSubscriptionVariables = {||};
 export type MeshSyncStatusSubscriptionResponse = {|
   +listenToMeshSyncEvents: {|
     +name: ?string,
-    +status: ?Status,
+    +status: Status,
     +error: ?{|
       +code: string,
       +description: string,
