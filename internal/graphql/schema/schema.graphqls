@@ -65,13 +65,13 @@ type ControlPlaneMember {
 
 # ============== OPERATOR =============================
 type OperatorStatus {
-	status: Status
+	status: Status!
 	error: Error
 }
 
 type OperatorControllerStatus {
 	name: String
-	status: Status
+	status: Status!
 	error: Error
 }
 
@@ -83,8 +83,8 @@ type Query {
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
-	changeOperatorStatus(targetStatus: Status): Status
+	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
+	changeOperatorStatus(targetStatus: Status!): Status!
 }
 
 type Subscription {

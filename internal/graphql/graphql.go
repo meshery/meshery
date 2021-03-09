@@ -16,18 +16,20 @@ import (
 )
 
 type Options struct {
-	DBHandler  *database.Handler
-	Logger     logger.Handler
-	KubeClient *mesherykube.Client
-	URL        string
+	DBHandler       *database.Handler
+	Logger          logger.Handler
+	KubeClient      *mesherykube.Client
+	MeshSyncChannel chan struct{}
+	URL             string
 }
 
 // New returns a graphql handler instance
 func New(opts Options) http.Handler {
 	resolver := &resolver.Resolver{
-		Log:        opts.Logger,
-		DBHandler:  opts.DBHandler,
-		KubeClient: opts.KubeClient,
+		Log:             opts.Logger,
+		DBHandler:       opts.DBHandler,
+		KubeClient:      opts.KubeClient,
+		MeshSyncChannel: opts.MeshSyncChannel,
 	}
 
 	srv := handler.New(generated.NewExecutableSchema(generated.Config{

@@ -12,10 +12,10 @@ export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKE
 export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type AddonStatusMutationVariables = {|
   selector?: ?MeshType,
-  targetStatus?: ?Status,
+  targetStatus: Status,
 |};
 export type AddonStatusMutationResponse = {|
-  +addonstate: ?Status
+  +addonstate: Status
 |};
 export type AddonStatusMutation = {|
   variables: AddonStatusMutationVariables,
@@ -27,7 +27,7 @@ export type AddonStatusMutation = {|
 /*
 mutation AddonStatusMutation(
   $selector: MeshType
-  $targetStatus: Status
+  $targetStatus: Status!
 ) {
   addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)
 }
@@ -84,16 +84,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6cbbc87cc13d2d10ee0d81e6503bc02c",
+    "cacheID": "bc81997a1e9bb3d2db83a11e0a4150b7",
     "id": null,
     "metadata": {},
     "name": "AddonStatusMutation",
     "operationKind": "mutation",
-    "text": "mutation AddonStatusMutation(\n  $selector: MeshType\n  $targetStatus: Status\n) {\n  addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)\n}\n"
+    "text": "mutation AddonStatusMutation(\n  $selector: MeshType\n  $targetStatus: Status!\n) {\n  addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b1868205652204d1597c407b7cd7780b';
+(node/*: any*/).hash = '37539d93c0e9392117292e6633d6be1c';
 
 module.exports = node;

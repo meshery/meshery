@@ -12,7 +12,7 @@ export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%futur
 export type OperatorStatusQueryVariables = {||};
 export type OperatorStatusQueryResponse = {|
   +operator: ?{|
-    +status: ?Status,
+    +status: Status,
     +error: ?{|
       +code: string,
       +description: string,

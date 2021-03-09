@@ -152,6 +152,7 @@ func main() {
 	}
 
 	kubeclient := mesherykube.Client{}
+	meshsyncCh := make(chan struct{})
 
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
@@ -169,9 +170,10 @@ func main() {
 		TestProfilesPersister:  testConfigPersister,
 		GenericPersister:       dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
-			Logger:     log,
-			DBHandler:  &dbHandler,
-			KubeClient: &kubeclient,
+			Logger:          log,
+			DBHandler:       &dbHandler,
+			KubeClient:      &kubeclient,
+			MeshSyncChannel: meshsyncCh,
 		}),
 		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 			URL: "/api/system/graphql/query",
@@ -204,9 +206,10 @@ func main() {
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
 			GraphqlHandler: graphql.New(graphql.Options{
-				Logger:     log,
-				DBHandler:  &dbHandler,
-				KubeClient: &kubeclient,
+				Logger:          log,
+				DBHandler:       &dbHandler,
+				KubeClient:      &kubeclient,
+				MeshSyncChannel: meshsyncCh,
 			}),
 			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 				URL: "/api/system/graphql/query",
@@ -237,7 +240,7 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-	}, &kubeclient)
+	}, &kubeclient, meshsyncCh, log)
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)

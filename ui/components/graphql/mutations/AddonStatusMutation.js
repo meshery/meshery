@@ -2,7 +2,7 @@ import { graphql, commitMutation } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const addonStatusMutation = graphql`
-  mutation AddonStatusMutation($selector: MeshType, $targetStatus: Status) {
+  mutation AddonStatusMutation($selector: MeshType, $targetStatus: Status!) {
     addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)
   }
 `;
