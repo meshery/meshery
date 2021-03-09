@@ -11,10 +11,10 @@ import (
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
+	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/broker"
-	"github.com/layer5io/meshsync/pkg/broker/nats"
 	"github.com/layer5io/meshsync/pkg/model"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -159,7 +159,14 @@ func (h *Handler) subscribeToBroker(datach chan *broker.Message) error {
 	}
 
 	// subscribing to nats
-	natsClient, err := nats.New(broker.Status.Endpoint.External)
+	natsClient, err := nats.New(nats.Options{
+		URLS:           []string{broker.Status.Endpoint.External},
+		ConnectionName: "meshery",
+		Username:       "",
+		Password:       "",
+		ReconnectWait:  2 * time.Second,
+		MaxReconnect:   5,
+	})
 	if err != nil {
 		return err
 	}

@@ -48,7 +48,9 @@ import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
-import subscribeAddonEvents from './graphql/subscriptions/AddonEventsSubscription';
+import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
+import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
+import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 
 const styles = (theme) => ({
   root: {
@@ -216,23 +218,27 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   componentDidMount() {
-    const meshname = this.mapAdapterNameToMeshName(this.activeMesh) 
-    subscribeAddonEvents(data => {
-      console.log(data)
-      data?.addonEvent?.forEach(addon => {
-        if (addon.type === meshname) {
-          this.setState(state => {
-            const name = addon.config.serviceName !== "jaeger-collector" ? addon.config.serviceName : "jaeger"
-            return {
-              addonSwitchGroup: { 
-                ...state.addonSwitchGroup, 
-                [`${name}-addon`]: addon.status === "ENABLED"
-              }
-            }
-          })
-        }
-      })
-    }, { serviceMesh: meshname })
+    const self = this;
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh) 
+    const variables = { 
+      serviceMesh: meshname
+    }
+    subscribeMeshSyncStatusEvents(res => {
+      if (res.meshsync?.error) {
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
+        return
+      }
+    })
+    subscribeAddonStatusEvents(self.setAddonsState, variables)
+
+    fetchAvailableAddons(variables)
+      .then(res => {
+        self.setAddonsState(res)
+      }
+      )
+      .catch(err =>
+        console.log("error at addon fetch: "+err)
+      )
   }
 
   mapAdapterNameToMeshName(name) {
@@ -241,11 +247,28 @@ class MesheryAdapterPlayComponent extends React.Component {
     return "ALL";
   }
 
+  setAddonsState = (data) => {
+    const self = this;
+    const meshname = self.activeMesh
+    const localState = {}
+    data?.addonsState?.forEach(addon => {
+      if (addon.type === meshname) {
+        const name = addon.config.serviceName !== "jaeger-collector" ? addon.config.serviceName : "jaeger"
+        localState[`${name}-addon`] = true
+      }
+    })
+    self.setState(() => {
+      return {
+        addonSwitchGroup: localState
+      }
+    })
+  }
+
   handleChange = (name, isDelete = false) => {
     const self = this;
     return (event) => {
       if (name === "namespace" && event.target.value !== "") {
-        this.setState({ namespaceError: false });
+        self.setState({ namespaceError: false });
       }
 
       if (name === "selectedOp" && event.target.value !== "") {

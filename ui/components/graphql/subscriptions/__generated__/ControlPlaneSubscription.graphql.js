@@ -9,41 +9,40 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
 export type ControlPlaneFilter = {|
   type?: ?MeshType
 |};
-export type meshScanSubscriptionVariables = {|
+export type ControlPlaneSubscriptionVariables = {|
   filter?: ?ControlPlaneFilter
 |};
-export type meshScanSubscriptionResponse = {|
-  +listenToControlPlaneEvents: $ReadOnlyArray<{|
+export type ControlPlaneSubscriptionResponse = {|
+  +controlPlanesState: $ReadOnlyArray<{|
     +name: ?MeshType,
-    +version: string,
     +members: $ReadOnlyArray<{|
+      +name: string,
+      +version: string,
       +component: string,
-      +status: ?Status,
       +namespace: string,
     |}>,
   |}>
 |};
-export type meshScanSubscription = {|
-  variables: meshScanSubscriptionVariables,
-  response: meshScanSubscriptionResponse,
+export type ControlPlaneSubscription = {|
+  variables: ControlPlaneSubscriptionVariables,
+  response: ControlPlaneSubscriptionResponse,
 |};
 */
 
 
 /*
-subscription meshScanSubscription(
+subscription ControlPlaneSubscription(
   $filter: ControlPlaneFilter
 ) {
-  listenToControlPlaneEvents(filter: $filter) {
+  controlPlanesState: listenToControlPlaneState(filter: $filter) {
     name
-    version
     members {
+      name
+      version
       component
-      status
       namespace
     }
   }
@@ -58,9 +57,16 @@ var v0 = [
     "name": "filter"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
   {
-    "alias": null,
+    "alias": "controlPlanesState",
     "args": [
       {
         "kind": "Variable",
@@ -70,23 +76,10 @@ v1 = [
     ],
     "concreteType": "ControlPlane",
     "kind": "LinkedField",
-    "name": "listenToControlPlaneEvents",
+    "name": "listenToControlPlaneState",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "version",
-        "storageKey": null
-      },
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -95,18 +88,19 @@ v1 = [
         "name": "members",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "component",
+            "name": "version",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "status",
+            "name": "component",
             "storageKey": null
           },
           {
@@ -128,8 +122,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "meshScanSubscription",
-    "selections": (v1/*: any*/),
+    "name": "ControlPlaneSubscription",
+    "selections": (v2/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
@@ -137,20 +131,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "meshScanSubscription",
-    "selections": (v1/*: any*/)
+    "name": "ControlPlaneSubscription",
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "610f5d659d8674ba54168d715e9ec97b",
+    "cacheID": "9594693970a688ad58d2d0f0743439f8",
     "id": null,
     "metadata": {},
-    "name": "meshScanSubscription",
+    "name": "ControlPlaneSubscription",
     "operationKind": "subscription",
-    "text": "subscription meshScanSubscription(\n  $filter: ControlPlaneFilter\n) {\n  listenToControlPlaneEvents(filter: $filter) {\n    name\n    version\n    members {\n      component\n      status\n      namespace\n    }\n  }\n}\n"
+    "text": "subscription ControlPlaneSubscription(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: listenToControlPlaneState(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '82a586a9835603dc4769821bfd5173e0';
+(node/*: any*/).hash = '99ef876152bb6036ee3741e1ccce209c';
 
 module.exports = node;
