@@ -20,7 +20,6 @@ var (
 func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error) {
 	channel := make(chan *model.OperatorControllerStatus)
 	if r.brokerChannel == nil {
-		r.Log.Info("creating broker channel")
 		r.brokerChannel = make(chan *broker.Message)
 	}
 
