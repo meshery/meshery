@@ -1,6 +1,7 @@
 //@ts-check
-import React from 'react';
-import PerformanceCard from './PerformanceCard';
+import { Grid } from "@material-ui/core";
+import React from "react";
+import PerformanceCard from "./PerformanceCard";
 
 /**
  * PerformanceProfileGrid is the react component for rendering
@@ -18,12 +19,21 @@ import PerformanceCard from './PerformanceCard';
  *  }>
  * }} props props
  */
-function PerformanceProfileGrid({ profiles }) {
+function PerformanceProfileGrid({ profiles = [] }) {
   return (
-    <div>
-      {profiles.map(() => <PerformanceCard />)}
-    </div>
-  )
+    <Grid container spacing={2} style={{ padding: "1rem" }} >
+      {profiles.map((profile) => (
+        <Grid item md={6} xs={12}>
+          <PerformanceCard
+            name={profile.name}
+            handleEdit={() => console.log("edit on", profile.id)}
+            handleDelete={() => console.log("delete on", profile.id)}
+            handleRunTest={() => console.log("run test on", profile.id)}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
 }
 
-export default PerformanceProfileGrid
+export default PerformanceProfileGrid;
