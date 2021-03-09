@@ -10,12 +10,12 @@ import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { updateProgress } from "../lib/store";
+import { updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import dataFetch from "../lib/data-fetch";
-import MesheryResults from "./MesheryResults";
-import GenericModal from "./GenericModal";
-import MesheryPerformanceComponent from "./MesheryPerformanceComponent";
+import dataFetch from "../../lib/data-fetch";
+import MesheryResults from "../MesheryResults";
+import GenericModal from "../GenericModal";
+import MesheryPerformanceComponent from "./index";
 
 const styles = (theme) => ({
   grid: {
