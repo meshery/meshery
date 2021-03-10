@@ -70,38 +70,7 @@ func NewDynamicClient(kubeconfig []byte) (dynamic.Interface, error) {
 }
 
 func NewKubeClient(kubeconfig []byte) (*mesherykube.Client, error) {
-	var (
-		restConfig *rest.Config
-		err        error
-	)
-
-	if len(kubeconfig) > 0 {
-		restConfig, err = clientcmd.RESTConfigFromKubeConfig(kubeconfig)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		restConfig, err = rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// To perform operations faster
-	restConfig.QPS = float32(50)
-	restConfig.Burst = int(100)
-
-	clientset, err := kubernetes.NewForConfig(restConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	// dynamicClient, err := dynamic.NewForConfig(restConfig)
-	// if err != nil {
-	// 	return ErrClientSet(err)
-	// }
-
-	client, err := mesherykube.New(clientset, *restConfig)
+	client, err := mesherykube.New(kubeconfig)
 	if err != nil {
 		return nil, err
 	}

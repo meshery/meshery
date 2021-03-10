@@ -335,11 +335,12 @@ func start() error {
 
 	case "kubernetes":
 
-		// create a kubernetes client
-		client, err := utils.CreateKubeClient()
+		log.Debug("creating new Clientset...")
+		// Create a new client
+		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to create new client")
 		}
 
 		log.Debug("fetching required Kubernetes manifest files...")

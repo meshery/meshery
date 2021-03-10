@@ -8,26 +8,26 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type mesheryOperatorStatusQueryVariables = {||};
-export type mesheryOperatorStatusQueryResponse = {|
+export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
+export type OperatorStatusQueryVariables = {||};
+export type OperatorStatusQueryResponse = {|
   +operator: ?{|
-    +status: ?Status,
+    +status: Status,
     +error: ?{|
       +code: string,
       +description: string,
     |},
   |}
 |};
-export type mesheryOperatorStatusQuery = {|
-  variables: mesheryOperatorStatusQueryVariables,
-  response: mesheryOperatorStatusQueryResponse,
+export type OperatorStatusQuery = {|
+  variables: OperatorStatusQueryVariables,
+  response: OperatorStatusQueryResponse,
 |};
 */
 
 
 /*
-query mesheryOperatorStatusQuery {
+query OperatorStatusQuery {
   operator: getOperatorStatus {
     status
     error {
@@ -89,7 +89,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "mesheryOperatorStatusQuery",
+    "name": "OperatorStatusQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -98,20 +98,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "mesheryOperatorStatusQuery",
+    "name": "OperatorStatusQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "0e7003f2d4816ecf4e6864a84333f5a8",
+    "cacheID": "ed65e93adf8349ea7d5a4e47f08bd16f",
     "id": null,
     "metadata": {},
-    "name": "mesheryOperatorStatusQuery",
+    "name": "OperatorStatusQuery",
     "operationKind": "query",
-    "text": "query mesheryOperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "query OperatorStatusQuery {\n  operator: getOperatorStatus {\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '800b4e252bc857ec45413b673f1c8a0d';
+(node/*: any*/).hash = '1c2d4cc73e3bbacd3ad55c6f2fb8c4bd';
 
 module.exports = node;

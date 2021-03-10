@@ -9,41 +9,40 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
 export type ControlPlaneFilter = {|
   type?: ?MeshType
 |};
-export type meshScanQueryVariables = {|
+export type ControlPlanesQueryVariables = {|
   filter?: ?ControlPlaneFilter
 |};
-export type meshScanQueryResponse = {|
-  +getControlPlanes: $ReadOnlyArray<{|
+export type ControlPlanesQueryResponse = {|
+  +controlPlanesState: $ReadOnlyArray<{|
     +name: ?MeshType,
-    +version: string,
     +members: $ReadOnlyArray<{|
+      +name: string,
+      +version: string,
       +component: string,
-      +status: ?Status,
       +namespace: string,
     |}>,
   |}>
 |};
-export type meshScanQuery = {|
-  variables: meshScanQueryVariables,
-  response: meshScanQueryResponse,
+export type ControlPlanesQuery = {|
+  variables: ControlPlanesQueryVariables,
+  response: ControlPlanesQueryResponse,
 |};
 */
 
 
 /*
-query meshScanQuery(
+query ControlPlanesQuery(
   $filter: ControlPlaneFilter
 ) {
-  getControlPlanes(filter: $filter) {
+  controlPlanesState: getControlPlanes(filter: $filter) {
     name
-    version
     members {
+      name
+      version
       component
-      status
       namespace
     }
   }
@@ -58,9 +57,16 @@ var v0 = [
     "name": "filter"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
   {
-    "alias": null,
+    "alias": "controlPlanesState",
     "args": [
       {
         "kind": "Variable",
@@ -73,20 +79,7 @@ v1 = [
     "name": "getControlPlanes",
     "plural": true,
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "version",
-        "storageKey": null
-      },
+      (v1/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -95,18 +88,19 @@ v1 = [
         "name": "members",
         "plural": true,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "component",
+            "name": "version",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "status",
+            "name": "component",
             "storageKey": null
           },
           {
@@ -128,8 +122,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "meshScanQuery",
-    "selections": (v1/*: any*/),
+    "name": "ControlPlanesQuery",
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -137,20 +131,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "meshScanQuery",
-    "selections": (v1/*: any*/)
+    "name": "ControlPlanesQuery",
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "e6e6230af67c35e191c1e10f5451acfd",
+    "cacheID": "81a16f9e33537974469a4c1f541dab63",
     "id": null,
     "metadata": {},
-    "name": "meshScanQuery",
+    "name": "ControlPlanesQuery",
     "operationKind": "query",
-    "text": "query meshScanQuery(\n  $filter: ControlPlaneFilter\n) {\n  getControlPlanes(filter: $filter) {\n    name\n    version\n    members {\n      component\n      status\n      namespace\n    }\n  }\n}\n"
+    "text": "query ControlPlanesQuery(\n  $filter: ControlPlaneFilter\n) {\n  controlPlanesState: getControlPlanes(filter: $filter) {\n    name\n    members {\n      name\n      version\n      component\n      namespace\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ea95368731b9b984d27bef1748d71bd3';
+(node/*: any*/).hash = '7749867bb95be6f805c7da4520e1fc1f';
 
 module.exports = node;
