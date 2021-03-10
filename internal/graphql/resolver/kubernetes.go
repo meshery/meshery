@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/layer5io/meshery/internal/graphql/model"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
