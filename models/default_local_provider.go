@@ -144,6 +144,24 @@ func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, s
 	return l.ResultPersister.GetResults(pg, pgs, profileID)
 }
 
+// FetchResults - fetches results from provider backend
+func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.ResultPersister.GetAllResults(pg, pgs)
+}
+
 // GetResult - fetches result from provider backend for the given result id
 func (l *DefaultLocalProvider) GetResult(req *http.Request, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)

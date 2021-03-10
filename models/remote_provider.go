@@ -357,8 +357,65 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
-// FetchResults - fetches results from provider backend
+// FetchResults - fetches results for profile id from provider backend
 func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
+
+	logrus.Infof("attempting to fetch results from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL)
+	remoteProviderURL.Path = path.Join(ep, profileID, "results")
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get results: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("results successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching results: %s", bdr)
+	return nil, fmt.Errorf("error while fetching results - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// FetchAllResults - fetches results from provider backend
+func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistResults, l.ProviderName)
@@ -368,8 +425,7 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 
 	logrus.Infof("attempting to fetch results from cloud")
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL)
-	remoteProviderURL.Path = path.Join(ep, profileID, "results")
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -519,12 +575,12 @@ func (l *RemoteProvider) GetResult(req *http.Request, resultID uuid.UUID) (*Mesh
 
 // PublishResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
-	if !l.Capabilities.IsSupported(PersistResults) {
+	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistResults, l.ProviderName)
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistPerformanceProfiles, l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResults)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistPerformanceProfiles)
 
 	data, err := json.Marshal(result)
 	if err != nil {
