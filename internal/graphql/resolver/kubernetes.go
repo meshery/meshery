@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/layer5io/meshery/internal/graphql/model"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	"github.com/sirupsen/logrus"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
