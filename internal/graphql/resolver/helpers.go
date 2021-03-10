@@ -17,13 +17,13 @@ func listernToEvents(log logger.Handler,
 	meshsyncCh chan struct{},
 ) {
 	var wg sync.WaitGroup
+	wg.Wait()
 	for {
 		select {
 		case msg := <-datach:
 			wg.Add(1)
 			go persistData(*msg, log, handler, meshsyncCh, &wg)
 		}
-		wg.Wait()
 	}
 }
 

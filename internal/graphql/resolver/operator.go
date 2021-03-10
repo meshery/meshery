@@ -132,13 +132,9 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 	go func() {
 		r.Log.Info("Operator subscription started")
 		err := r.connectToBroker(context.TODO())
-		if err != nil {
-			if err == ErrNoMeshSync {
-				r.Log.Warn(err)
-			} else {
-				r.Log.Error(err)
-				return
-			}
+		if err != nil && err != ErrNoMeshSync {
+			r.Log.Error(err)
+			return
 		}
 
 		select {

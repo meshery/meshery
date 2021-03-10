@@ -68,13 +68,9 @@ func (r *Resolver) listenToControlPlaneState(ctx context.Context, filter *model.
 	go func() {
 		r.Log.Info("ControlPlane subscription started")
 		err := r.connectToBroker(context.TODO())
-		if err != nil {
-			if err == ErrNoMeshSync {
-				r.Log.Warn(err)
-			} else {
-				r.Log.Error(err)
-				return
-			}
+		if err != nil && err != ErrNoMeshSync {
+			r.Log.Error(err)
+			return
 		}
 
 		select {
