@@ -11,7 +11,7 @@ describe("Settings", () => {
 
         cy.get(".MuiInputBase-input").type("mesherylocal.layer5.io:10000{enter}");
         cy.get("[data-cy=btnSubmitMeshAdapter]").click();
-        cy.get('@submitMeshAdapter')
+        cy.wait('@submitMeshAdapter')
         cy.get("[data-cy=adapterSuccessSnackbar]").should('exist')
       });
     });
