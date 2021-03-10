@@ -51,6 +51,8 @@ import MesheryResultDialog from "./MesheryResultDialog";
 import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import ReactSelectWrapper from "./ReactSelectWrapper";
 
 const styles = (theme) => ({
   root: {
@@ -195,7 +197,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       selectionError: false,
 
-      namespace: "default",
+      namespace: {
+        value: "default",
+        label: "default"
+      },
       namespaceError: false,
 
       customDialogAdd: false,
@@ -214,13 +219,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       search: "",
       sortOrder: "",
       pageSize: 10,
+      namespaceList: [],
     };
   }
 
   componentDidMount() {
     const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh) 
-    const variables = { 
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
+    const variables = {
       serviceMesh: meshname
     }
     subscribeMeshSyncStatusEvents(res => {
@@ -237,8 +243,28 @@ class MesheryAdapterPlayComponent extends React.Component {
       }
       )
       .catch(err =>
-        console.log("error at addon fetch: "+err)
+        console.log("error at addon fetch: " + err)
       )
+    fetchAvailableNamespaces()
+      .then(res => {
+        let namespaces = []
+        res?.namespaces?.map(ns => {
+          namespaces.push(
+            {
+              value: ns?.namespace,
+              label: ns?.namespace
+            }
+          )
+        })
+        if (namespaces.length === 0) {
+          namespaces.push({
+            value: "default",
+            label: "default"
+          })
+        }
+        self.setState({ namespaceList: namespaces })
+      })
+      .catch(err => console.log(err))
   }
 
   mapAdapterNameToMeshName(name) {
@@ -267,9 +293,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleChange = (name, isDelete = false) => {
     const self = this;
     return (event) => {
-      if (name === "namespace" && event.target.value !== "") {
-        self.setState({ namespaceError: false });
-      }
 
       if (name === "selectedOp" && event.target.value !== "") {
         if (event.target.value === "custom") {
@@ -288,6 +311,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       self.setState({ [name]: event.target.value });
     };
   };
+
+  handleNamespaceChange = (newValue) => {
+    if (typeof newValue !== "undefined") {
+      this.setState({ namespace: newValue, namespaceError: false });
+    } else {
+      this.setState({ namespaceError: true});
+    }
+  }
 
   handleModalClose(isDelete) {
     const self = this;
@@ -338,7 +369,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ cmEditorValAddError: true, selectionError: true });
         return;
       }
-      if (namespace === "") {
+      if (namespace.value === "") {
         self.setState({ namespaceError: true });
         return;
       }
@@ -354,7 +385,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const data = {
       adapter: adapter.adapter_location,
       query: selectedOp,
-      namespace,
+      namespace: namespace.value,
       customBody: deleteOp ? cmEditorValDel : cmEditorValAdd,
       deleteOp: deleteOp ? "on" : "",
     };
@@ -783,7 +814,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   generateYAMLEditor(cat, isDelete) {
     const { adapter } = this.props;
-    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel } = this.state;
+    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel, namespaceList } = this.state;
     const self = this;
     return (
       <Dialog
@@ -801,17 +832,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="namespace"
-                name="namespace"
+              <ReactSelectWrapper
                 label="Namespace"
-                fullWidth
                 value={namespace}
                 error={namespaceError}
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange("namespace")}
+                options={namespaceList}
+                onChange={this.handleNamespaceChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -972,7 +998,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     const self = this.state;
     return (
-      <FormControl component="fieldset" style={{padding: "1rem"}}>
+      <FormControl component="fieldset" style={{ padding: "1rem" }}>
         <FormLabel component="legend">Customize Addons</FormLabel>
         <FormGroup>
           {selectedAdapterOps
@@ -1004,7 +1030,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       </FormControl>
     )
   }
-  
+
   /**
    * renderGrafanaCustomCharts takes in the configuration and renders
    * the grafana boards. If the configuration is empty then it renders
@@ -1059,7 +1085,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   render() {
     const { classes, adapter } = this.props;
-    const { namespace, namespaceError, selectedRowData } = this.state;
+    const { namespace, namespaceError, selectedRowData, namespaceList } = this.state;
 
     let adapterName = adapter.name.split(" ").join("").toLowerCase();
     let imageSrc = "/static/img/" + adapterName + ".svg";
@@ -1108,17 +1134,12 @@ class MesheryAdapterPlayComponent extends React.Component {
                         </div>
                       </Grid>
                       <Grid item md={9} xs={12}>
-                        <TextField
-                          required
-                          id="namespace"
-                          name="namespace"
+                        <ReactSelectWrapper
                           label="Namespace"
-                          fullWidth
                           value={namespace}
                           error={namespaceError}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange("namespace")}
+                          options={namespaceList}
+                          onChange={this.handleNamespaceChange}
                         />
                       </Grid>
                     </Grid>

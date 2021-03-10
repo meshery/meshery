@@ -46,6 +46,10 @@ func (r *queryResolver) GetOperatorStatus(ctx context.Context) (*model.OperatorS
 	return r.getOperatorStatus(ctx)
 }
 
+func (r *queryResolver) GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error) {
+	return r.getAvailableNamespaces(ctx)
+}
+
 func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error) {
 	if selector != nil {
 		return r.listenToAddonState(ctx, selector)

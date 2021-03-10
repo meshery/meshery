@@ -341,6 +341,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
           <Grid container spacing={1} alignItems="flex-end">
             <Grid item xs={12}>
+              {console.log(availableAdapters)}
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
                 options={availableAdapters}

@@ -75,11 +75,17 @@ type OperatorControllerStatus {
 	error: Error
 }
 
+# ============== NAMESPACE =============================
+type NameSpace {
+	namespace: String!
+}
+
 # ============== ROOT =================================
 type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+	getAvailableNamespaces: [NameSpace!]!
 }
 
 type Mutation {
