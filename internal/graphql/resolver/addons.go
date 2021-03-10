@@ -106,13 +106,9 @@ func (r *Resolver) listenToAddonState(ctx context.Context, selector *model.MeshT
 	go func() {
 		r.Log.Info("Addons subscription started")
 		err := r.connectToBroker(context.TODO())
-		if err != nil {
-			if err == ErrNoMeshSync {
-				r.Log.Warn(err)
-			} else {
-				r.Log.Error(err)
-				return
-			}
+		if err != nil && err != ErrNoMeshSync {
+			r.Log.Error(err)
+			return
 		}
 
 		select {

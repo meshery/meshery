@@ -306,7 +306,6 @@ class MesheryPerformanceComponent extends React.Component {
 
   componentDidMount() {
     this.getStaticPrometheusBoardConfig();
-    this.scanForMeshes();
     this.getLoadTestPrefs();
     this.getSMPMeshes();
   }
@@ -349,30 +348,6 @@ class MesheryPerformanceComponent extends React.Component {
         self.setState({ staticPrometheusBoardConfig: result });
       }
     }, self.handleError('unable to fetch pre-configured boards'));
-  }
-
-  scanForMeshes = () => {
-    const self = this;
-
-    if (typeof self.props.k8sConfig === 'undefined' || !self.props.k8sConfig.clusterConfigured) {
-      return;
-    }
-    dataFetch('/api/mesh/scan', {
-      credentials: 'same-origin',
-      credentials: 'include',
-    }, (result) => {
-      if (typeof result !== 'undefined' && Object.keys(result).length > 0) {
-        const adaptersList = [];
-        Object.keys(result).forEach((mesh) => {
-          adaptersList.push(mesh);
-        });
-        self.setState({ availableAdapters: adaptersList });
-        Object.keys(result).forEach((mesh) => {
-          self.setState({ selectedMesh: mesh });
-        });
-      }
-    // }, self.handleError("unable to scan the kubernetes cluster"));
-    }, () => {});
   }
 
   getSMPMeshes = () => {
