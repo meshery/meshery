@@ -1,5 +1,5 @@
 import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import MesheryPerformanceComponent from "../../components/MesheryPerformance";
+import MesheryPerformanceComponent from "../../components/MesheryPerformance/Dashboard";
 import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';

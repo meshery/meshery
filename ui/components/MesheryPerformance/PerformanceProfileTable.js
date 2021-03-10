@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { NoSsr, TableCell, IconButton, TableRow, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
@@ -44,9 +44,13 @@ function MesheryTestProfiles({
   pageSize = 10,
   setPageSize,
   testProfiles = [],
+  setProfileForModal,
 }) {
   const [selectedProfile, setSelectedProfile] = useState();
-  console.log({ selectedProfile });
+
+  useEffect(() => {
+    setProfileForModal(selectedProfile);
+  }, [selectedProfile])
 
   const searchTimeout = useRef(null);
 

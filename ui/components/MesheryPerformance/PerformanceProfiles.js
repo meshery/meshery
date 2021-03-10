@@ -12,6 +12,11 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
 import { withSnackbar } from "notistack";
+import GenericModal from "../GenericModal";
+import MesheryPerformanceComponent from "./index";
+import { Paper } from "@material-ui/core";
+
+const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
 /**
  * Type Definition for View Type
@@ -29,7 +34,8 @@ function ViewSwitch({ view, changeView }) {
       size="small"
       value={view}
       exclusive
-      onChange={(_, newView) => changeView(newView)} aria-label="Switch View"
+      onChange={(_, newView) => changeView(newView)}
+      aria-label="Switch View"
     >
       <ToggleButton value="grid">
         <GridOnIcon />
@@ -53,6 +59,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
+  const [profileForModal, setProfileForModal] = useState();
 
   /**
    * fetch performance profiles when the page loads
@@ -77,43 +84,70 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       sortOrder
     )}`;
 
-    const val = "f";
-    if (val) {
-      updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
-      dataFetch(
-        `/api/user/performance/profiles${query}`,
-        {
-          credentials: "include",
-        },
-        (result) => {
-          updateProgress({ showProgress: false });
-          if (result) {
-            setTestProfiles(result.profiles || []);
-            setPage(result.page || 0);
-            setPageSize(result.page_size || 0);
-            setCount(result.total_count || 0);
-          }
-        },
-        handleError
-      );
-    }
+    dataFetch(
+      `${MESHERY_PERFORMANCE_URL}${query}`,
+      {
+        credentials: "include",
+      },
+      (result) => {
+        updateProgress({ showProgress: false });
+        if (result) {
+          setTestProfiles(result.profiles || []);
+          setPage(result.page || 0);
+          setPageSize(result.page_size || 0);
+          setCount(result.total_count || 0);
+        }
+      },
+      handleError("Failed to Fetch Profiles")
+    );
   }
 
-  function handleError(error) {
-    updateProgress({ showProgress: false });
-
-    enqueueSnackbar(`There was an error fetching results: ${error}`, {
-      variant: "error",
-      action: function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
+  function deleteProfile(id) {
+    dataFetch(
+      `${MESHERY_PERFORMANCE_URL}/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
       },
-      autoHideDuration: 8000,
-    });
+      () => {
+        updateProgress({ showProgress: false });
+
+        enqueueSnackbar("Performance Profile Successfully Deleted!", {
+          variant: "success",
+          autoHideDuration: 2000,
+          action: function Action(key) {
+            return (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            );
+          },
+        });
+
+        fetchTestProfiles(page, pageSize, search, sortOrder)
+      },
+      handleError("Failed To Delete Profile")
+    );
+  }
+
+  function handleError(msg) {
+    return function (error) {
+      updateProgress({ showProgress: false });
+
+      enqueueSnackbar(`${msg}: ${error}`, {
+        variant: "error",
+        action: function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          );
+        },
+        autoHideDuration: 8000,
+      });
+    };
   }
 
   return (
@@ -122,7 +156,11 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
         <ViewSwitch view={viewType} changeView={setViewType} />
       </div>
       {viewType === "grid" ? (
-        <PerformanceProfileGrid profiles={testProfiles} />
+        <PerformanceProfileGrid
+          profiles={testProfiles}
+          deleteHandler={deleteProfile}
+          setProfileForModal={setProfileForModal}
+        />
       ) : (
         <PerformanceProfileTable
           page={page}
@@ -135,8 +173,51 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           pageSize={pageSize}
           setPageSize={setPageSize}
           testProfiles={testProfiles}
+          setProfileForModal={setProfileForModal}
         />
       )}
+
+      <GenericModal
+        open={!!profileForModal}
+        Content={
+          <Paper style={{ margin: "auto", maxWidth: "90%", overflow: "hidden" }} >
+            <MesheryPerformanceComponent
+              // @ts-ignore
+              loadAsPerformanceProfile
+              // @ts-ignore
+              performanceProfileID={profileForModal?.id}
+              // @ts-ignore
+              profileName={profileForModal?.name}
+              // @ts-ignore
+              meshName={profileForModal?.service_mesh}
+              // @ts-ignore
+              url={profileForModal?.endpoints?.[0]}
+              // @ts-ignore
+              qps={profileForModal?.qps}
+              // @ts-ignore
+              loadGenerator={profileForModal?.load_generators?.[0]}
+              // @ts-ignore
+              t={profileForModal?.duration}
+              // @ts-ignore
+              c={profileForModal?.concurrent_request}
+              // @ts-ignore
+              reqBody={profileForModal?.request_body}
+              // @ts-ignore
+              headers={profileForModal?.request_headers}
+              // @ts-ignore
+              cookies={profileForModal?.request_cookies}
+              // @ts-ignore
+              contentType={profileForModal?.content_type}
+              // @ts-ignore
+              runTestOnMount={!!profileForModal?.runTest}
+            />
+          </Paper>
+        }
+        handleClose={() => {
+          fetchTestProfiles(page, pageSize, search, sortOrder);
+          setProfileForModal(undefined);
+        }}
+      />
     </div>
   );
 }
