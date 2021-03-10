@@ -17,9 +17,9 @@ describe('User Preferences', () => {
     })
 
     it('deactivates "Send Anonymous Performance Results"', () => {
-      cy.intercept('POST', '/api/user/stats', { fixture: 'stats.json' }).as('postUserStats')
-
       cy.get('[data-cy="PerfResultPreference"]').click()
+
+      cy.intercept('POST', '/api/user/stats', { fixture: 'stats.json' }).as('postUserStats')
       cy.wait('@postUserStats')
       cy.get('[data-cy="PerfResultPreference"]').should('not.have.class', 'Mui-checked')
     })
