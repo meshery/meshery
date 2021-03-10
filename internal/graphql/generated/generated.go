@@ -73,8 +73,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus *model.Status) int
-		ChangeOperatorStatus func(childComplexity int, targetStatus *model.Status) int
+		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus model.Status) int
+		ChangeOperatorStatus func(childComplexity int, targetStatus model.Status) int
 	}
 
 	NameSpace struct {
@@ -108,8 +108,8 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus *model.Status) (*model.Status, error)
-	ChangeOperatorStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error)
+	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus model.Status) (model.Status, error)
+	ChangeOperatorStatus(ctx context.Context, targetStatus model.Status) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
@@ -233,7 +233,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(*model.Status)), true
+		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status)), true
 
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
@@ -245,7 +245,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["targetStatus"].(*model.Status)), true
+		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["targetStatus"].(model.Status)), true
 
 	case "NameSpace.namespace":
 		if e.complexity.NameSpace.Namespace == nil {
@@ -513,13 +513,13 @@ type ControlPlaneMember {
 
 # ============== OPERATOR =============================
 type OperatorStatus {
-	status: Status
+	status: Status!
 	error: Error
 }
 
 type OperatorControllerStatus {
 	name: String
-	status: Status
+	status: Status!
 	error: Error
 }
 
@@ -537,8 +537,8 @@ type Query {
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
-	changeOperatorStatus(targetStatus: Status): Status
+	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
+	changeOperatorStatus(targetStatus: Status!): Status!
 }
 
 type Subscription {
@@ -567,10 +567,10 @@ func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Co
 		}
 	}
 	args["selector"] = arg0
-	var arg1 *model.Status
+	var arg1 model.Status
 	if tmp, ok := rawArgs["targetStatus"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg1, err = ec.unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+		arg1, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -582,10 +582,10 @@ func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Co
 func (ec *executionContext) field_Mutation_changeOperatorStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.Status
+	var arg0 model.Status
 	if tmp, ok := rawArgs["targetStatus"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg0, err = ec.unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1149,18 +1149,21 @@ func (ec *executionContext) _Mutation_changeAddonStatus(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["selector"].(*model.MeshType), args["targetStatus"].(*model.Status))
+		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1188,18 +1191,21 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["targetStatus"].(*model.Status))
+		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["targetStatus"].(model.Status))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _NameSpace_namespace(ctx context.Context, field graphql.CollectedField, obj *model.NameSpace) (ret graphql.Marshaler) {
@@ -1294,11 +1300,14 @@ func (ec *executionContext) _OperatorControllerStatus_status(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorControllerStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
@@ -1358,11 +1367,14 @@ func (ec *executionContext) _OperatorStatus_status(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
@@ -3112,8 +3124,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "changeAddonStatus":
 			out.Values[i] = ec._Mutation_changeAddonStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "changeOperatorStatus":
 			out.Values[i] = ec._Mutation_changeOperatorStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3167,6 +3185,9 @@ func (ec *executionContext) _OperatorControllerStatus(ctx context.Context, sel a
 			out.Values[i] = ec._OperatorControllerStatus_name(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._OperatorControllerStatus_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "error":
 			out.Values[i] = ec._OperatorControllerStatus_error(ctx, field, obj)
 		default:
@@ -3193,6 +3214,9 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 			out.Values[i] = graphql.MarshalString("OperatorStatus")
 		case "status":
 			out.Values[i] = ec._OperatorStatus_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "error":
 			out.Values[i] = ec._OperatorStatus_error(ctx, field, obj)
 		default:
@@ -3801,6 +3825,16 @@ func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 	return ec._OperatorStatus(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
+	var res model.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4105,22 +4139,6 @@ func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (*model.Status, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(model.Status)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v *model.Status) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

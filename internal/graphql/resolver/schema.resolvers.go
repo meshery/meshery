@@ -10,20 +10,16 @@ import (
 	"github.com/layer5io/meshery/internal/graphql/model"
 )
 
-func (r *mutationResolver) ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus *model.Status) (*model.Status, error) {
-	if selector != nil && targetStatus != nil {
+func (r *mutationResolver) ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus model.Status) (model.Status, error) {
+	if selector != nil {
 		return r.changeAddonStatus(ctx)
 	}
 
-	return nil, ErrInvalidRequest
+	return model.StatusUnknown, ErrInvalidRequest
 }
 
-func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error) {
-	if targetStatus != nil {
-		return r.changeOperatorStatus(ctx, targetStatus)
-	}
-
-	return nil, ErrInvalidRequest
+func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, targetStatus model.Status) (model.Status, error) {
+	return r.changeOperatorStatus(ctx, targetStatus)
 }
 
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error) {

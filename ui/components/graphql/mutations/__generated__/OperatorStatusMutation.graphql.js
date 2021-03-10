@@ -10,10 +10,10 @@
 import type { ConcreteRequest } from 'relay-runtime';
 export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
 export type OperatorStatusMutationVariables = {|
-  targetStatus?: ?Status
+  targetStatus: Status
 |};
 export type OperatorStatusMutationResponse = {|
-  +operatorStatus: ?Status
+  +operatorStatus: Status
 |};
 export type OperatorStatusMutation = {|
   variables: OperatorStatusMutationVariables,
@@ -24,7 +24,7 @@ export type OperatorStatusMutation = {|
 
 /*
 mutation OperatorStatusMutation(
-  $targetStatus: Status
+  $targetStatus: Status!
 ) {
   operatorStatus: changeOperatorStatus(targetStatus: $targetStatus)
 }
@@ -71,16 +71,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "df75e4f72d35f2c7c1577cbc17c311ec",
+    "cacheID": "f0f81d6685889dd15748788bd1e2d206",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusMutation",
     "operationKind": "mutation",
-    "text": "mutation OperatorStatusMutation(\n  $targetStatus: Status\n) {\n  operatorStatus: changeOperatorStatus(targetStatus: $targetStatus)\n}\n"
+    "text": "mutation OperatorStatusMutation(\n  $targetStatus: Status!\n) {\n  operatorStatus: changeOperatorStatus(targetStatus: $targetStatus)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '15ae99ba6bc204100999b4ca530433b1';
+(node/*: any*/).hash = 'f18b68bf4a817f8c1752cabe5235bf1f';
 
 module.exports = node;

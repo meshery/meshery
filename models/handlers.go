@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/vmihailenco/taskq/v3"
 )
 
@@ -31,7 +30,6 @@ type HandlerInterface interface {
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -85,9 +83,6 @@ type HandlerInterface interface {
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GraphqlSystemHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	MeshSyncDataHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	OperatorHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error
@@ -106,7 +101,6 @@ type HandlerConfig struct {
 	Queue taskq.Queue
 
 	KubeConfigFolder string
-	KubeClient       *mesherykube.Client
 
 	GrafanaClient         *GrafanaClient
 	GrafanaClientForQuery *GrafanaClient
