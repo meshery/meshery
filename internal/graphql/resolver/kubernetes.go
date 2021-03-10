@@ -15,7 +15,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context) ([]*model.NameSpa
 		return nil, result.Error
 	}
 	namespaces := make([]*model.NameSpace, 0)
-	for _, obj:= range resourceobjects{
+	for _, obj := range resourceobjects {
 		namespaces = append(namespaces, &model.NameSpace{
 			Namespace: obj.Namespace,
 		})
