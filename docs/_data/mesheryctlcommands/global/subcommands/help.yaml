@@ -1,4 +1,4 @@
-name: help
+name: --help, -h
 description: Displays helpful information about any command.
 usage: |
-    `mesheryctl --help`
+    `mesheryctl --help | mesheryctl system --help | meshery system start --help`

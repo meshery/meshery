@@ -1,4 +1,4 @@
-name: --file (optional)
-description: URI of the service mesh performance test configuration file. (default) empty string
+name: --file 
+description: URL of the service mesh performance test configuration file. (default) empty string.
 usage: |
-    `--file soak-test-clusterA.yaml`
+    `mesheryctl perf --file <path to file> --url <URL>`

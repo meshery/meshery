@@ -1,4 +1,4 @@
-name: --load-generator (optional)
+name: --load-generator 
 description: Choice of load generator - fortio (OR) wrk2 (default) fortio
 usage: |
-    `--load-generator=fortio`
+    `mesheryctl perf --load-generator [fortio/wrk2] --url <URL>`
