@@ -8,13 +8,14 @@ import PerformanceProfileTable from "./PerformanceProfileTable";
 import PerformanceProfileGrid from "./PerformanceProfileGrid";
 import dataFetch from "../../lib/data-fetch";
 import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
 import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
-import { Paper } from "@material-ui/core";
+import { Paper, Typography, Button } from "@material-ui/core";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 
@@ -60,6 +61,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
+  // const [loading, setLoading] = useState(false);
 
   /**
    * fetch performance profiles when the page loads
@@ -126,7 +128,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           },
         });
 
-        fetchTestProfiles(page, pageSize, search, sortOrder)
+        fetchTestProfiles(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Profile")
     );
@@ -160,6 +162,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           profiles={testProfiles}
           deleteHandler={deleteProfile}
           setProfileForModal={setProfileForModal}
+          pages={Math.ceil(count / pageSize)}
+          setPage={setPage}
         />
       ) : (
         <PerformanceProfileTable
@@ -176,11 +180,51 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           setProfileForModal={setProfileForModal}
         />
       )}
+      {!testProfiles.length ? (
+        <Paper style={{ padding: "0.5rem" }}>
+          <div
+            style={{
+              padding: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
+              No Performance Profiles Found
+            </Typography>
+            <Button
+              aria-label="Add Performance Profile"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => setProfileForModal({})}
+            >
+              <AddIcon />
+              Add Performance Profile
+            </Button>
+          </div>
+        </Paper>
+      ) : (
+        <div style={{ width: "fit-content", margin: "4rem auto 0" }}>
+          <Button
+            aria-label="Add Performance Profile"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => setProfileForModal({})}
+          >
+            <AddIcon />
+            Add Performance Profile
+          </Button>
+        </div>
+      )}
 
       <GenericModal
         open={!!profileForModal}
         Content={
-          <Paper style={{ margin: "auto", maxWidth: "90%", overflow: "hidden" }} >
+          <Paper style={{ margin: "auto", maxWidth: "90%", overflow: "hidden" }}>
             <MesheryPerformanceComponent
               // @ts-ignore
               loadAsPerformanceProfile

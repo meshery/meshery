@@ -4,15 +4,21 @@ import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { Grid } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
 import dataFetch from "../../lib/data-fetch";
 import MesheryMetrics from "../MesheryMetrics";
+import { withStyles } from "@material-ui/core/styles";
+import PerformanceCalendar from "./PerformanceCalendar";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
+
+const styles = () => ({
+  paper: {},
+});
 
 function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
   const [profiles, setProfiles] = useState({
@@ -93,22 +99,37 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   }
 
   return (
-    <Grid container spacing={1} style={{ padding: "0.5rem" }} alignItems="center" alignContent="space-around">
-      <Grid item md={6} xs={12}>
-        <div>
-          <b>Total Profiles Created:</b> {profiles.count}
-        </div>
-        <div>
-          <b>Total Tests Run:</b> {tests.count}
-        </div>
+    <Grid container spacing={2} style={{ padding: "0.5rem" }} alignItems="flex-start" alignContent="space-around">
+      <Grid item lg={6} xs={12}>
+        <Paper style={{ padding: "1rem" }}>
+          <div style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2rem" }}>
+            <h4>Performance Profile Summary</h4>
+          </div>
+          <PerformanceCalendar style={{ height: "40rem", margin: "1rem 0 2rem" }} />
+          <div>
+            <div>
+              <b>Total Profiles Created:</b> {profiles.count}
+            </div>
+            <div>
+              <b>Total Tests Run:</b> {tests.count}
+            </div>
+          </div>
+          <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
+            <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
+              Manage Profiles
+            </Button>
+          </div>
+        </Paper>
       </Grid>
-      <Grid item md={6} xs={12}>
-        <MesheryMetrics
-          boardConfigs={grafana.selectedBoardsConfigs}
-          grafanaURL={grafana.grafanaURL}
-          grafanaAPIKey={grafana.grafanaAPIKey}
-          handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
-        />
+      <Grid item lg={6} xs={12}>
+        <Paper>
+          <MesheryMetrics
+            boardConfigs={grafana.selectedBoardsConfigs}
+            grafanaURL={grafana.grafanaURL}
+            grafanaAPIKey={grafana.grafanaAPIKey}
+            handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
+          />
+        </Paper>
       </Grid>
     </Grid>
   );
@@ -123,4 +144,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard))));

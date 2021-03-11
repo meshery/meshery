@@ -1,5 +1,6 @@
 //@ts-check
 import { Grid } from "@material-ui/core";
+import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import PerformanceCard from "./PerformanceCard";
 
@@ -41,21 +42,30 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
  *    duration: string,
  *  }>,
  *  deleteHandler: (id: string) => void,
- *  setProfileForModal: (profile: any) => void
+ *  setProfileForModal: (profile: any) => void,
+ *  pages?: number,
+ *  setPage: (page: number) => void
  * }} props props
  */
-function PerformanceProfileGrid({ profiles = [], deleteHandler, setProfileForModal }) {
+function PerformanceProfileGrid({ profiles = [], deleteHandler, setProfileForModal, pages = 1, setPage }) {
   return (
-    <Grid container spacing={2} style={{ padding: "1rem" }}>
-      {profiles.map((profile) => (
-        <PerformanceCardGridItem
-          key={profile.id}
-          profile={profile}
-          deleteHandler={deleteHandler}
-          setProfileForModal={setProfileForModal}
-        />
-      ))}
-    </Grid>
+    <div>
+      <Grid container spacing={2} style={{ padding: "1rem" }}>
+        {profiles.map((profile) => (
+          <PerformanceCardGridItem
+            key={profile.id}
+            profile={profile}
+            deleteHandler={deleteHandler}
+            setProfileForModal={setProfileForModal}
+          />
+        ))}
+      </Grid>
+      {profiles.length ? (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "2rem" }}>
+          <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
+        </div>
+      ) : null}
+    </div>
   );
 }
 

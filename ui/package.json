@@ -68,6 +68,7 @@
     "notistack": "^1.0.5",
     "prop-types": "latest",
     "react": "^16.12.0",
+    "react-big-calendar": "^0.33.2",
     "react-codemirror2": "^7.2.1",
     "react-countdown-clock": "^2.6.0",
     "react-dom": "^16.12.0",
