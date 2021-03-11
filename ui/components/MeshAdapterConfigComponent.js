@@ -314,7 +314,7 @@ class MeshAdapterConfigComponent extends React.Component {
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
               case "traefik mesh":
-                image = "/static/img/traefik-mesh.svg";
+                image = "/static/img/traefikmesh.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
             }
