@@ -4,83 +4,32 @@ import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { Grid, Typography, Button } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import AddIcon from "@material-ui/icons/Add";
+import { withRouter } from "next/router";
 import dataFetch from "../../lib/data-fetch";
-import GrafanaCustomCharts from "../GrafanaCustomCharts";
+import MesheryMetrics from "../MesheryMetrics";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
+const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana }) {
-  const [count, setCount] = useState(0);
-  const [testProfiles, setTestProfiles] = useState([]);
-  console.log(testProfiles);
-
-  /**
-   * renderGrafanaCustomCharts takes in the configuration and renders
-   * the grafana boards. If the configuration is empty then it renders
-   * a note directing a user to install grafana and prometheus
-   * @param {Array<{ board: any, panels: Array<any>, templateVars: Array<any>}>} boardConfigs grafana board configs
-   * @param {string} grafanaURL grafana URL
-   * @param {string} grafanaAPIKey grafana API keey
-   */
-  function renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
-    if (boardConfigs?.length)
-      return (
-        <>
-          <Typography
-            align="center"
-            variant="h6"
-            style={{
-              margin: "0 0 2.5rem 0",
-            }}
-          >
-            Service Mesh Metrics
-          </Typography>
-          <GrafanaCustomCharts
-            // @ts-ignore
-            enableGrafanaChip
-            boardPanelConfigs={boardConfigs || []}
-            grafanaURL={grafanaURL || ""}
-            grafanaAPIKey={grafanaAPIKey || ""}
-          />
-        </>
-      );
-
-    return (
-      <div
-        style={{
-          padding: "2rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
-          No Service Mesh Metrics Configurations Found
-        </Typography>
-        <Button
-          aria-label="Add Grafana Charts"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={() => this.props.router.push("/settings/#metrics")}
-        >
-          <AddIcon />
-          Configure Service Mesh Metrics
-        </Button>
-      </div>
-    );
-  }
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+  const [profiles, setProfiles] = useState({
+    count: 0,
+    profiles: [],
+  });
+  const [tests, setTests] = useState({
+    count: 0,
+    tests: [],
+  });
 
   /**
    * fetch performance profiles when the page loads
    */
   useEffect(() => {
     fetchTestProfiles();
+    fetchTests();
   }, []);
 
   function fetchTestProfiles() {
@@ -94,8 +43,10 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana }) 
       (result) => {
         updateProgress({ showProgress: false });
         if (result) {
-          setTestProfiles(result.profiles || []);
-          setCount(result.total_count || 0);
+          setProfiles({
+            count: result.total_count || 0,
+            profiles: result.profiles || [],
+          });
         }
       },
       handleError("Failed to Fetch Profiles")
@@ -106,18 +57,20 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana }) 
     updateProgress({ showProgress: true });
 
     dataFetch(
-      `${MESHERY_PERFORMANCE_URL}`,
+      `${MESHERY_PERFORMANCE_TEST_URL}`,
       {
         credentials: "include",
       },
       (result) => {
         updateProgress({ showProgress: false });
         if (result) {
-          setTestProfiles(result.profiles || []);
-          setCount(result.total_count || 0);
+          setTests({
+            count: result.total_count || 0,
+            tests: result.results || [],
+          });
         }
       },
-      handleError("Failed to Fetch Profiles")
+      handleError("Failed to Fetch Results")
     );
   }
 
@@ -143,11 +96,19 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana }) 
     <Grid container spacing={1} style={{ padding: "0.5rem" }} alignItems="center" alignContent="space-around">
       <Grid item md={6} xs={12}>
         <div>
-          <b>Total Profiles Created:</b> {count}
+          <b>Total Profiles Created:</b> {profiles.count}
+        </div>
+        <div>
+          <b>Total Tests Run:</b> {tests.count}
         </div>
       </Grid>
       <Grid item md={6} xs={12}>
-        {renderGrafanaCustomCharts(grafana.selectedBoardsConfigs, grafana.grafanaURL, grafana.grafanaAPIKey)}
+        <MesheryMetrics
+          boardConfigs={grafana.selectedBoardsConfigs}
+          grafanaURL={grafana.grafanaURL}
+          grafanaAPIKey={grafana.grafanaAPIKey}
+          handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
+        />
       </Grid>
     </Grid>
   );
@@ -162,4 +123,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Dashboard));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Dashboard)));
