@@ -261,7 +261,7 @@ class MeshConfigComponent extends React.Component {
       if(errors !== undefined) {
         self.handleError("Operator action failed")
       }
-      self.props.enqueueSnackbar('Operator '+response, {
+      self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
         variant: 'success',
         autoHideDuration: 2000,
         action: (key) => (
@@ -362,6 +362,7 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+        // Prompt
         this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
         this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
           variant: 'success',
@@ -465,6 +466,7 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+        // Prompt
         this.setState({
           inClusterConfigForm: false,
           inClusterConfig: false,

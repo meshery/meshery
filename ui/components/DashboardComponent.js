@@ -35,6 +35,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
 
@@ -205,6 +206,7 @@ class DashboardComponent extends React.Component {
         return
       }
     })
+    subscribeOperatorStatusEvents(self.setOperatorState)
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
 
     fetchControlPlanes(ALL_MESH)
