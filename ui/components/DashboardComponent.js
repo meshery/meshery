@@ -291,7 +291,7 @@ class DashboardComponent extends React.Component {
       const meshData = mesh?.members?.map(member => ({
         name: member.name,
         component: member.component,
-        version: member.version,
+        version: this.normalizeVersion(member.version),
         namespace: member.namespace,
       }))
 
@@ -335,6 +335,15 @@ class DashboardComponent extends React.Component {
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   }
 
+  normalizeVersion = version => {
+    if (typeof version === "string") {
+      if (version.toLowerCase().startsWith('v')) return version.substring(1);
+      return version;
+    }
+
+    return "";
+  }
+  
   /**
    * generateMeshScanPodName takes in the podname and the hash
    * and returns the trimmed pod name
@@ -530,7 +539,7 @@ class DashboardComponent extends React.Component {
             <Grid item>
               <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
                 <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight: "0.75rem" }} />
-                <Typography variant="h6">{mesh.name}</Typography>
+                <Typography variant="h6" style={{ textTransform: "capitalize" }}>{mesh.name?.toLowerCase()}</Typography>
               </div>
             </Grid>
             <Grid item>
@@ -554,7 +563,6 @@ class DashboardComponent extends React.Component {
             <Table aria-label="mesh details table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Control Plane Pods</TableCell>
                   <TableCell align="center">Component</TableCell>
                   <TableCell align="center">Version</TableCell>
                 </TableRow>
@@ -563,16 +571,14 @@ class DashboardComponent extends React.Component {
                 {components
                   .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => (
-                    <TableRow key={component.name.full}>
-                      {/* <TableCell scope="row" align="center">
-                        <Tooltip title={component.name.full}>
+                    <TableRow key={component.name}>
+                      <TableCell scope="row" align="center">
+                        <Tooltip title={component.name}>
                           <div style={{ textAlign: "center" }}>
-                            {component.name.trimmed}
+                            {component.name}
                           </div>
                         </Tooltip>
-                      </TableCell> */}
-                      <TableCell align="center">{component.name}</TableCell>
-                      <TableCell align="center">{component.component}</TableCell>
+                      </TableCell>
                       <TableCell align="center">{component.version}</TableCell>
                     </TableRow>)
                   )}
