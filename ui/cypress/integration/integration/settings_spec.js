@@ -1,22 +1,20 @@
 describe("Settings", () => {
-    describe("Service Meshes", () => {
-      before(() => {
-        cy.intercept('GET', '/api/mesh/adapters').as('getMeshAdapters')
+  describe("Service Meshes", () => {
+    before(() => {
+      cy.visit("/settings");
+      cy.get('[data-cy="tabServiceMeshes"]').click();
+    });
 
-        cy.visit("/settings");
-        cy.get('[data-cy="tabServiceMeshes"]').click();
-        cy.wait('@getMeshAdapters')
-      });
+    it("select, submit, and confirm", () => {
+      cy.intercept("GET", "/api/mesh/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
+      cy.intercept("POST", "/api/mesh/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
 
-      it("select, submit, and confirm", () => {
-        cy.intercept('POST', '/api/mesh/manage', { fixture: 'stats.json' }).as('postMeshManage')
+      cy.get(".MuiInputBase-input").type("mesherylocal.layer5.io:10000{enter}");
 
-        cy.get(".MuiInputBase-input")
-          .type("mesherylocal.layer5.io:10000{enter}");
-
-        cy.get("[data-cy=btnSubmitMeshAdapter]").click();
-        cy.wait('@postMeshManage')
-        cy.get("[data-cy=adapterSuccessSnackbar]").should('exist')
-      });
+      cy.get("[data-cy=btnSubmitMeshAdapter]").click();
+      cy.wait("@postMeshManage");
+      cy.wait("@getMeshAdapters");
+      cy.get("[data-cy=adapterSuccessSnackbar]").should("exist");
     });
   });
+});
