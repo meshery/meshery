@@ -102,6 +102,25 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana }) 
     );
   }
 
+  function fetchTests() {
+    updateProgress({ showProgress: true });
+
+    dataFetch(
+      `${MESHERY_PERFORMANCE_URL}`,
+      {
+        credentials: "include",
+      },
+      (result) => {
+        updateProgress({ showProgress: false });
+        if (result) {
+          setTestProfiles(result.profiles || []);
+          setCount(result.total_count || 0);
+        }
+      },
+      handleError("Failed to Fetch Profiles")
+    );
+  }
+
   function handleError(msg) {
     return function (error) {
       updateProgress({ showProgress: false });
