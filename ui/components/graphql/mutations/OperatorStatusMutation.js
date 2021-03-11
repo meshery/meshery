@@ -2,7 +2,7 @@ import { graphql, commitMutation } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const operatorStatusMutation = graphql`
-  mutation OperatorStatusMutation($targetStatus: Status) {
+  mutation OperatorStatusMutation($targetStatus: Status!) {
     operatorStatus: changeOperatorStatus(targetStatus: $targetStatus) 
   }
 `;

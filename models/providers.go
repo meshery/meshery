@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -12,7 +13,9 @@ import (
 
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
-	DBHandler *database.Handler
+	DBHandler       *database.Handler
+	MeshSyncChannel chan struct{}
+	Logger          logger.Handler
 }
 
 // Router

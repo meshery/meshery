@@ -13,12 +13,15 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	Log        logger.Handler
-	DBHandler  *database.Handler
-	KubeClient *mesherykube.Client
+	Log             logger.Handler
+	DBHandler       *database.Handler
+	KubeClient      *mesherykube.Client
+	MeshSyncChannel chan struct{}
+
+	brokerConn broker.Handler
 
 	operatorChannel     chan *model.OperatorStatus
-	meshsyncChannel     chan *broker.Message
+	brokerChannel       chan *broker.Message
 	addonChannel        chan []*model.AddonList
 	controlPlaneChannel chan []*model.ControlPlane
 }

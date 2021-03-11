@@ -15,11 +15,14 @@ const (
 	ErrAddonSubscriptionCode        = "test_code"
 	ErrControlPlaneSubscriptionCode = "test_code"
 	ErrMesheryClientCode            = "test_code"
+	ErrSubscribeChannelCode         = "test_code"
+	ErrNoMeshSyncCode               = "test_code"
 )
 
 var (
 	ErrNilClient      = errors.NewDefault(ErrNilClientCode, "Kubernetes client not initialized")
 	ErrInvalidRequest = errors.NewDefault(ErrInvalidRequestCode, "Invalid query, please check syntax")
+	ErrNoMeshSync     = errors.NewDefault(ErrNoMeshSyncCode, "MeshSync disabled")
 )
 
 func ErrCreateData(err error) error {
@@ -52,6 +55,10 @@ func ErrAddonSubscription(err error) error {
 
 func ErrControlPlaneSubscription(err error) error {
 	return errors.NewDefault(ErrControlPlaneSubscriptionCode, "Control Plane Subscription failed", err.Error())
+}
+
+func ErrSubscribeChannel(err error) error {
+	return errors.NewDefault(ErrSubscribeChannelCode, "Unable to subscribe to channel", err.Error())
 }
 
 func ErrMesheryClient(err error) error {
