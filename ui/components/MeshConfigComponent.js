@@ -22,6 +22,7 @@ import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatu
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
+import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   root: {
@@ -183,6 +184,7 @@ class MeshConfigComponent extends React.Component {
 
       operatorSwitch: false,
     };
+    this.ref = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -220,7 +222,7 @@ class MeshConfigComponent extends React.Component {
       }
       )
       .catch(err =>
-        console.log("error at operator scan: "+err)
+        console.log("error at operator scan: " + err)
       )
   }
 
@@ -252,16 +254,16 @@ class MeshConfigComponent extends React.Component {
   handleOperatorSwitch = () => {
     const self = this;
     const variables = {
-      status: `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED" }`,
-    } 
+      status: `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED"}`,
+    }
     self.props.updateProgress({ showProgress: true })
 
     changeOperatorState((response, errors) => {
       self.props.updateProgress({ showProgress: false });
-      if(errors !== undefined) {
+      if (errors !== undefined) {
         self.handleError("Operator action failed")
       }
-      self.props.enqueueSnackbar('Operator '+response, {
+      self.props.enqueueSnackbar('Operator ' + response, {
         variant: 'success',
         autoHideDuration: 2000,
         action: (key) => (
@@ -362,26 +364,35 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
-        this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
-        this.props.updateK8SConfig({
-          k8sConfig: {
-            inClusterConfig: inClusterConfigForm, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer,
-          },
-        });
+        //prompt
+        const modal = this.ref.current;
+        setTimeout(async () => {
+          let response = await modal.show({ title: "", subtitle: "", options: ["yes", "no"] });
+          if (response == "yes") {
+            this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
+            this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
+              variant: 'success',
+              autoHideDuration: 2000,
+              action: (key) => (
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key)}
+                >
+                  <CloseIcon />
+                </IconButton>
+              ),
+            });
+            this.props.updateK8SConfig({
+              k8sConfig: {
+                inClusterConfig: inClusterConfigForm, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer,
+              },
+            });
+          } else {
+            this.setState({k8sfileElementVal: '', contextNameForForm: ''})
+          }
+        }, 100);
       }
     }, self.handleError("Kubernetes config could not be validated"));
   }
@@ -420,7 +431,7 @@ class MeshConfigComponent extends React.Component {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
-      this.setState({operatorInstalled: result["operator-installed"]=="true"?true:false, NATSInstalled: result["broker-installed"]=="true"?true:false, meshSyncInstalled: result["meshsync-installed"]=="true"?true:false})
+      this.setState({ operatorInstalled: result["operator-installed"] == "true" ? true : false, NATSInstalled: result["broker-installed"] == "true" ? true : false, meshSyncInstalled: result["meshsync-installed"] == "true" ? true : false })
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Operator was successfully pinged!', {
@@ -465,35 +476,43 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.setState({
-          inClusterConfigForm: false,
-          inClusterConfig: false,
-          k8sfile: '',
-          k8sfileElementVal: '',
-          k8sfileError: false,
-          contextName: '',
-          contextNameForForm: '',
-          clusterConfigured: false,
-        });
-        this.props.updateK8SConfig({
-          k8sConfig: {
-            inClusterConfig: false, k8sfile: '', contextName: '', clusterConfigured: false,
-          },
-        });
-        this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
+        //prompt
+        const modal = this.ref.current;
+        setTimeout(async () => {
+          let response = await modal.show({ title: "", subtitle: "", options: ["yes", "no"] });
+          if (response == "yes") {
+            this.setState({
+              inClusterConfigForm: false,
+              inClusterConfig: false,
+              k8sfile: '',
+              k8sfileElementVal: '',
+              k8sfileError: false,
+              contextName: '',
+              contextNameForForm: '',
+              clusterConfigured: false,
+            });
+            this.props.updateK8SConfig({
+              k8sConfig: {
+                inClusterConfig: false, k8sfile: '', contextName: '', clusterConfigured: false,
+              },
+            });
+            this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
+              variant: 'success',
+              autoHideDuration: 2000,
+              action: (key) => (
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key)}
+                >
+                  <CloseIcon />
+                </IconButton>
+              ),
+            });
+          } else {
+          }
+        }, 100);
       }
     }, self.handleError("Kubernetes config could not be validated"));
   }
@@ -571,12 +590,12 @@ class MeshConfigComponent extends React.Component {
             variant="outlined"
             data-cy="chipOperator"
           />
-              
+
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Operator State" secondary={operatorInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="Operator State" secondary={operatorInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -586,7 +605,7 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="MeshSync State" secondary={meshSyncInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="MeshSync State" secondary={meshSyncInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -596,20 +615,20 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={NATSInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="NATS State" secondary={NATSInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
                 </ListItem>
               </List>
             </Grid>
-                
+
           </Grid>
         </div>
         <div className={classes.grey}>
           <FormGroup>
             <FormControlLabel
-              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary"/>}
+              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary" />}
               label="Meshery Operator"
             />
           </FormGroup>
@@ -631,12 +650,13 @@ class MeshConfigComponent extends React.Component {
 
     return (
       <NoSsr>
+        <PromptComponent ref={this.ref} />
         <div className={classes.root}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>
                 <h4>
-              Cluster Configuration
+                  Cluster Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -697,10 +717,10 @@ class MeshConfigComponent extends React.Component {
             </Grid>
 
             <Grid item xs={12} md={6} spacing={1}>
-              
+
               <div className={classes.heading}>
                 <h4>
-              Operator Configuration
+                  Operator Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -718,12 +738,13 @@ class MeshConfigComponent extends React.Component {
 
     return (
       <NoSsr>
+        <PromptComponent ref={this.ref} />
         <div className={classes.root}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>
                 <h4>
-              Cluster Configuration
+                  Cluster Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -749,10 +770,10 @@ class MeshConfigComponent extends React.Component {
             </Grid>
 
             <Grid item xs={12} md={6} spacing={1}>
-              
+
               <div className={classes.heading}>
                 <h4>
-              Operator Configuration
+                  Operator Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
