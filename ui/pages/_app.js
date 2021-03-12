@@ -184,9 +184,6 @@ theme = {
   },
   mixins: {
     ...theme.mixins,
-    toolbar: {
-      minHeight: 48,
-    },
   },
 };
 
@@ -439,7 +436,7 @@ class MesheryApp extends App {
                     maxSnack={10}
                   >
                     <MesheryProgressBar />
-                    <Header onDrawerToggle={this.handleDrawerToggle} />
+                    <Header onDrawerToggle={this.handleDrawerToggle} onDrawerCollapse={isDrawerCollapsed}/>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
                         <Component pageContext={this.pageContext} {...pageProps} />

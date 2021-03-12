@@ -2,90 +2,100 @@ package resolver
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"time"
 
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
+	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/broker"
-	"github.com/layer5io/meshsync/pkg/broker/nats"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	natspackage "github.com/nats-io/nats.go"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	namespace = "meshery"
+	namespace       = "meshery"
+	operatorSubject = "meshery.>"
+	operatorQueue   = "meshery"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
-func (r *Resolver) changeOperatorStatus(ctx context.Context, status *model.Status) (*model.Status, error) {
+func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status) (model.Status, error) {
 	delete := true
-	if *status == model.StatusEnabled {
+	if status == model.StatusEnabled {
 		delete = false
 	}
 
-	go func(del bool) {
-		kubeClient, err := r.GetKubeClient()
-		if err != nil {
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: status,
-				Error: &model.Error{
-					Code:        errCode,
-					Description: "failed to create meshkube client",
-				},
-			}
-			return
-		}
+	if r.KubeClient.KubeClient == nil {
+		r.Log.Error(ErrNilClient)
+		return model.StatusUnknown, ErrNilClient
+	}
 
-		er := initialize(kubeClient, del)
-		if er != nil {
-			r.operatorChannel <- &model.OperatorStatus{
-				Status: status,
-				Error: &model.Error{
-					Code:        errCode,
-					Description: er.Error(),
-				},
-			}
-			return
-		}
-
-		r.meshsyncChannel = make(chan *broker.Message)
-		err = subscribeToBroker(kubeClient, r.meshsyncChannel)
+	go func(del bool, kubeclient *mesherykube.Client) {
+		err := initialize(kubeclient, del)
 		if err != nil {
+			r.Log.Error(err)
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
 				Error: &model.Error{
-					Code:        errCode,
+					Code:        "",
 					Description: err.Error(),
 				},
 			}
 			return
+		}
+		r.Log.Info("Operator operation executed")
+
+		if !del {
+			endpoint, err := r.subscribeToBroker(kubeclient, r.brokerChannel)
+			if err != nil {
+				r.Log.Error(err)
+				r.Log.Info(endpoint)
+				r.operatorChannel <- &model.OperatorStatus{
+					Status: status,
+					Error: &model.Error{
+						Code:        "",
+						Description: err.Error(),
+					},
+				}
+				return
+			}
+			r.Log.Info("Connected to broker at:", endpoint)
 		}
 
 		// installMeshsync
-		err = runMeshSync(kubeClient, del)
+		err = runMeshSync(kubeclient, del)
 		if err != nil {
+			r.Log.Error(err)
 			r.operatorChannel <- &model.OperatorStatus{
 				Status: status,
 				Error: &model.Error{
-					Code:        errCode,
+					Code:        "",
 					Description: err.Error(),
 				},
 			}
 			return
 		}
-	}(delete)
+		r.Log.Info("Meshsync operation executed")
+
+		r.operatorChannel <- &model.OperatorStatus{
+			Status: status,
+		}
+	}(delete, r.KubeClient)
 
 	r.operatorChannel <- &model.OperatorStatus{
-		Status: status,
+		Status: model.StatusProcessing,
 	}
 
-	return status, nil
+	return model.StatusProcessing, nil
 }
 
 func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
@@ -93,10 +103,11 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 
 	obj, err := getOperator(r.DBHandler)
 	if err != nil {
+		r.Log.Error(err)
 		return &model.OperatorStatus{
-			Status: &status,
+			Status: status,
 			Error: &model.Error{
-				Code:        errCode,
+				Code:        "",
 				Description: err.Error(),
 			},
 		}, nil
@@ -109,18 +120,28 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 	}
 
 	return &model.OperatorStatus{
-		Status: &status,
+		Status: status,
 	}, nil
 }
 
-func (r *Resolver) listenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error) {
-	r.operatorChannel = make(chan *model.OperatorStatus)
+func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
+	if r.operatorChannel == nil {
+		r.operatorChannel = make(chan *model.OperatorStatus)
+	}
 
 	go func() {
+		r.Log.Info("Operator subscription started")
+		err := r.connectToBroker(context.TODO())
+		if err != nil && err != ErrNoMeshSync {
+			r.Log.Error(err)
+			return
+		}
+
 		select {
-		case <-r.meshsyncChannel:
+		case <-r.MeshSyncChannel:
 			status, err := r.getOperatorStatus(ctx)
 			if err != nil {
+				r.Log.Error(ErrOperatorSubscription(err))
 				return
 			}
 			r.operatorChannel <- status
@@ -130,26 +151,94 @@ func (r *Resolver) listenToOperatorEvents(ctx context.Context) (<-chan *model.Op
 	return r.operatorChannel, nil
 }
 
+func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broker.Message) (string, error) {
+	var broker *operatorv1alpha1.Broker
+	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
+	if err != nil {
+		if mesheryclient == nil {
+			return "", ErrMesheryClient(nil)
+		}
+		return "", ErrMesheryClient(err)
+	}
+
+	timeout := 60
+	for timeout > 0 {
+		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
+		if err == nil && broker.Status.Endpoint.External != "" {
+			break
+		}
+		timeout--
+		time.Sleep(1 * time.Second)
+	}
+
+	// subscribing to nats
+	endpoint := broker.Status.Endpoint.External
+	r.brokerConn, err = nats.New(nats.Options{
+		URLS:           []string{endpoint},
+		ConnectionName: "meshery",
+		Username:       "",
+		Password:       "",
+		ReconnectWait:  2 * time.Second,
+		MaxReconnect:   5,
+	})
+	// Hack for minikube based clusters
+	if err != nil {
+		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
+			var er error
+			var port, address string
+			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 1 {
+				port = strings.Split(broker.Status.Endpoint.External, ":")[1]
+			}
+			if len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
+				address = strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
+				if len(address) > 0 {
+					address = address[:len(address)-1]
+				}
+			}
+			endpoint = fmt.Sprintf("%s:%s", address, port)
+			r.brokerConn, er = nats.New(nats.Options{
+				URLS:           []string{endpoint},
+				ConnectionName: "meshery",
+				Username:       "",
+				Password:       "",
+				ReconnectWait:  2 * time.Second,
+				MaxReconnect:   5,
+			})
+			if er != nil {
+				return endpoint, er
+			}
+		} else {
+			return endpoint, err
+		}
+	}
+
+	err = r.brokerConn.SubscribeWithChannel(operatorSubject, operatorQueue, datach)
+	if err != nil {
+		return endpoint, ErrSubscribeChannel(err)
+	}
+
+	return endpoint, nil
+}
+
 func getOperator(handler *database.Handler) ([]string, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 
 	subquery1 := handler.Select("id").Where("key = ? AND value = ?", "app", "meshery").Table("key_values")
 	subquery2 := handler.Select("id").Where("id IN (?) AND key = ? AND value = ?", subquery1, "component", "operator").Table("key_values")
 	result := handler.
-		Preload("TypeMeta", "kind = ?", "Deployment").
 		Preload("ObjectMeta").
 		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
+		Preload("ObjectMeta.Annotations", "id IN (?)", subquery2).
 		Preload("Spec").
 		Preload("Status").
-		Find(&objects, "id IN (?)", subquery2)
+		Find(&objects, "kind = ?", "Deployment")
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, ErrQuery(result.Error)
 	}
 
 	deploys := []string{}
 	for _, obj := range objects {
-		if obj.TypeMeta != nil && obj.ObjectMeta != nil && obj.Spec != nil && obj.Status != nil {
+		if meshsyncmodel.IsObject(obj) {
 			deploys = append(deploys, obj.ObjectMeta.Name)
 		}
 	}
@@ -166,35 +255,6 @@ func initialize(client *mesherykube.Client, delete bool) error {
 
 	// installBroker
 	err = applyYaml(client, delete, brokerYaml)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broker.Message) error {
-	var broker *operatorv1alpha1.Broker
-	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
-	if err != nil {
-		return err
-	}
-
-	for {
-		broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.Background(), "meshery-broker", metav1.GetOptions{})
-		if err == nil && broker.Status.Endpoint.External != "" {
-			break
-		}
-		time.Sleep(1 * time.Second)
-	}
-
-	// subscribing to nats
-	natsClient, err := nats.New(broker.Status.Endpoint.External)
-	if err != nil {
-		return err
-	}
-
-	err = natsClient.SubscribeWithChannel(meshsyncName, namespace, datach)
 	if err != nil {
 		return err
 	}

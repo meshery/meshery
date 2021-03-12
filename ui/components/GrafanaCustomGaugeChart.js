@@ -1,10 +1,7 @@
 import { NoSsr } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 
-let bb;
-if (typeof window !== 'undefined') {
-  bb = require('billboard.js');
-}
+import bb, { gauge } from 'billboard.js'
 
 const useStyles = makeStyles({
   '@global': {
@@ -71,7 +68,7 @@ export default function GrafanaCustomGaugeChart(props) {
     }
 
     if (chartRef && chartRef !== null) {
-      bbChart = bb.bb.generate({
+      bbChart = bb.generate({
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },
@@ -83,7 +80,7 @@ export default function GrafanaCustomGaugeChart(props) {
               gdata,
             ],
           ],
-          type: 'gauge',
+          type: gauge(),
         },
         gauge: {
           min,
