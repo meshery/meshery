@@ -224,7 +224,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
       <GenericModal
         open={!!profileForModal}
         Content={
-          <Paper style={{ margin: "auto", maxWidth: "90%", overflow: "hidden" }}>
+          <Paper style={{ margin: "auto", maxWidth: "90%", outline: "none" }}>
             <MesheryPerformanceComponent
               // @ts-ignore
               loadAsPerformanceProfile

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { Button, Grid, Paper } from "@material-ui/core";
+import { Button, Grid, Paper, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
@@ -17,10 +17,12 @@ const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
 const styles = () => ({
-  paper: {},
+  paper: {
+    padding: "1rem",
+  },
 });
 
-function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router }) {
+function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, router, classes }) {
   const [profiles, setProfiles] = useState({
     count: 0,
     profiles: [],
@@ -101,10 +103,16 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   return (
     <Grid container spacing={2} style={{ padding: "0.5rem" }} alignItems="flex-start" alignContent="space-around">
       <Grid item lg={6} xs={12}>
-        <Paper style={{ padding: "1rem" }}>
-          <div style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2rem" }}>
-            <h4>Performance Profile Summary</h4>
-          </div>
+        <Paper className={classes.paper}>
+          <Typography
+            align="center"
+            variant="h6"
+            style={{
+              margin: "0 0 2.5rem 0",
+            }}
+          >
+            Performance Profile Summary
+          </Typography>
           <PerformanceCalendar style={{ height: "40rem", margin: "1rem 0 2rem" }} />
           <div>
             <div>
@@ -122,7 +130,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
         </Paper>
       </Grid>
       <Grid item lg={6} xs={12}>
-        <Paper>
+        <Paper className={classes.paper}>
           <MesheryMetrics
             boardConfigs={grafana.selectedBoardsConfigs}
             grafanaURL={grafana.grafanaURL}
