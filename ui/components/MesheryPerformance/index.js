@@ -1,4 +1,4 @@
-/* eslint-disable */
+//@ts-check
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
@@ -30,7 +30,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import SaveIcon from "@material-ui/icons/Save";
-import DeleteIcon from "@material-ui/icons/Delete";
 import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,
@@ -42,7 +41,6 @@ import MesheryChart from "../MesheryChart";
 import LoadTestTimerDialog from "../load-test-timer-dialog";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import { durationOptions } from "../../lib/prePopulatedOptions";
-import GenericModal from "../GenericModal";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -66,7 +64,6 @@ function generatePerformanceProfile(data) {
     requestBody,
     contentType,
 
-    testName,
   } = data;
 
   const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh);
@@ -154,9 +151,6 @@ class MesheryPerformanceComponent extends React.Component {
       cookies,
       reqBody,
       contentType,
-      runTestOnMount,
-      k8sConfig,
-      loadTestPrefs,
     } = props;
 
     this.state = {
@@ -175,7 +169,6 @@ class MesheryPerformanceComponent extends React.Component {
       contentType: contentType || "",
 
       profileName: profileName || "",
-      performanceProfileModal: false,
       performanceProfileID: performanceProfileID || "",
 
       timerDialogOpen: false,
@@ -324,7 +317,7 @@ class MesheryPerformanceComponent extends React.Component {
                   key="close"
                   aria-label="Close"
                   color="inherit"
-                  onClick={() => self.props.closeSnackbar(key)}
+                  onClick={() => this.props.closeSnackbar(key)}
                 >
                   <CloseIcon />
                 </IconButton>
@@ -340,17 +333,13 @@ class MesheryPerformanceComponent extends React.Component {
           variant: "error",
           autoHideDuration: 2000,
           action: (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
               <CloseIcon />
             </IconButton>
           ),
         });
       }
     );
-  };
-
-  handleProfileModal = () => {
-    this.setState((state) => ({ performanceProfileModal: !state.performanceProfileModal }));
   };
 
   /**
@@ -515,13 +504,11 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   getLoadTestPrefs = () => {
-    const self = this;
     dataFetch(
       "/api/perf/load-test-prefs",
       {
         credentials: "same-origin",
         method: "GET",
-        credentials: "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -552,7 +539,6 @@ class MesheryPerformanceComponent extends React.Component {
     dataFetch(
       "/api/prometheus/static_board",
       {
-        credentials: "same-origin",
         credentials: "include",
       },
       (result) => {
@@ -584,7 +570,6 @@ class MesheryPerformanceComponent extends React.Component {
     dataFetch(
       "/api/mesh/scan",
       {
-        credentials: "same-origin",
         credentials: "include",
       },
       (result) => {
@@ -609,9 +594,7 @@ class MesheryPerformanceComponent extends React.Component {
     dataFetch(
       "/api/mesh",
       {
-        credentials: "same-origin",
         credentials: "include",
-        method: "GET",
       },
       (result) => {
         if (result && Array.isArray(result.available_meshes)) {
@@ -664,7 +647,6 @@ class MesheryPerformanceComponent extends React.Component {
       c,
       t,
       loadGenerator,
-      testName,
       meshName,
       result,
       urlError,
@@ -728,7 +710,7 @@ class MesheryPerformanceComponent extends React.Component {
     if (prometheus.selectedPrometheusBoardsConfigs.length > 0) {
       displayPromCharts = (
         <React.Fragment>
-          <Typography variant="h6" gutterBottom cclassName={classes.chartTitleGraf}>
+          <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
             Prometheus charts
           </Typography>
           <GrafanaCustomCharts
@@ -871,10 +853,10 @@ class MesheryPerformanceComponent extends React.Component {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} md={12} gutterBottom>
+              <Grid item xs={12} md={12}>
                 <ExpansionPanel className={classes.expansionPanel}>
                   <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
-                    <Typography align="center" color="textSecondary" varient="h6">
+                    <Typography align="center" color="textSecondary" variant="h6">
                       Advanced Options
                     </Typography>
                   </ExpansionPanelSummary>
@@ -960,7 +942,7 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onClick={this.props.loadAsPerformanceProfile ? () => this.submitProfile() : this.handleProfileModal}
+                  onClick={() => this.submitProfile()}
                   className={classes.button}
                   disabled={disableTest}
                   startIcon={<SaveIcon />}
@@ -1017,56 +999,6 @@ class MesheryPerformanceComponent extends React.Component {
         {displayPromCharts}
 
         {displayGCharts}
-
-        <GenericModal
-          open={this.state.performanceProfileModal}
-          handleClose={this.handleProfileModal}
-          Content={
-            <>
-              <div
-                className={classes.paper}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "50vw",
-                }}
-              >
-                <Typography variant="h5" gutterBottom>
-                  Save Performance Profile
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Performance Profile is a convenient way of saving performance test configuration with your selected
-                  remote provider which can be helpful in categorizing your test results as well as reproducing them
-                  with just one click.
-                </Typography>
-                <TextField
-                  id="profile_name"
-                  label="Profile Name"
-                  fullWidth
-                  value={this.state.profileName}
-                  multiline
-                  margin="normal"
-                  variant="outlined"
-                  onChange={(ev) => {
-                    this.setState({ profileName: ev.target.value });
-                  }}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={() => this.submitProfile()}
-                  className={classes.button}
-                >
-                  Submit
-                </Button>
-              </div>
-            </>
-          }
-        />
       </NoSsr>
     );
   }
@@ -1084,12 +1016,10 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  const loadTest = state.get("loadTest").toJS();
   const grafana = state.get("grafana").toJS();
   const prometheus = state.get("prometheus").toJS();
   const k8sConfig = state.get("k8sConfig").toJS();
   const staticPrometheusBoardConfig = state.get("staticPrometheusBoardConfig").toJS();
-  const loadTestPref = state.get("loadTestPref").toJS();
   return {
     grafana,
     prometheus,
