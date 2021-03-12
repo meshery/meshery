@@ -263,7 +263,7 @@ class MeshConfigComponent extends React.Component {
       if (errors !== undefined) {
         self.handleError("Operator action failed")
       }
-      self.props.enqueueSnackbar('Operator ' + response, {
+      self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
         variant: 'success',
         autoHideDuration: 2000,
         action: (key) => (

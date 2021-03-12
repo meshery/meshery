@@ -31,6 +31,7 @@ const (
 func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status) (model.Status, error) {
 	delete := true
 	if status == model.StatusEnabled {
+		r.Log.Info("Installing Operator")
 		delete = false
 	}
 
@@ -40,7 +41,20 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 	}
 
 	go func(del bool, kubeclient *mesherykube.Client) {
-		err := initialize(kubeclient, del)
+		err := r.cleanEntries(del)
+		if err != nil {
+			r.Log.Error(err)
+			r.operatorChannel <- &model.OperatorStatus{
+				Status: status,
+				Error: &model.Error{
+					Code:        "",
+					Description: err.Error(),
+				},
+			}
+			return
+		}
+
+		err = initialize(kubeclient, del)
 		if err != nil {
 			r.Log.Error(err)
 			r.operatorChannel <- &model.OperatorStatus{
@@ -58,7 +72,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 			endpoint, err := r.subscribeToBroker(kubeclient, r.brokerChannel)
 			if err != nil {
 				r.Log.Error(err)
-				r.Log.Info(endpoint)
 				r.operatorChannel <- &model.OperatorStatus{
 					Status: status,
 					Error: &model.Error{
@@ -143,6 +156,14 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 			if err != nil {
 				r.Log.Error(ErrOperatorSubscription(err))
 				return
+			}
+
+			if status.Status != model.StatusEnabled {
+				_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
+				if err != nil {
+					r.Log.Error(ErrOperatorSubscription(err))
+					return
+				}
 			}
 			r.operatorChannel <- status
 		}
@@ -239,7 +260,7 @@ func getOperator(handler *database.Handler) ([]string, error) {
 	deploys := []string{}
 	for _, obj := range objects {
 		if meshsyncmodel.IsObject(obj) {
-			deploys = append(deploys, obj.ObjectMeta.Name)
+			deploys = append(deploys, obj.ID)
 		}
 	}
 
@@ -277,5 +298,25 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (r *Resolver) cleanEntries(del bool) error {
+	if del {
+		r.Log.Info("Removing Operator")
+		objs, err := getOperator(r.DBHandler)
+		if err != nil {
+			return err
+		}
+
+		for _, obj := range objs {
+			err := recordMeshSyncData(broker.Delete, r.DBHandler, &meshsyncmodel.Object{
+				ID: obj,
+			})
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
