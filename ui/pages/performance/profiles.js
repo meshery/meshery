@@ -16,7 +16,7 @@ class Results extends React.Component {
     return (
       <NoSsr>
         <Head>
-          <title>Results | Meshery</title>
+          <title>Performance Profiles | Meshery</title>
         </Head>
         <PerformanceProfiles />
       </NoSsr>
