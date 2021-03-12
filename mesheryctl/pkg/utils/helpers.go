@@ -661,6 +661,34 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
+// GetManifestTreeURL returns the manifest tree url based on version
+func GetManifestTreeURL(version string) (string, error) {
+	url := "https://api.github.com/repos/layer5io/meshery/git/trees/" + version + "?recursive=1"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read response body")
+	}
+
+	var manLis ManifestList
+
+	err = json.Unmarshal([]byte(body), &manLis)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read response body")
+	}
+	for i := range manLis.Tree {
+		if manLis.Tree[i].Path == "install/deployment_yamls/k8s" {
+			return manLis.Tree[i].URL, nil
+		}
+	}
+	return "", errors.New("could not find path: install/deployment_yamls/k8s in the manifest tree")
+}
+
 // ListManifests lists the manifest files stored in GitHub
 func ListManifests(url string) ([]Manifest, error) {
 	resp, err := http.Get(url)

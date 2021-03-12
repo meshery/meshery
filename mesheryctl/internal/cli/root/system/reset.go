@@ -15,6 +15,10 @@
 package system
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -58,16 +62,73 @@ func resetMesheryConfig() error {
 	}
 
 	log.Info("Meshery resetting...\n")
-	log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
-	err = utils.DownloadDockerComposeFile(currCtx, true)
-	if err != nil {
-		return errors.Wrap(err, "failed to fetch docker-compose file")
-	}
-
 	log.Printf("Current Context: %s", mctlCfg.CurrentContext)
 	log.Printf("Channel: %s", currCtx.Channel)
-	log.Printf("Version: %s\n", currCtx.Version)
+	log.Printf("Version: %s", currCtx.Version)
+	log.Printf("Platform: %s\n", currCtx.Platform)
 
-	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+	switch currCtx.Platform {
+	case "docker":
+
+		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
+		err = utils.DownloadDockerComposeFile(currCtx, true)
+		if err != nil {
+			return errors.Wrap(err, "failed to fetch docker-compose file")
+		}
+		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+
+	case "kubernetes":
+
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		log.Debug("fetching required Kubernetes manifest files...")
+		// get correct minfestsURL based on version
+		manifestsURL, err := utils.GetManifestTreeURL(version)
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+		// pick all the manifest files stored in minfestsURL
+		manifests, err := utils.ListManifests(manifestsURL)
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+
+		log.Info("deleting ~/.meshery/manifests folder...")
+		if err := os.RemoveAll(utils.ManifestsFolder); err != nil {
+			return err
+		}
+		log.Info("creating ~/.meshery/manifests folder...")
+		// create a manifests folder under ~/.meshery to store the manifest files
+		if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
+			if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
+			}
+			log.Debug("created manifests folder...")
+		}
+
+		gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
+		log.Info("downloading manifest files from ", gitHubFolder)
+
+		// download all the manifest files to the ~/.meshery/manifests folder
+		rawManifestsURL := "https://raw.githubusercontent.com/layer5io/meshery/" + version + "/install/deployment_yamls/k8s/"
+		err = utils.DownloadManifests(manifests, rawManifestsURL)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to download manifests")
+		}
+
+	default:
+		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.Platform, utils.MesheryFolder)
+	}
 	return nil
 }
