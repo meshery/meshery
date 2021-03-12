@@ -1,0 +1,5 @@
+flag: view --context
+arg: context
+description: view the configurations of the specified context
+usage: |
+    `mesheryctl system context view --context <context name>`

@@ -1,0 +1,5 @@
+flag: create
+arg: context
+description: create a new context in config.yaml file
+usage: |
+    `mesheryctl system context create <context name>`
