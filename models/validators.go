@@ -14,7 +14,7 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		return errors.Errorf("Error: name field is blank")
 	}
 	if _, err := time.ParseDuration(perfTest.Duration); err != nil {
-		return errors.Wrapf(err, "error parsing test duration, please refer to: https://meshery.layer5.io/docs/guides/mesheryctl#performance-management")
+		return errors.Wrapf(err, "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management")
 	}
 
 	if len(perfTest.Clients) < 1 {
@@ -28,10 +28,10 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 		if !(testClient.LoadGenerator == Wrk2LG.Name() || testClient.LoadGenerator == FortioLG.Name()) {
 			return errors.Errorf("specify valid Loadgenerator")
 		}
-		if len(testClient.EndpointUrl) < 1 {
+		if len(testClient.EndpointUrls) < 1 {
 			return errors.Errorf("minimum one test endpoint needs to be specified")
 		}
-		for _, URL := range testClient.EndpointUrl {
+		for _, URL := range testClient.EndpointUrls {
 			if _, err := url.Parse(URL); err != nil {
 				return errors.Wrapf(err, "Enter valid URLs")
 			}

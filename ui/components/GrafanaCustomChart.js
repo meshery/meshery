@@ -13,10 +13,7 @@ import dataFetch from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 
-let bb;
-if (typeof window !== 'undefined') {
-  bb = require('billboard.js');
-}
+import bb, {area} from 'billboard.js'
 
 const grafanaStyles = (theme) => ({
   root: {
@@ -40,12 +37,18 @@ const grafanaStyles = (theme) => ({
   },
   cardHeader: {
     fontSize: theme.spacing(2),
+    width: "100%"
+  },
+  cardHeaderIcon: {
+    fontSize: theme.spacing(2),
   },
   card: {
     height: '100%',
+    width: "100%"
   },
   cardContent: {
     height: '100%',
+    width: "100%"
   },
   error: {
     color: '#D32F2F',
@@ -606,16 +609,15 @@ class GrafanaCustomChart extends Component {
             xFormat: self.bbTimeFormat,
             columns: [xAxis, ...chartData],
             groups,
-            type: 'area',
+            type: area(),
           },
           axis: {
             x: xAxes,
             y: yAxes,
           },
           zoom: {
-            enabled: {
-              type: 'drag',
-            },
+            enabled: true,
+            type:  'drag',
             onzoomend: self.updateDateRange(),
           },
           grid,
@@ -682,7 +684,7 @@ class GrafanaCustomChart extends Component {
           };
         }
 
-        self.chart = bb.bb.generate(chartConfig);
+        self.chart = bb.generate(chartConfig);
       }
     }
 
@@ -740,7 +742,7 @@ class GrafanaCustomChart extends Component {
           color="inherit"
           onClick={() => handleChartDialogOpen(board, panel, panelData)}
         >
-          <OpenInNewIcon className={classes.cardHeader} />
+          <OpenInNewIcon className={classes.cardHeaderIcon} />
         </IconButton>
       );
 

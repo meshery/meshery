@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Head, Main, NextScript, Html } from 'next/document';
 import flush from 'styled-jsx/server';
 
 class MesheryDocument extends Document {
@@ -8,15 +8,16 @@ class MesheryDocument extends Document {
     // eslint-disable-next-line no-unused-vars
     const { pageContext } = this.props;
     return (
-      <html lang="en" dir="ltr">
+      <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
+          <link rel="icon" href="/static/favicon.ico" />
         </Head>
         <body>
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }

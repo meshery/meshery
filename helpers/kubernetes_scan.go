@@ -1,13 +1,14 @@
 package helpers
 
 import (
+	"context"
 	"strings"
 
 	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 )
@@ -15,97 +16,90 @@ import (
 // NOT TO BE UPDATED at runtime
 var meshesMeta = map[string][]string{
 	"Istio": {
-		"docker.io/istio/citadel",
-		"docker.io/istio/proxyv2",
-		"docker.io/istio/galley",
-		"docker.io/istio/pilot",
+		"istio",
 	},
 	"Linkerd": {
-		"gcr.io/linkerd-io/controller",
-		"gcr.io/linkerd-io/proxy",
+		"linkerd",
 	},
 	"Consul": {
-		"hashicorp/consul-k8s",
+		"consul",
 	},
 	"Network Service Mesh": {
-		"docker.io/networkservicemesh/nsmdp",
-		"docker.io/networkservicemesh/nsmd",
-		"docker.io/networkservicemesh/nsmd-k8s",
+		"networkservicemesh",
+		"nsm",
 	},
 	"Citrix": {
-		"quay.io/citrix/citrix-istio-adaptor",
-		"quay.io/citrix/citrix-k8s-cpx-ingress",
+		"citrix",
 	},
 	"osm": {
-		"docker.io/openservicemesh/osm-controller",
-		"docker.io/openservicemesh/init",
+		"openservicemesh",
+		"osm",
 	},
 }
 
-// ScanKubernetes - Runs a quick scan on kubernetes to find out the version of service meshes deployed
-func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]v1.Deployment, error) {
+// ScanKubernetes scans kubernetes to find the pods for each service mesh
+func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.Pod, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
-	namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+	// equivalent to GET request to /api/v1/pods
+	podlist, err := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
 	if err != nil {
-		err = errors.Wrap(err, "unable to get the list of namespaces")
-		logrus.Error(err)
+		logrus.Debug("[ScanKubernetes] Failed to retrieve Pod List")
 		return nil, err
 	}
-	newResults := map[string][]v1.Deployment{}
-	for _, ns := range namespacelist.Items {
-		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
 
-		deploymentsClient := clientset.AppsV1().Deployments(ns.GetName())
-		deplist, err := deploymentsClient.List(metav1.ListOptions{})
-		if err != nil {
-			err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())
-			logrus.Error(err)
-			return nil, err
-		}
+	result := map[string][]corev1.Pod{}
 
-		for _, d := range deplist.Items {
-			logrus.Debugf(" * %s (%d replicas)", d.Name, *d.Spec.Replicas)
-			meshIdentifier := ""
-			for _, cont := range d.Spec.Template.Spec.Containers {
-				// logrus.Debugf("    - name: %s, image: %s", cont.Name, cont.Image)
-				for meshName, imageNames := range meshesMeta {
-					for _, imageName := range imageNames {
-						if strings.HasPrefix(cont.Image, imageName) || strings.Contains(cont.Image, imageName+":") {
-							meshIdentifier = meshName
-						}
-					}
+	for _, p := range podlist.Items {
+		logrus.Debugf("[ScanKubernetes] Found pod %s", p.Name)
+		meshIdentifier := ""
+		// for _, cont := range p.Name {
+		// 	for meshName, imageNames := range meshesMeta {
+		// 		for _, imageName := range imageNames {
+		// 			if strings.HasPrefix(cont.Image, imageName) || strings.Contains(cont.Image, imageName) {
+		// 				meshIdentifier = meshName
+		// 			}
+		// 		}
+		// 	}
+		// }
+		for meshName, names := range meshesMeta {
+			for _, name := range names {
+				if strings.Contains(p.Name, name) {
+					meshIdentifier = meshName
 				}
 			}
-			if meshIdentifier != "" {
-				newResults[meshIdentifier] = append(newResults[meshIdentifier], d)
-			}
+		}
+
+		// Ignoring "kube-system" pods
+		if meshIdentifier != "" && p.Namespace != "kube-system" {
+			result[meshIdentifier] = append(result[meshIdentifier], p)
 		}
 	}
-	return newResults, nil
+
+	return result, nil
 }
 
 // ScanPromGrafana - Runs a quick scan for Prometheus & Grafanas
-func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanPromGrafana(kubeconfig []byte, contextName string) (map[string][]corev1.Service, error) {
 	imageNames := []string{"prometheus", "grafana"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 // ScanPrometheus - Runs a quick scan for Prometheus
-func ScanPrometheus(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanPrometheus(kubeconfig []byte, contextName string) (map[string][]corev1.Service, error) {
 	imageNames := []string{"prometheus"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 // ScanGrafana - Runs a quick scan for Grafanas
-func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]string, error) {
+func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]corev1.Service, error) {
 	imageNames := []string{"grafana"}
 
-	return detectServiceForDeploymentImage(kubeconfig, contextName, imageNames)
+	return detectServiceWithName(kubeconfig, contextName, imageNames)
 }
 
 func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imageNames []string) (map[string][]string, error) {
@@ -113,7 +107,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 	if err != nil {
 		return nil, err
 	}
-	namespacelist, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespacelist, err := clientset.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		err = errors.Wrap(err, "unable to get the list of namespaces")
 		logrus.Error(err)
@@ -125,7 +119,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 		logrus.Debugf("Listing deployments in namespace %q", ns.GetName())
 
 		deploymentsClient := clientset.AppsV1().Deployments(ns.GetName())
-		deplist, err := deploymentsClient.List(metav1.ListOptions{})
+		deplist, err := deploymentsClient.List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			err = errors.Wrapf(err, "unable to get deployments in the %s namespace", ns.GetName())
 			logrus.Error(err)
@@ -150,7 +144,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 				logrus.Debugf("found deployment: %s", d.GetName())
 				lbls := d.Spec.Template.ObjectMeta.GetLabels()
 				svcClient := clientset.CoreV1().Services(ns.GetName())
-				svcList, err := svcClient.List(metav1.ListOptions{
+				svcList, err := svcClient.List(context.Background(), metav1.ListOptions{
 					LabelSelector: labels.SelectorFromSet(lbls).String(),
 				})
 				if err != nil {
@@ -175,5 +169,38 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 
 	// use that to go thru services with the given tags
 	// from there get the ports and service type
+	return result, nil
+}
+
+// detectServiceWithName detects the services in the cluster with the name given in "names" parameter
+func detectServiceWithName(kubeconfig []byte, contextName string, names []string) (map[string][]corev1.Service, error) {
+	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get all the running services
+	// analogous to GET request to /api/v1/services
+	svcList, err := clientset.CoreV1().Services("").List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		err = errors.Wrapf(err, "[DetectServiceWithName] Unable to get services")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	result := map[string][]corev1.Service{}
+
+	for _, svc := range svcList.Items {
+		svcName := svc.GetName()
+		logrus.Debugf("[DetectServiceWithName] Service Name: %s", svcName)
+		logrus.Debugf("[DetectServiceWithName] Service type: %s", svc.Spec.Type)
+
+		for _, query := range names {
+			if strings.Contains(strings.ToLower(svcName), query) {
+				result[query] = append(result[query], svc)
+			}
+		}
+	}
+
 	return result, nil
 }

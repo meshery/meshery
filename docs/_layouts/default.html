@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
   {% include head.html %}
   <body class="td-section">
     {% include header.html %}
@@ -31,6 +33,9 @@
 	      </ol>
            </nav>
            <div class="td-content">
+            {% if page.display-title != "false" and layout.display-title != "false" %}
+            <h1>{{page.title}}</h1>
+            {% endif %}
 	           {{ content }}	
               {% if section.links %}<div class="section-index">
                <hr class="panel-line">{% for child in section.links %}
@@ -52,3 +57,4 @@
     {% include google-analytics.html %}
   </body>
 </html>
+{% include toc.html %}

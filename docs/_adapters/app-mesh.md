@@ -1,20 +1,21 @@
 ---
-layout: page
-title: App Mesh Adapter
+layout: default
+title: Meshery Adapter for App Mesh
 name: Meshery Adapter for App Mesh
 mesh_name: App Mesh
 version: v0.1.0
 port: 10005/tcp
 project_status: alpha
 github_link: https://github.com/layer5io/meshery-app-mesh
-image: /docs/assets/img/service-meshes/aws-app-mesh.png
+image: /assets/img/service-meshes/app-mesh.svg
+permalink: service-meshes/adapters/app-mesh
 ---
 
-# {{ page.name }}
+{% include adapter-status.html %}
 
-| Service Mesh   | Adapter Status | Latest Supported Mesh Version |
-| :------------: | :------------:   | :------------:              |
-| {{page.title}} | [{{ page.project_status }}]({{ page.github_link }}) | {{page.version}}  |
+The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
+
+Want to contribute? Check our [progress]({{page.github_link}}).
 
 ### Lifecycle management
 

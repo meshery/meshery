@@ -8,7 +8,6 @@ import Navigator from '../components/Navigator';
 import Header from '../components/Header';
 import PropTypes from 'prop-types';
 import Hidden from '@material-ui/core/Hidden';
-import Paper from '@material-ui/core/Paper';
 import withRedux from "next-redux-wrapper";
 import { makeStore, actionTypes } from '../lib/store';
 import {Provider} from "react-redux";
@@ -18,6 +17,12 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { SnackbarProvider } from 'notistack';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import {
+  CheckCircle,
+  Info,
+  Error,
+  Warning
+} from '@material-ui/icons'
 
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
@@ -102,6 +107,12 @@ theme = {
         },
       },
     },
+    MuiToggleButton: {
+      label: {
+        textTransform: 'initial',
+        color: '#607d8b',
+      },
+    },
     MuiTabs: {
       root: {
         marginLeft: theme.spacing(1),
@@ -155,6 +166,8 @@ theme = {
         '& svg': {
           fontSize: 20,
         },
+        justifyContent: 'center',
+        minWidth: 0
       },
     },
     MuiAvatar: {
@@ -171,13 +184,17 @@ theme = {
   },
   mixins: {
     ...theme.mixins,
-    toolbar: {
-      minHeight: 48,
-    },
   },
 };
 
 const drawerWidth = 256;
+
+const notificationColors = {
+  error: "#ff1744",
+  warning: "#ffc400",
+  success: "#6fbf73",
+  info: "#2196f3"
+}
 
 const styles = {
   root: {
@@ -196,7 +213,7 @@ const styles = {
   },
   drawerCollapsed: {
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7) + 1,
+      width: theme.spacing(8.4) + 1,
     },
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -214,12 +231,6 @@ const styles = {
     padding: '48px 36px 24px',
     background: '#eaeff1',
   },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-
-  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
@@ -236,6 +247,22 @@ const styles = {
   },
   icon: {
     fontSize: 20,
+  },
+  notifSuccess: {
+    backgroundColor: "rgb(50, 50, 50) !important",
+    color: `${notificationColors.success} !important`
+  },
+  notifInfo: {
+    backgroundColor: "rgb(50, 50, 50) !important",
+    color: `${notificationColors.info} !important`
+  },
+  notifWarn: {
+    backgroundColor: "rgb(50, 50, 50) !important",
+    color: `${notificationColors.warning} !important`
+  },
+  notifError: {
+    backgroundColor: "rgb(50, 50, 50) !important",
+    color: `${notificationColors.error} !important`
   },
 };
 
@@ -389,20 +416,30 @@ class MesheryApp extends App {
                   </Hidden>
                 </nav>
                 <div className={classes.appContent}>
-                  <Header onDrawerToggle={this.handleDrawerToggle} />
                   <SnackbarProvider
                     anchorOrigin={{
-                      vertical: 'top',
+                      vertical: 'bottom',
                       horizontal: 'right',
+                    }}
+                    iconVariant = {{
+                      success: <CheckCircle style={{ marginRight: "0.5rem" }} />,
+                      error: <Error style={{ marginRight: "0.5rem" }} />,
+                      warning: <Warning style={{ marginRight: "0.5rem" }} />,
+                      info: <Info style={{ marginRight: "0.5rem" }} />
+                    }}
+                    classes={{
+                      variantSuccess: classes.notifSuccess,
+                      variantError: classes.notifError,
+                      variantWarning: classes.notifWarn,
+                      variantInfo: classes.notifInfo,
                     }}
                     maxSnack={10}
                   >
                     <MesheryProgressBar />
+                    <Header onDrawerToggle={this.handleDrawerToggle} onDrawerCollapse={isDrawerCollapsed}/>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <Paper className={classes.paper}>
-                          <Component pageContext={this.pageContext} {...pageProps} />
-                        </Paper>
+                        <Component pageContext={this.pageContext} {...pageProps} />
                       </MuiPickersUtilsProvider>
                     </main>
                   </SnackbarProvider>

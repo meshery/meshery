@@ -284,25 +284,3 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 }
-
-// InstalledMeshesHandler - scans and tries to find out the installed meshes
-func (h *Handler) InstalledMeshesHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	if prefObj.K8SConfig == nil {
-		_, _ = w.Write([]byte("{}"))
-		return
-	}
-
-	installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-	if err != nil {
-		err = errors.Wrap(err, "unable to scan Kubernetes")
-		logrus.Error(err)
-		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
-		return
-	}
-	if err = json.NewEncoder(w).Encode(installedMeshes); err != nil {
-		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(err)
-		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
-		return
-	}
-}

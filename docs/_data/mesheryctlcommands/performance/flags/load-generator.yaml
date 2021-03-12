@@ -1,0 +1,4 @@
+name: --load-generator (optional)
+description: Choice of load generator - fortio (OR) wrk2 (default) fortio
+usage: |
+    `--load-generator=fortio`

@@ -9,6 +9,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import RemoveIcon from "@material-ui/icons/Remove";
+import GitHubIcon from '@material-ui/icons/GitHub';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import MailIcon from '@material-ui/icons/Mail';
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -20,12 +23,17 @@ import {
   faTasks,
   faTerminal,
   faTachometerAlt,
-  faExternalLinkAlt,
   faChevronCircleLeft,
   faPollH,
+  faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSlack,
+} from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
 import { Tooltip } from "@material-ui/core";
+import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import dataFetch from "../lib/data-fetch";
 
 const styles = (theme) => ({
   categoryHeader: {
@@ -90,7 +98,22 @@ const styles = (theme) => ({
     height: "100%",
     borderRadius: "unset",
   },
-  community: {
+  mainLogoCollapsed: {
+    marginRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(-0.5),
+    width: 40,
+    height: 40,
+    borderRadius: "unset",
+  },
+  mainLogoTextCollapsed: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    width: 170,
+    height: "100%",
+    borderRadius: "unset",
+  },
+  documentation: {
     marginTop: theme.spacing(2),
   },
   settingsIcon: {
@@ -105,6 +128,24 @@ const styles = (theme) => ({
     textAlign: "center",
     display: "inline-table",
     paddingRight: theme.spacing(0.5),
+    marginLeft: theme.spacing(0.3),
+  },
+  listIcon1: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: "center",
+    display: "inline-table",
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
+  },
+  listIconSlack: {
+    minWidth: theme.spacing(3.5),
+    paddingTop: theme.spacing(0.5),
+    textAlign: "center",
+    display: "inline-table",
+    marginLeft: theme.spacing(-0.1),
+    paddingRight: theme.spacing(0.5),
+    opacity: 0.5,
   },
   nested1: {
     paddingLeft: theme.spacing(3),
@@ -132,7 +173,7 @@ const styles = (theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(7) + 1,
+    width: theme.spacing(8) + 4,
   },
   sidebarExpanded: {
     width: "256px",
@@ -167,6 +208,7 @@ const styles = (theme) => ({
   collapseButtonWrapperRotated: {
     width: "auto",
     "margin-left": "auto",
+    marginRight: theme.spacing(1),
     opacity: "0.7",
     transition: "opacity 200ms linear",
     transform: "rotate(180deg)",
@@ -237,6 +279,24 @@ const categories = [
     ],
   },
   {
+    id: "Configuration",
+    icon: <img src="/static/img/configuration_trans.svg" style={{ width: "1.21rem" }} />,
+    href: "/configuration",
+    title: "Meshery Configurations",
+    show: false,
+    link: false,
+    children: [
+      {
+        id: "Patterns",
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/patterns",
+        title: "Meshery Patterns",
+        show: false,
+        link: true,
+      },
+    ],
+  },
+  {
     id: "Management",
     icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
     href: "/management",
@@ -244,6 +304,14 @@ const categories = [
     show: true,
     link: true,
     children: [
+      {
+        id: "Citrix Service Mesh",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/citrix",
+        title: "Citrix Service Mesh",
+        link: false,
+        show: true,
+      },
       {
         id: "Consul",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -257,6 +325,14 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/istio",
         title: "Istio",
+        link: false,
+        show: true,
+      },
+      {
+        id: "Kuma",
+        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+        href: "/management/kuma",
+        title: "Kuma",
         link: false,
         show: true,
       },
@@ -276,19 +352,20 @@ const categories = [
         link: false,
         show: true,
       },
+      // Disable support for NGINX SM
+      // {
+      //   id: "NGINX Service Mesh",
+      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+      //   href: "/management/nginx",
+      //   title: "NGINX Service Mesh",
+      //   link: false,
+      //   show: true,
+      // },
       {
         id: "Octarine",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/octarine",
         title: "Octarine",
-        link: false,
-        show: true,
-      },
-      {
-        id: "Citrix Service Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/citrix",
-        title: "Citrix Service Mesh",
         link: false,
         show: true,
       },
@@ -301,14 +378,45 @@ const categories = [
         show: true,
       },
       {
-        id: "Kuma",
+        id: "Traefik Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/kuma",
-        title: "Kuma",
+        href: "/management/traefik-mesh",
+        title: "Traefik Mesh",
         link: false,
         show: true,
       },
     ],
+  },
+];
+
+const externlinks = [
+  {
+    id: "doc",
+    href: "http://docs.meshery.io",
+    title: "Documentation",
+    icon: <DescriptionOutlinedIcon/>,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+  },
+  {
+    id: "community",
+    href: "http://slack.layer5.io",
+    title: "Community",
+    icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+  },
+  {
+    id: "mailinglist",
+    href: "https://meshery.io/subscribe",
+    title: "Mailing List",
+    icon: <MailIcon />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+  },
+  {
+    id: "issues",
+    href: "https://github.com/layer5io/meshery/issues/new/choose",
+    title: "Issues",
+    icon: <GitHubIcon />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
   },
 ];
 
@@ -320,7 +428,105 @@ class Navigator extends React.Component {
       path: "",
       meshAdapters,
       mts: new Date(),
+
+      // ExtensionPointSchemaValidator will return a navigator schema
+      // decoder which in turn will return an empty array when there is no content
+      // passed into it
+      navigator: ExtensionPointSchemaValidator("navigator")(),
+
+      capabilities: []
     };
+  }
+
+  componentDidMount() {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        credentials: "same-origin",
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        if (result) {
+          this.setState({ 
+            navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
+            capabilities: result?.capabilities || []
+          })
+        }
+      },
+      err => console.error(err)
+    )
+  }
+
+  /**
+   * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children
+   * @param {number} depth
+   */
+  renderNavigatorExtensions(children, depth) {
+    const { classes, isDrawerCollapsed } = this.props;
+    const { path } = this.state;
+
+    if (children && children.length > 0) {
+      return (
+        <List disablePadding>
+          {children.map(({ id, icon, href, title, children }) => {
+            if (typeof showc !== "undefined" && !showc) {
+              return "";
+            }
+            return (
+              <React.Fragment key={id}>
+                <ListItem
+                  button
+                  key={id}
+                  className={classNames(
+                    depth === 1 ? classes.nested1 : classes.nested2,
+                    classes.item,
+                    classes.itemActionable,
+                    path === href && classes.itemActiveItem,
+                    isDrawerCollapsed && classes.noPadding
+                  )}
+                >
+                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                </ListItem>
+                {this.renderNavigatorExtensions(children, depth + 1)}
+              </React.Fragment>
+            );
+          })}
+        </List>
+      );
+    }
+  }
+
+  extensionPointContent(icon, href, name, drawerCollapsed) {
+    const { classes } = this.props;
+
+    const content = (
+      <div className={classNames(classes.link)}>
+        <Tooltip
+          title={name}
+          placement="right"
+          disableFocusListener={!drawerCollapsed}
+          disableHoverListener={!drawerCollapsed}
+          disableTouchListener={!drawerCollapsed}
+        >
+          <ListItemIcon className={classes.listIcon}>
+            <img src={icon} className={classes.icon}/>
+          </ListItemIcon>
+        </Tooltip>
+        <ListItemText
+          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
+          classes={{
+            primary: classes.itemPrimary,
+          }}
+        >
+          {name}
+        </ListItemText>
+      </div>
+    )
+
+    if (href) return <Link href={href}>{content}</Link>
+
+    return content
   }
 
   updateCategoriesMenus() {
@@ -333,6 +539,21 @@ class Navigator extends React.Component {
           categories[ind].children[ind1].icon = icon;
           categories[ind].children[ind1].children = cr;
         });
+      }
+
+      if (cat.id === "Configuration") {
+        let show = false
+        cat.children?.forEach(ch => {
+          if (ch.id === "Patterns") {
+            const idx = self.state.capabilities.findIndex(cap => cap.feature === "persist-meshery-patterns")
+            if (idx != -1) {
+              ch.show = true
+              show = true
+            }
+          }
+        })
+
+        cat.show = show
       }
     });
   }
@@ -387,10 +608,12 @@ class Navigator extends React.Component {
     const children = [];
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
-      const aName = adapter.name.toLowerCase();
+      let aName = adapter.name.toLowerCase();
+      // Manually changing adapter name so that it matches the internal name
+      if (aName === "osm") aName = "open service mesh"
       if (category !== aName) {
         return;
-      }
+      } 
       children.push({
         id: adapter.adapter_location,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -411,19 +634,19 @@ class Navigator extends React.Component {
     let logoIcon = <img src={image} className={classes.icon} />;
     switch (aName) {
       case "istio":
-        image = "/static/img/istio-white.svg";
+        image = "/static/img/istio-light.svg";
         logoIcon = <img src={image} className={classes.istioIcon} />;
         break;
       case "linkerd":
-        image = "/static/img/linkerd-white.svg";
+        image = "/static/img/linkerd-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "consul":
-        image = "/static/img/consul-white.svg";
+        image = "/static/img/consul-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "network service mesh":
-        image = "/static/img/nsm-white.svg";
+        image = "/static/img/nsm-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "octarine":
@@ -431,7 +654,7 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "citrix service mesh":
-        image = "/static/img/citrix-light-gray.svg";
+        image = "/static/img/citrix-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "open service mesh":
@@ -439,7 +662,16 @@ class Navigator extends React.Component {
         logoIcon = <img src={image} className={classes.icon} />;
         break;
       case "kuma":
-        image = "/static/img/kuma-white.svg";
+        image = "/static/img/kuma-light.svg";
+        logoIcon = <img src={image} className={classes.icon} />;
+        break;
+      // Disable support for NGINX SM
+      // case "nginx service mesh":
+      //   image = "/static/img/nginx-sm-light.svg";
+      //   logoIcon = <img src={image} className={classes.icon} />;
+      //   break;
+      case "traefik mesh":
+        image = "/static/img/traefikmesh-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
     }
@@ -460,6 +692,8 @@ class Navigator extends React.Component {
       "Citrix Service Mesh",
       "Open Service Mesh",
       "Kuma",
+      "NGINX Service Mesh",
+      "Traefik Mesh"
     ];
     let index = allowedId.indexOf(id);
     if (index != -1 && !link) {
@@ -600,9 +834,9 @@ class Navigator extends React.Component {
               onClick={this.handleTitleClick}
               className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
             >
-              <Avatar className={classes.mainLogo} src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
+              <Avatar className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo} src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
               <Avatar
-                className={classes.mainLogoText}
+                className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
                 src="/static/img/meshery-logo-text.png"
                 onClick={this.handleTitleClick}
               />
@@ -651,36 +885,65 @@ class Navigator extends React.Component {
                 </React.Fragment>
               );
             })}
+            {
+              (this.state.navigator && this.state.navigator.length)
+                ?
+                <React.Fragment>
+                  <Divider className={classes.divider} />
+                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
+                </React.Fragment>
+                :
+                null
+            }
             <Divider className={classes.divider} />
-            <ListItem
-              component="a"
-              href="https://meshery.io/"
-              target="_blank"
-              key="about"
-              className={classNames(classes.item, classes.itemActionable, classes.community)}
-            >
-              <div className={classNames(classes.link)}>
-                <Tooltip
-                  title="Community"
-                  placement="right"
-                  disableFocusListener={!isDrawerCollapsed}
-                  disableHoverListener={!isDrawerCollapsed}
-                  disableTouchListener={!isDrawerCollapsed}
+            {externlinks.map(({ id, icon, title, href, external_icon}) => {
+              return (
+                <ListItem
+                  component="a"
+                  href={href}
+                  target="_blank"
+                  key={id}
+                  className={classNames(
+                    classes.item,
+                    classes.itemActionable,
+                    id == "doc" ? classes.documentation : ""
+                  )}
                 >
-                  <ListItemIcon className={classes.listIcon}>
-                    <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-2" fixedWidth />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                  classes={{
-                    primary: classes.itemPrimary,
-                  }}
-                >
-                  Community
-                </ListItemText>
-              </div>
-            </ListItem>
+                  <div className={classNames(classes.link)}>
+                    <Tooltip
+                      title={title}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={!isDrawerCollapsed}
+                      disableTouchListener={!isDrawerCollapsed}
+                    >
+                      <ListItemIcon className={classes.listIcon}>
+                        {icon}       
+                      </ListItemIcon>
+                    </Tooltip>               
+                    <ListItemText
+                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                      classes={{
+                        primary: classes.itemPrimary,
+                      }}
+                    >
+                      {title}
+                    </ListItemText>
+                    <Tooltip
+                      title={title}
+                      placement="left"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={!isDrawerCollapsed}
+                      disableTouchListener={!isDrawerCollapsed}
+                    >
+                      <ListItemIcon className={id === "community" ? classes.listIconSlack : classes.listIcon1}>
+                        {external_icon}
+                      </ListItemIcon>
+                    </Tooltip>
+                  </div>
+                </ListItem>
+              );
+            })}
           </List>
           <div className={classes.fixedSidebarFooter}>
             <ListItem button onClick={() => this.toggleMiniDrawer()} className={classname}>

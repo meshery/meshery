@@ -1,0 +1,13 @@
+{
+    "apiVersion": "core.oam.dev/v1alpha1",
+    "kind": "TraitDefinition",
+    "metadata": {
+        "name": "meshmap"
+    },
+    "spec": {
+        "definitionRef": {
+            "name": "meshmap.meshery.layer5.io"
+        },
+        "revisionEnabled": false
+    }
+}

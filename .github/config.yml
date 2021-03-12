@@ -2,7 +2,12 @@
 # Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
  # Comment to be posted to on first time issues
 newIssueWelcomeComment: >
-   Thanks for opening this issue. A contributor will be by to give feedback soon. In the meantime, please review the [Layer5 Contributors' Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit?usp=sharing) and sure to join the [community Slack](http://slack.layer5.io/).
+   Thanks for opening this issue. A contributor will be by to give feedback soon. In the meantime, please review the [Layer5 Contributors' Welcome Guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit?usp=sharing) and be sure to join the [community Slack](http://slack.layer5.io/).
+  \
+  \ Let us know how you would like to proceed:
+  \ 1. You would like an existing contributor in the community to address this issue.
+  \ 1. You would like to address (fix) this issue.
+
  # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
  # Comment to be posted to on PRs from first time contributors in your repository
 newPRWelcomeComment: >
@@ -15,10 +20,12 @@ newPRWelcomeComment: >
 # Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
 # Comment to be posted to on pull requests merged by a first time user
 firstPRMergeComment: >
-  Thanks for your contribution to the Layer5 community! :tada:
-
+   &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; Thank you for contributing to the Layer5 community! :tada:
+  \
+  \
   ![Congrats!](https://raw.githubusercontent.com/layer5io/meshery/master/.github/welcome/Layer5-celebration.png)
-
+  \
+  \
   &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; :star: Please leave a [star on the project](../stargazers). :smile:
 
 #-------------------------------------------------------------------------------

@@ -16,17 +16,16 @@
 
 title: Documentation
 email: community@layer5.io
-author: Meshery
+author: Layer5
 description: > # this means to ignore newlines until "baseurl:"
   Documentation for Meshery, the multi-service mesh management plane for Istio,
-  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Maesh, App Mesh, Citrix Service Mesh
-  and other service meshes.
+  Linkerd, Consul, Network Service Mesh, Octarine, Envoy, Kuma, Traefik Mesh, App Mesh, Citrix Service Mesh and other service meshes.
 
 # DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh
-baseurl: "/docs" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 
 # This is mostly for testing
-url: "https://meshery.layer5.io/docs" # the base hostname & protocol for your site
+url: "https://docs.meshery.io" # the base hostname & protocol for your site
 
 # Social (First three Required)
 repo: "https://github.com/layer5io/meshery"
@@ -56,12 +55,10 @@ color: "#3C494F" #"#647881" # "#30638e"
 # Build settings
 markdown: kramdown
 
-plugins: ["jemoji"]
-
-# If you add tags to pages, you can link them to some external search
-# If you want to disable this, comment the URL.
+# If you add tags to pages, define this variable to link them to some external search
+# If you want to link to tags locally on the site, leave this commented out
 # tag_search_endpoint: https://ask.cyberinfrastructure.org/search?q=
-tag_color: danger # danger, success, warning, primary, info, secondary
+tag_color: primary # danger, success, warning, primary, info, secondary
 
 accentColor: red # purple, green, etc.
 themeColor: red # purple, green, blue, orange, purple, grey
@@ -70,6 +67,13 @@ fixedNav: 'true' # true or false
 permalink: /:year/:title/
 markdown: kramdown
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
+
+plugins:
+  - jekyll-redirect-from
+
+sass:
+    sass_dir: _sass
+    style: compact
 
 # Collections
 collections:
@@ -83,7 +87,16 @@ collections:
   guides:
     output: true
     permalink: /:collection/:path
-
+  es:
+    output: true
+    permalink: /:collection/:path
+  releases:
+    output: true
+    permalink: project/:collection/:path
+  mesheryctlcommands:
+    output: true
+    permalink: reference/mesheryctl/:collection/:path
+    name: mesheryctlcommands
 
 # Defaults
 defaults:
@@ -92,23 +105,16 @@ defaults:
       type: "docs"
     values:
       layout: page
-  - scope:
+  -
+    scope:
       path: ""
       type: "pages"
     values:
       layout: "page"
-  - scope:
+  -
+    scope:
       path: "posts"
       type: "posts"
     values:
       layout: "post"
-  - scope:
-      path: "guides"
-      type: "guide"
-    values:
-      layout: guide
-  - scope:
-      path: "adapters"
-      type: "adapters"
-    values:
-      layout: default
+      

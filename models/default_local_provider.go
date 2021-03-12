@@ -10,47 +10,77 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
-	SaaSBaseURL           string
+	ProviderProperties
+	ProviderBaseURL       string
 	ResultPersister       *BitCaskResultsPersister
 	SmiResultPersister    *BitCaskSmiResultsPersister
 	TestProfilesPersister *BitCaskTestProfilesPersister
+	GenericPersister      database.Handler
+	GraphqlHandler        http.Handler
+	GraphqlPlayground     http.Handler
+	KubeClient            *mesherykube.Client
+}
+
+// Initialize will initialize the local provider
+func (l *DefaultLocalProvider) Initialize() {
+	l.ProviderName = "None"
+	l.ProviderDescription = []string{
+		"Ephemeral sessions",
+		"Environment setup not saved",
+		"No performance test result history",
+		"Free Use",
+	}
+	l.ProviderType = LocalProviderType
+	l.PackageVersion = viper.GetString("BUILD")
+	l.PackageURL = ""
+	l.Extensions = Extensions{}
+	l.Capabilities = Capabilities{}
 }
 
 // Name - Returns Provider's friendly name
 func (l *DefaultLocalProvider) Name() string {
-	return "None"
+	return l.ProviderName
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
-func (l *DefaultLocalProvider) Description() string {
-	return `Provider: None
-	- ephemeral sessions
-	- environment setup not saved
-	- no performance test result history
-	- free use`
+func (l *DefaultLocalProvider) Description() []string {
+	return l.ProviderDescription
 }
 
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
-	return LocalProviderType
+	return l.ProviderType
 }
 
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
-	var result ProviderProperties
-	result.ProviderType = l.GetProviderType()
-	result.DisplayName = l.Name()
-	result.Description = l.Description()
-	result.Capabilities = make([]Capability, 0)
-	return result
+	return l.ProviderProperties
+}
+
+// PackageLocation returns an empty string as there is no extension package for
+// the local provider
+func (l *DefaultLocalProvider) PackageLocation() string {
+	return ""
+}
+
+// GetProviderCapabilities returns all of the provider properties
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(l.ProviderProperties); err != nil {
+		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
+	}
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -194,8 +224,8 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 
 func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result")
-	cReq, _ := http.NewRequest(http.MethodPost, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -213,7 +243,7 @@ func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (stri
 		return "", nil
 	}
 	if resp.StatusCode == http.StatusCreated {
-		// logrus.Infof("results successfully published to SaaS")
+		// logrus.Infof("results successfully published to reomote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			logrus.Warnf("unable to unmarshal body: %v", err)
@@ -240,8 +270,8 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	logrus.Debugf("Result: %s, size: %d", data, len(data))
 	bf := bytes.NewBuffer(data)
 
-	saasURL, _ := url.Parse(l.SaaSBaseURL + "/result/metrics")
-	cReq, _ := http.NewRequest(http.MethodPut, saasURL.String(), bf)
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
@@ -250,7 +280,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to SaaS")
+		logrus.Infof("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {
@@ -341,4 +371,78 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 		return err
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
+}
+
+// SaveMesheryPattern saves given pattern with the provider
+func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
+	return nil, fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPatterns gives the patterns stored with the provider
+func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// GetMesheryPattern gets pattern for the given patternID
+func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// DeleteMesheryPattern deletes a meshery pattern with the given id
+func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+	return []byte{}, fmt.Errorf("function not supported by local provider")
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
+	result := l.GenericPersister.Create(&obj)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+// RecordMeshSyncData records the mesh sync data
+func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
+	objects := make([]model.Object, 0)
+	result := l.GenericPersister.
+		Preload("TypeMeta").
+		Preload("ObjectMeta").
+		Preload("ObjectMeta.Labels").
+		Preload("ObjectMeta.Annotations").
+		Preload("Spec").
+		Preload("Status").
+		Find(&objects)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return objects, nil
+}
+
+// GetGenericPersister - to return persister
+func (l *DefaultLocalProvider) GetGenericPersister() *database.Handler {
+	return &l.GenericPersister
+}
+
+// GetGraphqlHandler - to return graphql handler instance
+func (l *DefaultLocalProvider) GetGraphqlHandler() http.Handler {
+	return l.GraphqlHandler
+}
+
+// GetGraphqlPlayground - to return graphql playground instance
+func (l *DefaultLocalProvider) GetGraphqlPlayground() http.Handler {
+	return l.GraphqlPlayground
+}
+
+// SetKubeClient - to set meshery kubernetes client
+func (l *DefaultLocalProvider) SetKubeClient(client *mesherykube.Client) {
+	l.KubeClient = client
+}
+
+// GetKubeClient - to get meshery kubernetes client
+func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
+	return l.KubeClient
 }

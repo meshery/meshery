@@ -1,0 +1,4 @@
+name: reset
+description: Resets meshery.yaml with copy from Meshery repo. Warning - Any local changes will be overwritten.
+usage: |
+    `mesheryctl system reset`

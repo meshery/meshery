@@ -1,108 +1,68 @@
 ---
-layout: page
-title: Installation Guide
-permalink: /installation
+layout: default
+title: Quick Start Guide
+permalink: installation/quick-start
+redirect_from: installation/
+language: en
+list: exclude
 ---
 
 <a name="getting-started"></a>
 
-# Quick Start
 
-Getting Meshery up and running on a locally on Docker-enabled system is easy. Use the Meshery command line interface, `mesheryctl`, to start Meshery on any of its [supported platforms](/docs/installation/platforms).
+Getting Meshery up and running locally on a Docker-enabled system is easy with Meshery's command line interface, <a href="{{ site.baseurl }}/guides/mesheryctl">mesheryctl</a>.
 
-## Using `mesheryctl`
+## Configure Your Environment
 
-`mesheryctl` is a command line interface to manage a Meshery deployment. `mesheryctl` allows you to control Meshery's lifecycle with commands like `start`, `stop`, `status`, `reset`. Running `reset` will remove all active container instances, prune pulled images and remove any local volumes created by starting Meshery.
+Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms). 
 
-### Mac or Linux
+## Install Meshery
 
-Use your choice of homebrew or bash to install `mesheryctl`. You only need to use one.
+Use the Meshery command line interface, , to install and start Meshery. Begin with Meshery by installing its command line client: [mesheryctl]({{ site.baseurl }}/guides/mesheryctl). If you are on a MacOS or Linux system, you can download, install, and run to the management plane with the command shown in the figure.
 
-#### Homebrew
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ curl -L https://git.io/meshery | bash - 
+ </div></div>
+ </pre>
 
-Install `mesheryctl` and run Meshery on Mac with Homebrew.
+_Download, install, and run Meshery in a single command._
 
-**Installing with Homebrew**
+## Access Meshery
 
-To install `mesheryctl`, execute the following commands:
+Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery is installed on a Docker host, your default browser will be opened and navigated to `http://localhost:9081`.
 
-```bash
-brew tap layer5io/tap
-brew install mesheryctl
-mesheryctl system start
-```
+## Select a Provider
+Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
 
-**Upgrading with Homebrew**
+<a href="/assets/img/meshery-server-page.png">
+  <img style="width:300px;" src="/assets/img/meshery-server-page.png" />
+</a>
 
-To upgrade `mesheryctl`, execute the following command:
 
-```bash
-brew upgrade mesheryctl
-```
+## Configure Connection to Kubernetes
+Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your your Kubernetes cluster. 
 
-#### Bash
+Visit <i class="fas fa-cog"></i> Settings:
 
-**Installing with Bash**
+  <a href="/assets/img/adapters/meshery-settings.png">
+  <img style="width:600px;" src="/assets/img/adapters/meshery-settings.png" />
+  </a>
 
-Install `mesheryctl` and run Meshery on Mac or Linux with this script:
+If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+## Verify Meshery's Deployment
+Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to Kubernetes by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports]({{ site.baseurl }}/concepts/architecture#adapter-ports).
 
-**Upgrading with Bash**
+<a href="/assets/img/adapters/meshery-ui.png">
+<img style="width:450px;height=auto;" src="/assets/img/adapters/meshery-ui.png" />
+</a>
 
-Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
-```bash
-curl -L https://git.io/meshery | bash -
-```
+## Operate service meshes and their workloads
+You may now proceed to install and work with any [service mesh]({{ site.baseurl }}/service-meshes) supported by Meshery.
 
-### Windows
-
-#### Installing the `mesheryctl` binary
-
-Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
-
-```bash
-./mesheryctl system start
-```
-
-#### Scoop
-
-Use [Scoop](https://scoop.sh) to install Meshery on your Windows machine.
-
-**Installing with Scoop**
-
-Add the Meshery Scoop Bucket and install:
-
-```bash
-scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
-scoop install mesheryctl
-```
-
-**Upgrading with Scoop**
-
-To upgrade `mesheryctl`, execute the following command:
-
-```bash
-scoop update mesheryctl
-```
-
-# Advanced Installation
-
-Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local `~/.meshery/meshery.yaml` (a docker compose file).
-Aligned with the Meshery container image, instead of leaving the implicit `:stable-latest` tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
-
-```bash
-version: '3'
-services:
-  meshery:
-    image: layer5/meshery:v0.5.0
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-```
-
----
-
-When Meshery is up and running, instructions to access Meshery will be printed on the screen and your default browser should be directed to the Meshery login screen.
+<video class="videoTest" width="750" height="auto" autoplay muted loop>
+  <source src="/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">
+ Your browser does not support the video tag
+</video>

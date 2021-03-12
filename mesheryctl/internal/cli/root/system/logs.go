@@ -43,9 +43,9 @@ var logsCmd = &cobra.Command{
 		log.Info("Starting Meshery logging...")
 
 		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-			if err := utils.DownloadFile(utils.DockerComposeFile, fileURL); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to download %s file from %s", utils.DockerComposeFile, fileURL)))
-			}
+			log.Errorf("%s does not exists", utils.DockerComposeFile)
+			log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+			return nil
 		}
 
 		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")

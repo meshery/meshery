@@ -90,10 +90,10 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. `Go` version 1.11+ installed if you want to build and/or make changes to the existing code.
+1. `Go` version 1.15+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
+1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 
 #### Build and run Meshery server
 
@@ -115,7 +115,7 @@ To build & run the Meshery server code, run the following command:
 make run-local
 ```
 
-Any time changes are made to the GO code, you will have to stop the server and run the above command again.
+Any time changes are made to the Go code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`.
 
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
@@ -157,6 +157,17 @@ Meshery uses adapters to provision and interact with different service meshes. F
 
 _Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
+#### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
+**Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
+
+1. Fork [Meshery-Istio](https://github.com/layer5io/meshery-istio)
+2. Clone your fork locally
+3. Run this command from the root directory of **meshery-istio**
+   ```sh
+   make run
+   ```
+4. Try connecting to port 10000 as Meshery Adapter URL
+   
 ## <a name="contributing-ui">UI Contribution Flow</a>
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React, Billboard.js and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
@@ -198,7 +209,7 @@ Any UI changes made now will automatically be recompiled and served in the brows
 If you want to run Meshery from IDE like Goland, VSCode. set below environment variable
 
 ```
-SAAS_BASE_URL=https://meshery.layer5.io
+PROVIDER_BASE_URLS="https://meshery.layer5.io"
 PORT=9081
 DEBUG=true
 ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009

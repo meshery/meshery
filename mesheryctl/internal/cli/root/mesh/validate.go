@@ -6,10 +6,12 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Operation is the common body type to be passed for Mesh Ops
@@ -43,7 +45,12 @@ var validateCmd = &cobra.Command{
 
 		log.Infof("Starting service mesh validation...")
 
-		path := "http://localhost:9081/api/mesh/ops"
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+
+		path := mctlCfg.GetBaseMesheryURL() + "/api/mesh/ops"
 		method := "POST"
 
 		data := url.Values{}

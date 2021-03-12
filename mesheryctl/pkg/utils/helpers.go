@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	crand "crypto/rand"
 	"encoding/binary"
@@ -8,20 +9,25 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	rand "math/rand"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -31,7 +37,7 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Usage URLs
-	docsBaseURL = "https://meshery.layer5.io/docs/"
+	docsBaseURL = "https://docs.meshery.io/"
 
 	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
@@ -62,11 +68,49 @@ var (
 	// related configuration files.
 	MesheryFolder = ".meshery"
 	// DockerComposeFile is the default location within the MesheryFolder
-	// where the docker compose file is located?
+	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
+	// ManifestsFolder is where the Kubernetes manifests are stored
+	ManifestsFolder = "manifests"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
+	// DefaultConfigPath is the detail path to mesheryctl config
+	DefaultConfigPath = "config.yaml"
+	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
+	MesheryNamespace = "meshery"
+	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryDeployment = "meshery-deployment.yaml"
+	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	MesheryService = "meshery-service.yaml"
+	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
+	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	ServiceAccount = "service-account.yaml"
+	// ViperCompose is an instance of viper for docker-compose
+	ViperCompose = viper.New()
+	// SilentFlag skips waiting for user input and proceeds with default options
+	SilentFlag bool
 )
+
+// ListOfAdapters returns the list of adapters available
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
+
+// TemplateContext is the template context provided when creating a config file
+var TemplateContext = config.Context{
+	Endpoint: "http://localhost:9081",
+	Token:    "Default",
+	Platform: "docker",
+	Adapters: ListOfAdapters,
+	Channel:  "stable",
+	Version:  "latest",
+}
+
+// TemplateToken is the template token provided when creating a config file
+var TemplateToken = config.Token{
+	Name:     "Default",
+	Location: AuthConfigFile,
+}
 
 type cryptoSource struct{}
 
@@ -109,6 +153,9 @@ func SafeClose(co io.Closer) {
 	}
 }
 
+// TODO: Use the same DownloadFile function from MeshKit instead of the function below
+// and change all it's occurrences
+
 // DownloadFile from url and save to configured file location
 func DownloadFile(filepath string, url string) error {
 	// Get the data
@@ -136,11 +183,12 @@ func DownloadFile(filepath string, url string) error {
 	return nil
 }
 
+// GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
 func GetMesheryGitHubOrg() string {
 	return mesheryGitHubOrg
 }
 
-// Get Meshery GitHub Details
+// GetMesheryGitHubRepo retrieves the name of the Meshery repository
 func GetMesheryGitHubRepo() string {
 	return mesheryGitHubRepo
 }
@@ -166,26 +214,93 @@ func SetFileLocation() error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get users home directory")
 	}
-	MesheryFolder = path.Join(home, MesheryFolder)
-	DockerComposeFile = path.Join(MesheryFolder, DockerComposeFile)
-	AuthConfigFile = path.Join(MesheryFolder, AuthConfigFile)
+	MesheryFolder = filepath.Join(home, MesheryFolder)
+	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
+	AuthConfigFile = filepath.Join(MesheryFolder, AuthConfigFile)
+	DefaultConfigPath = filepath.Join(MesheryFolder, DefaultConfigPath)
 	return nil
 }
 
 //PreReqCheck prerequisites check
-func PreReqCheck() error {
-	//Check for installed docker-compose on client system
-	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-		log.Info("Docker-Compose is not installed")
-		//No auto installation of Docker-compose for windows
-		if runtime.GOOS == "windows" {
-			return errors.Wrap(err, "please install docker-compose")
+func PreReqCheck(subcommand string, focusedContext string) error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
+	if err != nil {
+		return err
+	}
+
+	if currCtx.Platform == "docker" {
+		//Check whether docker daemon is running or not
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			log.Info("Docker is not running.")
+			//No auto installation of docker for windows
+			if runtime.GOOS == "windows" {
+				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
+			}
+			err = startdockerdaemon(subcommand)
+			if err != nil {
+				return errors.Wrapf(err, "failed to start Docker.")
+			}
 		}
-		err = installprereq()
+		//Check for installed docker-compose on client system
+		if err := exec.Command("docker-compose", "-v").Run(); err != nil {
+			log.Info("Docker-Compose is not installed")
+			//No auto installation of Docker-compose for windows
+			if runtime.GOOS == "windows" {
+				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+			}
+			err = installprereq()
+			if err != nil {
+				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+			}
+		}
+	} else if currCtx.Platform == "kubernetes" {
+
+	} else {
+		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
+	}
+	return nil
+}
+
+func startdockerdaemon(subcommand string) error {
+	userResponse := false
+	// read user input on whether to start Docker daemon or not.
+	if SilentFlag {
+		userResponse = true
+	} else {
+		userResponse = AskForConfirmation("Start Docker now")
+	}
+	if userResponse != true {
+		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
+	}
+
+	log.Info("Attempting to start Docker...")
+	// once user gaves permission, start docker daemon on linux/macOS
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+	} else {
+		// Assuming we are on macOS, try to start Docker from default path
+		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
+		err := cmd.Start()
 		if err != nil {
-			return errors.Wrap(err, "failed to install prerequisites")
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// wait for few seconds for docker to start
+		err = exec.Command("sleep", "30").Run()
+		if err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
+		}
+		// check whether docker started successfully or not, throw an error message otherwise
+		if err := exec.Command("docker", "ps").Run(); err != nil {
+			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	}
+	log.Info("Prerequisite Docker started.")
 	return nil
 }
 
@@ -262,8 +377,13 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
 	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", "http://localhost:9081/api/gettoken", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/gettoken", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request :")
 		return err
@@ -357,8 +477,7 @@ func SystemError(msg string) string {
 	return formatError(msg, cmdSystem)
 }
 
-// MeshError returns a formatted error message with a link to 'mesh' command usage page
-// in addition to the error message
+// MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 //func MeshError(msg string) string {
 //	return formatError(msg, cmdMesh)
 //}
@@ -398,4 +517,266 @@ func ContentTypeIsHTML(resp *http.Response) bool {
 		return true
 	}
 	return false
+}
+
+// UpdateMesheryContainers runs the update command for meshery client
+func UpdateMesheryContainers() error {
+	log.Info("Updating Meshery now...")
+
+	start := exec.Command("docker-compose", "-f", DockerComposeFile, "pull")
+	start.Stdout = os.Stdout
+	start.Stderr = os.Stderr
+	if err := start.Run(); err != nil {
+		return errors.Wrap(err, SystemError("failed to start meshery"))
+	}
+	return nil
+}
+
+// AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
+func AskForConfirmation(s string) bool {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]? ", s)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if response == "y" || response == "yes" {
+			return true
+		} else if response == "n" || response == "no" {
+			return false
+		}
+	}
+}
+
+// CreateConfigFile creates config file in Meshery Folder
+func CreateConfigFile() error {
+	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
+		_, err := os.Create(DefaultConfigPath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AddTokenToConfig adds token passed to it to mesheryctl config file
+func AddTokenToConfig(token config.Token, configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Tokens == nil {
+		mctlCfg.Tokens = []config.Token{}
+	}
+
+	for i := range mctlCfg.Tokens {
+		if mctlCfg.Tokens[i].Name == token.Name {
+			return errors.New("error adding token: a token with same name already exists")
+		}
+	}
+
+	mctlCfg.Tokens = append(mctlCfg.Tokens, token)
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AddContextToConfig adds context passed to it to mesheryctl config file
+func AddContextToConfig(contextName string, context config.Context, configPath string, set bool) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return err
+	}
+
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	if mctlCfg.Contexts == nil {
+		mctlCfg.Contexts = map[string]config.Context{}
+	}
+
+	_, exists := mctlCfg.Contexts[contextName]
+	if exists {
+		return errors.New("error adding context: a context with same name already exists")
+	}
+
+	mctlCfg.Contexts[contextName] = context
+	if set {
+		mctlCfg.CurrentContext = contextName
+	}
+
+	viper.Set("contexts", mctlCfg.Contexts)
+	viper.Set("current-context", mctlCfg.CurrentContext)
+	viper.Set("tokens", mctlCfg.Tokens)
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ValidateURL validates url provided for meshery backend to mesheryctl context
+func ValidateURL(URL string) error {
+	ParsedURL, err := url.ParseRequestURI(URL)
+	if err != nil {
+		return err
+	}
+	if ParsedURL.Scheme != "http" && ParsedURL.Scheme != "https" {
+		return fmt.Errorf("%s is not a supported protocol", ParsedURL.Scheme)
+	}
+	return nil
+}
+
+// ListManifests lists the manifest files stored in GitHub
+func ListManifests(url string) ([]Manifest, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	var manLis ManifestList
+
+	err = json.Unmarshal([]byte(body), &manLis)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	return manLis.Tree, nil
+}
+
+// GetManifestURL returns the URLs for the manifest files
+func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
+	var manifestURL string
+
+	if manifest.Typ == "blob" {
+		manifestURL = rawManifestsURL + manifest.Path
+		return manifestURL
+	}
+	return ""
+}
+
+// DownloadManifests downloads all the Kubernetes manifest files
+func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
+	for _, manifest := range manifestArr {
+		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
+			// download the manifest files to ~/.meshery/manifests folder
+			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
+			if err := DownloadFile(filepath, manifestFile); err != nil {
+				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
+			}
+		}
+	}
+	return nil
+}
+
+// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
+func GetLatestStableReleaseTag() (string, error) {
+	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
+	}
+	defer SafeClose(resp.Body)
+
+	var dat map[string]interface{}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read response body")
+	}
+	if err := json.Unmarshal(body, &dat); err != nil {
+		return "", errors.Wrap(err, "failed to unmarshal json into object")
+	}
+
+	return dat["tag_name"].(string), nil
+}
+
+// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
+func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
+	for _, v := range manifestArr {
+		if v.Path == adapterManifest {
+			return true
+		}
+	}
+
+	return false
+}
+
+// DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
+// Use force to override download anyway
+func DownloadDockerComposeFile(ctx config.Context, force bool) error {
+	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
+		fileURL := ""
+
+		if ctx.Channel == "edge" {
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+		} else if ctx.Channel == "stable" {
+			if ctx.Version == "latest" {
+				ctx.Version, err = GetLatestStableReleaseTag()
+				if err != nil {
+					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
+				}
+			}
+			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
+		} else {
+			return errors.Errorf("unknown channel %s", ctx.Channel)
+		}
+
+		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
+			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
+		}
+	}
+	return nil
+}
+
+// CreateKubeClient creates a Kubernetes client and returns it
+func CreateKubeClient() (*meshkitkube.Client, error) {
+	log.Debug("detecting kubeconfig file...")
+
+	// Create a new client
+	client, err := meshkitkube.New(nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new client")
+	}
+
+	return client, nil
 }

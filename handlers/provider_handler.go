@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	models "github.com/layer5io/meshery/models"
+	"github.com/sirupsen/logrus"
 )
 
 // ProviderHandler - handles the choice of provider
@@ -48,4 +50,44 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, r *http.Request) {
 // ProviderUIHandler - serves providers UI
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 	ServeUI(w, r, "/provider", "../provider-ui/out/")
+}
+
+// ProviderCapabilityHandler returns the capabilities.json for the provider
+func (h *Handler) ProviderCapabilityHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	provider.GetProviderCapabilities(w, r)
+}
+
+// ProviderComponentsHandler handlers the requests to serve react
+// components from the provider package
+func (h *Handler) ProviderComponentsHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	uiReqBasePath := "/api/provider/extension"
+	serverReqBasePath := "/api/provider/extension/server/"
+	loadReqBasePath := "/api/provider/extension/"
+
+	if strings.HasPrefix(r.URL.Path, serverReqBasePath) {
+		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
+	} else if r.URL.Path == loadReqBasePath {
+		err := h.LoadExtensionFromPackage(w, r, provider)
+		if err != nil {
+			logrus.Error(err)
+			http.Error(w, "Failed to Load Extensions from Package", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("content-type", "application/json")
+		_, _ = w.Write([]byte("{}"))
+	} else {
+		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
+	}
 }

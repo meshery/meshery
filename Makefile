@@ -1,11 +1,12 @@
-ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009"
+ADAPTER_URLS := "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009"
 
-MESHERY_CLOUD_LOCAL=http://mesherylocal.layer5.io:9876
-MESHERY_CLOUD_DEV=http://localhost:9876
-MESHERY_CLOUD_PROD=https://meshery.layer5.io
-MESHERY_CLOUD_STAGING=https://staging-meshery.layer5.io
+MESHERY_CLOUD_LOCAL="http://mesherylocal.layer5.io:9876"
+MESHERY_CLOUD_DEV="http://localhost:9876"
+MESHERY_CLOUD_PROD="https://meshery.layer5.io"
+MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
+RELEASE_CHANNEL="edge"
 
 # Build the CLI for Meshery - `mesheryctl`.
 # Build Meshery inside of a multi-stage Docker container.
@@ -16,7 +17,7 @@ mesheryctl:
 # `make docker` builds Meshery inside of a multi-stage Docker container.
 # This method does NOT require that you have Go, NPM, etc. installed locally.
 docker:
-	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) .
+	DOCKER_BUILDKIT=1 docker build -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
 # Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
@@ -24,7 +25,7 @@ docker-run-local-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
-	-e SAAS_BASE_URL=$(MESHERY_CLOUD_LOCAL) \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_LOCAL) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-p 9081:8080 \
@@ -35,7 +36,7 @@ docker-run-local-cloud:
 docker-run-cloud: 
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
-	-e SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	-e DEBUG=true \
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-v meshery-config:/home/appuser/.meshery/config \
@@ -48,8 +49,8 @@ docker-run-cloud:
 
 run-local-cloud: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
-	SAAS_BASE_URL=$(MESHERY_CLOUD_DEV) \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -60,13 +61,30 @@ run-local-cloud:
 #  and points to remote Meshery Cloud for user authentication.
 run-local: 
 	cd cmd; go clean; rm meshery; go mod tidy; \
-	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA}" -tags draft -a -o meshery; \
-	SAAS_BASE_URL=$(MESHERY_CLOUD_PROD) \
+	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	./meshery; \
 	cd ..
+
+run-fast:
+	cd cmd; go mod tidy; \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	go run main.go;
+
+run-fast-cloud:
+	cd cmd; go mod tidy; \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	go run main.go;
+
 
 golangci-run:
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
@@ -130,3 +148,6 @@ docker-docs:
 	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 
+.PHONY: chart-readme
+chart-readme:
+	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
