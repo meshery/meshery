@@ -145,7 +145,7 @@ func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, s
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")

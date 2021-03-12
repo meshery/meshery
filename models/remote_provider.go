@@ -415,7 +415,7 @@ func (l *RemoteProvider) FetchResults(req *http.Request, page, pageSize, search,
 }
 
 // FetchAllResults - fetches results from provider backend
-func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistResults) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistResults, l.ProviderName)
@@ -439,6 +439,13 @@ func (l *RemoteProvider) FetchAllResults(req *http.Request, page, pageSize, sear
 	if order != "" {
 		q.Set("order", order)
 	}
+	if from != "" {
+		q.Set("from", from)
+	}
+	if to != "" {
+		q.Set("to", to)
+	}
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed results url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
