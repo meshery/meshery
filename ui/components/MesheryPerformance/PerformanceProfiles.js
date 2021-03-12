@@ -178,6 +178,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
           setPageSize={setPageSize}
           testProfiles={testProfiles}
           setProfileForModal={setProfileForModal}
+          handleDelete={deleteProfile}
         />
       )}
       {!testProfiles.length ? (

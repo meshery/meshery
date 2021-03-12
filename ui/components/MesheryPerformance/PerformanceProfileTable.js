@@ -45,12 +45,13 @@ function MesheryTestProfiles({
   setPageSize,
   testProfiles = [],
   setProfileForModal,
+  handleDelete,
 }) {
   const [selectedProfile, setSelectedProfile] = useState();
 
   useEffect(() => {
     setProfileForModal(selectedProfile);
-  }, [selectedProfile])
+  }, [selectedProfile]);
 
   const searchTimeout = useRef(null);
 
@@ -235,17 +236,23 @@ function MesheryTestProfiles({
         </TableRow>
       );
     },
+    onRowsDelete: function handleDeleteRow(row) {
+      const pids = Object.keys(row.lookup).map(idx => testProfiles[idx]?.id)
+      pids.forEach(pid => handleDelete(pid))
+    },
   };
 
   return (
     <NoSsr>
-      <MUIDataTable
-        title={<div className={classes.tableHeader}>Profiles</div>}
-        data={testProfiles}
-        columns={columns}
-        // @ts-ignore
-        options={options}
-      />
+      {testProfiles?.length ? (
+        <MUIDataTable
+          title={<div className={classes.tableHeader}>Profiles</div>}
+          data={testProfiles}
+          columns={columns}
+          // @ts-ignore
+          options={options}
+        />
+      ) : null}
     </NoSsr>
   );
 }
