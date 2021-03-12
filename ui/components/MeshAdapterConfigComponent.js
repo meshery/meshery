@@ -309,12 +309,13 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/kuma.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
-              case "nginx service mesh":
-                image = "/static/img/nginx-sm.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
+              // Disable support for NGINX SM
+              // case "nginx service mesh":
+              //   image = "/static/img/nginx-sm.svg";
+              //   logoIcon = <img src={image} className={classes.icon} />;
+              //   break;
               case "traefik mesh":
-                image = "/static/img/traefik-mesh.svg";
+                image = "/static/img/traefikmesh.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
             }
