@@ -15,13 +15,11 @@ type AddonConfig struct {
 
 type AddonList struct {
 	Type   string       `json:"type"`
-	Status *Status      `json:"status"`
 	Config *AddonConfig `json:"config"`
 }
 
 type ControlPlane struct {
 	Name    *MeshType             `json:"name"`
-	Version string                `json:"version"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
@@ -30,9 +28,10 @@ type ControlPlaneFilter struct {
 }
 
 type ControlPlaneMember struct {
-	Component string  `json:"component"`
-	Namespace string  `json:"namespace"`
-	Status    *Status `json:"status"`
+	Name      string `json:"name"`
+	Component string `json:"component"`
+	Version   string `json:"version"`
+	Namespace string `json:"namespace"`
 }
 
 type Error struct {
@@ -42,13 +41,13 @@ type Error struct {
 
 type OperatorControllerStatus struct {
 	Name   *string `json:"name"`
-	Status *Status `json:"status"`
+	Status Status  `json:"status"`
 	Error  *Error  `json:"error"`
 }
 
 type OperatorStatus struct {
-	Status *Status `json:"status"`
-	Error  *Error  `json:"error"`
+	Status Status `json:"status"`
+	Error  *Error `json:"error"`
 }
 
 type AddonSelector string
@@ -162,20 +161,22 @@ func (e MeshType) MarshalGQL(w io.Writer) {
 type Status string
 
 const (
-	StatusEnabled  Status = "ENABLED"
-	StatusDisabled Status = "DISABLED"
-	StatusUnknown  Status = "UNKNOWN"
+	StatusEnabled    Status = "ENABLED"
+	StatusDisabled   Status = "DISABLED"
+	StatusProcessing Status = "PROCESSING"
+	StatusUnknown    Status = "UNKNOWN"
 )
 
 var AllStatus = []Status{
 	StatusEnabled,
 	StatusDisabled,
+	StatusProcessing,
 	StatusUnknown,
 }
 
 func (e Status) IsValid() bool {
 	switch e {
-	case StatusEnabled, StatusDisabled, StatusUnknown:
+	case StatusEnabled, StatusDisabled, StatusProcessing, StatusUnknown:
 		return true
 	}
 	return false

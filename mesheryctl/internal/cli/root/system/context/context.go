@@ -19,14 +19,14 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var configuration models.MesheryCtlConfig
+var configuration config.MesheryCtlConfig
 
 var (
 	availableSubcommands []*cobra.Command

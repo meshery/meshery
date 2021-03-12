@@ -18,6 +18,8 @@ import (
 	"github.com/layer5io/meshery/models/oam"
 	"github.com/layer5io/meshery/router"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
@@ -42,6 +44,15 @@ const (
 func main() {
 	if globalTokenForAnonymousResults != "" {
 		models.GlobalTokenForAnonymousResults = globalTokenForAnonymousResults
+	}
+
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logger.Options{
+		Format: logger.SyslogLogFormat,
+	})
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
 	}
 
 	ctx := context.Background()
@@ -140,10 +151,14 @@ func main() {
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
+		Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)
 	}
+
+	kubeclient := mesherykube.Client{}
+	meshsyncCh := make(chan struct{})
 
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
@@ -162,9 +177,10 @@ func main() {
 		PerformanceProfilesPersister: performanceProfilePersister,
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
-			DBHandler:        &dbHandler,
-			GetKubeClient:    helpers.NewKubeClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
-			GetDynamicClient: helpers.NewDynamicClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+			Logger:          log,
+			DBHandler:       &dbHandler,
+			KubeClient:      &kubeclient,
+			MeshSyncChannel: meshsyncCh,
 		}),
 		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 			URL: "/api/system/graphql/query",
@@ -197,9 +213,10 @@ func main() {
 			SmiResultPersister:         smiResultPersister,
 			GenericPersister:           dbHandler,
 			GraphqlHandler: graphql.New(graphql.Options{
-				DBHandler:        &dbHandler,
-				GetKubeClient:    helpers.NewKubeClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
-				GetDynamicClient: helpers.NewDynamicClientGenerator(viper.GetString("KUBECONFIG_FOLDER")),
+				Logger:          log,
+				DBHandler:       &dbHandler,
+				KubeClient:      &kubeclient,
+				MeshSyncChannel: meshsyncCh,
 			}),
 			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 				URL: "/api/system/graphql/query",
@@ -230,7 +247,7 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-	})
+	}, &kubeclient, meshsyncCh, log)
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)

@@ -352,14 +352,15 @@ const categories = [
         link: false,
         show: true,
       },
-      {
-        id: "NGINX Service Mesh",
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href: "/management/nginx",
-        title: "NGINX Service Mesh",
-        link: false,
-        show: true,
-      },
+      // Disable support for NGINX SM
+      // {
+      //   id: "NGINX Service Mesh",
+      //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+      //   href: "/management/nginx",
+      //   title: "NGINX Service Mesh",
+      //   link: false,
+      //   show: true,
+      // },
       {
         id: "Octarine",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -664,10 +665,11 @@ class Navigator extends React.Component {
         image = "/static/img/kuma-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;
         break;
-      case "nginx service mesh":
-        image = "/static/img/nginx-sm-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
+      // Disable support for NGINX SM
+      // case "nginx service mesh":
+      //   image = "/static/img/nginx-sm-light.svg";
+      //   logoIcon = <img src={image} className={classes.icon} />;
+      //   break;
       case "traefik mesh":
         image = "/static/img/traefikmesh-light.svg";
         logoIcon = <img src={image} className={classes.icon} />;

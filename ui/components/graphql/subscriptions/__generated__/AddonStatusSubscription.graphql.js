@@ -9,35 +9,34 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
-export type Status = "DISABLED" | "ENABLED" | "UNKNOWN" | "%future added value";
-export type AddonEventsSubscriptionVariables = {|
+export type AddonStatusSubscriptionVariables = {|
   selector?: ?MeshType
 |};
-export type AddonEventsSubscriptionResponse = {|
-  +addonEvent: $ReadOnlyArray<{|
+export type AddonStatusSubscriptionResponse = {|
+  +addonsState: $ReadOnlyArray<{|
     +type: string,
-    +status: ?Status,
     +config: {|
-      +serviceName: string
+      +serviceName: string,
+      +endpoint: string,
     |},
   |}>
 |};
-export type AddonEventsSubscription = {|
-  variables: AddonEventsSubscriptionVariables,
-  response: AddonEventsSubscriptionResponse,
+export type AddonStatusSubscription = {|
+  variables: AddonStatusSubscriptionVariables,
+  response: AddonStatusSubscriptionResponse,
 |};
 */
 
 
 /*
-subscription AddonEventsSubscription(
+subscription AddonStatusSubscription(
   $selector: MeshType
 ) {
-  addonEvent: listenToAddonEvents(selector: $selector) {
+  addonsState: listenToAddonState(selector: $selector) {
     type
-    status
     config {
       serviceName
+      endpoint
     }
   }
 }
@@ -53,7 +52,7 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": "addonEvent",
+    "alias": "addonsState",
     "args": [
       {
         "kind": "Variable",
@@ -63,7 +62,7 @@ v1 = [
     ],
     "concreteType": "AddonList",
     "kind": "LinkedField",
-    "name": "listenToAddonEvents",
+    "name": "listenToAddonState",
     "plural": true,
     "selections": [
       {
@@ -71,13 +70,6 @@ v1 = [
         "args": null,
         "kind": "ScalarField",
         "name": "type",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "status",
         "storageKey": null
       },
       {
@@ -94,6 +86,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "serviceName",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "endpoint",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -107,7 +106,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddonEventsSubscription",
+    "name": "AddonStatusSubscription",
     "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
@@ -116,20 +115,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddonEventsSubscription",
+    "name": "AddonStatusSubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "3bd191d555f561b79be8da77b06e1a99",
+    "cacheID": "fcb8f0fbff656cbf142d60097b3b6825",
     "id": null,
     "metadata": {},
-    "name": "AddonEventsSubscription",
+    "name": "AddonStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription AddonEventsSubscription(\n  $selector: MeshType\n) {\n  addonEvent: listenToAddonEvents(selector: $selector) {\n    type\n    status\n    config {\n      serviceName\n    }\n  }\n}\n"
+    "text": "subscription AddonStatusSubscription(\n  $selector: MeshType\n) {\n  addonsState: listenToAddonState(selector: $selector) {\n    type\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '1ecd4940edf0697c34d3f94a931ddb1d';
+(node/*: any*/).hash = '3b3f1991ed11961f1519a64d8db3392a';
 
 module.exports = node;

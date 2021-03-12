@@ -39,7 +39,6 @@ jobs:
         args: release --rm-dist --skip-validate
   docker:
     name: Docker build and push
-    if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
     env: 
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-latest
@@ -89,11 +88,19 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     steps:
-    - name: trigger packages publish
+    - name: trigger plugins for edge
+      if: startsWith(github.ref, 'refs/tags/') != true && success()
+      uses: kumarabd/trigger-remote-action@master
+      with:
+        name: "Build and Publish"
+        repo: layer5labs/meshery-extensions
+        token: ${{ secrets.GITHUB_PAT }}
+        version: edge-latest
+    - name: trigger plugins for edge
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: kumarabd/trigger-remote-action@master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
-        token: ${{ secrets.GLOBAL_PAT }}
+        token: ${{ secrets.GITHUB_PAT }}
         version: ${GITHUB_REF/refs\/tags\//}

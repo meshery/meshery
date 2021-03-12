@@ -12,6 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -62,7 +63,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 			return
 		}
 
-		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL)
+		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
 			http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
@@ -93,7 +94,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string, provider models.Provider) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -115,6 +116,16 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		logrus.Error(err)
 		return nil, err
 	}
+
+	kubeclient, err := mesherykube.New(prefObj.K8SConfig.Config)
+	if err != nil {
+		err = fmt.Errorf("unable to create Kubernetes client")
+		logrus.Error(err)
+		return nil, err
+	}
+	*h.kubeclient = *kubeclient
+	provider.SetKubeClient(h.kubeclient)
+
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil || prefObj.K8SConfig == nil {
 		err = errors.Wrapf(err, "Error creating a mesh client.")

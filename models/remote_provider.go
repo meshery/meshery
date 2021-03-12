@@ -20,6 +20,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -53,6 +54,7 @@ type RemoteProvider struct {
 	GenericPersister   database.Handler
 	GraphqlHandler     http.Handler
 	GraphqlPlayground  http.Handler
+	KubeClient         *mesherykube.Client
 }
 
 type userSession struct {
@@ -1673,4 +1675,14 @@ func (l *RemoteProvider) GetGraphqlHandler() http.Handler {
 // GetGraphqlPlayground - to return graphql playground instance
 func (l *RemoteProvider) GetGraphqlPlayground() http.Handler {
 	return l.GraphqlPlayground
+}
+
+// SetKubeClient - to set meshery kubernetes client
+func (l *RemoteProvider) SetKubeClient(client *mesherykube.Client) {
+	l.KubeClient = client
+}
+
+// GetKubeClient - to get meshery kubernetes client
+func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
+	return l.KubeClient
 }
