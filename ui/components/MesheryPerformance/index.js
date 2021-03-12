@@ -676,9 +676,9 @@ class MesheryPerformanceComponent extends React.Component {
     if (timerDialogOpen) {
       chartStyle = { opacity: 0.3 };
     }
-    let displayStaticCharts = "";
-    let displayGCharts = "";
-    let displayPromCharts = "";
+    let displayStaticCharts = null;
+    let displayGCharts = null;
+    let displayPromCharts = null;
 
     availableAdapters.forEach((item) => {
       const index = this.state.availableSMPMeshes.indexOf(item);
