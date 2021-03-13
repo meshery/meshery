@@ -58,7 +58,7 @@ When you execute `mesheryctl` without any flag, the output would be the usage an
  </div></div>
  </pre>
 <br/>
--
+
 
 ## Options inherited from parent command
 <pre class="codeblock-pre">
