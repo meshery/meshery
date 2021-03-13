@@ -22,7 +22,7 @@ list: exclude
 <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
 <!-- General example of command -->
- mesheryctl &#60;command&#62; [flags]
+ mesheryctl &#60;command name&#62; 
  </div></div>
  </pre>
 
@@ -37,10 +37,10 @@ Describe the command goes here.
  <div class="codeblock"><div class="clipboardjs">
 <!-- All possible use cases of the command should go here -->
   # use case 1
-  mesheryctl <command> [flags]
+  mesheryctl &#60;command&#62; [flags]
   
   # use case 2
-  mesheryctl <command> [flags] 
+  mesheryctl &#60;command&#62; [flags] 
  </div></div>
  </pre>
 
