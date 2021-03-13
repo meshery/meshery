@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl command name
+title: mesheryctl <command name>
 permalink: reference/mesheryctl/commands/command_name_template
 type: reference
 display-title: "false"
@@ -10,62 +10,60 @@ categories: en
 list: exclude
 # image: /assets/img/platforms/brew.png
 ---
-<!-- 
- This could be used as a template for commands documentation.
- Just fill your information in the sections indicated below.
- -->
 
+<!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
+<!-- Name of the command -->
+# mesheryctl &#60;command name&#62;
 
-<!-- name of command -->
-# mesheryctl
-<pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
-<!-- General example of command -->
- mesheryctl &#60;command name&#62; 
- </div></div>
- </pre>
-
-<!-- Description of the command -->
-Describe the command goes here.
+<!-- Description of the command. Preferably a paragraph -->
+Description of the command preferably in a paragraph.
 <br/>
 
-<!-- General usage of command -->
+<!-- Basic usage of the command -->
+<pre class="codeblock-pre">
+  <div class="codeblock">
+    <div class="clipboardjs">
+  mesheryctl &#60;command&#62; [flags] 
+    </div>
+  </div>
+</pre>
+
+<!-- All possible example use cases of the command -->
 ## Examples
 
- <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
+<pre class="codeblock-pre">
+  <div class="codeblock">
+    <div class="clipboardjs">
 <!-- All possible use cases of the command should go here -->
-  # use case 1
+  # use case 1 (brief description)
   mesheryctl &#60;command&#62; [flags]
   
-  # use case 2
+  # use case 2 (brief description)
   mesheryctl &#60;command&#62; [flags] 
- </div></div>
+    </div>
+  </div>
  </pre>
 
+<!-- Options/Flags available in this command -->
+## Options
 
-<!-- extra doc could be here -->
-When you execute `mesheryctl` without any flag, the output would be the usage and general help info about the command.
-
-
-
-## Options 
 <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
-<!-- General example of command -->
- Possible Options
- </div></div>
- </pre>
+  <div class="codeblock">
+    <div class="clipboardjs">
+  [flag] (data type) short description
+    </div>
+  </div>
+</pre>
 <br/>
 
-
-## Options inherited from parent command
+<!-- If any Options/Flags are inherited from any parent commands, add here -->
+## Options inherited from parent commands
 <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
-<!-- General example of command -->
- Possible Options inherited from parent command
- </div></div>
- </pre>
+  <div class="codeblock">
+    <div class="clipboardjs">
+  Possible Options inherited from parent command
+    </div>
+  </div>
+</pre>
 <br/>
-
