@@ -16,8 +16,10 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -70,6 +72,9 @@ var statusCmd = &cobra.Command{
 			}
 
 		case "kubernetes":
+			// if the platform is kubernetes, use kubernetes go-client to
+			// display pod status in the MesheryNamespace
+
 			// create an kubernetes client
 			client, err := utils.CreateKubeClient()
 
@@ -83,9 +88,21 @@ var statusCmd = &cobra.Command{
 			// List the pods in the MesheryNamespace
 			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
-			log.Info(podList)
-		}
+			if err != nil {
+				return err
+			}
 
+			for i, pod := range podList.Items {
+				// Get the status from all the pods
+				podstatusPhase := string(pod.Status.Phase)
+				podCreationTime := pod.GetCreationTimestamp()
+				age := time.Since(podCreationTime.Time).Round(time.Second)
+
+				// Log the status
+				podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
+				fmt.Println(podInfo)
+			}
+		}
 		return nil
 	},
 }
