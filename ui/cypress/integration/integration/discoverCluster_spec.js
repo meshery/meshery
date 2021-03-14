@@ -9,7 +9,7 @@ describe("Settings", () => {
 
       });
 
-      it("In Cluster Deployment & ping k8s cluster", () => {
+      it("search Cluster Deployment & ping k8s cluster", () => {
         cy.intercept('GET', '/api/k8sconfig/ping', { fixture: 'clusterVersion.json' }).as('getK8sConfig')
         cy.intercept('GET', '/api/config/sync', { fixture: 'sync.json' }).as('getConfigSync')
 
