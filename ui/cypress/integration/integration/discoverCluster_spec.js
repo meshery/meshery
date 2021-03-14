@@ -10,7 +10,7 @@ describe("Settings", () => {
       });
 
       it("search Cluster Deployment & ping k8s cluster", () => {
-        cy.intercept('GET', '/api/k8sconfig/ping', { fixture: 'clusterVersion.json' }).as('getK8sConfig')
+        cy.intercept('GET', '/api/k8sconfig/ping', { fixture: 'clusterVersion.json' }).as('getK8sVersion')
         cy.intercept('GET', '/api/config/sync', { fixture: 'sync.json' }).as('getConfigSync')
 
         cy.get("[data-cy=tabInClusterDeployment]").click();
@@ -18,7 +18,7 @@ describe("Settings", () => {
 
         cy.wait('@getConfigSync')
         cy.get("[data-cy=chipContextName]").click();
-        cy.wait('@getK8sConfig');
+        cy.wait('@getK8sVersion');
         cy.get("[data-cy=k8sSuccessSnackbar]").should("exist");
       });
     });
