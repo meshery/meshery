@@ -16,8 +16,8 @@ builds:
     - CGO_ENABLED=0
     
   ldflags:
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version={{.Version}}
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha={{.Commit}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version={{.Tag}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha={{.ShortCommit}}
     - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
