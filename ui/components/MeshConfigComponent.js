@@ -215,6 +215,7 @@ class MeshConfigComponent extends React.Component {
 
     subscribeOperatorStatusEvents(self.setOperatorState)
     fetchMesheryOperatorStatus()
+      .toPromise()
       .then(res => {
         self.setOperatorState(res)
       }

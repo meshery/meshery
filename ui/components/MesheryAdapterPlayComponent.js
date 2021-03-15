@@ -232,6 +232,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     subscribeAddonStatusEvents(self.setAddonsState, variables)
 
     fetchAvailableAddons(variables)
+      .toPrmise()
       .then(res => {
         self.setAddonsState(res)
       }
