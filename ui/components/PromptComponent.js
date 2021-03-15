@@ -14,7 +14,9 @@ const styles = () => ({
   title: {
     textAlign: 'center',
     minWidth: 400,
-    padding: '10px'
+    padding: '10px',
+    color: '#fff',
+    backgroundColor: '#607d8b'
   },
   subtitle: {
     minWidth: 400,
