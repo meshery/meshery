@@ -369,9 +369,33 @@ class MeshConfigComponent extends React.Component {
         setTimeout(async () => {
           let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
           if (response == "yes") {
-            console.log("uninstalling operator")
-          }else{
-            console.log("not uninstalling operator")
+            const self = this;
+            const variables = {
+              status: "DISABLED",
+            }
+            self.props.updateProgress({ showProgress: true })
+
+            changeOperatorState((response, errors) => {
+              self.props.updateProgress({ showProgress: false });
+              if (errors !== undefined) {
+                self.handleError("Operator action failed")
+              }
+              self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                variant: 'success',
+                autoHideDuration: 2000,
+                action: (key) => (
+                  <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    onClick={() => self.props.closeSnackbar(key)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                ),
+              });
+              self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+            }, variables);
           }
         }, 100);
         this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
@@ -481,40 +505,43 @@ class MeshConfigComponent extends React.Component {
         //prompt
         const modal = this.ref.current;
         setTimeout(async () => {
-          let response = await modal.show({ title: "", subtitle: "", options: ["yes", "no"] });
+          let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
           if (response == "yes") {
-            this.setState({
-              inClusterConfigForm: false,
-              inClusterConfig: false,
-              k8sfile: '',
-              k8sfileElementVal: '',
-              k8sfileError: false,
-              contextName: '',
-              contextNameForForm: '',
-              clusterConfigured: false,
-            });
-            this.props.updateK8SConfig({
-              k8sConfig: {
-                inClusterConfig: false, k8sfile: '', contextName: '', clusterConfigured: false,
-              },
-            });
-            this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
-              variant: 'success',
-              autoHideDuration: 2000,
-              action: (key) => (
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key)}
-                >
-                  <CloseIcon />
-                </IconButton>
-              ),
-            });
-          } else {
+            console.log("uninstalling operator")
+
+          }else{
+            console.log("not uninstalling operator")
           }
         }, 100);
+        this.setState({
+          inClusterConfigForm: false,
+          inClusterConfig: false,
+          k8sfile: '',
+          k8sfileElementVal: '',
+          k8sfileError: false,
+          contextName: '',
+          contextNameForForm: '',
+          clusterConfigured: false,
+        });
+        this.props.updateK8SConfig({
+          k8sConfig: {
+            inClusterConfig: false, k8sfile: '', contextName: '', clusterConfigured: false,
+          },
+        });
+        this.props.enqueueSnackbar('Kubernetes config was successfully removed!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
       }
     }, self.handleError("Kubernetes config could not be validated"));
   }
