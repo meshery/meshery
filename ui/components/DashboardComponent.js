@@ -712,10 +712,11 @@ class DashboardComponent extends React.Component {
                     image = "/static/img/kuma.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
                     break;
-                  case "nginx service mesh":
-                    image = "/static/img/nginx-sm.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
+                  // Disable support for NGINX SM
+                  // case "nginx service mesh":
+                  //   image = "/static/img/nginx-sm.svg";
+                  //   logoIcon = <img src={image} className={classes.icon} />;
+                  //   break;
                   case "traefik mesh":
                     image = "/static/img/traefikmesh.svg";
                     logoIcon = <img src={image} className={classes.icon} />;
@@ -836,7 +837,7 @@ class DashboardComponent extends React.Component {
               {self.Meshcard({ name: "OCTARINE", icon: "/static/img/octarine.svg" }, self.state.meshScan.Octarine)}
               {self.Meshcard({ name: "TRAEFIK", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.Traefik)}
               {self.Meshcard({ name: "KUMA", icon: "/static/img/kuma.svg" }, self.state.meshScan.Kuma)}
-              {self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.Nginx)}
+              {/**self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.Nginx) */}
               {self.Meshcard({ name: "CITRIX", icon: "/static/img/citrix.svg" }, self.state.meshScan.Citrix)}
             </>
             :
