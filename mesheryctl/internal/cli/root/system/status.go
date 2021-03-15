@@ -84,25 +84,54 @@ var statusCmd = &cobra.Command{
 			}
 
 			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
+			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
+
+			// Create a deployment interface for the MesheryNamespace
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
 
 			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+
+			// List the deployments in the MesheryNamespace
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return err
 			}
 
-			for i, pod := range podList.Items {
-				// Get the status from all the pods
-				podstatusPhase := string(pod.Status.Phase)
-				podCreationTime := pod.GetCreationTimestamp()
-				age := time.Since(podCreationTime.Time).Round(time.Second)
+			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
+			for i, deployment := range deploymentList.Items {
+
+				// Calculate the age of the deployment
+				deploymentCreationTime := deployment.GetCreationTimestamp()
+				age := time.Since(deploymentCreationTime.Time).Round(time.Second)
+
+				// Get the status of each of the deployments
+				deploymentStatus := deployment.Status
 
 				// Log the status
-				podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
-				fmt.Println(podInfo)
+				deploymentInfo := fmt.Sprintf("[%d] Name: %s, Ready: %d/%d, Up-to-date: %d, Available: %d, Age: %s",
+					i, deployment.GetName(),
+					deploymentStatus.ReadyReplicas,
+					deploymentStatus.Replicas,
+					deploymentStatus.UpdatedReplicas,
+					deploymentStatus.AvailableReplicas,
+					age)
+
+				fmt.Println(deploymentInfo)
 			}
+
+			// List all the pods
+			// for i, pod := range podList.Items {
+			// 	// Get the status from all the pods
+			// 	podstatusPhase := string(pod.Status.Phase)
+			// 	podCreationTime := pod.GetCreationTimestamp()
+			// 	age := time.Since(podCreationTime.Time).Round(time.Second)
+
+			// 	// Log the status
+			// 	podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
+			// 	fmt.Println(podInfo)
+			// }
 		}
 		return nil
 	},
