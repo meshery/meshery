@@ -398,6 +398,7 @@ class MeshConfigComponent extends React.Component {
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
           variant: 'success',
+          "data-cy":"k8sSuccessSnackbar",
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
