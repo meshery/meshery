@@ -68,10 +68,10 @@ var RootCmd = &cobra.Command{
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		latest, err := utils.GetLatestStableReleaseTag()
+
+		version = fmt.Sprintf("v%s", version)
 		if err == nil && latest != version {
-			if latest != version {
-				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			}
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
