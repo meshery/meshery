@@ -210,6 +210,7 @@ class DashboardComponent extends React.Component {
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
 
     fetchControlPlanes(ALL_MESH)
+      .toPromise()
       .then(res => {
         self.setMeshScanData(res)
       }
