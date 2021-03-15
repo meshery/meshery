@@ -26,6 +26,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -76,7 +77,7 @@ var statusCmd = &cobra.Command{
 			// display pod status in the MesheryNamespace
 
 			// create an kubernetes client
-			client, err := utils.CreateKubeClient()
+			client, err := meshkitkube.New([]byte(""))
 
 			if err != nil {
 				return err

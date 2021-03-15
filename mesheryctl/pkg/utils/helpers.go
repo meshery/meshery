@@ -26,8 +26,6 @@ import (
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
-
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -766,17 +764,4 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 		}
 	}
 	return nil
-}
-
-// CreateKubeClient creates a Kubernetes client and returns it
-func CreateKubeClient() (*meshkitkube.Client, error) {
-	log.Debug("detecting kubeconfig file...")
-
-	// Create a new client
-	client, err := meshkitkube.New(nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new client")
-	}
-
-	return client, nil
 }
