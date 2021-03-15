@@ -367,32 +367,33 @@ class MeshConfigComponent extends React.Component {
         //prompt
         const modal = this.ref.current;
         setTimeout(async () => {
-          let response = await modal.show({ title: "", subtitle: "", options: ["yes", "no"] });
+          let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
           if (response == "yes") {
-            this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
-            this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
-              variant: 'success',
-              autoHideDuration: 2000,
-              action: (key) => (
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => self.props.closeSnackbar(key)}
-                >
-                  <CloseIcon />
-                </IconButton>
-              ),
-            });
-            this.props.updateK8SConfig({
-              k8sConfig: {
-                inClusterConfig: inClusterConfigForm, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer,
-              },
-            });
-          } else {
-            this.setState({k8sfileElementVal: '', contextNameForForm: ''})
+            console.log("uninstalling operator")
+          }else{
+            console.log("not uninstalling operator")
           }
         }, 100);
+        this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
+        this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
+          variant: 'success',
+          autoHideDuration: 2000,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => self.props.closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        this.props.updateK8SConfig({
+          k8sConfig: {
+            inClusterConfig: inClusterConfigForm, k8sfile, contextName: result.contextName, clusterConfigured: true, configuredServer: result.configuredServer,
+          },
+        });
       }
     }, self.handleError("Kubernetes config could not be validated"));
   }
