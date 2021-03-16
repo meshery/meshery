@@ -78,14 +78,17 @@ type ComplexityRoot struct {
 	}
 
 	OperatorControllerStatus struct {
-		Error  func(childComplexity int) int
-		Name   func(childComplexity int) int
-		Status func(childComplexity int) int
+		Error   func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Status  func(childComplexity int) int
+		Version func(childComplexity int) int
 	}
 
 	OperatorStatus struct {
-		Error  func(childComplexity int) int
-		Status func(childComplexity int) int
+		Controllers func(childComplexity int) int
+		Error       func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Version     func(childComplexity int) int
 	}
 
 	Query struct {
@@ -262,6 +265,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorControllerStatus.Status(childComplexity), true
 
+	case "OperatorControllerStatus.version":
+		if e.complexity.OperatorControllerStatus.Version == nil {
+			break
+		}
+
+		return e.complexity.OperatorControllerStatus.Version(childComplexity), true
+
+	case "OperatorStatus.controllers":
+		if e.complexity.OperatorStatus.Controllers == nil {
+			break
+		}
+
+		return e.complexity.OperatorStatus.Controllers(childComplexity), true
+
 	case "OperatorStatus.error":
 		if e.complexity.OperatorStatus.Error == nil {
 			break
@@ -275,6 +292,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OperatorStatus.Status(childComplexity), true
+
+	case "OperatorStatus.version":
+		if e.complexity.OperatorStatus.Version == nil {
+			break
+		}
+
+		return e.complexity.OperatorStatus.Version(childComplexity), true
 
 	case "Query.getAvailableAddons":
 		if e.complexity.Query.GetAvailableAddons == nil {
@@ -494,11 +518,14 @@ type ControlPlaneMember {
 # ============== OPERATOR =============================
 type OperatorStatus {
 	status: Status!
+    version: String!
+    controllers: [OperatorControllerStatus!]!
 	error: Error
 }
 
 type OperatorControllerStatus {
-	name: String
+	name: String!
+    version: String!
 	status: Status!
 	error: Error
 }
@@ -1207,11 +1234,49 @@ func (ec *executionContext) _OperatorControllerStatus_name(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorControllerStatus_version(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorControllerStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorControllerStatus_status(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
@@ -1314,6 +1379,76 @@ func (ec *executionContext) _OperatorStatus_status(ctx context.Context, field gr
 	res := resTmp.(model.Status)
 	fc.Result = res
 	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorStatus_version(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorStatus_controllers(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Controllers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.OperatorControllerStatus)
+	fc.Result = res
+	return ec.marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
@@ -3060,6 +3195,14 @@ func (ec *executionContext) _OperatorControllerStatus(ctx context.Context, sel a
 			out.Values[i] = graphql.MarshalString("OperatorControllerStatus")
 		case "name":
 			out.Values[i] = ec._OperatorControllerStatus_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._OperatorControllerStatus_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "status":
 			out.Values[i] = ec._OperatorControllerStatus_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3091,6 +3234,16 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 			out.Values[i] = graphql.MarshalString("OperatorStatus")
 		case "status":
 			out.Values[i] = ec._OperatorStatus_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._OperatorStatus_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "controllers":
+			out.Values[i] = ec._OperatorStatus_controllers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3615,6 +3768,43 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5i
 
 func (ec *executionContext) marshalNOperatorControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.OperatorControllerStatus) graphql.Marshaler {
 	return ec._OperatorControllerStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OperatorControllerStatus) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
