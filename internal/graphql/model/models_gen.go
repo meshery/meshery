@@ -44,14 +44,17 @@ type NameSpace struct {
 }
 
 type OperatorControllerStatus struct {
-	Name   *string `json:"name"`
-	Status Status  `json:"status"`
-	Error  *Error  `json:"error"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Status  Status `json:"status"`
+	Error   *Error `json:"error"`
 }
 
 type OperatorStatus struct {
-	Status Status `json:"status"`
-	Error  *Error `json:"error"`
+	Status      Status                      `json:"status"`
+	Version     string                      `json:"version"`
+	Controllers []*OperatorControllerStatus `json:"controllers"`
+	Error       *Error                      `json:"error"`
 }
 
 type AddonSelector string

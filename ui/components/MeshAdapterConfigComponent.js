@@ -176,6 +176,7 @@ class MeshAdapterConfigComponent extends React.Component {
           self.setState({ meshAdapters: result, meshLocationURL: "" });
           self.props.enqueueSnackbar("Adapter was successfully configured!", {
             variant: "success",
+            "data-cy":"adapterSuccessSnackbar",
             autoHideDuration: 2000,
             action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -309,12 +310,13 @@ class MeshAdapterConfigComponent extends React.Component {
                 image = "/static/img/kuma.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
-              case "nginx service mesh":
-                image = "/static/img/nginx-sm.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
+              // Disable support for NGINX SM
+              // case "nginx service mesh":
+              //   image = "/static/img/nginx-sm.svg";
+              //   logoIcon = <img src={image} className={classes.icon} />;
+              //   break;
               case "traefik mesh":
-                image = "/static/img/traefik-mesh.svg";
+                image = "/static/img/traefikmesh.svg";
                 logoIcon = <img src={image} className={classes.icon} />;
                 break;
             }

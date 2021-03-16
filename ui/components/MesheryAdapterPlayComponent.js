@@ -48,6 +48,7 @@ import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import MesheryResultDialog from "./MesheryResultDialog";
 import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubscription';
+import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
@@ -234,9 +235,11 @@ class MesheryAdapterPlayComponent extends React.Component {
         return
       }
     })
+    subscribeOperatorStatusEvents(self.setOperatorState)
     subscribeAddonStatusEvents(self.setAddonsState, variables)
 
     fetchAvailableAddons(variables)
+      .toPrmise()
       .then(res => {
         self.setAddonsState(res)
       }

@@ -23,6 +23,7 @@ var (
 	ErrNilClient      = errors.NewDefault(ErrNilClientCode, "Kubernetes client not initialized")
 	ErrInvalidRequest = errors.NewDefault(ErrInvalidRequestCode, "Invalid query, please check syntax")
 	ErrNoMeshSync     = errors.NewDefault(ErrNoMeshSyncCode, "MeshSync disabled")
+	ErrEmptyHandler   = errors.NewDefault(ErrNoMeshSyncCode, "Database handler not initialized")
 )
 
 func ErrCreateData(err error) error {

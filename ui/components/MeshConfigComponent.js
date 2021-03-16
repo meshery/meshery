@@ -22,6 +22,7 @@ import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatu
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from './graphql/queries/OperatorStatusQuery';
+import PromptComponent from "./PromptComponent";
 
 const styles = (theme) => ({
   root: {
@@ -183,6 +184,7 @@ class MeshConfigComponent extends React.Component {
 
       operatorSwitch: false,
     };
+    this.ref = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -215,12 +217,13 @@ class MeshConfigComponent extends React.Component {
 
     subscribeOperatorStatusEvents(self.setOperatorState)
     fetchMesheryOperatorStatus()
+      .toPromise()
       .then(res => {
         self.setOperatorState(res)
       }
       )
       .catch(err =>
-        console.log("error at operator scan: "+err)
+        console.log("error at operator scan: " + err)
       )
   }
 
@@ -237,6 +240,7 @@ class MeshConfigComponent extends React.Component {
         NATSInstalled: true,
         meshSyncInstalled: true,
         operatorSwitch: true,
+        operatorVersion:res.operator?.version,
       })
       return
     }
@@ -246,22 +250,25 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
+      operatorVersion:"N/A",
+      meshSyncVersion:"N/A",
+      NATSVersion:"N/A",
     })
   }
 
   handleOperatorSwitch = () => {
     const self = this;
     const variables = {
-      status: `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED" }`,
-    } 
+      status: `${!self.state.operatorSwitch ? "ENABLED" : "DISABLED"}`,
+    }
     self.props.updateProgress({ showProgress: true })
 
     changeOperatorState((response, errors) => {
       self.props.updateProgress({ showProgress: false });
-      if(errors !== undefined) {
+      if (errors !== undefined) {
         self.handleError("Operator action failed")
       }
-      self.props.enqueueSnackbar('Operator '+response, {
+      self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
         variant: 'success',
         autoHideDuration: 2000,
         action: (key) => (
@@ -362,6 +369,42 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+        //prompt
+        const modal = this.ref.current;
+        const self = this;
+        if (self.state.operatorSwitch) {
+          setTimeout(async () => {
+            let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
+            if (response == "yes") {
+              const variables = {
+                status: "DISABLED",
+              }
+              self.props.updateProgress({ showProgress: true })
+                    
+              changeOperatorState((response, errors) => {
+                self.props.updateProgress({ showProgress: false });
+                if (errors !== undefined) {
+                  self.handleError("Operator action failed")
+                }
+                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                  variant: 'success',
+                  autoHideDuration: 2000,
+                  action: (key) => (
+                    <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                });
+                self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+              }, variables);
+            }
+          }, 100);
+        }
         this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
         this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
           variant: 'success',
@@ -397,6 +440,7 @@ class MeshConfigComponent extends React.Component {
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
           variant: 'success',
+          "data-cy":"k8sSuccessSnackbar",
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
@@ -420,7 +464,7 @@ class MeshConfigComponent extends React.Component {
       credentials: 'same-origin',
       credentials: 'include',
     }, (result) => {
-      this.setState({operatorInstalled: result["operator-installed"]=="true"?true:false, NATSInstalled: result["broker-installed"]=="true"?true:false, meshSyncInstalled: result["meshsync-installed"]=="true"?true:false})
+      this.setState({ operatorInstalled: result["operator-installed"] == "true" ? true : false, NATSInstalled: result["broker-installed"] == "true" ? true : false, meshSyncInstalled: result["meshsync-installed"] == "true" ? true : false })
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Operator was successfully pinged!', {
@@ -465,6 +509,42 @@ class MeshConfigComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
+        //prompt
+        const modal = this.ref.current;
+        const self = this;
+        if (self.state.operatorSwitch) {
+          setTimeout(async () => {
+            let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
+            if (response == "yes") {
+              const variables = {
+                status: "DISABLED",
+              }
+              self.props.updateProgress({ showProgress: true })
+                    
+              changeOperatorState((response, errors) => {
+                self.props.updateProgress({ showProgress: false });
+                if (errors !== undefined) {
+                  self.handleError("Operator action failed")
+                }
+                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                  variant: 'success',
+                  autoHideDuration: 2000,
+                  action: (key) => (
+                    <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                });
+                self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+              }, variables);
+            }
+          }, 100);
+        }
         this.setState({
           inClusterConfigForm: false,
           inClusterConfig: false,
@@ -571,12 +651,12 @@ class MeshConfigComponent extends React.Component {
             variant="outlined"
             data-cy="chipOperator"
           />
-              
+
           <Grid container spacing={1}>
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Operator State" secondary={operatorInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="Operator State" secondary={operatorInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="Operator Version" secondary={operatorVersion} />
@@ -586,7 +666,7 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="MeshSync State" secondary={meshSyncInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="MeshSync State" secondary={meshSyncInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
@@ -596,20 +676,20 @@ class MeshConfigComponent extends React.Component {
             <Grid item xs={12} md={4}>
               <List>
                 <ListItem>
-                  <ListItemText primary="NATS State" secondary={NATSInstalled?"Active":"Disabled"} />
+                  <ListItemText primary="NATS State" secondary={NATSInstalled ? "Active" : "Disabled"} />
                 </ListItem>
                 <ListItem>
                   <ListItemText primary="NATS Version" secondary={NATSVersion} />
                 </ListItem>
               </List>
             </Grid>
-                
+
           </Grid>
         </div>
         <div className={classes.grey}>
           <FormGroup>
             <FormControlLabel
-              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary"/>}
+              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary" />}
               label="Meshery Operator"
             />
           </FormGroup>
@@ -631,12 +711,13 @@ class MeshConfigComponent extends React.Component {
 
     return (
       <NoSsr>
+        <PromptComponent ref={this.ref} />
         <div className={classes.root}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>
                 <h4>
-              Cluster Configuration
+                  Cluster Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -697,10 +778,10 @@ class MeshConfigComponent extends React.Component {
             </Grid>
 
             <Grid item xs={12} md={6} spacing={1}>
-              
+
               <div className={classes.heading}>
                 <h4>
-              Operator Configuration
+                  Operator Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -718,12 +799,13 @@ class MeshConfigComponent extends React.Component {
 
     return (
       <NoSsr>
+        <PromptComponent ref={this.ref} />
         <div className={classes.root}>
           <Grid container spacing={5}>
             <Grid item spacing={1} xs={12} md={6}>
               <div className={classes.heading}>
                 <h4>
-              Cluster Configuration
+                  Cluster Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>
@@ -749,10 +831,10 @@ class MeshConfigComponent extends React.Component {
             </Grid>
 
             <Grid item xs={12} md={6} spacing={1}>
-              
+
               <div className={classes.heading}>
                 <h4>
-              Operator Configuration
+                  Operator Configuration
                 </h4>
               </div>
               <Paper className={classes.paper}>

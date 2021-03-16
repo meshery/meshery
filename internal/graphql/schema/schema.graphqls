@@ -66,11 +66,14 @@ type ControlPlaneMember {
 # ============== OPERATOR =============================
 type OperatorStatus {
 	status: Status!
+    version: String!
+    controllers: [OperatorControllerStatus!]!
 	error: Error
 }
 
 type OperatorControllerStatus {
-	name: String
+	name: String!
+    version: String!
 	status: Status!
 	error: Error
 }
