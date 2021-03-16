@@ -99,7 +99,7 @@ class GrafanaSelectionComponent extends Component {
             this.setState({
               grafanaBoard: newVal,
               panels: board.panels,
-              selectedPanels: board.panels.map((panel) => panel.id), // selecting all panels by default
+              selectedPanels: board.panels?.map((panel) => panel.id), // selecting all panels by default
               templateVars: board.template_vars && board.template_vars.length > 0 ? board.template_vars : [],
               templateVarOptions: [],
               selectedTemplateVars: [],
@@ -319,7 +319,7 @@ class GrafanaSelectionComponent extends Component {
                       ),
                     }}
                   >
-                    {panels.map((panel) => (
+                    {panels?.map((panel) => (
                       <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>{panel.title}</MenuItem>
                     ))}
                   </TextField>
