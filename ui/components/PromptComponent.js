@@ -69,7 +69,7 @@ class PromptComponent extends React.Component {
   render() {
     const { show, options, title, subtitle } = this.state;
     const { classes } = this.props;
-    const { resolve, reject } = this.promiseInfo;
+    const { resolve } = this.promiseInfo;
     return (
       <div className={classes.root}>
         <Dialog
@@ -101,9 +101,9 @@ class PromptComponent extends React.Component {
                     this.hide();
                     resolve(option);
                   }} key={index} className={classes.button}
-                    type="submit"
-                    variant="contained"
-                    color="primary">
+                  type="submit"
+                  variant="contained"
+                  color="primary">
                     {option}
                   </Button>
                 )

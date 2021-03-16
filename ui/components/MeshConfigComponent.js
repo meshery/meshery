@@ -240,6 +240,7 @@ class MeshConfigComponent extends React.Component {
         NATSInstalled: true,
         meshSyncInstalled: true,
         operatorSwitch: true,
+        operatorVersion:res.operator?.version,
       })
       return
     }
@@ -249,6 +250,9 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
+      operatorVersion:"N/A",
+      meshSyncVersion:"N/A",
+      NATSVersion:"N/A",
     })
   }
 
@@ -367,38 +371,40 @@ class MeshConfigComponent extends React.Component {
       if (typeof result !== 'undefined') {
         //prompt
         const modal = this.ref.current;
-        setTimeout(async () => {
-          let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
-          if (response == "yes") {
-            const self = this;
-            const variables = {
-              status: "DISABLED",
-            }
-            self.props.updateProgress({ showProgress: true })
-
-            changeOperatorState((response, errors) => {
-              self.props.updateProgress({ showProgress: false });
-              if (errors !== undefined) {
-                self.handleError("Operator action failed")
+        const self = this;
+        if (self.state.operatorSwitch) {
+          setTimeout(async () => {
+            let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
+            if (response == "yes") {
+              const variables = {
+                status: "DISABLED",
               }
-              self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
-                variant: 'success',
-                autoHideDuration: 2000,
-                action: (key) => (
-                  <IconButton
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    onClick={() => self.props.closeSnackbar(key)}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                ),
-              });
-              self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
-            }, variables);
-          }
-        }, 100);
+              self.props.updateProgress({ showProgress: true })
+                    
+              changeOperatorState((response, errors) => {
+                self.props.updateProgress({ showProgress: false });
+                if (errors !== undefined) {
+                  self.handleError("Operator action failed")
+                }
+                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                  variant: 'success',
+                  autoHideDuration: 2000,
+                  action: (key) => (
+                    <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                });
+                self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+              }, variables);
+            }
+          }, 100);
+        }
         this.setState({ clusterConfigured: true, configuredServer: result.configuredServer, contextName: result.contextName });
         this.props.enqueueSnackbar('Kubernetes config was successfully validated!', {
           variant: 'success',
@@ -505,15 +511,40 @@ class MeshConfigComponent extends React.Component {
       if (typeof result !== 'undefined') {
         //prompt
         const modal = this.ref.current;
-        setTimeout(async () => {
-          let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
-          if (response == "yes") {
-            console.log("uninstalling operator")
-
-          }else{
-            console.log("not uninstalling operator")
-          }
-        }, 100);
+        const self = this;
+        if (self.state.operatorSwitch) {
+          setTimeout(async () => {
+            let response = await modal.show({ title: "Do you wanna remove Operator from this cluster?", subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'", options: ["yes", "no"] });
+            if (response == "yes") {
+              const variables = {
+                status: "DISABLED",
+              }
+              self.props.updateProgress({ showProgress: true })
+                    
+              changeOperatorState((response, errors) => {
+                self.props.updateProgress({ showProgress: false });
+                if (errors !== undefined) {
+                  self.handleError("Operator action failed")
+                }
+                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                  variant: 'success',
+                  autoHideDuration: 2000,
+                  action: (key) => (
+                    <IconButton
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => self.props.closeSnackbar(key)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ),
+                });
+                self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }))
+              }, variables);
+            }
+          }, 100);
+        }
         this.setState({
           inClusterConfigForm: false,
           inClusterConfig: false,

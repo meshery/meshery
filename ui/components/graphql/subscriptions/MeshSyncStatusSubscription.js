@@ -6,6 +6,7 @@ subscription MeshSyncStatusSubscription {
   listenToMeshSyncEvents {
     name
     status
+    version
     error {
       code
       description

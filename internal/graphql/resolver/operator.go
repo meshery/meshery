@@ -28,6 +28,12 @@ const (
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
 )
 
+type controller struct {
+	id      string
+	name    string
+	version string
+}
+
 func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status) (model.Status, error) {
 	delete := true
 	if status == model.StatusEnabled {
@@ -113,6 +119,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 
 func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
+	version := string(model.StatusUnknown)
 
 	obj, err := getOperator(r.DBHandler)
 	if err != nil {
@@ -128,12 +135,36 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 
 	if len(obj) > 0 {
 		status = model.StatusEnabled
+		version = obj[0].version
 	} else {
 		status = model.StatusDisabled
 	}
 
+	objs, err := getControllersInfo(r.KubeClient)
+	if err != nil {
+		r.Log.Error(err)
+		return &model.OperatorStatus{
+			Status: status,
+			Error: &model.Error{
+				Code:        "",
+				Description: err.Error(),
+			},
+		}, nil
+	}
+
+	controllers := make([]*model.OperatorControllerStatus, 0)
+	for _, obj := range objs {
+		controllers = append(controllers, &model.OperatorControllerStatus{
+			Name:    obj.name,
+			Version: obj.version,
+			Status:  model.StatusEnabled,
+		})
+	}
+
 	return &model.OperatorStatus{
-		Status: status,
+		Status:      status,
+		Version:     version,
+		Controllers: controllers,
 	}, nil
 }
 
@@ -241,7 +272,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	return endpoint, nil
 }
 
-func getOperator(handler *database.Handler) ([]string, error) {
+func getOperator(handler *database.Handler) ([]*controller, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 
 	subquery1 := handler.Select("id").Where("key = ? AND value = ?", "app", "meshery").Table("key_values")
@@ -257,14 +288,56 @@ func getOperator(handler *database.Handler) ([]string, error) {
 		return nil, ErrQuery(result.Error)
 	}
 
-	deploys := []string{}
+	deploys := make([]*controller, 0)
 	for _, obj := range objects {
 		if meshsyncmodel.IsObject(obj) {
-			deploys = append(deploys, obj.ID)
+			version := "latest"
+			for _, label := range obj.ObjectMeta.Labels {
+				if label.Key == "version" {
+					version = label.Value
+				}
+			}
+
+			deploys = append(deploys, &controller{
+				id:      obj.ID,
+				version: version,
+			})
 		}
 	}
 
 	return deploys, nil
+}
+
+func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, error) {
+	controllers := make([]*controller, 0)
+	var broker *operatorv1alpha1.Broker
+	var meshsync *operatorv1alpha1.MeshSync
+	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
+	if err != nil {
+		if mesheryclient == nil {
+			return controllers, ErrMesheryClient(nil)
+		}
+		return controllers, ErrMesheryClient(err)
+	}
+
+	broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
+	if err != nil {
+		return controllers, ErrMesheryClient(err)
+	}
+	controllers = append(controllers, &controller{
+		name:    "broker",
+		version: broker.Labels["version"],
+	})
+
+	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
+	if err != nil {
+		return controllers, ErrMesheryClient(err)
+	}
+	controllers = append(controllers, &controller{
+		name:    "meshsync",
+		version: meshsync.Labels["version"],
+	})
+	return controllers, nil
 }
 
 func initialize(client *mesherykube.Client, delete bool) error {
@@ -311,7 +384,7 @@ func (r *Resolver) cleanEntries(del bool) error {
 
 		for _, obj := range objs {
 			err := recordMeshSyncData(broker.Delete, r.DBHandler, &meshsyncmodel.Object{
-				ID: obj,
+				ID: obj.id,
 			})
 			if err != nil {
 				return err
