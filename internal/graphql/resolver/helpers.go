@@ -47,7 +47,7 @@ func persistData(msg broker.Message,
 
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		err = recordMeshSyncData(msg.EventType, handler, object)
+		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
 			log.Error(err)
 			return

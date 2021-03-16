@@ -6,6 +6,12 @@ export default function fetchMesheryOperatorStatus() {
         query OperatorStatusQuery{
           operator: getOperatorStatus {
             status
+            version
+            controllers {
+                name
+                version
+                status
+            }
             error {
               code
               description

@@ -201,7 +201,7 @@ func stop() error {
 		}
 
 		// create an kubernetes client
-		client, err := utils.CreateKubeClient()
+		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
 			return err
