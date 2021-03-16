@@ -642,12 +642,12 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 
 // PublishSmiResults - publishes results to the provider backend synchronously
 func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
-	if !l.Capabilities.IsSupported(PersistSMIResults) {
+	if !l.Capabilities.IsSupported(PersistSMIResult) {
 		logrus.Error("operation not available")
-		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMIResults, l.ProviderName)
+		return "", fmt.Errorf("%s is not supported by provider: %s", PersistSMIResult, l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResults)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMIResult)
 
 	data, err := json.Marshal(result)
 	if err != nil {
