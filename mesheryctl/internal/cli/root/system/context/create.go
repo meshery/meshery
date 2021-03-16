@@ -12,6 +12,7 @@ var (
 	tokenPath = ""
 	set       = false
 	adapters  = []string{}
+	platform  = ""
 )
 
 // createContextCmd represents the update command
@@ -28,6 +29,7 @@ var createContextCmd = &cobra.Command{
 			return err
 		}
 		tempContext.Endpoint = url
+		tempContext.Platform = platform
 		if len(adapters) >= 1 {
 			tempContext.Adapters = adapters
 		}
@@ -46,4 +48,5 @@ func init() {
 	createContextCmd.Flags().StringVarP(&url, "url", "u", "https://localhost:9081", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "List of adapters")
+	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "docker", "Platform to deploy Meshery")
 }

@@ -25,7 +25,10 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
+		go listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
+
+		// signal to install operator when initialized
+		r.MeshSyncChannel <- struct{}{}
 		// extension to notify other channel when data comes in
 	}(channel)
 
@@ -64,18 +67,22 @@ func runMeshSync(client *mesherykube.Client, delete bool) error {
 	return nil
 }
 
-func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object meshsyncmodel.Object) error {
+func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.Object) error {
+	if handler == nil {
+		return ErrEmptyHandler
+	}
+
 	switch eventtype {
 	case broker.Add, broker.Update:
-		result := handler.Create(&object)
+		result := handler.Create(object)
 		if result.Error != nil {
-			result = handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&object)
+			result = handler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
 			if result.Error != nil {
 				return ErrCreateData(result.Error)
 			}
 		}
 	case broker.Delete:
-		result := handler.Delete(&object)
+		result := handler.Delete(object)
 		if result.Error != nil {
 			return ErrDeleteData(result.Error)
 		}
