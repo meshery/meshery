@@ -21,13 +21,12 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
-
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -768,15 +767,21 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 	return nil
 }
 
-// CreateKubeClient creates a Kubernetes client and returns it
-func CreateKubeClient() (*meshkitkube.Client, error) {
-	log.Debug("detecting kubeconfig file...")
-
-	// Create a new client
-	client, err := meshkitkube.New(nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new client")
-	}
-
-	return client, nil
+// PrintToTable prints the given data into a table format
+func PrintToTable(header []string, data [][]string) {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.Render()         // Render the table
 }
