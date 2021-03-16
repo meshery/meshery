@@ -210,12 +210,12 @@ class DashboardComponent extends React.Component {
     subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
 
     fetchControlPlanes(ALL_MESH)
-      .toPromise()
-      .then(res => {
-        self.setMeshScanData(res)
-      }
-      )
-      .catch((err) => console.error(err))
+      .subscribe({
+        next: res => {
+          self.setMeshScanData(res)
+        },
+        error: (err) => console.error(err), 
+      })
   }
 
   componentDidMount = () => {

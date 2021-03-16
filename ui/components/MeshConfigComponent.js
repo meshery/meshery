@@ -217,14 +217,12 @@ class MeshConfigComponent extends React.Component {
 
     subscribeOperatorStatusEvents(self.setOperatorState)
     fetchMesheryOperatorStatus()
-      .toPromise()
-      .then(res => {
-        self.setOperatorState(res)
-      }
-      )
-      .catch(err =>
-        console.log("error at operator scan: " + err)
-      )
+      .subscribe({
+        next: res => {
+          self.setOperatorState(res)
+        },
+        error: (err) => console.log("error at operator scan: " + err), 
+      })
   }
 
   setOperatorState = (res) => {

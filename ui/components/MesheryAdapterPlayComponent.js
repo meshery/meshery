@@ -234,14 +234,12 @@ class MesheryAdapterPlayComponent extends React.Component {
     subscribeAddonStatusEvents(self.setAddonsState, variables)
 
     fetchAvailableAddons(variables)
-      .toPrmise()
-      .then(res => {
-        self.setAddonsState(res)
-      }
-      )
-      .catch(err =>
-        console.log("error at addon fetch: "+err)
-      )
+      .subscribe({
+        next: res => {
+          self.setAddonsState(res)
+        },
+        error: (err) => console.log("error at addon fetch: "+ err), 
+      })
   }
 
   mapAdapterNameToMeshName(name) {
