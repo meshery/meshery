@@ -99,8 +99,10 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
+			var data [][]string
+
 			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
-			for i, deployment := range deploymentList.Items {
+			for _, deployment := range deploymentList.Items {
 
 				// Calculate the age of the deployment
 				deploymentCreationTime := deployment.GetCreationTimestamp()
@@ -109,17 +111,19 @@ var statusCmd = &cobra.Command{
 				// Get the status of each of the deployments
 				deploymentStatus := deployment.Status
 
-				// Log the status
-				deploymentInfo := fmt.Sprintf("[%d] Name: %s, Ready: %d/%d, Up-to-date: %d, Available: %d, Age: %s",
-					i, deployment.GetName(),
-					deploymentStatus.ReadyReplicas,
-					deploymentStatus.Replicas,
-					deploymentStatus.UpdatedReplicas,
-					deploymentStatus.AvailableReplicas,
-					age)
+				// Get the values from the deployment status
+				name := deployment.GetName()
+				ready := fmt.Sprintf("%d/%d", deploymentStatus.ReadyReplicas, deploymentStatus.Replicas)
+				updated := fmt.Sprintf("%d", deploymentStatus.UpdatedReplicas)
+				available := fmt.Sprintf("%d", deploymentStatus.AvailableReplicas)
+				ageS := fmt.Sprintf("%s", age.String())
 
-				fmt.Println(deploymentInfo)
+				// Append this to data to be printed in a table
+				data = append(data, []string{name, ready, updated, available, ageS})
 			}
+
+			// Print the data to a table for readability
+			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
 
 			// List all the pods
 			// for i, pod := range podList.Items {
