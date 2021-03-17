@@ -39,7 +39,13 @@ function PerformanceCard({
     >
       {/* FRONT PART */}
       <>
-        <Grid style={{ marginBottom: "0.25rem" }} container spacing={1} alignContent="space-between" alignItems="center">
+        <Grid
+          style={{ marginBottom: "0.25rem" }}
+          container
+          spacing={1}
+          alignContent="space-between"
+          alignItems="center"
+        >
           <Grid item xs={8}>
             <Typography variant="h6" component="div">
               {name}
@@ -57,34 +63,43 @@ function PerformanceCard({
           </Grid>
         </Grid>
         <div style={{ margin: "0 0 1rem" }}>
-          <div>
-            <b>Results:</b> {results}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
+              {results}
+            </Typography>
+            <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
+              Results
+            </Typography>
           </div>
-          {updatedAt ? (
-            <div>
-              <b>Updated On:</b> <Moment format="LLLL">{updatedAt}</Moment>
-            </div>
-          ) : null}
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          <Button
-            variant="contained"
-            onClick={() => {
-              // Let this propagate to the flip card which will trigger its
-              // onClick handlers resulting in the card flipping automatically
-            }}
-            style={{ marginRight: "0.5rem", width: "5.7rem" }}
-          >
-            Details
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={(ev) => genericClickHandler(ev, handleRunTest)}
-            style={{ width: "5.7rem" }}
-          >
-            Run Test
-          </Button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            {updatedAt ? (
+              <Typography color="primary" variant="caption" style={{ fontStyle: "italic" }}>
+                Updated On: <Moment format="LLL">{updatedAt}</Moment>
+              </Typography>
+            ) : null}
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                // Let this propagate to the flip card which will trigger its
+                // onClick handlers resulting in the card flipping automatically
+              }}
+              style={{ marginRight: "0.5rem", width: "5.7rem" }}
+            >
+              Details
+            </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={(ev) => genericClickHandler(ev, handleRunTest)}
+              style={{ width: "5.7rem" }}
+            >
+              Run Test
+            </Button>
+          </div>
         </div>
       </>
 
