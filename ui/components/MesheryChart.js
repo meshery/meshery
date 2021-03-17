@@ -10,7 +10,7 @@ import bb, {areaStep, line} from 'billboard.js'
 const styles = (theme) => ({
   title: {
     textAlign: 'center',
-    fontSize: theme.spacing(1.25),
+    fontSize: theme.spacing(1.75),
   },
 });
 
