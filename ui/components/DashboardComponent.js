@@ -22,26 +22,26 @@ import {
   Select,
   MenuItem,
   Link,
-  Box
+  Box,
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import SettingsIcon from "@material-ui/icons/Settings";
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from "@material-ui/icons/AddCircleOutline";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import subscribeControlPlaneEvents from './graphql/subscriptions/ControlPlaneSubscription';
-import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
-import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
-import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
+import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
+import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
+import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
+import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 
 const styles = (theme) => ({
   root: {
-    backgroundColor: "#eaeff1"
+    backgroundColor: "#eaeff1",
   },
   chip: {
     marginRight: theme.spacing(1),
@@ -104,7 +104,7 @@ const styles = (theme) => ({
   },
   card: {
     height: "100%",
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   cardContent: {
     height: "100%",
@@ -117,8 +117,8 @@ const styles = (theme) => ({
     backgroundColor: "#fff",
     padding: theme.spacing(2),
     borderRadius: 4,
-    height: "100%"
-  }
+    height: "100%",
+  },
 });
 
 /**
@@ -127,7 +127,7 @@ const styles = (theme) => ({
  * @param {string} str - string to be capitalized
  */
 function capitalize(str) {
-  return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`
+  return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`;
 }
 
 class DashboardComponent extends React.Component {
@@ -159,12 +159,12 @@ class DashboardComponent extends React.Component {
         latest: "",
         outdated: false,
         commitsha: "",
-        release_channel: "NA"
+        release_channel: "NA",
       },
 
       meshScan: {},
       activeMeshScanNamespace: {},
-      meshScanNamespaces: {}
+      meshScanNamespaces: {},
     };
   }
 
@@ -195,28 +195,25 @@ class DashboardComponent extends React.Component {
      * ALL_MESH indicates that we are interested in control plane
      * component of all of the service meshes supported by meshsync v2
      */
-    const ALL_MESH = {
-      type: "ALL"
-    };
+    const ALL_MESH = {};
 
     const self = this;
-    subscribeMeshSyncStatusEvents(res => {
+    subscribeMeshSyncStatusEvents((res) => {
       if (res.meshsync?.error) {
-        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached")
-        return
+        self.handleError(res.meshsync?.error?.description || "MeshSync could not be reached");
+        return;
       }
-    })
-    subscribeOperatorStatusEvents(self.setOperatorState)
-    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH)
+    });
+    subscribeOperatorStatusEvents(self.setOperatorState);
+    subscribeControlPlaneEvents(self.setMeshScanData, ALL_MESH);
 
-    fetchControlPlanes(ALL_MESH)
-      .subscribe({
-        next: res => {
-          self.setMeshScanData(res)
-        },
-        error: (err) => console.error(err), 
-      })
-  }
+    fetchControlPlanes(ALL_MESH).subscribe({
+      next: (res) => {
+        self.setMeshScanData(res);
+      },
+      error: (err) => console.error(err),
+    });
+  };
 
   componentDidMount = () => {
     this.fetchAvailableAdapters();
@@ -249,7 +246,7 @@ class DashboardComponent extends React.Component {
   };
 
   fetchVersionDetails = () => {
-    const self = this
+    const self = this;
     this.props.updateProgress({ showProgress: true });
     dataFetch(
       "/api/server/version",
@@ -268,8 +265,8 @@ class DashboardComponent extends React.Component {
               build: "Unknown",
               latest: "Unknown",
               outdated: false,
-              commitsha: "Unknown"
-            }
+              commitsha: "Unknown",
+            },
           });
         }
       },
@@ -282,61 +279,32 @@ class DashboardComponent extends React.Component {
     const namespaces = {};
     const activeNamespaces = {};
 
-    data?.controlPlanesState?.map(mesh => {
-      mesh?.members?.map(member => {
-        if (namespaces[mesh.name]) namespaces[mesh.name].add(member.namespace)
-        else namespaces[mesh.name] = new Set([member.namespace])
-      })
+    data?.controlPlanesState?.map((mesh) => {
+      if (!mesh?.members?.length) {
+        return;
+      }
+      mesh?.members?.map((member) => {
+        if (namespaces[mesh.name]) {
+          namespaces[mesh.name].add(member.namespace);
+        } else {
+          namespaces[mesh.name] = new Set([member.namespace]);
+        }
+      });
 
-      namespaces[mesh.name] = [...namespaces[mesh.name]]
+      namespaces[mesh.name] = [...namespaces[mesh.name]];
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
 
-      const meshData = mesh?.members?.map(member => ({
+      const meshData = mesh?.members?.map((member) => ({
         name: member.name,
         component: member.component,
         version: member.version,
         namespace: member.namespace,
-      }))
-
-      let meshName = ""
-      switch (mesh.name) {
-        case 'ISTIO':
-          meshName = "Istio";
-          break;
-        case 'LINKERD':
-          meshName = "Linkerd";
-          break;
-        case 'CONSUL':
-          meshName = "Consul";
-          break;
-        case 'OPENSERVICEMESH':
-          meshName = "osm";
-          break;
-        case 'NETWORKSM':
-          meshName = "Network Service Mesh";
-          break;
-        case 'OCTARINE':
-          meshName = "Octarine";
-          break;
-        case 'TRAEFIK':
-          meshName = "Traefik";
-          break;
-        case 'KUMA':
-          meshName = "Kuma";
-          break;
-        case 'NGINXSM':
-          meshName = "Nginx";
-          break;
-        case 'CITRIXSM':
-          meshName = "Citrix";
-          break;
-      }
-
-      self.setState(state => ({ meshScan: { ...state.meshScan, [meshName]: meshData } }));
+      }));
+      self.setState((state) => ({ meshScan: { ...state.meshScan, [mesh.name]: meshData } }));
     });
 
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
-  }
+  };
 
   /**
    * generateMeshScanPodName takes in the podname and the hash
@@ -347,12 +315,12 @@ class DashboardComponent extends React.Component {
    * @returns {{full, trimmed}}
    */
   generateMeshScanPodName = (podname, hash, custom) => {
-    const str = (custom || podname)
+    const str = custom || podname;
     return {
       full: podname,
-      trimmed: str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1)
-    }
-  }
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1),
+    };
+  };
 
   /**
    * generateMeshScanVersion takes in the string from which version
@@ -369,7 +337,7 @@ class DashboardComponent extends React.Component {
 
     // Add "v" iff we have a valid match result
     return `v${matchResult[0]}`;
-  }
+  };
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
@@ -389,14 +357,14 @@ class DashboardComponent extends React.Component {
    * redirectErrorToConsole returns a function which redirects
    * ther error to the console under the group labelled by the "msg"
    * param
-   * @param {string} msg 
+   * @param {string} msg
    */
   redirectErrorToConsole = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
     console.group(msg);
     console.error(error);
     console.groupEnd();
-  }
+  };
 
   handleAdapterPingError = (msg) => () => {
     const { classes } = this.props;
@@ -537,20 +505,19 @@ class DashboardComponent extends React.Component {
               </div>
             </Grid>
             <Grid item>
-              {self.state.activeMeshScanNamespace[mesh.name] &&
+              {self.state.activeMeshScanNamespace[mesh.name] && (
                 <Select
                   value={self.state.activeMeshScanNamespace[mesh.name]}
-                  onChange={(e) => self.setState(state => ({
-                    activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.name]: e.target.value }
-                  }))}
-                >
-                  {
-                    self.state.meshScanNamespaces[mesh.name]
-                    &&
-                    self.state.meshScanNamespaces[mesh.name].map(ns => <MenuItem value={ns}>{ns}</MenuItem>)
+                  onChange={(e) =>
+                    self.setState((state) => ({
+                      activeMeshScanNamespace: { ...state.activeMeshScanNamespace, [mesh.name]: e.target.value },
+                    }))
                   }
+                >
+                  {self.state.meshScanNamespaces[mesh.name] &&
+                    self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem value={ns}>{ns}</MenuItem>)}
                 </Select>
-              }
+              )}
             </Grid>
           </Grid>
           <TableContainer>
@@ -564,7 +531,7 @@ class DashboardComponent extends React.Component {
               </TableHead>
               <TableBody>
                 {components
-                  .filter(comp => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
+                  .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
                   .map((component) => (
                     <TableRow key={component.name.full}>
                       {/* <TableCell scope="row" align="center">
@@ -577,16 +544,16 @@ class DashboardComponent extends React.Component {
                       <TableCell align="center">{component.name}</TableCell>
                       <TableCell align="center">{component.component}</TableCell>
                       <TableCell align="center">{component.version}</TableCell>
-                    </TableRow>)
-                  )}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
         </Paper>
-      )
+      );
 
-    return null
-  }
+    return null;
+  };
 
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress: true });
@@ -815,88 +782,81 @@ class DashboardComponent extends React.Component {
 
     const showMetrics = (
       <Grid container justify="center" spacing={2}>
-        <Grid item>
-          {showPrometheus}
-        </Grid>
-        <Grid item>
-          {showGrafana}
-        </Grid>
+        <Grid item>{showPrometheus}</Grid>
+        <Grid item>{showGrafana}</Grid>
       </Grid>
     );
 
     const showServiceMesh = (
       <>
-        {
-          Object.keys(self.state.meshScan).length
-            ?
-            <>
-              {self.Meshcard({ name: "CONSUL", icon: "/static/img/consul.svg" }, self.state.meshScan.Consul)}
-              {self.Meshcard({ name: "ISTIO", icon: "/static/img/istio.svg" }, self.state.meshScan.Istio)}
-              {self.Meshcard({ name: "LINKERD", icon: "/static/img/linkerd.svg" }, self.state.meshScan.Linkerd)}
-              {self.Meshcard({ name: "OPENSERVICEMESH", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
-              {self.Meshcard({ name: "NETWORKSM", icon: "/static/img/nsm.svg" }, self.state.meshScan["Network Service Mesh"])}
-              {self.Meshcard({ name: "OCTARINE", icon: "/static/img/octarine.svg" }, self.state.meshScan.Octarine)}
-              {self.Meshcard({ name: "TRAEFIK", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.Traefik)}
-              {self.Meshcard({ name: "KUMA", icon: "/static/img/kuma.svg" }, self.state.meshScan.Kuma)}
-              {/**self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.Nginx) */}
-              {self.Meshcard({ name: "CITRIX", icon: "/static/img/citrix.svg" }, self.state.meshScan.Citrix)}
-            </>
-            :
-            <div style={{
+        {Object.keys(self.state.meshScan).length ? (
+          <>
+            {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.consul)}
+            {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.istio)}
+            {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.linkerd)}
+            {self.Meshcard({ name: "Open Service Mesh", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
+            {self.Meshcard({ name: "Network Service Mesh", icon: "/static/img/nsm.svg" }, self.state.meshScan.nsm)}
+            {self.Meshcard({ name: "Octarine", icon: "/static/img/octarine.svg" }, self.state.meshScan.octarine)}
+            {self.Meshcard({ name: "Traefik", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.traefikmesh)}
+            {self.Meshcard({ name: "Kuma", icon: "/static/img/kuma.svg" }, self.state.meshScan.kuma)}
+            {/**self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.nginx-sm) */}
+            {self.Meshcard({ name: "Citrix", icon: "/static/img/citrix.svg" }, self.state.meshScan.citrix)}
+          </>
+        ) : (
+          <div
+            style={{
               padding: "2rem",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              flexDirection: "column"
-            }}>
-              <Typography
-                style={{ fontSize: "1.5rem", marginBottom: "2rem" }}
-                align="center"
-                color="textSecondary">
-                No service meshes detected in the {self.state.contextName} cluster.
-              </Typography>
-              <Button
-                aria-label="Add Meshes"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => self.props.router.push("/management")}
-              >
-                <AddIcon className={classes.addIcon} />
-                Install Service Mesh
-              </Button>
-            </div>
-        }
+              flexDirection: "column",
+            }}
+          >
+            <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
+              No service meshes detected in the {self.state.contextName} cluster.
+            </Typography>
+            <Button
+              aria-label="Add Meshes"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => self.props.router.push("/management")}
+            >
+              <AddIcon className={classes.addIcon} />
+              Install Service Mesh
+            </Button>
+          </div>
+        )}
       </>
-    )
+    );
 
     /**
      * getMesheryVersionText returs a well formatted version text
-     * 
+     *
      * If the meshery is running latest version then and is using "edge" channel
      * then it will just show "edge-latest". However, if the meshery is on edge and
      * is running an outdated version then it will return "edge-$version".
-     * 
+     *
      * If on stable channel, then it will always show "stable-$version"
      */
     const getMesheryVersionText = () => {
-      const { build, outdated, release_channel } = this.state.versionDetail
+      const { build, outdated, release_channel } = this.state.versionDetail;
 
-      // If the version is outdated then no matter what the 
+      // If the version is outdated then no matter what the
       // release channel is, specify the build
       if (outdated) return `${release_channel}-${build}`;
 
       if (release_channel === "edge") return `${release_channel}-latest`;
       if (release_channel === "stable") return `${release_channel}-${build}`;
 
-      return ``
+      return ``;
     };
 
     /**
      * versionUpdateMsg returns the appropriate message
      * based on the meshery's current running version and latest available
      * version.
-     * 
+     *
      * @returns {React.ReactNode} react component to display
      */
     const versionUpdateMsg = () => {
@@ -910,8 +870,8 @@ class DashboardComponent extends React.Component {
           </>
         );
 
-      return <>Running latest Meshery version.</>
-    }
+      return <>Running latest Meshery version.</>;
+    };
 
     const showRelease = (
       <>
@@ -924,11 +884,9 @@ class DashboardComponent extends React.Component {
           </Grid>
           <Grid item xs={12} md={6} style={{ padding: "0" }}>
             <Typography style={{ fontWeight: "bold", paddingBottom: "4px" }}>Version</Typography>
-            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>
-              {getMesheryVersionText()}
-            </Typography>
+            <Typography style={{ paddingTop: "2px", paddingBottom: "8px" }}>{getMesheryVersionText()}</Typography>
           </Grid>
-        </ Grid>
+        </Grid>
         <Typography component="div" style={{ marginTop: "1.5rem" }}>
           <Box fontStyle="italic" fontSize={14}>
             {versionUpdateMsg()}

@@ -56,7 +56,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 		}
 
 		controlplanelist = append(controlplanelist, &model.ControlPlane{
-			Name:    strings.Title(strings.ToLower(selector)),
+			Name:    strings.ToLower(selector),
 			Members: members,
 		})
 	}

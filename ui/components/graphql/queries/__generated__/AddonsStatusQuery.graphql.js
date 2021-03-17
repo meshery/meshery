@@ -8,7 +8,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
+export type MeshType = "CITRIX" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NGINXSM" | "NSM" | "OCTARINE" | "OSM" | "TRAEFIKMESH" | "%future added value";
 export type AddonsStatusQueryVariables = {|
   selector?: ?MeshType
 |};
