@@ -7,10 +7,12 @@ import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import PerformanceResults from "./PerformanceResults";
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 const styles = (theme) => ({
   grid: {
@@ -148,17 +150,38 @@ function MesheryTestProfiles({
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <IconButton
-              onClick={(ev) => {
-                ev.stopPropagation();
-                console.log(testProfiles[tableMeta.rowIndex]);
-                setSelectedProfile(testProfiles[tableMeta.rowIndex]);
-              }}
-              aria-label="more"
-              color="inherit"
-            >
-              <MoreHorizIcon />
-            </IconButton>
+            <div>
+              <IconButton
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                }}
+                aria-label="edit"
+                color="rgba(0, 0, 0, 0.54)"
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  handleDelete(testProfiles[tableMeta.rowIndex].id)
+                }}
+                aria-label="delete"
+                color="rgba(0, 0, 0, 0.54)"
+              >
+                <DeleteIcon />
+              </IconButton>
+              <IconButton
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true});
+                }}
+                aria-label="run"
+                color="rgba(0, 0, 0, 0.54)"
+              >
+                <PlayArrowIcon />
+              </IconButton>
+            </div>
           );
         },
       },
