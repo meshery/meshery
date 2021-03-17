@@ -103,18 +103,17 @@ func resetMesheryConfig() error {
 			return errors.Wrap(err, "failed to make GET request")
 		}
 
-		log.Info("deleting ~/.meshery/manifests folder...")
+		log.Debug("deleting ~/.meshery/manifests folder...")
+		// delete manifests folder if it already exists
 		if err := os.RemoveAll(utils.ManifestsFolder); err != nil {
 			return err
 		}
 		log.Info("creating ~/.meshery/manifests folder...")
 		// create a manifests folder under ~/.meshery to store the manifest files
-		if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
-			if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
-			}
-			log.Debug("created manifests folder...")
+		if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
 		}
+		log.Debug("created manifests folder...")
 
 		gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
 		log.Info("downloading manifest files from ", gitHubFolder)
