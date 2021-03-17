@@ -12,8 +12,9 @@ export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%futur
 export type MeshSyncStatusSubscriptionVariables = {||};
 export type MeshSyncStatusSubscriptionResponse = {|
   +listenToMeshSyncEvents: {|
-    +name: ?string,
+    +name: string,
     +status: Status,
+    +version: string,
     +error: ?{|
       +code: string,
       +description: string,
@@ -32,6 +33,7 @@ subscription MeshSyncStatusSubscription {
   listenToMeshSyncEvents {
     name
     status
+    version
     error {
       code
       description
@@ -62,6 +64,13 @@ var v0 = [
         "args": null,
         "kind": "ScalarField",
         "name": "status",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "version",
         "storageKey": null
       },
       {
@@ -111,16 +120,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "e330914ffe44d508e311f3dd7d625aa9",
+    "cacheID": "9a3d3b03529103cf9d737147ed7c2d7a",
     "id": null,
     "metadata": {},
     "name": "MeshSyncStatusSubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshSyncStatusSubscription {\n  listenToMeshSyncEvents {\n    name\n    status\n    error {\n      code\n      description\n    }\n  }\n}\n"
+    "text": "subscription MeshSyncStatusSubscription {\n  listenToMeshSyncEvents {\n    name\n    status\n    version\n    error {\n      code\n      description\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'e0210af501e9bd9864ea6444ea6a5db2';
+(node/*: any*/).hash = 'f9a9715d6c56d418d17154fba8bda254';
 
 module.exports = node;
