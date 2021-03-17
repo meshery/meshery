@@ -200,6 +200,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
               variant="contained"
               color="primary"
               size="large"
+              // @ts-ignore
               onClick={() => setProfileForModal({})}
             >
               <AddIcon />
@@ -214,6 +215,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
             variant="contained"
             color="primary"
             size="large"
+            // @ts-ignore
             onClick={() => setProfileForModal({})}
           >
             <AddIcon />

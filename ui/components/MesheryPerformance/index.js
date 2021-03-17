@@ -63,7 +63,6 @@ function generatePerformanceProfile(data) {
     requestCookies,
     requestBody,
     contentType,
-
   } = data;
 
   const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh);
@@ -95,6 +94,7 @@ const loadGenerators = [
 const styles = (theme) => ({
   root: {
     padding: theme.spacing(10),
+    position: "relative",
   },
   buttons: {
     display: "flex",
@@ -123,6 +123,15 @@ const styles = (theme) => ({
   },
   centerTimer: {
     width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: "0",
+    left: "0",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    zIndex: 1201,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -963,14 +972,16 @@ class MesheryPerformanceComponent extends React.Component {
               </div>
             </React.Fragment>
 
-            <div className={classes.centerTimer}>
-              <LoadTestTimerDialog
-                open={timerDialogOpen}
-                t={t}
-                onClose={this.handleTimerDialogClose}
-                countDownComplete={this.handleTimerDialogClose}
-              />
-            </div>
+            {timerDialogOpen ? (
+              <div className={classes.centerTimer}>
+                <LoadTestTimerDialog
+                  open={timerDialogOpen}
+                  t={t}
+                  onClose={this.handleTimerDialogClose}
+                  countDownComplete={this.handleTimerDialogClose}
+                />
+              </div>
+            ) : null}
 
             {result && result.runner_results && (
               <div>

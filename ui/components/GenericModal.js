@@ -2,7 +2,17 @@
 import React from "react";
 import { Modal, Backdrop, Fade } from "@material-ui/core";
 
-export default function GenericModal({ open, Content, handleClose }) {
+/**
+ * 
+ * @param {{
+ *  open?: boolean,
+ *  Content?: JSX.Element,
+ *  handleClose?: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
+ *  container?: React.ReactInstance | (() => React.ReactInstance)
+ * }} props 
+ * @returns 
+ */
+export default function GenericModal({ open, Content, handleClose, container }) {
   return (
     <Modal
       style={{
@@ -17,6 +27,7 @@ export default function GenericModal({ open, Content, handleClose }) {
       BackdropProps={{
         timeout: 200,
       }}
+      container={container}
     >
       <Fade in={open} style={{ maxHeight: "90vh", overflow: "auto" }} >{Content}</Fade>
     </Modal>

@@ -11,6 +11,7 @@ const styles = (theme) => ({
   title: {
     textAlign: 'center',
     fontSize: theme.spacing(1.75),
+    marginBottom: theme.spacing(1)
   },
 });
 
