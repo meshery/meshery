@@ -253,8 +253,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     const meshname = self.activeMesh
     const localState = {}
     data?.addonsState?.forEach(addon => {
-      if (addon.type === meshname) {
-        const name = addon.config.serviceName !== "jaeger-collector" ? addon.config.serviceName : "jaeger"
+      if (addon.owner === meshname) {
+        const name = addon.name !== "jaeger-collector" ? addon.name : "jaeger"
         localState[`${name}-addon`] = true
       }
     })
