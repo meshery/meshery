@@ -501,7 +501,7 @@ class DashboardComponent extends React.Component {
             <Grid item>
               <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
                 <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight: "0.75rem" }} />
-                <Typography variant="h6">{mesh.name}</Typography>
+                <Typography variant="h6">{mesh.tag}</Typography>
               </div>
             </Grid>
             <Grid item>
@@ -791,16 +791,16 @@ class DashboardComponent extends React.Component {
       <>
         {Object.keys(self.state.meshScan).length ? (
           <>
-            {self.Meshcard({ name: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.consul)}
-            {self.Meshcard({ name: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.istio)}
-            {self.Meshcard({ name: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.linkerd)}
-            {self.Meshcard({ name: "Open Service Mesh", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
-            {self.Meshcard({ name: "Network Service Mesh", icon: "/static/img/nsm.svg" }, self.state.meshScan.nsm)}
-            {self.Meshcard({ name: "Octarine", icon: "/static/img/octarine.svg" }, self.state.meshScan.octarine)}
-            {self.Meshcard({ name: "Traefik", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.traefikmesh)}
-            {self.Meshcard({ name: "Kuma", icon: "/static/img/kuma.svg" }, self.state.meshScan.kuma)}
-            {/**self.Meshcard({ name: "NGINXSM", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.nginx-sm) */}
-            {self.Meshcard({ name: "Citrix", icon: "/static/img/citrix.svg" }, self.state.meshScan.citrix)}
+            {self.Meshcard({ name: "consul", tag: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.consul)}
+            {self.Meshcard({ name: "istio", tag: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.istio)}
+            {self.Meshcard({ name: "linkerd", tag: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.linkerd)}
+            {self.Meshcard({ name: "osm", tag: "Open Service Mesh", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
+            {self.Meshcard({ name: "osm", tag: "Network Service Mesh", icon: "/static/img/nsm.svg" }, self.state.meshScan.nsm)}
+            {self.Meshcard({ name: "octarine", tag: "Octarine", icon: "/static/img/octarine.svg" }, self.state.meshScan.octarine)}
+            {self.Meshcard({ name: "traefikmesh", tag: "Traefik Mesh", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.traefikmesh)}
+            {self.Meshcard({ name: "kuma", tag: "Kuma", icon: "/static/img/kuma.svg" }, self.state.meshScan.kuma)}
+            {/**self.Meshcard({ name: "nginx-sm", tag: "Nginx Service Mesh", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.nginx-sm) */}
+            {self.Meshcard({ name: "citrix", tag: "Citrix", icon: "/static/img/citrix.svg" }, self.state.meshScan.citrix)}
           </>
         ) : (
           <div
