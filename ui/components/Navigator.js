@@ -247,7 +247,7 @@ const categories = [
         id: "Profiles",
         icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
         href: "/performance/profiles",
-        title: "Performance Profile Management",
+        title: "Performance Profiles",
         show: true,
         link: true,
       },
