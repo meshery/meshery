@@ -14,6 +14,7 @@ function PerformanceCard({
   loadGenerators,
   testRunDuration,
   updatedAt,
+  reqHeaders,
   handleDelete,
   handleEdit,
   handleRunTest,
@@ -37,7 +38,7 @@ function PerformanceCard({
     >
       {/* FRONT PART */}
       <>
-        <Grid style={{ marginBottom: "3rem" }} container spacing={1} alignContent="space-between" alignItems="center">
+        <Grid style={{ marginBottom: "0.25rem" }} container spacing={1} alignContent="space-between" alignItems="center">
           <Grid item xs={8}>
             <Typography variant="h6" component="div">
               {name}
@@ -45,21 +46,41 @@ function PerformanceCard({
           </Grid>
           <Grid item xs={4}>
             <div style={{ width: "fit-content", margin: "0 0 0 auto" }}>
-              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon />
-              </IconButton>
               <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
                 <EditIcon />
+              </IconButton>
+              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
+                <DeleteIcon />
               </IconButton>
             </div>
           </Grid>
         </Grid>
-        <div>
+        <div style={{ margin: "0 0 1rem" }}>
+          <div>
+            <b>Results:</b> {0}
+          </div>
+          {updatedAt ? (
+            <div>
+              <b>Updated On:</b> <Moment format="LLLL">{updatedAt}</Moment>
+            </div>
+          ) : null}
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              // Let this propagate to the flip card which will trigger its
+              // onClick handlers resulting in the card flipping automatically
+            }}
+            style={{ marginRight: "0.5rem", width: "5.7rem" }}
+          >
+            Details
+          </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={(ev) => genericClickHandler(ev, handleRunTest)}
-            style={{ display: "block", marginLeft: "auto" }}
+            style={{ width: "5.7rem" }}
           >
             Run Test
           </Button>
@@ -69,7 +90,7 @@ function PerformanceCard({
       {/* BACK PART */}
       <>
         <Typography variant="h6" gutterBottom>
-          Details
+          {name} Details
         </Typography>
         {Array.isArray(endpoints) ? (
           <div>
@@ -86,9 +107,9 @@ function PerformanceCard({
             <b>Test Run Duration:</b> {testRunDuration}
           </div>
         ) : null}
-        {updatedAt ? (
+        {reqHeaders ? (
           <div>
-            <b>Last Updated At:</b> <Moment format="LLLL">{updatedAt}</Moment>
+            <b>Request Headers:</b> <code>{reqHeaders}</code>
           </div>
         ) : null}
         <Button
@@ -114,9 +135,11 @@ function PerformanceCard({
           <div onClick={(ev) => ev.stopPropagation()} style={{ marginTop: "0.5rem" }}>
             <PerformanceResults
               // @ts-ignore
-              CustomHeader={<Typography variant="h6">Performance Profile Results</Typography>}
+              CustomHeader={<Typography variant="h6">Test Results</Typography>}
               // @ts-ignore
               endpoint={`/api/user/performance/profiles/${id}/results`}
+              // @ts-ignore
+              elevation={0}
             />
           </div>
         ) : null}

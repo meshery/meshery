@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { Button, Grid, Paper, Typography } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
@@ -12,6 +12,8 @@ import dataFetch from "../../lib/data-fetch";
 import MesheryMetrics from "../MesheryMetrics";
 import { withStyles } from "@material-ui/core/styles";
 import PerformanceCalendar from "./PerformanceCalendar";
+import GenericModal from "../GenericModal";
+import MesheryPerformanceComponent from "./index";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -31,6 +33,8 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
     count: 0,
     tests: [],
   });
+
+  const [runTest, setRunTest] = useState(false);
 
   /**
    * fetch performance profiles when the page loads
@@ -101,45 +105,61 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
   }
 
   return (
-    <Grid container spacing={2} style={{ padding: "0.5rem" }} alignItems="flex-start" alignContent="space-around">
-      <Grid item lg={6} xs={12}>
-        <Paper className={classes.paper}>
-          <Typography
-            align="center"
-            variant="h6"
-            style={{
-              margin: "0 0 2.5rem 0",
-            }}
-          >
-            Performance Profile Summary
-          </Typography>
-          <PerformanceCalendar style={{ height: "40rem", margin: "1rem 0 2rem" }} />
-          <div>
-            <div>
-              <b>Total Profiles Created:</b> {profiles.count}
-            </div>
-            <div>
-              <b>Total Tests Run:</b> {tests.count}
-            </div>
-          </div>
-          <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
-            <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
-              Manage Profiles
-            </Button>
-          </div>
-        </Paper>
+    <>
+      <Grid container spacing={2} style={{ padding: "0.5rem" }} alignItems="flex-start" alignContent="space-around">
+        <Grid item lg={6} xs={12}>
+          <Paper className={classes.paper}>
+            <Grid container spacing={1}>
+              <Grid item xs>
+                <Paper className={classes.paper}>
+                  <div>
+                    <b>Tests Results:</b> {tests.count}
+                  </div>
+                  <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
+                    <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
+                      Run Test
+                    </Button>
+                  </div>
+                </Paper>
+              </Grid>
+              <Grid item xs>
+                <Paper className={classes.paper}>
+                  <div>
+                    <b>Profiles:</b> {profiles.count}
+                  </div>
+                  <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
+                    <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>
+                      Manage Profiles
+                    </Button>
+                  </div>
+                </Paper>
+              </Grid>
+            </Grid>
+            <PerformanceCalendar style={{ height: "40rem", margin: "2rem 0 0" }} />
+          </Paper>
+        </Grid>
+        <Grid item lg={6} xs={12}>
+          <Paper className={classes.paper}>
+            <MesheryMetrics
+              boardConfigs={grafana.selectedBoardsConfigs}
+              grafanaURL={grafana.grafanaURL}
+              grafanaAPIKey={grafana.grafanaAPIKey}
+              handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
+            />
+          </Paper>
+        </Grid>
       </Grid>
-      <Grid item lg={6} xs={12}>
-        <Paper className={classes.paper}>
-          <MesheryMetrics
-            boardConfigs={grafana.selectedBoardsConfigs}
-            grafanaURL={grafana.grafanaURL}
-            grafanaAPIKey={grafana.grafanaAPIKey}
-            handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
-          />
-        </Paper>
-      </Grid>
-    </Grid>
+
+      <GenericModal
+        open={!!runTest}
+        Content={
+          <Paper style={{ margin: "auto", maxWidth: "90%", outline: "none" }}>
+            <MesheryPerformanceComponent />
+          </Paper>
+        }
+        handleClose={() => setRunTest(false)}
+      />
+    </>
   );
 }
 

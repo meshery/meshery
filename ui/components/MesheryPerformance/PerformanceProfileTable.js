@@ -228,9 +228,11 @@ function MesheryTestProfiles({
           <TableCell colSpan={colSpan}>
             <PerformanceResults
               // @ts-ignore
-              CustomHeader={<Typography variant="h6">Performance Profile Results</Typography>}
+              CustomHeader={<Typography variant="h6">Test Results</Typography>}
               // @ts-ignore
               endpoint={`/api/user/performance/profiles/${testProfiles[rowMeta.rowIndex].id}/results`}
+              // @ts-ignore
+              elevation={0}
             />
           </TableCell>
         </TableRow>

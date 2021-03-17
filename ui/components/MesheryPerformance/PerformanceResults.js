@@ -274,6 +274,7 @@ function ResultChart({ result }) {
  *  classes?: any
  *  endpoint: string,
  *  CustomHeader?: JSX.Element
+ *  elevation?: Number
  * }} props
  */
 function MesheryResults({
@@ -285,6 +286,7 @@ function MesheryResults({
   results_selection,
   user,
   CustomHeader = <div />,
+  elevation = 4,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -352,6 +354,7 @@ function MesheryResults({
   const columns = generateColumnsForDisplay(sortOrder, (idx) => setSelectedRowData(results[idx]));
 
   const options = {
+    elevation: elevation,
     filter: false,
     sort: !(user?.user_id === "meshery"),
     search: !(user?.user_id === "meshery"),
