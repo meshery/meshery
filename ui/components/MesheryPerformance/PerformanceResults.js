@@ -14,7 +14,7 @@ import CustomToolbarSelect from "../CustomToolbarSelect";
 import MesheryChart from "../MesheryChart";
 import GrafanaCustomCharts from "../GrafanaCustomCharts";
 import GenericModal from "../GenericModal";
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import BarChartIcon from '@material-ui/icons/BarChart';
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -188,7 +188,7 @@ function generateColumnsForDisplay(sortOrder, setSelectedProfileIdx) {
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
             <IconButton aria-label="more" color="inherit" onClick={() => setSelectedProfileIdx(tableMeta.rowIndex)}>
-              <TrendingUpIcon />
+              <BarChartIcon />
             </IconButton>
           );
         },
