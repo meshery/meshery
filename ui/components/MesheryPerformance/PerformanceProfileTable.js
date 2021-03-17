@@ -136,6 +136,27 @@ function MesheryTestProfiles({
     //   },
     // },
     {
+      name: "updated_on",
+      label: "Updated On",
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender: function CustomBody(value) {
+          return <Moment format="LLLL">{value}</Moment>;
+        },
+      },
+    },
+    {
       name: "Actions",
       options: {
         filter: false,

@@ -14,6 +14,7 @@ function PerformanceCard({
   loadGenerators,
   testRunDuration,
   updatedAt,
+  lastRun,
   reqHeaders,
   results,
   handleDelete,
@@ -73,12 +74,14 @@ function PerformanceCard({
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            {updatedAt ? (
-              <Typography color="primary" variant="caption" style={{ fontStyle: "italic" }}>
-                Updated On: <Moment format="LLL">{updatedAt}</Moment>
-              </Typography>
-            ) : null}
+          <div style={{ marginRight: "0.5rem" }}>
+            <div>
+              {lastRun ? (
+                <Typography color="primary" variant="caption" style={{ fontStyle: "italic" }}>
+                  Last Run: <Moment format="LLL">{lastRun}</Moment>
+                </Typography>
+              ) : null}
+            </div>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
             <Button
