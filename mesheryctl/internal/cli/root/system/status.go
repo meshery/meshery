@@ -116,7 +116,7 @@ var statusCmd = &cobra.Command{
 				ready := fmt.Sprintf("%d/%d", deploymentStatus.ReadyReplicas, deploymentStatus.Replicas)
 				updated := fmt.Sprintf("%d", deploymentStatus.UpdatedReplicas)
 				available := fmt.Sprintf("%d", deploymentStatus.AvailableReplicas)
-				ageS := fmt.Sprintf("%s", age.String())
+				ageS := age.String()
 
 				// Append this to data to be printed in a table
 				data = append(data, []string{name, ready, updated, available, ageS})
