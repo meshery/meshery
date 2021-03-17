@@ -239,7 +239,7 @@ const categories = [
     id: "Performance",
     icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
     href: "/performance",
-    title: "Performance Test",
+    title: "Performance Profile Management",
     show: true,
     link: true,
     children: [
@@ -247,7 +247,7 @@ const categories = [
         id: "Profiles",
         icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
         href: "/performance/profiles",
-        title: "Performance Profiles",
+        title: "Performance Profile Management",
         show: true,
         link: true,
       },
@@ -577,7 +577,8 @@ class Navigator extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { meshAdapters, meshAdaptersts, path } = props;
+    const { meshAdapters, meshAdaptersts } = props;
+    const path = window.location.pathname
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
