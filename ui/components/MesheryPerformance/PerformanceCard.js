@@ -15,6 +15,7 @@ function PerformanceCard({
   testRunDuration,
   updatedAt,
   reqHeaders,
+  results,
   handleDelete,
   handleEdit,
   handleRunTest,
@@ -57,7 +58,7 @@ function PerformanceCard({
         </Grid>
         <div style={{ margin: "0 0 1rem" }}>
           <div>
-            <b>Results:</b> {0}
+            <b>Results:</b> {results}
           </div>
           {updatedAt ? (
             <div>

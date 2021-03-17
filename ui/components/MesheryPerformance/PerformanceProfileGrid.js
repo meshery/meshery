@@ -18,6 +18,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
         endpoints={profile.endpoints}
         loadGenerators={profile.load_generators}
         reqHeaders={profile.request_headers}
+        results={profile.total_results || 0}
         testRunDuration={profile.duration}
         handleEdit={() => setProfileForModal(profile)}
         handleDelete={() => deleteHandler(profile.id)}
