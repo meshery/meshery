@@ -4,11 +4,9 @@ import environment from "../../../lib/relayEnvironment";
 const addonStatusSubscription = graphql`
   subscription AddonStatusSubscription($selector: MeshType) {
     addonsState: listenToAddonState(selector: $selector) {
-      type
-      config {
-        serviceName
-        endpoint
-      }
+      name
+      owner
+      endpoint
     }
   }
 `;

@@ -8,7 +8,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
+export type MeshType = "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
 export type ControlPlaneFilter = {|
   type?: ?MeshType
 |};
@@ -17,7 +17,7 @@ export type ControlPlanesQueryVariables = {|
 |};
 export type ControlPlanesQueryResponse = {|
   +controlPlanesState: $ReadOnlyArray<{|
-    +name: ?MeshType,
+    +name: string,
     +members: $ReadOnlyArray<{|
       +name: string,
       +version: string,

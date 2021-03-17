@@ -1,8 +1,5 @@
 # ================= COMMONS =========================
 enum MeshType {
-	ALL
-	NONE
-
 	ISTIO
 	LINKERD
 	CONSUL
@@ -28,21 +25,10 @@ type Error {
 }
 
 # =================== ADDONS =====================
-enum AddonSelector {
-	PROMETHEUS
-	GRAFANA
-	ZIPKIN
-	JAEGER
-	KIALI
-}
 
 type AddonList {
-	type: String!
-	config: AddonConfig!
-}
-
-type AddonConfig {
-	serviceName: String!
+    name: String!
+	owner: String!
 	endpoint: String!
 }
 
@@ -52,7 +38,7 @@ input ControlPlaneFilter {
 }
 
 type ControlPlane {
-	name: MeshType
+	name: String!
 	members: [ControlPlaneMember!]!
 }
 

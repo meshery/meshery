@@ -8,17 +8,15 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "ALL" | "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "NONE" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
+export type MeshType = "CITRIXSM" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORKSM" | "NGINXSM" | "OCTARINE" | "OPENSERVICEMESH" | "TRAEFIK" | "%future added value";
 export type AddonsStatusQueryVariables = {|
   selector?: ?MeshType
 |};
 export type AddonsStatusQueryResponse = {|
   +addonsState: $ReadOnlyArray<{|
-    +type: string,
-    +config: {|
-      +serviceName: string,
-      +endpoint: string,
-    |},
+    +name: string,
+    +owner: string,
+    +endpoint: string,
   |}>
 |};
 export type AddonsStatusQuery = {|
@@ -33,11 +31,9 @@ query AddonsStatusQuery(
   $selector: MeshType
 ) {
   addonsState: getAvailableAddons(selector: $selector) {
-    type
-    config {
-      serviceName
-      endpoint
-    }
+    name
+    owner
+    endpoint
   }
 }
 */
@@ -69,32 +65,21 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "type",
+        "name": "name",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "AddonConfig",
-        "kind": "LinkedField",
-        "name": "config",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "serviceName",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "endpoint",
-            "storageKey": null
-          }
-        ],
+        "kind": "ScalarField",
+        "name": "owner",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "endpoint",
         "storageKey": null
       }
     ],
@@ -119,16 +104,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "11ad80c9023c8fef3cfdfbded25b1aaf",
+    "cacheID": "55e095b3cd951912fb7921aeac4d0401",
     "id": null,
     "metadata": {},
     "name": "AddonsStatusQuery",
     "operationKind": "query",
-    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonsState: getAvailableAddons(selector: $selector) {\n    type\n    config {\n      serviceName\n      endpoint\n    }\n  }\n}\n"
+    "text": "query AddonsStatusQuery(\n  $selector: MeshType\n) {\n  addonsState: getAvailableAddons(selector: $selector) {\n    name\n    owner\n    endpoint\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2e64dec408918ae250f67433d7f3fc46';
+(node/*: any*/).hash = '8d4c22678eba8c8078d3f4051e07abf2';
 
 module.exports = node;

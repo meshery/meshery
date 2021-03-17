@@ -10,27 +10,30 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var (
-	cpMap = map[model.MeshType]string{
-		model.MeshTypeIstio: "istio-system",
-	}
-)
-
 func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 	controlplanelist := make([]*model.ControlPlane, 0)
 
-	for key, val := range cpMap {
+	selectors := make([]string, 0)
+	if filter.Type == nil {
+		for _, mesh := range model.AllMeshType {
+			selectors = append(selectors, strings.ToLower(mesh.String()))
+		}
+	} else {
+		selectors = append(selectors, strings.ToLower(filter.Type.String()))
+	}
+	for _, selector := range selectors {
+		subquery := r.DBHandler.Select("id").Where("kind = ? AND key = ? AND value IN (?)", meshsyncmodel.KindAnnotation, "meshery/maintainer", selector).Table("key_values")
 		result := r.DBHandler.
-			Preload("ObjectMeta", "namespace = ?", val).
-			Preload("ObjectMeta.Labels").
-			Preload("ObjectMeta.Annotations").
+			Preload("ObjectMeta").
+			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
 			Preload("Status").
-			Find(&objects, "kind = ?", "Pod")
+			Find(&objects, "id IN (?) AND kind = ?", subquery, "Pod")
 		if result.Error != nil {
-			r.Log.Error(result.Error)
-			return nil, result.Error
+			r.Log.Error(ErrQuery(result.Error))
+			return nil, ErrQuery(result.Error)
 		}
 
 		members := make([]*model.ControlPlaneMember, 0)
@@ -45,7 +48,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 
 				members = append(members, &model.ControlPlaneMember{
 					Name:      obj.ObjectMeta.Name,
-					Component: obj.ObjectMeta.Name,
+					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
 					Version:   strings.Split(objspec.Containers[0].Image, ":")[1],
 					Namespace: obj.ObjectMeta.Namespace,
 				})
@@ -53,7 +56,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 		}
 
 		controlplanelist = append(controlplanelist, &model.ControlPlane{
-			Name:    &key,
+			Name:    strings.Title(strings.ToLower(selector)),
 			Members: members,
 		})
 	}
