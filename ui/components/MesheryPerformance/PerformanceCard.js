@@ -13,7 +13,6 @@ function PerformanceCard({
   endpoints,
   loadGenerators,
   testRunDuration,
-  updatedAt,
   lastRun,
   reqHeaders,
   results,
