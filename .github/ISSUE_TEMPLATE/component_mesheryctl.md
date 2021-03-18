@@ -1,15 +1,13 @@
 ---
-name: ⌨️ Component- mesheryctl(Meshery CLI)
-about: Report an issue/ faeture request for mesheryctl(Meshery CLI)
+name: ⌨️ Component: mesheryctl (Meshery CLI)
+about: Report an issue/ feature request for mesheryctl(Meshery CLI)
 title: '[mesheryctl]'
 labels: 'component/mesheryctl'
 assignees: ''
 ---
 
 <!-- Please update the mesheryctl- Command Reference and Tracker spreadsheet -->
-Refer the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
-
-Kind: [Bug/Feature Request]
+Refer the [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
 #### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
@@ -50,5 +48,5 @@ Kind: [Bug/Feature Request]
 
 - [mesheryctl Contributing Guide](https://github.com/layer5io/meshery/blob/master/mesheryctl/README.md)
 - [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4)
-- [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0)
+- [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0)
 - [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt)
