@@ -118,7 +118,7 @@ func ApplyManifestFiles(manifestArr []utils.Manifest, requestedAdapters []string
 		adapterDeployment := adapterFile + "-deployment.yaml"
 		adapterService := adapterFile + "-service.yaml"
 
-		if utils.IsAdapterValid(manifestArr, adapter+"-deployment.yaml") == false {
+		if !utils.IsAdapterValid(manifestArr, adapter+"-deployment.yaml") {
 			return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, utils.MesheryFolder)
 		}
 
@@ -343,26 +343,47 @@ func start() error {
 			return errors.Wrap(err, "failed to create new client")
 		}
 
-		log.Debug("fetching required Kubernetes manifest files...")
-		// pick all the manifest files stored in https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		manifests, err := utils.ListManifests(manifestsURL)
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
+			}
+		}
 
+		log.Debug("fetching required Kubernetes manifest files...")
+		// get correct minfestsURL based on version
+		manifestsURL, err := utils.GetManifestTreeURL(version)
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+		// pick all the manifest files stored in minfestsURL
+		manifests, err := utils.ListManifests(manifestsURL)
 		if err != nil {
 			return errors.Wrap(err, "failed to make GET request")
 		}
 
+		log.Debug("deleting ~/.meshery/manifests folder...")
+		// delete manifests folder if it already exists
+		if err := os.RemoveAll(utils.ManifestsFolder); err != nil {
+			return err
+		}
 		log.Info("creating ~/.meshery/manifests folder...")
 		// create a manifests folder under ~/.meshery to store the manifest files
-		if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
-			if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
-			}
-			log.Debug("created manifests folder...")
+		if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
+			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
 		}
+		log.Debug("created manifests folder...")
 
+		gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
 		log.Info("downloading manifest files from ", gitHubFolder)
 
 		// download all the manifest files to the ~/.meshery/manifests folder
+		rawManifestsURL := "https://raw.githubusercontent.com/layer5io/meshery/" + version + "/install/deployment_yamls/k8s/"
 		err = utils.DownloadManifests(manifests, rawManifestsURL)
 
 		if err != nil {

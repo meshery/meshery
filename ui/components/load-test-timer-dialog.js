@@ -57,6 +57,8 @@ class LoadTestTimerDialog extends React.Component {
           marginLeft: 'auto',
           marginRight: 'auto',
           width: '400px',
+          position: "relative",
+          zIndex: "0"
           // height: '400',
         }}
         >

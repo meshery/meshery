@@ -56,7 +56,86 @@ func NewBitCaskResultsPersister(folderName string) (*BitCaskResultsPersister, er
 }
 
 // GetResults - gets result for the page and pageSize
-func (s *BitCaskResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) {
+func (s *BitCaskResultsPersister) GetResults(page, pageSize uint64, profileID string) ([]byte, error) {
+	if s.db == nil {
+		return nil, errors.New("connection to DB does not exist")
+	}
+
+RETRY:
+	locked, err := s.db.TryRLock()
+	if err != nil {
+		err = errors.Wrapf(err, "Unable to obtain read lock from bitcask store")
+		logrus.Error(err)
+	}
+	if !locked {
+		goto RETRY
+	}
+	defer func() {
+		_ = s.db.Unlock()
+	}()
+
+	total := s.db.Len()
+
+	profileUUID, err := uuid.FromString(profileID)
+	if err != nil {
+		err = errors.Wrapf(err, "Invalid performance profile id")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	results := []*MesheryResult{}
+
+	start := page * pageSize
+	end := (page+1)*pageSize - 1
+	logrus.Debugf("received page: %d, page size: %d, total: %d", page, pageSize, total)
+	logrus.Debugf("computed start index: %d, end index: %d", start, end)
+
+	if start > uint64(total) {
+		return nil, fmt.Errorf("index out of range")
+	}
+	var localIndex uint64
+
+	for k := range s.db.Keys() {
+		if localIndex >= start && localIndex <= end {
+			dd, err := s.db.Get(k)
+			if err != nil {
+				err = errors.Wrapf(err, "Unable to read data from bitcask store")
+				logrus.Error(err)
+				return nil, err
+			}
+			if len(dd) > 0 {
+				result := &MesheryResult{}
+				if err := json.Unmarshal(dd, result); err != nil {
+					err = errors.Wrapf(err, "Unable to unmarshal data.")
+					logrus.Error(err)
+					return nil, err
+				}
+
+				if result.PerformanceProfile != nil && *result.PerformanceProfile == profileUUID {
+					results = append(results, result)
+				}
+			}
+		}
+		localIndex++
+	}
+
+	bd, err := json.Marshal(&MesheryResultPage{
+		Page:       page,
+		PageSize:   pageSize,
+		TotalCount: total,
+		Results:    results,
+	})
+	if err != nil {
+		err = errors.Wrapf(err, "Unable to marshal result data.")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return bd, nil
+}
+
+// GetResults - gets result for the page and pageSize
+func (s *BitCaskResultsPersister) GetAllResults(page, pageSize uint64) ([]byte, error) {
 	if s.db == nil {
 		return nil, errors.New("connection to DB does not exist")
 	}
@@ -103,6 +182,7 @@ RETRY:
 					logrus.Error(err)
 					return nil, err
 				}
+
 				results = append(results, result)
 			}
 		}

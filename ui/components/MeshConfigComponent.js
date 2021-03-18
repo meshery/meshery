@@ -217,14 +217,12 @@ class MeshConfigComponent extends React.Component {
 
     subscribeOperatorStatusEvents(self.setOperatorState)
     fetchMesheryOperatorStatus()
-      .toPromise()
-      .then(res => {
-        self.setOperatorState(res)
-      }
-      )
-      .catch(err =>
-        console.log("error at operator scan: " + err)
-      )
+      .subscribe({
+        next: res => {
+          self.setOperatorState(res)
+        },
+        error: (err) => console.log("error at operator scan: " + err), 
+      })
   }
 
   setOperatorState = (res) => {
@@ -235,10 +233,21 @@ class MeshConfigComponent extends React.Component {
     }
 
     if (res.operator?.status === "ENABLED") {
+      res.operator?.controllers?.forEach(controller => {
+        if(controller.name === "broker" && controller.status == "ENABLED"){
+          self.setState({
+            NATSInstalled: true,
+            NATSVersion: controller.version,
+          })
+        } else if(controller.name === "meshsync" && controller.status == "ENABLED"){
+          self.setState({
+            meshSyncInstalled: true,
+            meshSyncVersion: controller.version,
+          })
+        }
+      })
       self.setState({
         operatorInstalled: true,
-        NATSInstalled: true,
-        meshSyncInstalled: true,
         operatorSwitch: true,
         operatorVersion:res.operator?.version,
       })
