@@ -245,25 +245,30 @@ class MesheryAdapterPlayComponent extends React.Component {
         error: (err) => console.log("error at addon fetch: " + err),
       })
     fetchAvailableNamespaces()
-      .then(res => {
-        let namespaces = []
-        res?.namespaces?.map(ns => {
-          namespaces.push(
-            {
-              value: ns?.namespace,
-              label: ns?.namespace
-            }
-          )
-        })
-        if (namespaces.length === 0) {
-          namespaces.push({
-            value: "default",
-            label: "default"
+      .subscribe({
+        next: res => {
+          let namespaces = []
+          res?.namespaces?.map(ns => {
+            namespaces.push(
+              {
+                value: ns?.namespace,
+                label: ns?.namespace
+              }
+            )
           })
-        }
-        self.setState({ namespaceList: namespaces })
+          if (namespaces.length === 0) {
+            namespaces.push({
+              value: "default",
+              label: "default"
+            })
+          }
+          namespaces.sort((a, b) => (
+            a.value > b.value? 1: -1
+          ))
+          self.setState({ namespaceList: namespaces, namespace: namespaces[0] })
+        },
+        error: (err) => console.log("error at namespace fetch: " + err),
       })
-      .catch(err => console.log(err))
   }
 
   mapAdapterNameToMeshName(name) {
