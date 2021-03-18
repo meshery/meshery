@@ -8,18 +8,14 @@ import (
 	"strconv"
 )
 
-type AddonConfig struct {
-	ServiceName string `json:"serviceName"`
-	Endpoint    string `json:"endpoint"`
-}
-
 type AddonList struct {
-	Type   string       `json:"type"`
-	Config *AddonConfig `json:"config"`
+	Name     string `json:"name"`
+	Owner    string `json:"owner"`
+	Endpoint string `json:"endpoint"`
 }
 
 type ControlPlane struct {
-	Name    *MeshType             `json:"name"`
+	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
@@ -57,58 +53,9 @@ type OperatorStatus struct {
 	Error       *Error                      `json:"error"`
 }
 
-type AddonSelector string
-
-const (
-	AddonSelectorPrometheus AddonSelector = "PROMETHEUS"
-	AddonSelectorGrafana    AddonSelector = "GRAFANA"
-	AddonSelectorZipkin     AddonSelector = "ZIPKIN"
-	AddonSelectorJaeger     AddonSelector = "JAEGER"
-	AddonSelectorKiali      AddonSelector = "KIALI"
-)
-
-var AllAddonSelector = []AddonSelector{
-	AddonSelectorPrometheus,
-	AddonSelectorGrafana,
-	AddonSelectorZipkin,
-	AddonSelectorJaeger,
-	AddonSelectorKiali,
-}
-
-func (e AddonSelector) IsValid() bool {
-	switch e {
-	case AddonSelectorPrometheus, AddonSelectorGrafana, AddonSelectorZipkin, AddonSelectorJaeger, AddonSelectorKiali:
-		return true
-	}
-	return false
-}
-
-func (e AddonSelector) String() string {
-	return string(e)
-}
-
-func (e *AddonSelector) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = AddonSelector(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AddonSelector", str)
-	}
-	return nil
-}
-
-func (e AddonSelector) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type MeshType string
 
 const (
-	MeshTypeAll             MeshType = "ALL"
-	MeshTypeNone            MeshType = "NONE"
 	MeshTypeIstio           MeshType = "ISTIO"
 	MeshTypeLinkerd         MeshType = "LINKERD"
 	MeshTypeConsul          MeshType = "CONSUL"
@@ -122,8 +69,6 @@ const (
 )
 
 var AllMeshType = []MeshType{
-	MeshTypeAll,
-	MeshTypeNone,
 	MeshTypeIstio,
 	MeshTypeLinkerd,
 	MeshTypeConsul,
@@ -138,7 +83,7 @@ var AllMeshType = []MeshType{
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAll, MeshTypeNone, MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefik, MeshTypeOpenservicemesh, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNetworksm, MeshTypeCitrixsm:
+	case MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefik, MeshTypeOpenservicemesh, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNetworksm, MeshTypeCitrixsm:
 		return true
 	}
 	return false

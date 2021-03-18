@@ -109,7 +109,7 @@ func DeleteManifestFiles(manifestArr []utils.Manifest, requestedAdapters []strin
 		adapterDeployment := adapterFile + "-deployment.yaml"
 		adapterService := adapterFile + "-service.yaml"
 
-		if utils.IsAdapterValid(manifestArr, adapter+"-deployment.yaml") == false {
+		if !utils.IsAdapterValid(manifestArr, adapter+"-deployment.yaml") {
 			return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, utils.MesheryFolder)
 		}
 
@@ -201,7 +201,7 @@ func stop() error {
 		}
 
 		// create an kubernetes client
-		client, err := utils.CreateKubeClient()
+		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
 			return err
@@ -213,7 +213,23 @@ func stop() error {
 			return err
 		}
 
-		// pick all the manifest files stored in https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
+			}
+		}
+		// get correct minfestsURL based on version
+		manifestsURL, err := utils.GetManifestTreeURL(version)
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+		// pick all the manifest files stored in minfestsURL
 		manifests, err := utils.ListManifests(manifestsURL)
 
 		if err != nil {

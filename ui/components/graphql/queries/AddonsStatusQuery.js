@@ -9,11 +9,9 @@ export default function fetchAvailableAddons(variables) {
   const query = graphql`
     query AddonsStatusQuery($selector: MeshType) {
       addonsState: getAvailableAddons(selector: $selector) {
-        type
-        config {
-          serviceName
-          endpoint
-        }
+        name
+        owner
+        endpoint
       }
     }
   `;
