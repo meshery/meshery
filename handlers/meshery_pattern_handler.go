@@ -176,7 +176,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// GetMesheryPatternHandler fetched the patterhn with the given id
+// GetMesheryPatternHandler fetched the pattern with the given id
 func (h *Handler) GetMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

@@ -58,17 +58,25 @@ printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
 
 printf "\nExtracting %s...\n" "$NAME"
-unzip ${PWD}/meshery.zip 
+unzip -o ${PWD}/meshery.zip
 
-printf "\nInstalling mesheryctl in /usr/local/bin.\n"
+# Use user provided installation path from env variable(MESHERY_INSTALL_DIR)
+# by default its /usr/local/bin
+install_dir=${MESHERY_INSTALL_DIR}
+if [ -z "$install_dir" ]
+then
+    install_dir="/usr/local/bin"
+fi
+
+printf "\nInstalling mesheryctl in $install_dir.\n"
 WHOAMI=$(whoami)
-if mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then		
+if mv ${PWD}/mesheryctl $install_dir/mesheryctl ; then
   echo "mesheryctl installed."
 else
-  if sudo mv ${PWD}/mesheryctl /usr/local/bin/mesheryctl ; then
+  if sudo mv ${PWD}/mesheryctl $install_dir/mesheryctl ; then
     echo "Permission Resolved: mesheryctl installed using sudo permissions."
   else
-    echo "Cannot install mesheryctl. Check permissions of $WHOAMI for /usr/local/bin."
+    echo "Cannot install mesheryctl. Check permissions of $WHOAMI for $install_dir."
     exit 1
   fi
 fi
@@ -76,21 +84,20 @@ fi
 #Transfering permissions and ownership to client USER
 if [ "$SUDO_USER" == "" ] ;
 then
-	if 	chown $WHOAMI /usr/local/bin/mesheryctl ; then
+	if chown $WHOAMI $install_dir/mesheryctl ; then
     echo "permissions moved to "$WHOAMI
   else
-  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $WHOAMI."
+    echo "Unable to write to $install_dir. Please verify write permission for $WHOAMI."
     exit 1
   fi
 else
 	if chown $SUDO_USER /usr/local/bin/mesheryctl ; then
     echo "permissions moved to "$SUDO_USER
   else
-  	echo "Unable to write to /usr/local/bin/mesheryctl. Please verify write permission for $SUDO_USER."
+    echo "Unable to write to $install_dir/mesheryctl. Please verify write permission for $SUDO_USER."
     exit 1
   fi
 fi
-
 
 
 printf "Removing installation files and opening Meshery..."

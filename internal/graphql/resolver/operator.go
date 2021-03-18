@@ -275,15 +275,15 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 func getOperator(handler *database.Handler) ([]*controller, error) {
 	objects := make([]meshsyncmodel.Object, 0)
 
-	subquery1 := handler.Select("id").Where("key = ? AND value = ?", "app", "meshery").Table("key_values")
-	subquery2 := handler.Select("id").Where("id IN (?) AND key = ? AND value = ?", subquery1, "component", "operator").Table("key_values")
+	subquery1 := handler.Select("id").Where("kind = ? AND key = ? AND value = ?", meshsyncmodel.KindLabel, "app", "meshery").Table("key_values")
+	subquery2 := handler.Select("id").Where("id IN (?) AND kind = ? AND key = ? AND value = ?", subquery1, meshsyncmodel.KindLabel, "component", "operator").Table("key_values")
 	result := handler.
 		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations", "id IN (?)", subquery2).
+		Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+		Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 		Preload("Spec").
 		Preload("Status").
-		Find(&objects, "kind = ?", "Deployment")
+		Find(&objects, "id IN (?) AND kind = ?", subquery2, "Deployment")
 	if result.Error != nil {
 		return nil, ErrQuery(result.Error)
 	}

@@ -5,7 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { bindActionCreators } from "redux";
 import { updateLoadTestData } from "../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
-import MesheryPerformanceComponent from "./MesheryPerformanceComponent";
+import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch"
 
 const requires = createRequires(getDependencies);
