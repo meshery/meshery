@@ -286,7 +286,7 @@ func start() error {
 		log.Info("applying the manifests to Kubernetes cluster...")
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
+		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
 
 		if err != nil {
 			return err
