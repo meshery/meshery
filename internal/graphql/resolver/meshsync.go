@@ -82,7 +82,7 @@ func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, o
 			}
 		}
 	case broker.Delete:
-		result := handler.Delete(object, "id = ?", object.ID)
+		result := handler.Delete(object)
 		if result.Error != nil {
 			return ErrDeleteData(result.Error)
 		}
