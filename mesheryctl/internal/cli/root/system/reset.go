@@ -15,10 +15,6 @@
 package system
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -91,39 +87,11 @@ func resetMesheryConfig() error {
 			}
 		}
 
-		log.Debug("fetching required Kubernetes manifest files...")
-		// get correct minfestsURL based on version
-		manifestsURL, err := utils.GetManifestTreeURL(version)
-		if err != nil {
-			return errors.Wrap(err, "failed to make GET request")
-		}
-		// pick all the manifest files stored in minfestsURL
-		manifests, err := utils.ListManifests(manifestsURL)
-		if err != nil {
-			return errors.Wrap(err, "failed to make GET request")
-		}
+		// fetch the manifest files corresponding to the version specified
+		_, err := utils.FetchManifests(version)
 
-		log.Debug("deleting ~/.meshery/manifests folder...")
-		// delete manifests folder if it already exists
-		if err := os.RemoveAll(utils.ManifestsFolder); err != nil {
+		if err != nil {
 			return err
-		}
-		log.Info("creating ~/.meshery/manifests folder...")
-		// create a manifests folder under ~/.meshery to store the manifest files
-		if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
-		}
-		log.Debug("created manifests folder...")
-
-		gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
-		log.Info("downloading manifest files from ", gitHubFolder)
-
-		// download all the manifest files to the ~/.meshery/manifests folder
-		rawManifestsURL := "https://raw.githubusercontent.com/layer5io/meshery/" + version + "/install/deployment_yamls/k8s/"
-		err = utils.DownloadManifests(manifests, rawManifestsURL)
-
-		if err != nil {
-			return errors.Wrap(err, "failed to download manifests")
 		}
 
 	default:
