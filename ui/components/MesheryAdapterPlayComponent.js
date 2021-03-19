@@ -4,7 +4,6 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import {
   withStyles,
   Grid,
-  TextField,
   IconButton,
   Dialog,
   DialogTitle,
@@ -50,6 +49,8 @@ import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubsc
 import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import ReactSelectWrapper from "./ReactSelectWrapper";
 import MesheryMetrics from "./MesheryMetrics"
 
 const styles = (theme) => ({
@@ -195,7 +196,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       selectionError: false,
 
-      namespace: "default",
+      namespace: {
+        value: "default",
+        label: "default"
+      },
       namespaceError: false,
 
       customDialogAdd: false,
@@ -214,13 +218,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       search: "",
       sortOrder: "",
       pageSize: 10,
+      namespaceList: [],
     };
   }
 
   componentDidMount() {
     const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh) 
-    const variables = { 
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
+    const variables = {
       serviceMesh: meshname
     }
     subscribeMeshSyncStatusEvents(res => {
@@ -237,7 +242,32 @@ class MesheryAdapterPlayComponent extends React.Component {
         next: res => {
           self.setAddonsState(res)
         },
-        error: (err) => console.log("error at addon fetch: "+ err), 
+        error: (err) => console.log("error at addon fetch: " + err),
+      })
+    fetchAvailableNamespaces()
+      .subscribe({
+        next: res => {
+          let namespaces = []
+          res?.namespaces?.map(ns => {
+            namespaces.push(
+              {
+                value: ns?.namespace,
+                label: ns?.namespace
+              }
+            )
+          })
+          if (namespaces.length === 0) {
+            namespaces.push({
+              value: "default",
+              label: "default"
+            })
+          }
+          namespaces.sort((a, b) => (
+            a.value > b.value? 1: -1
+          ))
+          self.setState({ namespaceList: namespaces, namespace: namespaces[0] })
+        },
+        error: (err) => console.log("error at namespace fetch: " + err),
       })
   }
 
@@ -267,9 +297,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleChange = (name, isDelete = false) => {
     const self = this;
     return (event) => {
-      if (name === "namespace" && event.target.value !== "") {
-        self.setState({ namespaceError: false });
-      }
 
       if (name === "selectedOp" && event.target.value !== "") {
         if (event.target.value === "custom") {
@@ -288,6 +315,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       self.setState({ [name]: event.target.value });
     };
   };
+
+  handleNamespaceChange = (newValue) => {
+    if (typeof newValue !== "undefined") {
+      this.setState({ namespace: newValue, namespaceError: false });
+    } else {
+      this.setState({ namespaceError: true });
+    }
+  }
 
   handleModalClose(isDelete) {
     const self = this;
@@ -338,7 +373,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ cmEditorValAddError: true, selectionError: true });
         return;
       }
-      if (namespace === "") {
+      if (namespace.value === "") {
         self.setState({ namespaceError: true });
         return;
       }
@@ -354,7 +389,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const data = {
       adapter: adapter.adapter_location,
       query: selectedOp,
-      namespace,
+      namespace: namespace.value,
       customBody: deleteOp ? cmEditorValDel : cmEditorValAdd,
       deleteOp: deleteOp ? "on" : "",
     };
@@ -783,7 +818,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   generateYAMLEditor(cat, isDelete) {
     const { adapter } = this.props;
-    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel } = this.state;
+    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel, namespaceList } = this.state;
     const self = this;
     return (
       <Dialog
@@ -801,17 +836,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="namespace"
-                name="namespace"
+              <ReactSelectWrapper
                 label="Namespace"
-                fullWidth
                 value={namespace}
                 error={namespaceError}
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange("namespace")}
+                options={namespaceList}
+                onChange={this.handleNamespaceChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1014,18 +1044,18 @@ class MesheryAdapterPlayComponent extends React.Component {
    */
   renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
     return (
-      <MesheryMetrics 
-        boardConfigs={boardConfigs} 
-        grafanaAPIKey={grafanaAPIKey} 
+      <MesheryMetrics
+        boardConfigs={boardConfigs}
+        grafanaAPIKey={grafanaAPIKey}
         grafanaURL={grafanaURL}
-        handleGrafanaChartAddition={() => this.props.router.push("/settings/#metrics")} 
+        handleGrafanaChartAddition={() => this.props.router.push("/settings/#metrics")}
       />
     );
   }
 
   render() {
     const { classes, adapter } = this.props;
-    const { namespace, namespaceError, selectedRowData } = this.state;
+    const { namespace, namespaceError, selectedRowData, namespaceList } = this.state;
 
     let adapterName = adapter.name.split(" ").join("").toLowerCase();
     let imageSrc = "/static/img/" + adapterName + ".svg";
@@ -1080,17 +1110,12 @@ class MesheryAdapterPlayComponent extends React.Component {
                         </div>
                       </Grid>
                       <Grid item md={9} xs={12}>
-                        <TextField
-                          required
-                          id="namespace"
-                          name="namespace"
+                        <ReactSelectWrapper
                           label="Namespace"
-                          fullWidth
                           value={namespace}
                           error={namespaceError}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange("namespace")}
+                          options={namespaceList}
+                          onChange={this.handleNamespaceChange}
                         />
                       </Grid>
                     </Grid>
