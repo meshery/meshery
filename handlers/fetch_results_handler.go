@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -13,11 +14,7 @@ import (
 
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-	// TODO: may be force login if token not found?????
+	profileID := mux.Vars(req)["id"]
 
 	err := req.ParseForm()
 	if err != nil {
@@ -27,7 +24,26 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	q := req.Form
 
-	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	bdr, err := p.FetchResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
+	if err != nil {
+		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("content-type", "application/json")
+	_, _ = w.Write(bdr)
+}
+
+// FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
+func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
+	err := req.ParseForm()
+	if err != nil {
+		logrus.Errorf("Error: unable to parse form: %v", err)
+		http.Error(w, "unable to process the received data", http.StatusForbidden)
+		return
+	}
+	q := req.Form
+
+	bdr, err := p.FetchAllResults(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return

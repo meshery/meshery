@@ -2,10 +2,8 @@ import NoSsr from "@material-ui/core/NoSsr";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import {
-  Button,
   withStyles,
   Grid,
-  TextField,
   IconButton,
   Dialog,
   DialogTitle,
@@ -42,7 +40,6 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 // import { updateSMIResults } from '../lib/store';
-import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import { updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import MUIDataTable from "mui-datatables";
@@ -52,6 +49,9 @@ import subscribeAddonStatusEvents from './graphql/subscriptions/AddonStatusSubsc
 import subscribeOperatorStatusEvents from './graphql/subscriptions/OperatorStatusSubscription';
 import subscribeMeshSyncStatusEvents from './graphql/subscriptions/MeshSyncStatusSubscription';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
+import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import ReactSelectWrapper from "./ReactSelectWrapper";
+import MesheryMetrics from "./MesheryMetrics"
 
 const styles = (theme) => ({
   root: {
@@ -157,7 +157,7 @@ const styles = (theme) => ({
   },
   cardMesh: {
     margin: "-8px 0px",
-  }
+  },
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -184,7 +184,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       });
     }
 
-    this.activeMesh = adapter.name
+    this.activeMesh = adapter.name;
 
     this.state = {
       selectedOp: "",
@@ -196,7 +196,10 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       selectionError: false,
 
-      namespace: "default",
+      namespace: {
+        value: "default",
+        label: "default"
+      },
       namespaceError: false,
 
       customDialogAdd: false,
@@ -215,13 +218,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       search: "",
       sortOrder: "",
       pageSize: 10,
+      namespaceList: [],
     };
   }
 
   componentDidMount() {
     const self = this;
-    const meshname = self.mapAdapterNameToMeshName(self.activeMesh) 
-    const variables = { 
+    const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
+    const variables = {
       serviceMesh: meshname
     }
     subscribeMeshSyncStatusEvents(res => {
@@ -238,7 +242,32 @@ class MesheryAdapterPlayComponent extends React.Component {
         next: res => {
           self.setAddonsState(res)
         },
-        error: (err) => console.log("error at addon fetch: "+ err), 
+        error: (err) => console.log("error at addon fetch: " + err),
+      })
+    fetchAvailableNamespaces()
+      .subscribe({
+        next: res => {
+          let namespaces = []
+          res?.namespaces?.map(ns => {
+            namespaces.push(
+              {
+                value: ns?.namespace,
+                label: ns?.namespace
+              }
+            )
+          })
+          if (namespaces.length === 0) {
+            namespaces.push({
+              value: "default",
+              label: "default"
+            })
+          }
+          namespaces.sort((a, b) => (
+            a.value > b.value? 1: -1
+          ))
+          self.setState({ namespaceList: namespaces, namespace: namespaces[0] })
+        },
+        error: (err) => console.log("error at namespace fetch: " + err),
       })
   }
 
@@ -268,9 +297,6 @@ class MesheryAdapterPlayComponent extends React.Component {
   handleChange = (name, isDelete = false) => {
     const self = this;
     return (event) => {
-      if (name === "namespace" && event.target.value !== "") {
-        self.setState({ namespaceError: false });
-      }
 
       if (name === "selectedOp" && event.target.value !== "") {
         if (event.target.value === "custom") {
@@ -289,6 +315,14 @@ class MesheryAdapterPlayComponent extends React.Component {
       self.setState({ [name]: event.target.value });
     };
   };
+
+  handleNamespaceChange = (newValue) => {
+    if (typeof newValue !== "undefined") {
+      this.setState({ namespace: newValue, namespaceError: false });
+    } else {
+      this.setState({ namespaceError: true });
+    }
+  }
 
   handleModalClose(isDelete) {
     const self = this;
@@ -339,7 +373,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ cmEditorValAddError: true, selectionError: true });
         return;
       }
-      if (namespace === "") {
+      if (namespace.value === "") {
         self.setState({ namespaceError: true });
         return;
       }
@@ -355,7 +389,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const data = {
       adapter: adapter.adapter_location,
       query: selectedOp,
-      namespace,
+      namespace: namespace.value,
       customBody: deleteOp ? cmEditorValDel : cmEditorValAdd,
       deleteOp: deleteOp ? "on" : "",
     };
@@ -784,7 +818,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   generateYAMLEditor(cat, isDelete) {
     const { adapter } = this.props;
-    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel } = this.state;
+    const { customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel, namespaceList } = this.state;
     const self = this;
     return (
       <Dialog
@@ -802,17 +836,12 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="namespace"
-                name="namespace"
+              <ReactSelectWrapper
                 label="Namespace"
-                fullWidth
                 value={namespace}
                 error={namespaceError}
-                margin="normal"
-                variant="outlined"
-                onChange={this.handleChange("namespace")}
+                options={namespaceList}
+                onChange={this.handleNamespaceChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -905,7 +934,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       case 2:
         content = "Apply Service Mesh Configuration";
         description = "Configure your service mesh using some pre-defined options.";
-        selectedAdapterOps = selectedAdapterOps.filter(ops => !ops.value.startsWith("Add-on:"))
+        selectedAdapterOps = selectedAdapterOps.filter((ops) => !ops.value.startsWith("Add-on:"));
         break;
 
       case 3:
@@ -950,7 +979,6 @@ class MesheryAdapterPlayComponent extends React.Component {
     );
   }
 
-
   /**
    * extractAddonOperations returns an array of operations
    * which have a prefix "Addon:"
@@ -973,7 +1001,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     const self = this.state;
     return (
-      <FormControl component="fieldset" style={{padding: "1rem"}}>
+      <FormControl component="fieldset" style={{ padding: "1rem" }}>
         <FormLabel component="legend">Customize Addons</FormLabel>
         <FormGroup>
           {selectedAdapterOps
@@ -1003,9 +1031,9 @@ class MesheryAdapterPlayComponent extends React.Component {
             ))}
         </FormGroup>
       </FormControl>
-    )
+    );
   }
-  
+
   /**
    * renderGrafanaCustomCharts takes in the configuration and renders
    * the grafana boards. If the configuration is empty then it renders
@@ -1015,52 +1043,19 @@ class MesheryAdapterPlayComponent extends React.Component {
    * @param {string} grafanaAPIKey grafana API keey
    */
   renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
-    const { classes } = this.props
-    if (boardConfigs?.length)
-      return (
-        <>
-          <Typography align="center" variant="h6" style={{
-            margin: "0 0 2.5rem 0"
-          }}>Service Mesh Metrics</Typography>
-          <GrafanaCustomCharts
-            enableGrafanaChip
-            boardPanelConfigs={boardConfigs || []}
-            grafanaURL={grafanaURL || ""}
-            grafanaAPIKey={grafanaAPIKey || ""}
-          />
-        </>
-      );
-
     return (
-      <div
-        style={{
-          padding: "2rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Typography style={{ fontSize: "1.5rem", marginBottom: "2rem" }} align="center" color="textSecondary">
-          No Service Mesh Metrics Configurations Found
-        </Typography>
-        <Button
-          aria-label="Add Grafana Charts"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={() => this.props.router.push("/settings/#metrics")}
-        >
-          <AddIcon className={classes.addIcon} />
-          Configure Service Mesh Metrics
-        </Button>
-      </div>
+      <MesheryMetrics
+        boardConfigs={boardConfigs}
+        grafanaAPIKey={grafanaAPIKey}
+        grafanaURL={grafanaURL}
+        handleGrafanaChartAddition={() => this.props.router.push("/settings/#metrics")}
+      />
     );
   }
 
   render() {
     const { classes, adapter } = this.props;
-    const { namespace, namespaceError, selectedRowData } = this.state;
+    const { namespace, namespaceError, selectedRowData, namespaceList } = this.state;
 
     let adapterName = adapter.name.split(" ").join("").toLowerCase();
     let imageSrc = "/static/img/" + adapterName + ".svg";
@@ -1098,9 +1093,15 @@ class MesheryAdapterPlayComponent extends React.Component {
               {/* SECTION 1 */}
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
-                  <Typography align="center" variant="h6" style={{
-                    margin: "0 0 2.5rem 0"
-                  }}>Manage Service Mesh</Typography>
+                  <Typography
+                    align="center"
+                    variant="h6"
+                    style={{
+                      margin: "0 0 2.5rem 0",
+                    }}
+                  >
+                    Manage Service Mesh
+                  </Typography>
                   <Grid container spacing={4}>
                     <Grid container item xs={12} alignItems="center" justify="center" className={classes.chipNamespace}>
                       <Grid item md={3} xs={12}>
@@ -1109,22 +1110,24 @@ class MesheryAdapterPlayComponent extends React.Component {
                         </div>
                       </Grid>
                       <Grid item md={9} xs={12}>
-                        <TextField
-                          required
-                          id="namespace"
-                          name="namespace"
+                        <ReactSelectWrapper
                           label="Namespace"
-                          fullWidth
                           value={namespace}
                           error={namespaceError}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange("namespace")}
+                          options={namespaceList}
+                          onChange={this.handleNamespaceChange}
                         />
                       </Grid>
                     </Grid>
                     <Grid container spacing={1}>
-                      <Grid container item lg={(!(this.extractAddonOperations(2)).length) ? 12 : 10} xs={12} spacing={2} className={classes.cardMesh}>
+                      <Grid
+                        container
+                        item
+                        lg={!this.extractAddonOperations(2).length ? 12 : 10}
+                        xs={12}
+                        spacing={2}
+                        className={classes.cardMesh}
+                      >
                         {filteredOps.map((val, i) => (
                           <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
                             {this.generateCardForCategory(val)}
@@ -1146,7 +1149,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                   {this.renderGrafanaCustomCharts(
                     this.props.grafana.selectedBoardsConfigs,
                     this.props.grafana.grafanaURL,
-                    this.props.grafana.grafanaAPIKey,
+                    this.props.grafana.grafanaAPIKey
                   )}
                 </div>
               </Grid>

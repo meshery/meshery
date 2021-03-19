@@ -35,6 +35,10 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type NameSpace struct {
+	Namespace string `json:"namespace"`
+}
+
 type OperatorControllerStatus struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
