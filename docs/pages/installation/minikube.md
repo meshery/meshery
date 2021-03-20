@@ -13,9 +13,11 @@ image: /assets/img/platforms/minikube.png
 
 **To Setup and run Meshery on Minikube** :
 
-1. [Start Minikube](#1-start-minikube)
-1. [Configure Meshery to use minikube](#2-configure-meshery-to-use-minikube)
-1. [Run Meshery](#3-set-up-meshery)
+- [Steps](#steps)
+  - [1. Start minikube](#1-start-minikube)
+  - [2. Install Meshery](#2-install-meshery)
+  - [2. Configure Meshery to use minikube](#2-configure-meshery-to-use-minikube)
+  - [Manual Steps](#manual-steps)
 
 ##### Compatibility
 The following minimum component versions are required:
@@ -62,7 +64,7 @@ Perform the following steps in order:
 Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
 
 **Users using docker driver**:
-After completing the Meshery installation, execute the following command to establish connectivity between Meshery and Kubernetes cluster:
+After completing the Meshery installation, execute the following commands to establish connectivity between Meshery and Kubernetes cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -70,11 +72,27 @@ After completing the Meshery installation, execute the following command to esta
  </div></div>
  </pre>
 
-To establish connectivity between a particular Meshery Adapter and Kubernetes server, use *"docker ps"* to identify the name of the desired container, and execute the following command:
+<br/>
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- docker network connect bridge &lt container name of the desired adapter &gt
+ docker network connect minikube meshery_meshery_1
+ </div></div>
+ </pre>
+
+To establish connectivity between a particular Meshery Adapter and Kubernetes server, use *"docker ps"* to identify the name of the desired container, and execute the following commands:
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ docker network connect bridge &#60; container name of the desired adapter &#62;
+ </div></div>
+ </pre>
+
+<br/>
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ docker network connect minikube &#60; container name of the desired adapter &#62;
  </div></div>
  </pre>
 
