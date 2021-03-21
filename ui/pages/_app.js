@@ -399,7 +399,7 @@ class MesheryApp extends App {
             <MuiPickersUtilsProvider utils={MomentUtils}>
               <div className={classes.root}>
                 <CssBaseline />
-                <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
+                <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer} data-test="navigation">
                   <Hidden smUp implementation="js">
                     <Navigator
                       variant="temporary"
