@@ -1,18 +1,15 @@
 # ================= COMMONS =========================
 enum MeshType {
-	ALL
-	NONE
-
 	ISTIO
 	LINKERD
 	CONSUL
 	OCTARINE
-	TRAEFIK
-	OPENSERVICEMESH
+	TRAEFIKMESH
+	OSM
 	KUMA
 	NGINXSM
-	NETWORKSM
-	CITRIXSM
+	NSM
+	CITRIX
 }
 
 enum Status {
@@ -28,21 +25,10 @@ type Error {
 }
 
 # =================== ADDONS =====================
-enum AddonSelector {
-	PROMETHEUS
-	GRAFANA
-	ZIPKIN
-	JAEGER
-	KIALI
-}
 
 type AddonList {
-	type: String!
-	config: AddonConfig!
-}
-
-type AddonConfig {
-	serviceName: String!
+    name: String!
+	owner: String!
 	endpoint: String!
 }
 
@@ -52,7 +38,7 @@ input ControlPlaneFilter {
 }
 
 type ControlPlane {
-	name: MeshType
+	name: String!
 	members: [ControlPlaneMember!]!
 }
 
@@ -66,13 +52,21 @@ type ControlPlaneMember {
 # ============== OPERATOR =============================
 type OperatorStatus {
 	status: Status!
+    version: String!
+    controllers: [OperatorControllerStatus!]!
 	error: Error
 }
 
 type OperatorControllerStatus {
-	name: String
+	name: String!
+    version: String!
 	status: Status!
 	error: Error
+}
+
+# ============== NAMESPACE =============================
+type NameSpace {
+	namespace: String!
 }
 
 # ============== ROOT =================================
@@ -80,6 +74,7 @@ type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+	getAvailableNamespaces: [NameSpace!]!
 }
 
 type Mutation {

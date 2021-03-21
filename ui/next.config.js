@@ -8,11 +8,9 @@ module.exports = compose([
       return {
         '/': { page: '/' },
         '/index': { page: '/index' },
-        '/performance': { page: '/performance' },
+        '/performance/*': { page: '/performance/[page]' },
         '/configure': { page: '/configure' },
         '/playground': { page: '/playground' },
-        '/results': { page: '/results' },
-        // '/about': { page: '/about' },
         '/provider/*': { page: '/provider' },
         '/404': { page: '/_error' },
       }

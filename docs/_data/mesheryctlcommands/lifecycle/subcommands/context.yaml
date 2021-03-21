@@ -1,0 +1,4 @@
+name: context
+description: configure your Meshery deployment(s). 
+usage: |
+    `mesheryctl system context`

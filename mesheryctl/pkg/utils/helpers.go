@@ -21,13 +21,12 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
-
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -70,8 +69,6 @@ var (
 	// DockerComposeFile is the default location within the MesheryFolder
 	// where the docker compose file is located.
 	DockerComposeFile = "meshery.yaml"
-	// ManifestsFolder is where the Kubernetes manifests are stored
-	ManifestsFolder = "manifests"
 	// AuthConfigFile is the location of the auth file for performing perf testing
 	AuthConfigFile = "auth.json"
 	// DefaultConfigPath is the detail path to mesheryctl config
@@ -94,7 +91,7 @@ var (
 )
 
 // ListOfAdapters returns the list of adapters available
-var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-octarine", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
+var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -661,122 +658,21 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// ListManifests lists the manifest files stored in GitHub
-func ListManifests(url string) ([]Manifest, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer SafeClose(resp.Body)
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read response body")
-	}
-
-	var manLis ManifestList
-
-	err = json.Unmarshal([]byte(body), &manLis)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read response body")
-	}
-
-	return manLis.Tree, nil
-}
-
-// GetManifestURL returns the URLs for the manifest files
-func GetManifestURL(manifest Manifest, rawManifestsURL string) string {
-	var manifestURL string
-
-	if manifest.Typ == "blob" {
-		manifestURL = rawManifestsURL + manifest.Path
-		return manifestURL
-	}
-	return ""
-}
-
-// DownloadManifests downloads all the Kubernetes manifest files
-func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
-	for _, manifest := range manifestArr {
-		if manifestFile := GetManifestURL(manifest, rawManifestsURL); manifestFile != "" {
-			// download the manifest files to ~/.meshery/manifests folder
-			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
-			if err := DownloadFile(filepath, manifestFile); err != nil {
-				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
-			}
-		}
-	}
-	return nil
-}
-
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer SafeClose(resp.Body)
-
-	var dat map[string]interface{}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
-	}
-	if err := json.Unmarshal(body, &dat); err != nil {
-		return "", errors.Wrap(err, "failed to unmarshal json into object")
-	}
-
-	return dat["tag_name"].(string), nil
-}
-
-// IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
-func IsAdapterValid(manifestArr []Manifest, adapterManifest string) bool {
-	for _, v := range manifestArr {
-		if v.Path == adapterManifest {
-			return true
-		}
-	}
-
-	return false
-}
-
-// DownloadDockerComposeFile fetches docker-compose.yaml based on passed context if it does not exists.
-// Use force to override download anyway
-func DownloadDockerComposeFile(ctx config.Context, force bool) error {
-	if _, err := os.Stat(DockerComposeFile); os.IsNotExist(err) || force {
-		fileURL := ""
-
-		if ctx.Channel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-		} else if ctx.Channel == "stable" {
-			if ctx.Version == "latest" {
-				ctx.Version, err = GetLatestStableReleaseTag()
-				if err != nil {
-					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
-				}
-			}
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
-		} else {
-			return errors.Errorf("unknown channel %s", ctx.Channel)
-		}
-
-		if err := DownloadFile(DockerComposeFile, fileURL); err != nil {
-			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
-		}
-	}
-	return nil
-}
-
-// CreateKubeClient creates a Kubernetes client and returns it
-func CreateKubeClient() (*meshkitkube.Client, error) {
-	log.Debug("detecting kubeconfig file...")
-
-	// Create a new client
-	client, err := meshkitkube.New(nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new client")
-	}
-
-	return client, nil
+// PrintToTable prints the given data into a table format
+func PrintToTable(header []string, data [][]string) {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.Render()         // Render the table
 }

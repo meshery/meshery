@@ -15,6 +15,7 @@ import (
 	"fortio.org/fortio/periodic"
 	yamlj "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
@@ -388,7 +389,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 		Result: resultsMap,
 	}
 
-	resultID, err := provider.PublishResults(req, result)
+	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
 	if err != nil {
 		msg := "error: unable to persist the load test results"
 		err = errors.Wrap(err, msg)

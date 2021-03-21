@@ -5,6 +5,12 @@ const operatorStatusSubscription = graphql`
   subscription OperatorStatusSubscription {
     operator: listenToOperatorState {
       status
+      version
+      controllers {
+          name
+          version
+          status
+      }
       error {
         code
         description
