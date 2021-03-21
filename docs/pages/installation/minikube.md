@@ -64,7 +64,7 @@ Perform the following steps in order:
 Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
 
 **Users using docker driver**:
-After completing the Meshery installation, execute the following commands to establish connectivity between Meshery and Kubernetes cluster:
+After completing the Meshery installation, execute the following commands to establish connectivity between Meshery Server and Kubernetes cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
