@@ -16,16 +16,22 @@ package system
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // logsCmd represents the logs command
@@ -48,7 +54,50 @@ var logsCmd = &cobra.Command{
 			return nil
 		}
 
-		cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+		// Get viper instance used for context
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+		// get the platform, channel and the version of the current context
+		// if a temp context is set using the -c flag, use it as the current context
+		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return err
+		}
+		currPlatform := currCtx.Platform
+
+		var cmdlog *exec.Cmd
+		// switch statement for multiple platform
+		switch currPlatform {
+		case "docker":
+			cmdlog = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+
+		case "kubernetes":
+			// Create a new client
+			client, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return errors.Wrap(err, "failed to create new client")
+			}
+
+			// Create a deployment interface for the MesheryNamespace
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
+
+			// List the deployments in the MesheryNamespace
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+
+			if err != nil {
+				return err
+			}
+
+			// List logs for all the deployments similar to kubectl logs MesheryNamespace
+			for _, deployment := range deploymentList.Items {
+
+			}
+
+			cmdlog = exec.Command("kubectl logs meshery")
+
+		}
 		cmdReader, err := cmdlog.StdoutPipe()
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
