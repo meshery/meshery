@@ -939,7 +939,7 @@ class DashboardComponent extends React.Component {
         <div className={classes.root}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <div className={classes.dashboardSection}>
+              <div className={classes.dashboardSection} data-test="service-mesh">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Service Mesh
                 </Typography>
@@ -947,7 +947,7 @@ class DashboardComponent extends React.Component {
               </div>
             </Grid>
             <Grid item xs={12} md={6}>
-              <div className={classes.dashboardSection}>
+              <div className={classes.dashboardSection} data-test="connection-status">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
                   Connection Status
                 </Typography>
