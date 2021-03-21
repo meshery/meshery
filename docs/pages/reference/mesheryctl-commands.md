@@ -23,45 +23,27 @@ Meshery CLI commands are categorized by function, which are:
 <table>
 <thead>
   <tr>
-    <th>Main Command</th>
     <th>Command</th>
     <th>Flag</th>
     <th>Function</th>
     <th>Usage</th>
   </tr>
-  <tr>
-    <td rowspan="7" align="center" bgcolor="gainsboro">mesheryctl</td>
-    <td>version</td>
-    <td></td>
-    <td>displays the version of mesheryctl and the SHA of the release binary</td>
-    <td><code>mesheryctl version</code></td>
-  </tr>
-  <tr>
-    <td rowspan="3"></td>
-    <td rowspan="3">help, h</td>
-    <td rowspan="3">displays help for any command</td>
-    <td><code>mesheryctl --help</code></td>
-  </tr>
-  <tr>
-    <td><code>mesheryctl system --help</code></td>
-  </tr>
-  <tr>
-    <td><code>mesheryctl system start --help</code></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>config</td>
-    <td>path to mesheryctl config file(~/.meshery/config.yaml)</td>
-    <td><code>mesheryctl system reset --config=&lt;path to config file&gt;</code></td>
-  </tr>
-  <tr>
-    <td rowspan="2"></td>
-    <td rowspan="2">verbose, v</td>
-    <td rowspan="2">displays verbose/debug logs</td>
-    <td rowspan="2"><code>mesheryctl system update --verbose</code></td>
-  </tr>
-  <tr>
-  </tr>
+  {% for command_hash in site.data.mesheryctlcommands.global.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td>{{ command.name }}</td>
+      <td></td>
+      <td>{{ command.description }}</td>
+      <td><a href="./commands/{{ command.name }}">Click here to know about command usage</a></td>
+    </tr>
+    {% for subcommand_hash in site.data.mesheryctlcommands.global.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+         <td></td>
+         <td>{{ subcommand.name }}</td>
+         <td>{{ subcommand.description }}</td>
+         <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know about command usage</a></td>
+      </tr>
+    {% endfor %}
+  {% endfor %}
 </thead>
 </table>
 
@@ -252,57 +234,22 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     <th>Function</th>
     <th>Usage</th>
   </tr>
-  <tr>
-    <td rowspan="10" align="center" bgcolor="gainsboro">perf</td>
-    <td></td>
-    <td>performance management- baseline and testing</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>url</td>
-    <td>(required) endpoint URL to test</td>
-    <td><code>mesheryctl perf --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>name</td>
-    <td>name of the test</td>
-    <td><code>mesheryctl perf --name "&lt;name&gt;" --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>mesh</td>
-    <td>name of the service mesh</td>
-    <td><code>mesheryctl perf --mesh &lt;name&gt; --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>qps</td>
-    <td>queries per second</td>
-    <td><code>mesheryctl perf --qps &lt;queries&gt; --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>concurrent-requests</td>
-    <td>number of parallel requests</td>
-    <td><code>mesheryctl perf --concurrent-requests &lt;number of requests&gt; --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>duration</td>
-    <td>length of the test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration</td>
-    <td><code>mesheryctl perf --duration &lt;time&gt; --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>token</td>
-    <td>path to Meshery auth token</td>
-    <td><code>mesheryctl perf --token &lt;path to token&gt; --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>load-generator</td>
-    <td>load generator to be used (fortio/wrk2)</td>
-    <td><code>mesheryctl perf --load-generator [fortio/wrk2] --url &lt;URL&gt;</code></td>
-  </tr>
-  <tr>
-    <td>file</td>
-    <td>file containing SMP compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification</td>
-    <td><code>mesheryctl perf --file &lt;path to file&gt; --url &lt;URL&gt;</code></td>
-  </tr>
+  {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td>{{ command.name }}</td>
+      <td></td>
+      <td>{{ command.description }}</td>
+      <td><a href="./commands/{{ command.name }}">Click here to know more about the command usage</a></td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+        <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about the flag usage</a></td>
+      </tr>
+    {% endfor %}
+  {% endfor %}
 </thead>
 </table>
 
@@ -362,24 +309,32 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     <th>Function</th>
     <th>Usage</th>
   </tr>
-  <tr>
-    <td rowspan="3" align="center" bgcolor="gainsboro">pattern</td>
-    <td></td>
-    <td>file, f</td>
-    <td>(required) path to pattern file</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>apply</td>
-    <td></td>
-    <td>apply pattern file</td>
-    <td><code>mesheryctl exp pattern apply --file &lt;path to pattern file&gt;</code></td>
-  </tr>
-  <tr>
-    <td>delete</td>
-    <td></td>
-    <td>delete pattern file</td>
-    <td><code>mesheryctl exp pattern delete --file &lt;path to pattern file&gt;</code></td>
-  </tr>
+  {% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td>{{ command.name }}</td>
+      <td></td>
+      <td></td>
+      <td>{{ command.description }}</td>
+      <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+        <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about flag usage</a></td>
+      </tr>
+      {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ subcommand.name }}</td>
+          <td></td>
+          <td>{{ subcommand.description }}</td>
+          <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
 </thead>
 </table>
