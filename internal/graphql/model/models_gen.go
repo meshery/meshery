@@ -56,16 +56,16 @@ type OperatorStatus struct {
 type MeshType string
 
 const (
-	MeshTypeIstio           MeshType = "ISTIO"
-	MeshTypeLinkerd         MeshType = "LINKERD"
-	MeshTypeConsul          MeshType = "CONSUL"
-	MeshTypeOctarine        MeshType = "OCTARINE"
-	MeshTypeTraefik         MeshType = "TRAEFIK"
-	MeshTypeOpenservicemesh MeshType = "OPENSERVICEMESH"
-	MeshTypeKuma            MeshType = "KUMA"
-	MeshTypeNginxsm         MeshType = "NGINXSM"
-	MeshTypeNetworksm       MeshType = "NETWORKSM"
-	MeshTypeCitrixsm        MeshType = "CITRIXSM"
+	MeshTypeIstio       MeshType = "ISTIO"
+	MeshTypeLinkerd     MeshType = "LINKERD"
+	MeshTypeConsul      MeshType = "CONSUL"
+	MeshTypeOctarine    MeshType = "OCTARINE"
+	MeshTypeTraefikmesh MeshType = "TRAEFIKMESH"
+	MeshTypeOsm         MeshType = "OSM"
+	MeshTypeKuma        MeshType = "KUMA"
+	MeshTypeNginxsm     MeshType = "NGINXSM"
+	MeshTypeNsm         MeshType = "NSM"
+	MeshTypeCitrix      MeshType = "CITRIX"
 )
 
 var AllMeshType = []MeshType{
@@ -73,17 +73,17 @@ var AllMeshType = []MeshType{
 	MeshTypeLinkerd,
 	MeshTypeConsul,
 	MeshTypeOctarine,
-	MeshTypeTraefik,
-	MeshTypeOpenservicemesh,
+	MeshTypeTraefikmesh,
+	MeshTypeOsm,
 	MeshTypeKuma,
 	MeshTypeNginxsm,
-	MeshTypeNetworksm,
-	MeshTypeCitrixsm,
+	MeshTypeNsm,
+	MeshTypeCitrix,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefik, MeshTypeOpenservicemesh, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNetworksm, MeshTypeCitrixsm:
+	case MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefikmesh, MeshTypeOsm, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNsm, MeshTypeCitrix:
 		return true
 	}
 	return false
