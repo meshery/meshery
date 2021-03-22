@@ -3,11 +3,35 @@ package resolver
 import (
 	"sync"
 
+	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+)
+
+var (
+	controlPlaneNamespace = map[model.MeshType]string{
+		model.MeshTypeIstio:       "istio-system",
+		model.MeshTypeLinkerd:     "linkerd-system",
+		model.MeshTypeConsul:      "consul-system",
+		model.MeshTypeOctarine:    "octarine-system",
+		model.MeshTypeTraefikmesh: "traefik-system",
+		model.MeshTypeOsm:         "osm-system",
+		model.MeshTypeKuma:        "kuma-system",
+		model.MeshTypeNginxsm:     "nginx-system",
+		model.MeshTypeNsm:         "nsm-system",
+		model.MeshTypeCitrix:      "ctrix-system",
+	}
+
+	addonPortSelector = map[string]string{
+		"grafana":          "service",
+		"prometheus":       "http",
+		"jaeger-collector": "jaeger-collector-http",
+		"kiali":            "http",
+		"zipkin":           "http-query",
+	}
 )
 
 // listernToEvents - scale this function with the number of channels
