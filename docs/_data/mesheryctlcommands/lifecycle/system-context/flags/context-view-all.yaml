@@ -1,5 +1,5 @@
-flag: view --all
-arg: context
+flag: --all
+arg: view
 description: if set, shows the configurations of all the contexts
 usage: |
     `mesheryctl system context view --all`
