@@ -60,7 +60,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     <th>Function</th>
     <th>Usage</th>
   </tr>
-  {% for command_hash in site.data.mesheryctlcommands.lifecycle.commands %}{% assign command = command_hash[1] %}
+  {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
       <td>{{ command.name }}</td>
       <td></td>
@@ -68,7 +68,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <td>{{ command.description }}</td>
       <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
     </tr>
-    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
         <td></td>
         <td>{{ subcommand.name }}</td>
@@ -77,13 +77,67 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
       </tr>
     {% endfor %}
-      {% for flag_hash in site.data.mesheryctlcommands.lifecycle.flags %}{% assign flag = flag_hash[1] %}
+      {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td></td>
           <td>{{ flag.arg }}</td>
           <td>{{ flag.flag }}</td>
           <td>{{ flag.description }}</td>
-          <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about flag usage</a></td>
+          <td><a href="./commands/{{ command.name }}/{{ flag.flag }}">Click here to know more about flag usage</a></td>
+        </tr>
+      {% endfor %}
+  {% endfor %}
+    {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td>{{ command.name }}</td>
+      <td></td>
+      <td></td>
+      <td>{{ command.description }}</td>
+      <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
+    </tr>
+    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ subcommand.name }}</td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+        <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
+      </tr>
+    {% endfor %}
+      {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.arg }}</td>
+          <td>{{ flag.flag }}</td>
+          <td>{{ flag.description }}</td>
+          <td><a href="./commands/{{ command.name }}/{{ flag.flag }}">Click here to know more about flag usage</a></td>
+        </tr>
+      {% endfor %}
+  {% endfor %}
+    {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-context.commands %}{% assign command = command_hash[1] %}
+    <tr>
+      <td>{{ command.name }}</td>
+      <td></td>
+      <td></td>
+      <td>{{ command.description }}</td>
+      <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
+    </tr>
+    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ subcommand.name }}</td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+        <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
+      </tr>
+    {% endfor %}
+      {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.arg }}</td>
+          <td>{{ flag.flag }}</td>
+          <td>{{ flag.description }}</td>
+          <td><a href="./commands/{{ command.name }}/{{ flag.flag }}">Click here to know more about flag usage</a></td>
         </tr>
       {% endfor %}
   {% endfor %}
@@ -139,7 +193,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <td>{{ command.description }}</td>
       <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
     </tr>
-    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.init.commands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
         <td></td>
         <td>{{ subcommand.name }}</td>
@@ -148,7 +203,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
       </tr>
     {% endfor %}
-      {% for flag_hash in site.data.mesheryctlcommands.meshes.flags %}{% assign flag = flag_hash[1] %}
+      {% for flag_hash in site.data.mesheryctlcommands.meshes.init.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td></td>
           <td></td>
@@ -157,7 +212,24 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about flag usage</a></td>
         </tr>
       {% endfor %}
-  {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ subcommand.name }}</td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+        <td><a href="./commands/{{ command.name }}/{{ subcommand.name }}">Click here to know more about command usage</a></td>
+      </tr>
+    {% endfor %}
+      {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td></td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+          <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about flag usage</a></td>
+        </tr>
+      {% endfor %}
 </thead>
 </table>
 
