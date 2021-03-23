@@ -316,14 +316,12 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td></td>
-        <td></td>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
         <td><a href="./commands/{{ command.name }}/{{ flag.name }}">Click here to know more about flag usage</a></td>
       </tr>
       {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
         <tr>
-          <td></td>
           <td>{{ subcommand.name }}</td>
           <td></td>
           <td>{{ subcommand.description }}</td>
