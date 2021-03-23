@@ -44,10 +44,15 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 					r.Log.Error(err)
 					return nil, err
 				}
+
+				version := "unknown"
+				if len(strings.Split(objspec.Containers[0].Image, ":")) > 0 {
+					version = strings.Split(objspec.Containers[0].Image, ":")[1]
+				}
 				members = append(members, &model.ControlPlaneMember{
 					Name:      obj.ObjectMeta.Name,
 					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
-					Version:   strings.Split(objspec.Containers[0].Image, ":")[1],
+					Version:   version,
 					Namespace: obj.ObjectMeta.Namespace,
 				})
 			}
