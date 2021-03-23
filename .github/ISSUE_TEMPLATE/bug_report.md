@@ -15,9 +15,9 @@ assignees: ''
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
 #### Environment:
-- Host OS: 
 - Meshery Version: 
 - Kubernetes Version: 
+- Host OS:
 - Browser: 
 
 <!-- Optional 
@@ -27,3 +27,4 @@ Steps to reproduce the behavior:
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
+-->
