@@ -1,10 +1,10 @@
 package config
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+
 	"regexp"
 )
 
@@ -56,16 +56,10 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 	}
 
 	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
-		if ctx.Version == "" {
-			ctx.Version = "latest"
-		}
-
-		version, err := CheckIfCurrentVersionIsValid(ctx.Version)
-		if err != nil || version == "" {
+		err := ctx.ValidateVersion()
+		if err != nil {
 			return Context{}, errors.New("invalid version " + ctx.Version + " specified")
 		}
-		ctx.Version = version
-		fmt.Println("The version for this context is: ", ctx.Version)
 
 		return ctx, nil
 	}
@@ -73,23 +67,27 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 	return Context{}, errors.New("current context:" + mc.CurrentContext + " does not exist")
 }
 
-// CheckIfCurrentVersionIsValid checks if current version is valid, return context as a string
-func CheckIfCurrentVersionIsValid(version string) (string, error) {
-
-	if version == "" || version == "latest" {
-		return "latest", nil
+// ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
+func (ctx *Context) ValidateVersion() error {
+	if ctx.Version == "" {
+		ctx.Version = "latest"
+		return nil
 	}
 
-	matched, err := regexp.MatchString(`v[0-9]+.[0-9]+.[0-9]+[-a-z0-9]*`, version)
+	if ctx.Version == "latest" {
+		return nil
+	}
+
+	matched, err := regexp.MatchString(`v[0-9]+.[0-9]+.[0-9]+[-a-z0-9]*`, ctx.Version)
 	if err != nil || !matched {
-		return "", errors.New("Invalid version " + version + " specified")
+		return errors.New("Invalid version " + ctx.Version + " specified")
 	}
 
 	if matched {
-		return version, nil
+		return nil
 	}
 
-	return "", errors.New("Invalid version " + version + " specified")
+	return errors.New("Invalid version " + ctx.Version + " specified")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
