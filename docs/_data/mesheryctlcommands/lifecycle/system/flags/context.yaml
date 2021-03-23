@@ -1,4 +1,4 @@
-flag: --context, -c
+flag: context, c
 arg: system
 description: Temporarily change the current context.
 usage: |

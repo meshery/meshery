@@ -1,4 +1,4 @@
-flag: --all, -a
+flag: all, a
 arg: view
 description: view release channel and version
 usage: |

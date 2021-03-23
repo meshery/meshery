@@ -1,4 +1,0 @@
-name: mesheryctl-config
-description: (optional) path to Meshery Client (mesheryctl) configuration file (~/.meshery/mesheryctl.yaml) to overrides defaults.
-usage: |
-    `mesheryctl perf <args> --mesheryctl-config=~/.meshery/mesheryctl.yaml`

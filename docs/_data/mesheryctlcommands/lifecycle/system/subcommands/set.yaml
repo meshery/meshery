@@ -1,3 +1,0 @@
-name: set
-description: Configures Meshery to use a Kubernetes cluster.
-usage: |
