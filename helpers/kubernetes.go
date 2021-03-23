@@ -78,7 +78,7 @@ func NewKubeClient(kubeconfig []byte) (*mesherykube.Client, error) {
 	return client, nil
 }
 
-func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clientset, error) {
+func GetK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clientset, error) {
 	var clientConfig *rest.Config
 	var err error
 	if len(kubeconfig) == 0 {
@@ -117,7 +117,7 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 
 // FetchKubernetesNodes - function used to fetch nodes metadata
 func FetchKubernetesNodes(kubeconfig []byte, contextName string) ([]*models.K8SNode, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	clientset, err := GetK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string) ([]*models.K8SN
 
 // FetchKubernetesVersion - function used to fetch kubernetes server version
 func FetchKubernetesVersion(kubeconfig []byte, contextName string) (string, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	clientset, err := GetK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return "", err
 	}

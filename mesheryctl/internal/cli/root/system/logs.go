@@ -16,8 +16,10 @@ package system
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 
@@ -26,8 +28,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	k8s "github.com/layer5io/meshery/helpers"
 	log "github.com/sirupsen/logrus"
+	apiCorev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/spf13/cobra"
@@ -48,12 +51,6 @@ var logsCmd = &cobra.Command{
 
 		log.Info("Starting Meshery logging...")
 
-		if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
-			log.Errorf("%s does not exists", utils.DockerComposeFile)
-			log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
-			return nil
-		}
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -71,49 +68,71 @@ var logsCmd = &cobra.Command{
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
+			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
+				log.Errorf("%s does not exists", utils.DockerComposeFile)
+				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
+				return nil
+			}
+
 			cmdlog = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 
+			cmdReader, err := cmdlog.StdoutPipe()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
+			}
+			scanner := bufio.NewScanner(cmdReader)
+			go func() {
+				for scanner.Scan() {
+					fmt.Println(scanner.Text())
+				}
+			}()
+			if err := cmdlog.Start(); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed start logger"))
+			}
+			if err := cmdlog.Wait(); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
+			}
 		case "kubernetes":
 			// Create a new client
-			client, err := meshkitkube.New([]byte(""))
+			clientset, err := k8s.GetK8SClientSet([]byte(""), "")
 			if err != nil {
 				return errors.Wrap(err, "failed to create new client")
 			}
 
-			// Create a deployment interface for the MesheryNamespace
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
+			podLogOpts := apiCorev1.PodLogOptions{}
 
-			// List the deployments in the MesheryNamespace
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+			// Get the list of all the pods for the MesheryNamespace
+			pods, _ := clientset.CoreV1().Pods(utils.MesheryNamespace).List(context.Background(), v1.ListOptions{})
 
-			if err != nil {
-				return err
+			var data [][]string
+
+			// List logs for all the pods similar to kubectl logs podName -n MesheryNamespace
+			for _, pod := range pods.Items {
+				req := clientset.CoreV1().Pods(utils.MesheryNamespace).GetLogs(pod.Name, &podLogOpts)
+				podLogs, err := req.Stream(context.TODO())
+				if err != nil {
+					return fmt.Errorf("error in opening stream")
+				}
+				defer podLogs.Close()
+
+				buf := new(bytes.Buffer)
+				_, err = io.Copy(buf, podLogs)
+				if err != nil {
+					return fmt.Errorf("error in copy information from podLogs to buf")
+				}
+
+				// podName and logs from clientset
+				name := pod.Name
+				// str := fmt.Sprintf("%d|%d", buf.String())
+				str := buf.String()
+
+				// // Append this to data to be printed in a table
+				data = append(data, []string{name, str})
 			}
-
-			// List logs for all the deployments similar to kubectl logs MesheryNamespace
-			for _, deployment := range deploymentList.Items {
-
-			}
-
-			cmdlog = exec.Command("kubectl logs meshery")
+			utils.PrintToTable([]string{"Name", "Logs"}, data)
 
 		}
-		cmdReader, err := cmdlog.StdoutPipe()
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
-		}
-		scanner := bufio.NewScanner(cmdReader)
-		go func() {
-			for scanner.Scan() {
-				fmt.Println(scanner.Text())
-			}
-		}()
-		if err := cmdlog.Start(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed start logger"))
-		}
-		if err := cmdlog.Wait(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
-		}
+
 		return nil
 	},
 }

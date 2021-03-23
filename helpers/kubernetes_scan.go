@@ -39,7 +39,7 @@ var meshesMeta = map[string][]string{
 
 // ScanKubernetes scans kubernetes to find the pods for each service mesh
 func ScanKubernetes(kubeconfig []byte, contextName string) (map[string][]corev1.Pod, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	clientset, err := GetK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func ScanGrafana(kubeconfig []byte, contextName string) (map[string][]corev1.Ser
 }
 
 func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imageNames []string) (map[string][]string, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	clientset, err := GetK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func detectServiceForDeploymentImage(kubeconfig []byte, contextName string, imag
 
 // detectServiceWithName detects the services in the cluster with the name given in "names" parameter
 func detectServiceWithName(kubeconfig []byte, contextName string, names []string) (map[string][]corev1.Service, error) {
-	clientset, err := getK8SClientSet(kubeconfig, contextName)
+	clientset, err := GetK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return nil, err
 	}
