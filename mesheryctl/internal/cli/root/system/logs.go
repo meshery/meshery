@@ -104,13 +104,10 @@ var logsCmd = &cobra.Command{
 			}
 
 			// Create a pod interface for the MesheryNamespace
-			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
+			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
 
-			// Create a deployment interface for the MesheryNamespace
-			deploymentInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-			// List the deployments in the MesheryNamespace
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+			// List the pods in the MesheryNamespace
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 			if err != nil {
 				return err
 			}
@@ -118,10 +115,10 @@ var logsCmd = &cobra.Command{
 			var data []string
 			podLogOpts := apiCorev1.PodLogOptions{}
 
-			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
-			for _, deployment := range deploymentList.Items {
-				// Get the values from the deployment status
-				name := deployment.GetName()
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+				// Get the values from the pod status
+				name := pod.GetName()
 				req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
 
 				logs, err := req.Stream(context.TODO())
