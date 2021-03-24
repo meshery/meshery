@@ -391,13 +391,13 @@ func (r *Resolver) cleanEntries(del bool) error {
 
 		for _, obj := range objs {
 			err := recordMeshSyncData(broker.Delete, r.DBHandler, &meshsyncmodel.Object{
-				ID: obj.id,
-				Kind: obj.kind,
-				APIVersion:obj.apiversion,
-				ObjectMeta: &meshsyncmodel.ObjectMeta{
-					Name:obj.name,
-					Namespace:obj.Namespace,
-				}
+				ID:         obj.id,
+				Kind:       obj.kind,
+				APIVersion: obj.apiversion,
+				ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+					Name:      obj.name,
+					Namespace: obj.namespace,
+				},
 			})
 			if err != nil {
 				return err
