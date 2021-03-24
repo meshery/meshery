@@ -29,9 +29,12 @@ const (
 )
 
 type controller struct {
-	id      string
-	name    string
-	version string
+	id         string
+	name       string
+	version    string
+	kind       string
+	apiversion string
+	namespace  string
 }
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status) (model.Status, error) {
@@ -299,8 +302,12 @@ func getOperator(handler *database.Handler) ([]*controller, error) {
 			}
 
 			deploys = append(deploys, &controller{
-				id:      obj.ID,
-				version: version,
+				id:         obj.ID,
+				version:    version,
+				name:       obj.ObjectMeta.Name,
+				kind:       obj.Kind,
+				apiversion: obj.APIVersion,
+				namespace:  obj.ObjectMeta.Namespace,
 			})
 		}
 	}
@@ -385,6 +392,12 @@ func (r *Resolver) cleanEntries(del bool) error {
 		for _, obj := range objs {
 			err := recordMeshSyncData(broker.Delete, r.DBHandler, &meshsyncmodel.Object{
 				ID: obj.id,
+				Kind: obj.kind,
+				APIVersion:obj.apiversion,
+				ObjectMeta: &meshsyncmodel.ObjectMeta{
+					Name:obj.name,
+					Namespace:obj.Namespace,
+				}
 			})
 			if err != nil {
 				return err
