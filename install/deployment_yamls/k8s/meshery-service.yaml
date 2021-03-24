@@ -11,7 +11,7 @@ metadata:
 spec:
   ports:
   - name: "http"
-    port: 8080
+    port: 9081
     targetPort: 8080
   selector:
     io.kompose.service: meshery

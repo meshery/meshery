@@ -1094,7 +1094,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
                   <Typography
-                    align="center"
+                    align="left"
                     variant="h6"
                     style={{
                       margin: "0 0 2.5rem 0",
