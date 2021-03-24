@@ -134,7 +134,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td><a href="./commands/{{ command.name }}">Click here to know more about command usage</a></td>
         </tr>
         {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-          <tr bgcolor="#E3E3E3">
+          <tr bgcolor="#E4E4E4">
             <td>{{ subcommand.name }}</td>
             <td></td>
             <td>{{ subcommand.description }}</td>
