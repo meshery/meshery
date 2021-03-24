@@ -57,14 +57,17 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 
 	if ctx, exists := mc.Contexts[mc.CurrentContext]; exists {
 		err := ctx.ValidateVersion()
+
 		if err != nil {
 			return Context{}, errors.New("invalid version " + ctx.Version + " specified")
 		}
 
-		return ctx, nil
+		if err == nil {
+			return ctx, nil
+		}
 	}
 
-	return Context{}, errors.New("current context:" + mc.CurrentContext + " does not exist")
+	return Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
 }
 
 // ValidateVersion checks if the version is valid, if empty sets it to default value latest. Returns an error if the version is invalid.
@@ -80,14 +83,14 @@ func (ctx *Context) ValidateVersion() error {
 
 	matched, err := regexp.MatchString(`v[0-9]+.[0-9]+.[0-9]+[-a-z0-9]*`, ctx.Version)
 	if err != nil || !matched {
-		return errors.New("Invalid version " + ctx.Version + " specified")
+		return errors.New("invalid version " + ctx.Version + " specified")
 	}
 
 	if matched {
 		return nil
 	}
 
-	return errors.New("Invalid version " + ctx.Version + " specified")
+	return errors.New("invalid version " + ctx.Version + " specified")
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
@@ -117,10 +120,7 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) (Context, erro
 	}
 	currCtx, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf("\nCurrent Context does not exists. The available contexts are:")
-		for context := range mc.Contexts {
-			log.Errorf("%s", context)
-		}
+		log.Errorf(err.Error())
 	}
 
 	return currCtx, err
