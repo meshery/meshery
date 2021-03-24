@@ -1,4 +1,0 @@
-name: start
-description: Start all Meshery containers.
-usage: |
-    `mesheryctl system start`

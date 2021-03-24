@@ -1,0 +1,7 @@
+name: validate
+description: validate service mesh conformance to different standard specifications 
+flags:
+  - name: --adapter
+  - name: --spec
+  - name: --tokenpath
+  - name: --namespace

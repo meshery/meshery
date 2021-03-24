@@ -1,4 +1,4 @@
-name: --duration(optional)
+name: duration
 description: Duration of the test.
 usage: |
-    `10s, 5m, 2h`
+    `mesheryctl perf --duration <time> --url <URL>`

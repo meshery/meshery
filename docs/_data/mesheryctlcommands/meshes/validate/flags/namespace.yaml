@@ -1,0 +1,4 @@
+name: namespace, n
+description: Kubernetes namespace to be used for deploying the validation tests and sample workload
+usage: |
+    `mesheryctl mesh validate --adapter <name of the adapter> --tokenPath <path to token for authentication> --spec <specification to be used for conformance test> --namespace <namespace to be used>`

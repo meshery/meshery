@@ -1,0 +1,4 @@
+name: apply
+description: apply pattern file
+usage: |
+    `mesheryctl exp pattern apply --file <path to pattern file>`
