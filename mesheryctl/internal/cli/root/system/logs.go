@@ -133,7 +133,7 @@ var logsCmd = &cobra.Command{
 					return fmt.Errorf("error in copy information from logs to buf")
 				}
 
-				// Append this to data to be printed in a table
+				// Append this to data to be printed
 				for _, str := range strings.Split(buf.String(), "\n") {
 					data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
 				}
