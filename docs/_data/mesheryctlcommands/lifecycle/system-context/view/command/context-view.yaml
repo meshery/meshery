@@ -1,0 +1,4 @@
+name: view
+description: view the configurations of the current context
+usage: |
+    `mesheryctl system context view`

@@ -1,5 +1,0 @@
-flag: delete
-arg: context
-description: delete context
-usage: |
-    `mesheryctl system context delete <context_name>`

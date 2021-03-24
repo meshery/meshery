@@ -1,0 +1,5 @@
+flag: 
+arg: set
+description: set release channel and version.
+usage: |
+    `mesheryctl system channel set [stable|stable-version|edge|edge-version]`

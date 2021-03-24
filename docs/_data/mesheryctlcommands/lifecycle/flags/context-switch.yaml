@@ -1,5 +1,0 @@
-flag: switch
-arg: context
-description: switch context.
-usage: |
-    `mesheryctl system context switch <context_name>`

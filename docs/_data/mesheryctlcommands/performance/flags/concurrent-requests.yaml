@@ -1,4 +1,4 @@
-name: --concurrent-requests (optional)  
+name: concurrent-requests  
 description: Number of concurrent requests (default) 1
 usage: |
-    `--concurrent-requests 10`
+    `mesheryctl perf --concurrent-requests <number of requests> --url <URL>`
