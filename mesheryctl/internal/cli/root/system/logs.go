@@ -22,6 +22,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -106,7 +107,7 @@ var logsCmd = &cobra.Command{
 			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
 
 			// Create a deployment interface for the MesheryNamespace
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
+			deploymentInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
 
 			// List the deployments in the MesheryNamespace
 			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
@@ -114,7 +115,7 @@ var logsCmd = &cobra.Command{
 				return err
 			}
 
-			var data [][]string
+			var data []string
 			podLogOpts := apiCorev1.PodLogOptions{}
 
 			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
@@ -126,7 +127,6 @@ var logsCmd = &cobra.Command{
 				logs, err := req.Stream(context.TODO())
 				if err != nil {
 					return err
-					// return fmt.Errorf("error in opening stream")
 				}
 				defer logs.Close()
 
@@ -136,13 +136,16 @@ var logsCmd = &cobra.Command{
 					return fmt.Errorf("error in copy information from logs to buf")
 				}
 
-				str := buf.String()
 				// Append this to data to be printed in a table
-				data = append(data, []string{name, str})
+				for _, str := range strings.Split(buf.String(), "\n") {
+					data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+				}
 			}
 
-			// Print the data to a table for readability
-			utils.PrintToTable([]string{"Name", "Logs"}, data)
+			// Print the data
+			for _, str := range data {
+				log.Print(str)
+			}
 
 		}
 
