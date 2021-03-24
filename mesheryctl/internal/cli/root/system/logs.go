@@ -28,7 +28,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	k8s "github.com/layer5io/meshery/helpers"
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -44,11 +44,6 @@ var logsCmd = &cobra.Command{
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if ok := utils.IsMesheryRunning(); !ok {
-			log.Error("No logs to show. Meshery is not running.")
-			return nil
-		}
-
 		log.Info("Starting Meshery logging...")
 
 		// Get viper instance used for context
@@ -64,17 +59,21 @@ var logsCmd = &cobra.Command{
 		}
 		currPlatform := currCtx.Platform
 
-		var cmdlog *exec.Cmd
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
+			if ok := utils.IsMesheryRunning(); !ok {
+				log.Error("No logs to show. Meshery is not running.")
+				return nil
+			}
+
 			if _, err := os.Stat(utils.DockerComposeFile); os.IsNotExist(err) {
 				log.Errorf("%s does not exists", utils.DockerComposeFile)
 				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
 			}
 
-			cmdlog = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 
 			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
@@ -93,42 +92,56 @@ var logsCmd = &cobra.Command{
 				return errors.Wrap(err, utils.SystemError("failed to wait for exec process"))
 			}
 		case "kubernetes":
-			// Create a new client
-			clientset, err := k8s.GetK8SClientSet([]byte(""), "")
+			// if the platform is kubernetes, use kubernetes go-client to
+			// display pod status in the MesheryNamespace
+
+			// create an kubernetes client
+			client, err := meshkitkube.New([]byte(""))
+
 			if err != nil {
-				return errors.Wrap(err, "failed to create new client")
+				return err
 			}
 
-			podLogOpts := apiCorev1.PodLogOptions{}
+			// Create a pod interface for the MesheryNamespace
+			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
 
-			// Get the list of all the pods for the MesheryNamespace
-			pods, _ := clientset.CoreV1().Pods(utils.MesheryNamespace).List(context.Background(), v1.ListOptions{})
+			// Create a deployment interface for the MesheryNamespace
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
+
+			// List the deployments in the MesheryNamespace
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+			if err != nil {
+				return err
+			}
 
 			var data [][]string
+			podLogOpts := apiCorev1.PodLogOptions{}
 
-			// List logs for all the pods similar to kubectl logs podName -n MesheryNamespace
-			for _, pod := range pods.Items {
-				req := clientset.CoreV1().Pods(utils.MesheryNamespace).GetLogs(pod.Name, &podLogOpts)
-				podLogs, err := req.Stream(context.TODO())
+			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
+			for _, deployment := range deploymentList.Items {
+				// Get the values from the deployment status
+				name := deployment.GetName()
+				req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
+
+				logs, err := req.Stream(context.TODO())
 				if err != nil {
-					return fmt.Errorf("error in opening stream")
+					return err
+					// return fmt.Errorf("error in opening stream")
 				}
-				defer podLogs.Close()
+				defer logs.Close()
 
 				buf := new(bytes.Buffer)
-				_, err = io.Copy(buf, podLogs)
+				_, err = io.Copy(buf, logs)
 				if err != nil {
-					return fmt.Errorf("error in copy information from podLogs to buf")
+					return fmt.Errorf("error in copy information from logs to buf")
 				}
 
-				// podName and logs from clientset
-				name := pod.Name
-				// str := fmt.Sprintf("%d|%d", buf.String())
 				str := buf.String()
-
-				// // Append this to data to be printed in a table
+				// Append this to data to be printed in a table
 				data = append(data, []string{name, str})
 			}
+
+			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Logs"}, data)
 
 		}
