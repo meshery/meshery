@@ -451,6 +451,13 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
 func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")

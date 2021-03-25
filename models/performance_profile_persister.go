@@ -38,7 +38,7 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(userID, search, o
 		duration, request_headers, request_cookies, 
 		request_body, content_type, created_at,
 		updated_at, (?) as last_run, (?) as total_results`,
-			ppp.DB.Table("meshery_results").Select("MAX(meshery_results.test_time)").Where("performance_profile = performance_profiles.id"),
+			ppp.DB.Table("meshery_results").Select("MAX(meshery_results.test_start_time)").Where("performance_profile = performance_profiles.id"),
 			ppp.DB.Table("meshery_results").Select("COUNT(meshery_results.name)").Where("performance_profile = performance_profiles.id"),
 		).
 		Order(order)

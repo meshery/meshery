@@ -139,7 +139,7 @@ func main() {
 	dbHandler, err := database.New(database.Options{
 		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
-		//Logger:   log,
+		Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)

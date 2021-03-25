@@ -30,7 +30,7 @@ type localMesheryResultDBRepresentation struct {
 	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
 	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
 
-	TestTime               *time.Time         `json:"test_time,omitempty"`
+	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
@@ -89,7 +89,7 @@ func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) er
 	json.Unmarshal(result, &data)
 
 	t := time.Now()
-	data.TestTime = &t
+	data.TestStartTime = &t
 	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error
 }
 
@@ -125,7 +125,7 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		Result:             jsonmap,
 		ServerMetrics:      local.ServerMetrics,
 		ServerBoardConfig:  local.ServerMetrics,
-		TestTime:           local.TestTime,
+		TestStartTime:      local.TestStartTime,
 	}
 
 	return res
@@ -142,7 +142,7 @@ func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryR
 		Result:             byt,
 		ServerMetrics:      mr.ServerMetrics,
 		ServerBoardConfig:  mr.ServerMetrics,
-		TestTime:           mr.TestTime,
+		TestStartTime:      mr.TestStartTime,
 	}
 
 	return res

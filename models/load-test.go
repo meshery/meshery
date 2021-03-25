@@ -110,7 +110,7 @@ type MesheryResult struct {
 	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
 	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
 
-	TestTime               *time.Time         `json:"test_time,omitempty"`
+	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
