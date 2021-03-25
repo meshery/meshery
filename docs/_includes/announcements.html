@@ -1,0 +1,11 @@
+<div id="announcements">
+    {% assign items = site.data.announcements %}
+    {% for item in items.feed  %}
+        <br>
+       <i class="{{ item.icon }}"></i> &nbsp; {{ item.title }} {{ item.body }} <a href="{{ item.url }}">{{ item.linkText }}</a>
+        <br>
+    {% endfor %}
+</div>
+<br>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="{{site.url}}">Learn API Doc</a> > {{page.path | remove: "pages/" | split: "/" | last | remove: ".md" }} -->

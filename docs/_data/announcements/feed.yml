@@ -1,0 +1,33 @@
+# Every root Item would be a post announcement.
+# The 'type' could be one of these:
+#  News (posts, news)
+#  Events (talks, workshops)
+#  Releases
+#
+# this could be the usage:
+# ------------ template start------------------------
+# ---- Uncomment the following and fill to use ------
+# - title: Title of your post
+#   body: The Text body of the post announcement
+#   type: News|Events|Releases
+#   url: "the URL to which the post would lead"
+# ------------ template end  ------------------------
+# ------------ template start------------------------
+- title: 'Meshery v0.5.0-rc-6 has been released!'
+  icon: 'fas fa-exclamation-circle'
+  body: 'Meshery v0.5.0-rc-6 has been released! With 3 new features, MeshSync and Meshery Operator, Performance Profiles and Patterns.'
+  type: Releases
+  linkText: 'Get Starter'
+  url: "the URL to which the post would lead"
+- title: 'Other title'
+  icon: 'fas fa-exclamation-circle'
+  body: 'Other content... content content '
+  type: Releases
+  linkText: 'Get Starter'
+  url: "the URL to which the post would lead"
+- title: 'Other title'
+  icon: 'fas fa-exclamation-circle'
+  body: 'Other content... content content '
+  type: Releases
+  linkText: 'Get Starter'
+  url: "the URL to which the post would lead"
