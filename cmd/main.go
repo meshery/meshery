@@ -130,28 +130,16 @@ func main() {
 	}
 	defer smiResultPersister.CloseResultPersister()
 
-	resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer resultPersister.CloseResultPersister()
-
 	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	performanceProfilePersister, err := models.NewBitCaskPerformanceProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer performanceProfilePersister.ClosePerformanceProfilePersister()
-
 	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
+		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
-		Logger:   log,
+		//Logger:   log,
 	})
 	if err != nil {
 		logrus.Fatal(err)
@@ -163,6 +151,8 @@ func main() {
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
 		meshsyncmodel.Object{},
+		models.PerformanceProfile{},
+		models.MesheryResult{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -171,10 +161,10 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:              DefaultProviderURL,
 		MapPreferencePersister:       preferencePersister,
-		ResultPersister:              resultPersister,
+		ResultPersister:              &models.MesheryResultsPersister{DB: &dbHandler},
 		SmiResultPersister:           smiResultPersister,
 		TestProfilesPersister:        testConfigPersister,
-		PerformanceProfilesPersister: performanceProfilePersister,
+		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,
