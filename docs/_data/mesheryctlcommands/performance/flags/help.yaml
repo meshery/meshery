@@ -1,4 +1,0 @@
-name: --help, -h
-description: Displays help the performance management command.
-usage: |
-    `mesheryctl perf --help`

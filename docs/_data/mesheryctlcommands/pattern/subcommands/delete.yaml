@@ -1,0 +1,4 @@
+name: delete
+description: delete pattern file
+usage: |
+    `mesheryctl exp pattern delete --file <path to pattern file>`

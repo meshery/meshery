@@ -123,6 +123,7 @@ class Header extends React.Component {
                     {title}
                   </Typography>
                 </Grid>
+
                 {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
               </Grid> */}
@@ -130,24 +131,30 @@ class Header extends React.Component {
                   {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                  <div data-test="index-button">
+                    <IconButton color="inherit">
+                      <Link href="/">
+                        <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                        {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
+                      </Link>
+                    </IconButton>
+                  </div>
 
-                  <IconButton color="inherit">
-                    <Link href="/">
-                      <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
-                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
-                    </Link>
-                  </IconButton>
+                  <div data-test="settings-button">
+                    <IconButton color="inherit">
+                      <Link href="/settings">
+                        <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                      </Link>
+                    </IconButton>
+                  </div>
 
-                  <IconButton color="inherit">
-                    <Link href="/settings">
-                      <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
-                    </Link>
-                  </IconButton>
-
-                  <MesheryNotification />
+                  <div data-test="notification-button">
+                    <MesheryNotification />
+                  </div>
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>
+                  
                 </Grid>
               </Grid>
             </Toolbar>
