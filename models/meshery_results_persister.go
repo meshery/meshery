@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"github.com/sirupsen/logrus"
 )
 
 type MesheryResultsPersister struct {
@@ -86,7 +87,9 @@ func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, er
 
 func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) error {
 	var data MesheryResult
-	json.Unmarshal(result, &data)
+	if err := json.Unmarshal(result, &data); err != nil {
+		return err
+	}
 
 	t := time.Now()
 	data.TestStartTime = &t
@@ -115,7 +118,10 @@ func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryRe
 
 func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation) *MesheryResult {
 	var jsonmap map[string]interface{}
-	json.Unmarshal(local.Result, &jsonmap)
+	if err := json.Unmarshal(local.Result, &jsonmap); err != nil {
+		logrus.Error(err)
+		return nil
+	}
 
 	res := &MesheryResult{
 		ID:                 local.ID,
