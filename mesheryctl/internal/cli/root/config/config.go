@@ -59,7 +59,7 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (Context, error) {
 		err := ctx.ValidateVersion()
 
 		if err != nil {
-			return Context{}, errors.New("invalid version " + ctx.Version + " specified")
+			return Context{}, err
 		}
 
 		if err == nil {
