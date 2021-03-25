@@ -24,10 +24,10 @@ type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	ProviderProperties
 	ProviderBaseURL              string
-	ResultPersister              *BitCaskResultsPersister
+	ResultPersister              *MesheryResultsPersister
 	SmiResultPersister           *BitCaskSmiResultsPersister
 	TestProfilesPersister        *BitCaskTestProfilesPersister
-	PerformanceProfilesPersister *BitCaskPerformanceProfilesPersister
+	PerformanceProfilesPersister *PerformanceProfilePersister
 	GenericPersister             database.Handler
 	GraphqlHandler               http.Handler
 	GraphqlPlayground            http.Handler
@@ -148,6 +148,12 @@ func (l *DefaultLocalProvider) FetchResults(req *http.Request, page, pageSize, s
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -445,6 +451,13 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
 func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse page number")
@@ -459,7 +472,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(req *http.Request, page, p
 		return nil, err
 	}
 
-	return l.PerformanceProfilesPersister.GetPerformanceProfiles(pg, pgs)
+	return l.PerformanceProfilesPersister.GetPerformanceProfiles("", "", "", pg, pgs)
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
@@ -493,7 +506,7 @@ func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, perfo
 		return nil, err
 	}
 
-	return l.PerformanceProfilesPersister.DeletePeformanceProfile(uid)
+	return l.PerformanceProfilesPersister.DeletePerformanceProfile(uid)
 }
 
 // SaveSchedule saves a schedule
