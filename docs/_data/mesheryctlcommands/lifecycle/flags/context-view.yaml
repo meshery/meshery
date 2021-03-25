@@ -1,5 +1,0 @@
-flag: view
-arg: context
-description: view current context
-usage: |
-    `mesheryctl system context view`

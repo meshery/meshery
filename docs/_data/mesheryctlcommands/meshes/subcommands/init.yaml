@@ -1,6 +1,0 @@
-name: init
-description: Provision a service mesh
-flags:
-  - name: --platform
-  - name: --profile
-  - name: --help, -h

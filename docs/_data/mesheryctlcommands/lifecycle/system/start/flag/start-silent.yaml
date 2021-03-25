@@ -1,0 +1,5 @@
+flag: silent
+arg: start
+description: Silently create Meshery's configuration file with default settings.
+usage: |
+    `mesheryctl system start --silent`
