@@ -114,10 +114,7 @@ type MesheryResult struct {
 // ConvertToSpec - converts meshery result to SMP
 func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	b := &PerformanceSpec{
-		Env:     &Environment{},
-		Client:  &MeshClientConfig{},
-		Metrics: &Metrics{},
-		ExpUUID: m.ID.String(),
+		Latencies: &LatenciesMs{},
 	}
 	var (
 		results periodic.HasRunnerResult
@@ -130,7 +127,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		retcodes[k1], _ = v.(int64)
 	}
 	m.Result["RetCodes"] = retcodes
-	loadGenerator := m.Result["load-generator"].(string)
+	// loadGenerator := m.Result["load-generator"].(string)
 	logrus.Debugf("result to be converted: %+v", m)
 	if m.Result["RunType"].(string) == "HTTP" {
 		httpResults := &fhttp.HTTPRunnerResults{}
@@ -149,17 +146,15 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 
 		results = httpResults
 		logrus.Debugf("httpresults: %+v", httpResults)
-		b.EndpointURL = httpResults.URL
 	}
 
 	result := results.Result()
+	b.SMPVersion = "test_version"
+	b.id = result.ID()
+	b.labels = map[string]string{"test_label": "test_value"}
 	b.StartTime = result.StartTime
-	b.LoadGenerator = loadGenerator
 	b.EndTime = result.StartTime.Add(result.ActualDuration)
-	b.Client.Connections = result.NumThreads
-	b.Client.Rps = result.ActualQPS
-	b.Client.Internal = false
-	b.Client.LatenciesMs = &LatenciesMs{
+	b.Latencies = &LatenciesMs{
 		Min:     result.DurationHistogram.Min,
 		Max:     result.DurationHistogram.Max,
 		Average: result.DurationHistogram.Avg,
@@ -167,25 +162,34 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	for _, p := range result.DurationHistogram.Percentiles {
 		switch p.Percentile {
 		case 50:
-			b.Client.LatenciesMs.P50 = p.Value
+			b.Latencies.P50 = p.Value
 		case 90:
-			b.Client.LatenciesMs.P90 = p.Value
+			b.Latencies.P90 = p.Value
 		case 99:
-			b.Client.LatenciesMs.P99 = p.Value
+			b.Latencies.P99 = p.Value
 		}
 	}
+	b.ActualQPS = result.ActualQPS
+	b.DetailsURI = "test_details"
+	b.TestID = "test_testID"
+	b.MeshConfigID = "test_meshconfigID"
+	b.EnvID = "test_envID"
 
-	k8sI, ok := m.Result["kubernetes"]
-	if ok {
-		k8s, _ := k8sI.(map[string]interface{})
-		b.Env.Kubernetes, _ = k8s["server_version"].(string)
-		nodesI, okk := k8s["nodes"]
-		if okk {
-			nodes, okkk := nodesI.([]*K8SNode)
-			if okkk {
-				b.Env.NodeCount = len(nodes)
-			}
-		}
-	}
+	// b.LoadGenerator = loadGenerator
+	// b.Client.Connections = result.NumThreads
+	// b.Client.Internal = false
+
+	// k8sI, ok := m.Result["kubernetes"]
+	// if ok {
+	// 	k8s, _ := k8sI.(map[string]interface{})
+	// 	b.Env.Kubernetes, _ = k8s["server_version"].(string)
+	// 	nodesI, okk := k8s["nodes"]
+	// 	if okk {
+	// 		nodes, okkk := nodesI.([]*K8SNode)
+	// 		if okkk {
+	// 			b.Env.NodeCount = len(nodes)
+	// 		}
+	// 	}
+	// }
 	return b, nil
 }
