@@ -26,12 +26,12 @@ import (
 )
 
 type resetOptions struct {
-	ignoreUserConfirmation bool
+	skipConfirmation bool
 }
 
 func newResetOptions() *resetOptions {
 	return &resetOptions{
-		ignoreUserConfirmation: false,
+		skipConfirmation: false,
 	}
 }
 
@@ -44,7 +44,7 @@ var resetCmd = &cobra.Command{
 	Long:  `Reset Meshery to it's default configuration.`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !argsResetCmd.ignoreUserConfirmation {
+		if !argsResetCmd.skipConfirmation {
 			// ask user for confirmation
 			userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
 			if !userResponse {
@@ -114,5 +114,5 @@ func resetMesheryConfig() error {
 }
 
 func init() {
-	resetCmd.PersistentFlags().BoolVar(&argsResetCmd.ignoreUserConfirmation, "silent", argsResetCmd.ignoreUserConfirmation, "Avoid y/n input later")
+	resetCmd.PersistentFlags().BoolVar(&argsResetCmd.skipConfirmation, "silent", argsResetCmd.skipConfirmation, "Avoid y/n input later")
 }
