@@ -25,26 +25,39 @@ import (
 	"github.com/spf13/viper"
 )
 
+type resetOptions struct {
+	ignoreUserConfirmation bool
+}
+
+func newResetOptions() *resetOptions {
+	return &resetOptions{
+		ignoreUserConfirmation: false,
+	}
+}
+
+var argsResetCmd = newResetOptions()
+
 // resetCmd represents the reset command
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
 	Long:  `Reset Meshery to it's default configuration.`,
-	Args:  cobra.NoArgs,
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if !argsResetCmd.ignoreUserConfirmation {
+			// ask user for confirmation
+			userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+			if !userResponse {
+				log.Info("Reset aborted.")
+				return nil
+			}
+		}
 		return resetMesheryConfig()
 	},
 }
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
-	// ask user for confirmation
-	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-	if !userResponse {
-		log.Info("Reset aborted.")
-		return nil
-	}
-
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -98,4 +111,8 @@ func resetMesheryConfig() error {
 		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.Platform, utils.MesheryFolder)
 	}
 	return nil
+}
+
+func init() {
+	resetCmd.PersistentFlags().BoolVar(&argsResetCmd.ignoreUserConfirmation, "silent", argsResetCmd.ignoreUserConfirmation, "Avoid y/n input later")
 }
