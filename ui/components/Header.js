@@ -162,6 +162,14 @@ class Header extends React.Component {
                     </IconButton>
                   </div>
 
+                  <div data-test="wizard-button">
+                    <IconButton color="inherit">
+                      <Link href="/">
+                        <BuildIcon className={title === 'Wizard' ? classes.itemActiveItem : ''} />
+                      </Link>
+                    </IconButton>
+                  </div>
+
                   <div data-test="notification-button">
                     <MesheryNotification />
                   </div>
