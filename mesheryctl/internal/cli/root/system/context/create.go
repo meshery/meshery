@@ -45,7 +45,7 @@ var createContextCmd = &cobra.Command{
 }
 
 func init() {
-	createContextCmd.Flags().StringVarP(&url, "url", "u", "https://localhost:9081", "Meshery Server URL with Port")
+	createContextCmd.Flags().StringVarP(&url, "url", "u", "http://localhost:9081", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "List of adapters")
 	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "docker", "Platform to deploy Meshery")
