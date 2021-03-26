@@ -13,6 +13,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import BuildIcon from "@material-ui/icons/Build";
 import MesheryNotification from './MesheryNotification';
 import User from './User';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -144,6 +145,14 @@ class Header extends React.Component {
                     <IconButton color="inherit">
                       <Link href="/settings">
                         <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                      </Link>
+                    </IconButton>
+                  </div>
+
+                  <div data-test="wizard-button">
+                    <IconButton color="inherit">
+                      <Link href="/">
+                        <BuildIcon className={title === 'Wizard' ? classes.itemActiveItem : ''} />
                       </Link>
                     </IconButton>
                   </div>
