@@ -110,8 +110,14 @@ func stop() error {
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
 
-		// ask user for confirmation
-		userResponse := utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+		userResponse := false
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+		}
+
 		if !userResponse {
 			log.Info("Stop aborted.")
 			return nil
