@@ -16,6 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import BuildIcon from "@material-ui/icons/Build";
 import MesheryNotification from './MesheryNotification';
 import User from './User';
+import PopUp from './configuration-wizard/PopUp'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
@@ -99,8 +100,22 @@ const styles = (theme) => ({
 });
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+    };
+  }
+  handleOpen = () => {
+    this.setState({ open: true })
+  }
+  handleClose = () => {
+    this.setState({ open: false })
+  }
+  
   render() {
     const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
+   
     return (
       <NoSsr>
         <React.Fragment>
@@ -151,9 +166,8 @@ class Header extends React.Component {
 
                   <div data-test="wizard-button">
                     <IconButton color="inherit">
-                      <Link href="/">
-                        <BuildIcon className={title === 'Wizard' ? classes.itemActiveItem : ''} />
-                      </Link>
+                      <BuildIcon onClick={this.handleOpen} className={title === 'Wizard' ? classes.itemActiveItem : ''} />
+                      <PopUp open={this.state.open} handleClose={this.handleClose} />
                     </IconButton>
                   </div>
 
