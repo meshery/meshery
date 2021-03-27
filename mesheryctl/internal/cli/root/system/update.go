@@ -54,7 +54,13 @@ var updateCmd = &cobra.Command{
 		if currCtx.Version != "latest" {
 			// ask confirmation if user has pinned the version in config
 			log.Infof("You have pinned version: %s in your current conext", currCtx.Version)
-			userResponse := utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+			userResponse := false
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				userResponse = utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+			}
+
 			if !userResponse {
 				log.Info("Update aborted.")
 				return nil
