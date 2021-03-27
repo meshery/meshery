@@ -69,6 +69,8 @@ const (
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
+	// MesheryEndpoint is the default URL in which Meshery is exposed
+	MesheryEndpoint = "http://localhost:9081"
 	// MesheryFolder is the default relative location of the meshery config
 	// related configuration files.
 	MesheryFolder = ".meshery"
