@@ -105,6 +105,7 @@ type MesheryResult struct {
 	Name               string                 `json:"name,omitempty"`
 	Mesh               string                 `json:"mesh,omitempty"`
 	PerformanceProfile *uuid.UUID             `json:"performance_profile"`
+	TestID             string                 `json:"test_id"`
 	Result             map[string]interface{} `json:"runner_results,omitempty"`
 
 	ServerMetrics     interface{} `json:"server_metrics,omitempty"`
@@ -149,7 +150,8 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	}
 
 	result := results.Result()
-	b.SMPVersion = "test_version"
+	// b.SMPVersion = MoreDetails.SmiVersion
+	b.SMPVersion = "test_smp_version"
 	b.id = result.ID()
 	b.labels = map[string]string{"test_label": "test_value"}
 	b.StartTime = result.StartTime
@@ -171,10 +173,9 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	}
 	b.ActualQPS = result.ActualQPS
 	b.DetailsURI = "test_details"
-	b.TestID = "test_testID"
+	b.TestID = m.TestID
 	b.MeshConfigID = "test_meshconfigID"
 	b.EnvID = "test_envID"
-
 	// b.LoadGenerator = loadGenerator
 	// b.Client.Connections = result.NumThreads
 	// b.Client.Internal = false
