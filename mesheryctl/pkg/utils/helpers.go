@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/json"
@@ -27,6 +28,11 @@ import (
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	clientcmd "k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/homedir"
 )
 
 const (
@@ -255,7 +261,30 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			}
 		}
 	} else if currCtx.Platform == "kubernetes" {
+		if err != nil {
+			return errors.Wrap(err, "failed to create new client")
+		}
 
+		var kubeconfig string
+		home := homedir.HomeDir()
+		if home != "" {
+			kubeconfig = filepath.Join(home, ".kube", "config")
+		}
+
+		config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+		if err != nil {
+			return err
+		}
+
+		clientset, err := kubernetes.NewForConfig(config)
+		if err != nil {
+			return err
+		}
+
+		_, err = clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return errors.New("kubernetes is not running yet")
+		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
 	}
