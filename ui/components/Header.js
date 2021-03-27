@@ -115,6 +115,7 @@ class Header extends React.Component {
   
   render() {
     const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
+    console.log('title', title)
    
     return (
       <NoSsr>
@@ -150,7 +151,7 @@ class Header extends React.Component {
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
-                        <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                        <DashboardIcon className={title === 'System Dashboard' ? classes.itemActiveItem : ''} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
@@ -236,7 +237,7 @@ Header.propTypes = {
 
 const mapStateToProps = (state) =>
   // console.log("header - mapping state to props. . . new title: "+ state.get("page").get("title"));
-  // console.log("state: " + JSON.stringify(state));
+  // console.log("state: " + JSON.stringify(state))
   ({ title: state.get('page').get('title') })
 ;
 
