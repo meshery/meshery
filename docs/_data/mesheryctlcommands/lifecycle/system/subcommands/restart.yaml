@@ -1,0 +1,4 @@
+name: restart
+description: Restart all Meshery containers, their instances and their connected volumes.
+usage: |
+    `mesheryctl system restart`

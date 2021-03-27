@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { Button, Grid, Paper } from "@material-ui/core";
+import { Button, Grid, Paper, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { withRouter } from "next/router";
@@ -112,8 +112,13 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
             <Grid container spacing={1}>
               <Grid item xs>
                 <Paper className={classes.paper}>
-                  <div>
-                    <b>Tests Results:</b> {tests.count}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
+                      {tests.count}
+                    </Typography>
+                    <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
+                      Results
+                    </Typography>
                   </div>
                   <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
                     <Button variant="contained" color="primary" onClick={() => setRunTest(true)}>
@@ -124,8 +129,13 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
               </Grid>
               <Grid item xs>
                 <Paper className={classes.paper}>
-                  <div>
-                    <b>Profiles:</b> {profiles.count}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
+                      {profiles.count}
+                    </Typography>
+                    <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
+                      Profiles
+                    </Typography>
                   </div>
                   <div style={{ margin: "2rem 0 0 auto", width: "fit-content" }}>
                     <Button variant="contained" color="primary" onClick={() => router.push("/performance/profiles")}>

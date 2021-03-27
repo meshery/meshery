@@ -1,4 +1,0 @@
-name: --help, -h
-description: Displays help about any service mesh lifecycle management command.
-usage: |
-    `mesheryctl help`

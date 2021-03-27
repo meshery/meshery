@@ -1,5 +1,0 @@
-flag: create
-arg: context
-description: create a new context
-usage: |
-    `mesheryctl system context create <context_name>`

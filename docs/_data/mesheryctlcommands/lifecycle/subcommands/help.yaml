@@ -1,4 +1,0 @@
-name: help
-description: Displays help about any Meshery lifecycle management command.
-usage: |
-    `mesheryctl system --help`

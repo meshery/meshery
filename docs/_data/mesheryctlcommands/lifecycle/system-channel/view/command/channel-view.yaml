@@ -1,0 +1,4 @@
+name: view
+description: view release channel and version
+usage: |
+    `mesheryctl system channel view`
