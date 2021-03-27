@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     bottom: "35%",
     backgroundColor: "#017374",
     border: "none",
+    borderRadius: "1.125rem",
     boxShadow: theme.shadows[5],
   },
   buttonContainer: {
@@ -37,12 +38,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   label: {
-    //fontSize: "0.75rem",
-    color: "lightgray",
+    fontSize: "0.75rem",
     marginRight: "7rem",
+    color: "white",
   },
   startButton: {
-    padding: "0.75rem 1rem",
+    padding: "0.6rem 1rem",
     width: "8rem",
     background: "#455A64",
     color: "white",
