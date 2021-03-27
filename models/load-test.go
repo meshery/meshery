@@ -152,7 +152,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	result := results.Result()
 	// b.SMPVersion = MoreDetails.SmiVersion
 	b.SMPVersion = "test_smp_version"
-	b.id = result.ID()
+	b.id = "test_id"
 	b.labels = map[string]string{"test_label": "test_value"}
 	b.StartTime = result.StartTime
 	b.EndTime = result.StartTime.Add(result.ActualDuration)
@@ -173,7 +173,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	}
 	b.ActualQPS = result.ActualQPS
 	b.DetailsURI = "test_details"
-	b.TestID = m.TestID
+	b.TestID = "test_test_id"
 	b.MeshConfigID = "test_meshconfigID"
 	b.EnvID = "test_envID"
 	// b.LoadGenerator = loadGenerator
