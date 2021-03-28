@@ -358,12 +358,36 @@ func installprereq() error {
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning() bool {
-	op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-	if err != nil {
-		return false
+func IsMesheryRunning(currPlatform string) bool {
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
+				return false
+			}
+			return strings.Contains(string(op), "meshery")
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false
+			}
+
+			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+
+			if err != nil {
+				return false
+			}
+
+			return true
+		}
 	}
-	return strings.Contains(string(op), "meshery")
+
+	return false
 }
 
 // AddAuthDetails Adds authentication cookies to the request

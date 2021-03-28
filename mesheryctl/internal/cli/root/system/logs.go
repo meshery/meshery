@@ -63,7 +63,7 @@ var logsCmd = &cobra.Command{
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			if ok := utils.IsMesheryRunning(); !ok {
+			if ok := utils.IsMesheryRunning(currPlatform); !ok {
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
