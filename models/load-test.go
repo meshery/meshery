@@ -104,9 +104,9 @@ type MesheryResult struct {
 	ID                 uuid.UUID              `json:"meshery_id,omitempty"`
 	Name               string                 `json:"name,omitempty"`
 	Mesh               string                 `json:"mesh,omitempty"`
-	PerformanceProfile *uuid.UUID             `json:"performance_profile"`
+	PerformanceProfile *uuid.UUID             `json:"performance_profile,omitempty"`
 	TestID             string                 `json:"test_id"`
-	Result             map[string]interface{} `json:"runner_results,omitempty"`
+	Result             map[string]interface{} `json:"runner_results,omitempty" gorm:"type:JSONB"`
 
 	ServerMetrics     interface{} `json:"server_metrics,omitempty"`
 	ServerBoardConfig interface{} `json:"server_board_config,omitempty"`
