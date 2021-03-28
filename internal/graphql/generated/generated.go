@@ -45,27 +45,22 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	AddonConfig struct {
-		Endpoint    func(childComplexity int) int
-		ServiceName func(childComplexity int) int
-	}
-
 	AddonList struct {
-		Config func(childComplexity int) int
-		Status func(childComplexity int) int
-		Type   func(childComplexity int) int
+		Endpoint func(childComplexity int) int
+		Name     func(childComplexity int) int
+		Owner    func(childComplexity int) int
 	}
 
 	ControlPlane struct {
 		Members func(childComplexity int) int
 		Name    func(childComplexity int) int
-		Version func(childComplexity int) int
 	}
 
 	ControlPlaneMember struct {
 		Component func(childComplexity int) int
+		Name      func(childComplexity int) int
 		Namespace func(childComplexity int) int
-		Status    func(childComplexity int) int
+		Version   func(childComplexity int) int
 	}
 
 	Error struct {
@@ -74,49 +69,58 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus *model.Status) int
-		ChangeOperatorStatus func(childComplexity int, targetStatus *model.Status) int
+		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus model.Status) int
+		ChangeOperatorStatus func(childComplexity int, targetStatus model.Status) int
+	}
+
+	NameSpace struct {
+		Namespace func(childComplexity int) int
 	}
 
 	OperatorControllerStatus struct {
-		Error  func(childComplexity int) int
-		Name   func(childComplexity int) int
-		Status func(childComplexity int) int
+		Error   func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Status  func(childComplexity int) int
+		Version func(childComplexity int) int
 	}
 
 	OperatorStatus struct {
-		Error  func(childComplexity int) int
-		Status func(childComplexity int) int
+		Controllers func(childComplexity int) int
+		Error       func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Version     func(childComplexity int) int
 	}
 
 	Query struct {
-		GetAvailableAddons func(childComplexity int, selector *model.MeshType) int
-		GetControlPlanes   func(childComplexity int, filter *model.ControlPlaneFilter) int
-		GetOperatorStatus  func(childComplexity int) int
+		GetAvailableAddons     func(childComplexity int, selector *model.MeshType) int
+		GetAvailableNamespaces func(childComplexity int) int
+		GetControlPlanes       func(childComplexity int, filter *model.ControlPlaneFilter) int
+		GetOperatorStatus      func(childComplexity int) int
 	}
 
 	Subscription struct {
-		ListenToAddonEvents        func(childComplexity int, selector *model.MeshType) int
-		ListenToControlPlaneEvents func(childComplexity int, filter *model.ControlPlaneFilter) int
-		ListenToOperatorEvents     func(childComplexity int) int
-		SubscribeToMeshSync        func(childComplexity int) int
+		ListenToAddonState        func(childComplexity int, selector *model.MeshType) int
+		ListenToControlPlaneState func(childComplexity int, filter *model.ControlPlaneFilter) int
+		ListenToMeshSyncEvents    func(childComplexity int) int
+		ListenToOperatorState     func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
-	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus *model.Status) (*model.Status, error)
-	ChangeOperatorStatus(ctx context.Context, targetStatus *model.Status) (*model.Status, error)
+	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus model.Status) (model.Status, error)
+	ChangeOperatorStatus(ctx context.Context, targetStatus model.Status) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ControlPlaneFilter) ([]*model.ControlPlane, error)
 	GetOperatorStatus(ctx context.Context) (*model.OperatorStatus, error)
+	GetAvailableNamespaces(ctx context.Context) ([]*model.NameSpace, error)
 }
 type SubscriptionResolver interface {
-	ListenToAddonEvents(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
-	ListenToControlPlaneEvents(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
-	ListenToOperatorEvents(ctx context.Context) (<-chan *model.OperatorStatus, error)
-	SubscribeToMeshSync(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
+	ListenToAddonState(ctx context.Context, selector *model.MeshType) (<-chan []*model.AddonList, error)
+	ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
+	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
+	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
 }
 
 type executableSchema struct {
@@ -134,40 +138,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "AddonConfig.endpoint":
-		if e.complexity.AddonConfig.Endpoint == nil {
+	case "AddonList.endpoint":
+		if e.complexity.AddonList.Endpoint == nil {
 			break
 		}
 
-		return e.complexity.AddonConfig.Endpoint(childComplexity), true
+		return e.complexity.AddonList.Endpoint(childComplexity), true
 
-	case "AddonConfig.serviceName":
-		if e.complexity.AddonConfig.ServiceName == nil {
+	case "AddonList.name":
+		if e.complexity.AddonList.Name == nil {
 			break
 		}
 
-		return e.complexity.AddonConfig.ServiceName(childComplexity), true
+		return e.complexity.AddonList.Name(childComplexity), true
 
-	case "AddonList.config":
-		if e.complexity.AddonList.Config == nil {
+	case "AddonList.owner":
+		if e.complexity.AddonList.Owner == nil {
 			break
 		}
 
-		return e.complexity.AddonList.Config(childComplexity), true
-
-	case "AddonList.status":
-		if e.complexity.AddonList.Status == nil {
-			break
-		}
-
-		return e.complexity.AddonList.Status(childComplexity), true
-
-	case "AddonList.type":
-		if e.complexity.AddonList.Type == nil {
-			break
-		}
-
-		return e.complexity.AddonList.Type(childComplexity), true
+		return e.complexity.AddonList.Owner(childComplexity), true
 
 	case "ControlPlane.members":
 		if e.complexity.ControlPlane.Members == nil {
@@ -183,19 +173,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlPlane.Name(childComplexity), true
 
-	case "ControlPlane.version":
-		if e.complexity.ControlPlane.Version == nil {
-			break
-		}
-
-		return e.complexity.ControlPlane.Version(childComplexity), true
-
 	case "ControlPlaneMember.component":
 		if e.complexity.ControlPlaneMember.Component == nil {
 			break
 		}
 
 		return e.complexity.ControlPlaneMember.Component(childComplexity), true
+
+	case "ControlPlaneMember.name":
+		if e.complexity.ControlPlaneMember.Name == nil {
+			break
+		}
+
+		return e.complexity.ControlPlaneMember.Name(childComplexity), true
 
 	case "ControlPlaneMember.namespace":
 		if e.complexity.ControlPlaneMember.Namespace == nil {
@@ -204,12 +194,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlPlaneMember.Namespace(childComplexity), true
 
-	case "ControlPlaneMember.status":
-		if e.complexity.ControlPlaneMember.Status == nil {
+	case "ControlPlaneMember.version":
+		if e.complexity.ControlPlaneMember.Version == nil {
 			break
 		}
 
-		return e.complexity.ControlPlaneMember.Status(childComplexity), true
+		return e.complexity.ControlPlaneMember.Version(childComplexity), true
 
 	case "Error.code":
 		if e.complexity.Error.Code == nil {
@@ -235,7 +225,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(*model.Status)), true
+		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status)), true
 
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
@@ -247,7 +237,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["targetStatus"].(*model.Status)), true
+		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["targetStatus"].(model.Status)), true
+
+	case "NameSpace.namespace":
+		if e.complexity.NameSpace.Namespace == nil {
+			break
+		}
+
+		return e.complexity.NameSpace.Namespace(childComplexity), true
 
 	case "OperatorControllerStatus.error":
 		if e.complexity.OperatorControllerStatus.Error == nil {
@@ -270,6 +267,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorControllerStatus.Status(childComplexity), true
 
+	case "OperatorControllerStatus.version":
+		if e.complexity.OperatorControllerStatus.Version == nil {
+			break
+		}
+
+		return e.complexity.OperatorControllerStatus.Version(childComplexity), true
+
+	case "OperatorStatus.controllers":
+		if e.complexity.OperatorStatus.Controllers == nil {
+			break
+		}
+
+		return e.complexity.OperatorStatus.Controllers(childComplexity), true
+
 	case "OperatorStatus.error":
 		if e.complexity.OperatorStatus.Error == nil {
 			break
@@ -284,6 +295,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OperatorStatus.Status(childComplexity), true
 
+	case "OperatorStatus.version":
+		if e.complexity.OperatorStatus.Version == nil {
+			break
+		}
+
+		return e.complexity.OperatorStatus.Version(childComplexity), true
+
 	case "Query.getAvailableAddons":
 		if e.complexity.Query.GetAvailableAddons == nil {
 			break
@@ -295,6 +313,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetAvailableAddons(childComplexity, args["selector"].(*model.MeshType)), true
+
+	case "Query.getAvailableNamespaces":
+		if e.complexity.Query.GetAvailableNamespaces == nil {
+			break
+		}
+
+		return e.complexity.Query.GetAvailableNamespaces(childComplexity), true
 
 	case "Query.getControlPlanes":
 		if e.complexity.Query.GetControlPlanes == nil {
@@ -315,43 +340,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetOperatorStatus(childComplexity), true
 
-	case "Subscription.listenToAddonEvents":
-		if e.complexity.Subscription.ListenToAddonEvents == nil {
+	case "Subscription.listenToAddonState":
+		if e.complexity.Subscription.ListenToAddonState == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_listenToAddonEvents_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_listenToAddonState_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ListenToAddonEvents(childComplexity, args["selector"].(*model.MeshType)), true
+		return e.complexity.Subscription.ListenToAddonState(childComplexity, args["selector"].(*model.MeshType)), true
 
-	case "Subscription.listenToControlPlaneEvents":
-		if e.complexity.Subscription.ListenToControlPlaneEvents == nil {
+	case "Subscription.listenToControlPlaneState":
+		if e.complexity.Subscription.ListenToControlPlaneState == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_listenToControlPlaneEvents_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_listenToControlPlaneState_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ListenToControlPlaneEvents(childComplexity, args["filter"].(*model.ControlPlaneFilter)), true
+		return e.complexity.Subscription.ListenToControlPlaneState(childComplexity, args["filter"].(*model.ControlPlaneFilter)), true
 
-	case "Subscription.listenToOperatorEvents":
-		if e.complexity.Subscription.ListenToOperatorEvents == nil {
+	case "Subscription.listenToMeshSyncEvents":
+		if e.complexity.Subscription.ListenToMeshSyncEvents == nil {
 			break
 		}
 
-		return e.complexity.Subscription.ListenToOperatorEvents(childComplexity), true
+		return e.complexity.Subscription.ListenToMeshSyncEvents(childComplexity), true
 
-	case "Subscription.subscribeToMeshSync":
-		if e.complexity.Subscription.SubscribeToMeshSync == nil {
+	case "Subscription.listenToOperatorState":
+		if e.complexity.Subscription.ListenToOperatorState == nil {
 			break
 		}
 
-		return e.complexity.Subscription.SubscribeToMeshSync(childComplexity), true
+		return e.complexity.Subscription.ListenToOperatorState(childComplexity), true
 
 	}
 	return 0, false
@@ -434,92 +459,95 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "schema/addons.graphqls", Input: `enum AddonSelector {
-	PROMETHEUS
-	GRAFANA
-	ZIPKIN
-	JAEGER
-	KIALI
-}
-
-type AddonList {
-	type: String!
-	status: Status
-	config: AddonConfig!
-}
-
-type AddonConfig {
-	serviceName: String!
-	endpoint: String!
-}
-`, BuiltIn: false},
-	{Name: "schema/common.graphqls", Input: `enum MeshType {
-	ALL
-	NONE
-
+	{Name: "schema/schema.graphqls", Input: `# ================= COMMONS =========================
+enum MeshType {
 	ISTIO
 	LINKERD
 	CONSUL
 	OCTARINE
-	TRAEFIK
-	OPENSERVICEMESH
+	TRAEFIKMESH
+	OSM
 	KUMA
 	NGINXSM
-	NETWORKSM
-	CITRIXSM
+	NSM
+	CITRIX
 }
 
 enum Status {
 	ENABLED
 	DISABLED
+	PROCESSING
 	UNKNOWN
 }
 
 type Error {
 	code: String!
 	description: String!
-}`, BuiltIn: false},
-	{Name: "schema/control-plane.graphqls", Input: `input ControlPlaneFilter {
+}
+
+# =================== ADDONS =====================
+
+type AddonList {
+    name: String!
+	owner: String!
+	endpoint: String!
+}
+
+# ============== CONTROL PLANE =======================
+input ControlPlaneFilter {
     type: MeshType
 }
 
 type ControlPlane {
-	name: MeshType
-	version: String!
+	name: String!
 	members: [ControlPlaneMember!]!
 }
 
 type ControlPlaneMember {
+	name: String!
 	component: String!
+	version: String!
 	namespace: String!
-	status: Status
-}`, BuiltIn: false},
-	{Name: "schema/operator.graphqls", Input: `type OperatorStatus {
-	status: Status
+}
+
+# ============== OPERATOR =============================
+type OperatorStatus {
+	status: Status!
+    version: String!
+    controllers: [OperatorControllerStatus!]!
 	error: Error
 }
 
 type OperatorControllerStatus {
-	name: String
-	status: Status
+	name: String!
+    version: String!
+	status: Status!
 	error: Error
-}`, BuiltIn: false},
-	{Name: "schema/schema.graphqls", Input: `type Query {
+}
+
+# ============== NAMESPACE =============================
+type NameSpace {
+	namespace: String!
+}
+
+# ============== ROOT =================================
+type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+	getAvailableNamespaces: [NameSpace!]!
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
-	changeOperatorStatus(targetStatus: Status): Status
+	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
+	changeOperatorStatus(targetStatus: Status!): Status!
 }
 
 type Subscription {
-    listenToAddonEvents(selector: MeshType): [AddonList!]!
-    listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
-    listenToOperatorEvents: OperatorStatus!
-    subscribeToMeshSync: OperatorControllerStatus!
+    listenToAddonState(selector: MeshType): [AddonList!]!
+    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToOperatorState: OperatorStatus!
+    listenToMeshSyncEvents: OperatorControllerStatus!
 }
 `, BuiltIn: false},
 }
@@ -541,10 +569,10 @@ func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Co
 		}
 	}
 	args["selector"] = arg0
-	var arg1 *model.Status
+	var arg1 model.Status
 	if tmp, ok := rawArgs["targetStatus"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg1, err = ec.unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+		arg1, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -556,10 +584,10 @@ func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Co
 func (ec *executionContext) field_Mutation_changeOperatorStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.Status
+	var arg0 model.Status
 	if tmp, ok := rawArgs["targetStatus"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg0, err = ec.unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -613,7 +641,7 @@ func (ec *executionContext) field_Query_getControlPlanes_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_listenToAddonEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_listenToAddonState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.MeshType
@@ -628,7 +656,7 @@ func (ec *executionContext) field_Subscription_listenToAddonEvents_args(ctx cont
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_listenToControlPlaneEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_listenToControlPlaneState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.ControlPlaneFilter
@@ -681,7 +709,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _AddonConfig_serviceName(ctx context.Context, field graphql.CollectedField, obj *model.AddonConfig) (ret graphql.Marshaler) {
+func (ec *executionContext) _AddonList_name(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -689,7 +717,7 @@ func (ec *executionContext) _AddonConfig_serviceName(ctx context.Context, field 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "AddonConfig",
+		Object:     "AddonList",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -699,7 +727,7 @@ func (ec *executionContext) _AddonConfig_serviceName(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ServiceName, nil
+		return obj.Name, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -716,7 +744,7 @@ func (ec *executionContext) _AddonConfig_serviceName(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AddonConfig_endpoint(ctx context.Context, field graphql.CollectedField, obj *model.AddonConfig) (ret graphql.Marshaler) {
+func (ec *executionContext) _AddonList_owner(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -724,7 +752,42 @@ func (ec *executionContext) _AddonConfig_endpoint(ctx context.Context, field gra
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "AddonConfig",
+		Object:     "AddonList",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Owner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AddonList_endpoint(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AddonList",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -751,108 +814,6 @@ func (ec *executionContext) _AddonConfig_endpoint(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AddonList_type(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AddonList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Type, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AddonList_status(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AddonList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Status)
-	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AddonList_config(ctx context.Context, field graphql.CollectedField, obj *model.AddonList) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AddonList",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Config, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.AddonConfig)
-	fc.Result = res
-	return ec.marshalNAddonConfig2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfig(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ControlPlane_name(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -872,38 +833,6 @@ func (ec *executionContext) _ControlPlane_name(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.MeshType)
-	fc.Result = res
-	return ec.marshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ControlPlane_version(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlane) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ControlPlane",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Version, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -955,6 +884,41 @@ func (ec *executionContext) _ControlPlane_members(ctx context.Context, field gra
 	return ec.marshalNControlPlaneMember2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐControlPlaneMemberᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ControlPlaneMember_name(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ControlPlaneMember",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ControlPlaneMember_component(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -974,6 +938,41 @@ func (ec *executionContext) _ControlPlaneMember_component(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Component, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ControlPlaneMember_version(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ControlPlaneMember",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1023,38 +1022,6 @@ func (ec *executionContext) _ControlPlaneMember_namespace(ctx context.Context, f
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ControlPlaneMember_status(ctx context.Context, field graphql.CollectedField, obj *model.ControlPlaneMember) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ControlPlaneMember",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Status)
-	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Error_code(ctx context.Context, field graphql.CollectedField, obj *model.Error) (ret graphql.Marshaler) {
@@ -1152,18 +1119,21 @@ func (ec *executionContext) _Mutation_changeAddonStatus(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["selector"].(*model.MeshType), args["targetStatus"].(*model.Status))
+		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1191,18 +1161,56 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["targetStatus"].(*model.Status))
+		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["targetStatus"].(model.Status))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NameSpace_namespace(ctx context.Context, field graphql.CollectedField, obj *model.NameSpace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NameSpace",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorControllerStatus_name(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
@@ -1230,11 +1238,49 @@ func (ec *executionContext) _OperatorControllerStatus_name(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorControllerStatus_version(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorControllerStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorControllerStatus_status(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
@@ -1262,11 +1308,14 @@ func (ec *executionContext) _OperatorControllerStatus_status(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorControllerStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.OperatorControllerStatus) (ret graphql.Marshaler) {
@@ -1326,11 +1375,84 @@ func (ec *executionContext) _OperatorStatus_status(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Status)
+	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorStatus_version(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OperatorStatus_controllers(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OperatorStatus",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Controllers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.OperatorControllerStatus)
+	fc.Result = res
+	return ec.marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OperatorStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.OperatorStatus) (ret graphql.Marshaler) {
@@ -1481,6 +1603,41 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	return ec.marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatus(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetAvailableNamespaces(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.NameSpace)
+	fc.Result = res
+	return ec.marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1552,7 +1709,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1569,7 +1726,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_listenToAddonEvents_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_listenToAddonState_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -1577,7 +1734,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToAddonEvents(rctx, args["selector"].(*model.MeshType))
+		return ec.resolvers.Subscription().ListenToAddonState(rctx, args["selector"].(*model.MeshType))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1604,7 +1761,7 @@ func (ec *executionContext) _Subscription_listenToAddonEvents(ctx context.Contex
 	}
 }
 
-func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToControlPlaneState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1621,7 +1778,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_listenToControlPlaneEvents_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_listenToControlPlaneState_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -1629,7 +1786,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToControlPlaneEvents(rctx, args["filter"].(*model.ControlPlaneFilter))
+		return ec.resolvers.Subscription().ListenToControlPlaneState(rctx, args["filter"].(*model.ControlPlaneFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1656,7 +1813,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneEvents(ctx context
 	}
 }
 
-func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1674,7 +1831,7 @@ func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToOperatorEvents(rctx)
+		return ec.resolvers.Subscription().ListenToOperatorState(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1701,7 +1858,7 @@ func (ec *executionContext) _Subscription_listenToOperatorEvents(ctx context.Con
 	}
 }
 
-func (ec *executionContext) _Subscription_subscribeToMeshSync(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1719,7 +1876,7 @@ func (ec *executionContext) _Subscription_subscribeToMeshSync(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeToMeshSync(rctx)
+		return ec.resolvers.Subscription().ListenToMeshSyncEvents(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2861,38 +3018,6 @@ func (ec *executionContext) unmarshalInputControlPlaneFilter(ctx context.Context
 
 // region    **************************** object.gotpl ****************************
 
-var addonConfigImplementors = []string{"AddonConfig"}
-
-func (ec *executionContext) _AddonConfig(ctx context.Context, sel ast.SelectionSet, obj *model.AddonConfig) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, addonConfigImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AddonConfig")
-		case "serviceName":
-			out.Values[i] = ec._AddonConfig_serviceName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "endpoint":
-			out.Values[i] = ec._AddonConfig_endpoint(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var addonListImplementors = []string{"AddonList"}
 
 func (ec *executionContext) _AddonList(ctx context.Context, sel ast.SelectionSet, obj *model.AddonList) graphql.Marshaler {
@@ -2904,15 +3029,18 @@ func (ec *executionContext) _AddonList(ctx context.Context, sel ast.SelectionSet
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AddonList")
-		case "type":
-			out.Values[i] = ec._AddonList_type(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._AddonList_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "status":
-			out.Values[i] = ec._AddonList_status(ctx, field, obj)
-		case "config":
-			out.Values[i] = ec._AddonList_config(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._AddonList_owner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "endpoint":
+			out.Values[i] = ec._AddonList_endpoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2940,8 +3068,6 @@ func (ec *executionContext) _ControlPlane(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("ControlPlane")
 		case "name":
 			out.Values[i] = ec._ControlPlane_name(ctx, field, obj)
-		case "version":
-			out.Values[i] = ec._ControlPlane_version(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2972,8 +3098,18 @@ func (ec *executionContext) _ControlPlaneMember(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ControlPlaneMember")
+		case "name":
+			out.Values[i] = ec._ControlPlaneMember_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "component":
 			out.Values[i] = ec._ControlPlaneMember_component(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._ControlPlaneMember_version(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2982,8 +3118,6 @@ func (ec *executionContext) _ControlPlaneMember(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "status":
-			out.Values[i] = ec._ControlPlaneMember_status(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3044,8 +3178,41 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "changeAddonStatus":
 			out.Values[i] = ec._Mutation_changeAddonStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "changeOperatorStatus":
 			out.Values[i] = ec._Mutation_changeOperatorStatus(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var nameSpaceImplementors = []string{"NameSpace"}
+
+func (ec *executionContext) _NameSpace(ctx context.Context, sel ast.SelectionSet, obj *model.NameSpace) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, nameSpaceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("NameSpace")
+		case "namespace":
+			out.Values[i] = ec._NameSpace_namespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3070,8 +3237,19 @@ func (ec *executionContext) _OperatorControllerStatus(ctx context.Context, sel a
 			out.Values[i] = graphql.MarshalString("OperatorControllerStatus")
 		case "name":
 			out.Values[i] = ec._OperatorControllerStatus_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._OperatorControllerStatus_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "status":
 			out.Values[i] = ec._OperatorControllerStatus_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "error":
 			out.Values[i] = ec._OperatorControllerStatus_error(ctx, field, obj)
 		default:
@@ -3098,6 +3276,19 @@ func (ec *executionContext) _OperatorStatus(ctx context.Context, sel ast.Selecti
 			out.Values[i] = graphql.MarshalString("OperatorStatus")
 		case "status":
 			out.Values[i] = ec._OperatorStatus_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._OperatorStatus_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "controllers":
+			out.Values[i] = ec._OperatorStatus_controllers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "error":
 			out.Values[i] = ec._OperatorStatus_error(ctx, field, obj)
 		default:
@@ -3165,6 +3356,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_getOperatorStatus(ctx, field)
 				return res
 			})
+		case "getAvailableNamespaces":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAvailableNamespaces(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -3193,14 +3398,14 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "listenToAddonEvents":
-		return ec._Subscription_listenToAddonEvents(ctx, fields[0])
-	case "listenToControlPlaneEvents":
-		return ec._Subscription_listenToControlPlaneEvents(ctx, fields[0])
-	case "listenToOperatorEvents":
-		return ec._Subscription_listenToOperatorEvents(ctx, fields[0])
-	case "subscribeToMeshSync":
-		return ec._Subscription_subscribeToMeshSync(ctx, fields[0])
+	case "listenToAddonState":
+		return ec._Subscription_listenToAddonState(ctx, fields[0])
+	case "listenToControlPlaneState":
+		return ec._Subscription_listenToControlPlaneState(ctx, fields[0])
+	case "listenToOperatorState":
+		return ec._Subscription_listenToOperatorState(ctx, fields[0])
+	case "listenToMeshSyncEvents":
+		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -3451,16 +3656,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAddonConfig2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonConfig(ctx context.Context, sel ast.SelectionSet, v *model.AddonConfig) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._AddonConfig(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AddonList) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -3617,8 +3812,92 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5i
 	return ec._ControlPlaneMember(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNNameSpace2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpace(ctx context.Context, sel ast.SelectionSet, v *model.NameSpace) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._NameSpace(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNOperatorControllerStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.OperatorControllerStatus) graphql.Marshaler {
 	return ec._OperatorControllerStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOperatorControllerStatus2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OperatorControllerStatus) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
@@ -3643,6 +3922,16 @@ func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
+	var res model.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -3949,22 +4238,6 @@ func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (*model.Status, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(model.Status)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v *model.Status) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

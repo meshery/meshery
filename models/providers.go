@@ -5,13 +5,17 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
+	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
-	DBHandler *database.Handler
+	DBHandler       *database.Handler
+	MeshSyncChannel chan struct{}
+	Logger          logger.Handler
 }
 
 // Router
@@ -112,6 +116,10 @@ const (
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
+
+	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
+
+	PersistSchedules Feature = "persist-schedules" // /user/schedules
 )
 
 const (
@@ -178,8 +186,9 @@ type Provider interface {
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request)
 	Logout(http.ResponseWriter, *http.Request)
-	FetchResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-	PublishResults(req *http.Request, result *MesheryResult) (string, error)
+	FetchResults(req *http.Request, page, pageSize, search, order, profileID string) ([]byte, error)
+	FetchAllResults(req *http.Request, page, pageSize, search, order, from, to string) ([]byte, error)
+	PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error)
 	FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	PublishSmiResults(result *SmiResult) (string, error)
 	PublishMetrics(tokenVal string, data *MesheryResult) error
@@ -197,8 +206,21 @@ type Provider interface {
 	GetGraphqlHandler() http.Handler
 	GetGraphqlPlayground() http.Handler
 
+	SetKubeClient(client *mesherykube.Client)
+	GetKubeClient() *mesherykube.Client
+
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+
+	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
+	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
+	DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error)
+
+	SaveSchedule(tokenString string, s *Schedule) ([]byte, error)
+	GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error)
+	GetSchedule(req *http.Request, scheduleID string) ([]byte, error)
+	DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error)
 }

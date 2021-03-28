@@ -63,9 +63,34 @@ const styles = (theme) => ({
       fontSize: '26px',
     },
   },
-  appBar: {
+  appBarOnDrawerOpen: {
     padding: theme.spacing(1.4),
     zIndex: theme.zIndex.drawer+1,
+    [theme.breakpoints.between(635,732)]: {
+      padding: theme.spacing(0.75,1.4),
+    },
+    [theme.breakpoints.between(600,635)]: {
+      padding: theme.spacing(0.4,1.4),
+    },
+  },
+  appBarOnDrawerClosed: {
+    padding: theme.spacing(1.4),
+    zIndex: theme.zIndex.drawer+1,
+  },
+  toolbarOnDrawerClosed: {
+    minHeight: 59,
+    paddingLeft:24,
+    paddingRight:24,
+  },
+  toolbarOnDrawerOpen: {
+    minHeight: 58,
+    paddingLeft:20,
+    paddingRight:20,
+    [theme.breakpoints.between(620,732)]: {
+      minHeight: 68,
+      paddingLeft:20,
+      paddingRight:20,
+    },
   },
   itemActiveItem: {
     color: '#4fc3f7',
@@ -74,12 +99,12 @@ const styles = (theme) => ({
 
 class Header extends React.Component {
   render() {
-    const { classes, title, onDrawerToggle } = this.props;
+    const { classes, title, onDrawerToggle ,onDrawerCollapse} = this.props;
     return (
       <NoSsr>
         <React.Fragment>
-          <AppBar color="primary" position="sticky" elevation={0} className={classes.appBar}>
-            <Toolbar>
+          <AppBar color="primary" position="sticky" elevation={0} className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}>
+            <Toolbar className={onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen}>
               <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item>
@@ -98,6 +123,7 @@ class Header extends React.Component {
                     {title}
                   </Typography>
                 </Grid>
+
                 {/* <Grid item className={classes.notifications}>
                 <MesheryNotification />
               </Grid> */}
@@ -105,24 +131,30 @@ class Header extends React.Component {
                   {/* <IconButton color="inherit" className={classes.iconButtonAvatar}>
                   <Avatar className={classes.avatar} src="/static/images/avatar/1.jpg" />
                 </IconButton> */}
+                  <div data-test="index-button">
+                    <IconButton color="inherit">
+                      <Link href="/">
+                        <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                        {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
+                      </Link>
+                    </IconButton>
+                  </div>
 
-                  <IconButton color="inherit">
-                    <Link href="/">
-                      <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
-                      {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
-                    </Link>
-                  </IconButton>
+                  <div data-test="settings-button">
+                    <IconButton color="inherit">
+                      <Link href="/settings">
+                        <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                      </Link>
+                    </IconButton>
+                  </div>
 
-                  <IconButton color="inherit">
-                    <Link href="/settings">
-                      <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
-                    </Link>
-                  </IconButton>
-
-                  <MesheryNotification />
+                  <div data-test="notification-button">
+                    <MesheryNotification />
+                  </div>
                   <span className={classes.userSpan}>
                     <User color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} />
                   </span>
+                  
                 </Grid>
               </Grid>
             </Toolbar>

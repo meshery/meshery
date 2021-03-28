@@ -18,13 +18,18 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 // stopCmd represents the stop command
@@ -40,7 +45,6 @@ var stopCmd = &cobra.Command{
 		return utils.PreReqCheck(cmd.Use, "")
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Stopping Meshery...")
 		if err := stop(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}
@@ -49,38 +53,121 @@ var stopCmd = &cobra.Command{
 }
 
 func stop() error {
-	if !utils.IsMesheryRunning() {
-		log.Info("Meshery is not running. Nothing to stop.")
-		return nil
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
 	}
-	if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
-		if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
-			return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
+
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return errors.Wrap(err, "failed to retrieve current-context")
+	}
+
+	// Get the current platform and the specified adapters in the config.yaml
+	currPlatform := currCtx.Platform
+	RequestedAdapters := currCtx.Adapters
+
+	switch currPlatform {
+	case "docker":
+		// if the platform is docker, then stop all the running containers
+		if !utils.IsMesheryRunning() {
+			log.Info("Meshery is not running. Nothing to stop.")
+			return nil
+		}
+		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
+			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
+				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
+			}
+		}
+
+		log.Info("Stopping Meshery...")
+
+		// Stop all Docker containers
+		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
+		stop.Stdout = os.Stdout
+		stop.Stderr = os.Stderr
+
+		if err := stop.Run(); err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+		}
+
+		// Remove all Docker containers
+		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
+		stop.Stderr = os.Stderr
+
+		if err := stop.Run(); err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
+		}
+
+		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
+		// to start from scratch with a fresh install.
+		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
+		// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
+		// }
+
+	case "kubernetes":
+		// if the platform is kubernetes, stop the deployment by deleting the manifest files
+
+		userResponse := false
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+		}
+
+		if !userResponse {
+			log.Info("Stop aborted.")
+			return nil
+		}
+
+		// create an kubernetes client
+		client, err := meshkitkube.New([]byte(""))
+
+		if err != nil {
+			return err
+		}
+
+		// check if the manifest folder exists on the machine
+		if _, err := os.Stat(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)); os.IsNotExist(err) {
+			log.Errorf("%s folder does not exist.", utils.ManifestsFolder)
+			return err
+		}
+
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
+			}
+		}
+		// get correct manfestsURL based on version
+		manifestsURL, err := utils.GetManifestTreeURL(version)
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+		// pick all the manifest files stored in minfestsURL
+		manifests, err := utils.ListManifests(manifestsURL)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to make GET request")
+		}
+
+		log.Info("Stopping Meshery...")
+
+		// delete the Meshery deployment using the manifest files to stop Meshery
+		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
+
+		if err != nil {
+			return err
 		}
 	}
-
-	// Stop all Docker containers
-	stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-	stop.Stdout = os.Stdout
-	stop.Stderr = os.Stderr
-
-	if err := stop.Run(); err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
-	}
-
-	// Remove all Docker containers
-	stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-	stop.Stderr = os.Stderr
-
-	if err := stop.Run(); err != nil {
-		return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
-	}
-
-	// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
-	// to start from scratch with a fresh install.
-	// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-	// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-	// }
 
 	log.Info("Meshery is stopped.")
 

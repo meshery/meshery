@@ -66,6 +66,14 @@ var RootCmd = &cobra.Command{
 		}
 		return nil
 	},
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		latest, err := utils.GetLatestStableReleaseTag()
+		if err == nil && latest != version {
+			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -135,6 +143,12 @@ func initConfig() {
 
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				// Add Token to context file
+				err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
 					log.Fatal(err)
 				}

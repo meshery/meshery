@@ -8,20 +8,14 @@ import (
 	"strconv"
 )
 
-type AddonConfig struct {
-	ServiceName string `json:"serviceName"`
-	Endpoint    string `json:"endpoint"`
-}
-
 type AddonList struct {
-	Type   string       `json:"type"`
-	Status *Status      `json:"status"`
-	Config *AddonConfig `json:"config"`
+	Name     string `json:"name"`
+	Owner    string `json:"owner"`
+	Endpoint string `json:"endpoint"`
 }
 
 type ControlPlane struct {
-	Name    *MeshType             `json:"name"`
-	Version string                `json:"version"`
+	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
 }
 
@@ -30,9 +24,10 @@ type ControlPlaneFilter struct {
 }
 
 type ControlPlaneMember struct {
-	Component string  `json:"component"`
-	Namespace string  `json:"namespace"`
-	Status    *Status `json:"status"`
+	Name      string `json:"name"`
+	Component string `json:"component"`
+	Version   string `json:"version"`
+	Namespace string `json:"namespace"`
 }
 
 type Error struct {
@@ -40,99 +35,55 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type NameSpace struct {
+	Namespace string `json:"namespace"`
+}
+
 type OperatorControllerStatus struct {
-	Name   *string `json:"name"`
-	Status *Status `json:"status"`
-	Error  *Error  `json:"error"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Status  Status `json:"status"`
+	Error   *Error `json:"error"`
 }
 
 type OperatorStatus struct {
-	Status *Status `json:"status"`
-	Error  *Error  `json:"error"`
-}
-
-type AddonSelector string
-
-const (
-	AddonSelectorPrometheus AddonSelector = "PROMETHEUS"
-	AddonSelectorGrafana    AddonSelector = "GRAFANA"
-	AddonSelectorZipkin     AddonSelector = "ZIPKIN"
-	AddonSelectorJaeger     AddonSelector = "JAEGER"
-	AddonSelectorKiali      AddonSelector = "KIALI"
-)
-
-var AllAddonSelector = []AddonSelector{
-	AddonSelectorPrometheus,
-	AddonSelectorGrafana,
-	AddonSelectorZipkin,
-	AddonSelectorJaeger,
-	AddonSelectorKiali,
-}
-
-func (e AddonSelector) IsValid() bool {
-	switch e {
-	case AddonSelectorPrometheus, AddonSelectorGrafana, AddonSelectorZipkin, AddonSelectorJaeger, AddonSelectorKiali:
-		return true
-	}
-	return false
-}
-
-func (e AddonSelector) String() string {
-	return string(e)
-}
-
-func (e *AddonSelector) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = AddonSelector(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AddonSelector", str)
-	}
-	return nil
-}
-
-func (e AddonSelector) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+	Status      Status                      `json:"status"`
+	Version     string                      `json:"version"`
+	Controllers []*OperatorControllerStatus `json:"controllers"`
+	Error       *Error                      `json:"error"`
 }
 
 type MeshType string
 
 const (
-	MeshTypeAll             MeshType = "ALL"
-	MeshTypeNone            MeshType = "NONE"
-	MeshTypeIstio           MeshType = "ISTIO"
-	MeshTypeLinkerd         MeshType = "LINKERD"
-	MeshTypeConsul          MeshType = "CONSUL"
-	MeshTypeOctarine        MeshType = "OCTARINE"
-	MeshTypeTraefik         MeshType = "TRAEFIK"
-	MeshTypeOpenservicemesh MeshType = "OPENSERVICEMESH"
-	MeshTypeKuma            MeshType = "KUMA"
-	MeshTypeNginxsm         MeshType = "NGINXSM"
-	MeshTypeNetworksm       MeshType = "NETWORKSM"
-	MeshTypeCitrixsm        MeshType = "CITRIXSM"
+	MeshTypeIstio       MeshType = "ISTIO"
+	MeshTypeLinkerd     MeshType = "LINKERD"
+	MeshTypeConsul      MeshType = "CONSUL"
+	MeshTypeOctarine    MeshType = "OCTARINE"
+	MeshTypeTraefikmesh MeshType = "TRAEFIKMESH"
+	MeshTypeOsm         MeshType = "OSM"
+	MeshTypeKuma        MeshType = "KUMA"
+	MeshTypeNginxsm     MeshType = "NGINXSM"
+	MeshTypeNsm         MeshType = "NSM"
+	MeshTypeCitrix      MeshType = "CITRIX"
 )
 
 var AllMeshType = []MeshType{
-	MeshTypeAll,
-	MeshTypeNone,
 	MeshTypeIstio,
 	MeshTypeLinkerd,
 	MeshTypeConsul,
 	MeshTypeOctarine,
-	MeshTypeTraefik,
-	MeshTypeOpenservicemesh,
+	MeshTypeTraefikmesh,
+	MeshTypeOsm,
 	MeshTypeKuma,
 	MeshTypeNginxsm,
-	MeshTypeNetworksm,
-	MeshTypeCitrixsm,
+	MeshTypeNsm,
+	MeshTypeCitrix,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeAll, MeshTypeNone, MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefik, MeshTypeOpenservicemesh, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNetworksm, MeshTypeCitrixsm:
+	case MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefikmesh, MeshTypeOsm, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNsm, MeshTypeCitrix:
 		return true
 	}
 	return false
@@ -162,20 +113,22 @@ func (e MeshType) MarshalGQL(w io.Writer) {
 type Status string
 
 const (
-	StatusEnabled  Status = "ENABLED"
-	StatusDisabled Status = "DISABLED"
-	StatusUnknown  Status = "UNKNOWN"
+	StatusEnabled    Status = "ENABLED"
+	StatusDisabled   Status = "DISABLED"
+	StatusProcessing Status = "PROCESSING"
+	StatusUnknown    Status = "UNKNOWN"
 )
 
 var AllStatus = []Status{
 	StatusEnabled,
 	StatusDisabled,
+	StatusProcessing,
 	StatusUnknown,
 }
 
 func (e Status) IsValid() bool {
 	switch e {
-	case StatusEnabled, StatusDisabled, StatusUnknown:
+	case StatusEnabled, StatusDisabled, StatusProcessing, StatusUnknown:
 		return true
 	}
 	return false

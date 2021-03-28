@@ -38,8 +38,13 @@ var resetCmd = &cobra.Command{
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
-	// ask user for confirmation
-	userResponse := utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+	userResponse := false
+	if utils.SilentFlag {
+		userResponse = true
+	} else {
+		// ask user for confirmation
+		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+	}
 	if !userResponse {
 		log.Info("Reset aborted.")
 		return nil
@@ -58,16 +63,44 @@ func resetMesheryConfig() error {
 	}
 
 	log.Info("Meshery resetting...\n")
-	log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
-	err = utils.DownloadDockerComposeFile(currCtx, true)
-	if err != nil {
-		return errors.Wrap(err, "failed to fetch docker-compose file")
-	}
-
 	log.Printf("Current Context: %s", mctlCfg.CurrentContext)
 	log.Printf("Channel: %s", currCtx.Channel)
-	log.Printf("Version: %s\n", currCtx.Version)
+	log.Printf("Version: %s", currCtx.Version)
+	log.Printf("Platform: %s\n", currCtx.Platform)
 
-	log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+	switch currCtx.Platform {
+	case "docker":
+
+		log.Printf("Fetching default docker-compose file as per current-context: %s...\n", mctlCfg.CurrentContext)
+		err = utils.DownloadDockerComposeFile(currCtx, true)
+		if err != nil {
+			return errors.Wrap(err, "failed to fetch docker-compose file")
+		}
+		log.Info("...Meshery config (" + utils.DockerComposeFile + ") now reset to default settings.")
+
+	case "kubernetes":
+
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		// fetch the manifest files corresponding to the version specified
+		_, err := utils.FetchManifests(version)
+
+		if err != nil {
+			return err
+		}
+
+	default:
+		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.Platform, utils.MesheryFolder)
+	}
 	return nil
 }

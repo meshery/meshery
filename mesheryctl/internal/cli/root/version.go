@@ -22,6 +22,7 @@ import (
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -59,11 +60,12 @@ var versionCmd = &cobra.Command{
 			ReleaseChannel: "unavailable",
 		}
 
-		logrus.Infof("Client Version: %v \t  GitSHA: %v", build, commitsha)
+		header := []string{"", "Version", "GitSHA"}
+		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
 		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			utils.PrintToTable(header, rows)
 			logrus.Errorf("\nUnable to get request context: %v", err)
 			return
 		}
@@ -73,9 +75,9 @@ var versionCmd = &cobra.Command{
 		resp, err := client.Do(req)
 
 		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			utils.PrintToTable(header, rows)
 			logrus.Errorf("\n  Unable to communicate with Meshery: %v", err)
-			logrus.Errorf("  See https://docs.meshery.io for help getting started with Meshery.\n")
+			logrus.Errorf("  See https://docs.meshery.io for help getting started with Meshery.")
 			return
 		}
 
@@ -83,24 +85,25 @@ var versionCmd = &cobra.Command{
 		defer resp.Body.Close()
 		data, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			utils.PrintToTable(header, rows)
 			logrus.Errorf("\n  Invalid response: %v", err)
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
-			logrus.Infof("Server Version: %v \t  GitSHA: %v", version.Build, version.CommitSHA)
+			utils.PrintToTable(header, rows)
 			logrus.Errorf("\n  Unable to unmarshal data: %v", err)
 			return
 		}
-
-		logrus.Infof("Server Version: %v \t  GitSHA: %v", version.GetBuild(), version.GetCommitSHA())
+		rows[1][1] = version.GetBuild()
+		rows[1][2] = version.GetCommitSHA()
+		utils.PrintToTable(header, rows)
 	},
 }
 
 func checkMesheryctlClientVersion(build string) {
-	logrus.Infof("Checking for latest version of Meshery...")
+	logrus.Infof("\nChecking for latest version of Meshery...")
 
 	// Inform user of the latest release version
 	_, err := handlers.CheckLatestVersion(build)

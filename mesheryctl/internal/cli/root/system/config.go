@@ -30,6 +30,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,16 +40,9 @@ import (
 // TODO: https://github.com/layer5io/me shery/issues/1022
 
 const paramName = "k8sfile"
-const contextName = "contextName"
 const kubeConfigYaml = "kubeconfig.yaml"
 
 var tokenPath string
-
-type k8sContext struct {
-	contextName    string
-	clusterName    string
-	currentContext bool
-}
 
 func getContexts(configFile, tokenPath string) ([]string, error) {
 	client := &http.Client{}
@@ -141,12 +137,16 @@ var configCmd = &cobra.Command{
 		}
 		// Define the path where the kubeconfig.yaml will be written to
 		configPath := ""
+		kubeConfig := ""
 		usr, err := user.Current()
 		if err != nil {
 			configPath = filepath.Join(".meshery", kubeConfigYaml)
+			kubeConfig = filepath.Join(".kube", "config")
 		} else {
 			configPath = filepath.Join(usr.HomeDir, ".meshery", kubeConfigYaml)
+			kubeConfig = filepath.Join(usr.HomeDir, ".kube", "config")
 		}
+
 		// create the .meshery folder where the kubeconfig.yaml will be written to
 		configDir := filepath.Dir(configPath)
 		if _, err = os.Stat(configDir); err != nil {
@@ -159,16 +159,40 @@ var configCmd = &cobra.Command{
 
 		switch args[0] {
 		case "minikube":
-			if err := utils.GenerateConfigMinikube(configPath); err != nil {
-				log.Fatal("Error generating config:", err)
+			log.Info("Configuring Meshery to access Minikube...")
+			// Get the config from the default config path
+			if _, err = os.Stat(kubeConfig); err != nil {
+				log.Fatal("Could not find the default kube config:", err)
 				return
 			}
+			config, _ := clientcmd.LoadFromFile(kubeConfig)
+			if config == nil {
+				log.Fatal("Error reading the default kube config:", err)
+				return
+			}
+			// Flatten the config file
+			err = clientcmdapi.FlattenConfig(config)
+			if err != nil {
+				log.Fatal("Error flattening config:", err)
+				return
+			}
+			// write the flattened config to kubeconfig.yaml file
+			err = clientcmd.WriteToFile(*config, configPath)
+			if err != nil {
+				log.Fatal("Error writing config to file:", err)
+				return
+			}
+			log.Debugf("Minikube configuration is written to: %s", configPath)
+
 		case "gke":
+			// TODO: move the GenerateConfigGKE logic to meshkit/client-go
+			log.Info("Configuring Meshery to access GKE...")
 			SAName := "sa-meshery-" + utils.StringWithCharset(8)
 			if err := utils.GenerateConfigGKE(configPath, SAName, "default"); err != nil {
 				log.Fatal("Error generating config:", err)
 				return
 			}
+			log.Debugf("GKE configuration is written to: %s", configPath)
 		case "aks":
 			aksCheck := exec.Command("az", "version")
 			aksCheck.Stdout = os.Stdout
@@ -204,18 +228,31 @@ var configCmd = &cobra.Command{
 				}
 			}
 
+			// Build the Azure CLI syntax to fetch cluster config in kubeconfig.yaml file
+			aksCmd := exec.Command("az", "aks", "get-credentials", "--resource-group", resourceGroup, "--name", aksName, "--file", configPath)
+			aksCmd.Stdout = os.Stdout
+			aksCmd.Stderr = os.Stderr
 			// Write AKS compatible config to the filesystem
-			if err := utils.GenerateConfigAKS(configPath, resourceGroup, aksName); err != nil {
-				log.Fatal("Error generating kubeconfig: ", err)
+			err = aksCmd.Run()
+			if err != nil {
+				log.Fatalf("Error generating kubeconfig: %s", err.Error())
 				return
 			}
+			log.Debugf("AKS configuration is written to: %s", configPath)
 		case "eks":
+			eksCheck := exec.Command("aws", "--version")
+			eksCheck.Stdout = os.Stdout
+			eksCheck.Stderr = os.Stderr
+			err := eksCheck.Run()
+			if err != nil {
+				log.Fatalf("AWS CLI not found. Please install AWS CLI and try again. \nSee https://docs.aws.amazon.com/cli/latest/reference/ ")
+			}
 			log.Info("Configuring Meshery to access EKS...")
 			var regionName, clusterName string
 
 			// Prompt user for AWS region name
 			log.Info("Please enter the AWS region name:")
-			_, err := fmt.Scanf("%s", &regionName)
+			_, err = fmt.Scanf("%s", &regionName)
 			if err != nil {
 				log.Warnf("Error reading AWS region name: %s", err.Error())
 				log.Info("Let's try again. Please enter the AWS region name:")
@@ -237,16 +274,22 @@ var configCmd = &cobra.Command{
 				}
 			}
 
+			// Build the aws CLI syntax to fetch cluster config in kubeconfig.yaml file
+			eksCmd := exec.Command("aws", "eks", "--region", regionName, "update-kubeconfig", "--name", clusterName, "--kubeconfig", configPath)
+			eksCmd.Stdout = os.Stdout
+			eksCmd.Stderr = os.Stderr
 			// Write EKS compatible config to the filesystem
-			if err := utils.GenerateConfigEKS(configPath, regionName, clusterName); err != nil {
-				log.Fatal("Error generating kubeconfig: ", err)
+			err = eksCmd.Run()
+			if err != nil {
+				log.Fatalf("Error generating kubeconfig: %s", err.Error())
 				return
 			}
+			log.Debugf("EKS configuration is written to: %s", configPath)
 		default:
 			log.Fatal("The argument has to be one of gke | minikube | aks | eks")
 		}
 
-		log.Info(tokenPath)
+		log.Debugf("Token path: %s", tokenPath)
 		contexts, err := getContexts(configPath, tokenPath)
 		if err != nil || contexts == nil || len(contexts) < 1 {
 			log.Fatalf("Error getting context: %s", err.Error())

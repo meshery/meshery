@@ -1,0 +1,4 @@
+name: system channel
+description: Switch between release channels.
+usage: |
+    `mesheryctl system channel`

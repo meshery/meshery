@@ -26,18 +26,21 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.9
-	github.com/layer5io/meshkit v0.2.0
-	github.com/layer5io/meshsync v0.1.6
+	github.com/layer5io/meshery-operator v0.2.11
+	github.com/layer5io/meshkit v0.2.6
+	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.5
 	github.com/layer5io/service-mesh-performance v0.3.3
+	github.com/lib/pq v1.7.0
+	github.com/nats-io/nats.go v1.10.0
+	github.com/olekukonko/tablewriter v0.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
 	github.com/prometheus/client_golang v1.9.0
-	github.com/prometheus/common v0.15.0
+	github.com/prometheus/common v0.18.0
 	github.com/qri-io/jsonschema v0.2.0
-	github.com/sirupsen/logrus v1.7.0
-	github.com/spf13/cobra v1.1.1
+	github.com/sirupsen/logrus v1.8.0
+	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
@@ -46,10 +49,11 @@ require (
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
 	gonum.org/v1/gonum v0.8.2
-	google.golang.org/grpc v1.35.0
+	google.golang.org/grpc v1.36.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+	gorm.io/gorm v1.20.10
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12

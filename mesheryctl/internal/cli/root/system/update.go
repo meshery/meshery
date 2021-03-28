@@ -19,6 +19,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -53,22 +54,77 @@ var updateCmd = &cobra.Command{
 		if currCtx.Version != "latest" {
 			// ask confirmation if user has pinned the version in config
 			log.Infof("You have pinned version: %s in your current conext", currCtx.Version)
-			userResponse := utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+			userResponse := false
+			if utils.SilentFlag {
+				userResponse = true
+			} else {
+				userResponse = utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+			}
+
 			if !userResponse {
 				log.Info("Update aborted.")
 				return nil
 			}
 			currCtx.Version = "latest"
 		}
-		log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
-		err = utils.DownloadDockerComposeFile(currCtx, true)
-		if err != nil {
-			return errors.Wrap(err, "failed to fetch docker-compose file")
-		}
 
-		err = utils.UpdateMesheryContainers()
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+		switch currCtx.Platform {
+		case "docker":
+			log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
+			err = utils.DownloadDockerComposeFile(currCtx, true)
+			if err != nil {
+				return errors.Wrap(err, "failed to fetch docker-compose file")
+			}
+
+			err = utils.UpdateMesheryContainers()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+			}
+
+		case "kubernetes":
+
+			log.Debug("creating new Clientset...")
+			// Create a new client
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return errors.Wrap(err, "failed to create new client")
+			}
+
+			version := currCtx.Version
+			RequestedAdapters := currCtx.Adapters
+
+			if version == "latest" {
+				if currCtx.Channel == "edge" {
+					version = "master"
+				} else {
+					version, err = utils.GetLatestStableReleaseTag()
+					if err != nil {
+						return err
+					}
+				}
+			}
+
+			// fetch the manifest files corresponding to the version specified
+			manifests, err := utils.FetchManifests(version)
+
+			if err != nil {
+				return err
+			}
+
+			// downloaded required files successfully now apply the manifest files
+			log.Info("Updating Meshery...")
+
+			log.Info("applying the manifests to Kubernetes cluster...")
+
+			// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
+			err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
+
+			if err != nil {
+				return err
+			}
+			log.Info("... updated Meshery in the Kubernetes Cluster.")
+
 		}
 
 		log.Info("Meshery is now up-to-date")

@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -35,9 +34,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"k8s.io/client-go/kubernetes"
 )
 
 var (
@@ -63,86 +60,6 @@ var startCmd = &cobra.Command{
 		}
 		return nil
 	},
-}
-
-// applyManifest is a wrapper function for client.ApplyManifest
-func applyManifest(manifest []byte, client *meshkitkube.Client) error {
-	// ApplyManifest applies the given manifest file to the Kubernetes cluster
-	err := client.ApplyManifest(manifest, meshkitkube.ApplyOptions{
-		Namespace: "meshery",
-		Update:    true,
-		Delete:    false,
-	})
-
-	if err != nil {
-		return errors.Wrap(err, "failed to apply manifests")
-	}
-	return nil
-}
-
-// ApplyManifestFiles applies all the required manifests into the Kubernetes cluster
-func ApplyManifestFiles(manifestArr []utils.Manifest, requestedAdapters []string, client *meshkitkube.Client) error {
-	// path to the manifest files ~/.meshery/manifests
-	manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
-
-	// read the manifest files as strings
-	// other than the adapters, meshery-deployment.yaml, meshery-service.yaml and service-account.yaml should be applied
-	MesheryDeploymentManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, utils.MesheryDeployment))
-	if err != nil {
-		return errors.Wrap(err, "failed to read manifest files")
-	}
-	mesheryServiceManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, utils.MesheryService))
-	if err != nil {
-		return errors.Wrap(err, "failed to read manifest files")
-	}
-	serviceAccountManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, utils.ServiceAccount))
-	if err != nil {
-		return errors.Wrap(err, "failed to read manifest files")
-	}
-
-	// apply the manifest files
-	if err = applyManifest([]byte(MesheryDeploymentManifest), client); err != nil {
-		return errors.Wrap(err, "failed to apply manifest files")
-	}
-	if err = applyManifest([]byte(mesheryServiceManifest), client); err != nil {
-		return errors.Wrap(err, "failed to apply manifest files")
-	}
-	if err = applyManifest([]byte(serviceAccountManifest), client); err != nil {
-		return errors.Wrap(err, "failed to apply manifest files")
-	}
-
-	// loop through the required adapters as specified in the config.yaml file and apply each
-	for _, adapter := range requestedAdapters {
-		// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
-		// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		adapterFile := filepath.Join(manifestFiles, adapter)
-		adapterDeployment := adapterFile + "-deployment.yaml"
-		adapterService := adapterFile + "-service.yaml"
-
-		if utils.IsAdapterValid(manifestArr, adapter+"-deployment.yaml") == false {
-			return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, utils.MesheryFolder)
-		}
-
-		// read manifest files as strings and apply
-		manifestDepl, err := meshkitutils.ReadLocalFile(adapterDeployment)
-		if err != nil {
-			return errors.Wrap(err, "failed to read manifest files")
-		}
-		manifestService, err := meshkitutils.ReadLocalFile(adapterService)
-		if err != nil {
-			return errors.Wrap(err, "failed to read manifest files")
-		}
-
-		if err = applyManifest([]byte(manifestDepl), client); err != nil {
-			return errors.Wrap(err, "failed to apply manifest files")
-		}
-		if err = applyManifest([]byte(manifestService), client); err != nil {
-			return errors.Wrap(err, "failed to apply manifest files")
-		}
-	}
-	log.Debug("applied manifests to the Kubernetes cluster.")
-
-	return nil
 }
 
 func start() error {
@@ -336,58 +253,31 @@ func start() error {
 
 	case "kubernetes":
 
-		log.Debug("detecting kubeconfig file...")
-
-		// Detect user's kubeconfig file for the Kubernetes cluster
-		config, err := meshkitkube.DetectKubeConfig()
-
-		if err != nil {
-			return errors.Wrap(err, "failed to detect kubeconfig file")
-		}
-
-		// To avoid the timeout error from getting printed
-		config.QPS = float32(50)
-		config.Burst = int(100)
-
 		log.Debug("creating new Clientset...")
-		// Create a new Clientset for given config
-		clientSet, err := kubernetes.NewForConfig(config)
-
-		if err != nil {
-			return errors.Wrap(err, "error setting clientset")
-		}
-
 		// Create a new client
-		client, err := meshkitkube.New(clientSet, *config)
+		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
 			return errors.Wrap(err, "failed to create new client")
 		}
 
-		log.Debug("fetching required Kubernetes manifest files...")
-		// pick all the manifest files stored in https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		manifests, err := utils.ListManifests(manifestsURL)
-
-		if err != nil {
-			return errors.Wrap(err, "failed to make GET request")
-		}
-
-		log.Info("creating ~/.meshery/manifests folder...")
-		// create a manifests folder under ~/.meshery to store the manifest files
-		if _, err := os.Stat(utils.ManifestsFolder); os.IsNotExist(err) {
-			if err := os.MkdirAll(filepath.Join(utils.MesheryFolder, utils.ManifestsFolder), os.ModePerm); err != nil {
-				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to make %s directory", utils.ManifestsFolder)))
+		version := currCtx.Version
+		if version == "latest" {
+			if currCtx.Channel == "edge" {
+				version = "master"
+			} else {
+				version, err = utils.GetLatestStableReleaseTag()
+				if err != nil {
+					return err
+				}
 			}
-			log.Debug("created manifests folder...")
 		}
 
-		log.Info("downloading manifest files from ", gitHubFolder)
-
-		// download all the manifest files to the ~/.meshery/manifests folder
-		err = utils.DownloadManifests(manifests, rawManifestsURL)
+		// fetch the manifest files corresponding to the version specified
+		manifests, err := utils.FetchManifests(version)
 
 		if err != nil {
-			return errors.Wrap(err, "failed to download manifests")
+			return err
 		}
 
 		// downloaded required files successfully now apply the manifest files
@@ -396,7 +286,7 @@ func start() error {
 		log.Info("applying the manifests to Kubernetes cluster...")
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = ApplyManifestFiles(manifests, RequestedAdapters, client)
+		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
 
 		if err != nil {
 			return err
@@ -414,5 +304,4 @@ func start() error {
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
 }

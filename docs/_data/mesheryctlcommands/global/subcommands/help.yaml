@@ -1,4 +1,0 @@
-name: help
-description: Displays helpful information about any command.
-usage: |
-    `mesheryctl --help`

@@ -184,9 +184,6 @@ theme = {
   },
   mixins: {
     ...theme.mixins,
-    toolbar: {
-      minHeight: 48,
-    },
   },
 };
 
@@ -402,7 +399,7 @@ class MesheryApp extends App {
             <MuiPickersUtilsProvider utils={MomentUtils}>
               <div className={classes.root}>
                 <CssBaseline />
-                <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}>
+                <nav className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer} data-test="navigation">
                   <Hidden smUp implementation="js">
                     <Navigator
                       variant="temporary"
@@ -439,7 +436,7 @@ class MesheryApp extends App {
                     maxSnack={10}
                   >
                     <MesheryProgressBar />
-                    <Header onDrawerToggle={this.handleDrawerToggle} />
+                    <Header onDrawerToggle={this.handleDrawerToggle} onDrawerCollapse={isDrawerCollapsed}/>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
                         <Component pageContext={this.pageContext} {...pageProps} />

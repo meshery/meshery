@@ -1,23 +1,21 @@
 # ================= COMMONS =========================
 enum MeshType {
-	ALL
-	NONE
-
 	ISTIO
 	LINKERD
 	CONSUL
 	OCTARINE
-	TRAEFIK
-	OPENSERVICEMESH
+	TRAEFIKMESH
+	OSM
 	KUMA
 	NGINXSM
-	NETWORKSM
-	CITRIXSM
+	NSM
+	CITRIX
 }
 
 enum Status {
 	ENABLED
 	DISABLED
+	PROCESSING
 	UNKNOWN
 }
 
@@ -27,22 +25,10 @@ type Error {
 }
 
 # =================== ADDONS =====================
-enum AddonSelector {
-	PROMETHEUS
-	GRAFANA
-	ZIPKIN
-	JAEGER
-	KIALI
-}
 
 type AddonList {
-	type: String!
-	status: Status
-	config: AddonConfig!
-}
-
-type AddonConfig {
-	serviceName: String!
+    name: String!
+	owner: String!
 	endpoint: String!
 }
 
@@ -52,27 +38,35 @@ input ControlPlaneFilter {
 }
 
 type ControlPlane {
-	name: MeshType
-	version: String!
+	name: String!
 	members: [ControlPlaneMember!]!
 }
 
 type ControlPlaneMember {
+	name: String!
 	component: String!
+	version: String!
 	namespace: String!
-	status: Status
 }
 
 # ============== OPERATOR =============================
 type OperatorStatus {
-	status: Status
+	status: Status!
+    version: String!
+    controllers: [OperatorControllerStatus!]!
 	error: Error
 }
 
 type OperatorControllerStatus {
-	name: String
-	status: Status
+	name: String!
+    version: String!
+	status: Status!
 	error: Error
+}
+
+# ============== NAMESPACE =============================
+type NameSpace {
+	namespace: String!
 }
 
 # ============== ROOT =================================
@@ -80,16 +74,17 @@ type Query {
 	getAvailableAddons(selector: MeshType): [AddonList!]!
     getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
     getOperatorStatus: OperatorStatus
+	getAvailableNamespaces: [NameSpace!]!
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status): Status
-	changeOperatorStatus(targetStatus: Status): Status
+	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
+	changeOperatorStatus(targetStatus: Status!): Status!
 }
 
 type Subscription {
-    listenToAddonEvents(selector: MeshType): [AddonList!]!
-    listenToControlPlaneEvents(filter: ControlPlaneFilter): [ControlPlane!]!
-    listenToOperatorEvents: OperatorStatus!
-    subscribeToMeshSync: OperatorControllerStatus!
+    listenToAddonState(selector: MeshType): [AddonList!]!
+    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToOperatorState: OperatorStatus!
+    listenToMeshSyncEvents: OperatorControllerStatus!
 }

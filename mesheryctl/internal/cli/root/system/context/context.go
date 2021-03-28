@@ -17,13 +17,16 @@ package context
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var configuration models.MesheryCtlConfig
+var configuration config.MesheryCtlConfig
 
 var (
 	availableSubcommands []*cobra.Command
@@ -37,8 +40,15 @@ var ContextCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return viewContextCmd.RunE(cmd, args)
+			currentContext := viper.GetString("current-context")
+			if currentContext == "" {
+				return errors.New("current context not set")
+			}
+
+			log.Printf("Current context: %s\n", currentContext)
+			return cmd.Help()
 		}
+
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}

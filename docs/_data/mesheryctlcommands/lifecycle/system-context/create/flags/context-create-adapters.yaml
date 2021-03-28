@@ -1,0 +1,5 @@
+flag: adapters
+arg: create
+description: create a new context in config.yaml file- specify the list of adapters to be added
+usage: |
+    `mesheryctl system context create <context name> --adapters <list of adapters>`

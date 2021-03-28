@@ -26,17 +26,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	// TODO: `context` support for `system start` change the docker URL to dynamic URL
-	fileURL         = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
-	manifestsURL    = "https://api.github.com/repos/layer5io/meshery/git/trees/3ba314a0870d5291be6216b4d60d2bc9675a39b2"
-	rawManifestsURL = "https://raw.githubusercontent.com/layer5io/meshery/master/install/deployment_yamls/k8s/"
-	gitHubFolder    = "https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s"
-)
-
 var (
 	availableSubcommands = []*cobra.Command{}
-	url                  = ""
 	// flag to change the current context to a temporary context
 	tempContext = ""
 )
@@ -55,7 +46,7 @@ var SystemCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		url = mctlCfg.GetBaseMesheryURL()
+		mctlCfg.GetBaseMesheryURL()
 		return nil
 	},
 }
@@ -76,5 +67,6 @@ func init() {
 	}
 	// --context flag to temporarily change context. This is global to all system commands
 	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")
+	SystemCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	SystemCmd.AddCommand(availableSubcommands...)
 }

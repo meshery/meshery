@@ -1,0 +1,4 @@
+name: spec, s
+description: (required) specification to be used for conformance test. Defaults to "smi"
+usage: |
+    `mesheryctl mesh validate --adapter <name of the adapter> --tokenPath <path to token for authentication> --spec <specification to be used for conformance test>`

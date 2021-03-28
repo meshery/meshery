@@ -77,6 +77,14 @@ run-fast:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	go run main.go;
 
+run-fast-cloud:
+	cd cmd; go mod tidy; \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	go run main.go;
+
 
 golangci-run:
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
