@@ -1,10 +1,12 @@
 import React from 'react';
-import { updatepagepath, updatepagetitle } from "../lib/store";
+import { Paper, withStyles, NoSsr } from '@material-ui/core';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import Head from 'next/head';
+
+import { updatepagepath, updatepagetitle } from "../lib/store";
 import { getPath } from "../lib/path";
-import { Paper, withStyles, NoSsr } from '@material-ui/core';
+import ConfigurationWizard from '../components/configuration-wizard/ConfigurationWizard'
 
 const styles = {
   paper: {
@@ -28,7 +30,7 @@ class Wizard extends React.Component {
           <title>Configuration Wizard | Meshery</title>
         </Head>
         <Paper className={this.props.classes.paper}>
-          <h1>Wizard</h1>
+          <ConfigurationWizard/>
         </Paper>
       </NoSsr>
     );
