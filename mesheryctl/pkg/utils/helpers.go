@@ -29,10 +29,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	clientcmd "k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -263,29 +262,18 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			}
 		}
 	} else if currCtx.Platform == "kubernetes" {
-		if err != nil {
-			return errors.Wrap(err, "failed to create new client")
-		}
+		client, err := meshkitkube.New([]byte(""))
 
-		var kubeconfig string
-		home := homedir.HomeDir()
-		if home != "" {
-			kubeconfig = filepath.Join(home, ".kube", "config")
-		}
-
-		config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 		if err != nil {
 			return err
 		}
 
-		clientset, err := kubernetes.NewForConfig(config)
-		if err != nil {
-			return err
-		}
+		podInterface := client.KubeClient.CoreV1().Pods("")
+		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 
-		_, err = clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
-			return errors.New("kubernetes is not running yet")
+			log.Info("Kubernetes is not running yet")
+			return errors.Wrapf(err, "please start kubernetes. Run `mesheryctl system %s` after kubernetes is running", subcommand)
 		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
