@@ -108,8 +108,11 @@ type MesheryResult struct {
 	TestID             string                 `json:"test_id"`
 	Result             map[string]interface{} `json:"runner_results,omitempty" gorm:"type:JSONB"`
 
-	ServerMetrics     interface{} `json:"server_metrics,omitempty"`
-	ServerBoardConfig interface{} `json:"server_board_config,omitempty"`
+	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
+	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
+
+	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
+	PerformanceProfileInfo PerformanceProfile `json:"-,omitempty" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
 // ConvertToSpec - converts meshery result to SMP

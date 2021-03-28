@@ -304,5 +304,4 @@ func start() error {
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
 }
