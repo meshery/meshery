@@ -72,7 +72,11 @@ func stop() error {
 	switch currPlatform {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
-		if !utils.IsMesheryRunning(currPlatform) {
+		ok, err := utils.IsMesheryRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+		if !ok {
 			log.Info("Meshery is not running. Nothing to stop.")
 			return nil
 		}
@@ -109,7 +113,11 @@ func stop() error {
 
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
-		if !utils.IsMesheryRunning(currPlatform) {
+		ok, err := utils.IsMesheryRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+		if !ok {
 			log.Info("Meshery is not running. Nothing to stop.")
 			return nil
 		}

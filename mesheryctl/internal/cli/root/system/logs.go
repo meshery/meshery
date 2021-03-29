@@ -63,7 +63,11 @@ var logsCmd = &cobra.Command{
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			if ok := utils.IsMesheryRunning(currPlatform); !ok {
+			ok, err := utils.IsMesheryRunning(currPlatform)
+			if err != nil {
+				return err
+			}
+			if !ok {
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
@@ -95,6 +99,15 @@ var logsCmd = &cobra.Command{
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
+
+			ok, err := utils.IsMesheryRunning(currPlatform)
+			if err != nil {
+				return err
+			}
+			if !ok {
+				log.Error("No logs to show. Meshery is not running.")
+				return nil
+			}
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))

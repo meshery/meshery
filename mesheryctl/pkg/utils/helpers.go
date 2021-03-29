@@ -265,7 +265,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "failed to create new client")
 		}
 
 		podInterface := client.KubeClient.CoreV1().Pods("")
@@ -358,36 +358,36 @@ func installprereq() error {
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning(currPlatform string) bool {
+func IsMesheryRunning(currPlatform string) (bool, error) {
 	switch currPlatform {
 	case "docker":
 		{
 			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
 			if err != nil {
-				return false
+				return false, err
 			}
-			return strings.Contains(string(op), "meshery")
+			return strings.Contains(string(op), "meshery"), nil
 		}
 	case "kubernetes":
 		{
 			client, err := meshkitkube.New([]byte(""))
 
 			if err != nil {
-				return false
+				return false, errors.Wrap(err, "failed to create new client")
 			}
 
 			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
 			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
-				return false
+				return false, err
 			}
 
-			return true
+			return true, err
 		}
 	}
 
-	return false
+	return false, nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request
