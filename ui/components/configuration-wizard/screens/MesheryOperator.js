@@ -5,7 +5,7 @@ import {
   Fade,
 } from "@material-ui/core/";
 
-//import mesheryOperatorIcon from "../icons/meshery-operator-dark.svg";
+import MesheryOperatorIcon from "../icons/MesheryOperatorIcon";
 import ConfigCard from "./ConfigCard";
 
 const useStyles = makeStyles({
@@ -24,7 +24,7 @@ const MesheryOperator = () => {
     <Fade timeout={{ enter: "500ms" }} in="true">
       <Container className={classes.cardContainer}>
         {" "}
-        <ConfigCard name="Meshery Operator" icon='{mesheryOperatorIcon}' topInputPlaceholder="" bottomInputPlaceholder=""/>
+        <ConfigCard name="Meshery Operator" Icon={MesheryOperatorIcon} topInputPlaceholder="" bottomInputPlaceholder=""/>
       </Container>
     </Fade>
   );

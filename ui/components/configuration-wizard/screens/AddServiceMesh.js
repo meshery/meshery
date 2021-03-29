@@ -23,9 +23,9 @@ const External = () => {
   return (
     <Fade timeout={{ enter: "500ms" }} in="true">
       <Container className={classes.cardContainer}>
-        <ConfigCard name="Open Service Mesh" icon="timer" />
-        <ConfigCard name="Consul" icon="timer" />
-        <ConfigCard name="Linkerd" icon="timer" />
+        <ConfigCard name="Open Service Mesh" Icon="timer" />
+        <ConfigCard name="Consul" Icon="timer" />
+        <ConfigCard name="Linkerd" Icon="timer" />
       </Container>
     </Fade>
   );

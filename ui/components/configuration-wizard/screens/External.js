@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles, Container, Fade } from "@material-ui/core/";
 
-//import grafanaIcon from "../icons/grafana.svg";
-//import prometheusIcon from "../icons/prometheus.svg";
+import GrafanaIcon from "../icons/GrafanaIcon.js";
+import PrometheusIcon from "../icons/PrometheusIcon.js";
 import ConfigCard from "./ConfigCard";
 
 const useStyles = makeStyles({
@@ -20,8 +20,8 @@ const External = () => {
   return (
     <Fade timeout={{ enter: "500ms" }} in="true">
       <Container className={classes.cardContainer}>
-        <ConfigCard name="Grafana" icon='{grafanaIcon}' topInputPlaceholder="URL" bottomInputPlaceholder="API Key"/>
-        <ConfigCard name="Prometheus" icon='{prometheusIcon}' topInputPlaceholder="" bottomInputPlaceholder=""/>
+        <ConfigCard name="Grafana" Icon={GrafanaIcon} topInputPlaceholder="URL" bottomInputPlaceholder="API Key"/>
+        <ConfigCard name="Prometheus" Icon={PrometheusIcon} topInputPlaceholder="" bottomInputPlaceholder=""/>
       </Container>
     </Fade>
   );
