@@ -8,6 +8,8 @@ import { updatepagepath, updatepagetitle } from "../lib/store";
 import { getPath } from "../lib/path";
 import ConfigurationWizard from '../components/configuration-wizard/ConfigurationWizard'
 
+const styles = {
+}
 
 class Wizard extends React.Component {
   componentDidMount () {
