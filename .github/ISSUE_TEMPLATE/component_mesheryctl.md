@@ -1,5 +1,5 @@
 ---
-name: ⌨️ Component: mesheryctl (Meshery CLI)
+name: ⌨️ Component mesheryctl (Meshery CLI)
 about: Report an issue/ feature request for mesheryctl(Meshery CLI)
 title: '[mesheryctl]'
 labels: 'component/mesheryctl'
