@@ -34,6 +34,7 @@ const useStyles = makeStyles({
     border: "1px solid gray",
     borderRadius: "0.75rem",
     top: "2rem",
+    padding: 0,
     margin: "0rem 2rem 5rem 2rem",
     ["@media (max-width:1024px)"]: { //eslint-disable-line no-useless-computed-key
       margin: "0rem 2rem 5rem 0",
@@ -41,10 +42,12 @@ const useStyles = makeStyles({
   },
   cardChecked: {
     height: "15rem",
+    padding: 0,
     marginBottom: "0rem",
   },
   cardUnchecked: {
     height: "10rem",
+    padding: 0,
   },
   cardContent: {
     background: "red",
@@ -54,7 +57,8 @@ const useStyles = makeStyles({
     alignItems: "center",
     height: "100%",
     width: "100%",
-    margin: "-1rem 0 0 -1rem",
+    padding: 0,
+  //  margin: "-1rem 0 0 -1rem",
   },
   contentTop: {
     background: "#434343",
@@ -62,6 +66,7 @@ const useStyles = makeStyles({
     width: "100%",
     display: "flex",
     alignItems: "center",
+    padding: 0,
   },
   contentTopUnchecked: {
     background: "#434343",
@@ -69,6 +74,7 @@ const useStyles = makeStyles({
     width: "100%",
     display: "flex",
     alignItems: "center",
+    padding: 0,
   },
   contentTopSwitcher: {
     marginLeft: "0.5rem",
@@ -113,7 +119,7 @@ const useStyles = makeStyles({
 });
 
 const ConfigCard = ({
-  icon,
+  Icon,
   name,
   topInputPlaceholder,
   bottomInputPlaceholder,
@@ -135,7 +141,7 @@ const ConfigCard = ({
       }
       variant="outlined"
     >
-      <CardContent className={classes.cardContent}>
+      <CardContent className={classes.cardContent} style={{padding: 0}}>
         <div
           className={
             state.checked ? classes.contentTop : classes.contentTopUnchecked
@@ -147,10 +153,11 @@ const ConfigCard = ({
             onChange={handleChange}
           />
           <div className={classes.iconContainer}>
-            {icon === "timer" ? (
+            {Icon === "timer" ? (
               <TimerIcon />
             ) : (
-              <TimerIcon/>             
+              <Icon className={classes.cardIcon}
+                alt={`${name} icon`}/>           
             )}
             <Typography className={classes.cardIconText} color="primary">
               {name}
