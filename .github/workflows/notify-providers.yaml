@@ -18,7 +18,7 @@ jobs:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
         token: ${{ secrets.GITHUB_PAT }}
-        version: edge-latest
+        version: master
     - name: trigger plugins for release
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: kumarabd/trigger-remote-action@master
