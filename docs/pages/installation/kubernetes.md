@@ -11,10 +11,22 @@ image: /assets/img/platforms/kubernetes.svg
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on Kubernetes** 
+**To set up and run Meshery on Kubernetes**
 
-- [ Use Helm and set up a Kubernetes cluster](#using-helm)
+- [Use mesheryctl to install on a Kubernetes cluster](#using-mesheryctl)
+- [Use Helm and set up a Kubernetes cluster](#using-helm)
 - [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
+
+### **Using mesheryctl**
+Change `platform` in `config.yaml` to `kubernetes`.  
+Then run the following:
+
+<pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+    $ mesheryctl system start
+ </div></div>
+</pre>
+
 
 ### **Using Helm**
 
@@ -45,7 +57,7 @@ Meshery can also be deployed on an existing Kubernetes cluster. See [compatibili
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; 
+ $ git clone https://github.com/layer5io/meshery.git;
  $ cd meshery
  </div></div>
  </pre>
@@ -68,9 +80,9 @@ All the needed deployment yamls for deploying Meshery are included in the *insta
 
 Once the yaml files are deployed, we need to expose the *meshery* service to be able to access the service from outside the cluster. There are several ways a service can be exposed on Kubernetes. Here we will describe 3 common ways we can expose a service:
 
-#### **Ingress** 
+#### **Ingress**
 
-If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to expose Meshery: 
+If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to expose Meshery:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
