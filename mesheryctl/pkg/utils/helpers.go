@@ -273,7 +273,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 
 		if err != nil {
 			log.Info("Kubernetes is not running yet")
-			return errors.Wrapf(err, "please start kubernetes. Run `mesheryctl system %s` after kubernetes is running", subcommand)
+			return errors.Wrapf(err, "please start Kubernetes. Run `mesheryctl system %s` after Kubernetes is running", subcommand)
 		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
