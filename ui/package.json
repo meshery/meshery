@@ -104,7 +104,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "http-proxy": "^1.18.1",
     "husky": "^5.1.2",
-    "lint-staged": "^10.5.3",
+    "lint-staged": "^10.5.4",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
     "relay-compiler": "^10.1.3",
