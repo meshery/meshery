@@ -47,7 +47,7 @@
     "@paciolan/remote-component": "^2.11.0",
     "@zeit/next-css": "^1.0.1",
     "babel-plugin-istanbul": "^6.0.0",
-    "babel-plugin-relay": "^11.0.0",
+    "babel-plugin-relay": "^11.0.1",
     "billboard.js": "=2.2.3",
     "caniuse-lite": "^1.0.30001194",
     "classnames": "^2.2.6",
