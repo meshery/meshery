@@ -6,8 +6,6 @@ on:
     branches:
       - master
 # FIXME (ramrodo)
-  pull_request:
-    branches:
       - gh-2612-fix-release-drafter
 
 jobs:
