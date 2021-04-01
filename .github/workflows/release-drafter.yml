@@ -1,15 +1,7 @@
 name: Release Drafter
 
-on:
-  push:
-    # our release branch
-    branches:
-      - master
 # FIXME (ramrodo)
-      - gh-2612-fix-release-drafter
-  pull_request:
-    branches:
-      - gh-2612-fix-release-drafter
+on: [push]
 
 jobs:
   update_release_draft:
