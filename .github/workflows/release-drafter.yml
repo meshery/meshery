@@ -10,7 +10,6 @@ jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      # Drafts your next Release notes as Pull Requests are merged into "master"
       - name: Drafting release
         id: release_drafter
         uses: release-drafter/release-drafter@v5
@@ -25,7 +24,7 @@ jobs:
       - name: Write release notes to markdown file
         id: md_writer
         run: |
-          printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
+          printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
 
       - name: Create Pull Request
         id: cpr
