@@ -1,7 +1,7 @@
 name: Release Drafter
 
 # FIXME (ramrodo)
-on: [push]
+on: [push, pull_request]
 
 jobs:
   update_release_draft:
