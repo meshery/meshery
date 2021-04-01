@@ -161,6 +161,7 @@ func main() {
 		meshsyncmodel.Object{},
 		models.PerformanceProfile{},
 		models.MesheryResult{},
+		models.MesheryPattern{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -173,6 +174,7 @@ func main() {
 		SmiResultPersister:           smiResultPersister,
 		TestProfilesPersister:        testConfigPersister,
 		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
+		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,
