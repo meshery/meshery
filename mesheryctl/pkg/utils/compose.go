@@ -1,5 +1,12 @@
 package utils
 
+type K8sCompose struct {
+	Name      string   `yaml:"spec.template.spec.containers.name,omitempty"`
+	Image     string   `yaml:"spec.template.spec.containers.image,omitempty"`
+	Ports     []string `yaml:"spec.template.spec.containers.ports,omitempty"`
+	Resources []string `yaml:"spec.template.spec.containers.resources,omitempty"`
+}
+
 type DockerCompose struct {
 	Version  string             `yaml:"version,omitempty"`
 	Services map[string]Service `yaml:"services,omitempty"`

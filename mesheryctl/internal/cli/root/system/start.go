@@ -280,6 +280,30 @@ func start() error {
 			return err
 		}
 
+		for _, manifestFile := range manifests {
+			utils.ViperCompose.SetConfigFile(manifestFile.Path)
+			err = utils.ViperCompose.ReadInConfig()
+			if err != nil {
+				return err
+			}
+
+			compose := &utils.K8sCompose{}
+			err = utils.ViperCompose.Unmarshal(&compose)
+			if err != nil {
+				return err
+			}
+
+			spliter := strings.Split(compose.Image, ":")
+			compose.Image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
+
+			utils.ViperCompose.Set("spec.template.spec.containers", compose)
+			err = utils.ViperCompose.WriteConfig()
+			if err != nil {
+				return err
+			}
+
+		}
+
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
