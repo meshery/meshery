@@ -54,14 +54,14 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 }
 
 // DeleteMesheryPattern takes in a profile id and delete it if it already exists
-func (ppp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, error) {
+func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id uuid.UUID) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	ppp.DB.Delete(&pattern)
+	mpp.DB.Delete(&pattern)
 
 	return marshalMesheryPattern(&pattern), nil
 }
 
-func (ppp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	if pattern.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -70,13 +70,13 @@ func (ppp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 
 		pattern.ID = &id
 	}
-	return marshalMesheryPattern(pattern), ppp.DB.Save(pattern).Error
+	return marshalMesheryPattern(pattern), mpp.DB.Save(pattern).Error
 }
 
-func (ppp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
+func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
-	err := ppp.DB.First(&mesheryPattern, id).Error
+	err := mpp.DB.First(&mesheryPattern, id).Error
 	return marshalMesheryPattern(&mesheryPattern), err
 }
 
