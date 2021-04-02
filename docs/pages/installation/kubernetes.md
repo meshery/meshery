@@ -11,15 +11,34 @@ image: /assets/img/platforms/kubernetes.svg
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on Kubernetes**
+## Available Deployment Methods
 
-- [Use mesheryctl to install on a Kubernetes cluster](#using-mesheryctl)
-- [Use Helm and set up a Kubernetes cluster](#using-helm)
-- [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
+- [Using `mesheryctl`](#using-mesheryctl)
+- [Using `helm`](#using-helm)
+- [Using Kubernetes manifests](#using-kubernetes-manifests)
 
 ### **Using mesheryctl**
-Change `platform` in `config.yaml` to `kubernetes`.  
-Then run the following:
+Ensure that your `current-context` has `platform: kubernetes` configured in `~/.meshery/config.yaml`. Example context:
+
+```
+➜  ~ mesheryctl system context view
+endpoint: http://localhost:9081
+token: Default
+platform: Kubernetes
+adapters:
+- meshery-istio
+- meshery-linkerd
+- meshery-consul
+- meshery-nsm
+- meshery-kuma
+- meshery-cpx
+- meshery-osm
+- meshery-traefik-mesh
+channel: stable
+version: latest
+```
+
+Deploy Meshery to your Kubernetes cluster by executing:
 
 <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
