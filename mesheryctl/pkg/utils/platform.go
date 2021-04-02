@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
@@ -272,6 +273,37 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 	}
 	log.Debug("applied manifests to the Kubernetes cluster.")
+
+	return nil
+}
+
+func ChangeManifestVersion(fileName string, version string, filePath string) error {
+	// setting up config type to yaml files
+	ViperCompose.SetConfigType("yaml")
+
+	// setting up config file
+	ViperCompose.SetConfigFile(filePath)
+	err := ViperCompose.ReadInConfig()
+	if err != nil {
+		return fmt.Errorf("unable to read config %s | %s", fileName, err)
+	}
+
+	image := ViperCompose.GetString("image")
+	// err = ViperCompose.Unmarshal(&compose)
+	// if err != nil {
+	// 	return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+	// }
+	log.Debug("image name is ", image)
+	spliter := strings.Split(image, ":")
+	image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
+
+	log.Debug(spliter[0], image)
+
+	ViperCompose.Set("spec.template.spec.containers.image", image)
+	err = ViperCompose.WriteConfig()
+	if err != nil {
+		return fmt.Errorf("unable to update config %s | %s", fileName, err)
+	}
 
 	return nil
 }

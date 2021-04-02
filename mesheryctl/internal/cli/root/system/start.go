@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -279,29 +280,31 @@ func start() error {
 		if err != nil {
 			return err
 		}
+		// path to the manifest files ~/.meshery/manifests
+		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
-		for _, manifestFile := range manifests {
-			utils.ViperCompose.SetConfigFile(manifestFile.Path)
-			err = utils.ViperCompose.ReadInConfig()
+		// first change version in meshery-deployment manifest
+		err = utils.ChangeManifestVersion(utils.MesheryDeployment, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+		if err != nil {
+			return err
+		}
+
+		// loop through the required adapters as specified in the config.yaml file
+		for _, adapter := range RequestedAdapters {
+			// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
+			// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+			adapterFile := filepath.Join(manifestFiles, adapter)
+			adapterDeployment := adapterFile + "-deployment.yaml"
+
+			if !utils.IsAdapterValid(manifests, adapter+"-deployment.yaml") {
+				return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, utils.MesheryFolder)
+			}
+
+			// now replace version in deployment.yaml files
+			err = utils.ChangeManifestVersion(adapter+"-deployment.yaml", version, adapterDeployment)
 			if err != nil {
 				return err
 			}
-
-			compose := &utils.K8sCompose{}
-			err = utils.ViperCompose.Unmarshal(&compose)
-			if err != nil {
-				return err
-			}
-
-			spliter := strings.Split(compose.Image, ":")
-			compose.Image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
-
-			utils.ViperCompose.Set("spec.template.spec.containers", compose)
-			err = utils.ViperCompose.WriteConfig()
-			if err != nil {
-				return err
-			}
-
 		}
 
 		// downloaded required files successfully now apply the manifest files
