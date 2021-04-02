@@ -66,13 +66,16 @@ func stop() error {
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
-	currPlatform := currCtx.Platform
 	RequestedAdapters := currCtx.Adapters
 
-	switch currPlatform {
+	switch currCtx.Platform {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
-		if !utils.IsMesheryRunning() {
+		ok, err := utils.IsMesheryRunning(currCtx.Platform)
+		if err != nil {
+			return err
+		}
+		if !ok {
 			log.Info("Meshery is not running. Nothing to stop.")
 			return nil
 		}
@@ -109,6 +112,14 @@ func stop() error {
 
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
+		ok, err := utils.IsMesheryRunning(currCtx.Platform)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			log.Info("Meshery is not running. Nothing to stop.")
+			return nil
+		}
 
 		userResponse := false
 		if utils.SilentFlag {

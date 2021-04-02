@@ -87,7 +87,16 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	var resp *http.Response
 	var err error
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/capabilities")
+	version := viper.GetString("BUILD")
+	os := viper.GetString("OS")
+	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
+	finalURL = strings.TrimSuffix(finalURL, "\n")
+	remoteProviderURL, err := url.Parse(finalURL)
+	if err != nil {
+		logrus.Errorf("Error while constructing url: %s", err)
+		return
+	}
+
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	// If not token is provided then make a simple GET request

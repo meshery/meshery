@@ -37,7 +37,7 @@ class MesheryDocument extends Document {
       <Html lang="en" dir="ltr">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="icon" href="/static/favicon.ico" />
+          <link rel="icon" href="/static/favicon.png" />
 
           <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
 
