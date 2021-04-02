@@ -109,7 +109,8 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  </div></div>
  </pre>
 <br/>
- Run the command below to expose the services to the host machine:
+
+ **Optionally run the command below to expose the LoadBalancer services to the host machine** :
   
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
