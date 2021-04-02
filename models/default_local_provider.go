@@ -28,6 +28,7 @@ type DefaultLocalProvider struct {
 	SmiResultPersister           *BitCaskSmiResultsPersister
 	TestProfilesPersister        *BitCaskTestProfilesPersister
 	PerformanceProfilesPersister *PerformanceProfilePersister
+	MesheryPatternPersister      *MesheryPatternPersister
 	GenericPersister             database.Handler
 	GraphqlHandler               http.Handler
 	GraphqlPlayground            http.Handler
@@ -47,7 +48,9 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
-	l.Capabilities = Capabilities{}
+	l.Capabilities = Capabilities{
+		{Feature: PersistMesheryPatterns},
+	}
 }
 
 // Name - Returns Provider's friendly name
@@ -407,22 +410,45 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 
 // SaveMesheryPattern saves given pattern with the provider
 func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
-	return nil, fmt.Errorf("function not supported by local provider")
+	return l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
 func (l *DefaultLocalProvider) GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs)
 }
 
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	id := uuid.FromStringOrNil(patternID)
+	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
 func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
-	return []byte{}, fmt.Errorf("function not supported by local provider")
+	id := uuid.FromStringOrNil(patternID)
+	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
 // SavePerformanceProfile saves given performance profile with the provider

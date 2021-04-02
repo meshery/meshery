@@ -1,10 +1,11 @@
 name: Release Drafter
 
-# FIXME (ramrodo)
 on:
   push:
     branches:
-      - gh-2612-fix-release-drafter
+      - '!*'
+    tags:
+      - 'v*'
 
 jobs:
   update_release_draft:
