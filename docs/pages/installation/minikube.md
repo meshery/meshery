@@ -108,6 +108,16 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  mesheryctl system config minikube -t ~/Downloads/auth.json
  </div></div>
  </pre>
+<br/>
+
+ **Optionally run the command below to expose the LoadBalancer services to the host machine** :
+  
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ minikube tunnel
+ </div></div>
+ </pre>
+
 **Optionally configure Meshery to use minikube through the Web UI** :
 * Run the below command to generate the *"config_minikube.yaml"* file for your cluster:
 

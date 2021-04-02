@@ -1,4 +1,4 @@
-name-template: 'v$NEXT_PATCH_VERSION'
+name-template: 'Meshery v$NEXT_PATCH_VERSION'
 tag-template: 'v$NEXT_PATCH_VERSION'
 categories:
   - title: '🚀 Features'
@@ -27,3 +27,7 @@ template: |
   
   Thank you to our contributors for making this release possible:
   $CONTRIBUTORS
+autolabeler:
+  - label: 'area/docs'
+    branch:
+      - '/docs/'
