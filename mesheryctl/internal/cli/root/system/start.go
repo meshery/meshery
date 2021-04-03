@@ -49,10 +49,13 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
+
+		err := utils.PreReqCheck(cmd.Use, tempContext)
+		if err != nil {
+			cmd.SilenceUsage = true
 		}
-		return utils.PreReqCheck(cmd.Use, "")
+
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
