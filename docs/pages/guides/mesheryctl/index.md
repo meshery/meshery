@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Operation Guides
-permalink: guides
+title: Meshery CLI Guides
+permalink: guides/mesheryctl
 language: en
 list: exclude
 ---
@@ -9,16 +9,6 @@ list: exclude
 Guides to using Meshery's various features and components. 
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
-
-
-
-<ul><b>General</b>
-    {% for item in sorted_guides %}
-    {% if item.type=="Guides" and item.category!="mesheryctl" and item.list!="exclude"  -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
-      {% endif %}
-    {% endfor %}
-</ul>
 
 <ul><b><a href="{{ site.baseurl }}/guides/mesheryctl" class="text-black">Meshery CLI</a></b>
   {% for item in sorted_guides %}
@@ -28,6 +18,9 @@ Guides to using Meshery's various features and components.
     {% endif %}
   {% endfor %}
 </ul>
+
+
+
 
 {% include toc.html page=Guides %}
 
