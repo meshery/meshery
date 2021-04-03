@@ -38,6 +38,7 @@ jobs:
           signoff: true
           branch: docs/automated-release-notes
           delete-branch: true
+          base: master
           title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
           body: |
             An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
