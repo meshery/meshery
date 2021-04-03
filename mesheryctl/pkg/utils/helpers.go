@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/json"
@@ -27,6 +28,10 @@ import (
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
+
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -63,6 +68,8 @@ const (
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
+	// MesheryEndpoint is the default URL in which Meshery is exposed
+	MesheryEndpoint = "http://localhost:9081"
 	// MesheryFolder is the default relative location of the meshery config
 	// related configuration files.
 	MesheryFolder = ".meshery"
@@ -255,7 +262,19 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			}
 		}
 	} else if currCtx.Platform == "kubernetes" {
+		client, err := meshkitkube.New([]byte(""))
 
+		if err != nil {
+			return errors.Wrapf(err, "failed to create new client")
+		}
+
+		podInterface := client.KubeClient.CoreV1().Pods("")
+		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+
+		if err != nil {
+			log.Info("Kubernetes unreachable.")
+			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
+		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
 	}
@@ -339,12 +358,36 @@ func installprereq() error {
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning() bool {
-	op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-	if err != nil {
-		return false
+func IsMesheryRunning(currPlatform string) (bool, error) {
+	switch currPlatform {
+	case "docker":
+		{
+			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
+			if err != nil {
+				return false, err
+			}
+			return strings.Contains(string(op), "meshery"), nil
+		}
+	case "kubernetes":
+		{
+			client, err := meshkitkube.New([]byte(""))
+
+			if err != nil {
+				return false, errors.Wrap(err, "failed to create new client")
+			}
+
+			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+
+			if err != nil {
+				return false, err
+			}
+
+			return true, err
+		}
 	}
-	return strings.Contains(string(op), "meshery")
+
+	return false, nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request

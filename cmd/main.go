@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/layer5io/meshery/handlers"
@@ -55,6 +57,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	operatingSystem, err := exec.Command("uname", "-s").Output()
+	if err != nil {
+		logrus.Error(err)
+	}
+
 	ctx := context.Background()
 
 	viper.AutomaticEnv()
@@ -62,6 +69,7 @@ func main() {
 	viper.SetDefault("PORT", 8080)
 	viper.SetDefault("ADAPTER_URLS", "")
 	viper.SetDefault("BUILD", version)
+	viper.SetDefault("OS", strings.ToLower(string(operatingSystem)))
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 
@@ -130,26 +138,14 @@ func main() {
 	}
 	defer smiResultPersister.CloseResultPersister()
 
-	resultPersister, err := models.NewBitCaskResultsPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer resultPersister.CloseResultPersister()
-
 	testConfigPersister, err := models.NewBitCaskTestProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
 	if err != nil {
 		logrus.Fatal(err)
 	}
 	defer testConfigPersister.CloseTestConfigsPersister()
 
-	performanceProfilePersister, err := models.NewBitCaskPerformanceProfilesPersister(viper.GetString("USER_DATA_FOLDER"))
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	defer performanceProfilePersister.ClosePerformanceProfilePersister()
-
 	dbHandler, err := database.New(database.Options{
-		Filename: fmt.Sprintf("%s/meshsync.sql", viper.GetString("USER_DATA_FOLDER")),
+		Filename: fmt.Sprintf("%s/mesherydb.sql", viper.GetString("USER_DATA_FOLDER")),
 		Engine:   database.SQLITE,
 		Logger:   log,
 	})
@@ -163,6 +159,9 @@ func main() {
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
 		meshsyncmodel.Object{},
+		models.PerformanceProfile{},
+		models.MesheryResult{},
+		models.MesheryPattern{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -171,10 +170,11 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:              DefaultProviderURL,
 		MapPreferencePersister:       preferencePersister,
-		ResultPersister:              resultPersister,
+		ResultPersister:              &models.MesheryResultsPersister{DB: &dbHandler},
 		SmiResultPersister:           smiResultPersister,
 		TestProfilesPersister:        testConfigPersister,
-		PerformanceProfilesPersister: performanceProfilePersister,
+		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
+		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,

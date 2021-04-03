@@ -283,15 +283,13 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
-		log.Info("applying the manifests to Kubernetes cluster...")
-
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
 
 		if err != nil {
 			return err
 		}
-		log.Info("... deployed Meshery in the Kubernetes Cluster.")
+		log.Info("...Meshery deployed on Kubernetes.")
 
 	// switch to default case if the platform specified is not supported
 	default:
@@ -304,5 +302,4 @@ func start() error {
 func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&utils.SilentFlag, "silent", "", false, "(optional) silently create Meshery's configuration file with default settings.")
 }

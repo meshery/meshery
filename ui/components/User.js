@@ -89,18 +89,20 @@ class User extends React.Component {
     return (
       <div>
         <NoSsr>
-          <IconButton
-            color={color}
-            className={iconButtonClassName}
-            buttonRef={(node) => {
-              this.anchorEl = node;
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            onClick={this.handleToggle}
-          >
-            <Avatar className={avatarClassName} src={avatar_url} />
-          </IconButton>
+          <div data-test="profile-button">
+            <IconButton
+              color={color}
+              className={iconButtonClassName}
+              buttonRef={(node) => {
+                this.anchorEl = node;
+              }}
+              aria-owns={open ? 'menu-list-grow' : undefined}
+              aria-haspopup="true"
+              onClick={this.handleToggle}
+            >
+              <Avatar className={avatarClassName} src={avatar_url} />
+            </IconButton>
+          </div>
           <Popper open={open} anchorEl={this.anchorEl} transition disablePortal placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
