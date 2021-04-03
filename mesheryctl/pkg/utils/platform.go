@@ -303,12 +303,10 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	spliter := strings.Split(image, ":")
 	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
 
-	// compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s%s:%s-%s", "layer5/", adapter, version, "latest")
-
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
 	ViperCompose.Set("spec", compose.Spec)
-	ViperCompose.Set("apiVersion", compose.ApiVersion)
+	ViperCompose.Set("apiVersion", compose.APIVersion)
 	ViperCompose.Set("metadata", compose.Metadata)
 	err = ViperCompose.WriteConfig()
 	if err != nil {
