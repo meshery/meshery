@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Upgrade `mesheryctl` and Meshery
+title: Upgrading Meshery and all of its components
 description: How to Meshery and all of its components
 permalink: guides/upgrade
 display-title: "false"

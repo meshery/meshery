@@ -21,6 +21,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -103,6 +104,7 @@ func init() {
 	availableSubcommands = []*cobra.Command{
 		versionCmd,
 		system.SystemCmd,
+		pattern.PatternCmd,
 		perf.PerfCmd,
 		mesh.MeshCmd,
 		experimental.ExpCmd,

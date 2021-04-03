@@ -36,7 +36,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("(lower(meshery_pattern.name) like ?)", like)
+		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
 	}
 
 	query.Table("meshery_patterns").Count(&count)

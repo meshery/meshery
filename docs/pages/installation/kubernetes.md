@@ -49,27 +49,15 @@ Deploy Meshery to your Kubernetes cluster by executing:
 
 ### **Using Helm**
 
-#### 1. **Helm v3**
 Run the following:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create namespace meshery
- $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+ $ helm repo add meshery https://meshery.io/charts/
+ $ helm install my-meshery meshery/meshery --version 2.1.2
  </div></div>
  </pre>
 
-#### 2. **Helm v2**
-Run the following:
-
- <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create namespace meshery
- $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | kubectl apply -f -
- </div></div>
- </pre>
 
 ### **Using Kubernetes Manifests**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
@@ -118,8 +106,9 @@ If your Kubernetes cluster has a functional Ingress Controller, then you can con
      paths:
      - path: /
          backend:
+        # Please kindly check your service name and service port to confirm the Ingress can work well
          serviceName: meshery-service
-         servicePort: 8080
+         servicePort: 9081
  </div></div>
  </pre>
 
