@@ -273,7 +273,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 
 		if err != nil {
 			log.Info("Kubernetes unreachable.")
-			return errors.Wrapf(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.", subcommand)
+			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
 		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
