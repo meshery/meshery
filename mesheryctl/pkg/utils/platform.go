@@ -12,6 +12,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -288,18 +289,27 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 		return fmt.Errorf("unable to read config %s | %s", fileName, err)
 	}
 
-	image := ViperCompose.GetString("image")
+	compose := K8sCompose{}
+	yamlFile, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+	err = yaml.Unmarshal(yamlFile, &compose)
 	// err = ViperCompose.Unmarshal(&compose)
-	// if err != nil {
-	// 	return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
-	// }
-	log.Debug("image name is ", image)
+	if err != nil {
+		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+	}
+	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
-	image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
 
-	log.Debug(spliter[0], image)
+	// compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s%s:%s-%s", "layer5/", adapter, version, "latest")
 
-	ViperCompose.Set("spec.template.spec.containers.image", image)
+	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
+
+	ViperCompose.Set("spec", compose.Spec)
+	ViperCompose.Set("apiVersion", compose.ApiVersion)
+	ViperCompose.Set("metadata", compose.Metadata)
 	err = ViperCompose.WriteConfig()
 	if err != nil {
 		return fmt.Errorf("unable to update config %s | %s", fileName, err)
