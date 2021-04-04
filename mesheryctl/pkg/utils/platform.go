@@ -305,9 +305,11 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
-	ViperCompose.Set("spec", compose.Spec)
 	ViperCompose.Set("apiVersion", compose.APIVersion)
+	ViperCompose.Set("kind", compose.Kind)
 	ViperCompose.Set("metadata", compose.Metadata)
+	ViperCompose.Set("spec", compose.Spec)
+	ViperCompose.Set("status", compose.Status)
 	err = ViperCompose.WriteConfig()
 	if err != nil {
 		return fmt.Errorf("unable to update config %s | %s", fileName, err)
