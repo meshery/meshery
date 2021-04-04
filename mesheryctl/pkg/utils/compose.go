@@ -1,11 +1,11 @@
 package utils
 
 type K8sCompose struct {
-	APIVersion interface{}   `yaml:"apiVersion,omitempty"`
-	Kind       string        `yaml:"kind,omitempty"`
-	Status     []interface{} `yaml:"status,omitempty"`
-	Metadata   Metadata      `yaml:"metadata,omitempty"`
-	Spec       Spec          `yaml:"spec,omitempty"`
+	APIVersion interface{}                 `yaml:"apiVersion,omitempty"`
+	Kind       string                      `yaml:"kind,omitempty"`
+	Status     map[interface{}]interface{} `yaml:"status,omitempty"`
+	Metadata   Metadata                    `yaml:"metadata,omitempty"`
+	Spec       Spec                        `yaml:"spec,omitempty"`
 }
 
 type Spec struct {
