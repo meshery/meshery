@@ -67,7 +67,7 @@ fixedNav: 'true' # true or false
 # permalink: /:year/:title/ old
 # categories allows to implement the lang permalink, besides de vars 'lang', and 'language'
 permalink: /:categories/:title/
-markdown: kramdown
+
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 
 plugins:
