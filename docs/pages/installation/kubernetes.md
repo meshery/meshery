@@ -47,9 +47,9 @@ Deploy Meshery to your Kubernetes cluster by executing:
 </pre>
 
 
-### **Using Helm**
+### **Using Helm Charts**
 
-Run the following:
+Run the following for default:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -58,6 +58,21 @@ Run the following:
  </div></div>
  </pre>
 
+Customize of deployment the Meshery adapters:
+
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ $ helm repo add meshery https://meshery.io/charts/
+
+ # Manually disable the adapters you do not want to deploy
+ $ helm install --set key=value --set key=value my-meshery meshery/meshery --version 2.1.2
+
+ # Example : Disabled the Linkerd2 adapter and check the deployment manifest that the helm will deploy
+ $ helm install --set meshery-linkerd.enabled=false meshery/meshery --version 2.1.2 --dry-run
+ </div></div>
+ </pre>
+
+The key of Meshery adapters you can find [here](https://artifacthub.io/packages/helm/meshery/meshery#values)
 
 ### **Using Kubernetes Manifests**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
