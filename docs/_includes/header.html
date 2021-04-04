@@ -46,17 +46,43 @@
                 <span class="text-white text-bold">{% if site.data.languages.language_word == blank %}Language{% else %}{{ site.data.language.language_word }}{% endif %} </span>
                 <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="langSelection" id="langSelection">
                 <!-- TODO: poner la palabra language en el idioma que esté seleccionado -->
+                   <!-- extracting ALL the langs, not just the ACTUAL ONE -->
+
                 <!--for all the langs -->
                 {% for link in site.data.languages%}
                 <!-- we get the lang selected, and put it to the right option  -->
                    {%- if lang==link.url -%}
                       {%- assign optionSelected = "selected" -%}
                       {%- else -%}
-                      {%- assign optionSelected = "" -%}                      
+                      {%- assign optionSelected = "" -%}
                    {%- endif -%}
-                  <option {{ optionSelected }} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% else %}{{ link.external_url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
-                      <span>{{ link.title }}</span>
-                  </option>
+
+                   {%- if page.url!=' ' and lang!='en' -%}
+                        <!-- extract the current URL, WITHOUT lang slug -->
+                        {%- capture langSlug -%}/{{lang}}{%- endcapture -%}
+                        {%- if page.url contains  langSlug-%}
+                          {%- capture currentUrl -%}{{page.url | remove_first:langSlug}}{%- endcapture -%}
+                        {%- endif -%}
+                   {%- else -%}
+                      {%- if page.url!=' ' and lang=='en'-%}
+                        {%- capture currentUrl -%}{{page.url }}{%- endcapture -%}
+                      {%- else -%}
+                        {%- assign currentUrl = ' ' -%}
+                      {%- endif -%}
+                   {%- endif -%}
+                   {%- if link.language=='en'-%}
+
+                      <option {{ optionSelected }} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{{ currentUrl | relative_url | remove_first:'/' }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+                        <span>{{ link.title }} </span>
+                      </option>
+                    {%- else -%}
+                      <option {{ optionSelected }} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{{currentUrl }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+                        <span>{{ link.title }} </span>
+                      </option>
+                   {%- endif -%}
+                   <!-- Parsing URL = {{page.url}}- {{page.url | remove_first:langSlug}} - {{langSlug}}</span> -->
+                  <!-- <option {{ optionSelected }} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% if page.url!=' ' %}{{page.url | remove:langSlug}}{% else %}/{{currentUrl}}{% endif %}{% else %}{{ link.external_url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0"> -->
+
                 {% endfor %}
               </select>
             </div>
