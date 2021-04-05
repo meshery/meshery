@@ -49,10 +49,13 @@ var startCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
+
+		err := utils.PreReqCheck(cmd.Use, tempContext)
+		if err != nil {
+			cmd.SilenceUsage = true
 		}
-		return utils.PreReqCheck(cmd.Use, "")
+
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
@@ -283,15 +286,13 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
-		log.Info("applying the manifests to Kubernetes cluster...")
-
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
 
 		if err != nil {
 			return err
 		}
-		log.Info("... deployed Meshery in the Kubernetes Cluster.")
+		log.Info("...Meshery deployed on Kubernetes.")
 
 	// switch to default case if the platform specified is not supported
 	default:

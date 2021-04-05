@@ -13,7 +13,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 
 ## Bash
 
-**Install**
+**Install** and **Upgrade**
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -97,5 +97,5 @@ scoop update mesheryctl
 </div></div>
 </pre>
 
-Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platform).
+Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platforms).
 

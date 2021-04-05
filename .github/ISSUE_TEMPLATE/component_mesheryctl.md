@@ -1,13 +1,13 @@
 ---
-name: ⌨️ Component mesheryctl (Meshery CLI)
-about: Report an issue/ feature request for mesheryctl(Meshery CLI)
+name: ⌨️ [Component] mesheryctl (Meshery CLI)
+about: Report a bug or feature request for mesheryctl (Meshery CLI)
 title: '[mesheryctl]'
 labels: 'component/mesheryctl'
 assignees: ''
 ---
 
-<!-- Please update the mesheryctl- Command Reference and Tracker spreadsheet -->
-Refer the [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
+<!-- Please update the mesheryctl Command Tracker spreadsheet -->
+_See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of commands._
 
 #### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
@@ -31,7 +31,7 @@ Refer the [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q
 
 ---
 
-[Optional (for feature requests)]
+<!-- Optional for feature requests -->
 
 #### Implementation
 <!-- Specifics on the approach to fulfilling the feature request. -->
