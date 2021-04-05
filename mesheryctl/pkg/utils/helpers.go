@@ -272,8 +272,8 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 
 		if err != nil {
-			log.Info("Kubernetes is not running yet")
-			return errors.Wrapf(err, "please start Kubernetes. Run `mesheryctl system %s` after Kubernetes is running", subcommand)
+			log.Info("Kubernetes unreachable.")
+			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
 		}
 	} else {
 		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
