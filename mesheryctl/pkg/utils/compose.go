@@ -1,11 +1,11 @@
 package utils
 
 type K8sCompose struct {
-	APIVersion interface{}                 `yaml:"apiVersion,omitempty"`
-	Kind       string                      `yaml:"kind,omitempty"`
-	Status     map[interface{}]interface{} `yaml:"status,omitempty"`
-	Metadata   Metadata                    `yaml:"metadata,omitempty"`
-	Spec       Spec                        `yaml:"spec,omitempty"`
+	APIVersion interface{} `yaml:"apiVersion,omitempty"`
+	Kind       string      `yaml:"kind,omitempty"`
+	Metadata   Metadata    `yaml:"metadata,omitempty"`
+	Spec       Spec        `yaml:"spec,omitempty"`
+	Status     interface{} `yaml:"status,omitempty"`
 }
 
 type Spec struct {
@@ -16,8 +16,14 @@ type Spec struct {
 }
 
 type Template struct {
-	Metadata Metadata     `yaml:"metadata,omitempty"`
-	Spec     TemplateSpec `yaml:"spec,omitempty"`
+	Metadata TemplateMetadata `yaml:"metadata,omitempty"`
+	Spec     TemplateSpec     `yaml:"spec,omitempty"`
+}
+
+type TemplateMetadata struct {
+	CreationTimestamp interface{} `yaml:"creationTimestamp"`
+	Labels            Labels      `yaml:"labels,omitempty"`
+	Name              string      `yaml:"name,omitempty"`
 }
 
 type TemplateSpec struct {
@@ -27,7 +33,7 @@ type TemplateSpec struct {
 }
 
 type Containers struct {
-	Env       []interface{}    `yaml:"env,omitempty"`
+	Env       interface{}      `yaml:"env,omitempty"`
 	Image     string           `yaml:"image,omitempty"`
 	Name      string           `yaml:"name,omitempty"`
 	Ports     []map[string]int `yaml:"ports,omitempty"`
