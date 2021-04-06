@@ -82,7 +82,7 @@ var restartCmd = &cobra.Command{
 			for _, pod := range podList.Items {
 				// Get the values from the pod status
 				name := pod.GetName()
-				log.Info("Restarting pod ", name)
+				log.Debug("Restarting pod ", name)
 				err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
 				if err != nil {
 					log.Fatal(err)
