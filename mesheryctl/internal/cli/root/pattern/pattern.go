@@ -35,6 +35,10 @@ func init() {
 
 	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
 
+<<<<<<< HEAD
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, listCmd}
+=======
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd}
+>>>>>>> 0acec52d... pattern view cmd
 	PatternCmd.AddCommand(availableSubcommands...)
 }
