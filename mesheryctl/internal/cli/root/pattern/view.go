@@ -31,15 +31,15 @@ var viewCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 		pattern := ""
-		isId := false
-		// if pattern name/id avaiable
+		isID := false
+		// if pattern name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
 				return errors.New("-a cannot be used when pattern-name(pattern-id) is specified")
 			}
 			pattern = args[0]
 			// check if the pattern argument is a valid uuid v4 string
-			isId, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", pattern)
+			isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", pattern)
 			if err != nil {
 				return err
 			}
@@ -51,7 +51,7 @@ var viewCmd = &cobra.Command{
 			} else {
 				return errors.New("pattern-name(pattern-id) not specified, use -a to view all patterns")
 			}
-		} else if isId {
+		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
 			url += "/api/experimental/patternfile/" + pattern
 		} else {
@@ -90,7 +90,7 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 
-		if isId {
+		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
 				return err
 			}
