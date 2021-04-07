@@ -3,27 +3,21 @@ package utils
 type K8sCompose struct {
 	APIVersion interface{} `yaml:"apiVersion,omitempty"`
 	Kind       string      `yaml:"kind,omitempty"`
-	Metadata   Metadata    `yaml:"metadata,omitempty"`
+	Metadata   interface{} `yaml:"metadata,omitempty"`
 	Spec       Spec        `yaml:"spec,omitempty"`
 	Status     interface{} `yaml:"status,omitempty"`
 }
 
 type Spec struct {
-	Selector Selector    `yaml:"selector,omitempty"`
 	Replicas int         `yaml:"replicas,omitempty"`
+	Selector interface{} `yaml:"selector,omitempty"`
 	Strategy interface{} `yaml:"strategy,omitempty"`
 	Template Template    `yaml:"template,omitempty"`
 }
 
 type Template struct {
-	Metadata TemplateMetadata `yaml:"metadata,omitempty"`
-	Spec     TemplateSpec     `yaml:"spec,omitempty"`
-}
-
-type TemplateMetadata struct {
-	CreationTimestamp interface{} `yaml:"creationTimestamp"`
-	Labels            Labels      `yaml:"labels,omitempty"`
-	Name              string      `yaml:"name,omitempty"`
+	Metadata interface{}  `yaml:"metadata,omitempty"`
+	Spec     TemplateSpec `yaml:"spec,omitempty"`
 }
 
 type TemplateSpec struct {
@@ -38,26 +32,6 @@ type Containers struct {
 	Name      string           `yaml:"name,omitempty"`
 	Ports     []map[string]int `yaml:"ports,omitempty"`
 	Resources interface{}      `yaml:"resources,omitempty"`
-}
-
-type Selector struct {
-	MatchLabels Labels `yaml:"matchLabels,omitempty"`
-}
-
-type Metadata struct {
-	Annotations       map[string]interface{} `mapstructure:"annotations"`
-	CreationTimestamp interface{}            `yaml:"creationTimestamp"`
-	Labels            Labels                 `yaml:"labels,omitempty"`
-	Name              string                 `yaml:"name,omitempty"`
-}
-
-type Annotations struct {
-	KomposeCmd     interface{} `yaml:"kompose.cmd,omitempty"`
-	KomposeVersion interface{} `yaml:"kompose.version,omitempty"`
-}
-
-type Labels struct {
-	KomposeService interface{} `yaml:"io.kompose.service,omitempty"`
 }
 
 type DockerCompose struct {
