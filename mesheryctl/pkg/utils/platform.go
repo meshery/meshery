@@ -303,7 +303,7 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	}
 	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
-	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], version, "latest")
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], "stable", version)
 
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
