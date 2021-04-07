@@ -6,7 +6,6 @@ language: en
 type: Guides
 category: mesheryctl
 ---
-# Configuring Autocompletion for `mesheryctl`
 
 If you would like to have `mesheryctl` commands automatically completed for use as you use `mesheryctl`, then use the following instructions to configure automatic completion within your environment.
 
