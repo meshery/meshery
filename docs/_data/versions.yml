@@ -1,0 +1,17 @@
+- version: "0.5"
+  url: "v0.5"
+- version: "0.4"
+  url: "v0.4"
+- version: "0.3"
+  url: "v0.3"
+- version: "0.2"
+  url: "v0.2"
+- version: "0.1"
+  url: "v0.1"
+
+  # This would support the versions (minor and/major), that has the FOLDER named has the version:
+# /docs/versions/vV.M.m    so the permalink would be: /vV.M.m
+# This PoC contemplates
+
+#- version: "0.5.3rc"
+#  url: "v0.5.3" for example

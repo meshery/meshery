@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Meshery Documentation
-permalink: /v0.5
+permalink: /v0.5/
 display-title: "false"
 ---
 

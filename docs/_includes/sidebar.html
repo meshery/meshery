@@ -1,42 +1,63 @@
-<div id="td-sidebar-menu" class="td-sidebar__inner">  
-  <form class="td-sidebar__search d-flex align-items-center">
- <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
-    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+    <form class="td-sidebar__search d-flex align-items-center">
+        <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
+        <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
     </button>
-  </form>  
+    </form>
+    <hr>
+    <!-- VERSIONING try -->
 
-  <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
-  {% for section in site.data.toc %}
-  <ul class="td-sidebar-nav__section pr-md-3">
-    {% capture sectionUrl %}{{ section.url | replace: "/", "" }}{% endcapture %}
-    {% capture pageUrl %}{{ page.url | replace: "/", "" }}{% endcapture %}
-    <li class="td-sidebar-nav__section-title">
-      <a  href="{% if section.url %}{{ site.baseurl }}/{{ section.url }}{% else %}{{ section.external_url }}{% endif %}" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">{{ section.title }}</a>
-    </li>
-    {% if section.links %}
-      <ul>
-        <li class="collapse show" id="{{ section.title | slugify }}">
-            <ul class="td-sidebar-nav__section pr-md-3">
-              {% for entry in section.links %}
-              <li class="td-sidebar-nav__section-title">
-                <a href="{% if entry.url %}{{ site.baseurl }}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }}</a>
-              </li>
-              {% if page.url contains entry.url or pageUrl == sectionUrl %}
-              <ul>
-                <li class="collapse show" id="{{ child.title | slugify }}">
-                  {% if entry.children %}
-                  {% for child in entry.children %}
-                    <a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>
-                  {% endfor %}
-                  {% endif %}
-                </li>
-              </ul>
-              {% endif %}
-            {% endfor %}
-          </ul>
-      </ul>  
-    {% endif %}    
-  </ul>
-  {% endfor %}
-  </nav>
+    <div class="version" class="nav-item  ml-md-auto ">
+        <span class="text-black text-bold"> &nbsp;Meshery Version &nbsp;
+      <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide bg-white focus:outline-none" name="versioningSelection" id="versioningSelection">
+        <!-- <option value="">Versions</option> -->
+        {% assign versions = site.data.versions  %}
+
+        {% for link in versions%}
+        {%- capture linkUrl -%}/{{link.url}}/{%- endcapture -%}
+         <!-- we get the version selected, and put it to the right option  -->
+         {%- if page.url==linkUrl -%}
+          {%- assign optionSelected = "selected" -%}
+         {%- else -%}
+          {%- assign optionSelected = "" -%}
+         {%- endif -%}
+        <option {{optionSelected}} value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}" class="nav-item mr-4 mb-2 mb-lg-0">
+          <span>{{ link.version }}</span>
+        </option>
+        {% endfor %}
+        </select>
+        </span>
+    </div>
+    <!-- END VERSIONING try -->
+    <hr>
+
+    <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
+        {% for section in site.data.toc %}
+        <ul class="td-sidebar-nav__section pr-md-3">
+            {% capture sectionUrl %}{{ section.url | replace: "/", "" }}{% endcapture %} {% capture pageUrl %}{{ page.url | replace: "/", "" }}{% endcapture %}
+            <li class="td-sidebar-nav__section-title">
+                <a href="{% if section.url %}{{ site.baseurl }}/{{ section.url }}{% else %}{{ section.external_url }}{% endif %}" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">{{ section.title }}</a>
+            </li>
+            {% if section.links %}
+            <ul>
+                <li class="collapse show" id="{{ section.title | slugify }}">
+                    <ul class="td-sidebar-nav__section pr-md-3">
+                        {% for entry in section.links %}
+                        <li class="td-sidebar-nav__section-title">
+                            <a href="{% if entry.url %}{{ site.baseurl }}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">{{ entry.title }}</a>
+                        </li>
+                        {% if page.url contains entry.url or pageUrl == sectionUrl %}
+                        <ul>
+                            <li class="collapse show" id="{{ child.title | slugify }}">
+                                {% if entry.children %} {% for child in entry.children %}
+                                <a class="td-sidebar-link td-sidebar-link__page " id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}" href="{% if child.url %}{{ site.baseurl }}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}">{{ child.title }}</a>                                {% endfor %} {% endif %}
+                            </li>
+                        </ul>
+                        {% endif %} {% endfor %}
+                    </ul>
+            </ul>
+            {% endif %}
+        </ul>
+        {% endfor %}
+    </nav>
 </div>

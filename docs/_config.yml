@@ -65,7 +65,6 @@ themeColor: red # purple, green, blue, orange, purple, grey
 fixedNav: 'true' # true or false
 
 permalink: /:year/:title/
-markdown: kramdown
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 
 plugins:
@@ -117,4 +116,3 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      
