@@ -213,6 +213,7 @@ type Provider interface {
 	GetMesheryPatterns(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
+	ImportPatternFileGithub(owner, repo, path string) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
