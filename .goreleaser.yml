@@ -41,6 +41,10 @@ builds:
   ignore:
       - goos: freebsd
         goarch: arm64
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
 
 archives:
 - replacements:
