@@ -2,4 +2,4 @@ flag: skip-update
 arg: start
 description: (optional) skip checking for new updates available in Meshery.
 usage: |
-    `mesheryctl system start --skip-update`
+    mesheryctl system start --skip-update

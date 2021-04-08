@@ -30,7 +30,7 @@ Meshery CLI commands are categorized by function, which are:
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.global.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=6>{{ command.name }}</td>
+      <td rowspan=6><a href="./commands/mesheryctl">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -67,7 +67,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=15>{{ command.name }}</td>
+      <td rowspan=15><a href="./commands/subcommands/mesheryctl-system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -115,7 +115,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
-          <td rowspan=5>{{ command.name }}</td>
+          <td rowspan=5><a href="./commands/subcommands/mesheryctl-system-channel">{{ command.name }}</a></td>
           <td></td>
           <td></td>
           <td>{{ command.description }}</td>
@@ -150,7 +150,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-context.commands %}{% assign command = command_hash[1] %}
       <tr>
-        <td rowspan=10>{{ command.name }}</td>
+        <td rowspan=10><a href="./commands/subcommands/mesheryctl-system-context">{{ command.name }}</a></td>
         <td></td>
         <td></td>
         <td>{{ command.description }}</td>
@@ -210,7 +210,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=11>{{ command.name }}</td>
+      <td rowspan=11><a href="./commands/subcommands/mesheryctl-perf">{{ command.name }}</a></td>
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
@@ -237,7 +237,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.meshes.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=10>{{ command.name }}</td>
+      <td rowspan=10><a href="./commands/subcommands/mesheryctl-mesh">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -284,7 +284,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=4>{{ command.name }}</td>
+      <td rowspan=4><a href="./commands/subcommands/mesheryctl-pattern">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
