@@ -45,6 +45,16 @@ Global command
 {% endfor %}
 
 ## Examples
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+    <div class="clipboardjs">
+  mesheryctl version
+    </div>
+  </div>
+</pre>
+<br/>
+
 {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
 <pre class="codeblock-pre">
   <div class="codeblock">

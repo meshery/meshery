@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl perf
-permalink: reference/mesheryctl/commands/mesheryctl-perf
+permalink: reference/mesheryctl/commands/subcommands/mesheryctl-perf
 type: reference
 display-title: "false"
 language: en
@@ -17,11 +17,11 @@ list: exclude
 # mesheryctl perf
 
 ## Description
+
 <!-- Description of the command. Preferably a paragraph -->
 {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
     {{ command.description }}
 {% endfor %}
-<br/>
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -32,7 +32,7 @@ list: exclude
   </div>
 </pre>
 
-## Options
+## Options & Flags
 
 {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
 <pre class="codeblock-pre">

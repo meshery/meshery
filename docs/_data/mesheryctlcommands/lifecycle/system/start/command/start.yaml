@@ -1,4 +1,4 @@
 name: start
 description: Start Meshery.
 usage: |
-    `mesheryctl system start`
+    mesheryctl system start

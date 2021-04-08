@@ -2,4 +2,4 @@ flag: all, a
 arg: view
 description: view release channel and version
 usage: |
-    `mesheryctl system channel view --all`
+    mesheryctl system channel view --all

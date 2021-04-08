@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl mesh
-permalink: reference/mesheryctl/commands/mesheryctl-mesh
+permalink: reference/mesheryctl/commands/subcommands/mesheryctl-mesh
 type: reference
 display-title: "false"
 language: en
@@ -17,10 +17,11 @@ list: exclude
 # mesheryctl mesh
 
 <!-- Description of the command. Preferably a paragraph -->
+## Description
+
 {% for command_hash in site.data.mesheryctlcommands.meshes.commands %}{% assign command = command_hash[1] %}
     {{ command.description }}
 {% endfor %}
-<br/>
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -32,7 +33,7 @@ list: exclude
 </pre>
 
 <!-- Options/Flags available in this command -->
-## Options
+## Options & Flags
 
 {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
 <pre class="codeblock-pre">
