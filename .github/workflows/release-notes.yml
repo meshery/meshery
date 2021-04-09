@@ -1,4 +1,4 @@
-name: Release notes
+name: Release Notes Publisher
 
 on:
   push:
