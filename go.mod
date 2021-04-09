@@ -29,7 +29,7 @@ require (
 	github.com/layer5io/meshery-operator v0.2.11
 	github.com/layer5io/meshkit v0.2.6
 	github.com/layer5io/meshsync v0.1.17
-	github.com/layer5io/nighthawk-go v0.1.5
+	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.7.0
 	github.com/nats-io/nats.go v1.10.0
