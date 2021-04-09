@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Install mesheryctl
-permalink: installation/mesheryctl
+permalink: /v0.3/installation/mesheryctl
 type: installation
 display-title: "true"
 language: en

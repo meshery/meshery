@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Docker
-permalink: es/installation/platforms/docker
+permalink: /v0.3/es/installation/platforms/docker
 language: es
 type: installation
 ---

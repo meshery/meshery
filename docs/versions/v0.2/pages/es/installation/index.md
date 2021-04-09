@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Installation Guide
-permalink: es/installation
+permalink: /v0.2/es/installation
 language: es
 type: installation
 language: en

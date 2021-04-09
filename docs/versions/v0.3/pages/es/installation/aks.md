@@ -1,7 +1,7 @@
 ---
 layout: page
 title: AKS
-permalink: es/installation/platforms/aks
+permalink: /v0.3/es/installation/platforms/aks
 language: es
 type: installation
 ---

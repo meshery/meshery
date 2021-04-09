@@ -29,7 +29,7 @@ display-title: "false"
     </ul>
     <ul><b><a href="{{ site.baseurl }}/installation/platforms" class="text-black">Supported Platforms</a></b>
         {% for item in sorted_pages %}
-        {% if item.type=="installation" and item.list=="include" -%}
+        {% if item.type=="installation" and item.list=="include" and item.url contains 'v0.3'-%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}
@@ -44,7 +44,7 @@ display-title: "false"
     </a>
     <ul><b><a href="{{ site.baseurl }}/concepts" class="text-black">Concepts</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="concepts" and item.list!="exclude" -%}
+      {% if item.type=="concepts" and item.list!="exclude" and item.url contains 'v0.3' -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -52,7 +52,7 @@ display-title: "false"
     </ul>
     <ul><b><a href="{{ site.baseurl }}/functionality" class="text-black">Functionality</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" -%}
+      {% if item.type=="functionality" and item.list!="exclude" and item.language !="es" and item.url contains 'v0.3' -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -80,7 +80,7 @@ display-title: "false"
     </a>
     <ul><b><a href="{{ site.baseurl }}/guides" class="text-black">Guides</a></b>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude" -%}
+      {% if item.type=="Guides" and item.list!="exclude"  and item.url contains 'v0.3'-%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -88,7 +88,7 @@ display-title: "false"
     </ul>
     <ul><b><a href="{{ site.baseurl }}/reference" class="text-black">Reference</a></b>
         {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude" -%}
+        {% if item.type=="Reference" and item.list!="exclude"  and item.url contains 'v0.3'-%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           </li>
           {% endif %}

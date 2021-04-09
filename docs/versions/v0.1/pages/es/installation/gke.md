@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GKE
-permalink: es/installation/platforms/gke
+permalink: /v0.1/es/installation/platforms/gke
 language: es
 type: installation
 ---

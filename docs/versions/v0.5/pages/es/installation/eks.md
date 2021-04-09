@@ -1,7 +1,7 @@
 ---
 layout: page
 title: EKS
-permalink: es/installation/platforms/eks
+permalink: /v0.5/es/installation/platforms/eks
 language: es
 type: installation
 ---

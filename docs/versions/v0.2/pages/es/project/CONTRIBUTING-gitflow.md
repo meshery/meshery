@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contribuir Flujo
-permalink: es/project/contributing-flow
+permalink: /v0.2/es/project/contributing-flow
 language: es
 type: project
 ---

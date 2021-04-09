@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Functionality
-permalink: functionality
+permalink: /v0.2/functionality
 ---
 
 These sections provide user guides to the functionality Meshery offers.
@@ -11,7 +11,7 @@ These sections provide user guides to the functionality Meshery offers.
 
 <ul>
     {% for item in sorted_functionality %}
-    {% if item.type=="functionality" and item.list!="exclude" and item.language !="es"  -%}
+    {% if item.type=="functionality" and item.list!="exclude" and item.language !="es"  and item.url contains '/v0.2/' -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}

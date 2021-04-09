@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Adapters
-permalink: concepts/architecture/adapters
+permalink: /v0.4/concepts/architecture/adapters
 type: concepts
 redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."

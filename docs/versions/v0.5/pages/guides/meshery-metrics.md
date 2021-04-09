@@ -2,7 +2,7 @@
 layout: default
 title: Using Metrics in Meshery
 description: How to connect and use Prometheus and Grafana metrics in Meshery
-permalink: guides/meshery-metrics
+permalink: /v0.5/guides/meshery-metrics
 language: en
 type: Guides
 category: mesheryctl

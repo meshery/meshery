@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Descripción General
-permalink: es/overview
+permalink: /v0.4/es/overview
 language: es
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Lanzamientos
-permalink: es/project/releases
+permalink: /v0.4/es/project/releases
 language: es
 type: project
 ---

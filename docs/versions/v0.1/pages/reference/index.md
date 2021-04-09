@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Reference
-permalink: reference
+permalink: /v0.1/reference
 language: en
 list: exclude
 ---

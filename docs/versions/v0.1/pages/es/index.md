@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Documentación en Español 🇲🇽
-permalink: es
+permalink: /v0.1/es
 display-title: "false"
 ---
 

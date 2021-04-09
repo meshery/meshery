@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Service Meshes
-permalink: service-meshes
+permalink: /v0.1/service-meshes
 type: service-mesh
 list: exclude
 ---

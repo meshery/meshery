@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Layer5 Community
-permalink: project
+permalink: /v0.4/project
 description: Meshery Project
 redirect_from:
  - /project/

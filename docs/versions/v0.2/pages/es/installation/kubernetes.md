@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Kubernetes
-permalink: es/installation/platforms/kubernetes
+permalink: /v0.2/es/installation/platforms/kubernetes
 language: es
 type: installation
 ---

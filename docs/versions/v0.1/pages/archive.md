@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Articles
-permalink: /archive/
+permalink: /v0.1/archive/
 excluded_in_search: true
 ---
 # News Archive

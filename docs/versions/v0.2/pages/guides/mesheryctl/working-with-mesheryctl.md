@@ -2,7 +2,7 @@
 layout: default
 title: Using mesheryctl
 description: How to use mesheryctl
-permalink: guides/mesheryctl/using-mesheryctl 
+permalink: /v0.2/guides/mesheryctl/using-mesheryctl 
 language: en
 type: Guides
 category: mesheryctl

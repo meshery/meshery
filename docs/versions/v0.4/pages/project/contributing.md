@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Contributing
-permalink: project/contributing
+permalink: /v0.4/project/contributing
 ---
 
 

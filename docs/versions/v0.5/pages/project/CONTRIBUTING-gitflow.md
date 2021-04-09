@@ -1,3 +1,8 @@
+---
+layout: default
+title: Contribuiting Gitflow
+permalink: /v0.5/project/contribuiting-gitflow
+---
 # Working by Forking
 Just head over to the GitHub page and click the "Fork" button. It's just that simple. Once you've done that, you can use your favorite git client to clone your repo or just head straight to the command line:
 

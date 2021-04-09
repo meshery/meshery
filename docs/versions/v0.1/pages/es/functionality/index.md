@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Functionality
-permalink: es/functionality
+permalink: /v0.1/es/functionality
 type: functionality
 language: es
 list: exclude
@@ -15,7 +15,7 @@ Estas secciones proveen guías de usuario sobre las funcionalidades que ofrece M
 
 <ul>
     {% for item in sorted_functionality %}
-    {% if item.type=="functionality" -%}
+    {% if item.type=="functionality" and item.url contains '/v0.1/' -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}

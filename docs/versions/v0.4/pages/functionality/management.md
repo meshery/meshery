@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Lifecycle Management
-permalink: functionality/lifecycle-management
+permalink: /v0.4/functionality/lifecycle-management
 type: functionality
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Releases
-permalink: project/releases
+permalink: /v0.4/project/releases
 ---
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
 <table>

@@ -2,7 +2,7 @@
 layout: default
 title: Upgrading Meshery and all of its components
 description: How to Meshery and all of its components
-permalink: guides/upgrade
+permalink: /v0.1/guides/upgrade
 display-title: "false"
 type: Guides
 ---

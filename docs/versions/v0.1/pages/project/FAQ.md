@@ -1,7 +1,7 @@
 ---
 layout: page
 title: FAQ
-permalink: project/faq
+permalink: /v0.1/project/faq
 ---
 
 ## Question: Why was Meshery created?
