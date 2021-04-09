@@ -15,6 +15,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -30,6 +31,7 @@ import (
 	"github.com/spf13/viper"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // stopCmd represents the stop command
@@ -137,6 +139,27 @@ func stop() error {
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
 
+		if err != nil {
+			return err
+		}
+
+		//getting service endpoint
+		var opts meshkitkube.ServiceOptions
+		opts.Name = "meshery"
+		opts.Namespace = utils.MesheryNamespace
+
+		clientset := client.KubeClient
+		deploymentsClient := clientset.AppsV1().Deployments(utils.MesheryNamespace)
+
+		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+		if err != nil {
+			return err
+		}
+		_ = endpoint //temporary line
+
+		//delete deployment
+		deletePolicy := metav1.DeletePropagationForeground
+		err = deploymentsClient.Delete(context.TODO(), utils.MesheryNamespace, metav1.DeleteOptions{PropagationPolicy: &deletePolicy})
 		if err != nil {
 			return err
 		}
