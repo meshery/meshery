@@ -36,7 +36,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
-	github.com/prometheus/client_golang v1.9.0
+	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/common v0.18.0
 	github.com/qri-io/jsonschema v0.2.0
 	github.com/sirupsen/logrus v1.8.0
@@ -47,7 +47,6 @@ require (
 	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
 	gonum.org/v1/gonum v0.8.2
 	google.golang.org/grpc v1.36.0
 	google.golang.org/protobuf v1.25.0
