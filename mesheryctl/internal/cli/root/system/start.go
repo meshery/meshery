@@ -286,29 +286,11 @@ func start() error {
 		// path to the manifest files ~/.meshery/manifests
 		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
-		// first change version in meshery-deployment manifest
+		// change version in meshery-deployment manifest
 		err = utils.ChangeManifestVersion(utils.MesheryDeployment, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
 		if err != nil {
 			return err
 		}
-
-		// Commented for future references
-		// loop through the required adapters as specified in the config.yaml file
-		// for _, adapter := range RequestedAdapters {
-		// 	// for each adapter, there is a meshery-adapterName-deployment.yaml and meshery-adapterName-service.yaml
-		// 	// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
-		// 	adapterFile := filepath.Join(manifestFiles, adapter+"-deployment.yaml")
-
-		// 	if !utils.IsAdapterValid(manifests, adapter+"-deployment.yaml") {
-		// 		return fmt.Errorf("invalid adapter %s specified. Please check %s/config.yaml file", adapter, utils.MesheryFolder)
-		// 	}
-
-		// 	// now replace version in deployment.yaml files
-		// 	err = utils.ChangeManifestVersion(adapter+"-deployment.yaml", version, adapterFile)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// }
 
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")

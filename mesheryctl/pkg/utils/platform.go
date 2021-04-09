@@ -297,7 +297,6 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 
 	// unmarshal the file into structs
 	err = yaml.Unmarshal(yamlFile, &compose)
-	// err = ViperCompose.Unmarshal(&compose)
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
 	}
@@ -319,7 +318,6 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
 	}
 	err = ioutil.WriteFile(filePath, newConfig, 0644)
-	// err = ViperCompose.WriteConfig()
 	if err != nil {
 		return fmt.Errorf("unable to update config %s | %s", fileName, err)
 	}
