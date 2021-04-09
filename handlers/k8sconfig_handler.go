@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path"
 
+	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
