@@ -32,6 +32,7 @@ import (
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	rest "k8s.io/client-go/rest"
 )
 
 // stopCmd represents the stop command
@@ -160,6 +161,21 @@ func stop() error {
 		//delete deployment
 		deletePolicy := metav1.DeletePropagationForeground
 		err = deploymentsClient.Delete(context.TODO(), utils.MesheryNamespace, metav1.DeleteOptions{PropagationPolicy: &deletePolicy})
+		if err != nil {
+			return err
+		}
+
+		//delete namespace
+		type NamespaceInterface interface {
+			Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
+		}
+		type namespaces struct {
+			client rest.Interface
+		}
+
+		var ns *namespaces
+		err = ns.client.Delete().Resource("namespaces").Name(utils.MesheryNamespace).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+
 		if err != nil {
 			return err
 		}
