@@ -57,7 +57,7 @@ func (h *Handler) ImportPatternFileGithub(
 	repo := mux.Vars(r)["repo"]
 	path := mux.Vars(r)["path"]
 
-	cont, err := provider.ImportPatternFileGithub(owner, repo, path)
+	cont, err := provider.ImportPatternFileGithub(r, owner, repo, path)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(rw, "%s", err)
