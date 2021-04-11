@@ -30,7 +30,7 @@ func (h *Handler) SaveScheduleHandler(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get user token"), http.StatusInternalServerError)
+		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
 
