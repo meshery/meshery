@@ -30,11 +30,11 @@ Meshery provides its GraphQl API at `localhost:9081/api/system/graphql/query`. A
 
 Explore the Meshery GraphQL API using the `interactive Playground` provided with meshery instance at `localhost:9081/api/system/graphql/playground`.
 
-Meshery GrahphQL API can be used to peform three operations:
+Meshery GrahphQL API can be used to perform three operations:
 
-- Queries for data retrival.
+- Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.
-- Subscriptions for watching data changes.
+- Subscriptions for watching for any data changes.
 
 ### Queries
 

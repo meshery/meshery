@@ -15,7 +15,7 @@
    - name: error
      type: Error 
 - name : OperatorControllerStatus
-  description : Used to define status of controllers in Meshery Operator.
+  description : Used to define the status of controllers in Meshery Operator.
   arguments:
    - name: name
      type: String!
