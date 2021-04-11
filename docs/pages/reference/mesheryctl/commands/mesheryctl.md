@@ -29,39 +29,27 @@ Global command
   </div>
 </pre>
 
-
-<!-- Options/Flags available in this command -->
-## Options
-
-{% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.name }}  # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
 ## Examples
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
   mesheryctl version
-    </div>
+  {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
   </div>
 </pre>
 <br/>
 
-{% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+
+<!-- Options/Flags available in this command -->
+## Options
+
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.usage }}  
-    </div>
+    {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+    {{ flag.name }}  # {{ flag.description }}
+    {% endfor %}
   </div>
 </pre>
 <br/>
-{% endfor %}

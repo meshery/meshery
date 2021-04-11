@@ -26,46 +26,63 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
   mesheryctl pattern [flags] 
-    </div>
   </div>
 </pre>
+
+## Examples
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.usage }}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.list.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
+  </div>
+ </pre>
+ <br/>
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-{% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
   {{ flag.name }} # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
   {{ subcommand.name }} # {{ subcommand.description }}
-    </div>
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.name }} # {{ subcommand.description }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.list.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.name }} # {{ flag.description }}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.name }} # {{ subcommand.description }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.name }} # {{ flag.description }}
+  {% endfor %}
   </div>
 </pre>
 <br/>
-{% endfor %}
 
-## Examples
-
-{% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-    {{ subcommand.usage }}
-    </div>
+  --help, -h # Shows help for the command
   </div>
- </pre>
- <br/>
-{% endfor %}
+</pre>

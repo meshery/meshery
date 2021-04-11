@@ -26,34 +26,35 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
   mesheryctl perf [flags] 
-    </div>
   </div>
 </pre>
-
-## Options & Flags
-
-{% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.name }}  # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
 
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.usage }}
-    </div>
+    {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
+    {{ flag.usage }}
+    {% endfor %}
   </div>
 </pre>
 <br/>
-{% endfor %}
+
+## Options & Flags
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.name }}  # {{ flag.description }}
+  {% endfor %}
+  </div>
+</pre>
+<br/>
+
+## Options inherited from parent commands
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  --help, -h # Shows help for the command
+  </div>
+</pre>
