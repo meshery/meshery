@@ -1,0 +1,67 @@
+- name : NameSpace
+  description : .
+  arguments:
+   - name: namespace
+     type: String!
+- name : OperatorControllerStatus
+  description : .
+  arguments:
+   - name: name
+     type: String!
+   - name: version
+     type: String!
+   - name: status
+     type: Status!
+   - name: error
+     type: Error
+- name : OperatorStatus
+  description :
+  arguments:
+   - name: status
+     type: Status!
+   - name: version
+     type: String!
+   - name: controllers
+     type: "[OperatorControllerStatus!]!"
+   - name: error
+     type: Error 
+- name : ControlPlaneFilter
+  description :
+  arguments:
+   - name: type
+     type: MeshType!
+- name : ControlPlane
+  description :
+  arguments:
+   - name: name
+     type: String!
+   - name: members
+     type: "[ControlPlaneMember!]!"
+- name : ControlPlaneMember
+  description :
+  arguments:
+   - name: name
+     type: String!
+   - name: component
+     type: String!
+   - name: version
+     type: String!
+   - name: namespace
+     type: String!
+- name : AddonList
+  description :
+  arguments:
+   - name: name
+     type: String!
+   - name: owner
+     type: String!
+   - name: endpoint
+     type: String!
+- name : Error
+  description :
+  arguments:
+   - name: code
+     type: String!
+   - name: description
+     type: String!
+
