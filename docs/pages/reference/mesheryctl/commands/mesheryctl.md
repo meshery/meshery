@@ -33,8 +33,12 @@ Global command
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl version
+  {% for subcommand_hash in site.data.mesheryctlcommands.global.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
+  {{ subcommand.usage }}
+  {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   </div>
