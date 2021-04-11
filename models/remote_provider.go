@@ -941,9 +941,44 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-func (l *RemoteProvider) ImportPatternFileGithub(owner, repo, path string) ([]byte, error) {
-	fmt.Println(owner, repo, path)
-	return nil, nil
+// ImportPatternFileGithub downloads a file from a repository and stores it as a pattern for the user
+func (l *RemoteProvider) ImportPatternFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistRemoteMesheryPatterns) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistRemoteMesheryPatterns, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistRemoteMesheryPatterns)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s?path=%s", l.RemoteProviderURL, ep, owner, repo, path))
+	logrus.Debugf("constructed pattern import url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to import patterns: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to import patterns: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("pattern successfully imported pattern")
+		return bdr, nil
+	}
+	logrus.Errorf("error while importing pattern: %s", bdr)
+	return nil, fmt.Errorf("error while importing pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // SavePerformanceProfile saves a performance profile into the remote provider

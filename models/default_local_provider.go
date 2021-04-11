@@ -453,7 +453,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID
 }
 
 // ImportPatternFileGithub downloads a file from a repository and stores it as a pattern for the user
-func (l *DefaultLocalProvider) ImportPatternFileGithub(owner, repo, path string) ([]byte, error) {
+func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
 	githubAPIURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
 
 	resp, err := http.Get(githubAPIURL)
