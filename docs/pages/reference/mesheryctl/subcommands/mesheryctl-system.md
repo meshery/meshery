@@ -37,21 +37,27 @@ list: exclude
 <pre class="codeblock-pre">
   <div class="codeblock">
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
+  # {{ command.description }}
   {{ command.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   </div>

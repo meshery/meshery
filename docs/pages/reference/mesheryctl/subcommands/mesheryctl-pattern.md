@@ -35,18 +35,23 @@ list: exclude
 <pre class="codeblock-pre">
   <div class="codeblock">
   {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.pattern.list.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   </div>

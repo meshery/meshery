@@ -36,15 +36,19 @@ list: exclude
 <pre class="codeblock-pre">
   <div class="codeblock">
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
   {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
   </div>

@@ -35,6 +35,7 @@ list: exclude
 <pre class="codeblock-pre">
   <div class="codeblock">
     {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
+    # {{ flag.description }}
     {{ flag.usage }}
     {% endfor %}
   </div>
