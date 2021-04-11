@@ -34,7 +34,7 @@ Meshery GrahphQL API can be used to peform three operations:
 
 - Queries for data retrival.
 - Mutations for creating, updating, and deleting data.
-- Subscriptions for long-term data retrival.
+- Subscriptions for watching data changes.
 
 ### Queries
 
@@ -134,7 +134,7 @@ _No Arguments needed._
 {% for data in site.data.GraphQL.ObjectTypes %}
 #### `{{data.name}}`
 
-<!-- {{data.description}} -->
+{{data.description}}
 
 {% if data.arguments %}
 **Arguments**
@@ -144,14 +144,12 @@ _No Arguments needed._
     <tr>
         <th>Field</th>
         <th>Type</th>
-        <!-- <th>Description</th> -->
     </tr>
 </thead>
     {% for arg in data.arguments %}
     <tr>
         <td><code>{{arg.name}}</code></td>
         <td><code>{{arg.type}}</code></td>
-        <!-- <td>{{arg.desc}}</td> -->
     </tr>
     {% endfor %}
 </table>
@@ -163,7 +161,7 @@ _No Arguments needed._
 {% for data in site.data.GraphQL.EnumerationTypes %}
 #### `{{data.name}}`
 
-<!-- {{data.description}} -->
+{{data.description}}
 
 {% if data.arguments %}
 **Arguments**
@@ -173,7 +171,6 @@ _No Arguments needed._
     <tr>
         <th>Value</th>
         <th>Description</th>
-        <!-- <th>Description</th> -->
     </tr>
 </thead>
     {% for arg in data.arguments %}

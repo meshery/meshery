@@ -1,5 +1,5 @@
 - name : MeshType
-  description :
+  description : The type of the Service Mesh.
   arguments:
    - value: ISTIO
      desc: "`ISTIO` Service Mesh"
@@ -22,7 +22,7 @@
    - value: CITRIX
      desc: "`CITRIX` Service Mesh"
 - name : Status
-  description :
+  description : State of a controller.
   arguments:
    - value: ENABLED
      desc: "Indicates whether the feature enabled."
