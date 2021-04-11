@@ -144,7 +144,7 @@ func (h *Handler) SavePatternFile(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get user token"), http.StatusInternalServerError)
+		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
 
@@ -210,7 +210,7 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
+		http.Error(rw, fmt.Sprintf("failed to get the pattern: %s", err), http.StatusNotFound)
 		return
 	}
 

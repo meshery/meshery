@@ -11,20 +11,20 @@ categories:
       - 'kind/bugfix'
       - 'kind/bug'
   - title: '🧰 Maintenance'
-    labels: 
+    labels:
       - 'kind/chore'
       - 'area/ci'
       - 'area/tests'
   - title: 📖 Documentation
-    label: area/docs 
+    label: area/docs
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## What's New
   **General**
   $CHANGES
-  
+
   ## Contributors
-  
+
   Thank you to our contributors for making this release possible:
   $CONTRIBUTORS
 autolabeler:

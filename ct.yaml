@@ -1,0 +1,7 @@
+# See https://github.com/helm/chart-testing#configuration
+remote: origin
+chart-dirs:
+  - install/kubernetes/helm/meshery
+chart-repos:
+  - meshery=https://meshery.io/charts/
+helm-extra-args: --timeout 600s
