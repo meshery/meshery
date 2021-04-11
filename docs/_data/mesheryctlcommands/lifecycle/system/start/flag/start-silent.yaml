@@ -1,4 +1,4 @@
-flag: silent
+flag: --silent
 arg: start
 description: Silently create Meshery's configuration file with default settings.
 usage: |

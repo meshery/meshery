@@ -27,147 +27,62 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
   mesheryctl system [flags] 
-    </div>
   </div>
 </pre>
+
+<!-- All possible example use cases of the command -->
+## Examples
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
+  {{ command.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+  {{ flag.usage }}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.usage }}
+  {% endfor %}
+  </div>
+</pre>
+<br/>
 
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.flag }} # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.flag }} # {{ flag.description }}
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
   {{ command.name }} # {{ command.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
   {{ flag.flag }} # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
   {{ subcommand.name }} # {{ subcommand.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
   {{ flag.flag }} # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
   {{ subcommand.name }} # {{ subcommand.description }}
-    </div>
+  {% endfor %}
   </div>
 </pre>
 <br/>
-{% endfor %}
-
-<!-- All possible example use cases of the command -->
-## Examples
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ command.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ subcommand.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ subcommand.usage }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}

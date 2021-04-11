@@ -26,36 +26,9 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
   mesheryctl mesh [flags] 
-    </div>
   </div>
 </pre>
-
-<!-- Options/Flags available in this command -->
-## Options & Flags
-
-{% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ subcommand.name }}  # {{ subcommand.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
-
-{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flags %}{% assign flag = flag_hash[1] %}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    <div class="clipboardjs">
-  {{ flag.name }}  # {{ flag.description }}
-    </div>
-  </div>
-</pre>
-<br/>
-{% endfor %}
 
 <!-- All possible example use cases of the command -->
 ## Examples
@@ -63,18 +36,32 @@ list: exclude
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
     mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
-    </div>
+
+    mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test]
   </div>
  </pre>
-
 <br/>
+
+
+<!-- Options/Flags available in this command -->
+## Options & Flags
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-    mesheryctl mesh validate --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test]
-    </div>
+    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
+    {{ subcommand.name }}  # {{ subcommand.description }}
+    {% endfor %}
+    {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flags %}{% assign flag = flag_hash[1] %}
+    {{ flag.name }}  # {{ flag.description }}
+    {% endfor %}
   </div>
- </pre>
+</pre>
+<br/>
+
+## Options inherited from parent commands
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  --help, -h # Shows help for the command
+  </div>
+</pre>

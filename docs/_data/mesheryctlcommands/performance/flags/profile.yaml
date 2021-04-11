@@ -1,0 +1,4 @@
+name: --profile
+description: Performance profile to use for running tests
+usage: |
+    mesheryctl perf --profile [profile name]
