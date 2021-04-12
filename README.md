@@ -18,8 +18,8 @@
 
 See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
-| Platform                                                                                                                                                                                                            | Supported?  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
+| Platform                                                                                                                                                                                                                        | Supported?  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
 | <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/platforms/docker)                                            |     ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/platforms/docker)            |     ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/platforms/kubernetes)                                |     ✔️      |
@@ -30,14 +30,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/platforms/kubernetes#using-helm) |     ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/platforms/kind)                  |     ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/platforms/minikube)      |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                                      | In Progress |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                               | In Progress |
 | <img src="https://docs.meshery.io/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                  |     ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                    |     ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                   |     ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                      |     ✔️      |
-| &nbsp;&nbsp;&nbsp; [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                     |     ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                               |     ✔️      |
-| <img src="https://docs.meshery.io/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                                | In Progress |
+| &nbsp;&nbsp;&nbsp; [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                        |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                       |     ✔️      |
+| <img src="https://docs.meshery.io/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                         | In Progress |
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
