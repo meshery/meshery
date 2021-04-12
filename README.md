@@ -183,6 +183,19 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 
 </p>
 
+
+<img alt="WebAssebly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="18%" align="left" />
+<h3>Manage data plane intelligence with WebAssembly filters</h3>
+
+<p style="clear:both;">
+<a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
+<br>
+See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
+<br /><br /><br /><br />
+
+</p>
+
 <div>&nbsp;</div>
 
 ## Meshery Architecture
