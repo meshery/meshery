@@ -1,0 +1,66 @@
+- name : NameSpace
+  description : Used to define a k8s `namespace` resource.
+  arguments:
+   - name: namespace
+     type: String!
+- name : OperatorStatus
+  description : Return type for `getOperatorStatus` and `listenToOperatorState`.
+  arguments:
+   - name: status
+     type: Status!
+   - name: version
+     type: String!
+   - name: controllers
+     type: "[OperatorControllerStatus!]!"
+   - name: error
+     type: Error 
+- name : OperatorControllerStatus
+  description : Used to define the status of controllers in Meshery Operator.
+  arguments:
+   - name: name
+     type: String!
+   - name: version
+     type: String!
+   - name: status
+     type: Status!
+   - name: error
+     type: Error
+- name : ControlPlaneFilter
+  description : Input type for `getControlPlanes` and `listenToControlPlaneState`.
+  arguments:
+   - name: type
+     type: MeshType!
+- name : ControlPlane
+  description : Return type for `getControlPlanes` and `listenToControlPlaneState`.
+  arguments:
+   - name: name
+     type: String!
+   - name: members
+     type: "[ControlPlaneMember!]!"
+- name : ControlPlaneMember
+  description : Used to define various resource present in a Service Mesh.
+  arguments:
+   - name: name
+     type: String!
+   - name: component
+     type: String!
+   - name: version
+     type: String!
+   - name: namespace
+     type: String!
+- name : AddonList
+  description : Return type for `getAvailableAddons` and `listenToAddonState`.
+  arguments:
+   - name: name
+     type: String!
+   - name: owner
+     type: String!
+   - name: endpoint
+     type: String!
+- name : Error
+  description : Used to define an error.
+  arguments:
+   - name: code
+     type: String!
+   - name: description
+     type: String!

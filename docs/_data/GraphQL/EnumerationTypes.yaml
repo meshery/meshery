@@ -1,0 +1,34 @@
+- name : MeshType
+  description : The type of the Service Mesh.
+  arguments:
+   - value: ISTIO
+     desc: "`ISTIO` Service Mesh"
+   - value: LINKERD
+     desc: "`LINKERD` Service Mesh"
+   - value: CONSUL
+     desc: "`CONSUL` Service Mesh"
+   - value: OCTARINE
+     desc: "`OCTARINE` Service Mesh"
+   - value: TRAEFIKMESH
+     desc: "`TRAEFIKMESH` Service Mesh"
+   - value: OSM
+     desc: "`OSM` Service Mesh"
+   - value: KUMA
+     desc: "`KUMA` Service Mesh"
+   - value: NGINXSM
+     desc: "`NGINXSM` Service Mesh"
+   - value: NSM
+     desc: "`NSM` Service Mesh"
+   - value: CITRIX
+     desc: "`CITRIX` Service Mesh"
+- name : Status
+  description : State of a controller.
+  arguments:
+   - value: ENABLED
+     desc: "Indicates whether the feature enabled."
+   - value: DISABLED
+     desc: "Indicates whether the feature disabled."
+   - value: PROCESSING
+     desc: "Indicates whether the feature is still processing."
+   - value: UNKNOWN
+     desc: "Indicates whether the feature is unknown."
