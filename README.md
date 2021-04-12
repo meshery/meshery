@@ -178,23 +178,20 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 ✔︎ Runs a set of conformance tests. <br />
 ✔︎ Built into the participating service mesh’s release pipeline. <br />
 ✔︎ Provides [Learn Layer5](https://github.com/layer5io/learn-layer5) sample application used for validating test assertions. <br />
-
-<br /><br />
-
-</p>
-
-
-<img alt="WebAssebly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="18%" align="left" />
-<h3>Manage data plane intelligence with WebAssembly filters</h3>
+<br /><br /><br /><br />
 
 <p style="clear:both;">
-<a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
+<a href="docs/assets/img/readme/meshery-wasm.png"><img alt="WebAssembly filters" src="docs/assets/img/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="45%" align="left"/></a>
+
+<img alt="WebAssembly Logo" src="docs/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
+<h3> Manage data plane intelligence with WebAssembly filters </h3>
 Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
 <br>
 See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
-<br /><br /><br /><br />
-
+<br /><br />
 </p>
+
+<br /><br /><br /><br />
 
 <div>&nbsp;</div>
 
