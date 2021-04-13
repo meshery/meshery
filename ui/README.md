@@ -3,19 +3,22 @@
 This guide is specific to the Meshery UI component and involves steps/methods one need to follow while working on issues related to Meshery UI.
 
 ## How to run Meshery UI?
-Meshery UI can be used for different purposes, it can be for general use like testing out Meshery and it's functionalities or work on issues related to the Meshery UI.
+Meshery UI can be built and run in different ways. You will choose one of the two ways to build and run Meshery UI depending upon whether you are actively developing it (whether you are creating a new feature or fixing a bug in Meshery UI) or whether you simply need to use it as a user. Let's refer to these two methods as a _Development Build_ and _User Build._
 
-#### 1. General Usage:
+#### 1. User Build:
 For general usage, one can run Meshery UI using Meshery's command client `mesheryctl`, by simply running the `mesheryctl system start` command.
 If you don't have the `mesheryctl` tool installed already, you can follow the [mesheryctl installation docs](https://docs.meshery.io/installation/mesheryctl) to install `mesheryctl` using various `package management` tools supported.
 
-#### 2. For development purporse:
-For development purpose, either of the below mentioned approach could be followed
+#### 2. Development Build:
+For purposes of actively developing Meshery UI, you can use either of the following approaches.
 - Follow the procedure mentioned in Step 1 (General Usage) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using eihter of the providers mentioned on the login page. Then, to run a development server of Meshery UI, first install the dependencies using the `make setup-ui-libs` command, then build the UI package and export it using the command `make build-ui`, and finally execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
     > **NOTE:** Please run the steps in order to avoid issues, as Meshery server should be running and logged-in before accessing the development server
     > on 3000 port.
     
-- Another way, to run Meshery UI for development purpose is by using the `make run-local` command. But, before that you will have to build the Meshery UI and export it using `make buil-ui` command. This method doesn't give a livereload server and one will have to build the Meshery-UI after making changes to the code and then again run the server.
+2)  **`make run-local`** - Alternatively, build all of Meshery UI's components upfront before serving the UI. Do this in two steps:
+# Execute `make build-ui` to build and export all Meshery UI components.
+# Execute `make run-local` to serve the prebuilt components. 
+This method doesn't provide a live reload server. You will have to build Meshery UI after making changes to the code and rerun these steps again in order to see those subsequent code changes reflected in the UI.
     > **NOTE:** If you are using this method, make sure you don't have Meshery already running on 9081 port, using `mesheryctl`.
 
 ## Tech stack used in Meshery-UI
