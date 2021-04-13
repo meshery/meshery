@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl system channel
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-channel
+permalink: reference/mesheryctl/commands/mesheryctl-system-channel
 type: reference
 display-title: "false"
 language: en
@@ -43,14 +43,6 @@ list: exclude
   # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
-  {{ subcommand.usage }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
-  {% endfor %}
   </div>
 </pre>
 <br/>
@@ -65,12 +57,6 @@ list: exclude
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
   {{ flag.arg }} # {{ flag.description }}
-  {% endfor %}
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
-  {{ subcommand.name }} # {{ subcommand.description }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
-  {{ flag.flag }} # {{ flag.description }}
   {% endfor %}
   </div>
 </pre>

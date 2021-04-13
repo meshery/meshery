@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl 
-permalink: reference/mesheryctl/commands/mesheryctl
+title: mesheryctl system stop
+permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-stop
 type: reference
 display-title: "false"
 language: en
@@ -14,17 +14,15 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl 
+# mesheryctl system stop
 
 ## Description
-Global command
-<br/>
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
     <div class="clipboardjs">
-  mesheryctl [flags]
+  mesheryctl system stop[flags]
     </div>
   </div>
 </pre>
@@ -33,9 +31,11 @@ Global command
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.name }} # {{ subcommand.description }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+  {{ flag.flag }} # {{ flag.description }}
   {% endfor %}
   </div>
 </pre>
@@ -47,8 +47,8 @@ Global command
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.name }}  # {{ flag.description }}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+    {{ flag.flag }} # {{ flag.description }}
     {% endfor %}
   </div>
 </pre>

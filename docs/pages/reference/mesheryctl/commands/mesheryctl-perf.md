@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl perf
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-perf
+permalink: reference/mesheryctl/commands/mesheryctl-perf
 type: reference
 display-title: "false"
 language: en

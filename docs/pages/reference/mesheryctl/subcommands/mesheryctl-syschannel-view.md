@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl 
-permalink: reference/mesheryctl/commands/mesheryctl
+title: mesheryctl system channel view
+permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-channel-view
 type: reference
 display-title: "false"
 language: en
@@ -14,17 +14,15 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl 
+# mesheryctl system channel view
 
 ## Description
-Global command
-<br/>
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
     <div class="clipboardjs">
-  mesheryctl [flags]
+  mesheryctl system channel view [flags]
     </div>
   </div>
 </pre>
@@ -33,7 +31,11 @@ Global command
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
+  # {{ subcommand.description }}
+  {{ subcommand.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
   # {{ flag.description }}
   {{ flag.usage }}
   {% endfor %}
@@ -47,8 +49,8 @@ Global command
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.name }}  # {{ flag.description }}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
+    {{ flag.flag }} # {{ flag.description }}
     {% endfor %}
   </div>
 </pre>
