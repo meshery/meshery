@@ -1,0 +1,15 @@
+- name : changeAddonStatus
+  description : Returns `Status` object on successful mutation of AddonStatus for the given mesh.
+  arguments:
+   - name: selector
+     type: MeshType
+     desc: The Service Mesh to mutate change on.
+   - name: targetStatus
+     type: Status!
+     desc: The `status` you want to mutate.
+- name : changeOperatorStatus
+  description : Returns `Status` object on successful mutation of Operator Status.
+  arguments:
+   - name: targetStatus
+     type: Status!
+     desc: The `status` you want to mutate.
