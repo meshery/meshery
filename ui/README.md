@@ -10,8 +10,8 @@ For general usage, one can run Meshery UI using Meshery's command client `mesher
 If you don't have the `mesheryctl` tool installed already, you can follow the [mesheryctl installation docs](https://docs.meshery.io/installation/mesheryctl) to install `mesheryctl` using various `package management` tools supported.
 
 #### 2. Development Build:
-For purposes of actively developing Meshery UI, you first need to install the dependeincies using `make setup-ui-libs` and then you can use either of the following approaches to build Meshery UI:
-1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using eihter of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, then build the UI package and export it using the command `make build-ui`, and finally execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
+For purposes of actively developing Meshery UI, you first need to install the dependencies using `make setup-ui-libs` and then you can use either of the following approaches to build Meshery UI:
+1. Follow the procedure mentioned in Step 1 (User build) above, and start Meshery UI sever on the 9081 port, and login to Meshery UI using either of the providers mentioned on the login page. Then, to run a development server of Meshery UI, install the dependencies using the command mentioned above, then build the UI package and export it using the command `make build-ui`, and finally execute `make run-ui-dev` to run the livereload-nodemon server on port 3000.
     > **NOTE:** Please run the steps in order to avoid issues, as Meshery server should be running and logged-in before accessing the development server
     > on 3000 port.
     
@@ -30,7 +30,7 @@ This method doesn't provide a live reload server. You will have to build Meshery
 
 ## Component naming convention
 For reference and easy code search, the components are named accordingly following the rule 'Meshery<Part of UI it involves>', for example: components
-involved in rednering the Results page of Meshery UI are named as 'MesheryResults.js', 'MesheryResultDialog.js', 'MesherySMIResults.js'. Please follow this convention if you are creating a new component.
+involved in rendering the Results page of Meshery UI are named as 'MesheryResults.js', 'MesheryResultDialog.js', 'MesherySMIResults.js'. Please follow this convention if you are creating a new component.
 
 
 <p style="text-align: center"><em>If you'll like to go to the main Meshery Contributor guide <a href="../CONTRIBUTING.md">click here</a></em></p>
