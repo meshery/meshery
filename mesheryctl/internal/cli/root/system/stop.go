@@ -150,7 +150,6 @@ func stop() error {
 		opts.Namespace = utils.MesheryNamespace
 
 		clientset := client.KubeClient
-		fmt.Println(clientset)
 		deploymentsClient := clientset.AppsV1().Deployments(utils.MesheryNamespace)
 
 		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
@@ -158,7 +157,6 @@ func stop() error {
 			return err
 		}
 		_ = endpoint //temporary line
-		fmt.Println(*endpoint)
 
 		//delete deployment
 		deletePolicy := metav1.DeletePropagationForeground
@@ -172,6 +170,12 @@ func stop() error {
 		}
 
 		var mc *mesheryClient
+
+		//delete services
+		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("services").Name("meshery-operator-metrics-service").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+		if err != nil {
+			return err
+		}
 
 		//delete cluster roles
 		clusterRoles := []string{"meshery-metrics-reader", "meshery-operator-role", "meshery-proxy-role"}
