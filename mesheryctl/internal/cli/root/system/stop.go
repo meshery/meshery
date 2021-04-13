@@ -150,6 +150,7 @@ func stop() error {
 		opts.Namespace = utils.MesheryNamespace
 
 		clientset := client.KubeClient
+		fmt.Println(clientset)
 		deploymentsClient := clientset.AppsV1().Deployments(utils.MesheryNamespace)
 
 		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
@@ -157,6 +158,7 @@ func stop() error {
 			return err
 		}
 		_ = endpoint //temporary line
+		fmt.Println(*endpoint)
 
 		//delete deployment
 		deletePolicy := metav1.DeletePropagationForeground
@@ -165,17 +167,44 @@ func stop() error {
 			return err
 		}
 
-		//delete namespace
-		type NamespaceInterface interface {
-			Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
-		}
-		type namespaces struct {
+		type mesheryClient struct {
 			client rest.Interface
 		}
 
-		var ns *namespaces
-		err = ns.client.Delete().Resource("namespaces").Name(utils.MesheryNamespace).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+		var mc *mesheryClient
 
+		//delete cluster roles
+		clusterRoles := []string{"meshery-metrics-reader", "meshery-operator-role", "meshery-proxy-role"}
+		for _, cr := range clusterRoles {
+			err = mc.client.Delete().Resource("clusterroles").Name(cr).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+			if err != nil {
+				return err
+			}
+		}
+
+		//delete cluster role bindings
+		clusterRoleBindings := []string{"meshery-operator-rolebinding", "meshery-proxy-rolebinding"}
+		for _, crb := range clusterRoleBindings {
+			err = mc.client.Delete().Resource("clusterrolebindings").Name(crb).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+			if err != nil {
+				return err
+			}
+		}
+
+		//delete roles
+		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("roles").Name("meshery-leader-election-role").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+		if err != nil {
+			return nil
+		}
+
+		//delete role bindings
+		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("rolebindings").Name("meshery-leader-election-rolebinding").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+		if err != nil {
+			return nil
+		}
+
+		//delete namespace
+		err = mc.client.Delete().Resource("namespaces").Name(utils.MesheryNamespace).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
 		if err != nil {
 			return err
 		}
