@@ -195,7 +195,7 @@ class UserPreference extends React.Component {
       (result) => {
         if (result) {
           this.setState({
-            userPrefs: ExtensionPointSchemaValidator("user-prefs")(result?.extensions?.user_prefs)
+            userPrefs: ExtensionPointSchemaValidator("user_prefs")(result?.extensions?.user_prefs)
           })
         }
       },
@@ -289,7 +289,7 @@ class UserPreference extends React.Component {
             </div>
           }
           {tabVal == 1 && userPrefs &&
-            <ExtensionSandbox type="user_prefs" Extension={() => RemoteUserPref({startOnZoom, handleToggle})}/>
+            <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteUserPref({startOnZoom, handleToggle,url})}/>
           }
         </Paper>
       </NoSsr>
