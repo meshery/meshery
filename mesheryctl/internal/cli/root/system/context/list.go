@@ -9,7 +9,7 @@ import (
 
 var currContext string
 
-// listContextCmd represents the update command
+// listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:          "list",
 	Short:        "list contexts",
@@ -32,10 +32,10 @@ var listContextCmd = &cobra.Command{
 		if currContext == "" {
 			return errors.New("current context not set")
 		}
-		log.Printf("Current context: %s\n", currContext);
-		log.Print("Available contexts:\n");
+		log.Printf("Current context: %s\n", currContext)
+		log.Print("Available contexts:\n")
 		for context, _ := range contexts {
-			log.Printf("%s", context);
+			log.Printf("%s", context)
 		}
 		return nil
 	},
