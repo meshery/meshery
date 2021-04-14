@@ -9,9 +9,9 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import RemoveIcon from "@material-ui/icons/Remove";
-import GitHubIcon from '@material-ui/icons/GitHub';
-import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
-import MailIcon from '@material-ui/icons/Mail';
+import GitHubIcon from "@material-ui/icons/GitHub";
+import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
+import MailIcon from "@material-ui/icons/Mail";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -25,11 +25,9 @@ import {
   faTachometerAlt,
   faChevronCircleLeft,
   faPollH,
-  faExternalLinkAlt
+  faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faSlack,
-} from "@fortawesome/free-brands-svg-icons";
+import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { updatepagetitle } from "../lib/store";
 import { Tooltip } from "@material-ui/core";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
@@ -305,7 +303,7 @@ const categories = [
     link: true,
     children: [
       {
-        id: "Citrix Service Mesh",
+        id: "Citrix_Service_Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/citrix",
         title: "Citrix Service Mesh",
@@ -345,7 +343,7 @@ const categories = [
         show: true,
       },
       {
-        id: "Network Service Mesh",
+        id: "Network_Service_Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/nsm",
         title: "Network Service Mesh",
@@ -354,7 +352,7 @@ const categories = [
       },
       // Disable support for NGINX SM
       // {
-      //   id: "NGINX Service Mesh",
+      //   id: "NGINX_Service_Mesh",
       //   // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
       //   href: "/management/nginx",
       //   title: "NGINX Service Mesh",
@@ -370,7 +368,7 @@ const categories = [
         show: true,
       },
       {
-        id: "Open Service Mesh",
+        id: "Open_Service_Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/osm",
         title: "Open Service Mesh",
@@ -378,7 +376,7 @@ const categories = [
         show: true,
       },
       {
-        id: "Traefik Mesh",
+        id: "Traefik_Mesh",
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/traefik-mesh",
         title: "Traefik Mesh",
@@ -394,29 +392,29 @@ const externlinks = [
     id: "doc",
     href: "http://docs.meshery.io",
     title: "Documentation",
-    icon: <DescriptionOutlinedIcon/>,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+    icon: <DescriptionOutlinedIcon />,
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
   },
   {
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
     icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
   },
   {
     id: "mailinglist",
     href: "https://meshery.io/subscribe",
     title: "Mailing List",
     icon: <MailIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
   },
   {
     id: "issues",
     href: "https://github.com/layer5io/meshery/issues/new/choose",
     title: "Issues",
     icon: <GitHubIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7"/>
+    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
   },
 ];
 
@@ -434,7 +432,7 @@ class Navigator extends React.Component {
       // passed into it
       navigator: ExtensionPointSchemaValidator("navigator")(),
 
-      capabilities: []
+      capabilities: [],
     };
   }
 
@@ -448,14 +446,14 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (result) {
-          this.setState({ 
+          this.setState({
             navigator: ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
-            capabilities: result?.capabilities || []
-          })
+            capabilities: result?.capabilities || [],
+          });
         }
       },
-      err => console.error(err)
-    )
+      (err) => console.error(err)
+    );
   }
 
   /**
@@ -510,7 +508,7 @@ class Navigator extends React.Component {
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>
-            <img src={icon} className={classes.icon}/>
+            <img src={icon} className={classes.icon} />
           </ListItemIcon>
         </Tooltip>
         <ListItemText
@@ -522,11 +520,11 @@ class Navigator extends React.Component {
           {name}
         </ListItemText>
       </div>
-    )
+    );
 
-    if (href) return <Link href={href}>{content}</Link>
+    if (href) return <Link href={href}>{content}</Link>;
 
-    return content
+    return content;
   }
 
   updateCategoriesMenus() {
@@ -542,18 +540,18 @@ class Navigator extends React.Component {
       }
 
       if (cat.id === "Configuration") {
-        let show = false
-        cat.children?.forEach(ch => {
+        let show = false;
+        cat.children?.forEach((ch) => {
           if (ch.id === "Patterns") {
-            const idx = self.state.capabilities.findIndex(cap => cap.feature === "persist-meshery-patterns")
+            const idx = self.state.capabilities.findIndex((cap) => cap.feature === "persist-meshery-patterns");
             if (idx != -1) {
-              ch.show = true
-              show = true
+              ch.show = true;
+              show = true;
             }
           }
-        })
+        });
 
-        cat.show = show
+        cat.show = show;
       }
     });
   }
@@ -578,7 +576,7 @@ class Navigator extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const { meshAdapters, meshAdaptersts } = props;
-    const path = window.location.pathname
+    const path = window.location.pathname;
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
@@ -611,10 +609,10 @@ class Navigator extends React.Component {
     meshAdapters.forEach((adapter) => {
       let aName = adapter.name.toLowerCase();
       // Manually changing adapter name so that it matches the internal name
-      if (aName === "osm") aName = "open service mesh"
+      if (aName === "osm") aName = "open service mesh";
       if (category !== aName) {
         return;
-      } 
+      }
       children.push({
         id: adapter.adapter_location,
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
@@ -633,48 +631,9 @@ class Navigator extends React.Component {
     const { classes } = this.props;
     let image = "/static/img/meshery-logo.png";
     let logoIcon = <img src={image} className={classes.icon} />;
-    switch (aName) {
-      case "istio":
-        image = "/static/img/istio-light.svg";
-        logoIcon = <img src={image} className={classes.istioIcon} />;
-        break;
-      case "linkerd":
-        image = "/static/img/linkerd-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "consul":
-        image = "/static/img/consul-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "network service mesh":
-        image = "/static/img/nsm-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "octarine":
-        image = "/static/img/octarine-white.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "citrix service mesh":
-        image = "/static/img/citrix-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "open service mesh":
-        image = "/static/img/osm-white.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      case "kuma":
-        image = "/static/img/kuma-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
-      // Disable support for NGINX SM
-      // case "nginx service mesh":
-      //   image = "/static/img/nginx-sm-light.svg";
-      //   logoIcon = <img src={image} className={classes.icon} />;
-      //   break;
-      case "traefik mesh":
-        image = "/static/img/traefikmesh-light.svg";
-        logoIcon = <img src={image} className={classes.icon} />;
-        break;
+    if (aName) {
+      image = "/static/img/" + aName + "-light.svg";
+      logoIcon = <img src={image} className={classes.icon} />;
     }
     return logoIcon;
   }
@@ -684,20 +643,7 @@ class Navigator extends React.Component {
   };
 
   handleAdapterClick = (id, link) => {
-    let allowedId = [
-      "Consul",
-      "Istio",
-      "Linkerd",
-      "Network Service Mesh",
-      "Octarine",
-      "Citrix Service Mesh",
-      "Open Service Mesh",
-      "Kuma",
-      "NGINX Service Mesh",
-      "Traefik Mesh"
-    ];
-    let index = allowedId.indexOf(id);
-    if (index != -1 && !link) {
+    if (id != -1 && !link) {
       this.props.router.push("/management");
     }
   };
@@ -744,7 +690,7 @@ class Navigator extends React.Component {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
-            {children.map(({ id: idc, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+            {children.map(({ id: idc,title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
               if (typeof showc !== "undefined" && !showc) {
                 return "";
               }
@@ -762,7 +708,7 @@ class Navigator extends React.Component {
                     )}
                     onClick={() => this.handleAdapterClick(idc, linkc)}
                   >
-                    {this.linkContent(iconc, idc, hrefc, linkc, isDrawerCollapsed)}
+                    {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
                   {this.renderChildren(idname, childrenc, depth + 1)}
                 </React.Fragment>
@@ -778,13 +724,13 @@ class Navigator extends React.Component {
     return "";
   }
 
-  linkContent(iconc, idc, hrefc, linkc, drawerCollapsed) {
+  linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
     const { classes } = this.props;
 
     let linkContent = (
       <div className={classNames(classes.link)}>
         <Tooltip
-          title={idc}
+          title={titlec}
           placement="right"
           disableFocusListener={!drawerCollapsed}
           disableHoverListener={!drawerCollapsed}
@@ -798,7 +744,7 @@ class Navigator extends React.Component {
             primary: classes.itemPrimary,
           }}
         >
-          {idc}
+          {titlec}
         </ListItemText>
       </div>
     );
@@ -835,7 +781,11 @@ class Navigator extends React.Component {
               onClick={this.handleTitleClick}
               className={classNames(classes.firebase, classes.item, classes.itemCategory, classes.cursorPointer)}
             >
-              <Avatar className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo} src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
+              <Avatar
+                className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
+                src="/static/img/meshery-logo.png"
+                onClick={this.handleTitleClick}
+              />
               <Avatar
                 className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
                 src="/static/img/meshery-logo-text.png"
@@ -886,29 +836,21 @@ class Navigator extends React.Component {
                 </React.Fragment>
               );
             })}
-            {
-              (this.state.navigator && this.state.navigator.length)
-                ?
-                <React.Fragment>
-                  <Divider className={classes.divider} />
-                  {this.renderNavigatorExtensions(this.state.navigator, 1)}
-                </React.Fragment>
-                :
-                null
-            }
+            {this.state.navigator && this.state.navigator.length ? (
+              <React.Fragment>
+                <Divider className={classes.divider} />
+                {this.renderNavigatorExtensions(this.state.navigator, 1)}
+              </React.Fragment>
+            ) : null}
             <Divider className={classes.divider} />
-            {externlinks.map(({ id, icon, title, href, external_icon}) => {
+            {externlinks.map(({ id, icon, title, href, external_icon }) => {
               return (
                 <ListItem
                   component="a"
                   href={href}
                   target="_blank"
                   key={id}
-                  className={classNames(
-                    classes.item,
-                    classes.itemActionable,
-                    id == "doc" ? classes.documentation : ""
-                  )}
+                  className={classNames(classes.item, classes.itemActionable, id == "doc" ? classes.documentation : "")}
                 >
                   <div className={classNames(classes.link)}>
                     <Tooltip
@@ -918,10 +860,8 @@ class Navigator extends React.Component {
                       disableHoverListener={!isDrawerCollapsed}
                       disableTouchListener={!isDrawerCollapsed}
                     >
-                      <ListItemIcon className={classes.listIcon}>
-                        {icon}       
-                      </ListItemIcon>
-                    </Tooltip>               
+                      <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                    </Tooltip>
                     <ListItemText
                       className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                       classes={{
