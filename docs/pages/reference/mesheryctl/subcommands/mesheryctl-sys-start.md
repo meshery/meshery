@@ -21,9 +21,7 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  mesheryctl system start[flags]
-    </div>
+    mesheryctl system start [flags]
   </div>
 </pre>
 

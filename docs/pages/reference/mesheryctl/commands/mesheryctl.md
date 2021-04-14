@@ -23,9 +23,7 @@ Global command
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  mesheryctl [flags]
-    </div>
+    mesheryctl [flags]
   </div>
 </pre>
 

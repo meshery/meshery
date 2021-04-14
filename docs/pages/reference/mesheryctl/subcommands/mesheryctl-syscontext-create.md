@@ -27,7 +27,7 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl system context create [flags] 
+    mesheryctl system context create [flags] 
   </div>
 </pre> 
 

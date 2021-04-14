@@ -20,7 +20,7 @@ list: exclude
 
 <!-- Description of the command. Preferably a paragraph -->
 {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
-    {{ command.description }}
+{{ command.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->

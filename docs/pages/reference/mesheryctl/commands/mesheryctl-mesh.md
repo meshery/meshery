@@ -20,7 +20,7 @@ list: exclude
 ## Description
 
 {% for command_hash in site.data.mesheryctlcommands.meshes.commands %}{% assign command = command_hash[1] %}
-    {{ command.description }}
+{{ command.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
