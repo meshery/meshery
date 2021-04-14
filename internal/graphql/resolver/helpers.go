@@ -13,16 +13,16 @@ import (
 
 var (
 	controlPlaneNamespace = map[model.MeshType]string{
-		model.MeshTypeIstio:       "istio-system",
-		model.MeshTypeLinkerd:     "linkerd-system",
-		model.MeshTypeConsul:      "consul-system",
-		model.MeshTypeOctarine:    "octarine-system",
-		model.MeshTypeTraefikmesh: "traefik-system",
-		model.MeshTypeOsm:         "osm-system",
-		model.MeshTypeKuma:        "kuma-system",
-		model.MeshTypeNginxsm:     "nginx-system",
-		model.MeshTypeNsm:         "nsm-system",
-		model.MeshTypeCitrix:      "ctrix-system",
+		model.MeshTypeIstio:              "istio-system",
+		model.MeshTypeLinkerd:            "linkerd-system",
+		model.MeshTypeConsul:             "consul-system",
+		model.MeshTypeOctarine:           "octarine-system",
+		model.MeshTypeTraefikMesh:        "traefik-system",
+		model.MeshTypeOpenServiceMesh:    "osm-system",
+		model.MeshTypeKuma:               "kuma-system",
+		model.MeshTypeNginxServiceMesh:   "nginx-system",
+		model.MeshTypeNetworkServiceMesh: "nsm-system",
+		model.MeshTypeCitrixServiceMesh:  "ctrix-system",
 	}
 
 	addonPortSelector = map[string]string{
