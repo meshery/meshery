@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// switchContextCmd represents the update command
+// switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
 	Use:          "switch <context-name>",
 	Short:        "switch context",
