@@ -62,6 +62,7 @@ func init() {
 		deleteContextCmd,
 		switchContextCmd,
 		viewContextCmd,
+		listContextCmd,
 	}
 	ContextCmd.AddCommand(availableSubcommands...)
 }
