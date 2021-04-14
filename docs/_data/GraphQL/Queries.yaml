@@ -1,0 +1,16 @@
+- name : getAvailableAddons
+  description : Returns `AddonList` object.
+  arguments:
+   - name: selector
+     type: MeshType
+     desc: Returns AddonList for that Service Mesh.
+- name : getControlPlanes
+  description : Returns `ControlPlane` object (used in Meshey Dashboard).
+  arguments:
+   - name: filter
+     type: ControlPlaneFilter
+     desc: Filters Control Plane query.
+- name : getOperatorStatus
+  description : Returns `OperatorStatus` of Meshery Operator.
+- name : getAvailableNamespaces
+  description : Returns non-empty array of `NameSpace` object, containing all the `ns` in your cluster.
