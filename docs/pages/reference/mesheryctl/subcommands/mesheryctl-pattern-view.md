@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl pattern
-permalink: reference/mesheryctl/commands/mesheryctl-pattern
+title: mesheryctl pattern view
+permalink: reference/mesheryctl/commands/subcommands/mesheryctl-pattern-view
 type: reference
 display-title: "false"
 language: en
@@ -14,19 +14,19 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl pattern
+# mesheryctl pattern view
 
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl pattern [flags] 
+  mesheryctl pattern view [flags] 
   </div>
 </pre>
 
@@ -34,9 +34,13 @@ list: exclude
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
   # {{ subcommand.description }}
   {{ subcommand.usage }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
+  # {{ flag.description }}
+  {{ flag.usage }}
   {% endfor %}
   </div>
  </pre>
@@ -47,16 +51,9 @@ list: exclude
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.pattern.flags %}{% assign flag = flag_hash[1] %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
   {{ flag.name }} # {{ flag.description }}
   {% endfor %}
   </div>
 </pre>
 <br/>
-
-## Options inherited from parent commands
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  --help, -h # Shows help for the command
-  </div>
-</pre>
