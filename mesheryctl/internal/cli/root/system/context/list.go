@@ -23,24 +23,25 @@ var listContextCmd = &cobra.Command{
 		}
 		var contexts = configuration.Contexts
 		if contexts == nil {
-			return errors.New("no contexts set")
+			return errors.New("no available contexts")
 		}
 
 		if currContext == "" {
 			currContext = viper.GetString("current-context")
 		}
 		if currContext == "" {
-			return errors.New("current context not set")
+			log.Print("Current context not set\n")
+		} else {
+			log.Printf("Current context: %s\n", currContext)
 		}
-		log.Printf("Current context: %s\n", currContext)
 		log.Print("Available contexts:\n")
 		for context := range contexts {
-			log.Printf("%s", context)
+			log.Printf("- %s", context)
+		}
+
+		if currContext == "" {
+			log.Print("\nRun to set current context: mesheryctl system context switch <context name>")
 		}
 		return nil
 	},
-}
-
-func init() {
-	listContextCmd.Flags().StringVar(&currContext, "context", "", "Show config for the context")
 }
