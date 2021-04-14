@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	extendedEndpoints = make(map[string]*models.Router, 0)
+	extendedEndpoints = make(map[string]*models.Router)
 )
 
 func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
