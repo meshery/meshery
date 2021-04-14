@@ -18,6 +18,10 @@ list: exclude
 
 ## Description
 
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
+{% endfor %}
+
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">

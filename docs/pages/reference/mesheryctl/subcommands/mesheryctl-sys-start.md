@@ -18,6 +18,10 @@ list: exclude
 
 ## Description
 
+{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
+{{ command.description }}
+{% endfor %}
+
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">

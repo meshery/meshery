@@ -1,4 +1,4 @@
-flag: url, u
+flag: --url, -u
 arg: create
 description: create a new context in config.yaml file- set Meshery server URL. Defaults to "https://localhost:9081"
 usage: |
