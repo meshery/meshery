@@ -313,7 +313,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <tr>
           <td></td>
           <td>{{ flag.name }}</td>
-          <td>{{ list.description }}</td>
+          <td>{{ flag.description }}</td>
       </tr>
       {% endfor %}
     {% endfor %}
@@ -327,7 +327,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <tr>
           <td></td>
           <td>{{ flag.name }}</td>
-          <td>{{ list.description }}</td>
+          <td>{{ flag.description }}</td>
       </tr>
       {% endfor %}
     {% endfor %}
