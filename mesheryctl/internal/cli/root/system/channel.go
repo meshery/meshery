@@ -161,7 +161,7 @@ var switchCmd = &cobra.Command{
 	},
 }
 
-// channelCmd represents the config command
+// channelCmd represents the channel command
 var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
