@@ -30,9 +30,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	rest "k8s.io/client-go/rest"
 )
 
 // stopCmd represents the stop command
@@ -150,7 +149,6 @@ func stop() error {
 		opts.Namespace = utils.MesheryNamespace
 
 		clientset := client.KubeClient
-		deploymentsClient := clientset.AppsV1().Deployments(utils.MesheryNamespace)
 
 		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
 		if err != nil {
@@ -158,57 +156,14 @@ func stop() error {
 		}
 		_ = endpoint //temporary line
 
-		//delete deployment
-		deletePolicy := metav1.DeletePropagationForeground
-		err = deploymentsClient.Delete(context.TODO(), utils.MesheryNamespace, metav1.DeleteOptions{PropagationPolicy: &deletePolicy})
+		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
+
+		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
 		if err != nil {
 			return err
 		}
 
-		type mesheryClient struct {
-			client rest.Interface
-		}
-
-		var mc *mesheryClient
-
-		//delete services
-		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("services").Name("meshery-operator-metrics-service").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
-		if err != nil {
-			return err
-		}
-
-		//delete cluster roles
-		clusterRoles := []string{"meshery-metrics-reader", "meshery-operator-role", "meshery-proxy-role"}
-		for _, cr := range clusterRoles {
-			err = mc.client.Delete().Resource("clusterroles").Name(cr).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
-			if err != nil {
-				return err
-			}
-		}
-
-		//delete cluster role bindings
-		clusterRoleBindings := []string{"meshery-operator-rolebinding", "meshery-proxy-rolebinding"}
-		for _, crb := range clusterRoleBindings {
-			err = mc.client.Delete().Resource("clusterrolebindings").Name(crb).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
-			if err != nil {
-				return err
-			}
-		}
-
-		//delete roles
-		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("roles").Name("meshery-leader-election-role").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
-		if err != nil {
-			return nil
-		}
-
-		//delete role bindings
-		err = mc.client.Delete().Namespace(utils.MesheryNamespace).Resource("rolebindings").Name("meshery-leader-election-rolebinding").Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
-		if err != nil {
-			return nil
-		}
-
-		//delete namespace
-		err = mc.client.Delete().Resource("namespaces").Name(utils.MesheryNamespace).Body(&metav1.DeleteOptions{}).Do(context.TODO()).Error()
+		err = utils.ApplyManifest([]byte(operatorManifest), client, false, true)
 		if err != nil {
 			return err
 		}
