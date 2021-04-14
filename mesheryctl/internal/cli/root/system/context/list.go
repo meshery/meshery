@@ -34,7 +34,7 @@ var listContextCmd = &cobra.Command{
 		}
 		log.Printf("Current context: %s\n", currContext)
 		log.Print("Available contexts:\n")
-		for context, _ := range contexts {
+		for context := range contexts {
 			log.Printf("%s", context)
 		}
 		return nil
