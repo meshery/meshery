@@ -142,7 +142,7 @@ Interoperate multiple service meshes with service mesh adapters provision, confi
 </p>
 
 <p style="clear:both;">
-<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
+<a href="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="45%" align="left"/></a>
   <br /><br /><br />
 <h3>Service Mesh Configuration Management</h3>
 
@@ -157,7 +157,7 @@ Onboard your workload onto the service mesh with confidence. Check your service 
 In an effort to produce service mesh agnostic tooling, Meshery uses the [service mesh performance](https://smp-spec.io) as a common format to capture and measure your mesh's performance against a universal service mesh performance index. As a partner of VMware's Multi-Vendor Service Mesh Interoperation (Hamlet) and Service Mesh Interface (SMI), Meshery participates in advancing service mesh adoption through the standardization of APIs.
 
 <p style="clear:both;">
-<a href="https://user-images.githubusercontent.com/54861487/114587868-b11cf780-9ca3-11eb-907a-82975843caf8.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://user-images.githubusercontent.com/54861487/114587868-b11cf780-9ca3-11eb-907a-82975843caf8.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
+<a href="https://docs.meshery.io/assets/img/readme/service mesh performance example.gif"><img alt="Layer5 Service Mesh Performance Management" src="https://docs.meshery.io/assets/img/readme/service mesh performance example.gif" style="margin-left:10px;margin-bottom:10px;" width="45%" align="right" /></a>
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
 <h4>Standardized Service Performance Management</h4>
 
@@ -170,7 +170,7 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 
 <p style="clear:both;">
 
-Meshery provides tooling to validate any service mesh that claims to implement and <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="45%" align="left" /></a>conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
+Meshery provides tooling to validate any service mesh that claims to implement and <a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="45%" align="left" /></a>conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
 
 ✔︎ Defines compliant behavior.<br />
 ✔︎ Produces compatibility matrix. <br />
