@@ -15,7 +15,6 @@
 package system
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -138,23 +137,9 @@ func stop() error {
 
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
-
 		if err != nil {
 			return err
 		}
-
-		//getting service endpoint
-		var opts meshkitkube.ServiceOptions
-		opts.Name = "meshery"
-		opts.Namespace = utils.MesheryNamespace
-
-		clientset := client.KubeClient
-
-		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
-		if err != nil {
-			return err
-		}
-		_ = endpoint //temporary line
 
 		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 
