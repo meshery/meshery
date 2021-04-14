@@ -23,7 +23,7 @@ var listContextCmd = &cobra.Command{
 		}
 		var contexts = configuration.Contexts
 		if contexts == nil {
-			return errors.New("No contexts set")
+			return errors.New("no contexts set")
 		}
 
 		if currContext == "" {
