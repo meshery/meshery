@@ -30,10 +30,10 @@ list: exclude
 <pre class="codeblock-pre">
   <div class="codeblock">
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
-  {{ subcommand.name }} # {{ subcommand.description }}
+  {{ subcommand.usage }}
   {% endfor %}
   {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
-  {{ flag.flag }} # {{ flag.description }}
+  {{ flag.usage }}
   {% endfor %}
   </div>
 </pre>
