@@ -40,7 +40,7 @@ var listContextCmd = &cobra.Command{
 		}
 
 		if currContext == "" {
-			log.Print("\nRun to set current context: mesheryctl system context switch <context name>")
+			log.Print("\nRun `mesheryctl system context switch <context name>` to set the current context.")
 		}
 		return nil
 	},
