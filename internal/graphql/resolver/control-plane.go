@@ -23,7 +23,6 @@ func (r *Resolver) getControlPlanes(ctx context.Context, filter *model.ControlPl
 	}
 
 	for _, selector := range selectors {
-		//subquery := r.DBHandler.Select("id").Where("kind = ? AND key = ? AND value IN (?)", meshsyncmodel.KindAnnotation, "meshery/maintainer", selector).Table("key_values")
 		result := r.DBHandler.
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[model.MeshType(selector)]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).

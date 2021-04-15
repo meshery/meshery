@@ -27,7 +27,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.12
-	github.com/layer5io/meshkit v0.2.6
+	github.com/layer5io/meshkit v0.2.7
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -44,7 +44,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
-	github.com/vektah/gqlparser/v2 v2.1.0
+	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gonum.org/v1/gonum v0.8.2

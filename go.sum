@@ -584,8 +584,9 @@ github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87 h1:qMO4fkVja8WatRr
 github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87/go.mod h1:l7fQujTUkq0/ecH98qdKAgy9aCV+YvoyEF3nj2IIP50=
 github.com/layer5io/meshery-operator v0.2.12 h1:tjECncDFFesBzwkWjHsuvHm4nR9qu93Woyk4SWoZZSU=
 github.com/layer5io/meshery-operator v0.2.12/go.mod h1:KKuPcYrzeVpVN2+xiikVj2qjXhfPjGfzpmh560DxW2A=
-github.com/layer5io/meshkit v0.2.6 h1:PsWl5qyz9OHDuOv87DitG00Sphiu0Sg8vHmIZvprtn4=
 github.com/layer5io/meshkit v0.2.6/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
+github.com/layer5io/meshkit v0.2.7 h1:cuZLr6BYLVlAYgqD4itCqBZDff1EL0eteRRwKSBuHog=
+github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
 github.com/layer5io/meshsync v0.1.17 h1:Y9HBmTXGcHLjz05WL9UfxUCG2aTz/qOBpIzATKLIpPM=
 github.com/layer5io/meshsync v0.1.17/go.mod h1:FPHaIf08QLsHqocScARlDjJ30HhGMBheII5819CIJoQ=
 github.com/layer5io/nighthawk-go v0.1.6 h1:x87Rxr4ZPnhyYGAb0axQPHa+93P7qAs5xTlB3bcgPBM=
@@ -921,6 +922,8 @@ github.com/vektah/gqlparser v1.1.2 h1:ZsyLGn7/7jDNI+y4SEhI4yAxRChlv15pUHMjijT+e6
 github.com/vektah/gqlparser v1.1.2/go.mod h1:1ycwN7Ij5njmMkPPAOaRFY4rET2Enx7IkVv3vaXspKw=
 github.com/vektah/gqlparser/v2 v2.1.0 h1:uiKJ+T5HMGGQM2kRKQ8Pxw8+Zq9qhhZhz/lieYvCMns=
 github.com/vektah/gqlparser/v2 v2.1.0/go.mod h1:SyUiHgLATUR8BiYURfTirrTcGpcE+4XkV2se04Px1Ms=
+github.com/vektah/gqlparser/v2 v2.2.0 h1:bAc3slekAAJW6sZTi07aGq0OrfaCjj4jxARAaC7g2EM=
+github.com/vektah/gqlparser/v2 v2.2.0/go.mod h1:i3mQIGIrbK2PD1RrCeMTlVbkF2FJ6WkU1KJlJlC+3F4=
 github.com/vmihailenco/msgpack/v4 v4.3.11/go.mod h1:gborTTJjAo/GWTqqRjrLCn9pgNN+NXzzngzBKDPIqw4=
 github.com/vmihailenco/msgpack/v5 v5.0.0-alpha.2 h1:0jVpYJSRJzGY7m21n9V5uIkl7Zre64W8DR1dxEKX2g4=
 github.com/vmihailenco/msgpack/v5 v5.0.0-alpha.2/go.mod h1:LDfrk4wJpSFwkzNOJxrCWiSm8c7Iqw/hXNPT2fzQfE8=

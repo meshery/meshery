@@ -461,16 +461,20 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 var sources = []*ast.Source{
 	{Name: "schema/schema.graphqls", Input: `# ================= COMMONS =========================
 enum MeshType {
-	ISTIO
-	LINKERD
-	CONSUL
-	OCTARINE
-	TRAEFIKMESH
-	OSM
-	KUMA
-	NGINXSM
-	NSM
-	CITRIX
+    ALL_MESH
+	INVALID_MESH
+    APP_MESH
+    CITRIX_SERVICE_MESH
+    CONSUL
+    ISTIO
+    KUMA
+    LINKERD
+    TRAEFIK_MESH
+    OCTARINE
+    NETWORK_SERVICE_MESH
+    TANZU
+    OPEN_SERVICE_MESH
+    NGINX_SERVICE_MESH
 }
 
 enum Status {
