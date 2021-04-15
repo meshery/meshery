@@ -3,9 +3,9 @@ module github.com/layer5io/meshery
 go 1.13
 
 replace (
-	//github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
+	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
 	github.com/kudobuilder/kuttl => github.com/layer5io/kuttl v0.4.1-0.20200806180306-b7e46afd657f
-	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )
 
@@ -27,12 +27,17 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 <<<<<<< HEAD
+<<<<<<< HEAD
 	github.com/layer5io/meshery-operator v0.2.12
 	github.com/layer5io/meshkit v0.2.6
 =======
 	github.com/layer5io/meshery-operator v0.2.11
 	github.com/layer5io/meshkit v0.2.7
 >>>>>>> 9e6b12bc... fixes
+=======
+	github.com/layer5io/meshery-operator v0.2.12
+	github.com/layer5io/meshkit v0.2.7
+>>>>>>> d02981fa... ci fix
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3
