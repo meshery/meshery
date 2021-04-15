@@ -3,6 +3,7 @@ package pattern
 import (
 	"encoding/json"
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,11 @@ import (
 =======
 	"net/http"
 >>>>>>> 306424b1... list command v1
+=======
+	"io/ioutil"
+	"net/http"
+	"time"
+>>>>>>> 2c41dd5c... wip list command
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -22,6 +28,7 @@ import (
 
 var (
 <<<<<<< HEAD
+<<<<<<< HEAD
 	token   string
 	verbose bool
 )
@@ -32,18 +39,28 @@ var listCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(0),
 =======
 	token string
+=======
+	token   string
+	allflag bool
+>>>>>>> 2c41dd5c... wip list command
 )
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list pattern files",
+<<<<<<< HEAD
 	Long:  "List available pattern files",
 	Args:  cobra.MinimumNArgs(1),
 >>>>>>> 306424b1... list command v1
+=======
+	Long:  "Display list of all available pattern files",
+	Args:  cobra.MinimumNArgs(0),
+>>>>>>> 2c41dd5c... wip list command
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 		var response models.PatternsAPIResponse
 
@@ -68,16 +85,20 @@ var listCmd = &cobra.Command{
 		err = json.Unmarshal(body, &response)
 =======
 		var Patterns models.PatternsApiResponse
+=======
+		var response models.PatternsApiResponse
+>>>>>>> 2c41dd5c... wip list command
 
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/patternfile/", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/patternfile", nil)
 		if err != nil {
 			return err
 		}
-		err = utils.AddAuthDetails(req, "./auth.json")
+		err = utils.AddAuthDetails(req, token)
 		if err != nil {
 			return err
 		}
+<<<<<<< HEAD
 		client.Do(req)
 		err = json.NewDecoder(req.Body).Decode(&Patterns)
 >>>>>>> 306424b1... list command v1
@@ -147,3 +168,40 @@ func init() {
 	},
 }
 >>>>>>> 306424b1... list command v1
+=======
+		res, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		json.Unmarshal(body, &response)
+		if allflag == true {
+			for _, v := range response.Patterns {
+				headers := []string{"PATTERN ID", "NAME", "USER ID", "CREATED", "UPDATED"}
+				data := [][]string{
+					{v.ID.String(), v.Name, v.ID.String(), v.CreatedAt.Format(time.RFC3339Nano), v.UpdatedAt.Format(time.RFC3339Nano)},
+				}
+				utils.PrintToTable(headers, data)
+			}
+			return nil
+		}
+		for _, v := range response.Patterns {
+			headers := []string{"NAME", "USER ID", "CREATED", "UPDATED"}
+			data := [][]string{
+				{v.Name, v.ID.String(), v.CreatedAt.Format(time.RFC3339Nano), v.UpdatedAt.Format(time.RFC3339Nano)},
+			}
+			utils.PrintToTable(headers, data)
+		}
+		return nil
+	},
+}
+
+func init() {
+	listCmd.Flags().BoolVarP(&allflag, "all", "a", false, "Display full length user and pattern file identifiers")
+	listCmd.MarkFlagRequired("token")
+}
+>>>>>>> 2c41dd5c... wip list command
