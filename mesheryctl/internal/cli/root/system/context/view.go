@@ -11,7 +11,7 @@ import (
 var context string
 var allContext bool
 
-// viewContextCmd represents the update command
+// viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
 	Use:          "view",
 	Short:        "view current context",
