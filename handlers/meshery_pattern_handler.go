@@ -45,6 +45,28 @@ func (h *Handler) ImportPatternFile(
 	fmt.Fprintf(rw, "%s", pfByt)
 }
 
+// ImportPatternFileGithub will import patternfile file from github
+func (h *Handler) ImportPatternFileGithub(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	owner := mux.Vars(r)["owner"]
+	repo := mux.Vars(r)["repo"]
+	path := mux.Vars(r)["path"]
+
+	cont, err := provider.ImportPatternFileGithub(r, owner, repo, path)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(rw, "%s", err)
+		return
+	}
+
+	fmt.Fprintf(rw, "%s", cont)
+}
+
 // ExportPatternFile converts a patternfile into
 // cytoscapejs notation
 func (h *Handler) ExportPatternFile(
