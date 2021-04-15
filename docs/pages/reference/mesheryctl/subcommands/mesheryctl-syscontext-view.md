@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl system context
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-context-view
+title: view
+permalink: reference/mesheryctl/system/context/view
 type: reference
 display-title: "false"
 language: en
@@ -14,7 +14,7 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl system context create
+# mesheryctl system context view
 
 <!-- Description of the command. Preferably a paragraph -->
 ## Description 

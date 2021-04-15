@@ -1,7 +1,7 @@
 ---
 layout: default
 title: mesheryctl 
-permalink: reference/mesheryctl/commands/mesheryctl
+permalink: reference/mesheryctl/mesheryctl
 type: reference
 display-title: "false"
 language: en

@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl system start
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-start
+title: start
+permalink: reference/mesheryctl/system/start
 type: reference
 display-title: "false"
 language: en

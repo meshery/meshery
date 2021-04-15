@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl system context create
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-context-create
+title: create
+permalink: reference/mesheryctl/system/context/create
 type: reference
 display-title: "false"
 language: en
