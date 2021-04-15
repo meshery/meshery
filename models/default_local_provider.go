@@ -494,6 +494,30 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 	})
 }
 
+// ImportPatternFileHTTP is a generic method for importing pattern files from
+// the given http endpoint
+func (l *DefaultLocalProvider) ImportPatternFileHTTP(req *http.Request, url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	var result string
+
+	// Decode resp into the json object
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return l.MesheryPatternPersister.SaveMesheryPattern(&MesheryPattern{
+		Name:        "",
+		PatternFile: result,
+	})
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
