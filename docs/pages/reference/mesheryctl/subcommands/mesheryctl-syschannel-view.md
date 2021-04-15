@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl system channel view
-permalink: reference/mesheryctl/commands/subcommands/mesheryctl-system-channel-view
+title: view
+permalink: reference/mesheryctl/system/channel/view
 type: reference
 display-title: "false"
 language: en

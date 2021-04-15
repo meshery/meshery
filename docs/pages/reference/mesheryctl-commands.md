@@ -30,14 +30,14 @@ Meshery CLI commands are categorized by function, which are:
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.global.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl">{{ command.name }}</a></td>
+      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesheryctl">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
     {% for subcommand_hash in site.data.mesheryctlcommands.global.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-         <td><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-version">{{ subcommand.name }}</a></td>
+         <td><a href="{{ site.baseurl }}/reference/mesheryctl/version">{{ subcommand.name }}</a></td>
          <td></td>
          <td>{{ subcommand.description }}</td>
       </tr>
@@ -67,7 +67,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=15><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-system">{{ command.name }}</a></td>
+      <td rowspan=15><a href="{{ site.baseurl }}/reference/system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -81,7 +81,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-system-start">{{ command.name }}</a></td>
+      <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/start">{{ command.name }}</a></td>
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
@@ -94,7 +94,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
     <tr>
-      <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-system-stop">{{ subcommand.name }}</a></td>
+      <td rowspan=2><a href="{{ site.baseurl }}/reference/system/stop">{{ subcommand.name }}</a></td>
       <td></td>
       <td>{{ subcommand.description }}</td>
     </tr>
@@ -115,7 +115,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
-          <td rowspan=5><a href="./mesheryctl/commands/mesheryctl-system-channel">{{ command.name }}</a></td>
+          <td rowspan=5><a href="./mesheryctl/system/channel">{{ command.name }}</a></td>
           <td></td>
           <td></td>
           <td>{{ command.description }}</td>
@@ -137,7 +137,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-system-channel-view">{{ subcommand.name }}</a></td>
+        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/view">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
@@ -150,14 +150,14 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-context.commands %}{% assign command = command_hash[1] %}
       <tr>
-        <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-system-context">{{ command.name }}</a></td>
+        <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/system/context">{{ command.name }}</a></td>
         <td></td>
         <td></td>
         <td>{{ command.description }}</td>
       </tr>
       {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.create.command %}{% assign subcommand = subcommand_hash[1] %}
         <tr>
-          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-system-context-create">{{ subcommand.name }}</a></td>
+          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/create">{{ subcommand.name }}</a></td>
           <td></td>
           <td>{{ subcommand.description }}</td>
         </tr>
@@ -184,7 +184,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       {% endfor %}
       {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.command %}{% assign subcommand = subcommand_hash[1] %}
         <tr>
-          <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-system-context-view">{{ subcommand.name }}</a></td>
+          <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/view">{{ subcommand.name }}</a></td>
           <td></td>
           <td>{{ subcommand.description }}</td>
         </tr>
@@ -210,7 +210,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=11><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-perf">{{ command.name }}</a></td>
+      <td rowspan=11><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command.name }}</a></td>
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
@@ -237,7 +237,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.meshes.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-mesh">{{ command.name }}</a></td>
+      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/mesh">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -284,7 +284,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/commands/mesheryctl-pattern">{{ command.name }}</a></td>
+      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -305,7 +305,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-pattern-list">{{ subcommand.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
@@ -319,7 +319,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.pattern.view.commands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/commands/subcommands/mesheryctl-pattern-view">{{ subcommand.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/view">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
