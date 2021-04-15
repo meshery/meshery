@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -272,6 +274,53 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 	}
 	log.Debug("applied manifests to the Kubernetes cluster.")
+
+	return nil
+}
+
+func ChangeManifestVersion(fileName string, version string, filePath string) error {
+	// setting up config type to yaml files
+	ViperCompose.SetConfigType("yaml")
+
+	// setting up config file
+	ViperCompose.SetConfigFile(filePath)
+	err := ViperCompose.ReadInConfig()
+	if err != nil {
+		return fmt.Errorf("unable to read config %s | %s", fileName, err)
+	}
+
+	compose := K8sCompose{}
+	yamlFile, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	// unmarshal the file into structs
+	err = yaml.Unmarshal(yamlFile, &compose)
+	if err != nil {
+		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
+	}
+	image := compose.Spec.Template.Spec.Containers[0].Image
+	spliter := strings.Split(image, ":")
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], "stable", version)
+
+	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
+
+	ViperCompose.Set("apiVersion", compose.APIVersion)
+	ViperCompose.Set("kind", compose.Kind)
+	ViperCompose.Set("metadata", compose.Metadata)
+	ViperCompose.Set("spec", compose.Spec)
+	ViperCompose.Set("status", compose.Status)
+
+	// Marshal the structs
+	newConfig, err := yaml.Marshal(compose)
+	if err != nil {
+		return fmt.Errorf("unable to marshal config %s | %s", fileName, err)
+	}
+	err = ioutil.WriteFile(filePath, newConfig, 0644)
+	if err != nil {
+		return fmt.Errorf("unable to update config %s | %s", fileName, err)
+	}
 
 	return nil
 }
