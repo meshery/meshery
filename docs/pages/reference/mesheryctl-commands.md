@@ -37,7 +37,7 @@ Meshery CLI commands are categorized by function, which are:
     </tr>
     {% for subcommand_hash in site.data.mesheryctlcommands.global.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-         <td><a href="{{ site.baseurl }}/reference/mesheryctl/version">{{ subcommand.name }}</a></td>
+         <td><a href="{{ site.baseurl }}/reference/mesheryctl/mesheryctl/version">{{ subcommand.name }}</a></td>
          <td></td>
          <td>{{ subcommand.description }}</td>
       </tr>
