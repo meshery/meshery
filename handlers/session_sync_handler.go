@@ -23,8 +23,8 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	meshAdapters := []*models.Adapter{}
 
 	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
-	for _, adapterURL := range adapters {
-		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapterURL, provider)
+	for _, adapter := range adapters {
+		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
 	}
 	logrus.Debugf("final list of active adapters: %+v", meshAdapters)
 	prefObj.MeshAdapters = meshAdapters
