@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.13
+go 1.15
 
 replace (
 	//golang.org/x/sys => golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
