@@ -75,7 +75,7 @@ func parseGitHubURL(url string) (string, string, string, error) {
 	ogPath := strings.Replace(url, "https://", "", 1)
 	idx := strings.Index(ogPath, "/")
 	if idx == -1 {
-		return "", "", "", errors.New("Invalid GitHub URL")
+		return "", "", "", errors.New("invalid GitHub URL")
 	}
 	host := ogPath[:idx]
 	paths := strings.Split(ogPath, "/")
@@ -87,6 +87,6 @@ func parseGitHubURL(url string) (string, string, string, error) {
 	} else if host == "raw.githubusercontent.com" {
 		return paths[1], paths[2], strings.Join(paths[4:], "/"), nil
 	} else {
-		return "", "", "", errors.New("Invalid GitHub URL")
+		return "", "", "", errors.New("invalid GitHub URL")
 	}
 }
