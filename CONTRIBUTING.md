@@ -94,7 +94,7 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
 1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
-1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users. 
 
 #### Build and run Meshery server
 
