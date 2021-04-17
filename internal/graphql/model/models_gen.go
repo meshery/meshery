@@ -56,34 +56,42 @@ type OperatorStatus struct {
 type MeshType string
 
 const (
-	MeshTypeIstio       MeshType = "ISTIO"
-	MeshTypeLinkerd     MeshType = "LINKERD"
-	MeshTypeConsul      MeshType = "CONSUL"
-	MeshTypeOctarine    MeshType = "OCTARINE"
-	MeshTypeTraefikmesh MeshType = "TRAEFIKMESH"
-	MeshTypeOsm         MeshType = "OSM"
-	MeshTypeKuma        MeshType = "KUMA"
-	MeshTypeNginxsm     MeshType = "NGINXSM"
-	MeshTypeNsm         MeshType = "NSM"
-	MeshTypeCitrix      MeshType = "CITRIX"
+	MeshTypeAllMesh            MeshType = "ALL_MESH"
+	MeshTypeInvalidMesh        MeshType = "INVALID_MESH"
+	MeshTypeAppMesh            MeshType = "APP_MESH"
+	MeshTypeCitrixServiceMesh  MeshType = "CITRIX_SERVICE_MESH"
+	MeshTypeConsul             MeshType = "CONSUL"
+	MeshTypeIstio              MeshType = "ISTIO"
+	MeshTypeKuma               MeshType = "KUMA"
+	MeshTypeLinkerd            MeshType = "LINKERD"
+	MeshTypeTraefikMesh        MeshType = "TRAEFIK_MESH"
+	MeshTypeOctarine           MeshType = "OCTARINE"
+	MeshTypeNetworkServiceMesh MeshType = "NETWORK_SERVICE_MESH"
+	MeshTypeTanzu              MeshType = "TANZU"
+	MeshTypeOpenServiceMesh    MeshType = "OPEN_SERVICE_MESH"
+	MeshTypeNginxServiceMesh   MeshType = "NGINX_SERVICE_MESH"
 )
 
 var AllMeshType = []MeshType{
-	MeshTypeIstio,
-	MeshTypeLinkerd,
+	MeshTypeAllMesh,
+	MeshTypeInvalidMesh,
+	MeshTypeAppMesh,
+	MeshTypeCitrixServiceMesh,
 	MeshTypeConsul,
-	MeshTypeOctarine,
-	MeshTypeTraefikmesh,
-	MeshTypeOsm,
+	MeshTypeIstio,
 	MeshTypeKuma,
-	MeshTypeNginxsm,
-	MeshTypeNsm,
-	MeshTypeCitrix,
+	MeshTypeLinkerd,
+	MeshTypeTraefikMesh,
+	MeshTypeOctarine,
+	MeshTypeNetworkServiceMesh,
+	MeshTypeTanzu,
+	MeshTypeOpenServiceMesh,
+	MeshTypeNginxServiceMesh,
 }
 
 func (e MeshType) IsValid() bool {
 	switch e {
-	case MeshTypeIstio, MeshTypeLinkerd, MeshTypeConsul, MeshTypeOctarine, MeshTypeTraefikmesh, MeshTypeOsm, MeshTypeKuma, MeshTypeNginxsm, MeshTypeNsm, MeshTypeCitrix:
+	case MeshTypeAllMesh, MeshTypeInvalidMesh, MeshTypeAppMesh, MeshTypeCitrixServiceMesh, MeshTypeConsul, MeshTypeIstio, MeshTypeKuma, MeshTypeLinkerd, MeshTypeTraefikMesh, MeshTypeOctarine, MeshTypeNetworkServiceMesh, MeshTypeTanzu, MeshTypeOpenServiceMesh, MeshTypeNginxServiceMesh:
 		return true
 	}
 	return false
