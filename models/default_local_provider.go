@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -471,12 +472,6 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 		return nil, err
 	}
 
-	// Get the name of the file
-	name, ok := respJSON["name"].(string)
-	if !ok {
-		return nil, fmt.Errorf("failed to get filename from github")
-	}
-
 	// Get the base64 encoded
 	content, ok := respJSON["content"].(string)
 	if !ok {
@@ -488,16 +483,34 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 		return nil, err
 	}
 
-	return l.MesheryPatternPersister.SaveMesheryPattern(&MesheryPattern{
+	// Get the name of the file
+	name, err := GetPatternName(string(decodedContent))
+	if err != nil {
+		return nil, err
+	}
+
+	pf := &MesheryPattern{
 		Name:        name,
 		PatternFile: string(decodedContent),
-	})
+		Location: map[string]interface{}{
+			"type": "github",
+			"host": "github.com",
+			"path": fmt.Sprintf("%s/%s/%s", owner, repo, path),
+		},
+	}
+
+	save := strings.ToLower(req.URL.Query().Get("save"))
+	if save != "f" && save != "false" {
+		return l.MesheryPatternPersister.SaveMesheryPattern(pf)
+	}
+
+	return marshalMesheryPattern(pf), nil
 }
 
 // ImportPatternFileHTTP is a generic method for importing pattern files from
 // the given http endpoint
-func (l *DefaultLocalProvider) ImportPatternFileHTTP(req *http.Request, url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func (l *DefaultLocalProvider) ImportPatternFileHTTP(req *http.Request, fileURL string) ([]byte, error) {
+	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -505,17 +518,45 @@ func (l *DefaultLocalProvider) ImportPatternFileHTTP(req *http.Request, url stri
 		return nil, fmt.Errorf("file not found")
 	}
 
-	var result string
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			logrus.Error("failed to close response body")
+		}
+	}()
 
-	// Decode resp into the json object
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	result := string(body)
+
+	name, err := GetPatternName(result)
+	if err != nil {
 		return nil, err
 	}
 
-	return l.MesheryPatternPersister.SaveMesheryPattern(&MesheryPattern{
-		Name:        "",
+	parsedURL, err := url.Parse(fileURL)
+	if err != nil {
+		logrus.Errorf("error parsing fileURL: %v", err)
+		return nil, err
+	}
+
+	pf := &MesheryPattern{
+		Name:        name,
 		PatternFile: result,
-	})
+		Location: map[string]interface{}{
+			"type": "http",
+			"host": parsedURL.Host,
+			"path": parsedURL.EscapedPath(),
+		},
+	}
+
+	save := strings.ToLower(req.URL.Query().Get("save"))
+	if save != "f" && save != "false" {
+		return l.MesheryPatternPersister.SaveMesheryPattern(pf)
+	}
+
+	return marshalMesheryPattern(pf), nil
 }
 
 // SavePerformanceProfile saves given performance profile with the provider

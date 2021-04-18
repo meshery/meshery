@@ -953,7 +953,50 @@ func (l *RemoteProvider) ImportPatternFileGithub(req *http.Request, owner, repo,
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistRemoteMesheryPatterns)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s?path=%s", l.RemoteProviderURL, ep, owner, repo, path))
+	save := req.URL.Query().Get("save")
+	remoteProviderURL, _ := url.Parse(
+		fmt.Sprintf("%s%s/%s/%s?path=%s&save=%s", l.RemoteProviderURL, ep, owner, repo, path, save),
+	)
+	logrus.Debugf("constructed pattern import url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to import patterns: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to import patterns: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("pattern successfully imported pattern")
+		return bdr, nil
+	}
+	logrus.Errorf("error while importing pattern: %s", bdr)
+	return nil, fmt.Errorf("error while importing pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) ImportPatternFileHTTP(req *http.Request, fileURL string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(ImportRemoteMesheryPatterns) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", ImportRemoteMesheryPatterns, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(ImportRemoteMesheryPatterns)
+
+	save := req.URL.Query().Get("save")
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/http?url=%s&save=%s", l.RemoteProviderURL, ep, fileURL, save))
 	logrus.Debugf("constructed pattern import url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
