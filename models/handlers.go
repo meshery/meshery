@@ -84,6 +84,7 @@ type HandlerInterface interface {
 	ExportPatternFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ImportPatternFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ImportPatternFileGithub(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ImportPatternFileHTTP(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
