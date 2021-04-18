@@ -166,6 +166,14 @@ func (h *Handler) SavePatternFile(
 		return
 	}
 
+	if len(parsedBody.Location) == 0 {
+		parsedBody.Location = map[string]interface{}{
+			"type": "local",
+			"host": "",
+			"path": "",
+		}
+	}
+
 	resp, err := provider.SaveMesheryPattern(token, parsedBody)
 	if err != nil {
 		http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusInternalServerError)
