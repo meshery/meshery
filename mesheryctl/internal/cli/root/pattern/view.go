@@ -35,7 +35,7 @@ var viewCmd = &cobra.Command{
 		// if pattern name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when pattern-name(pattern-id) is specified")
+				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
 			}
 			pattern = args[0]
 			// check if the pattern argument is a valid uuid v4 string
@@ -49,7 +49,7 @@ var viewCmd = &cobra.Command{
 			if viewAllFlag {
 				url += "/api/experimental/patternfile?page_size=10000"
 			} else {
-				return errors.New("pattern-name(pattern-id) not specified, use -a to view all patterns")
+				return errors.New("[pattern-name|pattern-id] not specified, use -a to view all patterns")
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
@@ -116,7 +116,7 @@ var viewCmd = &cobra.Command{
 				return errors.Wrap(err, "failed to convert json to yaml")
 			}
 		} else if outFormatFlag != "json" {
-			return errors.New("output-format choice invalid, use json or yaml")
+			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 		log.Info(string(body))
 		return nil
@@ -125,5 +125,5 @@ var viewCmd = &cobra.Command{
 
 func init() {
 	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all patterns available")
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in (json|yaml)")
+	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }
