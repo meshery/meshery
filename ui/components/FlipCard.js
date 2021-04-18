@@ -5,7 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 const styles = (theme) => ({
   card: {
     backgroundColor: "transparent",
-    perspective: theme.spacing(120),
+    perspective: theme.spacing(125),
   },
   innerCard: {
     padding: theme.spacing(2),
@@ -20,7 +20,7 @@ const styles = (theme) => ({
   },
   frontContent: {},
   backContent: {
-    transform: "rotateY(180deg)",
+    transform: "scale(-1, 1)",
   },
 });
 
@@ -43,12 +43,12 @@ function FlipCard({ classes, duration = 500, onClick, children }) {
     // This function makes sure that the inner content of the card disappears roughly
     // after 30 deg rotation has already occured. It will ensure that the user doesn't gets
     // a "blank" card while the card is rotating
-    // 
+    //
     // This guarantee can be offered because of two main reasons:
     // 1. In sufficiently modern browsers JS and CSS are handled in different threads
     // hence ones execution doesn't blocks another.
     // 2. setTimeout will put its callback at the end of current context's end hence ensuring
-    // this callback doesn't gets blocked by another JS process. 
+    // this callback doesn't gets blocked by another JS process.
     if (timeout.current) clearTimeout(timeout.current);
 
     timeout.current = setTimeout(() => {
@@ -66,7 +66,11 @@ function FlipCard({ classes, duration = 500, onClick, children }) {
     >
       <div
         className={classes.innerCard}
-        style={{ transform: flipped ? "rotateY(180deg)" : undefined, transition: `transform ${duration}ms` }}
+        style={{
+          transform: flipped ? "scale(-1,1)" : undefined,
+          transition: `transform ${duration}ms`,
+          transformOrigin: "50% 50% 10%"
+        }}
       >
         {!activeBack ? (
           <div className={`${classes.content} ${classes.frontContent}`}>
