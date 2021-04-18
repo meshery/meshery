@@ -26,19 +26,18 @@ type MesheryPattern struct {
 }
 
 // GetPatternName takes in a stringified patternfile and extracts the name from it
-func GetPatternName(stringifiedFile string) (name string, err error) {
+func GetPatternName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}
 
-	if err = yaml.Unmarshal([]byte(stringifiedFile), &out); err != nil {
-		return
+	if err := yaml.Unmarshal([]byte(stringifiedFile), &out); err != nil {
+		return "", err
 	}
 
 	// Get Name from the file
 	name, ok := out["name"].(string)
 	if !ok {
-		err = fmt.Errorf("invalid patternfile - name field is either not present or is not valid")
-		return
+		return "", fmt.Errorf("invalid patternfile - name field is either not present or is not valid")
 	}
 
-	return
+	return name, nil
 }
