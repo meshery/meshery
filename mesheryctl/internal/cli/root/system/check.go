@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var preCheckCmd = &cobra.Command{
-	Use:   "pre",
+var PreCheckCmd = &cobra.Command{
+	Use:   "preflight",
 	Short: "run basic checks to verify environment for deployment",
 	Long:  `To verify environment readiness for a Meshery deloyment `,
 	Args:  cobra.NoArgs,
