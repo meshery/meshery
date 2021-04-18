@@ -67,7 +67,7 @@ func (h *Handler) ImportPatternFileGithub(
 	fmt.Fprintf(rw, "%s", cont)
 }
 
-// ImportPatternFileGithub will import patternfile file from github
+// ImportPatternFileHTTP will import patternfile file from HTTP endpoint
 func (h *Handler) ImportPatternFileHTTP(
 	rw http.ResponseWriter,
 	r *http.Request,
