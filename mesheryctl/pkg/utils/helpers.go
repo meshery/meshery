@@ -792,3 +792,31 @@ func AskForInput(prompt string, allowed []string) string {
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
 }
+
+func ParseGitHubURL(url string) (string, string, string, error) {
+	ogPath := strings.Replace(url, "https://", "", 1)
+	idx := strings.Index(ogPath, "/")
+	if idx == -1 {
+		return "", "", "", errors.New(fmt.Sprintf("failed to parse GitHub URL %s", url))
+	}
+	host := ogPath[:idx]
+	paths := strings.Split(ogPath, "/")
+	if (host == "github.com" && len(paths) < 6) || (host == "raw.githubcontent.com" && len(paths) < 5) {
+		return "", "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", url))
+	}
+	if host == "github.com" {
+		return paths[1], paths[2], strings.Join(paths[5:], "/"), nil
+	} else if host == "raw.githubusercontent.com" {
+		return paths[1], paths[2], strings.Join(paths[4:], "/"), nil
+	} else {
+		return "", "", "", errors.New("invalid GitHub URL")
+	}
+}
+
+func ConstructURL(paths ...string) (string, error) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return "", errors.Wrap(err, "error processing config")
+	}
+	return mctlCfg.GetBaseMesheryURL() + strings.Join(paths, "/"), nil
+}
