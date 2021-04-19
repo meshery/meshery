@@ -31,10 +31,11 @@ var PatternCmd = &cobra.Command{
 
 func init() {
 	PatternCmd.PersistentFlags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+	PatternCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "Path to token file")
 	_ = PatternCmd.MarkFlagRequired("file")
 
 	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
 }
