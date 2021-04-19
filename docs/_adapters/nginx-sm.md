@@ -12,7 +12,7 @@ permalink: service-meshes/adapters/nginx-sm
 ---
 {% include adapter-status.html %}
 
-The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress](https://github.com/layer5io/meshery-nginx-sm).
+The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress]({{page.github_link}}).
 ## Lifecycle management
 
 The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A number of sample applications can be installed using the {{page.name}}.
