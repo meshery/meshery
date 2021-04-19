@@ -21,7 +21,7 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view",
+	Use:   "view <pattern name>",
 	Short: "Display pattern(s)",
 	Long:  `Displays the contents of a specific pattern based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
