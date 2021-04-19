@@ -40,7 +40,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		res, err := client.Do(req)
-		fmt.Println(res.StatusCode)
+
 		if err != nil {
 			return err
 		}
