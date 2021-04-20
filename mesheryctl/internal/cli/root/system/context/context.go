@@ -32,7 +32,7 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// ContextCmd represents the update command
+// ContextCmd represents the context command
 var ContextCmd = &cobra.Command{
 	Use:   "context [command]",
 	Short: "Configure your Meshery deployment(s)",
@@ -62,6 +62,7 @@ func init() {
 		deleteContextCmd,
 		switchContextCmd,
 		viewContextCmd,
+		listContextCmd,
 	}
 	ContextCmd.AddCommand(availableSubcommands...)
 }

@@ -133,49 +133,8 @@ class MesheryPlayComponent extends React.Component {
     let image = "/static/img/meshery-logo.png";
     let imageIcon = <img src={image} className={classes.expTitleIcon} />;
     if (adapter && adapter.name) {
-      switch (adapter.name.toLowerCase()) {
-        case "istio":
-          image = "/static/img/istio.svg";
-          imageIcon = <img src={image} className={classes.expIstioTitleIcon} />;
-          break;
-        case "linkerd":
-          image = "/static/img/linkerd.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "consul":
-          image = "/static/img/consul.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "network service mesh":
-          image = "/static/img/nsm.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "octarine":
-          image = "/static/img/octarine.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "citrix service mesh":
-          image = "/static/img/citrix.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "osm":
-          image = "/static/img/osm.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        case "kuma":
-          image = "/static/img/kuma.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break;
-        // Disable support for NGINX SM
-        // case "nginx service mesh":
-        //   image = "/static/img/nginx-sm.svg";
-        //   imageIcon = <img src={image} className={classes.expTitleIcon} />;
-        //   break;
-        case "traefik mesh":
-          image = "/static/img/traefikmesh.svg";
-          imageIcon = <img src={image} className={classes.expTitleIcon} />;
-          break; 
-      }
+      image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+      imageIcon = <img src={image} className={classes.expTitleIcon} />;
     }
     return imageIcon;
   }

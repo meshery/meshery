@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// deleteContextCmd represents the update command
+// deleteContextCmd represents the delete command
 var deleteContextCmd = &cobra.Command{
 	Use:   "delete <context-name>",
 	Short: "delete context",
