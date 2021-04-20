@@ -5,7 +5,7 @@ abstract: "Meshery's library Errors"
 permalink: reference/meshkit-lib-errors
 type: Reference
 ---
-## Meshkit Library 
+## Meshkit Library Introduction
 
 Paragraph about Meshkit Library Errors.
 
@@ -21,11 +21,19 @@ Paragraph about Meshkit Library Errors.
   </tr>
 </thead>
 <tbody>
-  {% for component in site.data.meshkit.errorutil_errors_export %}    
-    <tr>
-      <td >{{ component[1].component_name }}</td>
-      <td>{{ component[1].component_type }}  </td>
-    </tr>
+  {% for files in site.data.errorref %}    
+    {% for eachFile in files %}
+      {% for component in eachFile  %}
+          {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
+           {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+            {% if thecycle == 'even' %}             
+            <tr>
+              <td><a href="#{{ component[1].component_name }}-{{ component[1].component_type }}">{{ component[1].component_name }}</a></td>
+              <td>{{ component[1].component_type }}</td>
+            </tr>
+        {% endif %}
+      {% endfor %}      
+    {% endfor %}
   {% endfor %}
 </tbody>
 </table>
@@ -34,7 +42,12 @@ Paragraph about Meshkit Library Errors.
 <hr>
 
 
-{% for component in site.data.meshkit.errorutil_errors_export %}   
+  {% for files in site.data.errorref %}    
+    {% for eachFile in files %}
+      {% for component in eachFile  %}
+          {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
+           {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+            {% if thecycle == 'even' %}    
 ## {{ component[1].component_name }} {{ component[1].component_type }}
 
   <table>
@@ -66,5 +79,10 @@ Paragraph about Meshkit Library Errors.
 
   </tbody>
   </table>
+  <a href="#meshkit-library-errors">Go Up...</a>
+  <hr>
+  <br>
+{% endif %}
 {% endfor %}
-
+{% endfor %}
+{% endfor %}

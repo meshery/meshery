@@ -1,0 +1,116 @@
+{
+    "errors_export": {
+        "component_name": "meshery-adapter-library",
+        "component_type": "library",
+        "errors": {
+            "1000": {
+                "name": "ErrGetNameCode",
+                "code": "1000",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1001": {
+                "name": "ErrCreateInstanceCode",
+                "code": "1001",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1002": {
+                "name": "ErrMeshConfigCode",
+                "code": "1002",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1003": {
+                "name": "ErrValidateKubeconfigCode",
+                "code": "1003",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1004": {
+                "name": "ErrClientConfigCode",
+                "code": "1004",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1005": {
+                "name": "ErrClientSetCode",
+                "code": "1005",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1006": {
+                "name": "ErrStreamEventCode",
+                "code": "1006",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1007": {
+                "name": "ErrOpInvalidCode",
+                "code": "1007",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1008": {
+                "name": "ErrApplyOperationCode",
+                "code": "1008",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1009": {
+                "name": "ErrListOperationsCode",
+                "code": "1009",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1010": {
+                "name": "ErrNewSmiCode",
+                "code": "1010",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            },
+            "1011": {
+                "name": "ErrRunSmiCode",
+                "code": "1011",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            }
+        }
+    }
+}

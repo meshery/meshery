@@ -1,0 +1,17 @@
+{
+    "errors_export": {
+        "component_name": "linkerd",
+        "component_type": "adapter",
+        "errors": {
+            "11300": {
+                "name": "ErrEmptyConfigCode",
+                "code": "11300",
+                "severity": "none",
+                "long_description": "might contain newlines (JSON encoded)",
+                "short_description": "might contain newlines (JSON encoded)",
+                "probable_cause": "might contain newlines (JSON encoded)",
+                "suggested_remediation": "might contain newlines (JSON encoded)"
+            }
+        }
+    }
+}
