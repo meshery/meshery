@@ -2,4 +2,4 @@ flag:
 arg: delete
 description: delete the specified context from the config.yaml file
 usage: |
-    `mesheryctl system context delete <context name>`
+    mesheryctl system context delete [context name]

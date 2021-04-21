@@ -111,8 +111,8 @@ class MeshAdapterConfigComponent extends React.Component {
         this.props.updateProgress({ showProgress: false });
         if (typeof result !== "undefined") {
           const options = result.map((res) => ({
-            value: res,
-            label: res,
+            value: res.adapter_location,
+            label: res.adapter_location,
           }));
           this.setState({ availableAdapters: options });
         }
@@ -176,7 +176,7 @@ class MeshAdapterConfigComponent extends React.Component {
           self.setState({ meshAdapters: result, meshLocationURL: "" });
           self.props.enqueueSnackbar("Adapter was successfully configured!", {
             variant: "success",
-            "data-cy":"adapterSuccessSnackbar",
+            "data-cy": "adapterSuccessSnackbar",
             autoHideDuration: 2000,
             action: (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
@@ -277,48 +277,9 @@ class MeshAdapterConfigComponent extends React.Component {
           {meshAdapters.map((adapter) => {
             let image = "/static/img/meshery-logo.png";
             let logoIcon = <img src={image} className={classes.icon} />;
-            switch (adapter.name.toLowerCase()) {
-              case "istio":
-                image = "/static/img/istio.svg";
-                logoIcon = <img src={image} className={classes.istioIcon} />;
-                break;
-              case "linkerd":
-                image = "/static/img/linkerd.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "consul":
-                image = "/static/img/consul.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "network service mesh":
-                image = "/static/img/nsm.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "octarine":
-                image = "/static/img/octarine.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "citrix service mesh":
-                image = "/static/img/citrix.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "osm":
-                image = "/static/img/osm.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              case "kuma":
-                image = "/static/img/kuma.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
-              // Disable support for NGINX SM
-              // case "nginx service mesh":
-              //   image = "/static/img/nginx-sm.svg";
-              //   logoIcon = <img src={image} className={classes.icon} />;
-              //   break;
-              case "traefik mesh":
-                image = "/static/img/traefikmesh.svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-                break;
+            if (adapter.name) {
+              image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+              logoIcon = <img src={image} className={classes.icon} />;
             }
 
             return (

@@ -45,6 +45,28 @@ func (h *Handler) ImportPatternFile(
 	fmt.Fprintf(rw, "%s", pfByt)
 }
 
+// ImportPatternFileGithub will import patternfile file from github
+func (h *Handler) ImportPatternFileGithub(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	owner := mux.Vars(r)["owner"]
+	repo := mux.Vars(r)["repo"]
+	path := mux.Vars(r)["path"]
+
+	cont, err := provider.ImportPatternFileGithub(r, owner, repo, path)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(rw, "%s", err)
+		return
+	}
+
+	fmt.Fprintf(rw, "%s", cont)
+}
+
 // ExportPatternFile converts a patternfile into
 // cytoscapejs notation
 func (h *Handler) ExportPatternFile(
@@ -122,7 +144,7 @@ func (h *Handler) SavePatternFile(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get user token"), http.StatusInternalServerError)
+		http.Error(rw, "failed to get user token", http.StatusInternalServerError)
 		return
 	}
 
@@ -188,7 +210,7 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	resp, err := provider.GetMesheryPattern(r, patternID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
+		http.Error(rw, fmt.Sprintf("failed to get the pattern: %s", err), http.StatusNotFound)
 		return
 	}
 

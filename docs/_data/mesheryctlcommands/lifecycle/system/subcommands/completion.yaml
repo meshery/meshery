@@ -1,4 +1,4 @@
 name: completion
 description: Generates completion script.
 usage: |
-    `mesheryctl system completion [bash\|zsh\|fish]`
+    mesheryctl system completion [bash\|zsh\|fish]

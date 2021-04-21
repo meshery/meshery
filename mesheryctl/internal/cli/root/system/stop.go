@@ -29,6 +29,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -136,7 +137,18 @@ func stop() error {
 
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
 
+		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
+
+		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyManifest([]byte(operatorManifest), client, false, true)
 		if err != nil {
 			return err
 		}
