@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,6 +18,13 @@ import (
 	"net/http"
 	"time"
 >>>>>>> 2c41dd5c... wip list command
+=======
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"path/filepath"
+	"strings"
+>>>>>>> d1661977... add patterns list command
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -179,29 +187,63 @@ func init() {
 			return err
 		}
 		json.Unmarshal(body, &response)
+		tokenObj, err := utils.ReadToken(token)
+		if err != nil {
+			return err
+		}
+		provider := tokenObj["meshery-provider"]
+		var data [][]string
+
 		if allflag == true {
-			for _, v := range response.Patterns {
-				headers := []string{"PATTERN ID", "NAME", "USER ID", "CREATED", "UPDATED"}
-				data := [][]string{
-					{v.ID.String(), v.Name, v.ID.String(), v.CreatedAt.Format(time.RFC3339Nano), v.UpdatedAt.Format(time.RFC3339Nano)},
+			if provider == "None" {
+				for _, v := range response.Patterns {
+					PatternId := v.ID.String()
+					PatterName := v.Name
+					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
+					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
+					data = append(data, []string{PatternId, PatterName, CreatedAt, UpdatedAt})
 				}
-				utils.PrintToTable(headers, data)
+				utils.PrintToTable([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data)
+				return nil
 			}
+
+			for _, v := range response.Patterns {
+				PatternId := utils.TruncateID(v.ID.String())
+				var UserId string
+				if v.UserID != nil {
+					UserId = *v.UserID
+				} else {
+					UserId = "null"
+				}
+				PatterName := v.Name
+				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+				data = append(data, []string{PatternId, UserId, PatterName, CreatedAt, UpdatedAt})
+			}
+			utils.PrintToTable([]string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data)
+
 			return nil
 		}
-		for _, v := range response.Patterns {
-			headers := []string{"NAME", "USER ID", "CREATED", "UPDATED"}
-			data := [][]string{
-				{v.Name, v.ID.String(), v.CreatedAt.Format(time.RFC3339Nano), v.UpdatedAt.Format(time.RFC3339Nano)},
+
+		// Check if messhery provider is set
+		if provider == "None" {
+			for _, v := range response.Patterns {
+				PatterName := fmt.Sprintf("%s", strings.Trim(v.Name, filepath.Ext(v.Name)))
+				PatternId := utils.TruncateID(v.ID.String())
+				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
+				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
+				data = append(data, []string{PatternId, PatterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTable(headers, data)
+			utils.PrintToTable([]string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}, data)
 		}
+
 		return nil
 	},
 }
 
 func init() {
 	listCmd.Flags().BoolVarP(&allflag, "all", "a", false, "Display full length user and pattern file identifiers")
+	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
 	listCmd.MarkFlagRequired("token")
 }
 >>>>>>> 2c41dd5c... wip list command
