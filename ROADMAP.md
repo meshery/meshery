@@ -4,6 +4,7 @@ Milestones on Meshery's high-level roadmap-
 
 Milestone | Features
 --- | ---
+v0.5.0 | Adapters for NGINX Service Mesh and Traefik Mesh, Meshery Operator, GraphQL, Remote Provider dynamic injection, MeshKit and Meshery Adapter Library
 v0.6.0 | <p>performance profiles, patterns (crud)</p><p><li>Remote provider: meshmap</li></p>
 v0.7.0 | workflow engine, environments and multi-cluster, wasm filters (crud)
 v0.8.0 | extensible authorization, meshsync viewer
