@@ -701,6 +701,22 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
+// ReadToken returns a map of the token passed in
+func ReadToken(filepath string) (map[string]string, error) {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "could not read token:")
+		return nil, err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid:")
+		return nil, err
+	}
+	return tokenObj, nil
+
+}
+
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
 	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
@@ -725,6 +741,7 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+<<<<<<< HEAD
 
 // ReadToken returns a map of the token passed in
 func ReadToken(filepath string) (map[string]string, error) {
@@ -741,3 +758,5 @@ func ReadToken(filepath string) (map[string]string, error) {
 	return tokenObj, nil
 
 }
+=======
+>>>>>>> 3c3d7b60... add helper functions to read auth token and truncate id's
