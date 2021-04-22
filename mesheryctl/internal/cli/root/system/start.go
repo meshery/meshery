@@ -303,7 +303,7 @@ func start() error {
 			return err
 		}
 
-		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
+		operatorURL := utils.OperatorURL
 
 		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
 		if err != nil {
@@ -315,7 +315,7 @@ func start() error {
 			return err
 		}
 
-		brokerURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
+		brokerURL := utils.BrokerURL
 
 		brokerManifest, err := meshkitutils.ReadFileSource(brokerURL)
 		if err != nil {
@@ -327,7 +327,7 @@ func start() error {
 			return err
 		}
 
-		meshsyncURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
+		meshsyncURL := utils.MeshsyncURL
 
 		meshsyncManifest, err := meshkitutils.ReadFileSource(meshsyncURL)
 		if err != nil {

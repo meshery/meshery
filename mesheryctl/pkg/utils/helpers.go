@@ -47,6 +47,10 @@ const (
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
 	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
 	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	baseConfigURL  = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL    = baseConfigURL + "manifests/default.yaml"
+	BrokerURL      = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL    = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 const (

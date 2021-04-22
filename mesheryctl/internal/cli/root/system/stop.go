@@ -141,7 +141,7 @@ func stop() error {
 			return err
 		}
 
-		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
+		operatorURL := utils.OperatorURL
 
 		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
 		if err != nil {
