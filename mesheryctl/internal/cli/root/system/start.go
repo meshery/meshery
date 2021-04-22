@@ -35,6 +35,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -301,6 +302,43 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
+		operatorURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
+
+		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyManifest([]byte(operatorManifest), client, true, false)
+		if err != nil {
+			return err
+		}
+
+		brokerURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
+
+		brokerManifest, err := meshkitutils.ReadFileSource(brokerURL)
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyManifest([]byte(brokerManifest), client, true, false)
+		if err != nil {
+			return err
+		}
+
+		meshsyncURL := "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_meshsync.yaml"
+
+		meshsyncManifest, err := meshkitutils.ReadFileSource(meshsyncURL)
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyManifest([]byte(meshsyncManifest), client, true, false)
+		if err != nil {
+			return err
+		}
+
 		log.Info("...Meshery deployed on Kubernetes.")
 
 	// switch to default case if the platform specified is not supported
