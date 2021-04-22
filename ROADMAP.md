@@ -19,6 +19,7 @@ Milestones on mesheryctl's high-level roadmap-
 
 Milestone | Features
 --- | ---
+v0.5.0 | Release channel subscriptions with system channel, Deployment management with system context 
 v0.6.0 | <p><li>pervasive kubernetes support </li> </p><p><li>Create `patterns`</li><li>Refactoring `perf` to support SMP better</li><li>Confirm support for Linux, Windows, and MacOS across all current commands</li></p>
 v0.7.0 | <p><li>Create `mesh` (adapter operations)</li><li>Confirm support for environment and multi-cluster</li></p>
 v0.8.0 | <p>gRPC (streaming of status and events)<p><p><li>Colorizing output</li></p>
