@@ -6,6 +6,7 @@ import (
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,15 +21,20 @@ import (
 	"time"
 >>>>>>> 2c41dd5c... wip list command
 =======
+=======
+>>>>>>> ac869cc8... add patterns list command
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strings"
+<<<<<<< HEAD
 >>>>>>> d1661977... add patterns list command
 =======
 	"net/http"
 >>>>>>> 3927d252... list command v1
+=======
+>>>>>>> ac869cc8... add patterns list command
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -39,6 +45,7 @@ import (
 )
 
 var (
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -59,8 +66,14 @@ var listCmd = &cobra.Command{
 =======
 	token string
 >>>>>>> 3927d252... list command v1
+=======
+	token   string
+	allflag bool
+>>>>>>> ac869cc8... add patterns list command
 )
+
 var listCmd = &cobra.Command{
+<<<<<<< HEAD
 	Use:   "list",
 	Short: "list pattern files",
 <<<<<<< HEAD
@@ -76,11 +89,16 @@ var listCmd = &cobra.Command{
 	Long:  "List available pattern files",
 	Args:  cobra.MinimumNArgs(1),
 >>>>>>> 3927d252... list command v1
+=======
+	Long: "Display list of all available pattern files",
+	Args: cobra.MinimumNArgs(0),
+>>>>>>> ac869cc8... add patterns list command
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -108,6 +126,8 @@ var listCmd = &cobra.Command{
 =======
 		var Patterns models.PatternsApiResponse
 =======
+=======
+>>>>>>> ac869cc8... add patterns list command
 		var response models.PatternsApiResponse
 >>>>>>> 2c41dd5c... wip list command
 
@@ -260,6 +280,7 @@ func init() {
 	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
 	listCmd.MarkFlagRequired("token")
 }
+<<<<<<< HEAD
 >>>>>>> 2c41dd5c... wip list command
 =======
 		var Patterns models.PatternsApiResponse
@@ -282,3 +303,5 @@ func init() {
 	},
 }
 >>>>>>> 3927d252... list command v1
+=======
+>>>>>>> ac869cc8... add patterns list command
