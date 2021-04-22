@@ -156,7 +156,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	if err := json.Unmarshal(body, &dat); err != nil {
 		return "", errors.Wrap(err, "failed to unmarshal json into object")
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 461289cc... fix runtime panic caused by assertion error
 	null := ""
 	if dat["tag_name"] != nil {
 		null = dat["tag_name"].(string)
