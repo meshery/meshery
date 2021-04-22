@@ -2,11 +2,15 @@ package pattern
 
 import (
 	"encoding/json"
+<<<<<<< HEAD
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strings"
+=======
+	"net/http"
+>>>>>>> 0753cdebf0bdc94854c8d3b13dea8017790aea4f
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -17,19 +21,29 @@ import (
 )
 
 var (
+<<<<<<< HEAD
 	token   string
 	allflag bool
+=======
+	token string
+>>>>>>> 0753cdebf0bdc94854c8d3b13dea8017790aea4f
 )
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list pattern files",
+<<<<<<< HEAD
 	Long:  "Display list of all available pattern files",
 	Args:  cobra.MinimumNArgs(0),
+=======
+	Long:  "List available pattern files",
+	Args:  cobra.MinimumNArgs(1),
+>>>>>>> 0753cdebf0bdc94854c8d3b13dea8017790aea4f
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+<<<<<<< HEAD
 		var response models.PatternsApiResponse
 
 		client := &http.Client{}
@@ -110,3 +124,24 @@ func init() {
 	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
 	listCmd.MarkFlagRequired("token")
 }
+=======
+		var Patterns models.PatternsApiResponse
+
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/patternfile/", nil)
+		if err != nil {
+			return err
+		}
+		err = utils.AddAuthDetails(req, "./auth.json")
+		if err != nil {
+			return err
+		}
+		client.Do(req)
+		err = json.NewDecoder(req.Body).Decode(&Patterns)
+		if err != nil {
+			return err
+		}
+
+	},
+}
+>>>>>>> 0753cdebf0bdc94854c8d3b13dea8017790aea4f
