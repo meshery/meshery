@@ -144,7 +144,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		return meshAdapters, err
 	}
 	logrus.Debugf("retrieved supported ops for adapter: %s", meshLocationURL)
-	meshNameOps, err := mClient.MClient.MeshName(ctx, &meshes.MeshNameRequest{})
+	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
 		err = errors.Wrapf(err, "Error getting service mesh name.")
 		logrus.Error(err)
@@ -153,12 +153,14 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}
 	logrus.Debugf("retrieved name for adapter: %s", meshLocationURL)
 	result := &models.Adapter{
-		Location: meshLocationURL,
-		Name:     meshNameOps.GetName(),
-		Ops:      respOps.GetOps(),
+		Location:     meshLocationURL,
+		Name:         meshInfo.Name,
+		Version:      meshInfo.Version,
+		GitCommitSHA: meshInfo.GitSha,
+		Ops:          respOps.GetOps(),
 	}
 
-	h.config.AdapterTracker.AddAdapter(ctx, meshLocationURL)
+	h.config.AdapterTracker.AddAdapter(ctx, *result)
 	meshAdapters = append(meshAdapters, result)
 	return meshAdapters, nil
 }
