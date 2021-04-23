@@ -6,10 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/layer5io/meshery/handlers"
