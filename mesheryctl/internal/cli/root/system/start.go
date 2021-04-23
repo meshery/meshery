@@ -35,7 +35,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -299,42 +298,6 @@ func start() error {
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
 
-		if err != nil {
-			return err
-		}
-
-		operatorURL := utils.OperatorURL
-
-		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyManifest([]byte(operatorManifest), client, true, false)
-		if err != nil {
-			return err
-		}
-
-		brokerURL := utils.BrokerURL
-
-		brokerManifest, err := meshkitutils.ReadFileSource(brokerURL)
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyManifest([]byte(brokerManifest), client, true, false)
-		if err != nil {
-			return err
-		}
-
-		meshsyncURL := utils.MeshsyncURL
-
-		meshsyncManifest, err := meshkitutils.ReadFileSource(meshsyncURL)
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyManifest([]byte(meshsyncManifest), client, true, false)
 		if err != nil {
 			return err
 		}
