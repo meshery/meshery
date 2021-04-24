@@ -1,0 +1,4 @@
+name: view
+description: displays the contents of a specific pattern file
+usage: |
+    mesheryctl exp pattern view [pattern-name|pattern-id]

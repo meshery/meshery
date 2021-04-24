@@ -65,7 +65,7 @@ function PerformanceCard({
         <div style={{ margin: "0 0 1rem" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Typography variant="h2" component="div" color="primary" style={{ marginRight: "0.75rem" }}>
-              {results}
+              {(results).toLocaleString('en')}
             </Typography>
             <Typography variant="body1" style={{ color: "rgba(0, 0, 0, 0.54)" }} component="div">
               Results
