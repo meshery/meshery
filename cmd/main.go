@@ -55,10 +55,10 @@ func main() {
 		os.Exit(1)
 	}
 
-// 	operatingSystem, err := exec.Command("uname", "-s").Output()
-// 	if err != nil {
-// 		logrus.Error(err)
-// 	}
+	// operatingSystem, err := exec.Command("uname", "-s").Output()
+	// if err != nil {
+	// 	logrus.Error(err)
+	// }
 
 	ctx := context.Background()
 
