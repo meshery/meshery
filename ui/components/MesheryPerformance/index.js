@@ -888,7 +888,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="cookies"
                           name="cookies"
-                          label='Request Cookies e.g. "yummy_cookie=choco_chip"'
+                          label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
                           fullWidth
                           value={cookies}
                           multiline
@@ -901,7 +901,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="contentType"
                           name="contentType"
-                          label='Content Type e.g. "application/json"'
+                          label='Content Type e.g. application/json'
                           fullWidth
                           value={contentType}
                           multiline
