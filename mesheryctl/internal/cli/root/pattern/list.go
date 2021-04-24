@@ -7,11 +7,15 @@ import (
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strings"
+<<<<<<< HEAD
 =======
 	"net/http"
 >>>>>>> 306424b1... list command v1
@@ -35,6 +39,8 @@ import (
 >>>>>>> 3927d252... list command v1
 =======
 >>>>>>> ac869cc8... add patterns list command
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -49,6 +55,9 @@ var (
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	token   string
 	verbose bool
 )
@@ -57,6 +66,7 @@ var listCmd = &cobra.Command{
 	Use:  "list",
 	Long: "Display list of all available pattern files",
 	Args: cobra.MinimumNArgs(0),
+<<<<<<< HEAD
 =======
 	token string
 =======
@@ -93,6 +103,8 @@ var listCmd = &cobra.Command{
 	Long: "Display list of all available pattern files",
 	Args: cobra.MinimumNArgs(0),
 >>>>>>> ac869cc8... add patterns list command
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -102,6 +114,9 @@ var listCmd = &cobra.Command{
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 		var response models.PatternsAPIResponse
 
 		client := &http.Client{}
@@ -123,6 +138,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		err = json.Unmarshal(body, &response)
+<<<<<<< HEAD
 =======
 		var Patterns models.PatternsApiResponse
 =======
@@ -144,11 +160,16 @@ var listCmd = &cobra.Command{
 		client.Do(req)
 		err = json.NewDecoder(req.Body).Decode(&Patterns)
 >>>>>>> 306424b1... list command v1
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 		if err != nil {
 			return err
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 		tokenObj, err := utils.ReadToken(token)
 		if err != nil {
 			return err
@@ -206,6 +227,7 @@ func init() {
 	listCmd.Flags().StringVarP(&token, "token", "t", "", "path to token")
 	_ = listCmd.MarkFlagRequired("token")
 }
+<<<<<<< HEAD
 =======
 	},
 }
@@ -305,3 +327,5 @@ func init() {
 >>>>>>> 3927d252... list command v1
 =======
 >>>>>>> ac869cc8... add patterns list command
+=======
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028

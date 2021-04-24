@@ -759,4 +759,8 @@ func ReadToken(filepath string) (map[string]string, error) {
 
 }
 =======
+<<<<<<< HEAD
 >>>>>>> 3c3d7b60... add helper functions to read auth token and truncate id's
+=======
+>>>>>>> e56351c0e3ec180813a2d3638991292a528bd34d
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028

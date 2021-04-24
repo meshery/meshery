@@ -159,7 +159,11 @@ func GetLatestStableReleaseTag() (string, error) {
 <<<<<<< HEAD
 
 =======
+<<<<<<< HEAD
 >>>>>>> 461289cc... fix runtime panic caused by assertion error
+=======
+>>>>>>> e56351c0e3ec180813a2d3638991292a528bd34d
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	null := ""
 	if dat["tag_name"] != nil {
 		null = dat["tag_name"].(string)

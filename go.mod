@@ -29,6 +29,7 @@ require (
 <<<<<<< HEAD
 <<<<<<< HEAD
 	github.com/layer5io/meshery-operator v0.2.12
+<<<<<<< HEAD
 	github.com/layer5io/meshkit v0.2.6
 =======
 	github.com/layer5io/meshery-operator v0.2.11
@@ -38,6 +39,9 @@ require (
 	github.com/layer5io/meshery-operator v0.2.12
 	github.com/layer5io/meshkit v0.2.7
 >>>>>>> d02981fa... ci fix
+=======
+	github.com/layer5io/meshkit v0.2.7
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3

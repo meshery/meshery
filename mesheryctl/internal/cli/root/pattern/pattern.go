@@ -37,6 +37,7 @@ func init() {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, listCmd}
 =======
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd}
@@ -44,5 +45,8 @@ func init() {
 =======
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
 >>>>>>> e56351c0... register list command
+=======
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
+>>>>>>> 9af444385e81347cabaf254dcad319009aef2028
 	PatternCmd.AddCommand(availableSubcommands...)
 }
