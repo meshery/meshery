@@ -156,7 +156,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	if err := json.Unmarshal(body, &dat); err != nil {
 		return "", errors.Wrap(err, "failed to unmarshal json into object")
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> e56351c0e3ec180813a2d3638991292a528bd34d
 	null := ""
 	if dat["tag_name"] != nil {
 		null = dat["tag_name"].(string)
