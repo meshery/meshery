@@ -30,6 +30,7 @@ type DefaultLocalProvider struct {
 	TestProfilesPersister        *BitCaskTestProfilesPersister
 	PerformanceProfilesPersister *PerformanceProfilePersister
 	MesheryPatternPersister      *MesheryPatternPersister
+	MesheryFilterPersister       *MesheryFilterPersister
 	GenericPersister             database.Handler
 	GraphqlHandler               http.Handler
 	GraphqlPlayground            http.Handler
@@ -492,6 +493,37 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 		Name:        name,
 		PatternFile: string(decodedContent),
 	})
+}
+
+// SaveMesheryFilter saves given pattern with the provider
+func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
+	return l.MesheryFilterPersister.SaveMesheryFilter(filter)
+}
+
+// GetMesheryFilters gives the patterns stored with the provider
+func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
