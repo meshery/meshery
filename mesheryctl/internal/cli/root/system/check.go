@@ -40,13 +40,13 @@ func runDockerHealthCheck() error {
 	log.Info("\nDocker \n--------------")
 	//Check whether docker daemon is running or not
 	if err := exec.Command("docker", "ps").Run(); err != nil {
-		log.Warn("Docker is not running")
+		log.Warn("!! Docker is not running")
 	}
 	log.Info("√ Docker is running")
 
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-		log.Warn("Docker-Compose is not available")
+		log.Warn("!! Docker-Compose is not available")
 	}
 	log.Info("√ docker-compose is available")
 
@@ -59,7 +59,7 @@ func runKubernetesAPIHealthCheck() error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return errors.New("cannot initialize the client")
+		return errors.New("!! cannot initialize the client")
 	}
 	log.Info("√ can initialize the client")
 
@@ -67,7 +67,7 @@ func runKubernetesAPIHealthCheck() error {
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
-		return errors.New("cannot query the Kubernetes API")
+		return errors.New("!! cannot query the Kubernetes API")
 	}
 	log.Info("√ can query the Kubernetes API")
 
