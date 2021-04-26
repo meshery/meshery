@@ -4,39 +4,57 @@ import (
 	"context"
 	"errors"
 	"os/exec"
-	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8sVersion "k8s.io/apimachinery/pkg/version"
 
 	"github.com/spf13/cobra"
 )
 
 var PreCheckCmd = &cobra.Command{
 	Use:   "preflight",
-	Short: "run basic checks to verify environment for deployment",
-	Long:  `To verify environment readiness for a Meshery deloyment `,
+	Short: "Meshery pre-flight check",
+	Long:  `Verify environment readiness to deploy Meshery.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return runPreDeploymentChecks()
+		//Run docker healthchecks
+		_ = runDockerHealthCheck()
+		//Run k8s API healthchecks
+		if err := runKubernetesAPIHealthCheck(); err != nil {
+			return err
+		}
+		//Run k8s plus kubectl minimum version healthchecks
+		if err := runKubernetesVersionHealthCheck(); err != nil {
+			return err
+		}
+		log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+		return nil
 	},
 }
 
-func runPreDeploymentChecks() error {
+//Run healthchecks to verify if docker is running and active
+func runDockerHealthCheck() error {
 	log.Info("\nDocker \n--------------")
 	//Check whether docker daemon is running or not
 	if err := exec.Command("docker", "ps").Run(); err != nil {
-		log.Error("Docker is not running")
+		log.Warn("Docker is not running")
 	}
 	log.Info("√ Docker is running")
 
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-		log.Info("Docker-Compose is not available")
+		log.Warn("Docker-Compose is not available")
 	}
 	log.Info("√ docker-compose is available")
 
+	return nil
+}
+
+//Run healthchecks to verify if kubernetes client can be initialized and can be queried
+func runKubernetesAPIHealthCheck() error {
 	log.Info("\nKubernetes API \n--------------")
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
@@ -53,42 +71,28 @@ func runPreDeploymentChecks() error {
 	}
 	log.Info("√ can query the Kubernetes API")
 
+	return nil
+}
+
+//Run healthchecks to verify kubectl and kubenetes version with
+// minimum compatible versions
+func runKubernetesVersionHealthCheck() error {
 	log.Info("\nKubernetes Version \n--------------")
 	//Check whether system has minimum supported versions of kubernetes and kubectl
-	minK8sVersion := "1.12.0"
-	minVersionArray := strings.Split(minK8sVersion, ".")
-
-	//Check kubernetes version with minimum version
-	serverOutput, err := exec.Command("bash", "-c", "kubectl version --short | grep -i server").Output()
+	var kubeVersion *k8sVersion.Info
+	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
-		return errors.New("failed to fetch kubernetes version")
+		return err
 	}
-	serverVersion := string(serverOutput)
-	spliter := strings.Split(serverVersion, "v")
-	spliter = strings.Split(spliter[1], ".")
-	if spliter[0] > minVersionArray[0] {
-		log.Info("√ is running the minimum Kubernetes version")
-	} else if spliter[0] == minVersionArray[0] && spliter[1] >= minVersionArray[1] {
-		log.Info("√ is running the minimum Kubernetes version")
-	} else {
-		return errors.New("system isn't running the minimum Kubernetes version")
+	if err = utils.CheckK8sVersion(kubeVersion); err != nil {
+		return err
 	}
+	log.Info("√ is running the minimum Kubernetes version")
 
-	//Check kubectl version with minimum version
-	clientOutput, err := exec.Command("bash", "-c", "kubectl version --short | grep -i client").Output()
-	if err != nil {
-		return errors.New("failed to fetch kubectl version")
+	if err = utils.CheckKubectlVersion(); err != nil {
+		return err
 	}
-	clientVersion := string(clientOutput)
-	spliter = strings.Split(clientVersion, "v")
-	spliter = strings.Split(spliter[1], ".")
-	if spliter[0] > minVersionArray[0] {
-		log.Info("√ is running the minimum kubectl version")
-	} else if spliter[0] == minVersionArray[0] && spliter[1] >= minVersionArray[1] {
-		log.Info("√ is running the minimum kubectl version")
-	} else {
-		return errors.New("system isn't running the minimum kubectl version")
-	}
+	log.Info("√ is running the minimum kubectl version")
 
 	return nil
 }
