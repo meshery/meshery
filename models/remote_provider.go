@@ -1175,7 +1175,7 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// SaveMesheryFilter saves given pattern with the remote provider
+// SaveMesheryFilter saves given filter with the remote provider
 func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
@@ -1223,7 +1223,6 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 
 	logrus.Errorf("error while sending filter: %s", bdr)
 	return bdr, fmt.Errorf("error while sending filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
-
 }
 
 // GetMesheryFilters gives the filters stored with the provider
@@ -1283,7 +1282,7 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 	return nil, fmt.Errorf("error while fetching filters - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// GetMesheryFilter gets filter for the given filter
+// GetMesheryFilter gets filter for the given filterID
 func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")

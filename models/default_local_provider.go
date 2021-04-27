@@ -495,12 +495,12 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 	})
 }
 
-// SaveMesheryFilter saves given pattern with the provider
+// SaveMesheryFilter saves given filter with the provider
 func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
 	return l.MesheryFilterPersister.SaveMesheryFilter(filter)
 }
 
-// GetMesheryFilters gives the patterns stored with the provider
+// GetMesheryFilters gives the filter stored with the provider
 func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
@@ -526,7 +526,7 @@ func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSi
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
 }
 
-// GetMesheryFilter gets pattern for the given patternID
+// GetMesheryFilter gets filter for the given filterID
 func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)

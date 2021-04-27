@@ -23,7 +23,7 @@ type MesheryFilterPage struct {
 	Filters    []*MesheryFilter `json:"filters"`
 }
 
-// GetMesheryFilters returns all of the performance profiles
+// GetMesheryFilters returns all of the filters
 func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64) ([]byte, error) {
 	if order == "" {
 		order = "updated_at desc"

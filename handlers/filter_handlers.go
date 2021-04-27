@@ -48,7 +48,6 @@ func (h *Handler) GetMesheryFilterHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
-
 }
 
 func (h *Handler) SaveFilterFile(
