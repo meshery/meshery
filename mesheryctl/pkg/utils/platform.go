@@ -96,6 +96,25 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
+
+	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
+	err := DownloadFile(operatorFilepath, OperatorURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
+	}
+
+	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
+	err = DownloadFile(brokerFilepath, BrokerURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
+	}
+
+	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
+	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
+	}
+
 	return nil
 }
 
@@ -273,6 +292,35 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 			return err
 		}
 	}
+
+	//applying meshery operator files
+	MesheryOperatorManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperator))
+	if err != nil {
+		return errors.Wrap(err, "failed to read operator manifest files")
+	}
+
+	if err = ApplyManifest([]byte(MesheryOperatorManifest), client, update, delete); err != nil {
+		return err
+	}
+
+	MesheryBrokerManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorBroker))
+	if err != nil {
+		return errors.Wrap(err, "failed to read operator manifest files")
+	}
+
+	if err = ApplyManifest([]byte(MesheryBrokerManifest), client, update, delete); err != nil {
+		return err
+	}
+
+	MesheryMeshsyncManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorMeshsync))
+	if err != nil {
+		return errors.Wrap(err, "failed to read operator manifest files")
+	}
+
+	if err = ApplyManifest([]byte(MesheryMeshsyncManifest), client, update, delete); err != nil {
+		return err
+	}
+
 	log.Debug("applied manifests to the Kubernetes cluster.")
 
 	return nil
