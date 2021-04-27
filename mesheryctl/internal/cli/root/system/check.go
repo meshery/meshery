@@ -46,7 +46,7 @@ func runDockerHealthCheck() error {
 
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-		log.Warn("!! Docker-Compose is not available")
+		log.Warn("!! docker-compose is not available")
 	}
 	log.Info("√ docker-compose is available")
 
