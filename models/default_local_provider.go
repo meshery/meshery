@@ -526,6 +526,12 @@ func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSi
 	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
 }
 
+// GetMesheryFilter gets pattern for the given patternID
+func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryPatternPersister.GetMesheryPattern(id)
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID

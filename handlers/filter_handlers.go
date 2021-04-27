@@ -9,9 +9,9 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// FetchAllFiltersHandler will handle requests of both type GET and POST
+// FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/experimental/filter
-func (h *Handler) FetchAllFiltersHandler(
+func (h *Handler) FilterFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	prefObj *models.Preference,
@@ -29,20 +29,20 @@ func (h *Handler) FetchAllFiltersHandler(
 	}
 }
 
-// NewFilterHandler will handle requests type GET
+// GetMesheryFilterHandler will handle requests type GET
 // on the route /api/experimental/filter/{id}
-func (h *Handler) NewFilterHandler(
+func (h *Handler) GetMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	prefObj *models.Preference,
 	user *models.User,
 	provider models.Provider,
 ) {
-	performanceProfileID := mux.Vars(r)["id"]
+	filterID := mux.Vars(r)["id"]
 
-	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
+	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
-		http.Error(rw, fmt.Sprintf("failed to get the performance profile: %s", err), http.StatusInternalServerError)
+		http.Error(rw, fmt.Sprintf("failed to get the filter: %s", err), http.StatusInternalServerError)
 		return
 	}
 

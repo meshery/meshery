@@ -1175,7 +1175,7 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	return nil, fmt.Errorf("error while getting performance profile - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// TODO: @navendu-pottekkat SaveMesheryFilter saves given pattern with the remote provider
+// SaveMesheryFilter saves given pattern with the remote provider
 func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
@@ -1281,6 +1281,48 @@ func (l *RemoteProvider) GetMesheryFilters(req *http.Request, page, pageSize, se
 	}
 	logrus.Errorf("error while fetching filters: %s", bdr)
 	return nil, fmt.Errorf("error while fetching filters - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetMesheryFilter gets filter for the given filter
+func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryFilters, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+
+	logrus.Infof("attempting to fetch filter from cloud for id: %s", filterID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, filterID))
+	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get filters: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get filters: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("filter successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching filter: %s", bdr)
+	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // SaveSchedule saves a SaveSchedule into the remote provider
