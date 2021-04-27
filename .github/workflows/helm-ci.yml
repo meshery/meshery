@@ -31,7 +31,7 @@ jobs:
           version: v3.4.1
       - name: Helm lint
         env:
-          CHARTS_PATH: install/meshery
+          CHARTS_PATH: install/kubernetes/helm/meshery
         run:
           helm lint ${{ env.CHARTS_PATH }}
 
@@ -60,7 +60,7 @@ jobs:
       - name: Helm Chart Releaser For Remote
         uses: Aisuko/chart-releaser-action@v1.0.0-alpha.14
         with:
-          charts_dir: install/kubernetes/helm
+          charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
           repo: layer5io/meshery.io
           # For helm charts index

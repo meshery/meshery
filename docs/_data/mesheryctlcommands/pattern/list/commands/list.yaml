@@ -1,0 +1,4 @@
+name: list
+description: displays a list of available pattern files
+usage: |
+    mesheryctl exp pattern list

@@ -124,7 +124,7 @@ const styles = (theme) => ({
 /**
  * capitalize takes in a string and returns
  * capitalized string
- * @param {string} str - string to be capitalized
+ * @param {string} str string to be capitalized
  */
 function capitalize(str) {
   return `${str?.charAt(0).toUpperCase()}${str?.substring(1)}`;
@@ -162,7 +162,7 @@ class DashboardComponent extends React.Component {
         release_channel: "NA",
       },
 
-      meshScan: {},
+      meshScan: [],
       activeMeshScanNamespace: {},
       meshScanNamespaces: {},
     };
@@ -235,8 +235,8 @@ class DashboardComponent extends React.Component {
         this.props.updateProgress({ showProgress: false });
         if (typeof result !== "undefined") {
           const options = result.map((res) => ({
-            value: res,
-            label: res,
+            value: res.adapter_location,
+            label: res.adapter_location,
           }));
           this.setState({ availableAdapters: options });
         }
@@ -278,7 +278,6 @@ class DashboardComponent extends React.Component {
     const self = this;
     const namespaces = {};
     const activeNamespaces = {};
-
     data?.controlPlanesState?.map((mesh) => {
       if (!mesh?.members?.length) {
         return;
@@ -290,19 +289,11 @@ class DashboardComponent extends React.Component {
           namespaces[mesh.name] = new Set([member.namespace]);
         }
       });
-
       namespaces[mesh.name] = [...namespaces[mesh.name]];
       activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
-
-      const meshData = mesh?.members?.map((member) => ({
-        name: member.name,
-        component: member.component,
-        version: member.version,
-        namespace: member.namespace,
-      }));
-      self.setState((state) => ({ meshScan: { ...state.meshScan, [mesh.name]: meshData } }));
     });
 
+    self.setState({ meshScan: data?.controlPlanesState?.filter((data) => data.members?.length > 0) });
     self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   };
 
@@ -643,53 +634,14 @@ class DashboardComponent extends React.Component {
             let image = "/static/img/meshery-logo.png";
             let logoIcon = <img src={image} className={classes.icon} />;
             let adapterType = "";
+            let adapterVersion = "";
             meshAdapters.forEach((adapter) => {
               if (aa.value === adapter.adapter_location) {
                 isDisabled = false;
                 adapterType = adapter.name;
-                switch (adapter.name.toLowerCase()) {
-                  case "istio":
-                    image = "/static/img/istio.svg";
-                    logoIcon = <img src={image} className={classes.istioIcon} />;
-                    break;
-                  case "linkerd":
-                    image = "/static/img/linkerd.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "consul":
-                    image = "/static/img/consul.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "network service mesh":
-                    image = "/static/img/nsm.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "octarine":
-                    image = "/static/img/octarine.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "citrix service mesh":
-                    image = "/static/img/citrix.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "osm":
-                    image = "/static/img/osm.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  case "kuma":
-                    image = "/static/img/kuma.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                  // Disable support for NGINX SM
-                  // case "nginx service mesh":
-                  //   image = "/static/img/nginx-sm.svg";
-                  //   logoIcon = <img src={image} className={classes.icon} />;
-                  //   break;
-                  case "traefik mesh":
-                    image = "/static/img/traefikmesh.svg";
-                    logoIcon = <img src={image} className={classes.icon} />;
-                    break;
-                }
+                adapterVersion = adapter.version;
+                image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
+                logoIcon = <img src={image} className={classes.icon} />;
               }
             });
 
@@ -703,7 +655,7 @@ class DashboardComponent extends React.Component {
                       .toLowerCase()
                       .split(" ")
                       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} adapter on port ${aa.label.split(":")[1]}`
+                      .join(" ")} adapter version ${adapterVersion} on port ${aa.label.split(":")[1]}`
                 }
               >
                 <Chip
@@ -791,16 +743,19 @@ class DashboardComponent extends React.Component {
       <>
         {Object.keys(self.state.meshScan).length ? (
           <>
-            {self.Meshcard({ name: "consul", tag: "Consul", icon: "/static/img/consul.svg" }, self.state.meshScan.consul)}
-            {self.Meshcard({ name: "istio", tag: "Istio", icon: "/static/img/istio.svg" }, self.state.meshScan.istio)}
-            {self.Meshcard({ name: "linkerd", tag: "Linkerd", icon: "/static/img/linkerd.svg" }, self.state.meshScan.linkerd)}
-            {self.Meshcard({ name: "osm", tag: "Open Service Mesh", icon: "/static/img/osm.svg" }, self.state.meshScan.osm)}
-            {self.Meshcard({ name: "osm", tag: "Network Service Mesh", icon: "/static/img/nsm.svg" }, self.state.meshScan.nsm)}
-            {self.Meshcard({ name: "octarine", tag: "Octarine", icon: "/static/img/octarine.svg" }, self.state.meshScan.octarine)}
-            {self.Meshcard({ name: "traefikmesh", tag: "Traefik Mesh", icon: "/static/img/traefikmesh.svg" }, self.state.meshScan.traefikmesh)}
-            {self.Meshcard({ name: "kuma", tag: "Kuma", icon: "/static/img/kuma.svg" }, self.state.meshScan.kuma)}
-            {/**self.Meshcard({ name: "nginx-sm", tag: "Nginx Service Mesh", icon: "/static/img/nginx-sm.svg" }, self.state.meshScan.nginx-sm) */}
-            {self.Meshcard({ name: "citrix", tag: "Citrix", icon: "/static/img/citrix.svg" }, self.state.meshScan.citrix)}
+            {self.state.meshScan.map((mesh) => {
+              let tag = ""
+              mesh.name
+                .replace("_", " ")
+                .split(" ")
+                .forEach((element) => {
+                  tag = tag + " " + element[0].toUpperCase() + element.slice(1, element.length);
+                });
+              return self.Meshcard(
+                { name: mesh.name, tag: tag, icon: "/static/img/" + mesh.name + ".svg" },
+                mesh.members
+              );
+            })}
           </>
         ) : (
           <div
