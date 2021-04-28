@@ -24,6 +24,7 @@ type PerformanceProfilePage struct {
 
 // GetPerformanceProfiles returns all of the performance profiles
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(userID, search, order string, page, pageSize uint64) ([]byte, error) {
+	order = sanitizeOrderInput(order, []string{"updated_at", "created_at", "name", "last_run"})
 	if order == "" {
 		order = "updated_at desc"
 	}

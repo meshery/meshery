@@ -25,6 +25,8 @@ type MesheryPatternPage struct {
 
 // GetMesheryPatterns returns all of the performance profiles
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64) ([]byte, error) {
+	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
 	if order == "" {
 		order = "updated_at desc"
 	}

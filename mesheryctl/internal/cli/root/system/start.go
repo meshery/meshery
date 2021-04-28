@@ -301,6 +301,7 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
 		log.Info("...Meshery deployed on Kubernetes.")
 
 	// switch to default case if the platform specified is not supported
