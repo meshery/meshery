@@ -117,10 +117,6 @@ const (
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
 
-	PersistRemoteMesheryPatterns Feature = "persist-remote-meshery-patterns" // /patterns/import/github.com
-
-	ImportRemoteMesheryPatterns Feature = "import-remote-meshery-patterns" // /patterns/import/<type>
-
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
