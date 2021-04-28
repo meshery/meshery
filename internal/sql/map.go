@@ -47,15 +47,19 @@ func (m Map) Value() (driver.Value, error) {
 
 // UnmarshalJSON will unmarshall JSON value into
 // the map representation of this value.
-func (m Map) UnmarshalJSON(b []byte) error {
+func (m *Map) UnmarshalJSON(b []byte) error {
 	var stuff map[string]interface{}
 
 	if err := json.Unmarshal(b, &stuff); err != nil {
 		return err
 	}
 
+	if *m == nil {
+		*m = Map{}
+	}
+
 	for key, value := range stuff {
-		m[key] = value
+		(*m)[key] = value
 	}
 
 	return nil
