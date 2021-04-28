@@ -255,6 +255,9 @@ func start() error {
 			}
 		}
 
+		endPoint := currCtx.Endpoint
+		log.Info("The endpoint Meshery is deployed at is: " + endPoint)
+
 	case "kubernetes":
 
 		log.Debug("creating new Clientset...")
@@ -303,6 +306,20 @@ func start() error {
 		}
 
 		log.Info("...Meshery deployed on Kubernetes.")
+
+		clientset := client.KubeClient
+
+		var opts meshkitkube.ServiceOptions
+		opts.Name = "meshery"
+		opts.Namespace = utils.MesheryNamespace
+		opts.APIServerURL = client.RestConfig.Host
+
+		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+		if err != nil {
+			return err
+		}
+
+		log.Info("The endpoint Meshery is deployed at is: "+endpoint.External.Address+":", endpoint.External.Port)
 
 	// switch to default case if the platform specified is not supported
 	default:
