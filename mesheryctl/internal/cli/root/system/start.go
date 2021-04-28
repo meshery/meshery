@@ -197,7 +197,7 @@ func start() error {
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
 			if container.Names[0] == "/meshery_meshery_1" {
-				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
+				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to the endpoint URL to access Meshery.")
 
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
