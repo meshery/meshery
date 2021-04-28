@@ -944,6 +944,10 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+	return nil, nil
+}
+
 // ImportPatternFileGithub downloads a file from a repository and stores it as a pattern for the user
 func (l *RemoteProvider) ImportPatternFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistRemoteMesheryPatterns) {
