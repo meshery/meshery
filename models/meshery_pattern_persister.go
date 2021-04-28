@@ -70,7 +70,8 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 
 		pattern.ID = &id
 	}
-	return marshalMesheryPattern(pattern), mpp.DB.Save(pattern).Error
+
+	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
 
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
@@ -88,6 +89,12 @@ func marshalMesheryPatternPage(mpp *MesheryPatternPage) []byte {
 
 func marshalMesheryPattern(mp *MesheryPattern) []byte {
 	res, _ := json.Marshal(mp)
+
+	return res
+}
+
+func marshalMesheryPatterns(mps []MesheryPattern) []byte {
+	res, _ := json.Marshal(mps)
 
 	return res
 }
