@@ -158,23 +158,25 @@ func (g *Github) walker(path string, isFile bool) error {
 		isFile := typ == "file"
 
 		wg.Add(1)
-		go func() {
+		go func(r GithubContentAPI) {
 			if g.recurse || isFile {
 				if err := g.walker(nextPath, isFile); err != nil {
 					logrus.Error("[GithubWalker]: error occured while processing github node ", err)
 				}
 			}
 
-			if g.dirInterceptor != nil {
-				if err := g.dirInterceptor(respBody); err != nil {
-					logrus.Error("[GithubWalker]: error occured while executing directory interceptor function ", err)
-				}
-			}
-
 			wg.Done()
-		}()
+		}(r)
 	}
 
 	wg.Wait()
+
+	if g.dirInterceptor != nil {
+		if err := g.dirInterceptor(respBody); err != nil {
+			logrus.Error("[GithubWalker]: error occured while executing directory interceptor function ", err)
+			return err
+		}
+	}
+
 	return nil
 }
