@@ -110,6 +110,10 @@ func start() error {
 			return err
 		}
 		services := compose.Services // Current Services
+		//extracting the custom user port from config.yaml
+		userPort := strings.Split(currCtx.Endpoint, ":")
+		userPortMapping := userPort[len(userPort)-1] + ":8080"
+		services["meshery"].Ports[0] = userPortMapping
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
