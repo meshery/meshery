@@ -3,31 +3,6 @@ name: Release Notes Publisher
 on: [push, pull_request]
 
 jobs:
-  create_release_draft:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout release notes
-          uses: actions/checkout@v2
-
-        - name: Drafting release
-          id: release_drafter
-          uses: release-drafter/release-drafter@v5
-          with:
-            config-name: release-drafter.yml
-          env:
-            GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
-
-        - name: Write release notes to markdown file
-          run: |
-            printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-
-        - name: Checkout release notes
-          uses: actions/checkout@v2
-
-        - name: Write release notes to markdown file
-          run: |
-            printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-
   create_release_notes_pr:
     runs-on: ubuntu-latest
     steps:
