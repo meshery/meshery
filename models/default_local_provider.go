@@ -532,6 +532,48 @@ func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID stri
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
+// ImportFilterFileGithub downloads a file from a repository and stores it as a filter for the user
+func (l *DefaultLocalProvider) ImportFilterFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
+	githubAPIURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
+
+	resp, err := http.Get(githubAPIURL)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	respJSON := map[string]interface{}{}
+
+	// Decode resp into the json object
+	if err := json.NewDecoder(resp.Body).Decode(&respJSON); err != nil {
+		return nil, err
+	}
+
+	// Get the name of the file
+	name, ok := respJSON["name"].(string)
+	if !ok {
+		return nil, fmt.Errorf("failed to get filename from github")
+	}
+
+	// Get the base64 encoded
+	content, ok := respJSON["content"].(string)
+	if !ok {
+		return nil, fmt.Errorf("failed to get the content from github")
+	}
+
+	decodedContent, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		return nil, err
+	}
+
+	return l.MesheryFilterPersister.SaveMesheryFilter(&MesheryFilter{
+		Name:       name,
+		FilterFile: string(decodedContent),
+	})
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID

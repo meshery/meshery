@@ -50,6 +50,28 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// ImportFilterFileGithub will import filterfile file from github
+func (h *Handler) ImportFilterFileGithub(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	owner := mux.Vars(r)["owner"]
+	repo := mux.Vars(r)["repo"]
+	path := mux.Vars(r)["path"]
+
+	cont, err := provider.ImportFilterFileGithub(r, owner, repo, path)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(rw, "%s", err)
+		return
+	}
+
+	fmt.Fprintf(rw, "%s", cont)
+}
+
 func (h *Handler) SaveFilterFile(
 	rw http.ResponseWriter,
 	r *http.Request,

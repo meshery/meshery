@@ -91,6 +91,7 @@ type HandlerInterface interface {
 
 	FilterFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ImportFilterFileGithub(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GraphqlSystemHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 

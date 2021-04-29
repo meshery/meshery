@@ -1324,6 +1324,46 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 	return nil, fmt.Errorf("error while getting filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// ImportFilterFileGithub downloads a file from a repository and stores it as a filter for the user
+func (l *RemoteProvider) ImportFilterFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistRemoteMesheryFilters) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistRemoteMesheryFilters, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistRemoteMesheryFilters)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s?path=%s", l.RemoteProviderURL, ep, owner, repo, path))
+	logrus.Debugf("constructed filter import url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to import filters: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to import filters: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		logrus.Infof("successfully imported filter")
+		return bdr, nil
+	}
+	logrus.Errorf("error while importing filter: %s", bdr)
+	return nil, fmt.Errorf("error while importing filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // SaveSchedule saves a SaveSchedule into the remote provider
 func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistSchedules) {
