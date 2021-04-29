@@ -65,6 +65,14 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 	return marshalMesheryFilter(filter), mfp.DB.Save(filter).Error
 }
 
+// DeleteMesheryFilter takes in a filter id and delete it if it already exists
+func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
+	filter := MesheryFilter{ID: &id}
+	mfp.DB.Delete(&filter)
+
+	return marshalMesheryFilter(&filter), nil
+}
+
 func marshalMesheryFilter(mf *MesheryFilter) []byte {
 	res, _ := json.Marshal(mf)
 

@@ -50,6 +50,26 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// DeleteMesheryFilterHandler deletes a filter with the given id
+func (h *Handler) DeleteMesheryFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	filterID := mux.Vars(r)["id"]
+
+	resp, err := provider.DeleteMesheryFilter(r, filterID)
+	if err != nil {
+		http.Error(rw, fmt.Sprintf("failed to delete the filter: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // ImportFilterFileGithub will import filterfile file from github
 func (h *Handler) ImportFilterFileGithub(
 	rw http.ResponseWriter,

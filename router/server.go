@@ -139,6 +139,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("POST", "GET")
 	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterHandler)))).
 		Methods("GET")
+	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
+		Methods("DELETE")
 	gMux.Handle("/api/experimental/filter/import/github.com/{owner}/{repo}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportFilterFileGithub)))).
 		Queries("path", "{path}").
 		Methods("GET")

@@ -532,6 +532,12 @@ func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID stri
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
+// DeleteMesheryFilter deletes a meshery filter with the given id
+func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
+}
+
 // ImportFilterFileGithub downloads a file from a repository and stores it as a filter for the user
 func (l *DefaultLocalProvider) ImportFilterFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
 	githubAPIURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
