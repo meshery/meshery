@@ -22,6 +22,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -197,7 +198,7 @@ func start() error {
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
 			if container.Names[0] == "/meshery_meshery_1" {
-				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to the endpoint URL to access Meshery.")
+				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
 				//check for os of host machine
 				if runtime.GOOS == "windows" {
@@ -254,9 +255,6 @@ func start() error {
 				return errors.Wrap(err, utils.SystemError("failed to wait for command to execute"))
 			}
 		}
-
-		endPoint := currCtx.Endpoint
-		log.Info("The endpoint Meshery is deployed at is: " + endPoint)
 
 	case "kubernetes":
 
@@ -319,7 +317,32 @@ func start() error {
 			return err
 		}
 
-		log.Info("The endpoint Meshery is deployed at is: "+endpoint.External.Address+":", endpoint.External.Port)
+		currCtx.Endpoint = "http://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
+		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
+
+		if runtime.GOOS == "windows" {
+			// Meshery running on Windows host
+			err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to exec command"))
+			}
+		} else if runtime.GOOS == "linux" {
+			// Meshery running on Linux host
+			_, err = exec.LookPath("xdg-open")
+			if err != nil {
+				break
+			}
+			err = exec.Command("xdg-open", currCtx.Endpoint).Start()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to exec command"))
+			}
+		} else {
+			// Assume Meshery running on MacOS host
+			err = exec.Command("open", currCtx.Endpoint).Start()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to exec command"))
+			}
+		}
 
 	// switch to default case if the platform specified is not supported
 	default:
