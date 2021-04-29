@@ -47,8 +47,8 @@ var (
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:     "perf",
-	Short:   "Performance Testing",
-	Long:    `Performance Testing & Benchmarking using Meshery CLI.`,
+	Short:   "Performance Management",
+	Long:    `Performance Management & Benchmarking using Meshery CLI.`,
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
