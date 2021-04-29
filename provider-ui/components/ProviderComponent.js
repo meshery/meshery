@@ -126,7 +126,7 @@ class ProviderComponent extends React.Component {
   };
 
   handleMenuItemClick = (index) => {
-    this.setState({ selectedProvider: index });
+    this.setState({ selectedProvider: index, open: false });
   };
 
   handleToggle() {
@@ -278,7 +278,7 @@ class ProviderComponent extends React.Component {
                               <MenuItem disabled={true} key="SMI">
                                 SMI Conformance
                               </MenuItem>
-                              <MenuItem disabled={true} key="UT Austin">
+                              <MenuItem disabled={false} key="UT Austin">
                                 The University of Texas at Austin
                               </MenuItem>
                             </MenuList>
