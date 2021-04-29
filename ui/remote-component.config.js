@@ -12,6 +12,7 @@ module.exports = {
     "@material-ui/core/SvgIcon": require("@material-ui/core/SvgIcon"),
     "@material-ui/core/Typography": require("@material-ui/core/Typography"),
     "@material-ui/core/Drawer": require("@material-ui/core/Drawer"),
+    "@material-ui/icons/Cached": require("@material-ui/icons/Cached"),
     "@material-ui/icons/ChevronLeft": require("@material-ui/icons/ChevronLeft"),
     "@material-ui/icons/Traffic": require("@material-ui/icons/Traffic"),
     "@material-ui/icons/Security": require("@material-ui/icons/Security"),
