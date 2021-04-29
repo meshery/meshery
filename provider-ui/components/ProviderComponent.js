@@ -278,7 +278,7 @@ class ProviderComponent extends React.Component {
                               <MenuItem disabled={true} key="SMI">
                                 SMI Conformance
                               </MenuItem>
-                              <MenuItem disabled={false} key="UT Austin">
+                              <MenuItem disabled={true} key="UT Austin">
                                 The University of Texas at Austin
                               </MenuItem>
                             </MenuList>
