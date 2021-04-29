@@ -236,32 +236,33 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 		return err
 	}
 
-	if currCtx.Platform == "docker" {
-		//Check whether docker daemon is running or not
-		if err := exec.Command("docker", "ps").Run(); err != nil {
-			log.Info("Docker is not running.")
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
-			}
-			err = startdockerdaemon(subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
-			}
-		}
-		//Check for installed docker-compose on client system
-		if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-			log.Info("Docker-Compose is not installed")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-			err = installprereq()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-		}
-	} else if currCtx.Platform == "kubernetes" {
+	// if currCtx.Platform == "docker" {
+	// 	//Check whether docker daemon is running or not
+	// 	if err := exec.Command("docker", "ps").Run(); err != nil {
+	// 		log.Info("Docker is not running.")
+	// 		//No auto installation of docker for windows
+	// 		if runtime.GOOS == "windows" {
+	// 			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
+	// 		}
+	// 		err = startdockerdaemon(subcommand)
+	// 		if err != nil {
+	// 			return errors.Wrapf(err, "failed to start Docker.")
+	// 		}
+	// 	}
+	// 	//Check for installed docker-compose on client system
+	// 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
+	// 		log.Info("Docker-Compose is not installed")
+	// 		//No auto installation of Docker-compose for windows
+	// 		if runtime.GOOS == "windows" {
+	// 			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+	// 		}
+	// 		err = installprereq()
+	// 		if err != nil {
+	// 			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+	// 		}
+	// 	}
+	// } else 
+	if currCtx.Platform == "kubernetes" {
 		client, err := meshkitkube.New([]byte(""))
 
 		if err != nil {
