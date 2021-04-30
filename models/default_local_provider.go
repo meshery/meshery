@@ -485,9 +485,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		}
 
 		if save {
-			for _, pf := range pfs {
-				l.MesheryPatternPersister.SaveMesheryPattern(&pf)
-			}
+			return l.MesheryPatternPersister.SaveMesheryPatterns(pfs)
 		}
 
 		return json.Marshal(pfs)
@@ -499,9 +497,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		return nil, err
 	}
 	if save {
-		for _, pf := range pfs {
-			l.MesheryPatternPersister.SaveMesheryPattern(&pf)
-		}
+		return l.MesheryPatternPersister.SaveMesheryPatterns(pfs)
 	}
 
 	return json.Marshal(pfs)
@@ -828,19 +824,13 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 		return nil, err
 	}
 
-	parsedURL, err := url.Parse(fileURL)
-	if err != nil {
-		logrus.Errorf("error parsing fileURL: %v", err)
-		return nil, err
-	}
-
 	pf := MesheryPattern{
 		Name:        name,
 		PatternFile: result,
 		Location: map[string]interface{}{
 			"type": "http",
-			"host": parsedURL.Host,
-			"path": parsedURL.EscapedPath(),
+			"host": fileURL,
+			"path": "",
 		},
 	}
 

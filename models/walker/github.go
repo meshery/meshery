@@ -157,12 +157,12 @@ func (g *Github) walker(path string, isFile bool) error {
 			respJSON := map[string]interface{}{}
 
 			if err := json.NewDecoder(resp.Body).Decode(&respJSON); err != nil {
-				return fmt.Errorf("GithubAPI responded with: forbidden")
+				return fmt.Errorf("[GithubWalker]: GithubAPI responded with: forbidden")
 			}
 
 			message, ok := respJSON["message"].(string)
 			if !ok {
-				return fmt.Errorf("GithubAPI responded with: forbidden")
+				return fmt.Errorf("[GithubWalker]: GithubAPI responded with: forbidden")
 			}
 
 			return fmt.Errorf(message)
@@ -208,7 +208,7 @@ func (g *Github) walker(path string, isFile bool) error {
 		go func(r GithubContentAPI) {
 			if g.recurse || isFile {
 				if err := g.walker(nextPath, isFile); err != nil {
-					logrus.Error("[GithubWalker]: error occured while processing github node ", err)
+					logrus.Error("[GithubWalker]: error occurred while processing github node ", err)
 				}
 			}
 
@@ -220,7 +220,7 @@ func (g *Github) walker(path string, isFile bool) error {
 
 	if g.dirInterceptor != nil {
 		if err := g.dirInterceptor(respBody); err != nil {
-			logrus.Error("[GithubWalker]: error occured while executing directory interceptor function ", err)
+			logrus.Error("[GithubWalker]: error occurred while executing directory interceptor function ", err)
 			return err
 		}
 	}
