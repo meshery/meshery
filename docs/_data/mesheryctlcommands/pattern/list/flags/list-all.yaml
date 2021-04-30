@@ -1,0 +1,4 @@
+name: --all, -a
+description: show all pattern file metadata
+usage: |
+    mesheryctl exp pattern list --all

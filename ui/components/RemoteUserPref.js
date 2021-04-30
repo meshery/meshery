@@ -10,7 +10,7 @@ const useRemoteComponent = createUseRemoteComponent({
 });
 
 const RemoteUserPref = ({ startOnZoom, handleToggle, url }) => {
-  const [loading, err, RemoteComponent] = useRemoteComponent(url);
+  const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
     return (
       <CircularProgress />
