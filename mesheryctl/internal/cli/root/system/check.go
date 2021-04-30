@@ -32,15 +32,15 @@ var PreCheckCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return runPreflightHealthChecks(cmd.Use, currCtx.Platform)
+		return runPreflightHealthChecks(false, cmd.Use, currCtx.Platform)
 
 	},
 }
 
 //Run preflight healthchecks to verify environment health
-func runPreflightHealthChecks(subcommand string, platform string) error {
+func runPreflightHealthChecks(isPreRunExecution bool, subcommand string, platform string) error {
 	//Run docker healthchecks
-	if err := runDockerHealthCheck(false, subcommand, platform); err != nil {
+	if err := runDockerHealthCheck(isPreRunExecution, subcommand, platform); err != nil {
 		return err
 	}
 	//Run k8s API healthchecks
