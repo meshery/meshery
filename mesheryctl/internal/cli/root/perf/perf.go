@@ -51,10 +51,6 @@ var PerfCmd = &cobra.Command{
 	Long:    `Performance Management & Benchmarking using Meshery CLI.`,
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.NoArgs,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		return utils.PreReqCheck(cmd.Use, "")
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Importing SMP Configuration from the file
 		var req *http.Request
