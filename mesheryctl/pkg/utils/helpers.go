@@ -235,6 +235,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 	if err != nil {
 		return err
 	}
+	
     if currCtx.Platform == "docker" {
 	    //Check for installed docker-compose on client system
 	    if err := exec.Command("docker-compose", "-v").Run(); err != nil {
