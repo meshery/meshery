@@ -3,8 +3,7 @@ package sql
 import (
 	"database/sql/driver"
 	"encoding/json"
-
-	"errors"
+	"fmt"
 )
 
 // Map type is an alias for map[string]interface{}
@@ -22,9 +21,15 @@ func (m Map) Interface() interface{} {
 // Scan implements the sql.Scanner interface.
 // It allows to read the map from the database value.
 func (m *Map) Scan(src interface{}) error {
-	b, ok := src.([]byte)
-	if !ok {
-		return errors.New("scan source is not of type []byte")
+	var b []byte
+
+	switch t := src.(type) {
+	case []byte:
+		b = t
+	case string:
+		b = []byte(t)
+	default:
+		return fmt.Errorf("scan source was not []byte nor string but %T", src)
 	}
 
 	if err := json.Unmarshal(b, m); err != nil {
