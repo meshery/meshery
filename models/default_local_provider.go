@@ -30,6 +30,7 @@ type DefaultLocalProvider struct {
 	TestProfilesPersister        *BitCaskTestProfilesPersister
 	PerformanceProfilesPersister *PerformanceProfilePersister
 	MesheryPatternPersister      *MesheryPatternPersister
+	MesheryFilterPersister       *MesheryFilterPersister
 	GenericPersister             database.Handler
 	GraphqlHandler               http.Handler
 	GraphqlPlayground            http.Handler
@@ -491,6 +492,91 @@ func (l *DefaultLocalProvider) ImportPatternFileGithub(req *http.Request, owner,
 	return l.MesheryPatternPersister.SaveMesheryPattern(&MesheryPattern{
 		Name:        name,
 		PatternFile: string(decodedContent),
+	})
+}
+
+// SaveMesheryFilter saves given filter with the provider
+func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
+	return l.MesheryFilterPersister.SaveMesheryFilter(filter)
+}
+
+// GetMesheryFilters gives the filter stored with the provider
+func (l *DefaultLocalProvider) GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
+}
+
+// GetMesheryFilter gets filter for the given filterID
+func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryPatternPersister.GetMesheryPattern(id)
+}
+
+// DeleteMesheryFilter deletes a meshery filter with the given id
+func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(filterID)
+	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
+}
+
+// ImportFilterFileGithub downloads a file from a repository and stores it as a filter for the user
+func (l *DefaultLocalProvider) ImportFilterFileGithub(req *http.Request, owner, repo, path string) ([]byte, error) {
+	githubAPIURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
+
+	resp, err := http.Get(githubAPIURL)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	respJSON := map[string]interface{}{}
+
+	// Decode resp into the json object
+	if err := json.NewDecoder(resp.Body).Decode(&respJSON); err != nil {
+		return nil, err
+	}
+
+	// Get the name of the file
+	name, ok := respJSON["name"].(string)
+	if !ok {
+		return nil, fmt.Errorf("failed to get filename from github")
+	}
+
+	// Get the base64 encoded
+	content, ok := respJSON["content"].(string)
+	if !ok {
+		return nil, fmt.Errorf("failed to get the content from github")
+	}
+
+	decodedContent, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		return nil, err
+	}
+
+	return l.MesheryFilterPersister.SaveMesheryFilter(&MesheryFilter{
+		Name:       name,
+		FilterFile: string(decodedContent),
 	})
 }
 
