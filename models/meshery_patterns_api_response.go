@@ -7,4 +7,3 @@ type PatternsAPIResponse struct {
 	TotalCount uint             `json:"total_size"`
 	Patterns   []MesheryPattern `json:"patterns"`
 }
-
