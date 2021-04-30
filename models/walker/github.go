@@ -11,6 +11,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GithubContentAPI represents Github API v3 response
+// to /repos/{owner}/{repo}/contents/{path}?ref={branch}
 type GithubContentAPI struct {
 	Name        string `json:"name,omitempty"`
 	Path        string `json:"path,omitempty"`
@@ -21,15 +23,28 @@ type GithubContentAPI struct {
 	GitURL      string `json:"git_url,omitempty"`
 	DownloadURL string `json:"download_url,omitempty"`
 	Type        string `json:"type,omitempty"`
-	Content     string `json:"content,omitempty"`
-	Encoding    string `json:"encoding,omitempty"`
+	// Content will be empty when the path is of a directory
+	Content string `json:"content,omitempty"`
+	// Encoding will be empty when the path is of a directory
+	Encoding string `json:"encoding,omitempty"`
 }
 
+// GithubDirectoryContentAPI represents Github API v3 response
+// to /repos/{owner}/{repo}/contents/{path}?ref={branch} when "path"
+// is of a directory
 type GithubDirectoryContentAPI []GithubContentAPI
 
+// GithubFileInterceptor represents function signature which
+// will be used on "file" nodes when the github walker traverses
+// the paths
 type GithubFileInterceptor func(GithubContentAPI) error
+
+// GithubDirInterceptor represents function signature which
+// will be used on "dir" nodes when the github walker traverses
+// the paths
 type GithubDirInterceptor func(GithubDirectoryContentAPI) error
 
+// Github represents the Github Walker
 type Github struct {
 	owner           string
 	repo            string
@@ -40,27 +55,45 @@ type Github struct {
 	dirInterceptor  GithubDirInterceptor
 }
 
+// NewGithub returns a pointer to an instance of Github
 func NewGithub() *Github {
 	return &Github{
 		branch: "main",
 	}
 }
 
+// Owner sets github repository owner and returns a pointer
+// to the same Github instance
 func (g *Github) Owner(owner string) *Github {
 	g.owner = owner
 	return g
 }
 
+// Repo sets github repository and returns a pointer
+// to the same Github instance
 func (g *Github) Repo(repo string) *Github {
 	g.repo = repo
 	return g
 }
 
+// Branch sets github repository branch which
+// will be traversed and returns a pointer
+// to the same Github instance
 func (g *Github) Branch(branch string) *Github {
 	g.branch = branch
 	return g
 }
 
+// Root sets github repository root node from where
+// Github walker needs to start traversing and returns
+// a pointer to the same Github instance
+//
+// If the root parameter ends with a "/**" then github walker
+// will run in "traversal" mode, ie. it will look into each sub
+// directory of the root node
+//
+// If the root node ends with an extension, then that
+// file will be returned and github walker will not traverse deeper
 func (g *Github) Root(root string) *Github {
 	g.root = root
 
@@ -72,16 +105,29 @@ func (g *Github) Root(root string) *Github {
 	return g
 }
 
+// RegisterFileInterceptor takes in a file interceptor which will be invoked
+// on each "file" node and it returns pointer to the same github instance
+//
+// Github Walker walks the nodes concurrently so if the interceptor is reading
+// or writing to any variable from a higher namespace then those operations
+// should be done in thread safe manner in order to avoid data races
 func (g *Github) RegisterFileInterceptor(i GithubFileInterceptor) *Github {
 	g.fileInterceptor = i
 	return g
 }
 
+// RegisterFileInterceptor takes in a directory interceptor which will be invoked
+// on each "directory" node and it returns pointer to the same github instance
+//
+// Github Walker walks the nodes concurrently so if the interceptor is reading
+// or writing to any variable from a higher namespace then those operations
+// should be done in thread safe manner in order to avoid data races
 func (g *Github) RegisterDirInterceptor(i GithubDirInterceptor) *Github {
 	g.dirInterceptor = i
 	return g
 }
 
+// Walk will initiate traversal process
 func (g *Github) Walk() error {
 	// Check if a file is requested
 	isFile := true
@@ -92,6 +138,7 @@ func (g *Github) Walk() error {
 	return g.walker(g.root, isFile)
 }
 
+// walker is a recursive function which actually walks the Github tree
 func (g *Github) walker(path string, isFile bool) error {
 	githubAPIURL := fmt.Sprintf(
 		"https://api.github.com/repos/%s/%s/contents/%s?ref=%s",
