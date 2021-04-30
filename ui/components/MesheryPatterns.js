@@ -199,7 +199,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ id, name, pattern_file: data }),
+          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
         },
         () => {
           console.log("PatternFile API", `/api/experimental/patternfile`);
@@ -216,7 +216,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ name, pattern_file: data }),
+          body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
         },
         () => {
           console.log("PatternFile API", `/api/experimental/patternfile`);
