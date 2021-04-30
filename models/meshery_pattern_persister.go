@@ -76,6 +76,25 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
 
+// SaveMesheryPatterns batch inserts the given patterns
+func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
+	finalPatterns := []MesheryPattern{}
+	for _, pattern := range patterns {
+		if pattern.ID == nil {
+			id, err := uuid.NewV4()
+			if err != nil {
+				return nil, fmt.Errorf("failed to create ID for the pattern: %s", err)
+			}
+
+			pattern.ID = &id
+		}
+
+		finalPatterns = append(finalPatterns, pattern)
+	}
+
+	return marshalMesheryPatterns(finalPatterns), mpp.DB.Create(finalPatterns).Error
+}
+
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
