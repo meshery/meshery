@@ -763,7 +763,8 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
 	data, err := json.Marshal(map[string]interface{}{
-		"content": pattern,
+		"pattern_data": pattern,
+		"save":         true,
 	})
 
 	if err != nil {
@@ -797,7 +798,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusCreated {
+	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("pattern successfully sent to remote provider: %s", string(bdr))
 		return bdr, nil
 	}
@@ -998,7 +999,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusCreated {
+	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("pattern successfully sent to remote provider: %s", string(bdr))
 		return bdr, nil
 	}

@@ -13,11 +13,11 @@ import (
 // MesheryPatternRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive
 type MesheryPatternRequestBody struct {
-	URL           string `json:"url,omitempty"`
-	Path          string `json:"path,omitempty"`
-	Save          bool   `json:"save,omitempty"`
-	Content       string `json:"content,omitempty"`
-	CytoscapeJSON string `json:"cytoscape_json,omitempty"`
+	URL           string                 `json:"url,omitempty"`
+	Path          string                 `json:"path,omitempty"`
+	Save          bool                   `json:"save,omitempty"`
+	PatternData   *models.MesheryPattern `json:"pattern_data,omitempty"`
+	CytoscapeJSON string                 `json:"cytoscape_json,omitempty"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
@@ -67,23 +67,27 @@ func (h *Handler) handlePatternPOST(
 	format := r.URL.Query().Get("output")
 
 	// If Content is not empty then assume it's a local upload
-	if parsedBody.Content != "" {
-		// If no output format was specified then proceed to save the pattern
-		patternName, err := models.GetPatternName(parsedBody.Content)
+	if parsedBody.PatternData != nil {
+		patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
 		if err != nil {
 			http.Error(rw, fmt.Sprintf("failed to save the pattern: %s", err), http.StatusBadRequest)
 			return
 		}
 
-		mesheryPattern := &models.MesheryPattern{
-			Name:        patternName,
-			PatternFile: parsedBody.Content,
-			Location: map[string]interface{}{
+		// Assign a name if no name is provided
+		if parsedBody.PatternData.Name == "" {
+			parsedBody.PatternData.Name = patternName
+		}
+		// Assign a location if no location is specified
+		if parsedBody.PatternData.Location == nil {
+			parsedBody.PatternData.Location = map[string]interface{}{
 				"host": "",
 				"path": "",
 				"type": "local",
-			},
+			}
 		}
+
+		mesheryPattern := parsedBody.PatternData
 
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
@@ -119,7 +123,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := OAM.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.Content))
+		pf, err := OAM.NewPatternFileFromCytoscapeJSJSON([]byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
@@ -141,7 +145,7 @@ func (h *Handler) handlePatternPOST(
 
 		mesheryPattern := &models.MesheryPattern{
 			Name:        patternName,
-			PatternFile: parsedBody.Content,
+			PatternFile: string(pfByt),
 			Location: map[string]interface{}{
 				"host": "",
 				"path": "",
