@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -282,6 +283,14 @@ func start() error {
 		if err != nil {
 			return err
 		}
+		// path to the manifest files ~/.meshery/manifests
+		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
+
+		// change version in meshery-deployment manifest
+		err = utils.ChangeManifestVersion(utils.MesheryDeployment, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+		if err != nil {
+			return err
+		}
 
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
@@ -292,6 +301,7 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
 		log.Info("...Meshery deployed on Kubernetes.")
 
 	// switch to default case if the platform specified is not supported

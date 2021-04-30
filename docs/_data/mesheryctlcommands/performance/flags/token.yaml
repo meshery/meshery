@@ -1,4 +1,4 @@
-name: token
+name: --token
 description: Path to Meshery auth token
 usage: |
-    `mesheryctl perf --token <path to token> --url <URL>`
+    mesheryctl perf --token [path to token] --url [URL]

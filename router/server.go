@@ -124,6 +124,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("POST")
 	gMux.Handle("/api/experimental/patternfile/import/cytoscapejs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportPatternFile)))).
 		Methods("POST")
+	gMux.Handle("/api/experimental/patternfile/import/github.com/{owner}/{repo}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportPatternFileGithub)))).
+		Queries("path", "{path}").
+		Methods("GET")
 	gMux.Handle("/api/experimental/patternfile", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
 		Methods("POST", "GET")
 	gMux.Handle("/api/experimental/patternfile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
@@ -131,6 +134,16 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/experimental/patternfile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
 		Methods("DELETE")
 	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
+
+	gMux.Handle("/api/experimental/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler)))).
+		Methods("POST", "GET")
+	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterHandler)))).
+		Methods("GET")
+	gMux.Handle("/api/experimental/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler)))).
+		Methods("DELETE")
+	gMux.Handle("/api/experimental/filter/import/github.com/{owner}/{repo}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ImportFilterFileGithub)))).
+		Queries("path", "{path}").
+		Methods("GET")
 
 	gMux.Handle("/api/user/performance/profiles", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetPerformanceProfilesHandler)))).
 		Methods("GET")
