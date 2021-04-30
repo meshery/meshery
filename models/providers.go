@@ -117,6 +117,10 @@ const (
 
 	PersistMesheryPatterns Feature = "persist-meshery-patterns" // /patterns
 
+	PersistMesheryFilters Feature = "persist-meshery-filters" // /filter
+
+	PersistRemoteMesheryFilters Feature = "persist-remote-meshery-filters" // /filter/import/github.com
+
 	PersistPerformanceProfiles Feature = "persist-performance-profiles" // /user/performance/profile
 
 	PersistSchedules Feature = "persist-schedules" // /user/schedules
@@ -214,6 +218,12 @@ type Provider interface {
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	GetMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+
+	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
+	GetMesheryFilters(req *http.Request, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
+	ImportFilterFileGithub(req *http.Request, owner, repo, path string) ([]byte, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(req *http.Request, page, pageSize, search, order string) ([]byte, error)
