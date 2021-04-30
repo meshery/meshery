@@ -257,7 +257,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			if runtime.GOOS == "windows" {
 				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
 			}
-			err = startdockerdaemon(subcommand)
+			err = Startdockerdaemon(subcommand)
 			if err != nil {
 				return errors.Wrapf(err, "failed to start Docker.")
 			}
@@ -269,7 +269,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			if runtime.GOOS == "windows" {
 				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
-			err = installprereq()
+			err = Installprereq()
 			if err != nil {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
@@ -294,7 +294,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 	return nil
 }
 
-func startdockerdaemon(subcommand string) error {
+func Startdockerdaemon(subcommand string) error {
 	userResponse := false
 	// read user input on whether to start Docker daemon or not.
 	if SilentFlag {
@@ -333,7 +333,7 @@ func startdockerdaemon(subcommand string) error {
 	return nil
 }
 
-func installprereq() error {
+func Installprereq() error {
 	log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
 	if err != nil {

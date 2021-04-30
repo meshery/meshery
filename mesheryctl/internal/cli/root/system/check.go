@@ -2,9 +2,12 @@ package system
 
 import (
 	"context"
-	"errors"
 	"os/exec"
+	"runtime"
 
+	"github.com/pkg/errors"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -12,6 +15,7 @@ import (
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var PreCheckCmd = &cobra.Command{
@@ -20,35 +24,78 @@ var PreCheckCmd = &cobra.Command{
 	Long:  `Verify environment readiness to deploy Meshery.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//Run docker healthchecks
-		_ = runDockerHealthCheck()
-		//Run k8s API healthchecks
-		if err := runKubernetesAPIHealthCheck(); err != nil {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
 			return err
 		}
-		//Run k8s plus kubectl minimum version healthchecks
-		if err := runKubernetesVersionHealthCheck(); err != nil {
-			return err
-		}
-		log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
-		return nil
+		return runPreflightHealthChecks(cmd.Use, currCtx.Platform)
+
 	},
 }
 
+//Run preflight healthchecks to verify environment health
+func runPreflightHealthChecks(subcommand string, platform string) error {
+	//Run docker healthchecks
+	if err := runDockerHealthCheck(false, subcommand, platform); err != nil {
+		return err
+	}
+	//Run k8s API healthchecks
+	if err = runKubernetesAPIHealthCheck(); err != nil {
+		return err
+	}
+	//Run k8s plus kubectl minimum version healthchecks
+	if err := runKubernetesVersionHealthCheck(); err != nil {
+		return err
+	}
+	log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+	return nil
+}
+
 //Run healthchecks to verify if docker is running and active
-func runDockerHealthCheck() error {
-	log.Info("\nDocker \n--------------")
+func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform string) error {
+	if !isPreRunExecution {
+		log.Info("\nDocker \n--------------")
+	}
 	//Check whether docker daemon is running or not
 	if err := exec.Command("docker", "ps").Run(); err != nil {
 		log.Warn("!! Docker is not running")
+		//If preRunExecution and the current platform is docker then we trigger docker installation
+		if isPreRunExecution && platform == "docker" {
+			//No auto installation of docker for windows
+			if runtime.GOOS == "windows" {
+				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
+			}
+			err = utils.Startdockerdaemon(subcommand)
+			if err != nil {
+				return errors.Wrapf(err, "failed to start Docker.")
+			}
+		}
 	}
-	log.Info("√ Docker is running")
+	if !isPreRunExecution {
+		log.Info("√ Docker is running")
+	}
 
 	//Check for installed docker-compose on client system
 	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
 		log.Warn("!! docker-compose is not available")
+		if isPreRunExecution && platform == "docker" {
+			//No auto installation of Docker-compose for windows
+			if runtime.GOOS == "windows" {
+				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+			}
+			err = utils.Installprereq()
+			if err != nil {
+				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+			}
+		}
 	}
-	log.Info("√ docker-compose is available")
+	if !isPreRunExecution {
+		log.Info("√ docker-compose is available")
+	}
 
 	return nil
 }
