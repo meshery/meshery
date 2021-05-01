@@ -1,39 +1,11 @@
-name: Meshery Build and Releaser
+name: Meshery Build and Releaser (stable)
 on:
   push:
-    branches:
-      - 'fix-build-and-release-workflow'
+    tags:
+      - '*'
 
 jobs:
-  build_release:
-    name: Meshery build & release
-    if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-    runs-on: macos-latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@master
-    - name: Unshallow
-      run: git fetch --prune --unshallow
-    - name: Set up Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ secrets.GO_VERSION }}
-    - name: Setup Cache
-      uses: actions/cache@v1
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    - name: goreleaser with tag
-      uses: goreleaser/goreleaser-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
-        RELEASE_CHANNEL: "stable"
-      with:
-        version: latest
-        args: release --rm-dist --skip-validate
-  docker:
+  build:
     name: Docker build and push
     env:
       RELEASE_CHANNEL: "stable"
@@ -48,34 +20,39 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Docker edge build & tag
-      if: startsWith(github.ref, 'refs/tags/') != true && success()
-      env:
-        RELEASE_CHANNEL: "edge"
-      run: |
-        DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION="edge-latest" --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-        docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-    - name: Docker edge push
-      if: startsWith(github.ref, 'refs/tags/') != true && success()
-      run: |
-        docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-        docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
     - name: Docker stable build & tag
-      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       run: |
         DOCKER_BUILDKIT=1 docker build --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
         docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
         docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
     - name: Docker stable push
-      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       run: |
         docker push ${{ secrets.IMAGE_NAME }}:stable-latest
         docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
         docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
     - name: Docker Hub Description
-      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: peter-evans/dockerhub-description@v2.0.0
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
+  release:
+    name: Meshery build & release
+    runs-on: macos-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+    - name: Unshallow
+      run: git fetch --prune --unshallow
+    - name: Set up Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ secrets.GO_VERSION }}
+    - name: goreleaser with tag
+      uses: goreleaser/goreleaser-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_CHANNEL: "stable"
+      with:
+        version: latest
+        args: release --rm-dist --skip-validate
