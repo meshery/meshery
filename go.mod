@@ -31,7 +31,7 @@ require (
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3
-	github.com/lib/pq v1.10.0
+	github.com/lib/pq v1.10.1
 	github.com/nats-io/nats.go v1.10.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
