@@ -47,16 +47,16 @@ var viewCmd = &cobra.Command{
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				url += "/api/experimental/patternfile?page_size=10000"
+				url += "/api/experimental/pattern?page_size=10000"
 			} else {
 				return errors.New("[pattern-name|pattern-id] not specified, use -a to view all patterns")
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
-			url += "/api/experimental/patternfile/" + pattern
+			url += "/api/experimental/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			url += "/api/experimental/patternfile?search=" + pattern
+			url += "/api/experimental/pattern?search=" + pattern
 		}
 
 		client := &http.Client{}

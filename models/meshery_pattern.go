@@ -1,9 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/internal/sql"
+	"gopkg.in/yaml.v2"
 )
 
 // MesheryPattern represents the patterns that needs to be saved
@@ -16,6 +19,25 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id" gorm:"-"`
 
+	Location sql.Map `json:"location"`
+
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+}
+
+// GetPatternName takes in a stringified patternfile and extracts the name from it
+func GetPatternName(stringifiedFile string) (string, error) {
+	out := map[string]interface{}{}
+
+	if err := yaml.Unmarshal([]byte(stringifiedFile), &out); err != nil {
+		return "", err
+	}
+
+	// Get Name from the file
+	name, ok := out["name"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid patternfile - name field is either not present or is not valid")
+	}
+
+	return name, nil
 }
