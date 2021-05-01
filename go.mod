@@ -39,7 +39,7 @@ require (
 	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/common v0.20.0
 	github.com/qri-io/jsonschema v0.2.1
-	github.com/sirupsen/logrus v1.8.0
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
@@ -52,7 +52,7 @@ require (
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
-	gorm.io/gorm v1.20.10
+	gorm.io/gorm v1.21.9
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12
 	k8s.io/client-go v0.18.12
