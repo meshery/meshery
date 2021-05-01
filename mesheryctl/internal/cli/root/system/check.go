@@ -24,21 +24,21 @@ var PreCheckCmd = &cobra.Command{
 	Long:  `Verify environment readiness to deploy Meshery.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return errors.Wrap(err, "error processing config")
-		}
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
-		if err != nil {
-			return err
-		}
-		return runPreflightHealthChecks(false, cmd.Use, currCtx.Platform)
-
+		return RunPreflightHealthChecks(false, cmd.Use)
 	},
 }
 
 //Run preflight healthchecks to verify environment health
-func runPreflightHealthChecks(isPreRunExecution bool, subcommand string, platform string) error {
+func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return err
+	}
+	platform := currCtx.Platform
 	//Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker
 	if !isPreRunExecution || (isPreRunExecution && platform == "docker") {
