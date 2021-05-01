@@ -21,7 +21,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -109,6 +108,7 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
 		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
 		userPort := strings.Split(currCtx.Endpoint, ":")
@@ -204,31 +204,10 @@ func start() error {
 			if container.Names[0] == "/meshery_meshery_1" {
 				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
-				//check for os of host machine
-				if runtime.GOOS == "windows" {
-					// Meshery running on Windows host
-					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
-				} else if runtime.GOOS == "linux" {
-					// Meshery running on Linux host
-					_, err = exec.LookPath("xdg-open")
-					if err != nil {
-						break
-					}
-					err = exec.Command("xdg-open", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
-				} else {
-					// Assume Meshery running on MacOS host
-					err = exec.Command("open", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
+				err := utils.NavigateToBrowser(currCtx.Endpoint)
+				if err != nil {
+					return err
 				}
-
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
@@ -324,28 +303,9 @@ func start() error {
 		currCtx.Endpoint = "http://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
-		if runtime.GOOS == "windows" {
-			// Meshery running on Windows host
-			err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to exec command"))
-			}
-		} else if runtime.GOOS == "linux" {
-			// Meshery running on Linux host
-			_, err = exec.LookPath("xdg-open")
-			if err != nil {
-				break
-			}
-			err = exec.Command("xdg-open", currCtx.Endpoint).Start()
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to exec command"))
-			}
-		} else {
-			// Assume Meshery running on MacOS host
-			err = exec.Command("open", currCtx.Endpoint).Start()
-			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to exec command"))
-			}
+		err = utils.NavigateToBrowser(currCtx.Endpoint)
+		if err != nil {
+			return err
 		}
 
 	// switch to default case if the platform specified is not supported

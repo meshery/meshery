@@ -403,6 +403,37 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	return false, nil
 }
 
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+func NavigateToBrowser(endpoint string) error {
+	//check for os of host machine
+	if runtime.GOOS == "windows" {
+		// Meshery running on Windows host
+		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else if runtime.GOOS == "linux" {
+		// Meshery running on Linux host
+		_, err := exec.LookPath("xdg-open")
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+			//find out what to do here!
+		}
+		err = exec.Command("xdg-open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else {
+		// Assume Meshery running on MacOS host
+		err := exec.Command("open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	}
+
+	return nil
+}
+
 // AddAuthDetails Adds authentication cookies to the request
 func AddAuthDetails(req *http.Request, filepath string) error {
 	file, err := ioutil.ReadFile(filepath)
