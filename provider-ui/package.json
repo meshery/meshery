@@ -36,7 +36,7 @@
     "cypress": "^6.8.0",
     "eslint": "^7.23.0",
     "eslint-plugin-cypress": "^2.11.2",
-    "eslint-plugin-react": "^7.23.1",
+    "eslint-plugin-react": "^7.23.2",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
