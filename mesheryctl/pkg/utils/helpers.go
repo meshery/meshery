@@ -269,7 +269,7 @@ func PreReqCheck(subcommand string, focusedContext string) error {
 			if runtime.GOOS == "windows" {
 				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
-			err = Installprereq()
+			err = InstallprereqDocker()
 			if err != nil {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
@@ -333,7 +333,7 @@ func Startdockerdaemon(subcommand string) error {
 	return nil
 }
 
-func Installprereq() error {
+func InstallprereqDocker() error {
 	log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
 	if err != nil {

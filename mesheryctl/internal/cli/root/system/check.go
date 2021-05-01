@@ -101,7 +101,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 			if runtime.GOOS == "windows" {
 				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
-			err = utils.Installprereq()
+			err = utils.InstallprereqDocker()
 			if err != nil {
 				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 			}
