@@ -11,16 +11,16 @@ jobs:
   create_release_draft:
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout release notes
+          uses: actions/checkout@v2
+
         - name: Drafting release
           id: release_drafter
           uses: release-drafter/release-drafter@v5
           with:
             config-name: release-drafter.yml
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        - name: Checkout release notes
-          uses: actions/checkout@v2
+            GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
 
         - name: Write release notes to markdown file
           run: |
@@ -40,7 +40,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASEDRAFTER_PAT }}
           commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>

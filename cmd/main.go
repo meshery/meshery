@@ -173,6 +173,7 @@ func main() {
 		TestProfilesPersister:        testConfigPersister,
 		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
+		MesheryFilterPersister:       &models.MesheryFilterPersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,
