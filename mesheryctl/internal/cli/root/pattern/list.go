@@ -22,10 +22,10 @@ var (
 )
 
 var listCmd = &cobra.Command{
-	Use:  "list",
+	Use:   "list",
 	Short: "List patterns",
-	Long: `Display list of all available pattern files.`,
-	Args: cobra.MinimumNArgs(0),
+	Long:  `Display list of all available pattern files.`,
+	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
