@@ -47,17 +47,13 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 			return err
 		}
 	}
-	//Kubernetes healthchecks are only invoked when it's not a PreRunExecution
+	//Kubernetes and KubernetesVersion healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is kubernetes
 	if !isPreRunExecution || (isPreRunExecution && platform == "kubernetes") {
 		//Run k8s API healthchecks
 		if err = runKubernetesAPIHealthCheck(isPreRunExecution); err != nil {
 			return err
 		}
-	}
-	//KubernetesVersion healthchecks are only invoked when it's not a PreRunExecution
-	// or it's a PreRunExecution and current platform is kubernetes
-	if !isPreRunExecution || (isPreRunExecution && platform == "kubernetes") {
 		//Run k8s plus kubectl minimum version healthchecks
 		if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
 			return err
