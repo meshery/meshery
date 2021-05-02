@@ -1,15 +1,15 @@
 package pattern
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"strings"
 
 	//"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
+	//"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	//"github.com/spf13/viper"
@@ -21,13 +21,44 @@ var applyCmd = &cobra.Command{
 	Long:  `Apply pattern file will trigger deploy of the pattern file`,
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := &http.Client{}
 		var req *http.Request
 		var err error
-		if strings.Contains(file, "github.com") || strings.Contains(file, "raw.githubusercontent.com") {
-			req, err = applyImportGitHubFileHandler(file)
+		client := &http.Client{}
+		url, path, err := utils.ParseURL(file)
+		if err != nil {
+			return err
+		}
+
+		reqURL, err := utils.ConstructURL("/api/experimental/pattern")
+		if err != nil {
+			return err
+		}
+		if path == "" && url == file {
+			content, err := ioutil.ReadFile(file)
+			if err != nil {
+				return err
+			}
+			text := string(content)
+			jsonValues, err := json.Marshal(map[string]interface{}{
+				"pattern_data": map[string]interface{}{
+					"pattern_file": text,
+				},
+				"save": true,
+			})
+			if err != nil {
+				return err
+			}
+			req, err = http.NewRequest("POST", reqURL, bytes.NewBuffer(jsonValues))
 		} else {
-			req, err = applyLocalFileHandler(file)
+			jsonValues, err := json.Marshal(map[string]interface{}{
+				"url":  url,
+				"path": path,
+				"save": true,
+			})
+			if err != nil {
+				return err
+			}
+			req, err = http.NewRequest("POST", reqURL, bytes.NewBuffer(jsonValues))
 		}
 
 		if err != nil {
@@ -40,7 +71,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		res, err := client.Do(req)
-
+		fmt.Println(res)
 		if err != nil {
 			return err
 		}
@@ -51,32 +82,7 @@ var applyCmd = &cobra.Command{
 			return err
 		}
 
-		log.Infof(string(body))
-
+		log.Info(string(body))
 		return nil
 	},
-}
-
-func applyImportGitHubFileHandler(file string) (*http.Request, error) {
-	owner, repo, path, err := utils.ParseGitHubURL(file)
-	if err != nil {
-		return nil, err
-	}
-	reqURL, err := utils.ConstructURL("/api/experimental/patternfile/import/github.com", owner, repo)
-	if err != nil {
-		return nil, err
-	}
-	return http.NewRequest("GET", reqURL+"?path="+path, nil)
-}
-
-func applyLocalFileHandler(file string) (*http.Request, error) {
-	fileReader, err := os.Open(file)
-	if err != nil {
-		return nil, errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
-	}
-	reqURL, err := utils.ConstructURL("/api/experimental/paternfile/deploy")
-	if err != nil {
-		return nil, err
-	}
-	return http.NewRequest("POST", reqURL, fileReader)
 }

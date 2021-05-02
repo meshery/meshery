@@ -474,10 +474,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 		owner := parsedPath[1]
 		repo := parsedPath[2]
 		branch := "main"
-
-		if len(parsedPath) == 4 {
-			branch = parsedPath[3]
-		}
+		branch = parsedPath[len(parsedPath)-1]
 
 		pfs, err := githubRepoPatternScan(owner, repo, path, branch)
 		if err != nil {

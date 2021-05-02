@@ -803,13 +803,34 @@ func ParseGitHubURL(url string) (string, string, string, error) {
 	paths := strings.Split(ogPath, "/")
 	if (host == "github.com" && len(paths) < 6) || (host == "raw.githubcontent.com" && len(paths) < 5) {
 		return "", "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", url))
+  }
+}
+
+func ParseURL(URL string) (string, string, error) {
+	// GitHub URL:
+	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
+	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
+	parsedURL, err := url.Parse(URL)
+	if err != nil {
+		return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
 	}
+	host := parsedURL.Host
+	path := parsedURL.Path
+	paths := strings.Split(path, "/")
 	if host == "github.com" {
-		return paths[1], paths[2], strings.Join(paths[5:], "/"), nil
+		if len(paths) < 6 {
+			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		}
+		resURL := "https://" + host + strings.Join(paths[:5], "/")
+		return resURL, strings.Join(paths[5:], "/"), nil
 	} else if host == "raw.githubusercontent.com" {
-		return paths[1], paths[2], strings.Join(paths[4:], "/"), nil
+		if len(paths) < 5 {
+			return "", "", errors.New(fmt.Sprintf("failed to retrieve file from URL: %s", URL))
+		}
+		resURL := "https://" + host + strings.Join(paths[:4], "/")
+		return resURL, strings.Join(paths[4:], "/"), nil
 	} else {
-		return "", "", "", errors.New("invalid GitHub URL")
+		return URL, "", nil
 	}
 }
 
