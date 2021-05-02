@@ -47,7 +47,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	gonum.org/v1/gonum v0.8.2
+	gonum.org/v1/gonum v0.9.1
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
