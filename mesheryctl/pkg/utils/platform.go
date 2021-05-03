@@ -167,6 +167,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 	defer SafeClose(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+
 	var dat map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
