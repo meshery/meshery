@@ -238,62 +238,6 @@ func SetFileLocation() error {
 	return nil
 }
 
-//PreReqCheck prerequisites check
-func PreReqCheck(subcommand string, focusedContext string) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
-	if err != nil {
-		return err
-	}
-
-	if currCtx.Platform == "docker" {
-		//Check whether docker daemon is running or not
-		if err := exec.Command("docker", "ps").Run(); err != nil {
-			log.Info("Docker is not running.")
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
-			}
-			err = Startdockerdaemon(subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
-			}
-		}
-		//Check for installed docker-compose on client system
-		if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-			log.Info("Docker-Compose is not installed")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-			err = InstallprereqDocker()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-		}
-	} else if currCtx.Platform == "kubernetes" {
-		client, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrapf(err, "failed to create new client")
-		}
-
-		podInterface := client.KubeClient.CoreV1().Pods("")
-		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
-
-		if err != nil {
-			log.Info("Kubernetes unreachable.")
-			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
-		}
-	} else {
-		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
-	}
-	return nil
-}
-
 func Startdockerdaemon(subcommand string) error {
 	userResponse := false
 	// read user input on whether to start Docker daemon or not.
