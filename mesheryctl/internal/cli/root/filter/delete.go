@@ -14,10 +14,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var applyCmd = &cobra.Command{
-	Use:   "apply",
-	Short: "Apply filter file",
-	Long:  `Apply filter file will trigger deploy of the filter file`,
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete filter file",
+	Long:  `delete filter file will trigger deletion of the filter file`,
 	Args:  cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -32,7 +32,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		client := &http.Client{}
-		req, err := http.NewRequest("POST", mctlCfg.GetBaseMesheryURL()+"/api/experimental/filter/deploy", fileReader)
+		req, err := http.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/experimental/filter/deploy", fileReader)
 		if err != nil {
 			return err
 		}
