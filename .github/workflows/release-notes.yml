@@ -11,9 +11,8 @@ jobs:
         id: release_drafter
         uses: release-drafter/release-drafter@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           config-name: release-drafter.yml
 
       - name: Checkout release notes
