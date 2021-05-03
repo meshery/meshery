@@ -13,3 +13,6 @@ labels:
       issue:
         body: Hello there! If you want to create a design specification, please refer this document link... https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing 
         action: open
+      pr:
+        body: Hello there! If you want to create a design specification, please refer this document link... https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing 
+        action: open
