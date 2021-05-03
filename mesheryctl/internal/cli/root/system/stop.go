@@ -40,10 +40,7 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
-		}
-		return utils.PreReqCheck(cmd.Use, "")
+		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
