@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -44,7 +44,23 @@ var versionCmd = &cobra.Command{
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			logrus.Errorf("error processing config: %v", err)
+			userResponse := false
+			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file [y/n] ?")
+			if userResponse {
+				err = os.Rename("~/.meshery/config.yaml", "~/.meshery/config.bak")
+				if err != nil {
+					logrus.Fatal(err)
+					return nil
+				}
+				fmt.Println("current meshconfig backed up to ~/.meshery/config.bak and new meshconfig generated")
+				err = utils.CreateConfigFile()
+				if err != nil {
+					logrus.Fatal(err)
+					return nil
+				}
+				return nil
+			}
 		}
 		return nil
 	},
