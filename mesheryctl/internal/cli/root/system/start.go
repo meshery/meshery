@@ -277,10 +277,14 @@ func start() error {
 		}
 
 		// fetch the manifest files corresponding to the version specified
-		manifests, err := utils.FetchManifests(version)
-
-		if err != nil {
-			return err
+		var manifests []Manifest
+		var manifestsError error
+		manifests, err = utils.GetCachedManifests(version)
+		if manifestsError != nil {	
+			manifests, manifestsError = utils.FetchManifests(version)
+			if manifestsError != nil {
+				return manifestsError
+			}
 		}
 
 		// downloaded required files successfully now apply the manifest files

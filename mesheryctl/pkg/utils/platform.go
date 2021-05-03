@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
@@ -20,6 +21,62 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 )
+
+type YamlStruct struct {
+	Contexts struct {
+		Local struct {
+			Endpoint string `yaml:"endpoint,omitempty"`
+    		Token string `yaml:"token,omitempty"`
+    		Platform string `yaml:"platform,omitempty"`
+    		Adapters struct {
+				MesheryIstio string `yaml:"meshery-istio,omitempty"` 
+    			MesheryLinkerd string `yaml:"meshery-linkerd,omitempty"`
+    			MesheryConsul string `yaml:"meshery-consul,omitempty"`
+    			MesheryNsm string `yaml:"meshery-nsm,omitempty"`
+    			MesheryKuma string `yaml:"meshery-kuma,omitempty"`
+    			MesheryCpx string `yaml:"meshery-cpx,omitempty"`
+    			MesheryOsm string `yaml:"meshery-osm,omitempty"`
+    			MesheryTraefikMesh string `yaml:"meshery-traefik-mesh,omitempty"`
+			} `yaml:"adapters,omitempty"`
+			Channel string `yaml:"channel,omitempty"`
+			Version string `yaml:"version,omitempty"`
+		} `yaml:"local,omitempty"`
+		Currentcontext string `yaml:"current-context,omitempty"`
+		Tokens struct {
+			Name string `yaml:"name,omitempty"`
+  			Location string `yaml:"location,omitempty"`
+		} `yaml:"tokens,omitempty"`
+	} `yaml:"contexts,omitempty"`
+	
+}
+//get cached k8s manifests
+func GetCachedManifests(version string) ([]Manifest, error) {
+	var yamlStruct YamlStruct
+	var localManifestList []Manifest
+
+	yamlFile, err := ioutil.ReadFile(filepath.Join(MesheryFolder, "config.yaml"))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read config.yaml file")
+	}
+
+	err = yaml.Unmarshal(yamlFile, &yamlStruct)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal config.yaml")
+	}
+
+	if version == yamlStruct.Contexts.Local.Version {
+		files, err := ioutil.ReadDir(filepath.Join(MesheryFolder, ManifestsFolder))
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to read cached directory or no cached directory")
+		}
+	
+		for _, file := range files {
+			tempManifest := Manifest{Path: file.Name(), Mode: "", Typ: "", SHA: "", Size: "0", URL: ""}
+			localManifestList = append(localManifestList, tempManifest)	
+		}	
+	}
+	return localManifestList, nil
+}
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
@@ -99,6 +156,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 
 // FetchManifests is a wrapper function that identifies the required manifest files as downloads them
 func FetchManifests(version string) ([]Manifest, error) {
+
 	log.Debug("fetching required Kubernetes manifest files...")
 	// get correct minfestsURL based on version
 	manifestsURL, err := GetManifestTreeURL(version)
