@@ -13,6 +13,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
         with:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           config-name: release-drafter.yml
 
       - name: Checkout release notes
