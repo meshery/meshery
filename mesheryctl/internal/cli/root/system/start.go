@@ -303,6 +303,26 @@ func start() error {
 		currCtx.Endpoint = "http://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
+		utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
+		err = utils.ViperK8s.ReadInConfig()
+		if err != nil {
+			return err
+		}
+
+		kubeCompose := &config.MesheryCtlConfig{}
+		err = utils.ViperK8s.Unmarshal(&kubeCompose)
+		if err != nil {
+			return err
+		}
+
+		kubeCompose.Contexts[mctlCfg.CurrentContext] = currCtx
+		utils.ViperK8s.Set("contexts."+mctlCfg.CurrentContext, currCtx)
+
+		err = utils.ViperK8s.WriteConfig()
+		if err != nil {
+			return err
+		}
+
 		err = utils.NavigateToBrowser(currCtx.Endpoint)
 		if err != nil {
 			return err
