@@ -753,3 +753,23 @@ func PrintToTable(header []string, data [][]string) {
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
+
+// PrintToTableWithFooter prints the given data into a table format but with a footer
+func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.SetFooter(footer)
+	table.Render() // Render the table
+}
