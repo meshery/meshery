@@ -55,7 +55,7 @@ func (l *DefaultLocalProvider) Initialize() {
 	l.PackageURL = ""
 	l.Extensions = Extensions{}
 	l.Capabilities = Capabilities{
-		{Feature: PersistMesheryPatterns},
+		// {Feature: PersistMesheryPatterns},
 	}
 }
 
@@ -784,9 +784,10 @@ func githubRepoScan(
 					Name:        name,
 					PatternFile: string(decodedContent),
 					Location: map[string]interface{}{
-						"type": "github",
-						"host": fmt.Sprintf("github.com/%s/%s/%s", owner, repo, branch),
-						"path": path,
+						"type":   "github",
+						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
+						"path":   data.Path,
+						"branch": branch,
 					},
 				}
 
@@ -828,9 +829,10 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 		Name:        name,
 		PatternFile: result,
 		Location: map[string]interface{}{
-			"type": "http",
-			"host": fileURL,
-			"path": "",
+			"type":   "http",
+			"host":   fileURL,
+			"path":   "",
+			"branch": "",
 		},
 	}
 
