@@ -33,7 +33,7 @@ var listCmd = &cobra.Command{
 		}
 		var response models.PatternsAPIResponse
 		client := &http.Client{}
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/patternfile", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/experimental/pattern", nil)
 		if err != nil {
 			return err
 		}
