@@ -1,0 +1,15 @@
+comment:
+  header: Hi, there.
+  footer: "\
+    ---\n\n
+    > This is an automated comment created by the [peaceiris/actions-label-commenter]. \
+    Responding to the bot or mentioning it won't have any effect.\n\n
+    [peaceiris/actions-label-commenter]: https://github.com/peaceiris/actions-label-commenter
+    "
+
+labels:
+  - name: issue/design required
+    labeled:
+      issue:
+        body: Hello there! If you want to create a design specification, please refer this document link... https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing 
+        action: open
