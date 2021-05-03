@@ -10,10 +10,10 @@ jobs:
       - name: Drafting release
         id: release_drafter
         uses: release-drafter/release-drafter@v5
-        with:
-          config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+        with:
+          config-name: release-drafter.yml
 
       - name: Checkout release notes
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
