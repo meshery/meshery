@@ -75,8 +75,31 @@ As much as possible this announcement will be actionable, and include any mitiga
 
 ## List of Announced Vulnerabilities
 
-{% for vulns in site.data.vulnerabilities.announce %}
-| CVE ID | DESCRIPTION | AFFECTED COMPONENT | VULNERABLE VERSION | PATCHED VERSION | FIX DETAILS | LINKS |
-| {{vulns.cve-id}} | {{vulns.description}} | {{vulns.affected-component}} | {{vulns.vulnerable-version}} | {{vulns.patched-version}} | {{vulns.fix-details}} | {{vulns.links}} | 
+
+<table>
+<tr>
+  <th> DATE ANNOUNCED </th>
+  <th> CVE ID </th>
+  <th> DESCRIPTION </th>
+  <th> AFFECTED COMPONENT </th>
+  <th> VULNERABLE VERSION </th>
+  <th> PATCHED VERSION </th>
+  <th> LINKS </th>
+</tr>
+{% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
+
+{% for vuln in vulns %}
+
+<tr>
+  <td> {{vuln.DateAnnounced}} </td>
+  <td> {{vuln.CVE}} </td>
+  <td> {{vuln.Description}} </td>
+  <td> {{vuln.AffectedComponent}} </td>
+  <td> {{vuln.VulnerableVersion}} </td>
+  <td> {{vuln.PatchedVersion}} </td>
+  <td> {{vuln.FixDetails}} </td>
+  <td> {{vuln.Links}} </td>
+</tr>
 
 {% endfor %}
+</table>

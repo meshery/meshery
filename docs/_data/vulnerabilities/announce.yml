@@ -1,0 +1,8 @@
+- CVE:
+  DateAnnounced:
+  Description: "A SQL Injection vulnerability in the REST API in Layer5 Meshery 0.5.2 allows an attacker to execute arbitrary SQL commands via the /experimental/patternfiles endpoint (order parameter in GetMesheryPatterns in models/meshery_pattern_persister.go)."
+  AffectedComponent: REST API
+  VulnerableVersion: v0.5.2
+  PatchedVersion: v0.5.3
+  FixDetails:
+  Links:
