@@ -35,6 +35,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -178,6 +179,22 @@ func start() error {
 			}
 		}
 
+		var endpoint meshkitutils.HostPort
+		endpoint.Address = "http://localhost"
+		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
+		if err != nil {
+			return err
+		}
+		endpoint.Port = int32(tempPort)
+
+		var mockEndpoint *meshkitutils.MockOptions
+		mockEndpoint = nil
+
+		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
+		if res {
+			return errors.New("the endpoint is not accessible")
+		}
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -186,6 +203,7 @@ func start() error {
 		if err := start.Run(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
+
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
@@ -208,6 +226,7 @@ func start() error {
 				if err != nil {
 					return err
 				}
+
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
