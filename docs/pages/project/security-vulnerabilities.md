@@ -72,3 +72,11 @@ branches.
   - The [#announcements](https://layer5io.slack.com/archives/CSF3PSZT9) channel on [Layer5 Slack](http://slack.layer5.io/)
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version.
+
+## List of Announced Vulnerabilities
+
+{% for vulns in site.data.vulnerabilities.announce %}
+| CVE ID | DESCRIPTION | AFFECTED COMPONENT | VULNERABLE VERSION | PATCHED VERSION | FIX DETAILS | LINKS |
+| {{vulns.cve-id}} | {{vulns.description}} | {{vulns.affected-component}} | {{vulns.vulnerable-version}} | {{vulns.patched-version}} | {{vulns.fix-details}} | {{vulns.links}} | 
+
+{% endfor %}
