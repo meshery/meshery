@@ -71,8 +71,10 @@ var listCmd = &cobra.Command{
 					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 				}
-				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-				return nil
+				if len(data) > 0 {
+					utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+				}
+				return errors.New("No filters available.")
 			}
 
 			for _, v := range response.Filters {
@@ -88,9 +90,10 @@ var listCmd = &cobra.Command{
 				UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
 				data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-
-			return nil
+			if len(data) > 0 {
+				utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+			}
+			return errors.New("No filters available.")
 		}
 
 		// Check if messhery provider is set
@@ -102,8 +105,10 @@ var listCmd = &cobra.Command{
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 				data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
 			}
-			utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
-			return nil
+			if len(data) > 0 {
+				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
+			}
+			return errors.New("No filters available.")
 		}
 		for _, v := range response.Filters {
 			FilterID := utils.TruncateID(v.ID.String())
@@ -118,9 +123,10 @@ var listCmd = &cobra.Command{
 			UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
 			data = append(data, []string{FilterID, UserID, FilterName, CreatedAt, UpdatedAt})
 		}
-		utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
-
-		return nil
+		if len(data) > 0 {
+			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
+		}
+		return errors.New("No filters available.")
 
 	},
 }
