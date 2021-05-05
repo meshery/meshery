@@ -187,14 +187,6 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 
-		var mockEndpoint *meshkitutils.MockOptions
-		mockEndpoint = nil
-
-		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
-		if res {
-			return errors.New("the endpoint is not accessible")
-		}
-
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -215,6 +207,14 @@ func start() error {
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+		}
+
+		var mockEndpoint *meshkitutils.MockOptions
+		mockEndpoint = nil
+
+		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
+		if res {
+			return errors.New("the endpoint is not accessible")
 		}
 
 		//check for container meshery_meshery_1 running status
