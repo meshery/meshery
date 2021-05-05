@@ -136,12 +136,12 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     updateProgress({ showProgress: true });
 
     dataFetch(
-      `/api/experimental/patternfile${query}`,
+      `/api/experimental/pattern${query}`,
       {
         credentials: "include",
       },
       (result) => {
-        console.log("PatternFile API", `/api/experimental/patternfile${query}`);
+        console.log("PatternFile API", `/api/experimental/pattern${query}`);
         updateProgress({ showProgress: false });
         if (result) {
           setPatterns(result.patterns || []);
@@ -179,13 +179,13 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   function handleSubmit(data, id, name, type) {
     if (type === "delete") {
       dataFetch(
-        `/api/experimental/patternfile/${id}`,
+        `/api/experimental/pattern/${id}`,
         {
           credentials: "include",
           method: "DELETE",
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/patternfile/${id}`);
+          console.log("PatternFile API", `/api/experimental/pattern/${id}`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
@@ -195,14 +195,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "update") {
       dataFetch(
-        `/api/experimental/patternfile`,
+        `/api/experimental/pattern`,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ id, name, pattern_file: data }),
+          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/patternfile`);
+          console.log("PatternFile API", `/api/experimental/pattern`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },
@@ -212,14 +212,14 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "upload") {
       dataFetch(
-        `/api/experimental/patternfile`,
+        `/api/experimental/pattern`,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ name, pattern_file: data }),
+          body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/patternfile`);
+          console.log("PatternFile API", `/api/experimental/pattern`);
           updateProgress({ showProgress: false });
           fetchPatterns(page, pageSize, search, sortOrder);
         },

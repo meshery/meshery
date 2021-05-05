@@ -47,7 +47,7 @@ if [ "x${MESHERY_VERSION}" = "x" ] ; then
 fi
 
 if [ "x${MESHERY_VERSION}" = "x" ] ; then
-  printf "Unable to get latest mesheryctl version. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6"
+  printf "Unable to get latest mesheryctl version. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6\n"
   exit;
 fi
 
@@ -56,6 +56,12 @@ URL="https://github.com/layer5io/meshery/releases/download/${MESHERY_VERSION}/me
 
 printf "\nDownloading %s for %s...\n\n" "$NAME" "$OSEXT"
 curl -L ${URL} -o ${PWD}/meshery.zip
+
+validFile=`file ${PWD}/meshery.zip | grep 'Zip archive data'`
+if [ -z "$validFile" ] ; then
+  printf "Unable to get latest meshery install package. Set MESHERY_VERSION env var and re-run. For example: export MESHERY_VERSION=v0.1.6\n"
+  exit;
+fi
 
 printf "\nExtracting %s...\n" "$NAME"
 unzip -o ${PWD}/meshery.zip

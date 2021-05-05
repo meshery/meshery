@@ -47,6 +47,10 @@ const (
 	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
 	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
 	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	baseConfigURL  = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL    = baseConfigURL + "manifests/default.yaml"
+	BrokerURL      = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL    = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 const (
@@ -88,6 +92,15 @@ var (
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
+	//MesheryOperator is the file for default Meshery operator
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
+	MesheryOperator = "default.yaml"
+	//MesheryOperatorBroker is the file for the Meshery broker
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
+	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
@@ -701,6 +714,27 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
+// ReadToken returns a map of the token passed in
+func ReadToken(filepath string) (map[string]string, error) {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "could not read token:")
+		return nil, err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid:")
+		return nil, err
+	}
+	return tokenObj, nil
+}
+
+// TruncateID shortens an id to 8 characters
+func TruncateID(id string) string {
+	ShortenedID := id[0:8]
+	return ShortenedID
+}
+
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
 	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
@@ -718,4 +752,24 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetNoWhiteSpace(true)
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
+}
+
+// PrintToTableWithFooter prints the given data into a table format but with a footer
+func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.SetFooter(footer)
+	table.Render() // Render the table
 }

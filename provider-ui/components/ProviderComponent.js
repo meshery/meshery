@@ -126,7 +126,7 @@ class ProviderComponent extends React.Component {
   };
 
   handleMenuItemClick = (index) => {
-    this.setState({ selectedProvider: index });
+    this.setState({ selectedProvider: index, open: false });
   };
 
   handleToggle() {
