@@ -108,7 +108,7 @@
 - title: Reference
   url: reference
   links:
-    - title: mesheryctl Command Reference
+    - title: mesheryctl Commands
       url: reference/mesheryctl
-    - title: Meshkit Library Errors Reference
-      url: reference/meshkit-lib-errors
+    - title: Error Codes
+      url: reference/error-codes

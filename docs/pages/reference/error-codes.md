@@ -1,23 +1,27 @@
 ---
 layout: default
-title: Meshery Lib Errors Reference
-abstract: "Meshery's library Errors"
-permalink: reference/meshkit-lib-errors
+title: Error Code Reference
+abstract: "Meshery Error Code Reference"
+permalink: reference/error-codes
 type: Reference
 ---
-## Meshkit Library Introduction
+<style>
 
-Paragraph about Meshkit Library Errors.
+.title::first-letter {
+  text-transform:capitalize;
+}
+</style>
+## Error Codes and Troubleshooting
 
-<br>
+Meshery and it's components use a common framework (defined within MeshKit) to generate and document an error with a unique identifier - an error code. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
-## Meshkit Library Errors
+## Error Code Categories by Component
 
-<table>
+<table style="margin:auto;margin-left:25%;">
 <thead>
   <tr>
-    <th>Component</th>
-    <th>Type</th>
+    <th align="right">Component Type</th>
+    <th>Component Name</th>
   </tr>
 </thead>
 <tbody>
@@ -28,19 +32,18 @@ Paragraph about Meshkit Library Errors.
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
             {% if thecycle == 'even' %}             
             <tr>
-              <td><a href="#{{ component[1].component_name }}-{{ component[1].component_type }}">{{ component[1].component_name }}</a></td>
-              <td>{{ component[1].component_type }}</td>
+              <td align="right">{{ component[1].component_type }}</td>
+              <td class="title"><a href="#{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}">{{ component[1].component_name }}</a></td>
             </tr>
         {% endif %}
-      {% endfor %}      
+      {% endfor %}
     {% endfor %}
   {% endfor %}
 </tbody>
 </table>
 
-<br>
-<hr>
 
+<hr />
 
   {% for files in site.data.errorref %}    
     {% for eachFile in files %}
@@ -48,8 +51,16 @@ Paragraph about Meshkit Library Errors.
           {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
             {% if thecycle == 'even' %}    
-## {{ component[1].component_name }} {{ component[1].component_type }}
-
+            {% if component[1].component_type == 'adapter' %}
+              {% capture heading %}
+              Meshery Adapter for {{ component[1].component_name }}
+              {% endcapture %}
+            {% else %}
+              {% capture heading %}
+              {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+              {% endcapture %}
+            {% endif %}
+<h2> {{ heading }} </h2>
   <table>
   <thead>
     <tr>
@@ -79,7 +90,7 @@ Paragraph about Meshkit Library Errors.
 
   </tbody>
   </table>
-  <a href="#meshkit-library-errors">Top</a>
+  <a href="#{{ component[1].component_name }}">Top</a>
   <hr>
   <br>
 {% endif %}
