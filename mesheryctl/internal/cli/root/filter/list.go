@@ -74,7 +74,7 @@ var listCmd = &cobra.Command{
 				if len(data) > 0 {
 					utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 				}
-				return errors.New("no filters available.")
+				return errors.New("no filters available")
 			}
 
 			for _, v := range response.Filters {
@@ -93,7 +93,7 @@ var listCmd = &cobra.Command{
 			if len(data) > 0 {
 				utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 			}
-			return errors.New("no filters available.")
+			return errors.New("no filters available")
 		}
 
 		// Check if messhery provider is set
@@ -108,7 +108,7 @@ var listCmd = &cobra.Command{
 			if len(data) > 0 {
 				utils.PrintToTableWithFooter([]string{"FILTER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""})
 			}
-			return errors.New("no filters available.")
+			return errors.New("no filters available")
 		}
 		for _, v := range response.Filters {
 			FilterID := utils.TruncateID(v.ID.String())
@@ -126,7 +126,7 @@ var listCmd = &cobra.Command{
 		if len(data) > 0 {
 			utils.PrintToTableWithFooter([]string{"FILTER ID", "USER ID", "NAME", "CREATED", "UPDATED"}, data, []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""})
 		}
-		return errors.New("no filters available.")
+		return errors.New("no filters available")
 
 	},
 }
