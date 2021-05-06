@@ -6,11 +6,11 @@
             "11300": {
                 "name": "ErrEmptyConfigCode",
                 "code": "11300",
-                "severity": "none",
-                "long_description": "might contain newlines (JSON encoded)",
-                "short_description": "might contain newlines (JSON encoded)",
-                "probable_cause": "might contain newlines (JSON encoded)",
-                "suggested_remediation": "might contain newlines (JSON encoded)"
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
             }
         }
     }
