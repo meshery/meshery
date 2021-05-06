@@ -41,7 +41,7 @@ var viewContextCmd = &cobra.Command{
 			log.Printf("context \"%s\" doesn't exists, run the following to create:\n\nmesheryctl system context create %s", context, context)
 			return nil
 		}
-
+		log.Printf("\nContext: %s\n", context)
 		log.Print(getYAML(contextData))
 		return nil
 	},
