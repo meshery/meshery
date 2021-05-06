@@ -93,7 +93,7 @@ const styles = (theme) => ({
     },
   },
   itemActiveItem: {
-    color: '#4fc3f7',
+    color: '#00e6cb',
   },
 });
 
@@ -134,7 +134,7 @@ class Header extends React.Component {
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
-                        <DashboardIcon className={title === 'Dashboard' ? classes.itemActiveItem : ''} />
+                        <DashboardIcon className={title === 'System Dashboard' ? classes.itemActiveItem : ''} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
