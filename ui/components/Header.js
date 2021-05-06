@@ -93,7 +93,8 @@ const styles = (theme) => ({
     },
   },
   itemActiveItem: {
-    color: '#00e6cb',
+    color: '#00B39F',
+
   },
 });
 
