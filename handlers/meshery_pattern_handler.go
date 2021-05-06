@@ -81,9 +81,10 @@ func (h *Handler) handlePatternPOST(
 		// Assign a location if no location is specified
 		if parsedBody.PatternData.Location == nil {
 			parsedBody.PatternData.Location = map[string]interface{}{
-				"host": "",
-				"path": "",
-				"type": "local",
+				"host":   "",
+				"path":   "",
+				"type":   "local",
+				"branch": "",
 			}
 		}
 
