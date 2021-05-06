@@ -42,6 +42,14 @@ COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=nighthawk /nighthawk-go/apinighthawk/bin /usr/local/bin
+RUN curl -Lo nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz https://github.com/layer5io/getnighthawk/releases/download/v1.0.1/nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz \
+    && tar -xzvf nighthawk_service-ubuntu-amd64-v1.0.1.tar.gz \
+    && chmod +x nighthawk_service \
+    && mv nighthawk_service /app/cmd/.
+RUN curl -Lo nighthawk_output_transform-ubuntu-amd64-v1.0.1.tar.gz https://github.com/layer5io/getnighthawk/releases/download/v1.0.1/nighthawk_output_transform-ubuntu-amd64-v1.0.1.tar.gz \
+    && tar -xzvf nighthawk_output_transform-ubuntu-amd64-v1.0.1.tar.gz \
+    && chmod +x nighthawk_output_transform \
+    && mv nighthawk_output_transform /app/cmd/.
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
 USER appuser
 WORKDIR /app/cmd
