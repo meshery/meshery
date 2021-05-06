@@ -50,6 +50,8 @@ module.exports = {
     "@material-ui/icons/FullscreenExit": require("@material-ui/icons/FullscreenExit"),
     "@material-ui/icons/RotateRight": require("@material-ui/icons/RotateRight"),
     "@material-ui/icons/RotateLeft": require("@material-ui/icons/RotateLeft"),
+    "@material-ui/icons/Add": require("@material-ui/icons/Add"),
+    "@material-ui/icons/Remove": require("@material-ui/icons/Remove"),
     notistack: require("notistack"),
     "relay-runtime": require("relay-runtime"),
   },
