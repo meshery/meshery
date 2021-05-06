@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -55,15 +56,19 @@ var startCmd = &cobra.Command{
 		err := utils.PreReqCheck(cmd.Use, tempContext)
 		if err != nil {
 			cmd.SilenceUsage = true
+
 		}
 
 		return err
+
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
+
 		}
 		return nil
+
 	},
 }
 
@@ -85,6 +90,7 @@ func start() error {
 	if err != nil {
 		return err
 	}
+
 	currPlatform := currCtx.Platform
 	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
 
@@ -122,24 +128,29 @@ func start() error {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
+
 			temp, ok := services[v]
 			if !ok {
 				return errors.New("unable to extract adapter version")
 			}
+
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
+
 		for _, v := range RequiredService {
 			if v == "watchtower" {
 				AllowedServices[v] = services[v]
 				continue
 			}
+
 			temp, ok := services[v]
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
+
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
@@ -314,7 +325,20 @@ func start() error {
 		opts.Namespace = utils.MesheryNamespace
 		opts.APIServerURL = client.RestConfig.Host
 
-		endpoint, err := meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+		var endpoint *meshkitutils.Endpoint
+
+		deadline := time.Now().Add(3 * time.Second)
+
+		//polling for endpoint to be available within the three second deadline
+		for !(time.Now().After(deadline)) {
+			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+			if err == nil {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
 		if err != nil {
 			return err
 		}
@@ -347,7 +371,7 @@ func start() error {
 			return err
 		}
 
-	// switch to default case if the platform specified is not supported
+		// switch to default case if the platform specified is not supported
 	default:
 		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
 	}
