@@ -18,8 +18,8 @@ var (
 // PatternCmd represents the root command for pattern commands
 var PatternCmd = &cobra.Command{
 	Use:   "pattern",
-	Short: "Meshery Patterns Management",
-	Long:  `Manage meshery patterns from the manage`,
+	Short: "Service Mesh Patterns Management",
+	Long:  `Manage service meshes using predefined patterns`,
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
@@ -36,6 +36,6 @@ func init() {
 
 	tokenPath = os.Getenv("MESHERY_AUTH_TOKEN")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
 }

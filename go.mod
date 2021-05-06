@@ -27,19 +27,19 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.12
-	github.com/layer5io/meshkit v0.2.7
+	github.com/layer5io/meshkit v0.2.9
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v0.1.6
 	github.com/layer5io/service-mesh-performance v0.3.3
-	github.com/lib/pq v1.10.0
+	github.com/lib/pq v1.10.1
 	github.com/nats-io/nats.go v1.10.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
 	github.com/prometheus/client_golang v1.10.0
-	github.com/prometheus/common v0.20.0
+	github.com/prometheus/common v0.23.0
 	github.com/qri-io/jsonschema v0.2.1
-	github.com/sirupsen/logrus v1.8.0
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
@@ -47,7 +47,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	gonum.org/v1/gonum v0.8.2
+	gonum.org/v1/gonum v0.9.1
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
