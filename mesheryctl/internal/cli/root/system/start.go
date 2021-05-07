@@ -119,7 +119,9 @@ func start() error {
 		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
 		userPort := strings.Split(currCtx.Endpoint, ":")
-		userPortMapping := userPort[len(userPort)-1] + ":8080"
+		//extracting container port from the docker-compose
+		containerPort := strings.Split(services["meshery"].Ports[0], ":")
+		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
 		services["meshery"].Ports[0] = userPortMapping
 		RequiredService := []string{"meshery", "watchtower"}
 
