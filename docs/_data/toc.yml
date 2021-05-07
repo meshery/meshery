@@ -109,8 +109,9 @@
 - title: Reference
   url: reference
   links:
-    - title: Error Code Reference
-      url: reference/error-codes
     - title: mesheryctl Command Reference
       url: reference/mesheryctl
+    - title: Error Code Reference
+      url: reference/error-codes
+
 
