@@ -164,7 +164,7 @@ Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/l
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system start
+ ./mesheryctl system start
  </div></div>
  </pre>
 
