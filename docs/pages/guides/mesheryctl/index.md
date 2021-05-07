@@ -10,7 +10,7 @@ Guides to using Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
-<ul><b><a href="{{ site.baseurl }}/guides/mesheryctl" class="text-black">Meshery CLI</a></b>
+<ul>
   {% for item in sorted_guides %}
   {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
