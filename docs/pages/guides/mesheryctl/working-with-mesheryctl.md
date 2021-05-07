@@ -178,7 +178,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ### Installing the `mesheryctl` binary
 
-Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
+Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
