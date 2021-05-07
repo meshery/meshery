@@ -57,7 +57,7 @@ If shell completion is not already enabled in your environment you will need to 
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- ~/.zshrc > echo "autoload -U compinit; compinit" 
+ ~/.zshrc > echo "autoload -U compinit; compinit"
  </div></div>
  </pre>
 _Note_ : You might need to restart your shell for this setup to take effect.
@@ -87,5 +87,5 @@ To load fish shell completions for each session, execute once:
 
 # Suggested Reading
 
-- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/guides/mesheryctl-commands)**.
+- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl)**.
 - To upgrade `mesheryctl`, refer to the **[Upgrade Guide]({{ site.baseurl }}/guides/upgrade)**.

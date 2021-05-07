@@ -14,7 +14,7 @@ image: /assets/img/platforms/kubernetes.svg
 ## Available Deployment Methods
 
 - [Using `mesheryctl`](#using-mesheryctl)
-- [Using `helm-charts`](#using-helm-charts)
+- [Using `helm-Charts`](#using-helm-Charts)
 - [Using `Kubernetes manifests`](#using-kubernetes-manifests)
 
 ### **Using mesheryctl**
