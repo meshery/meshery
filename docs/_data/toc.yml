@@ -52,10 +52,10 @@
   links:
     - title: Lifecycle Management
       url: functionality/lifecycle-management
-    - title: Performance Management
-      url: functionality/performance-management
     - title: Service Mesh Interface (SMI)
       url: functionality/service-mesh-interface
+    - title: Performance Management
+      url: functionality/performance-management
 - title: Service Meshes
   url: service-meshes
   links:
@@ -71,10 +71,10 @@
       url: service-meshes/adapters/kuma
     - title: Linkerd
       url: service-meshes/adapters/linkerd
-    - title: Network Service Mesh
-      url: service-meshes/adapters/nsm
     - title: NGINX Service Mesh
       url: service-meshes/adapters/nginx-sm
+    - title: Network Service Mesh
+      url: service-meshes/adapters/nsm
     - title: Octarine
       url: service-meshes/adapters/octarine
     - title: Open Service Mesh
@@ -92,23 +92,25 @@
       url: guides/meshery-metrics
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Using mesheryctl
-      url: guides/mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
+    - title: Using mesheryctl
+      url: guides/mesheryctl
 - title: Extensibility
   url: extensibility
   links:
-    - title: "Service Mesh Adapters"
-      url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
+    - title: "Service Mesh Adapters"
+      url: extensibility/adapters
+
 - title: Reference
   url: reference
   links:
-    - title: mesheryctl Command Reference
-      url: reference/mesheryctl
     - title: Error Code Reference
       url: reference/error-codes
+    - title: mesheryctl Command Reference
+      url: reference/mesheryctl
+
