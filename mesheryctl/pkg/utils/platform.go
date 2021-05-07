@@ -167,6 +167,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 	defer SafeClose(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+
 	var dat map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -175,8 +179,11 @@ func GetLatestStableReleaseTag() (string, error) {
 	if err := json.Unmarshal(body, &dat); err != nil {
 		return "", errors.Wrap(err, "failed to unmarshal json into object")
 	}
-
-	return dat["tag_name"].(string), nil
+	null := ""
+	if dat["tag_name"] != nil {
+		null = dat["tag_name"].(string)
+	}
+	return null, nil
 }
 
 // IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
