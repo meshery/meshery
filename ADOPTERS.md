@@ -6,6 +6,7 @@
 - Sudeep Batra ([Ericsson](https://www.ericsson.com))
 - [Metabob](https://metabob.com)
   - [Sako WS](https://twitter.com/sakows): "We find Meshery to be the perfect to tool to help us successfully operate our service mesh. And with so many new features coming out, it's only getter better and better."
-
+  - [Asteria Aerospace](https://asteria.co.in)
+    - "As we are a very modern technology company, we always want to use the cutting edge open source technology to excel. All our microservices are modern in nature and so is their infrastructure. We are cloud agnostic and at the same time, we are fascinated by service meshes to empower us with secure, reliable, intelligent infrastructure. When we are in an Istio world, the need for managing the mesh was always been a gap. With **Meshery**, we believe we can nurture our service mesh to perform better and more efficiently."
 ---
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/layer5io/meshery/pulls)!
