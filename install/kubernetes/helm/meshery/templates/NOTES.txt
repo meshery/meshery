@@ -16,7 +16,7 @@
   echo http://$SERVICE_IP:{{ .Values.service.port }}/provider
 {{- else if contains "ClusterIP" .Values.service.type }}
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "meshery.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:8080
-  echo "Visit http://127.0.0.1:8080/provider to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9081:9081
+  echo "Visit http://127.0.0.1:9081/provider to use your application"
 {{- end }}
 2. All the Notes.txt of Meshery, Mesheryistio and Mesherylinkerd need to add the content here. This can be achieved by sub PR.
