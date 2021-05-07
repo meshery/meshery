@@ -83,14 +83,8 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
 			// Create a deployment interface for the MesheryNamespace
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			// List the deployments in the MesheryNamespace
 			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
@@ -120,6 +114,18 @@ var statusCmd = &cobra.Command{
 
 				// Append this to data to be printed in a table
 				data = append(data, []string{name, ready, updated, available, ageS})
+			}
+			// Create a pod interface for the MesheryNamespace
+			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
+
+			// List the pods in the MesheryNamespace
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			if err != nil {
+				return err
+			}
+
+			for _, pod := range podList.Items {
+				log.Info(pod.GetName())
 			}
 
 			// Print the data to a table for readability
