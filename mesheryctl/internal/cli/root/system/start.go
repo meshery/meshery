@@ -345,7 +345,7 @@ func start() error {
 			return err
 		}
 
-		currCtx.Endpoint = "http://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
+		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
 		utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
