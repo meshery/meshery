@@ -5,12 +5,10 @@ metadata:
   labels:
 {{- include "meshery.labels" . | nindent 4 }}
 rules:
-- apiGroups: ["networking.istio.io"]
+- apiGroups:
+  - '*'
   resources:
-  - virtualservices
-  - destinationrules
-  - serviceentries
-  - gateways
+  - '*'
   verbs:
   - get
   - list
@@ -19,11 +17,11 @@ rules:
   - update
   - patch
   - delete
-{{- if .Values.rbac.nodes }}
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - "watch"
-{{- end }}
+#{{- if .Values.rbac.nodes }}
+#- apiGroups:
+#  - ""
+#  resources:
+#  - nodes
+#  verbs:
+#  - "watch"
+#{{- end }}
