@@ -9,8 +9,6 @@ import {
   CardContent,
   Typography,
 } from "@material-ui/core/";
-import TimerIcon from "@material-ui/icons/Timer";
-import FiberManualRecordRoundedIcon from "@material-ui/icons/FiberManualRecordRounded";
 
 const MeshySwitch = withStyles({
   switchBase: {
@@ -29,36 +27,32 @@ const MeshySwitch = withStyles({
 const useStyles = makeStyles({
   card: {
     position: "relative",
-    width: "10rem",
+    width: "12rem",
     minWidth: "10rem",
     border: "1px solid gray",
     borderRadius: "0.75rem",
     top: "2rem",
-    padding: 0,
-    margin: "0rem 2rem 5rem 2rem",
-    ["@media (max-width:1024px)"]: { //eslint-disable-line no-useless-computed-key
-      margin: "0rem 2rem 5rem 0",
+    margin: "0rem 0rem 6rem 0rem",
+    ["@media (max-width:1024px)"]: {
+      //eslint-disable-line no-useless-computed-key
+      margin: "0rem 0rem 6rem 0",
     },
   },
   cardChecked: {
     height: "15rem",
-    padding: 0,
-    marginBottom: "0rem",
+    marginBottom: "1rem",
   },
   cardUnchecked: {
     height: "10rem",
-    padding: 0,
   },
   cardContent: {
-    background: "red",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
     width: "100%",
-    padding: 0,
-  //  margin: "-1rem 0 0 -1rem",
+    padding: "0",
   },
   contentTop: {
     background: "#434343",
@@ -66,7 +60,6 @@ const useStyles = makeStyles({
     width: "100%",
     display: "flex",
     alignItems: "center",
-    padding: 0,
   },
   contentTopUnchecked: {
     background: "#434343",
@@ -74,15 +67,15 @@ const useStyles = makeStyles({
     width: "100%",
     display: "flex",
     alignItems: "center",
-    padding: 0,
   },
   contentTopSwitcher: {
-    marginLeft: "0.5rem",
+    paddingLeft: "2rem",
   },
   iconContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    marginLeft: "1rem",
   },
   cardIcon: {
     width: "3rem",
@@ -90,6 +83,10 @@ const useStyles = makeStyles({
   cardIconText: {
     color: "white",
     fontSize: "0.85rem",
+    textAlign: "center",
+    "&:first-letter": {
+      textTransform: "capitalize",
+    },
   },
   contentBottomChecked: {
     background: "white",
@@ -112,96 +109,85 @@ const useStyles = makeStyles({
     fontSize: "0.75rem",
     padding: "0.50rem",
   },
-  contentBottomIcon: {
-    marginBottom: "-0.4rem",
-    color: "#00B39F",
+  topInputIcon: {
+    position: "absolute",
+    fontSize: "1.25rem",
+    color: "lightgray",
+    bottom: "4.25rem",
+    left: "9rem",
+    cursor: "pointer",
+    zIndex: "99999",
+    "&:hover": {
+      color: "grey",
+    },
+  },
+  file: {
+    display: "none",
   },
 });
 
-const ConfigCard = ({
-  Icon,
-  name,
-  topInputPlaceholder,
-  bottomInputPlaceholder,
-}) => {
-  const [state, setState] = React.useState({
-    checked: false,
-  });
+const ConfigCard = ({ handleSwitch, Icon, name, topInputPlaceholder, TopInputIcon, bottomInputPlaceholder }) => {
+  const [state, setState] = React.useState(false);
+  const [kubeConfig, setKubeConfig] = React.useState("");
   const classes = useStyles();
 
-  const handleChange = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
+  const handleChange = (e) => {
+    setState(e.target.checked);
+    if (handleSwitch) {
+      handleSwitch(e.target.name, e.target.checked);
+    }
   };
+  const handleKubeConfigUpload = (file) => setKubeConfig(file);
   return (
-    <Card
-      className={
-        state.checked
-          ? `${classes.card} ${classes.cardChecked}`
-          : `${classes.card} ${classes.cardUnchecked}`
-      }
-      variant="outlined"
-    >
-      <CardContent className={classes.cardContent} style={{padding: 0}}>
-        <div
-          className={
-            state.checked ? classes.contentTop : classes.contentTopUnchecked
-          }
-        >
+    <Card className={`${classes.card} ${classes.cardChecked}`} variant="outlined">
+      <CardContent className={classes.cardContent}>
+        <div className={classes.contentTop}>
+          <div className={classes.iconContainer}>
+            <Icon className={classes.cardIcon} alt={`${name} icon`} />
+            {name === "openServiceMesh" ? (
+              <Typography className={classes.cardIconText} color="primary">
+                Open Service <br />
+                Mesh
+              </Typography>
+            ) : (
+              <Typography className={classes.cardIconText} color="primary">
+                {name}
+              </Typography>
+            )}
+          </div>
           <FormControlLabel
             className={classes.contentTopSwitcher}
-            control={<MeshySwitch checked={state.checked} name="checked" />}
+            control={<MeshySwitch checked={state} name={name} />}
             onChange={handleChange}
           />
-          <div className={classes.iconContainer}>
-            {Icon === "timer" ? (
-              <TimerIcon />
-            ) : (
-              <Icon className={classes.cardIcon}
-                alt={`${name} icon`}/>           
-            )}
-            <Typography className={classes.cardIconText} color="primary">
-              {name}
-            </Typography>
-          </div>
         </div>
-        <div
-          className={
-            state.checked
-              ? classes.contentBottomChecked
-              : classes.contentBottomUnchecked
-          }
-        >
-          {name === "Open Service Mesh" ||
-          name === "Consul" ||
-          name === "Linkerd" ? (
+        <div className={classes.contentBottomChecked}>
+          <>
+            {name === "Kubernetes" ? (
               <>
-                <Typography className={classes.contentBottomControlPlane}>
-                Control Plane: 6{" "}
-                  <FiberManualRecordRoundedIcon
-                    className={classes.contentBottomIcon}
-                  />
-                </Typography>
-                <Typography className={classes.contentBottomDataPlane}>
-                Data Plane: 18
-                  <FiberManualRecordRoundedIcon
-                    className={classes.contentBottomIcon}
-                  />
-                </Typography>
+                <label htmlFor="file-upload">
+                  {TopInputIcon ? <TopInputIcon className={classes.topInputIcon} /> : null}
+                </label>
+                <input
+                  type="file"
+                  id="file-upload"
+                  onChange={(e) => handleKubeConfigUpload(e.target.files[0].name)}
+                  className={classes.file}
+                />
               </>
-            ) : (
-              <>
-                <Input
-                  placeholder={topInputPlaceholder}
-                  disableUnderline="false"
-                  className={classes.contentBottomInput}
-                ></Input>
-                <Input
-                  placeholder={bottomInputPlaceholder}
-                  disableUnderline="false"
-                  className={classes.contentBottomInput}
-                ></Input>
-              </>
-            )}
+            ) : null}
+            <Input
+              placeholder={topInputPlaceholder}
+              disableUnderline="false"
+              className={classes.contentBottomInput}
+              value={kubeConfig}
+            ></Input>
+            <Input
+              placeholder={bottomInputPlaceholder}
+              disableUnderline="false"
+              className={classes.contentBottomInput}
+            ></Input>
+          </>
         </div>
       </CardContent>
     </Card>
@@ -209,9 +195,3 @@ const ConfigCard = ({
 };
 
 export default ConfigCard;
-
-{ /*<img
-                className={classes.cardIcon}
-                src={icon}
-                alt={`${name} icon`}
-              /> */ }
