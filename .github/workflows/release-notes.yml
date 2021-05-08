@@ -21,7 +21,7 @@ jobs:
           commit-message: "Created release note file 0.5.x.md"
           committer: l5io <ci@layer5.io>
           signoff: true
-          base: mater
+          base: master
           branch: docs/automated-release-notes
           delete-branch: true
           title: '[Docs] Release Notes for Meshery 0.5.x'
