@@ -8,31 +8,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Make changes to pull request
+        run: date +%s > report.txt
+
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.RELEASEDRAFTER_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Created release note file 0.5.x.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
           branch: docs/automated-release-notes
           delete-branch: true
-          base: master
           title: '[Docs] Release Notes for Meshery 0.5.x'
           body: |
             An auto-generated pull request to document release notes for Meshery 0.5.x
           labels: |
             area/ci
             kind/chore
-          # assignees:
-          # reviewers:
           team-reviewers: |
             release-team
             maintainers
-          # milestone: 1
-          draft: false
+          draft: true
 
       - name: Verify PR
         run: |
