@@ -12,7 +12,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASEDRAFTER_PAT }}
           commit-message: "Created release note file 0.5.x.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
