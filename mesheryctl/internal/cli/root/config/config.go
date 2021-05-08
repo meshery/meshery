@@ -20,6 +20,7 @@ type MesheryCtlConfig struct {
 	Contexts       map[string]Context `mapstructure:"contexts"`
 	CurrentContext string             `mapstructure:"current-context"`
 	Tokens         []Token            `mapstructure:"tokens"`
+	PerfProfiles   []PerfProfile      `mapstructure:"perf-profiles"`
 }
 
 // Token defines the structure of Token stored in mesheryctl
@@ -30,12 +31,25 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint string   `mapstructure:"endpoint,omitempty"`
-	Token    string   `mapstructure:"token,omitempty"`
-	Platform string   `mapstructure:"platform"`
-	Adapters []string `mapstructure:"adapters,omitempty"`
-	Channel  string   `mapstructure:"channel,omitempty"`
-	Version  string   `mapstructure:"version,omitempty"`
+	Endpoint    string   `mapstructure:"endpoint,omitempty"`
+	PerfProfile string   `mapstructure:"perf-Profile,omitempty"`
+	Token       string   `mapstructure:"token,omitempty"`
+	Platform    string   `mapstructure:"platform"`
+	Adapters    []string `mapstructure:"adapters,omitempty"`
+	Channel     string   `mapstructure:"channel,omitempty"`
+	Version     string   `mapstructure:"version,omitempty"`
+}
+
+type PerfProfile struct {
+	Name               string      `mapstructure:"name,omitempty"`
+	URL                string      `mapstructure:"name,omitempty"`
+	Mesh               interface{} `mapstructure:"mesh,omitempty"`
+	QPS                interface{} `mapstructure:"qps,omitempty"`
+	ConcurrentRequests interface{} `mapstructure:"concurrent-request,omitempty"`
+	Duration           interface{} `mapstructure:"duration,omitempty"`
+	LoadGenerator      string      `mapstructure:"load-generator,omitempty"`
+	File               string      `mapstructure:"file,omitempty"`
+	Token              string      `mapstructure:"token,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object.
