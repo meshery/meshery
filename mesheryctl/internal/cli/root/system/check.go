@@ -25,7 +25,7 @@ var (
 
 var checkCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Meshery enviroment check",
+	Short: "Meshery environment check",
 	Long:  `Verify environment pre/post-deployment of Meshery.`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
