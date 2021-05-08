@@ -83,14 +83,8 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
 			// Create a deployment interface for the MesheryNamespace
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			// List the deployments in the MesheryNamespace
 			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
@@ -116,6 +110,30 @@ var statusCmd = &cobra.Command{
 				ready := fmt.Sprintf("%d/%d", deploymentStatus.ReadyReplicas, deploymentStatus.Replicas)
 				updated := fmt.Sprintf("%d", deploymentStatus.UpdatedReplicas)
 				available := fmt.Sprintf("%d", deploymentStatus.AvailableReplicas)
+				ageS := age.String()
+
+				// Append this to data to be printed in a table
+				data = append(data, []string{name, ready, updated, available, ageS})
+			}
+
+			// List the statefulsets in the MesheryNamespace
+			statefulsetList, err := client.KubeClient.AppsV1().StatefulSets(utils.MesheryNamespace).List(context.TODO(), v1.ListOptions{})
+			if err != nil {
+				return err
+			}
+			for _, statefulset := range statefulsetList.Items {
+				name := statefulset.GetName()
+
+				// Calculate the age of the meshery-broker
+				statefulsetCreationTime := statefulset.GetCreationTimestamp()
+				age := time.Since(statefulsetCreationTime.Time).Round(time.Second)
+
+				// Get the status of each of the meshery-broker
+				statefulsetStatus := statefulset.Status
+				// Get the values from the statefulset status of meshery-broker
+				ready := fmt.Sprintf("%d/%d", statefulsetStatus.ReadyReplicas, statefulsetStatus.Replicas)
+				updated := fmt.Sprintf("%d", statefulsetStatus.UpdatedReplicas)
+				available := fmt.Sprintf("%d", statefulsetStatus.CurrentReplicas)
 				ageS := age.String()
 
 				// Append this to data to be printed in a table
