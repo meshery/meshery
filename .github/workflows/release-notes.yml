@@ -6,7 +6,7 @@ on:
       - master
   pull_request:
     branches:
-      - mastrer
+      - publish-release-notes-for-0.5.3
 
 jobs:
   create_release_notes_and_pr:
