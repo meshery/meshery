@@ -1,6 +1,12 @@
 name: Release Notes Publisher
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - mastrer
 
 jobs:
   create_release_notes_and_pr:
