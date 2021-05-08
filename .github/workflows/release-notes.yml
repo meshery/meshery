@@ -3,40 +3,26 @@ name: Release Notes Publisher
 on: [pull_request]
 
 jobs:
-  create_release_notes_and_pr:
+  create_release_notes_pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Drafting release
-        id: release_drafter
-        uses: release-drafter/release-drafter@v5
-        with:
-          config-name: release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
-
-      - name: Write release notes to markdown file
-        id: md_writer
-        run: |
-          printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-
-      - name: Cat release notes (DELETE ME)
-        run: echo ${{ steps.release_drafter.outputs.tag_name }}
-
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.RELEASE_NOTES_PAT }}
-          commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
+          commit-message: "Created release note file 0.5.x.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
           branch: docs/automated-release-notes
           delete-branch: true
           base: master
-          title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
+          title: '[Docs] Release Notes for Meshery 0.5.x'
           body: |
-            An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
+            An auto-generated pull request to document release notes for Meshery 0.5.x
           labels: |
             area/ci
             kind/chore
