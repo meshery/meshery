@@ -3,7 +3,7 @@ name: Release Notes Publisher
 on: [push, pull_request]
 
 jobs:
-  write_release_notes:
+  create_release_notes_and_pr:
     runs-on: ubuntu-latest
     steps:
       # Drafts your next Release notes as Pull Requests are merged into "master"
@@ -15,7 +15,7 @@ jobs:
         with:
           config-name: release-drafter.yml
 
-      - name: Checkout release notes
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Write release notes to markdown file
@@ -24,15 +24,8 @@ jobs:
           printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
 
       - name: Cat release notes (DELETE ME)
-        run: |
-          ls -la ./docs/_releases/
-          echo ${{ steps.release_drafter.outputs.tag_name }}
+        run: echo ${{ steps.release_drafter.outputs.tag_name }}
 
-  create_release_notes_pr:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
