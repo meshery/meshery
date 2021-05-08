@@ -141,6 +141,6 @@ $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
 ```bash
 service:
   type: NodePort
-  port: 8080
+  port: 9081
   annotations: {}
 ```

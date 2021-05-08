@@ -33,3 +33,4 @@ The following points of extension are currently incorporated into Meshery.
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
 1. [REST API](/extensibility/api#rest)
 1. [GraphQL API](/extensibility/api#graphql)
+1. CloudEvents Integration
