@@ -31,6 +31,7 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
           branch: docs/automated-release-notes
+          base: master
           delete-branch: true
           title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
           body: |
