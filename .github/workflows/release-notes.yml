@@ -17,10 +17,11 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit-message: "Created release note file 0.5.x.md"
           committer: l5io <ci@layer5.io>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
+          base: mater
           branch: docs/automated-release-notes
           delete-branch: true
           title: '[Docs] Release Notes for Meshery 0.5.x'
