@@ -23,6 +23,9 @@ jobs:
         run: |
           printf '%b\n' "---\nlayout: default\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
 
+      - name: Cat release notes (DELETE ME)
+        run: ls -la ./docs/_releases/
+
   create_release_notes_pr:
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +35,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
           commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
