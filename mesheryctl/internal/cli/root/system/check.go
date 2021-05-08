@@ -18,13 +18,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-var PreCheckCmd = &cobra.Command{
-	Use:   "preflight",
-	Short: "Meshery pre-flight check",
-	Long:  `Verify environment readiness to deploy Meshery.`,
-	Args:  cobra.NoArgs,
+var (
+	preflight bool
+	pre       bool
+)
+
+var checkCmd = &cobra.Command{
+	Use:   "check",
+	Short: "Meshery enviroment check",
+	Long:  `Verify environment pre/post-deployment of Meshery.`,
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunPreflightHealthChecks(false, cmd.Use)
+		//incase --preflight or --pre has been passed as a flag
+		if preflight || pre {
+			return RunPreflightHealthChecks(false, cmd.Use)
+		}
+		return nil
 	},
 }
 
@@ -164,4 +173,9 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	}
 
 	return nil
+}
+
+func init() {
+	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
+	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
 }
