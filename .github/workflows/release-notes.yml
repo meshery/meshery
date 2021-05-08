@@ -1,12 +1,6 @@
 name: Release Notes Publisher
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - publish-release-notes-for-0.5.3
+on: [pull_request]
 
 jobs:
   create_release_notes_and_pr:
