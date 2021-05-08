@@ -31,7 +31,7 @@ const useStyles = makeStyles({
     minWidth: "10rem",
     border: "1px solid gray",
     borderRadius: "0.75rem",
-    top: "2rem",
+    //top: "2rem",
     margin: "0rem 0rem 6rem 0rem",
     ["@media (max-width:1024px)"]: {
       //eslint-disable-line no-useless-computed-key
@@ -75,6 +75,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
     marginLeft: "1rem",
   },
   cardIcon: {
