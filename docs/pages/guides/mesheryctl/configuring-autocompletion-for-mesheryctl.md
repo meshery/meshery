@@ -87,5 +87,5 @@ To load fish shell completions for each session, execute once:
 
 # Suggested Reading
 
-- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/guides/mesheryctl-commands)**.
+- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl)**.
 - To upgrade `mesheryctl`, refer to the **[Upgrade Guide]({{ site.baseurl }}/guides/upgrade)**.
