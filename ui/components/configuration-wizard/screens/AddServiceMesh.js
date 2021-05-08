@@ -2,9 +2,9 @@ import React from 'react'
 import { makeStyles, Container, Fade, Button } from '@material-ui/core/'
 
 import ConfigCard from './ConfigCard'
-import ConsulIcon from '../icons/consulIcon.js'
-import LinkerdIcon from '../icons/linkerdIcon.js'
-import OpenServiceMeshIcon from '../icons/openServiceMeshIcon.js'
+import ConsulIcon from '../icons/ConsulIcon.js'
+import LinkerdIcon from '../icons/LinkerdIcon.js'
+import OpenServiceMeshIcon from '../icons/OpenServiceMeshIcon.js'
 import InfoContainer from '../InfoContainer'
 
 const useStyles = makeStyles({
