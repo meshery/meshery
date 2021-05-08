@@ -116,32 +116,24 @@ var statusCmd = &cobra.Command{
 				data = append(data, []string{name, ready, updated, available, ageS})
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.AppsV1().StatefulSets(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			// List the statefulsets in the MesheryNamespace
+			statefulsetList, err := client.KubeClient.AppsV1().StatefulSets(utils.MesheryNamespace).List(context.TODO(), v1.ListOptions{})
 			if err != nil {
 				return err
 			}
+			for _, statefulset := range statefulsetList.Items {
+				name := statefulset.GetName()
 
-			for _, pod := range podList.Items {
-				name := pod.GetName()
-				//check if the current pod is meshery-broker
-				splitter := strings.Split(name, "-")
-				if splitter[1] != "broker" {
-					continue
-				}
 				// Calculate the age of the meshery-broker
-				podCreationTime := pod.GetCreationTimestamp()
-				age := time.Since(podCreationTime.Time).Round(time.Second)
+				statefulsetCreationTime := statefulset.GetCreationTimestamp()
+				age := time.Since(statefulsetCreationTime.Time).Round(time.Second)
 
 				// Get the status of each of the meshery-broker
-				podStatus := pod.Status
-				// Get the values from the pod status of meshery-broker
-				ready := fmt.Sprintf("%d/%d", podStatus.ReadyReplicas, podStatus.Replicas)
-				updated := fmt.Sprintf("%d", podStatus.UpdatedReplicas)
-				available := fmt.Sprintf("%d", podStatus.CurrentReplicas)
+				statefulsetStatus := statefulset.Status
+				// Get the values from the statefulset status of meshery-broker
+				ready := fmt.Sprintf("%d/%d", statefulsetStatus.ReadyReplicas, statefulsetStatus.Replicas)
+				updated := fmt.Sprintf("%d", statefulsetStatus.UpdatedReplicas)
+				available := fmt.Sprintf("%d", statefulsetStatus.CurrentReplicas)
 				ageS := age.String()
 
 				// Append this to data to be printed in a table
