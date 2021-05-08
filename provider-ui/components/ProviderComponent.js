@@ -21,7 +21,7 @@ import Divider from "@material-ui/core/Divider";
 
 const styles = (theme) => ({
   root: {
-    padding: "80px 0px",
+    padding: "170px 0px",
     textAlign: "center",
   },
   container: {
