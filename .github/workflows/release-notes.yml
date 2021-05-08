@@ -3,37 +3,48 @@ name: Release Notes Publisher
 on: [pull_request]
 
 jobs:
-  create_release_notes_pr:
+  update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Drafting release
+        id: release_drafter
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout release notes
         uses: actions/checkout@v2
 
-      - name: Make changes to pull request
-        run: date +%s > report.txt
-
+      - name: Write release notes to markdown file
+        id: md_writer
+        run: |
+          printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit-message: "Created release note file 0.5.x.md"
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
           committer: l5io <ci@layer5.io>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
-          base: master
           branch: docs/automated-release-notes
           delete-branch: true
-          title: '[Docs] Release Notes for Meshery 0.5.x'
+          title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
           body: |
-            An auto-generated pull request to document release notes for Meshery 0.5.x
+            An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
           labels: |
             area/ci
             kind/chore
+          # assignees:
+          # reviewers:
           team-reviewers: |
             release-team
             maintainers
-          draft: true
+          # milestone: 1
+          draft: false
 
       - name: Verify PR
         run: |
