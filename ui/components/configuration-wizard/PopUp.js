@@ -1,36 +1,38 @@
 import React from "react";
 import Link from "next/link";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Modal,
-  Button,
-  Checkbox,
-  Zoom,
-} from "@material-ui/core/";
+import { Typography, Modal, Button, Checkbox, Zoom } from "@material-ui/core/";
 
 const useStyles = makeStyles((theme) => ({
-  modal: {
+  root: {
     position: "absolute",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-evenly",
-    height: "20rem",
+    height: "18rem",
     padding: "1rem",
-    width: "500px",
+    width: "40rem",
     marginLeft: "-250px",
     left: "50%",
     bottom: "35%",
     backgroundColor: "#017374",
     border: "none",
-    borderRadius: "1.125rem",
+    borderRadius: "1.25rem",
     boxShadow: theme.shadows[5],
   },
+  text: {
+    color: "white",
+    fontWeight: "300",
+    letterSpacing: ".05rem",
+    textTransform: "none",
+  },
   buttonContainer: {
-    alignSelf: "flex-end",
+    alignSelf: "flex-start",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    textTransform: "none",
+    marginTop: "1.5rem",
   },
   checkbox: {
     display: "flex",
@@ -39,13 +41,14 @@ const useStyles = makeStyles((theme) => ({
   },
   label: {
     fontSize: "0.75rem",
+    color: "lightgray",
     marginRight: "7rem",
-    color: "white",
   },
-  startButton: {
-    padding: "0.6rem 1rem",
-    width: "8rem",
+  getStartedButton: {
+    padding: "0.5rem 2.25rem",
     background: "#455A64",
+    textTransform: "none",
+    fontWeight: "300",
     color: "white",
     "&:hover": {
       backgroundColor: "#607D8B",
@@ -53,9 +56,6 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: "none",
-    color: "white",
-  },
-  text: {
     color: "white",
   },
 }));
@@ -70,39 +70,38 @@ const PopUp = ({ open, handleClose }) => {
       aria-describedby="simple-modal-description"
     >
       <Zoom in={open}>
-        <div className={classes.modal}>
-          <Typography
-            variant="h4"
-            gutterBottom="true"
-            paragraph="true"
-            className={classes.text}
-            id="simple-modal-title"
-          >
-            Configuration Wizard
-          </Typography>
-          <Typography
-            variant="body2"
-            gutterBottom="true"
-            paragraph="true"
-            className={classes.text}
-            id="simple-modal-description"
-          >
-            Welcome to configuration wizard, Mesherys unique feature. The
-            configuration wizard represents an assembly of existing
-            functionality and settings that you can configure.
-          </Typography>
+        <div className={classes.root}>
+          <div className={classes.textContainer}>
+            <Typography
+              variant="h4"
+              gutterBottom="true"
+              paragraph="true"
+              className={classes.text}
+              id="simple-modal-title"
+            >
+              Configuration Wizard
+            </Typography>
+            <Typography
+              variant="body2"
+              gutterBottom="true"
+              paragraph="true"
+              className={classes.text}
+              id="simple-modal-description"
+            >
+              Welcome to configuration wizard, Meshery's unique feature. The configuration wizard represents an assembly
+              of existing functionality and settings that you can configure
+            </Typography>
+          </div>
           <div className={classes.buttonContainer}>
             <div className={classes.checkbox}>
               <Checkbox color="default" />
-              <Typography className={classes.label}>
-                Dont show this again
-              </Typography>
+              <Typography className={classes.label}>Don't show this again</Typography>
             </div>
             <Button onClick={handleClose} className={classes.text}>
               Skip
             </Button>
             <Link href="/wizard" className={classes.link}>
-              <Button onClick={handleClose} className={classes.startButton}>
+              <Button onClick={handleClose} className={classes.getStartedButton}>
                 Get Started
               </Button>
             </Link>

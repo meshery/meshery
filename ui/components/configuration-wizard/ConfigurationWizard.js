@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles, Container, Button, Fade } from '@material-ui/core/'
 
 import Stepper from './Stepper'
-import KubernetesScreen from './screens/Kubernetes'
+import KubernetesScreen from './screens/KubernetesScreen'
 import MesheryOperatorScreen from './screens/MesheryOperator'
 import ServiceMeshScreen from './screens/AddServiceMesh'
 import ExternalScreen from './screens/External'

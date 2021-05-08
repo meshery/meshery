@@ -127,7 +127,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ConfigCard = ({ handleSwitch, Icon, name, topInputPlaceholder, TopInputIcon, bottomInputPlaceholder }) => {
+const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceholder, TopInputIcon, bottomInputPlaceholder }) => {
   const [state, setState] = React.useState(false);
   const [kubeConfig, setKubeConfig] = React.useState("");
   const classes = useStyles();
@@ -165,29 +165,22 @@ const ConfigCard = ({ handleSwitch, Icon, name, topInputPlaceholder, TopInputIco
         <div className={classes.contentBottomChecked}>
           <>
             {name === "Kubernetes" ? (
+              <KubernetesInput/>
+            ) : (
               <>
-                <label htmlFor="file-upload">
-                  {TopInputIcon ? <TopInputIcon className={classes.topInputIcon} /> : null}
-                </label>
-                <input
-                  type="file"
-                  id="file-upload"
-                  onChange={(e) => handleKubeConfigUpload(e.target.files[0].name)}
-                  className={classes.file}
-                />
+                {" "}
+                <Input
+                  placeholder={topInputPlaceholder}
+                  disableUnderline="false"
+                  className={classes.contentBottomInput}
+                ></Input>
+                <Input
+                  placeholder={bottomInputPlaceholder}
+                  disableUnderline="false"
+                  className={classes.contentBottomInput}
+                ></Input>
               </>
-            ) : null}
-            <Input
-              placeholder={topInputPlaceholder}
-              disableUnderline="false"
-              className={classes.contentBottomInput}
-              value={kubeConfig}
-            ></Input>
-            <Input
-              placeholder={bottomInputPlaceholder}
-              disableUnderline="false"
-              className={classes.contentBottomInput}
-            ></Input>
+            )}
           </>
         </div>
       </CardContent>
