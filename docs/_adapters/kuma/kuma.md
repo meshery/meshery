@@ -5,7 +5,8 @@ name: Meshery Adapter for Kuma
 mesh_name: Kuma
 version: v1.0
 port: 10007/tcp
-project_status: beta
+project_status: stable
+adapter_version: v0.5.2
 lab: kuma-meshery-adapter
 github_link: https://github.com/layer5io/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
