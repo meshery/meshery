@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { withStyles, FormGroup, TextField, InputAdornment } from "@material-ui/core/";
+import { withStyles, FormGroup, TextField, InputAdornment, MenuItem } from "@material-ui/core/";
 import BackupIcon from "@material-ui/icons/Backup";
 
-const styles = (theme) => ({
+const styles = () => ({
   fileInputStyle: {
     opacity: "0.01",
   },
@@ -14,12 +14,12 @@ const styles = (theme) => ({
     justifyContent: "flex-end",
   },
   contentBottomUpperInput: {
-     width: "11rem",
-     fontSize: "0.75rem",
-     marginLeft: "2.4rem",
-     marginTop: "-1rem",
-     marginBottom: "0rem",
-   },
+    width: "11rem",
+    fontSize: "0.75rem",
+    marginLeft: "2.4rem",
+    marginTop: "-1rem",
+    marginBottom: "0rem",
+  },
   contentBottomLowerInput: {
     width: "11rem",
     marginBottom: "-1rem",

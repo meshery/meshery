@@ -6,7 +6,7 @@ import KubernetesStatus from './KubernetesStatus'
 import KubernetesIcon from "../icons/KubernetesIcon";
 import ConfigCard from "./ConfigCard";
 
-const styles = (theme) => ({
+const styles = () => ({
   cardContainer: {
     position: "relative",
     display: "flex",
