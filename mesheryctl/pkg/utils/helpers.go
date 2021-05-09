@@ -43,12 +43,13 @@ const (
 	// Usage URLs
 	docsBaseURL = "https://docs.meshery.io/"
 
-	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
-	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
-	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
-	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
-	baseConfigURL  = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
-	OperatorURL    = baseConfigURL + "manifests/default.yaml"
+	EndpointProtocol = "http"
+	rootUsageURL     = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
+	perfUsageURL     = docsBaseURL + "guides/mesheryctl/#performance-management"
+	systemUsageURL   = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
+	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL      = baseConfigURL + "manifests/default.yaml"
 )
 
 const (
@@ -104,6 +105,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
+	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 )
@@ -343,6 +346,37 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+func NavigateToBrowser(endpoint string) error {
+	//check for os of host machine
+	if runtime.GOOS == "windows" {
+		// Meshery running on Windows host
+		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else if runtime.GOOS == "linux" {
+		// Meshery running on Linux host
+		_, err := exec.LookPath("xdg-open")
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+			//find out what to do here!
+		}
+		err = exec.Command("xdg-open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else {
+		// Assume Meshery running on MacOS host
+		err := exec.Command("open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	}
+
+	return nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request

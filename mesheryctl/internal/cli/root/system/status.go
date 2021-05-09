@@ -40,8 +40,6 @@ var statusCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Meshery status... \n")
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -66,8 +64,12 @@ var statusCmd = &cobra.Command{
 			}
 
 			outputString := string(outputStd)
+
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
+
+				log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+
 			} else {
 				log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
 			}
@@ -143,17 +145,8 @@ var statusCmd = &cobra.Command{
 			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
 
-			// List all the pods
-			// for i, pod := range podList.Items {
-			// 	// Get the status from all the pods
-			// 	podstatusPhase := string(pod.Status.Phase)
-			// 	podCreationTime := pod.GetCreationTimestamp()
-			// 	age := time.Since(podCreationTime.Time).Round(time.Second)
+			log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
-			// 	// Log the status
-			// 	podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
-			// 	fmt.Println(podInfo)
-			// }
 		}
 		return nil
 	},
