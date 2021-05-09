@@ -88,14 +88,14 @@ const PopUp = ({ open, handleClose }) => {
               className={classes.text}
               id="simple-modal-description"
             >
-              Welcome to configuration wizard, Meshery's unique feature. The configuration wizard represents an assembly
+              Welcome to configuration wizard, Mesherys unique feature. The configuration wizard represents an assembly
               of existing functionality and settings that you can configure
             </Typography>
           </div>
           <div className={classes.buttonContainer}>
             <div className={classes.checkbox}>
               <Checkbox color="default" />
-              <Typography className={classes.label}>Don't show this again</Typography>
+              <Typography className={classes.label}>Dont show this again</Typography>
             </div>
             <Button onClick={handleClose} className={classes.text}>
               Skip
