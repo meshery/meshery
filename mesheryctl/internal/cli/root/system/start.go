@@ -53,7 +53,7 @@ var startCmd = &cobra.Command{
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 
-		err := utils.PreReqCheck(cmd.Use, tempContext)
+		err := RunPreflightHealthChecks(true, cmd.Use)
 		if err != nil {
 			cmd.SilenceUsage = true
 

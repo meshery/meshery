@@ -19,8 +19,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 
@@ -143,10 +141,7 @@ var switchCmd = &cobra.Command{
 	Long:  `Switch release channel and version of context in focus`,
 	Args:  cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
-		}
-		return utils.PreReqCheck(cmd.Use, "")
+		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err = setCmd.RunE(cmd, args)
