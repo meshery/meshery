@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
-	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +26,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 
 	log "github.com/sirupsen/logrus"
@@ -72,8 +70,7 @@ var statusCmd = &cobra.Command{
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
 
-				currCtx := mctlCfg.CurrentContext
-				log.Info("Meshery endpoint is " + mctlCfg.Contexts[currCtx].Endpoint)
+				log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
 			} else {
 				log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
@@ -150,21 +147,7 @@ var statusCmd = &cobra.Command{
 			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
 
-			clientset := client.KubeClient
-
-			var opts meshkitkube.ServiceOptions
-			opts.Name = "meshery"
-			opts.Namespace = utils.MesheryNamespace
-			opts.APIServerURL = client.RestConfig.Host
-
-			var endpoint *meshkitutils.Endpoint
-
-			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
-			if err != nil {
-				return err
-			}
-
-			log.Info("Meshery endpoint is " + utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port)))
+			log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
 		}
 		return nil
