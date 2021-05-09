@@ -42,7 +42,7 @@ function CustomToolbar(onClick) {
       <>
         <label htmlFor="upload-button">
           <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
-          <Tooltip title="Upload Pattern">
+          <Tooltip title="Upload Filter">
             <IconButton aria-label="Upload" component="span">
               <UploadIcon />
             </IconButton>
@@ -53,16 +53,16 @@ function CustomToolbar(onClick) {
   };
 }
 
-function YAMLEditor({ pattern, onClose, onSubmit }) {
+function YAMLEditor({ filter, onClose, onSubmit }) {
   const [yaml, setYaml] = useState("");
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="pattern-dialog-title" open fullWidth maxWidth="md">
-      <DialogTitle id="pattern-dialog-title">{pattern.name}</DialogTitle>
+    <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open fullWidth maxWidth="md">
+      <DialogTitle id="filter-dialog-title">{filter.name}</DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
-          value={pattern.pattern_file}
+          value={filter.filter_file}
           options={{
             theme: "material",
             lineNumbers: true,
@@ -76,20 +76,20 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Pattern">
+        <Tooltip title="Update Filter">
           <IconButton
             aria-label="Update"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
+            onClick={() => onSubmit(yaml, filter.id, filter.name, "update")}
           >
             <UpdateIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete Pattern">
+        <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
             color="primary"
-            onClick={() => onSubmit(yaml, pattern.id, pattern.name, "delete")}
+            onClick={() => onSubmit(yaml, filter.id, filter.name, "delete")}
           >
             <DeleteIcon />
           </IconButton>
@@ -99,33 +99,33 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
   );
 }
 
-function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
+function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes }) {
   const [page, setPage] = useState(0);
   const [search] = useState("");
   const [sortOrder] = useState("");
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [patterns, setPatterns] = useState([]);
+  const [filters, setFilters] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
 
   const searchTimeout = useRef(null);
 
   /**
-   * fetch patterns when the page loads
+   * fetch filters when the page loads
    */
   useEffect(() => {
-    fetchPatterns(page, pageSize, search, sortOrder);
+    fetchFilters(page, pageSize, search, sortOrder);
   }, []);
 
   /**
-   * fetchPatterns constructs the queries based on the parameters given
-   * and fetches the patterns
+   * fetchFilters constructs the queries based on the parameters given
+   * and fetches the filters
    * @param {number} page current page
    * @param {number} pageSize items per page
    * @param {string} search search string
    * @param {string} sortOrder order of sort
    */
-  function fetchPatterns(page, pageSize, search, sortOrder) {
+  function fetchFilters(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
@@ -136,15 +136,15 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
     updateProgress({ showProgress: true });
 
     dataFetch(
-      `/api/experimental/pattern${query}`,
+      `/api/experimental/filter${query}`,
       {
         credentials: "include",
       },
       (result) => {
-        console.log("PatternFile API", `/api/experimental/pattern${query}`);
+        console.log("FilterFile API", `/api/experimental/filter${query}`);
         updateProgress({ showProgress: false });
         if (result) {
-          setPatterns(result.patterns || []);
+          setFilters(result.filters || []);
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
@@ -179,15 +179,15 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   function handleSubmit(data, id, name, type) {
     if (type === "delete") {
       dataFetch(
-        `/api/experimental/pattern/${id}`,
+        `/api/experimental/filter/${id}`,
         {
           credentials: "include",
           method: "DELETE",
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern/${id}`);
+          console.log("FilterFile API", `/api/experimental/filter/${id}`);
           updateProgress({ showProgress: false });
-          fetchPatterns(page, pageSize, search, sortOrder);
+          fetchFilters(page, pageSize, search, sortOrder);
         },
         handleError
       );
@@ -195,16 +195,16 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "update") {
       dataFetch(
-        `/api/experimental/pattern`,
+        `/api/experimental/filter`,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
+          body: JSON.stringify({ filter_data: { id, filter_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern`);
+          console.log("FilterFile API", `/api/experimental/filter`);
           updateProgress({ showProgress: false });
-          fetchPatterns(page, pageSize, search, sortOrder);
+          fetchFilters(page, pageSize, search, sortOrder);
         },
         handleError
       );
@@ -212,16 +212,16 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
     if (type === "upload") {
       dataFetch(
-        `/api/experimental/pattern`,
+        `/api/experimental/filter`,
         {
           credentials: "include",
           method: "POST",
-          body: JSON.stringify({ pattern_data: { pattern_file: data }, save: true }),
+          body: JSON.stringify({ filter_data: { filter_file: data }, save: true }),
         },
         () => {
-          console.log("PatternFile API", `/api/experimental/pattern`);
+          console.log("FilterFile API", `/api/experimental/filter`);
           updateProgress({ showProgress: false });
-          fetchPatterns(page, pageSize, search, sortOrder);
+          fetchFilters(page, pageSize, search, sortOrder);
         },
         handleError
       );
@@ -249,7 +249,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   const columns = [
     {
       name: "name",
-      label: "Pattern Name",
+      label: "Filter Name",
       options: {
         filter: false,
         sort: true,
@@ -325,7 +325,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             <IconButton
               aria-label="more"
               color="inherit"
-              onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])}
+              onClick={() => setSelectedRowData(filters[tableMeta.rowIndex])}
             >
               <MoreHorizIcon />
             </IconButton>
@@ -368,10 +368,10 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
 
       switch (action) {
         case "changePage":
-          fetchPatterns(tableState.page, pageSize, search, sortOrder);
+          fetchFilters(tableState.page, pageSize, search, sortOrder);
           break;
         case "changeRowsPerPage":
-          fetchPatterns(page, tableState.rowsPerPage, search, sortOrder);
+          fetchFilters(page, tableState.rowsPerPage, search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -379,7 +379,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchPatterns(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
+              fetchFilters(page, pageSize, tableState.searchText !== null ? tableState.searchText : "", sortOrder);
             }
           }, 500);
           break;
@@ -392,7 +392,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
             }
           }
           if (order !== sortOrder) {
-            fetchPatterns(page, pageSize, search, order);
+            fetchFilters(page, pageSize, search, order);
           }
           break;
       }
@@ -402,11 +402,11 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
   return (
     <NoSsr>
       {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-        <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+        <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
       )}
       <MUIDataTable
         title={<div className={classes.tableHeader}>Meshery Filters</div>}
-        data={patterns}
+        data={filters}
         columns={columns}
         // @ts-ignore
         options={options}
@@ -426,4 +426,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryFilters)));
