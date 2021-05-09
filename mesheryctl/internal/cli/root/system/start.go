@@ -21,8 +21,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -35,6 +36,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -54,15 +56,19 @@ var startCmd = &cobra.Command{
 		err := RunPreflightHealthChecks(true, cmd.Use)
 		if err != nil {
 			cmd.SilenceUsage = true
+
 		}
 
 		return err
+
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
+
 		}
 		return nil
+
 	},
 }
 
@@ -84,6 +90,7 @@ func start() error {
 	if err != nil {
 		return err
 	}
+
 	currPlatform := currCtx.Platform
 	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
 
@@ -108,7 +115,14 @@ func start() error {
 		if err != nil {
 			return err
 		}
+
 		services := compose.Services // Current Services
+		//extracting the custom user port from config.yaml
+		userPort := strings.Split(currCtx.Endpoint, ":")
+		//extracting container port from the docker-compose
+		containerPort := strings.Split(services["meshery"].Ports[0], ":")
+		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
+		services["meshery"].Ports[0] = userPortMapping
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
@@ -116,24 +130,29 @@ func start() error {
 			if services[v].Image == "" {
 				log.Fatalf("Invalid adapter specified %s", v)
 			}
+
 			temp, ok := services[v]
 			if !ok {
 				return errors.New("unable to extract adapter version")
 			}
+
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
+
 		for _, v := range RequiredService {
 			if v == "watchtower" {
 				AllowedServices[v] = services[v]
 				continue
 			}
+
 			temp, ok := services[v]
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
+
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.Channel, "latest")
 			if v == "meshery" {
@@ -173,6 +192,14 @@ func start() error {
 			}
 		}
 
+		var endpoint meshkitutils.HostPort
+		endpoint.Address = "http://localhost"
+		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
+		if err != nil {
+			return err
+		}
+		endpoint.Port = int32(tempPort)
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -181,6 +208,7 @@ func start() error {
 		if err := start.Run(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
+
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
@@ -194,34 +222,22 @@ func start() error {
 			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
 		}
 
+		var mockEndpoint *meshkitutils.MockOptions
+		mockEndpoint = nil
+
+		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
+		if res {
+			return errors.New("the endpoint is not accessible")
+		}
+
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
 			if container.Names[0] == "/meshery_meshery_1" {
-				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to http://localhost:9081 to access Meshery.")
+				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
-				//check for os of host machine
-				if runtime.GOOS == "windows" {
-					// Meshery running on Windows host
-					err = exec.Command("rundll32", "url.dll,FileProtocolHandler", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
-				} else if runtime.GOOS == "linux" {
-					// Meshery running on Linux host
-					_, err = exec.LookPath("xdg-open")
-					if err != nil {
-						break
-					}
-					err = exec.Command("xdg-open", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
-				} else {
-					// Assume Meshery running on MacOS host
-					err = exec.Command("open", currCtx.Endpoint).Start()
-					if err != nil {
-						return errors.Wrap(err, utils.SystemError("failed to exec command"))
-					}
+				err := utils.NavigateToBrowser(currCtx.Endpoint)
+				if err != nil {
+					return err
 				}
 
 				//check flag to check successful deployment
@@ -304,7 +320,60 @@ func start() error {
 
 		log.Info("...Meshery deployed on Kubernetes.")
 
-	// switch to default case if the platform specified is not supported
+		clientset := client.KubeClient
+
+		var opts meshkitkube.ServiceOptions
+		opts.Name = "meshery"
+		opts.Namespace = utils.MesheryNamespace
+		opts.APIServerURL = client.RestConfig.Host
+
+		var endpoint *meshkitutils.Endpoint
+
+		deadline := time.Now().Add(3 * time.Second)
+
+		//polling for endpoint to be available within the three second deadline
+		for !(time.Now().After(deadline)) {
+			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
+			if err == nil {
+				break
+			} else {
+				time.Sleep(1 * time.Second)
+			}
+		}
+
+		if err != nil {
+			return err
+		}
+
+		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
+		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
+
+		utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
+		err = utils.ViperK8s.ReadInConfig()
+		if err != nil {
+			return err
+		}
+
+		kubeCompose := &config.MesheryCtlConfig{}
+		err = utils.ViperK8s.Unmarshal(&kubeCompose)
+		if err != nil {
+			return err
+		}
+
+		kubeCompose.Contexts[mctlCfg.CurrentContext] = currCtx
+		utils.ViperK8s.Set("contexts."+mctlCfg.CurrentContext, currCtx)
+
+		err = utils.ViperK8s.WriteConfig()
+		if err != nil {
+			return err
+		}
+
+		err = utils.NavigateToBrowser(currCtx.Endpoint)
+		if err != nil {
+			return err
+		}
+
+		// switch to default case if the platform specified is not supported
 	default:
 		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
 	}
