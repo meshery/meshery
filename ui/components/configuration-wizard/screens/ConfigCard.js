@@ -127,9 +127,8 @@ const useStyles = makeStyles({
   },
 });
 
-const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceholder, TopInputIcon, bottomInputPlaceholder }) => {
+const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceholder, bottomInputPlaceholder }) => {
   const [state, setState] = React.useState(false);
-  const [kubeConfig, setKubeConfig] = React.useState("");
   const classes = useStyles();
 
   const handleChange = (e) => {
@@ -138,7 +137,6 @@ const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceho
       handleSwitch(e.target.name, e.target.checked);
     }
   };
-  const handleKubeConfigUpload = (file) => setKubeConfig(file);
   return (
     <Card className={`${classes.card} ${classes.cardChecked}`} variant="outlined">
       <CardContent className={classes.cardContent}>
