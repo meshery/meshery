@@ -5,7 +5,7 @@ description: How to connect and use Prometheus and Grafana metrics in Meshery
 permalink: guides/meshery-metrics
 language: en
 type: Guides
-category: mesheryctl
+category: performance
 ---
 
 ## Connect and use metrics in Meshery

@@ -29,7 +29,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
@@ -40,10 +39,7 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
-		}
-		return utils.PreReqCheck(cmd.Use, "")
+		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -137,18 +133,6 @@ func stop() error {
 
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
-		operatorURL := utils.OperatorURL
-
-		operatorManifest, err := meshkitutils.ReadFileSource(operatorURL)
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyManifest([]byte(operatorManifest), client, false, true)
 		if err != nil {
 			return err
 		}

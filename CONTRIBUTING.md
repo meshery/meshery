@@ -16,7 +16,7 @@ All set to contribute? Grab an open issue with the [help-wanted label](../../lab
     - <a href="#adapter">Writing a Meshery Adapter</a>
   - <a href="#contributing-ui">Meshery UI</a>
     Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
-  - <a href="#contributing-meshery">Mesheryctl Documentation</a>
+  - <a href="#contributing-mesheryctl">Mesheryctl Documentation</a>
     - <a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Command Reference and Tracker</a> 
 
 # <a name="contributing">General Contribution Flow</a>
@@ -239,7 +239,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](http://slack.layer5.io).
 
-## <a href="#contributing-meshery">Mesheryctl Documentation</a>
+## <a name="contributing-mesheryctl">Mesheryctl Documentation</a>
 
 ### mesheryctl
 `mesheryctl` is the CLI client for Meshery.

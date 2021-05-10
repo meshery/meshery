@@ -71,8 +71,8 @@ to your azure account using *az login*.
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
- kubectl --namespace meshery port-forward $POD_NAME 8080:8080
+ kubectl --namespace meshery port-forward $POD_NAME 9081:8080
  </div></div>
  </pre>
 
-Meshery should now be running in your AKS cluster and the Meshery UI should be locally accessible. Navigate to [http://localhost:9081](http://localhost:9081) to log into Meshery.
+Meshery should now be running in your AKS cluster and the Meshery UI should be accessible. Navigate to the `meshery` service endpoint to log into Meshery.
