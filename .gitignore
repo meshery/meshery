@@ -56,3 +56,4 @@ yarn.lock
 *.Identifier
 
 default.profraw
+makefile
