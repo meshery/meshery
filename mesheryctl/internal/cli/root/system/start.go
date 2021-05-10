@@ -279,9 +279,9 @@ func start() error {
 		// fetch the manifest files corresponding to the version specified
 		var manifests []Manifest
 		var manifestsError error
-		manifests, err = utils.GetCachedManifests(version)
+		manifests, err = utils.FetchManifests(version)
 		if manifestsError != nil {	
-			manifests, manifestsError = utils.FetchManifests(version)
+			manifests, manifestsError = utils.GetCachedManifests(version)
 			if manifestsError != nil {
 				return manifestsError
 			}
