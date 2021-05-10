@@ -85,11 +85,7 @@ function generatePerformanceProfile(data) {
 
 // =============================== PERFORMANCE COMPONENT =======================
 
-const loadGenerators = [
-  "fortio",
-  "wrk2",
- 'nighthawk',
-];
+const loadGenerators = ["fortio", "wrk2", "nighthawk"];
 
 const styles = (theme) => ({
   root: {
@@ -901,7 +897,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="contentType"
                           name="contentType"
-                          label='Content Type e.g. application/json'
+                          label="Content Type e.g. application/json"
                           fullWidth
                           value={contentType}
                           multiline
