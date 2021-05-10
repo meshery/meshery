@@ -288,8 +288,19 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 	}
 
+	log.Debug("applied manifests to the Kubernetes cluster.")
+
+	return nil
+}
+
+// ApplyOperatorManifest applies/updates/deletes the operator manifest
+func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool) error {
+	// path to the manifest files ~/.meshery/manifests
+	manifestFiles := filepath.Join(MesheryFolder, ManifestsFolder)
+
 	//applying meshery operator file
 	MesheryOperatorManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperator))
+
 	if err != nil {
 		return errors.Wrap(err, "failed to read operator manifest files")
 	}
@@ -298,7 +309,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return err
 	}
 
-	log.Debug("applied manifests to the Kubernetes cluster.")
+	log.Debug("applied operator manifest.")
 
 	return nil
 }
