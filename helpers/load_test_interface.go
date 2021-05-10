@@ -14,7 +14,6 @@ import (
 	"fortio.org/fortio/fgrpc"
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/layer5io/gowrk2/api"
 	"github.com/layer5io/meshery/models"
@@ -23,6 +22,7 @@ import (
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	v3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v32 "github.com/envoyproxy/go-control-plane/envoy/config/metrics/v3"
@@ -217,7 +217,6 @@ func startNighthawkServer(timeout int64) error {
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
-
 	err := startNighthawkServer(int64(opts.Duration))
 	if err != nil {
 		err = errors.Wrap(err, "error while running nighthawk server")
@@ -246,9 +245,9 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		RequestsPerSecond: &wrappers.UInt32Value{Value: uint32(qps)},
 		Connections:       &wrappers.UInt32Value{Value: uint32(2)},
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
-			Duration: ptypes.DurationProto(opts.Duration),
+			Duration: durationpb.New(opts.Duration),
 		},
-		Timeout:             ptypes.DurationProto(10 * time.Second),
+		Timeout:             durationpb.New(10 * time.Second),
 		H2:                  &wrappers.BoolValue{Value: false},
 		Concurrency:         &wrappers.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
 		Verbosity:           &nighthawk_proto.Verbosity{Value: nighthawk_proto.Verbosity_INFO},
@@ -276,7 +275,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		TerminationPredicates:                make(map[string]uint64),
 		FailurePredicates:                    make(map[string]uint64),
 		OpenLoop:                             &wrappers.BoolValue{Value: false},
-		JitterUniform:                        ptypes.DurationProto(0 * time.Second),
+		JitterUniform:                        durationpb.New(0 * time.Second),
 		ExperimentalH2UseMultipleConnections: &wrappers.BoolValue{Value: false},
 		Labels:                               make([]string, 0),
 		//TransportSocket: &v3.TransportSocket{
