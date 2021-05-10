@@ -192,7 +192,7 @@ class MeshConfigComponent extends React.Component {
       inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer,
     } = props;
     if (props.ts > state.ts) {
-      return {
+      let newState = {
         inClusterConfig,
         k8sfile,
         k8sfileElementVal: '',
@@ -200,7 +200,11 @@ class MeshConfigComponent extends React.Component {
         clusterConfigured,
         configuredServer,
         ts: props.ts,
-      };
+      }
+      
+      // If contextsFromFile is empty then add the default value to it
+      if (!state.contextsFromFile?.length) newState = { ...newState, contextsFromFile: [{ contextName, currentContext: true }] } 
+      return newState;
     }
     return {};
   }
@@ -715,7 +719,7 @@ class MeshConfigComponent extends React.Component {
   meshOut = (showConfigured, operator) => {
     const { classes } = this.props;
     const {
-      k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile,
+      k8sfile, k8sfileElementVal, contextNameForForm, contextsFromFile, contextName
     } = this.state;
 
     return (
@@ -769,7 +773,7 @@ class MeshConfigComponent extends React.Component {
                     name="contextName"
                     label="Context Name"
                     fullWidth
-                    value={contextNameForForm}
+                    value={contextNameForForm || contextName}
                     margin="normal"
                     variant="outlined"
                     // disabled={inClusterConfigForm === true}
