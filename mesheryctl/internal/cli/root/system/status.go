@@ -40,8 +40,6 @@ var statusCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Meshery status... \n")
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -66,8 +64,12 @@ var statusCmd = &cobra.Command{
 			}
 
 			outputString := string(outputStd)
+
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
+
+				log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+
 			} else {
 				log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
 			}
@@ -83,14 +85,8 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
 			// Create a deployment interface for the MesheryNamespace
 			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			// List the deployments in the MesheryNamespace
 			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
@@ -122,20 +118,35 @@ var statusCmd = &cobra.Command{
 				data = append(data, []string{name, ready, updated, available, ageS})
 			}
 
+			// List the statefulsets in the MesheryNamespace
+			statefulsetList, err := client.KubeClient.AppsV1().StatefulSets(utils.MesheryNamespace).List(context.TODO(), v1.ListOptions{})
+			if err != nil {
+				return err
+			}
+			for _, statefulset := range statefulsetList.Items {
+				name := statefulset.GetName()
+
+				// Calculate the age of the meshery-broker
+				statefulsetCreationTime := statefulset.GetCreationTimestamp()
+				age := time.Since(statefulsetCreationTime.Time).Round(time.Second)
+
+				// Get the status of each of the meshery-broker
+				statefulsetStatus := statefulset.Status
+				// Get the values from the statefulset status of meshery-broker
+				ready := fmt.Sprintf("%d/%d", statefulsetStatus.ReadyReplicas, statefulsetStatus.Replicas)
+				updated := fmt.Sprintf("%d", statefulsetStatus.UpdatedReplicas)
+				available := fmt.Sprintf("%d", statefulsetStatus.CurrentReplicas)
+				ageS := age.String()
+
+				// Append this to data to be printed in a table
+				data = append(data, []string{name, ready, updated, available, ageS})
+			}
+
 			// Print the data to a table for readability
 			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
 
-			// List all the pods
-			// for i, pod := range podList.Items {
-			// 	// Get the status from all the pods
-			// 	podstatusPhase := string(pod.Status.Phase)
-			// 	podCreationTime := pod.GetCreationTimestamp()
-			// 	age := time.Since(podCreationTime.Time).Round(time.Second)
+			log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
-			// 	// Log the status
-			// 	podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
-			// 	fmt.Println(podInfo)
-			// }
 		}
 		return nil
 	},

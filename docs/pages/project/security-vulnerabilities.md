@@ -84,6 +84,7 @@ As much as possible this announcement will be actionable, and include any mitiga
   <th> AFFECTED COMPONENT </th>
   <th> VULNERABLE VERSION </th>
   <th> PATCHED VERSION </th>
+  <th> FIX DETAILS </th>
   <th> LINKS </th>
 </tr>
 {% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
