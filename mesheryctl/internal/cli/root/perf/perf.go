@@ -33,6 +33,7 @@ import (
 )
 
 var (
+	view               = ""
 	testURL            = ""
 	testName           = ""
 	testMesh           = ""
@@ -161,4 +162,27 @@ func init() {
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	//PerfCmd.Flags().StringVar(&view, "view", "", "(optional) View test configuration of a profile")
+	PerfCmd.AddCommand(viewCmd)
+}
+
+var viewCmd = &cobra.Command{
+	Use:   "view",
+	Short: "view perf profile",
+	Long:  `See the configuration of your performance profile`,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return errors.Wrap(err, "error processing config")
+		}
+		var req *http.Request
+		req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"user/performance/profiles", nil)
+		if err != nil {
+			return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
+		}
+		q := req.URL.Query()
+		fmt.Println(q.Get(view))
+		return nil
+	},
 }
