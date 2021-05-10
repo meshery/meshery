@@ -10,11 +10,12 @@ category: mesheryctl
 
 Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and service mesh management functions. `mesheryctl` commands can be categorized as follows:
 
-- `mesheryctl` - Global flags
-- `mesheryctl system` - Meshery Lifecycle and Troubleshooting
+- `mesheryctl` - Global overrides and flags
+- `mesheryctl filter` - Service Mesh Filter Management
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management
 - `mesheryctl perf` -  Service Mesh Performance Management
 - `mesheryctl pattern` - Service Mesh Pattern Configuration & Management
+- `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 
 
 ## Configuring Meshery Deployments with meshconfig
@@ -46,18 +47,20 @@ The following template is used to create a config file from scratch. Not all of 
 
 ```
 contexts:
-   <context1-name>:
-	endpoint: <url to meshery server rest api>
-	token: <name of token variable in this config file>
-platform: <type of platform: ”docker” or “kubernetes”> 
-# Future: specify type of kubernetes (e.g. eks)
-adapters: <collection of names of service mesh adapters: “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”> 
-# Future: ”app-mesh”,”traefik-mesh”
+    <context1-name>:
+      endpoint: <url to meshery server rest api>
+      token: <name of token variable in this config file>
+      platform: <type of platform: ”docker” or “kubernetes”> 
+      # Future: specify type of kubernetes (e.g. eks)
+      adapters: <collection of names of service mesh adapters: 
+          “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”> 
+
    <context2-name>:
-	endpoint: <url to meshery server rest api>
-	token: <name of token variable in this config file>
-platform: <type of platform: ”docker” or “kubernetes”>
-current-context: <context name>
+    endpoint: <url to meshery server rest api>
+    token: <name of token variable in this config file>
+    platform: <type of platform: ”docker” or “kubernetes”>
+    current-context: <context name>
+
 tokens:
 - name: <token1-name>
   location: <token-location>
@@ -83,7 +86,20 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 ```
 
-## Related Guides
+# Suggested Reading
+
+- [Configuring Autocompletion for `mesheryctl`]({{ site.baseurl }}/guides/mesheryctl/configuring-autocompletion-for-mesheryctl")
+- [`mesheryctl` Command Reference]({{ site.baseurl }}/guides/mesheryctl-commands)
+- [`mesheryctl` Upgrade Guide]({{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli)
+
+<!-- ## Related Guides
+
+<div>
+  <a href="{{ site.baseurl }}/guides/mesheryctl/configuring-autocompletion-for-mesheryctl">
+    <div class="overview">Configuring Autocompletion for `mesheryctl`</div>
+  </a>
+  <p>Configure automatic completion of `mesheryctl` commands in your environment.</p>
+</div>
 
 <div class="wrapper" style="text-align: left;">
   <div>
@@ -99,7 +115,9 @@ services:
   </a>
   <p>To upgrade <code>mesheryctl</code>, refer to the Upgrade Guide.</p>
 </div>
-</div>
+
+
+</div> -->
 
 
 <!--
@@ -160,7 +178,7 @@ Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
 
 ### Installing the `mesheryctl` binary
 
-Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/latest) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
+Download and unzip `mesheryctl` from the [Meshery releases](https://github.com/layer5io/meshery/releases/) page. Add `mesheryctl` to your PATH for ease of use. Then, execute:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">

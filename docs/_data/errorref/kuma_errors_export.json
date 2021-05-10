@@ -1,0 +1,134 @@
+{
+    "errors_export": {
+        "component_name": "kuma",
+        "component_type": "adapter",
+        "errors": {
+            "1000": {
+                "name": "ErrInstallKumaCode",
+                "code": "1000",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1001": {
+                "name": "ErrMeshConfigCode",
+                "code": "1001",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1002": {
+                "name": "ErrFetchManifestCode",
+                "code": "1002",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1003": {
+                "name": "ErrClientConfigCode",
+                "code": "1003",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1004": {
+                "name": "ErrClientSetCode",
+                "code": "1004",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1005": {
+                "name": "ErrStreamEventCode",
+                "code": "1005",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1006": {
+                "name": "ErrSampleAppCode",
+                "code": "1006",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1007": {
+                "name": "ErrGetKumactlCode",
+                "code": "1007",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1008": {
+                "name": "ErrDownloadBinaryCode",
+                "code": "1008",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1009": {
+                "name": "ErrInstallBinaryCode",
+                "code": "1009",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1010": {
+                "name": "ErrUntarCode",
+                "code": "1010",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1011": {
+                "name": "ErrUntarDefaultCode",
+                "code": "1011",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1012": {
+                "name": "ErrMoveBinaryCode",
+                "code": "1012",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1013": {
+                "name": "ErrCustomOperationCode",
+                "code": "1013",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            }
+        }
+    }
+}
