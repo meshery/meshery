@@ -15,6 +15,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
+	github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d
 	github.com/ghodss/yaml v1.0.0
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
@@ -29,10 +30,9 @@ require (
 	github.com/layer5io/meshery-operator v0.2.12
 	github.com/layer5io/meshkit v0.2.9
 	github.com/layer5io/meshsync v0.1.17
-	github.com/layer5io/nighthawk-go v0.1.6
+	github.com/layer5io/nighthawk-go v1.0.2
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.1
-	github.com/nats-io/nats.go v1.10.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9
