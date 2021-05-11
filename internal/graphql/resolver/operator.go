@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	natspackage "github.com/nats-io/nats.go"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -79,6 +79,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, status model.Status
 
 		if !del {
 			endpoint, err := r.subscribeToBroker(kubeclient, r.brokerChannel)
+			r.Log.Debug("Endpoint: ", endpoint)
 			if err != nil {
 				r.Log.Error(err)
 				r.operatorChannel <- &model.OperatorStatus{
@@ -226,8 +227,30 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 		time.Sleep(1 * time.Second)
 	}
 
+	endpoint := broker.Status.Endpoint.Internal
+	if len(strings.Split(broker.Status.Endpoint.Internal, ":")) > 1 {
+		port, _ := strconv.Atoi(strings.Split(broker.Status.Endpoint.Internal, ":")[1])
+		if !utils.TcpCheck(&utils.HostPort{
+			Address: strings.Split(broker.Status.Endpoint.Internal, ":")[0],
+			Port:    int32(port),
+		}, nil) {
+			endpoint = broker.Status.Endpoint.External
+			port, _ = strconv.Atoi(strings.Split(broker.Status.Endpoint.External, ":")[1])
+			if !utils.TcpCheck(&utils.HostPort{
+				Address: strings.Split(broker.Status.Endpoint.External, ":")[0],
+				Port:    int32(port),
+			}, nil) {
+				if utils.TcpCheck(&utils.HostPort{
+					Address: "host.docker.internal",
+					Port:    int32(port),
+				}, nil) {
+					endpoint = fmt.Sprintf("host.docker.internal:%d", int32(port))
+				}
+			}
+		}
+	}
+
 	// subscribing to nats
-	endpoint := broker.Status.Endpoint.External
 	r.brokerConn, err = nats.New(nats.Options{
 		URLS:           []string{endpoint},
 		ConnectionName: "meshery",
@@ -238,33 +261,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	})
 	// Hack for minikube based clusters
 	if err != nil {
-		if err.Error() == nats.ErrConnect(natspackage.ErrNoServers).Error() {
-			var er error
-			var port, address string
-			if len(strings.Split(broker.Status.Endpoint.External, ":")) > 1 {
-				port = strings.Split(broker.Status.Endpoint.External, ":")[1]
-			}
-			if len(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")) > 1 {
-				address = strings.SplitAfter(strings.SplitAfter(mesheryKubeClient.RestConfig.Host, "://")[1], ":")[0]
-				if len(address) > 0 {
-					address = address[:len(address)-1]
-				}
-			}
-			endpoint = fmt.Sprintf("%s:%s", address, port)
-			r.brokerConn, er = nats.New(nats.Options{
-				URLS:           []string{endpoint},
-				ConnectionName: "meshery",
-				Username:       "",
-				Password:       "",
-				ReconnectWait:  2 * time.Second,
-				MaxReconnect:   5,
-			})
-			if er != nil {
-				return endpoint, er
-			}
-		} else {
-			return endpoint, err
-		}
+		return endpoint, err
 	}
 
 	err = r.brokerConn.SubscribeWithChannel(operatorSubject, operatorQueue, datach)
