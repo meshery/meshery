@@ -28,8 +28,8 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20200411085644-f7626bef00b3
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
-	github.com/layer5io/meshery-operator v0.2.12
-	github.com/layer5io/meshkit v0.2.9
+	github.com/layer5io/meshery-operator v0.2.16
+	github.com/layer5io/meshkit v0.2.10
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v1.0.2
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -47,7 +47,7 @@ require (
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/vektah/gqlparser/v2 v2.2.0
 	github.com/vmihailenco/taskq/v3 v3.0.0-beta.9.0.20200519124923-d9823546b85a
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93
 	gonum.org/v1/gonum v0.9.1
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
