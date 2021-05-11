@@ -34,10 +34,7 @@ var updateCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
-		}
-		return utils.PreReqCheck(cmd.Use, "")
+		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context

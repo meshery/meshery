@@ -165,7 +165,7 @@ Run the following:
  <div class="clipboardjs">
  service:
    type: NodePort
-   port: 8080
+   port: 9081
    annotations: {}
  </div></div>
  </pre>
