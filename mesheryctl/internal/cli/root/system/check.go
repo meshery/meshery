@@ -56,17 +56,15 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 			return err
 		}
 	}
-	//Kubernetes and KubernetesVersion healthchecks are only invoked when it's not a PreRunExecution
-	// or it's a PreRunExecution and current platform is kubernetes
-	if !isPreRunExecution || (isPreRunExecution && platform == "kubernetes") {
-		//Run k8s API healthchecks
-		if err = runKubernetesAPIHealthCheck(isPreRunExecution); err != nil {
-			return err
-		}
-		//Run k8s plus kubectl minimum version healthchecks
-		if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
-			return err
-		}
+	//Kubernetes and KubernetesVersion healthchecks are invoked in
+	//both the cases PreRunExecution and !PreRunExecution
+	//Run k8s API healthchecks
+	if err = runKubernetesAPIHealthCheck(isPreRunExecution); err != nil {
+		return err
+	}
+	//Run k8s plus kubectl minimum version healthchecks
+	if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
+		return err
 	}
 	if !isPreRunExecution {
 		log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
