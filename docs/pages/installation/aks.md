@@ -75,4 +75,4 @@ to your azure account using *az login*.
  </div></div>
  </pre>
 
-Meshery should now be running in your AKS cluster and the Meshery UI should be locally accessible. Navigate to [http://localhost:8080](http://localhost:8080) to log into Meshery.
+Meshery should now be running in your AKS cluster and the Meshery UI should be locally accessible. Navigate to [http://localhost:9081](http://localhost:9081) to log into Meshery.
