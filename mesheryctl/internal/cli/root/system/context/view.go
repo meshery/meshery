@@ -16,7 +16,7 @@ var viewContextCmd = &cobra.Command{
 	Use:          "view",
 	Short:        "view current context",
 	Long:         `Display active Meshery context`,
-	Args:         cobra.MinimumNArgs(0),
+	Args:         cobra.MaximumNArgs(1),
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -33,7 +33,7 @@ var viewContextCmd = &cobra.Command{
 		}
 		if context == "" {
 			context = viper.GetString("current-context")
-			log.Printf("***This is your Current context***")
+
 		}
 		if context == "" {
 			return errors.New("current context not set")
@@ -44,7 +44,7 @@ var viewContextCmd = &cobra.Command{
 			log.Printf("context \"%s\" doesn't exists, run the following to create:\n\nmesheryctl system context create %s", context, context)
 			return nil
 		}
-		log.Printf("\nContext: %s\n", context)
+		log.Printf("\nCurrent Context: %s\n", context)
 		log.Print(getYAML(contextData))
 		return nil
 	},
