@@ -22,8 +22,8 @@ import (
 )
 
 var (
-	InvalidKubeConfigErr     = fmt.Errorf("Given file is not a valid Kubernetes config file, please try again")
-	InvalidK8sContextNameErr = fmt.Errorf("Given context name is not valid, please try again with a valid value")
+	ErrInvalidKubeConfig     = fmt.Errorf("given file is not a valid Kubernetes config file, please try again")
+	ErrInvalidK8sContextName = fmt.Errorf("given context name is not valid, please try again with a valid value")
 )
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
@@ -76,7 +76,7 @@ func (h *Handler) addK8SConfig(user *models.User, prefObj *models.Preference, w 
 
 	if gerr != nil {
 		status := http.StatusInternalServerError
-		if gerr == InvalidK8sContextNameErr || gerr == InvalidKubeConfigErr {
+		if gerr == ErrInvalidK8sContextName || gerr == ErrInvalidKubeConfig {
 			status = http.StatusBadRequest
 		}
 
@@ -250,7 +250,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	if !inClusterConfig {
 		ccfg, err := clientcmd.Load(k8sConfigBytes)
 		if err != nil {
-			return nil, InvalidKubeConfigErr
+			return nil, ErrInvalidKubeConfig
 		}
 
 		logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", ccfg.CurrentContext, ccfg.Contexts, ccfg.Clusters)
@@ -258,7 +258,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 		if contextName != "" {
 			k8sCtx, ok := ccfg.Contexts[contextName]
 			if !ok || k8sCtx == nil {
-				return nil, InvalidK8sContextNameErr
+				return nil, ErrInvalidK8sContextName
 			}
 			ccfg.CurrentContext = contextName
 		}
