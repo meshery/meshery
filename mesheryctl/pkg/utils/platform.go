@@ -96,6 +96,13 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
+
+	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
+	err := DownloadFile(operatorFilepath, OperatorURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
+	}
+
 	return nil
 }
 
@@ -148,6 +155,10 @@ func GetLatestStableReleaseTag() (string, error) {
 	}
 	defer SafeClose(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get latest stable release tag")
+	}
+
 	var dat map[string]interface{}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -156,8 +167,11 @@ func GetLatestStableReleaseTag() (string, error) {
 	if err := json.Unmarshal(body, &dat); err != nil {
 		return "", errors.Wrap(err, "failed to unmarshal json into object")
 	}
-
-	return dat["tag_name"].(string), nil
+	null := ""
+	if dat["tag_name"] != nil {
+		null = dat["tag_name"].(string)
+	}
+	return null, nil
 }
 
 // IsAdapterValid checks if the adapter mentioned by the user is a valid adapter
@@ -273,6 +287,17 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 			return err
 		}
 	}
+
+	//applying meshery operator file
+	MesheryOperatorManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperator))
+	if err != nil {
+		return errors.Wrap(err, "failed to read operator manifest files")
+	}
+
+	if err = ApplyManifest([]byte(MesheryOperatorManifest), client, update, delete); err != nil {
+		return err
+	}
+
 	log.Debug("applied manifests to the Kubernetes cluster.")
 
 	return nil

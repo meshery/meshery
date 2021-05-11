@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: trigger plugins for edge
       if: startsWith(github.ref, 'refs/tags/') != true && success()
-      uses: kumarabd/trigger-remote-action@master
+      uses: layer5io/trigger-remote-provider-action@master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
@@ -21,7 +21,7 @@ jobs:
         version: master
     - name: trigger plugins for release
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-      uses: kumarabd/trigger-remote-action@master
+      uses: layer5io/trigger-remote-provider-action@master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions

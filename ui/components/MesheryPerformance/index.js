@@ -85,11 +85,7 @@ function generatePerformanceProfile(data) {
 
 // =============================== PERFORMANCE COMPONENT =======================
 
-const loadGenerators = [
-  "fortio",
-  "wrk2",
-  // 'nighthawk',
-];
+const loadGenerators = ["fortio", "wrk2", "nighthawk"];
 
 const styles = (theme) => ({
   root: {
@@ -875,7 +871,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="headers"
                           name="headers"
-                          label="Request Headers"
+                          label='Request Headers e.g. {"host":"bookinfo.meshery.io"}'
                           fullWidth
                           value={headers}
                           multiline
@@ -888,7 +884,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="cookies"
                           name="cookies"
-                          label="Request Cookies"
+                          label='Request Cookies e.g. {"yummy_cookie":"choco_chip"}'
                           fullWidth
                           value={cookies}
                           multiline
@@ -901,7 +897,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="contentType"
                           name="contentType"
-                          label="Content Type"
+                          label="Content Type e.g. application/json"
                           fullWidth
                           value={contentType}
                           multiline
@@ -914,7 +910,7 @@ class MesheryPerformanceComponent extends React.Component {
                         <TextField
                           id="cookies"
                           name="cookies"
-                          label="Request Body"
+                          label='Request Body e.g. {"method":"post","url":"http://bookinfo.meshery.io/test"}'
                           fullWidth
                           value={reqBody}
                           multiline

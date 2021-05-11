@@ -47,8 +47,9 @@ const (
 
 // LoadTestOptions represents the load test options
 type LoadTestOptions struct {
-	Name string
-	URL  string
+	Name     string
+	Location string
+	URL      string
 
 	HTTPQPS float64
 

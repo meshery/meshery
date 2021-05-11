@@ -43,10 +43,13 @@ const (
 	// Usage URLs
 	docsBaseURL = "https://docs.meshery.io/"
 
-	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
-	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
-	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
-	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	EndpointProtocol = "http"
+	rootUsageURL     = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
+	perfUsageURL     = docsBaseURL + "guides/mesheryctl/#performance-management"
+	systemUsageURL   = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
+	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL      = baseConfigURL + "manifests/default.yaml"
 )
 
 const (
@@ -88,11 +91,22 @@ var (
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
+	//MesheryOperator is the file for default Meshery operator
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
+	MesheryOperator = "default.yaml"
+	//MesheryOperatorBroker is the file for the Meshery broker
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_broker.yaml
+	MesheryOperatorBroker = "meshery_v1alpha1_broker.yaml"
+	//MesheryOperatorMeshsync is the file for the Meshery Meshsync Operator
+	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
+	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
 	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
+	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 )
@@ -225,63 +239,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-//PreReqCheck prerequisites check
-func PreReqCheck(subcommand string, focusedContext string) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
-	if err != nil {
-		return err
-	}
-
-	if currCtx.Platform == "docker" {
-		//Check whether docker daemon is running or not
-		if err := exec.Command("docker", "ps").Run(); err != nil {
-			log.Info("Docker is not running.")
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
-			}
-			err = startdockerdaemon(subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
-			}
-		}
-		//Check for installed docker-compose on client system
-		if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-			log.Info("Docker-Compose is not installed")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-			err = installprereq()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-		}
-	} else if currCtx.Platform == "kubernetes" {
-		client, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrapf(err, "failed to create new client")
-		}
-
-		podInterface := client.KubeClient.CoreV1().Pods("")
-		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
-
-		if err != nil {
-			log.Info("Kubernetes unreachable.")
-			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
-		}
-	} else {
-		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
-	}
-	return nil
-}
-
-func startdockerdaemon(subcommand string) error {
+func Startdockerdaemon(subcommand string) error {
 	userResponse := false
 	// read user input on whether to start Docker daemon or not.
 	if SilentFlag {
@@ -320,7 +278,7 @@ func startdockerdaemon(subcommand string) error {
 	return nil
 }
 
-func installprereq() error {
+func InstallprereqDocker() error {
 	log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
 	if err != nil {
@@ -388,6 +346,37 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+func NavigateToBrowser(endpoint string) error {
+	//check for os of host machine
+	if runtime.GOOS == "windows" {
+		// Meshery running on Windows host
+		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else if runtime.GOOS == "linux" {
+		// Meshery running on Linux host
+		_, err := exec.LookPath("xdg-open")
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+			//find out what to do here!
+		}
+		err = exec.Command("xdg-open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else {
+		// Assume Meshery running on MacOS host
+		err := exec.Command("open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	}
+
+	return nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request
@@ -701,6 +690,27 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
+// ReadToken returns a map of the token passed in
+func ReadToken(filepath string) (map[string]string, error) {
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		err = errors.Wrap(err, "could not read token:")
+		return nil, err
+	}
+	var tokenObj map[string]string
+	if err := json.Unmarshal(file, &tokenObj); err != nil {
+		err = errors.Wrap(err, "token file invalid:")
+		return nil, err
+	}
+	return tokenObj, nil
+}
+
+// TruncateID shortens an id to 8 characters
+func TruncateID(id string) string {
+	ShortenedID := id[0:8]
+	return ShortenedID
+}
+
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
 	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
@@ -718,4 +728,24 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetNoWhiteSpace(true)
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
+}
+
+// PrintToTableWithFooter prints the given data into a table format but with a footer
+func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.SetFooter(footer)
+	table.Render() // Render the table
 }

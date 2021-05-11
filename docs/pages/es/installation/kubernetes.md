@@ -75,7 +75,7 @@ rules:
     - path: /
         backend:
         serviceName: meshery-service
-        servicePort: 8080
+        servicePort: 9081
 ```
 
 - **Balanceador de Cargas** -

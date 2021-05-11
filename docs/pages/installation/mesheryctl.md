@@ -86,6 +86,10 @@ mesheryctl system start
 </div></div>
 </pre>
 
+`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
+
+If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
+
 **Upgrade**
 
 To upgrade `mesheryctl`, just execute the following command.
