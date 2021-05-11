@@ -6,8 +6,8 @@ replicaCount: 1
 restartPolicy: Always
 
 image:
-  repository: local/meshery:stable-latest
-  pullPolicy: Never
+  repository: layer5/meshery:stable-latest
+  pullPolicy: Always
 
 env:
   EVENT: mesheryLocal
