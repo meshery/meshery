@@ -32,12 +32,16 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import { updateProgress } from "../lib/store";
+import { updateGrafanaConfig, updatePrometheusConfig, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import subscribeControlPlaneEvents from "./graphql/subscriptions/ControlPlaneSubscription";
 import subscribeOperatorStatusEvents from "./graphql/subscriptions/OperatorStatusSubscription";
 import subscribeMeshSyncStatusEvents from "./graphql/subscriptions/MeshSyncStatusSubscription";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
+import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
+import { submitPrometheusConfigure } from "./PrometheusComponent";
+import { submitGrafanaConfigure } from "./GrafanaComponent";
+//import MesheryMetrics from "./MesheryMetrics";
 
 const styles = (theme) => ({
   root: {
@@ -162,6 +166,15 @@ class DashboardComponent extends React.Component {
         release_channel: "NA",
       },
 
+      urlError: false,
+      grafanaConfigSuccess: props.grafana.grafanaURL !== "",
+      grafanaBoardSearch: "",
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
+
       meshScan: [],
       activeMeshScanNamespace: {},
       meshScanNamespaces: {},
@@ -218,7 +231,33 @@ class DashboardComponent extends React.Component {
   componentDidMount = () => {
     this.fetchAvailableAdapters();
     this.fetchVersionDetails();
+    this.fetchMetricComponents();
     this.initMeshSyncControlPlaneSubscription();
+  };
+
+  fetchMetricComponents = () => {
+    const self = this;
+    let selector = {
+      serviceMesh: "ALL_MESH",
+    };
+
+    fetchAvailableAddons(selector).subscribe({
+      next: (res) => {
+        res?.addonsState?.forEach((addon) => {
+          if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+            self.setState({prometheusURL: "http://" + addon.endpoint})
+            submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+          } else if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+            self.setState({grafanaURL: "http://" + addon.endpoint})
+            submitGrafanaConfigure(self, () => {
+              self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
+              console.log("Grafana added")
+            });
+          }
+        });
+      },
+      error: (err) => console.log("error registering addons: " + err),
+    });
   };
 
   fetchAvailableAdapters = () => {
@@ -736,6 +775,16 @@ class DashboardComponent extends React.Component {
       <Grid container justify="center" spacing={2}>
         <Grid item>{showPrometheus}</Grid>
         <Grid item>{showGrafana}</Grid>
+        {/*<Grid item>
+          <Paper className={classes.paper}>
+            <MesheryMetrics
+              boardConfigs={grafana.selectedBoardsConfigs}
+              grafanaURL={grafana.grafanaURL}
+              grafanaAPIKey={grafana.grafanaAPIKey}
+              handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
+            />
+          </Paper>
+        </Grid>*/}
       </Grid>
     );
 
@@ -744,7 +793,7 @@ class DashboardComponent extends React.Component {
         {Object.keys(self.state.meshScan).length ? (
           <>
             {self.state.meshScan.map((mesh) => {
-              let tag = ""
+              let tag = "";
               mesh.name
                 .replace("_", " ")
                 .split(" ")
@@ -890,6 +939,8 @@ DashboardComponent.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
 });
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
