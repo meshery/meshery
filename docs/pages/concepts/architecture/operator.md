@@ -27,5 +27,5 @@ See the "[MeshSync]({{site.baseurl}}/architecture/meshsync)" for more informatio
 
 ### Operator FAQs
 
-#### When is the operator deployed and when is it deleted?  
+#### When is Meshery Operator deployed and when is it deleted?  
 The operator is deployed on `mesheryctl system start` and deleted on `mesheryctl system stop`, for both Docker and Kubernetes. It is also deleted and then re-deployed on `mesheryctl system restart`.   
