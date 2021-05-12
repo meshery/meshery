@@ -120,7 +120,7 @@ class PrometheusComponent extends Component {
       urlError: false,
 
       prometheusConfigSuccess,
-      selectedPrometheusBoardsConfigs,
+      selectedPrometheusBoardsConfigs: selectedPrometheusBoardsConfigs?selectedPrometheusBoardsConfigs:[],
       prometheusURL,
       ts: new Date(),
     };
