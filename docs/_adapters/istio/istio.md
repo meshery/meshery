@@ -84,10 +84,10 @@ The {{page.name}} will parse all of Istio's configuration and compare the runnin
 Meshery allows you to paste (or type in) any Kubernetes manifest that you would like to have applied to the cluster. This configuraiton may be new VirtualServices or new DestinationRules or other.
 
 <a href="#istio-custom">
-  <img style="width:500px;" src="istio-adapter-custom-configuration.png" />
+  <img style="width:500px;" src="./istio-adapter-custom-configuration.png" />
 </a>
 <a href="#" class="lightbox" id="istio-custom">
-  <span style="background-image: url('istio-adapter-custom-configuration.png')"></span>
+  <span style="background-image: url('./istio-adapter-custom-configuration.png')"></span>
 </a>
 
 ### Suggested Topics
