@@ -3,6 +3,7 @@ package experimental
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -28,6 +29,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = []*cobra.Command{mesh.MeshCmd}
+	availableSubcommands = []*cobra.Command{mesh.MeshCmd, filter.FilterCmd}
 	ExpCmd.AddCommand(availableSubcommands...)
 }

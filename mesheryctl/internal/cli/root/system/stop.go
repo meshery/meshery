@@ -101,6 +101,17 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
+		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(client, false, true)
+
+		if err != nil {
+			return err
+		}
+
 		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
 		// to start from scratch with a fresh install.
 		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
@@ -170,6 +181,12 @@ func stop() error {
 
 		// delete the Meshery deployment using the manifest files to stop Meshery
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(client, false, true)
 
 		if err != nil {
 			return err
