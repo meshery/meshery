@@ -15,7 +15,7 @@ type MesheryFilterPersister struct {
 	DB *database.Handler
 }
 
-// MesheryFilterPage represents a page of performance profiles
+// MesheryFilterPage represents a page of filters
 type MesheryFilterPage struct {
 	Page       uint64           `json:"page"`
 	PageSize   uint64           `json:"page_size"`
@@ -25,6 +25,8 @@ type MesheryFilterPage struct {
 
 // GetMesheryFilters returns all of the filters
 func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64) ([]byte, error) {
+	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+
 	if order == "" {
 		order = "updated_at desc"
 	}
@@ -53,6 +55,14 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	return marshalMesheryFilterPage(mesheryFilterPage), nil
 }
 
+// DeleteMesheryFilter takes in a profile id and delete it if it already exists
+func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
+	filter := MesheryFilter{ID: &id}
+	mfp.DB.Delete(&filter)
+
+	return marshalMesheryFilter(&filter), nil
+}
+
 func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]byte, error) {
 	if filter.ID == nil {
 		id, err := uuid.NewV4()
@@ -62,15 +72,40 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 
 		filter.ID = &id
 	}
-	return marshalMesheryFilter(filter), mfp.DB.Save(filter).Error
+
+	return marshalMesheryFilters([]MesheryFilter{*filter}), mfp.DB.Save(filter).Error
 }
 
-// DeleteMesheryFilter takes in a filter id and delete it if it already exists
-func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id uuid.UUID) ([]byte, error) {
-	filter := MesheryFilter{ID: &id}
-	mfp.DB.Delete(&filter)
+// SaveMesheryFilters batch inserts the given filters
+func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) ([]byte, error) {
+	finalFilters := []MesheryFilter{}
+	for _, filter := range filters {
+		if filter.ID == nil {
+			id, err := uuid.NewV4()
+			if err != nil {
+				return nil, fmt.Errorf("failed to create ID for the filter: %s", err)
+			}
 
-	return marshalMesheryFilter(&filter), nil
+			filter.ID = &id
+		}
+
+		finalFilters = append(finalFilters, filter)
+	}
+
+	return marshalMesheryFilters(finalFilters), mfp.DB.Create(finalFilters).Error
+}
+
+func (mfp *MesheryFilterPersister) GetMesheryFilter(id uuid.UUID) ([]byte, error) {
+	var mesheryFilter MesheryFilter
+
+	err := mfp.DB.First(&mesheryFilter, id).Error
+	return marshalMesheryFilter(&mesheryFilter), err
+}
+
+func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
+	res, _ := json.Marshal(mfp)
+
+	return res
 }
 
 func marshalMesheryFilter(mf *MesheryFilter) []byte {
@@ -79,8 +114,8 @@ func marshalMesheryFilter(mf *MesheryFilter) []byte {
 	return res
 }
 
-func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
-	res, _ := json.Marshal(mfp)
+func marshalMesheryFilters(mps []MesheryFilter) []byte {
+	res, _ := json.Marshal(mps)
 
 	return res
 }
