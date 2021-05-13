@@ -65,8 +65,11 @@ const styles = (theme) => ({
     marginRight:"10px"
   },
   providerDisabled:{
-    color: "darkcyan"
-  }
+    // color: "darkcyan",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -289,13 +292,12 @@ class ProviderComponent extends React.Component {
                                   {key}
                                 </MenuItem>
                               ))}
-                              <MenuItem disabled={true} className={classes.providerDisabled}>Disabled</MenuItem>
                               <Divider className={classes.providerDivider}/>
-                              <MenuItem disabled={true} key="SMI">
-                                SMI Conformance
+                              <MenuItem disabled={true} key="SMI" className={classes.providerDisabled}>
+                                SMI Conformance <span style={{ fontWeight: 800 }} > Disabled </span>
                               </MenuItem>
-                              <MenuItem disabled={true} key="UT Austin">
-                                The University of Texas at Austin
+                              <MenuItem disabled={true} key="UT Austin" className={classes.providerDisabled}>
+                                The University of Texas at Austin &nbsp; <span style={{ fontWeight: 800 }} > Disabled </span>
                               </MenuItem>
                             </MenuList>
                           </ClickAwayListener>
