@@ -17,11 +17,11 @@ type PerformanceResult struct {
 	ServerMatrics      interface{}   `json:"server_metrics"`
 	ServerBoardConfig  interface{}   `json:"server_board_config,omitempty"`
 	TestStartTime      *time.Time    `json:"test_start_time,omitempty"`
-	Unknown            interface{}   `json:"-,omitempty"`
 }
+
 type RunnerResults struct {
 	Duration          string     `json:"RequestedDuration"`
-	QPS               float64    `json:"ActualQPS"`
+	Qps               float64    `json:"ActualQPS"`
 	StartTime         *time.Time `json:"StartTime"`
 	DurationHistogram struct {
 		Percentiles []struct {
