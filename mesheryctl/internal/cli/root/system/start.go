@@ -215,6 +215,18 @@ func start() error {
 			return err
 		}
 
+		err = utils.CreateManifestsFolder()
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.DownloadOperatorManifest()
+
+		if err != nil {
+			return err
+		}
+
 		err = utils.ApplyOperatorManifest(kubeClient, false, false)
 
 		if err != nil {
