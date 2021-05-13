@@ -339,13 +339,19 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			}
 
 			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
 
-			return true, err
+			for _, pod := range podList.Items {
+				if strings.Contains(pod.GetName(), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
 		}
 	}
 
