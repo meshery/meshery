@@ -71,12 +71,21 @@ var statusCmd = &cobra.Command{
 				log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
 			} else {
-				log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
+				log.Info("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
 			}
 
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
+
+			ok, err := utils.IsMesheryRunning(currPlatform)
+			if err != nil {
+				return err
+			}
+			if !ok {
+				log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
+				return nil
+			}
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
