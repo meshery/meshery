@@ -1,6 +1,6 @@
 package models
 
-// PerformanceAPIResponse response retruned by patternfile endpoint on meshery server
+// PerformanceAPIResponse response retruned by perfomance endpoint on meshery server
 type PerformanceAPIResponse struct {
 	Page       uint                `json:"page"`
 	PageSize   uint                `json:"page_size"`

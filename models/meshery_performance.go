@@ -6,7 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-// PerformanceResult represents the result of a performace test
+// PerformanceResult represents the result of a performance test
 type PerformanceResult struct {
 	MesheryID          *uuid.UUID    `json:"meshery_id,omitempty"`
 	Name               string        `json:"name,omitempty"`
