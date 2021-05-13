@@ -58,7 +58,7 @@ jobs:
         run: |
           helm repo add meshery https://meshery.io/charts/
       - name: Helm Chart Releaser For Remote
-        uses: Aisuko/chart-releaser-action@v1.0.0-alpha.14
+        uses: layer5io/helm-chart-releaser
         with:
           charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
@@ -88,8 +88,8 @@ jobs:
       - name: Push
         env:
           REPO_PATH: meshery.io
-          GIT_USERNAME: Aisuko
-          GIT_EMAIL: Aisuko@users.noreply.github.com
+          GIT_USERNAME: l5io
+          GIT_EMAIL: l5io@users.noreply.github.com
         run: |
           cd ${{ env.REPO_PATH }}
           git config --local user.name "${{ env.GIT_USERNAME }}"

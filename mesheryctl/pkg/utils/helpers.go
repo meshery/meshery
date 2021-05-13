@@ -43,14 +43,15 @@ const (
 	// Usage URLs
 	docsBaseURL = "https://docs.meshery.io/"
 
-	rootUsageURL   = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
-	perfUsageURL   = docsBaseURL + "guides/mesheryctl/#performance-management"
-	systemUsageURL = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
-	meshUsageURL   = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
-	baseConfigURL  = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
-	OperatorURL    = baseConfigURL + "manifests/default.yaml"
-	BrokerURL      = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
-	MeshsyncURL    = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
+	EndpointProtocol = "http"
+	rootUsageURL     = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
+	perfUsageURL     = docsBaseURL + "guides/mesheryctl/#performance-management"
+	systemUsageURL   = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
+	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL      = baseConfigURL + "manifests/default.yaml"
+	BrokerURL        = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL      = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 const (
@@ -72,6 +73,8 @@ const (
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
+	// SkipResetFlag indicates if fetching the updated manifest files is required
+	SkipResetFlag bool
 	// MesheryEndpoint is the default URL in which Meshery is exposed
 	MesheryEndpoint = "http://localhost:9081"
 	// MesheryFolder is the default relative location of the meshery config
@@ -106,6 +109,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
+	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
 )
@@ -238,63 +243,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-//PreReqCheck prerequisites check
-func PreReqCheck(subcommand string, focusedContext string) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-	currCtx, err := mctlCfg.SetCurrentContext(focusedContext)
-	if err != nil {
-		return err
-	}
-
-	if currCtx.Platform == "docker" {
-		//Check whether docker daemon is running or not
-		if err := exec.Command("docker", "ps").Run(); err != nil {
-			log.Info("Docker is not running.")
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
-			}
-			err = startdockerdaemon(subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
-			}
-		}
-		//Check for installed docker-compose on client system
-		if err := exec.Command("docker-compose", "-v").Run(); err != nil {
-			log.Info("Docker-Compose is not installed")
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-			err = installprereq()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-		}
-	} else if currCtx.Platform == "kubernetes" {
-		client, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrapf(err, "failed to create new client")
-		}
-
-		podInterface := client.KubeClient.CoreV1().Pods("")
-		_, err = podInterface.List(context.TODO(), v1.ListOptions{})
-
-		if err != nil {
-			log.Info("Kubernetes unreachable.")
-			return errors.Wrap(err, "Kubernetes is not available. Verify Kubernetes is up, reachable, and a valid cert / token is available.")
-		}
-	} else {
-		return errors.New(fmt.Sprintf("%v platform not supported", currCtx.Platform))
-	}
-	return nil
-}
-
-func startdockerdaemon(subcommand string) error {
+func Startdockerdaemon(subcommand string) error {
 	userResponse := false
 	// read user input on whether to start Docker daemon or not.
 	if SilentFlag {
@@ -333,7 +282,7 @@ func startdockerdaemon(subcommand string) error {
 	return nil
 }
 
-func installprereq() error {
+func InstallprereqDocker() error {
 	log.Info("Attempting Docker-Compose installation...")
 	ostype, osarch, err := prereq()
 	if err != nil {
@@ -390,17 +339,54 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			}
 
 			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
 
-			return true, err
+			for _, pod := range podList.Items {
+				if strings.Contains(pod.GetName(), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
 		}
 	}
 
 	return false, nil
+}
+
+// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
+func NavigateToBrowser(endpoint string) error {
+	//check for os of host machine
+	if runtime.GOOS == "windows" {
+		// Meshery running on Windows host
+		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else if runtime.GOOS == "linux" {
+		// Meshery running on Linux host
+		_, err := exec.LookPath("xdg-open")
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+			//find out what to do here!
+		}
+		err = exec.Command("xdg-open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	} else {
+		// Assume Meshery running on MacOS host
+		err := exec.Command("open", endpoint).Start()
+		if err != nil {
+			return errors.Wrap(err, SystemError("failed to exec command"))
+		}
+	}
+
+	return nil
 }
 
 // AddAuthDetails Adds authentication cookies to the request

@@ -16,5 +16,5 @@ spec:
     - destination:
         host: meshery
         port:
-          number: 8080
+          number: 9081
 {{- end }}

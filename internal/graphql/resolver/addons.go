@@ -21,7 +21,7 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 	objects := make([]meshsyncmodel.Object, 0)
 
 	selectors := make([]model.MeshType, 0)
-	if selector == nil {
+	if selector == nil || *selector == model.MeshTypeAllMesh {
 		for _, mesh := range model.AllMeshType {
 			selectors = append(selectors, mesh)
 		}
