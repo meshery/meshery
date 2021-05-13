@@ -34,15 +34,16 @@ import (
 )
 
 var (
-	testURL            = ""
-	testName           = ""
-	testMesh           = ""
-	qps                = ""
-	concurrentRequests = ""
-	testDuration       = ""
-	loadGenerator      = ""
-	filePath           = ""
-	tokenPath          = ""
+	availableSubcommands []*cobra.Command
+	testURL              = ""
+	testName             = ""
+	testMesh             = ""
+	qps                  = ""
+	concurrentRequests   = ""
+	testDuration         = ""
+	loadGenerator        = ""
+	filePath             = ""
+	tokenPath            = ""
 )
 
 // PerfCmd represents the Performance Management CLI command
@@ -53,6 +54,9 @@ var PerfCmd = &cobra.Command{
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+		}
 		//Check prerequisite
 		return system.RunPreflightHealthChecks(true, cmd.Use)
 	},
@@ -166,4 +170,7 @@ func init() {
 	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+
+	availableSubcommands = []*cobra.Command{listCmd}
+	PerfCmd.AddCommand(availableSubcommands...)
 }
