@@ -16,6 +16,7 @@ package perf
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -168,6 +169,7 @@ func init() {
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	//PerfCmd.Flags().StringVar(&view, "view", "", "(optional) View test configuration of a profile")
+	//viewCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 	PerfCmd.AddCommand(viewCmd)
 }
 
@@ -181,13 +183,37 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+		pattern := args[0]
 		var req *http.Request
-		req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"user/performance/profiles", nil)
+		url := mctlCfg.GetBaseMesheryURL() + "/user/test-prefs" + pattern
+
+		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 		}
-		q := req.URL.Query()
-		fmt.Println(q.Get(view))
+		err = utils.AddAuthDetails(req, tokenPath)
+		if err != nil {
+			return err
+		}
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		if resp.StatusCode != 200 {
+			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+			return errors.Errorf("Response Status Code %d, possible invalid ID", resp.StatusCode)
+		}
+		defer resp.Body.Close()
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+		}
+		var dat map[string]interface{}
+		if err = json.Unmarshal(data, &dat); err != nil {
+			return errors.Wrap(err, "failed to unmarshal response body")
+		}
+		log.Info(string(data))
 		return nil
 	},
 }
