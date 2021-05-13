@@ -97,6 +97,15 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		}
 	}
 
+	if err := DownloadOperatorManifest(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DownloadOperatorManifest downloads the operator manifest files
+func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
 	err := DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
