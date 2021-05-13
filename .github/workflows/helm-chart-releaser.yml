@@ -46,7 +46,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Configure Git
         env:
-          GITHUB_ACTOR: Aisuko
+          GITHUB_ACTOR: l5io
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
@@ -58,7 +58,7 @@ jobs:
         run: |
           helm repo add meshery https://meshery.io/charts/
       - name: Helm Chart Releaser For Remote
-        uses: layer5io/helm-chart-releaser@v1
+        uses: layer5io/helm-chart-releaser@v0.1.0
         with:
           charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
