@@ -111,6 +111,19 @@ func DownloadOperatorManifest() error {
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
+
+	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
+	err = DownloadFile(brokerFilepath, BrokerURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
+	}
+
+	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
+	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
+	}
+
 	return nil
 }
 
@@ -309,6 +322,29 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 
 	if err = ApplyManifest([]byte(MesheryOperatorManifest), client, update, delete); err != nil {
 		return err
+	}
+
+	//condition to check for system stop
+	if !delete {
+		MesheryBrokerManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorBroker))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to read broker manifest files")
+		}
+
+		if err = ApplyManifest([]byte(MesheryBrokerManifest), client, update, delete); err != nil {
+			return err
+		}
+
+		MesheryMeshsyncManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorMeshsync))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to read meshsync manifest files")
+		}
+
+		if err = ApplyManifest([]byte(MesheryMeshsyncManifest), client, update, delete); err != nil {
+			return err
+		}
 	}
 
 	log.Debug("applied operator manifest.")
