@@ -55,6 +55,17 @@ const styles = (theme) => ({
   },
   chartTitle:{
     fontWeight: 700,
+  },
+  providerTitle: {
+    fontWeight: 700,
+  },
+  providerDivider: {
+    backgroundColor: "#c1c8d2", 
+    marginLeft:"10px", 
+    marginRight:"10px"
+  },
+  providerDisabled:{
+    color: "darkcyan"
   }
 });
 
@@ -202,19 +213,19 @@ class ProviderComponent extends React.Component {
                 {Object.keys(availableProviders).map((key) => {
                   return (
                     <React.Fragment key={availableProviders[key]["provider_name"]}>
-                      <p>{availableProviders[key]["provider_name"]}</p>
+                      <p className={classes.providerTitle}>{availableProviders[key]["provider_name"]}</p>
                       <ul>
                         {availableProviders[key]["provider_description"]?.map((desc, i) => <li key={`desc-${i}`}>{desc}</li>)}
                       </ul>
                     </React.Fragment>
                   );
                 })}
-                <p>Provider: SMI Conformance</p>
+                <p className={classes.providerTitle}>SMI Conformance</p>
                 <ul>
                   <li>Remote provider for SMI Conformance Testing</li>
                   <li>Provides provenence of test results and their persistence</li>
                 </ul>
-                <p>Provider: The University of Texas at Austin</p>
+                <p className={classes.providerTitle}>The University of Texas at Austin</p>
                 <ul>
                   <li>Academic research and advanced studies by Ph.D. researchers</li>
                   <li>Used by school of Electrical and Computer Engineering (ECE)</li>
@@ -222,7 +233,7 @@ class ProviderComponent extends React.Component {
               </Typography>
             </DialogContent>
             <DialogActions>
-              <Button autoFocus onClick={self.handleModalClose()} color="primary" data-cy="providers-modal-button-ok">
+              <Button autoFocus onClick={self.handleModalClose()} color="primary" data-cy="providers-modal-button-ok" variant="contained">
                 OK
               </Button>
             </DialogActions>
@@ -239,13 +250,17 @@ class ProviderComponent extends React.Component {
                   >
                     <Button
                       size="large"
+                      aria-controls={open ? "split-button-menu" : undefined}
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={self.handleToggle()}
                       href={
                         selectedProvider == "" ? "" : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`
                       }
                     >
                       {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
+                      <ArrowDropDownIcon />
                     </Button>
-                    <Button
+                    {/* <Button
                       color="primary"
                       size="small"
                       aria-controls={open ? "split-button-menu" : undefined}
@@ -256,7 +271,7 @@ class ProviderComponent extends React.Component {
                       onClick={self.handleToggle()}
                     >
                       <ArrowDropDownIcon />
-                    </Button>
+                    </Button> */}
                   </ButtonGroup>
                   <Popper open={open} anchorEl={self.anchorRef} role={undefined} transition disablePortal>
                     {({ TransitionProps, placement }) => (
@@ -274,7 +289,8 @@ class ProviderComponent extends React.Component {
                                   {key}
                                 </MenuItem>
                               ))}
-                              <Divider />
+                              <MenuItem disabled={true} className={classes.providerDisabled}>Disabled</MenuItem>
+                              <Divider className={classes.providerDivider}/>
                               <MenuItem disabled={true} key="SMI">
                                 SMI Conformance
                               </MenuItem>
