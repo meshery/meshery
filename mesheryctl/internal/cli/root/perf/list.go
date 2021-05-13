@@ -131,7 +131,7 @@ var listCmd = &cobra.Command{
 			startTime := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(result.TestStartTime.Month()), result.TestStartTime.Day(), result.TestStartTime.Year(), result.TestStartTime.Hour(), result.TestStartTime.Minute(), result.TestStartTime.Second())
 			p50 := result.RunnerResults.DurationHistogram.Percentiles[0].Value
 			p99_9 := result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value
-			data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.Qps), result.RunnerResults.Duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
+			data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), result.RunnerResults.Duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
 		}
 		utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 		return nil

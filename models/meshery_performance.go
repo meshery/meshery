@@ -21,7 +21,7 @@ type PerformanceResult struct {
 
 type RunnerResults struct {
 	Duration          string     `json:"RequestedDuration"`
-	Qps               float64    `json:"ActualQPS"`
+	QPS               float64    `json:"ActualQPS"`
 	StartTime         *time.Time `json:"StartTime"`
 	DurationHistogram struct {
 		Percentiles []struct {
