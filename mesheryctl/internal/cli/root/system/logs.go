@@ -126,29 +126,38 @@ var logsCmd = &cobra.Command{
 			}
 
 			var data []string
-			podLogOpts := apiCorev1.PodLogOptions{}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
-				// Get the values from the pod status
-				name := pod.GetName()
-				req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
+				// If a pod has multiple containers, get the logs from all the containers
+				for container := range pod.Spec.Containers {
+					// Get the values from the pod status
+					name := pod.GetName()
+					containerName := pod.Spec.Containers[container].Name
 
-				logs, err := req.Stream(context.TODO())
-				if err != nil {
-					return err
-				}
-				defer logs.Close()
+					// Get the logs from a container within the pod
+					podLogOpts := apiCorev1.PodLogOptions{
+						Container: containerName,
+					}
 
-				buf := new(bytes.Buffer)
-				_, err = io.Copy(buf, logs)
-				if err != nil {
-					return fmt.Errorf("error in copy information from logs to buf")
-				}
+					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
 
-				// Append this to data to be printed
-				for _, str := range strings.Split(buf.String(), "\n") {
-					data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+					logs, err := req.Stream(context.TODO())
+					if err != nil {
+						return err
+					}
+					defer logs.Close()
+
+					buf := new(bytes.Buffer)
+					_, err = io.Copy(buf, logs)
+					if err != nil {
+						return fmt.Errorf("error in copy information from logs to buf")
+					}
+
+					// Append this to data to be printed
+					for _, str := range strings.Split(buf.String(), "\n") {
+						data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+					}
 				}
 			}
 
