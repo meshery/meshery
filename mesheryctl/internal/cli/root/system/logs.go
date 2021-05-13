@@ -136,7 +136,7 @@ var logsCmd = &cobra.Command{
 
 				logs, err := req.Stream(context.TODO())
 				if err != nil {
-					return err
+					continue
 				}
 				defer logs.Close()
 
