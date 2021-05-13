@@ -90,8 +90,8 @@ var listCmd = &cobra.Command{
 			for _, profile := range dataMap {
 				id := profile.ID
 				results := profile.Results
-				last_run := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
-				data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), last_run})
+				lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+				data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), lastRun})
 			}
 			utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
 
@@ -124,14 +124,14 @@ var listCmd = &cobra.Command{
 		}
 		var data [][]string
 		for _, result := range response.Results {
-			service_mesh := "No Mesh"
+			serviceMesh := "No Mesh"
 			if result.Mesh != "" {
-				service_mesh = result.Mesh
+				serviceMesh = result.Mesh
 			}
-			start_time := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(result.TestStartTime.Month()), result.TestStartTime.Day(), result.TestStartTime.Year(), result.TestStartTime.Hour(), result.TestStartTime.Minute(), result.TestStartTime.Second())
+			startTime := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(result.TestStartTime.Month()), result.TestStartTime.Day(), result.TestStartTime.Year(), result.TestStartTime.Hour(), result.TestStartTime.Minute(), result.TestStartTime.Second())
 			P50 := result.RunnerResults.DurationHistogram.Percentiles[0].Value
 			P99_9 := result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value
-			data = append(data, []string{result.Name, service_mesh, start_time, fmt.Sprintf("%f", result.RunnerResults.QPS), result.RunnerResults.Duration, fmt.Sprintf("%f", P50), fmt.Sprintf("%f", P99_9)})
+			data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), result.RunnerResults.Duration, fmt.Sprintf("%f", P50), fmt.Sprintf("%f", P99_9)})
 		}
 		utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 		return nil
