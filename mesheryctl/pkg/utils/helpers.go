@@ -73,6 +73,8 @@ const (
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
+	// SkipResetFlag indicates if fetching the updated manifest files is required
+	SkipResetFlag bool
 	// MesheryEndpoint is the default URL in which Meshery is exposed
 	MesheryEndpoint = "http://localhost:9081"
 	// MesheryFolder is the default relative location of the meshery config
@@ -337,13 +339,19 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			}
 
 			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
 
-			return true, err
+			for _, pod := range podList.Items {
+				if strings.Contains(pod.GetName(), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
 		}
 	}
 

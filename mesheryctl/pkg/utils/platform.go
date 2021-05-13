@@ -325,7 +325,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 	}
 
 	//condition to check for system stop
-	if delete == false {
+	if !delete {
 		MesheryBrokerManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorBroker))
 
 		if err != nil {
