@@ -36,60 +36,64 @@ var restartCmd = &cobra.Command{
 	Long:  `Restart all Meshery containers, their instances and their connected volumes.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Restarting Meshery...")
+		return restart()
+	},
+}
 
-		// Get viper instance used for context
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return errors.Wrap(err, "error processing config")
+func restart() error {
+	log.Info("Restarting Meshery...")
+
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+	// get the platform, channel and the version of the current context
+	// if a temp context is set using the -c flag, use it as the current context
+	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+	if err != nil {
+		return err
+	}
+	currPlatform := currCtx.Platform
+
+	switch currPlatform {
+	case "docker":
+		if err := stop(); err != nil {
+			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
-		// get the platform, channel and the version of the current context
-		// if a temp context is set using the -c flag, use it as the current context
-		currCtx, err := mctlCfg.SetCurrentContext(tempContext)
+
+		if err := start(); err != nil {
+			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+		}
+
+	case "kubernetes":
+		// create an kubernetes client
+		client, err := meshkitkube.New([]byte(""))
+
 		if err != nil {
 			return err
 		}
-		currPlatform := currCtx.Platform
 
-		switch currPlatform {
-		case "docker":
-			if err := stop(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
-			}
+		// Create a pod interface for the MesheryNamespace
+		podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
 
-			if err := start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
-			}
-
-		case "kubernetes":
-			// create an kubernetes client
-			client, err := meshkitkube.New([]byte(""))
-
-			if err != nil {
-				return err
-			}
-
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-			if err != nil {
-				return err
-			}
-
-			// List all the pods similar to kubectl get pods -n MesheryNamespace
-			for _, pod := range podList.Items {
-				// Get the values from the pod status
-				name := pod.GetName()
-				log.Info("Deleting pod ", name)
-				err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
-				if err != nil {
-					log.Fatal(err)
-				}
-				log.Info("Restarting pod ", name)
-			}
+		// List the pods in the MesheryNamespace
+		podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+		if err != nil {
+			return err
 		}
-		return nil
-	},
+
+		// List all the pods similar to kubectl get pods -n MesheryNamespace
+		for _, pod := range podList.Items {
+			// Get the values from the pod status
+			name := pod.GetName()
+			log.Info("Deleting pod ", name)
+			err := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).Delete(context.TODO(), name, v1.DeleteOptions{})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("Restarting pod ", name)
+		}
+	}
+	return nil
 }
