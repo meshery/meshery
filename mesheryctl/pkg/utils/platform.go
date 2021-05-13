@@ -97,12 +97,20 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		}
 	}
 
+	if err := DownloadOperatorManifest(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DownloadOperatorManifest downloads the operator manifest files
+func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
 	err := DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
 	}
-
 	return nil
 }
 
@@ -120,17 +128,11 @@ func FetchManifests(version string) ([]Manifest, error) {
 		return nil, errors.Wrap(err, "failed to make GET request")
 	}
 
-	log.Debug("deleting ~/.meshery/manifests folder...")
-	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	err = CreateManifestsFolder()
+
+	if err != nil {
 		return nil, err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
-	// create a manifests folder under ~/.meshery to store the manifest files
-	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
-		return nil, errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
-	}
-	log.Debug("created manifests folder...")
 
 	gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
 	log.Info("downloading manifest files from ", gitHubFolder)
@@ -357,6 +359,22 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	if err != nil {
 		return fmt.Errorf("unable to update config %s | %s", fileName, err)
 	}
+
+	return nil
+}
+
+func CreateManifestsFolder() error {
+	log.Debug("deleting ~/.meshery/manifests folder...")
+	// delete manifests folder if it already exists
+	if err := os.RemoveAll(ManifestsFolder); err != nil {
+		return err
+	}
+	log.Info("creating ~/.meshery/manifests folder...")
+	// create a manifests folder under ~/.meshery to store the manifest files
+	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
+	}
+	log.Debug("created manifests folder...")
 
 	return nil
 }
