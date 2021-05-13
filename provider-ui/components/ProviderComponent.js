@@ -294,10 +294,10 @@ class ProviderComponent extends React.Component {
                               ))}
                               <Divider className={classes.providerDivider}/>
                               <MenuItem disabled={true} key="SMI" className={classes.providerDisabled}>
-                                SMI Conformance <span> Disabled </span>
+                                SMI Conformance <span>Disabled</span>
                               </MenuItem>
                               <MenuItem disabled={true} key="UT Austin" className={classes.providerDisabled}>
-                                The University of Texas at Austin &nbsp; <span> Disabled </span>
+                                The University of Texas at Austin&nbsp;<span>Disabled</span>
                               </MenuItem>
                             </MenuList>
                           </ClickAwayListener>
