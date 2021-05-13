@@ -297,7 +297,7 @@ class ProviderComponent extends React.Component {
                                 SMI Conformance <span>Disabled</span>
                               </MenuItem>
                               <MenuItem disabled={true} key="UT Austin" className={classes.providerDisabled}>
-                                The University of Texas at Austin&nbsp;<span>Disabled</span>
+                                The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
                               </MenuItem>
                             </MenuList>
                           </ClickAwayListener>
