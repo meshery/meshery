@@ -20,7 +20,7 @@ type PerformanceResult struct {
 }
 
 type RunnerResults struct {
-	Duration          string     `json:"RequestedDuration"`
+	Duration          uint64     `json:"ActualDuration"`
 	QPS               float64    `json:"ActualQPS"`
 	StartTime         *time.Time `json:"StartTime"`
 	DurationHistogram struct {

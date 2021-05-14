@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -25,10 +26,11 @@ type ProfileStruct struct {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List Performance profiles",
-	Long:  `List all the available performance profiles`,
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "list",
+	Short:   "List Performance profiles",
+	Long:    `List all the available performance profiles`,
+	Args:    cobra.MaximumNArgs(1),
+	Example: "mesheryctl perf list \nmesheryctl perf list [profile-id]",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -131,7 +133,9 @@ var listCmd = &cobra.Command{
 			startTime := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(result.TestStartTime.Month()), result.TestStartTime.Day(), result.TestStartTime.Year(), result.TestStartTime.Hour(), result.TestStartTime.Minute(), result.TestStartTime.Second())
 			p50 := result.RunnerResults.DurationHistogram.Percentiles[0].Value
 			p99_9 := result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value
-			data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), result.RunnerResults.Duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
+			timeDuration := strings.SplitAfterN(strconv.FormatUint(uint64(result.RunnerResults.Duration), 10), "", 5)
+			duration := fmt.Sprintf("%s%s.%s%ss", timeDuration[0], timeDuration[1], timeDuration[2], timeDuration[3])
+			data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
 		}
 		utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 		return nil
