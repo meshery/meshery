@@ -1,12 +1,12 @@
 import React from "react";
-import { withStyles, Container } from "@material-ui/core/";
+import { makeStyles, Container, Typography } from "@material-ui/core/";
 
-import KubernetesInput from './KubernetesInput'
-import KubernetesStatus from './KubernetesStatus'
+import KubernetesInput from "./KubernetesInput";
+import KubernetesStatus from "./KubernetesStatus";
 import KubernetesIcon from "../icons/KubernetesIcon";
 import ConfigCard from "./ConfigCard";
 
-const styles = () => ({
+const useStyles = makeStyles({
   cardContainer: {
     position: "relative",
     display: "flex",
@@ -16,37 +16,29 @@ const styles = () => ({
   },
 });
 
-class KubernetesScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isChecked: false,
-    };
-  }
-  // if kubernetes are not connected/configured do not switch
-  handleSwitch = (name, checked) => {
-    const { handleConnectToKubernetes } = this.props;
-    this.setState({ isChecked: checked });
+const KubernetesScreen = ({ handleConnectToKubernetes }) => {
+  const classes = useStyles();
+  const [isChecked, setIsChecked] = React.useState(false);
+
+  const handleSwitch = (name, checked) => {
+    setIsChecked(checked)
     if (handleConnectToKubernetes) {
       handleConnectToKubernetes(checked);
     }
   };
-  render() {
-    const { classes } = this.props;
-    return (
-      <Container className={classes.cardContainer}>
-        <ConfigCard
-          handleSwitch={this.handleSwitch}
-          name="Kubernetes"
-          Icon={KubernetesIcon}
-          KubernetesInput={KubernetesInput}
-        />
-        {!this.state.isChecked ? null : (
-          <KubernetesStatus/>
-        )}
-      </Container>
-    );
-  }
-}
 
-export default withStyles(styles)(KubernetesScreen);
+  return (
+    <Container className={classes.cardContainer}>
+      <ConfigCard
+        handleSwitch={handleSwitch}
+        name="Kubernetes"
+        Icon={KubernetesIcon}
+        KubernetesInput={KubernetesInput}
+      />
+      {isChecked ? <KubernetesStatus /> : null}
+      
+    </Container>
+  );
+};
+
+export default KubernetesScreen;

@@ -128,11 +128,11 @@ const useStyles = makeStyles({
 });
 
 const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceholder, bottomInputPlaceholder }) => {
-  const [state, setState] = React.useState(false);
+  const [isChecked, setIsChecked] = React.useState(false);
   const classes = useStyles();
 
   const handleChange = (e) => {
-    setState(e.target.checked);
+    setIsChecked(e.target.checked);
     if (handleSwitch) {
       handleSwitch(e.target.name, e.target.checked);
     }
@@ -156,7 +156,7 @@ const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceho
           </div>
           <FormControlLabel
             className={classes.contentTopSwitcher}
-            control={<MeshySwitch checked={state} name={name} />}
+            control={<MeshySwitch checked={isChecked} name={name} />}
             onChange={handleChange}
           />
         </div>
