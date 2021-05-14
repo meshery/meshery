@@ -37,31 +37,17 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		client := &http.Client{}
 		if len(args) == 0 {
-			req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", nil)
-			if err != nil {
-				return errors.Wrapf(err, utils.PerfError("failed to create a request"))
-			}
-			err = utils.AddAuthDetails(req, tokenPath)
+			response, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", 0, "")
 			if err != nil {
 				return err
 			}
-			resp, err := client.Do(req)
-			if err != nil {
-				return err
+			if response.TotalCount > 10 {
+				response, err = fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", response.TotalCount, "")
+				if err != nil {
+					return err
+				}
 			}
-			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
-			}
-			var response models.PerformanceAPIResponse
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
-			}
-
 			// map to store profile related data wrt profile-id
 			dataMap := make(map[string]*ProfileStruct)
 			for _, result := range response.Results {
@@ -101,33 +87,17 @@ var listCmd = &cobra.Command{
 		}
 		// Output results of a performance profile
 		profileID := args[0]
+		response, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", 0, profileID)
+		if err != nil {
+			return err
+		}
+		if response.TotalCount > 10 {
+			response, err = fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", response.TotalCount, profileID)
+			if err != nil {
+				return err
+			}
+		}
 
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", nil)
-		if err != nil {
-			return errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
-		}
-		err = utils.AddAuthDetails(req, tokenPath)
-		if err != nil {
-			return err
-		}
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		if resp.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", resp.StatusCode)
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
-		}
-		var response models.PerformanceAPIResponse
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
-		}
 		var data [][]string
 		for _, result := range response.Results {
 			serviceMesh := "No Mesh"
@@ -144,6 +114,43 @@ var listCmd = &cobra.Command{
 		utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 		return nil
 	},
+}
+
+func fetchPerformanceAPIResponse(url string, pageSize uint, profileID string) (*models.PerformanceAPIResponse, error) {
+	if pageSize != 0 {
+		url = fmt.Sprintf("%s?pageSize=%d", url, pageSize)
+	}
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+	}
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+		if profileID != "" {
+			return nil, errors.Errorf("performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
+		}
+		return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+	}
+	var response *models.PerformanceAPIResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	return response, nil
 }
 
 func init() {
