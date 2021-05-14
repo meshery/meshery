@@ -66,6 +66,14 @@ func restart() error {
 			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
 
+		if skipUpdateFlag {
+			log.Info("Skipping Meshery Update...")
+		} else {
+			if err := start(); err != nil {
+				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+			}
+		}
+
 	case "kubernetes":
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
@@ -96,4 +104,8 @@ func restart() error {
 		}
 	}
 	return nil
+}
+
+func init() {
+	restartCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 }
