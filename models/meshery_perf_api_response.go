@@ -5,5 +5,5 @@ type PerformanceAPIResponse struct {
 	Page       uint                `json:"page"`
 	PageSize   uint                `json:"page_size"`
 	TotalCount uint                `json:"total_count"`
-	Results    []PerformanceResult `json:"results"`
+	Results    []PerformanceResult `json:"results,omitempty"`
 }
