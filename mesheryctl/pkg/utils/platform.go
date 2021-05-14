@@ -23,60 +23,33 @@ var (
 	ManifestsFolder = "manifests"
 )
 
-// type YamlStruct struct {
-// 	Contexts struct {
-// 		Local struct {
-// 			Endpoint string `yaml:"endpoint,omitempty"`
-//     		Token string `yaml:"token,omitempty"`
-//     		Platform string `yaml:"platform,omitempty"`
-//     		Adapters struct {
-// 				MesheryIstio string `yaml:"meshery-istio,omitempty"` 
-//     			MesheryLinkerd string `yaml:"meshery-linkerd,omitempty"`
-//     			MesheryConsul string `yaml:"meshery-consul,omitempty"`
-//     			MesheryNsm string `yaml:"meshery-nsm,omitempty"`
-//     			MesheryKuma string `yaml:"meshery-kuma,omitempty"`
-//     			MesheryCpx string `yaml:"meshery-cpx,omitempty"`
-//     			MesheryOsm string `yaml:"meshery-osm,omitempty"`
-//     			MesheryTraefikMesh string `yaml:"meshery-traefik-mesh,omitempty"`
-// 			} `yaml:"adapters,omitempty"`
-// 			Channel string `yaml:"channel,omitempty"`
-// 			Version string `yaml:"version,omitempty"`
-// 		} `yaml:"local,omitempty"`
-// 		Currentcontext string `yaml:"current-context,omitempty"`
-// 		Tokens struct {
-// 			Name string `yaml:"name,omitempty"`
-//   			Location string `yaml:"location,omitempty"`
-// 		} `yaml:"tokens,omitempty"`
-// 	} `yaml:"contexts,omitempty"`
-	
-// }
 //get cached k8s manifests
 func GetCachedManifests(version string) ([]Manifest, error) {
-	var yamlStruct K8sCompose{}
+	var yamlStruct YamlStruct
 	var localManifestList []Manifest
 
-	// yamlFile, err := ioutil.ReadFile(filepath.Join(MesheryFolder, "config.yaml"))
 	yamlFile, err := ioutil.ReadFile(filepath.Join(MesheryFolder, ManifestsFolder, MesheryDeployment))
-
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read Meshery Deployment file")
+		return nil, errors.Wrap(err, "Unable to fetch cached manifest files")
 	}
 
 	err = yaml.Unmarshal(yamlFile, &yamlStruct)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal Meshery Deployment file")
+		return nil, errors.Wrap(err, "failed to unmarshal config.yaml")
 	}
 
-	if strings.Contains(yamlStruct.Spec.Template.Spec.Containers[0].Image, version) {
+	if strings.Contains(yamlStruct.Spec.Template.Spec.Containers[0].Image, version {
 		files, err := ioutil.ReadDir(filepath.Join(MesheryFolder, ManifestsFolder))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read cached directory or no cached directory")
 		}
 	
 		for _, file := range files {
-			tempManifest := Manifest{Path: file.Name(), Mode: "", Typ: "", SHA: "", Size: "0", URL: ""}
+			tempManifest := Manifest{Path: filepath.Join(MesheryFolder, ManifestsFolder, file.Name()), Mode: "", Typ: "", SHA: "", Size: "0", URL: ""}
 			localManifestList = append(localManifestList, tempManifest)	
 		}	
+	} else {
+		return nil, errors.Wrap(err, "fetching local manifests failed")
 	}
 	return localManifestList, nil
 }
