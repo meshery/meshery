@@ -15,14 +15,12 @@
 package system
 
 import (
-	"context"
 	"fmt"
 	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -94,11 +92,8 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a deployment interface for the MesheryNamespace
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
-
-			// List the deployments in the MesheryNamespace
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+			// List the pods in the MesheryNamespace
+			podList, err := utils.GetPods(client, utils.MesheryNamespace)
 
 			if err != nil {
 				return err
@@ -106,55 +101,43 @@ var statusCmd = &cobra.Command{
 
 			var data [][]string
 
-			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
-			for _, deployment := range deploymentList.Items {
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+				// Calculate the age of the pod
+				podCreationTime := pod.GetCreationTimestamp()
+				age := time.Since(podCreationTime.Time).Round(time.Second)
 
-				// Calculate the age of the deployment
-				deploymentCreationTime := deployment.GetCreationTimestamp()
-				age := time.Since(deploymentCreationTime.Time).Round(time.Second)
+				// Get the status of each of the pods
+				podStatus := pod.Status
 
-				// Get the status of each of the deployments
-				deploymentStatus := deployment.Status
+				var containerRestarts int32
+				var containerReady int
+				var totalContainers int
 
-				// Get the values from the deployment status
-				name := deployment.GetName()
-				ready := fmt.Sprintf("%d/%d", deploymentStatus.ReadyReplicas, deploymentStatus.Replicas)
-				updated := fmt.Sprintf("%d", deploymentStatus.UpdatedReplicas)
-				available := fmt.Sprintf("%d", deploymentStatus.AvailableReplicas)
+				// If a pod has multiple containers, get the status from all
+				for container := range pod.Spec.Containers {
+					containerRestarts += podStatus.ContainerStatuses[container].RestartCount
+					if podStatus.ContainerStatuses[container].Ready {
+						containerReady++
+					}
+					totalContainers++
+				}
+
+				// Get the values from the pod status
+				name := pod.GetName()
+				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
+				status := fmt.Sprintf("%v", podStatus.Phase)
+				restarts := fmt.Sprintf("%v", containerRestarts)
 				ageS := age.String()
 
 				// Append this to data to be printed in a table
-				data = append(data, []string{name, ready, updated, available, ageS})
-			}
-
-			// List the statefulsets in the MesheryNamespace
-			statefulsetList, err := client.KubeClient.AppsV1().StatefulSets(utils.MesheryNamespace).List(context.TODO(), v1.ListOptions{})
-			if err != nil {
-				return err
-			}
-			for _, statefulset := range statefulsetList.Items {
-				name := statefulset.GetName()
-
-				// Calculate the age of the meshery-broker
-				statefulsetCreationTime := statefulset.GetCreationTimestamp()
-				age := time.Since(statefulsetCreationTime.Time).Round(time.Second)
-
-				// Get the status of each of the meshery-broker
-				statefulsetStatus := statefulset.Status
-				// Get the values from the statefulset status of meshery-broker
-				ready := fmt.Sprintf("%d/%d", statefulsetStatus.ReadyReplicas, statefulsetStatus.Replicas)
-				updated := fmt.Sprintf("%d", statefulsetStatus.UpdatedReplicas)
-				available := fmt.Sprintf("%d", statefulsetStatus.CurrentReplicas)
-				ageS := age.String()
-
-				// Append this to data to be printed in a table
-				data = append(data, []string{name, ready, updated, available, ageS})
+				data = append(data, []string{name, ready, status, restarts, ageS})
 			}
 
 			// Print the data to a table for readability
-			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
+			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
 
-			log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
+			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 
 		}
 		return nil

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +14,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+
+	v1core "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -352,6 +356,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 	return nil
 }
 
+// ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
 func ChangeManifestVersion(fileName string, version string, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
@@ -399,6 +404,7 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	return nil
 }
 
+// CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
 	log.Debug("deleting ~/.meshery/manifests folder...")
 	// delete manifests folder if it already exists
@@ -413,4 +419,45 @@ func CreateManifestsFolder() error {
 	log.Debug("created manifests folder...")
 
 	return nil
+}
+
+// GetPods lists all the available pods in the MesheryNamespace
+func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
+	// Create a pod interface for the given namespace
+	podInterface := client.KubeClient.CoreV1().Pods(namespace)
+
+	// List the pods in the given namespace
+	podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+	return podList, nil
+}
+
+// IsPodRequired checks if a given pod is specified in the required pods
+func IsPodRequired(requiredPods []string, pod string) bool {
+	for _, rp := range requiredPods {
+		if rp == pod {
+			return true
+		}
+	}
+	return false
+}
+
+// GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
+func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
+	var requiredPods []string
+	var availablePodsName []string
+	for _, pod := range availablePods {
+		availablePodsName = append(availablePodsName, pod.GetName())
+	}
+	for _, sp := range specifiedPods {
+		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
+			requiredPods = append(requiredPods, availablePodsName[index])
+		} else {
+			return nil, errors.New(fmt.Sprintf("Invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods.", sp))
+		}
+	}
+	return requiredPods, nil
 }
