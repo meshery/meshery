@@ -114,6 +114,10 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if resp.StatusCode != 200 {
+			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+			return errors.Errorf("Response Status Code %d, possible invalid ID", resp.StatusCode)
+		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
