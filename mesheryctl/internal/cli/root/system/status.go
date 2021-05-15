@@ -51,6 +51,15 @@ var statusCmd = &cobra.Command{
 		}
 		currPlatform := currCtx.Platform
 
+		ok, err := utils.IsMesheryRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
+			return nil
+		}
+
 		switch currPlatform {
 		case "docker":
 			// List the running Meshery containers
@@ -65,25 +74,14 @@ var statusCmd = &cobra.Command{
 
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
-
-				log.Info("Meshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
-
-			} else {
-				log.Info("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
 			}
+
+			// Also print the status of pods in the MesheryNamespace
+			fallthrough
 
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
-
-			ok, err := utils.IsMesheryRunning(currPlatform)
-			if err != nil {
-				return err
-			}
-			if !ok {
-				log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
-				return nil
-			}
 
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
@@ -114,13 +112,15 @@ var statusCmd = &cobra.Command{
 				var containerReady int
 				var totalContainers int
 
-				// If a pod has multiple containers, get the status from all
-				for container := range pod.Spec.Containers {
-					containerRestarts += podStatus.ContainerStatuses[container].RestartCount
-					if podStatus.ContainerStatuses[container].Ready {
-						containerReady++
+				if len(pod.Spec.Containers) > 0 {
+					// If a pod has multiple containers, get the status from all
+					for container := range pod.Spec.Containers {
+						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
+						if podStatus.ContainerStatuses[container].Ready {
+							containerReady++
+						}
+						totalContainers++
 					}
-					totalContainers++
 				}
 
 				// Get the values from the pod status
@@ -138,7 +138,6 @@ var statusCmd = &cobra.Command{
 			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
 
 			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
-
 		}
 		return nil
 	},
