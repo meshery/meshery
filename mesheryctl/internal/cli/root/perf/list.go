@@ -19,7 +19,8 @@ import (
 )
 
 var (
-	page uint64
+	page         uint64
+	totalResults uint64
 )
 
 // ProfileStruct to store profile related data
@@ -57,9 +58,10 @@ var listCmd = &cobra.Command{
 					return err
 				} else if len(data) > 0 {
 					utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
-				} else {
-					fmt.Printf("End of the results.")
-					break
+					if page == totalResults/25+1 {
+						fmt.Printf("\nEnd of the results.")
+						break
+					}
 				}
 				// ask user for confirmation
 				userResponse := utils.AskForConfirmation("Go to next page")
@@ -172,8 +174,10 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
 		data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), lastRun})
 	}
-	//increase the page count
+	//increase the page count and set totalResults
 	page += 1
+	totalResults = uint64(response.TotalCount)
+
 	return data, nil
 }
 
