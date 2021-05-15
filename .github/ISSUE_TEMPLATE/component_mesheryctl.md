@@ -15,21 +15,15 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 #### Desired Behavior
 <!-- A brief description of the enhancement. -->
 
----
-
-<!-- Logs and Environment details if the issue is a bug. -->
-
 #### Screenshots/Logs
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
 #### Environment
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
-- Host OS: 
-- Meshery Version: 
-- Platform [docker/kubernetes/gke/eks etc]:
-
----
+- Host OS: Mac Linux Windows
+- Meshery Version: stable-v
+- Platform: Docker or Kubernetes
 
 <!-- Optional for feature requests -->
 

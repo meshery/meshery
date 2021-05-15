@@ -5,9 +5,9 @@ title: '[Docs]'
 labels: 'area/docs'
 assignees: ''
 ---
-**Current State:**
+#### Current State
 
-**Desired State:**
+#### Desired State
 
 ---
 **Contributor Resources**
