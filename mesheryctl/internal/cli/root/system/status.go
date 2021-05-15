@@ -124,7 +124,7 @@ var statusCmd = &cobra.Command{
 				}
 
 				// Get the values from the pod status
-				name := pod.GetName()
+				name := utils.CleanPodNames(pod.GetName())
 				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
 				status := fmt.Sprintf("%v", podStatus.Phase)
 				restarts := fmt.Sprintf("%v", containerRestarts)
