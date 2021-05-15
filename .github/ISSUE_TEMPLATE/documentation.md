@@ -10,7 +10,10 @@ assignees: ''
 #### Desired State
 
 ---
-**Contributor Resources**
+
+#### Contributor Resources
+
 - [Meshery documentation site](https://docs.meshery.io/)
 - [Meshery documentation source](https://github.com/layer5io/meshery/tree/master/docs)
 - [Instructions for contributing to documentation](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow)
+- [Layer5 Community Slack](http://slack.layer5.io)
