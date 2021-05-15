@@ -66,14 +66,6 @@ func restart() error {
 			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
 
-		if skipUpdateFlag {
-			log.Info("Skipping Meshery Update...")
-		} else {
-			if err := start(); err != nil {
-				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
-			}
-		}
-
 	case "kubernetes":
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
