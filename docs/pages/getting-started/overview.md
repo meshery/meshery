@@ -65,7 +65,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -76,7 +75,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -87,7 +85,6 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 | Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
