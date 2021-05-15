@@ -13,6 +13,7 @@ require (
 	fortio.org/fortio v1.14.2
 	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/buger/goterm v1.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
 	github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d
