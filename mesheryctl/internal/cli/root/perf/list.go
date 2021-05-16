@@ -90,7 +90,7 @@ var listCmd = &cobra.Command{
 			if err != nil {
 				return err
 			} else if len(data) > 0 {
-				log.Debug(fmt.Sprintf("Page %d out of %d \t\t\t\t Total Results: %d", page, totalResults/limitResults+1, totalResults))
+				log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 				if page == totalResults/limitResults+1 {
 					fmt.Printf("End of the results.")
