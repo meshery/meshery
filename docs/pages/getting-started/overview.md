@@ -81,7 +81,7 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 {% endif -%}
 {% endfor %}
 
-##### **Alpha** - Service mesh adapters adapters for which we are seeking community-contributed support.
+##### **Alpha** - Service mesh adapters for which we are seeking community-contributed support.
 
 | Service Mesh | Status |
 | :----------- | -----: |
