@@ -63,8 +63,8 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 #### **Stable**
 
-| Service Mesh | Port |
-| :----------- | ---: |
+| Service Mesh | Status |
+| :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
