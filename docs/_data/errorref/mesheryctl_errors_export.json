@@ -1,0 +1,26 @@
+{
+    "errors_export": {
+        "component_name": "mesheryctl",
+        "component_type": "component",
+        "errors": {
+            "1000": {
+                "name": "K8sClient",
+                "code": "1000",
+                "severity": "",
+                "short_description": "Failure to create Kubernetes client.",
+                "long_description": "Check whether `mesheryctl` can initialize a Kubernetes client.",
+                "probable_cause": "Missing certificate data in user's kubeconfic for one or more contexts.",
+                "suggested_remediation": "Run `mesheryctl system config <kubernetes-type>` to export your Kubernetes' cluster certificate data."
+            },
+            "1001": {
+                "name": "K8sConnect",
+                "code": "1001",
+                "severity": "",
+                "short_description": "Failure to connect to Kubernetes.",
+                "long_description": "`mesheryctl` fails to query for pods in the default namespace of the user's current Kubernetes context.",
+                "probable_cause": "Kuberentes cluster not running or not network unreachable.",
+                "suggested_remediation": "Verify network connectivity between `mesheryctl` network and Kubernetes cluster defined as current-context in your kubeconfig."
+            }
+        }
+    }
+}
