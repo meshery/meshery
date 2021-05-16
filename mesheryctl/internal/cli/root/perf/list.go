@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/inancgumus/screen"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -22,6 +24,7 @@ import (
 var (
 	page         uint64
 	totalResults uint64
+	limitResults uint64 = 10
 )
 
 // ProfileStruct to store profile related data
@@ -56,8 +59,9 @@ var listCmd = &cobra.Command{
 				if err != nil {
 					return err
 				} else if len(data) > 0 {
+					log.Debug(fmt.Sprintf("Page %d out of %d \t\t\t\t Total Results: %d", page, totalResults/limitResults+1, totalResults))
 					utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
-					if page == totalResults/25+1 {
+					if page == totalResults/limitResults+1 {
 						fmt.Printf("\nEnd of the results.")
 						break
 					}
@@ -87,8 +91,9 @@ var listCmd = &cobra.Command{
 			if err != nil {
 				return err
 			} else if len(data) > 0 {
+				log.Debug(fmt.Sprintf("Page %d out of %d \t\t\t\t Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
-				if page == totalResults/25+1 {
+				if page == totalResults/limitResults+1 {
 					fmt.Printf("\nEnd of the results.")
 					break
 				}
@@ -112,7 +117,7 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 	client := &http.Client{}
 	var response *models.PerformanceAPIResponse
 
-	tempURL := fmt.Sprintf("%s?pageSize=25&page=%d", url, page)
+	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
 	if err != nil {
 		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
