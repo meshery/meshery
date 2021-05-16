@@ -2,7 +2,7 @@
 layout: default
 title: "Extensibility: APIs"
 permalink: extensibility/api
-type: Reference
+type: Extensibility
 abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
 #redirect_from: extensibility
 ---

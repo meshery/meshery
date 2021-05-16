@@ -6,13 +6,15 @@ language: en
 list: exclude
 ---
 
-Guides to using Meshery's various features and components. 
+Guides to using and troubleshooting Meshery's various features and components.
 
 {% assign sorted_guides = site.pages | sort: "type" | reverse %}
 
 
 
-<ul><b>General</b>
+### General
+
+<ul>
     {% for item in sorted_guides %}
     {% if item.type=="Guides" and item.category!="mesheryctl" and item.list!="exclude"  -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
@@ -20,7 +22,9 @@ Guides to using Meshery's various features and components.
     {% endfor %}
 </ul>
 
-<ul><b><a href="{{ site.baseurl }}/guides/mesheryctl" class="text-black">Meshery CLI</a></b>
+### <a href="{{ site.baseurl }}/guides/mesheryctl" class="text-black">Meshery CLI</a>
+
+<ul>
   {% for item in sorted_guides %}
   {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
