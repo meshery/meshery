@@ -193,12 +193,18 @@ func start() error {
 		}
 
 		var endpoint meshkitutils.HostPort
-		endpoint.Address = "http://localhost"
+		endpoint.Address = utils.EndpointProtocol + "://localhost"
 		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
 		if err != nil {
 			return err
 		}
 		endpoint.Port = int32(tempPort)
+		currCtx.Endpoint = endpoint.Address + ":" + userPort[len(userPort)-1]
+
+		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+		if err != nil {
+			return err
+		}
 
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
@@ -378,22 +384,7 @@ func start() error {
 		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
-		utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
-		err = utils.ViperK8s.ReadInConfig()
-		if err != nil {
-			return err
-		}
-
-		kubeCompose := &config.MesheryCtlConfig{}
-		err = utils.ViperK8s.Unmarshal(&kubeCompose)
-		if err != nil {
-			return err
-		}
-
-		kubeCompose.Contexts[mctlCfg.CurrentContext] = currCtx
-		utils.ViperK8s.Set("contexts."+mctlCfg.CurrentContext, currCtx)
-
-		err = utils.ViperK8s.WriteConfig()
+		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
 		if err != nil {
 			return err
 		}
