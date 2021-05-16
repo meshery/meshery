@@ -46,13 +46,9 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 		if len(args) == 0 {
-			tm.Clear() // Clear current screen
-
+			// Clear screen
+			fmt.Print("\033[H\033[2J")
 			for {
-				// By moving cursor to top-left position we ensure that console output
-				// will be overwritten each time, instead of adding new.
-				tm.MoveCursor(1, 1)
-
 				data, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", "")
 				if err != nil {
 					return err
@@ -70,7 +66,8 @@ var listCmd = &cobra.Command{
 					fmt.Printf("Closing.")
 					break
 				}
-				tm.Flush() // Call it every time at the end of rendering
+				// Clear screen
+				fmt.Print("\033[H\033[2J")
 			}
 
 			return nil
