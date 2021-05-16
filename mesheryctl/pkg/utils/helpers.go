@@ -761,3 +761,14 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.SetFooter(footer)
 	table.Render() // Render the table
 }
+
+// StringContainedInSlice returns the index in which a string is a substring in a list of strings
+func StringContainedInSlice(str string, slice []string) int {
+	for index, ele := range slice {
+		// Return index even if only a part of the string is present
+		if strings.Contains(ele, str) {
+			return index
+		}
+	}
+	return -1
+}
