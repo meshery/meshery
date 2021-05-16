@@ -73,7 +73,6 @@ var listCmd = &cobra.Command{
 					break
 				}
 				// Clear screen
-				// fmt.Print("\033[H\033[2J")
 				screen.Clear()
 			}
 
@@ -105,7 +104,6 @@ var listCmd = &cobra.Command{
 				break
 			}
 			// Clear screen
-			// fmt.Print("\033[H\033[2J")
 			screen.Clear()
 		}
 		return nil
