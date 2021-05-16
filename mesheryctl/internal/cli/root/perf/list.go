@@ -174,7 +174,7 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 	}
 
 	//increase the page count and set totalResults
-	page += 1
+	page++
 	totalResults = uint64(response.TotalCount)
 
 	var data [][]string
