@@ -41,8 +41,7 @@ var listCmd = &cobra.Command{
 	Args:    cobra.MaximumNArgs(1),
 	Example: "mesheryctl perf list \nmesheryctl perf list [profile-id]",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//Set the page number for API response to be zero
-		page = 0
+		page = 0 //Set the page number for API response to be zero
 
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -59,7 +58,7 @@ var listCmd = &cobra.Command{
 				if err != nil {
 					return err
 				} else if len(data) > 0 {
-					log.Debug(fmt.Sprintf("Page %d out of %d \t\t\t\t Total Results: %d", page, totalResults/limitResults+1, totalResults))
+					log.Debug(fmt.Sprintf("Page %d out of %d \tTotal Results: %d", page, totalResults/limitResults+1, totalResults))
 					utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
 					if page == totalResults/limitResults+1 {
 						fmt.Printf("\nEnd of the results.")
