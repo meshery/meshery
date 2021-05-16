@@ -32,7 +32,6 @@ import (
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,7 +42,7 @@ var logsCmd = &cobra.Command{
 	Use:   "logs",
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
-	Args:  cobra.NoArgs,
+	Args:  cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Starting Meshery logging...")
 
@@ -116,23 +115,43 @@ var logsCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
 			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			availablePods := podList.Items
+
 			if err != nil {
 				return err
 			}
 
 			var data []string
+			var requiredPods []string
+
+			// If the user specified logs from any particular pods, then show only that
+			if len(args) > 0 {
+				// Get the actual pod names even when the user specifes incomplete pod names
+				requiredPods, err = utils.GetRequiredPods(args, availablePods)
+
+				// error when the specified pod is invalid
+				if err != nil {
+					return err
+				}
+			}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
+
+				// Get the values from the pod status
+				name := pod.GetName()
+
+				// Only print the logs from the required pods
+				if len(requiredPods) > 0 {
+					if !utils.IsPodRequired(requiredPods, name) {
+						continue
+					}
+				}
+
 				// If a pod has multiple containers, get the logs from all the containers
 				for container := range pod.Spec.Containers {
-					// Get the values from the pod status
-					name := pod.GetName()
 					containerName := pod.Spec.Containers[container].Name
 
 					// Get the logs from a container within the pod
@@ -158,6 +177,7 @@ var logsCmd = &cobra.Command{
 					for _, str := range strings.Split(buf.String(), "\n") {
 						data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
 					}
+					data = append(data, "\n")
 				}
 			}
 
