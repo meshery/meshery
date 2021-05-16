@@ -6,9 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
-	tm "github.com/buger/goterm"
+	"github.com/inancgumus/screen"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
@@ -47,8 +48,10 @@ var listCmd = &cobra.Command{
 		}
 		if len(args) == 0 {
 			// Clear screen
-			fmt.Print("\033[H\033[2J")
+			screen.Clear()
 			for {
+				// Moves the cursor to the top-left position of the screen
+				screen.MoveTopLeft()
 				data, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", "")
 				if err != nil {
 					return err
@@ -67,29 +70,28 @@ var listCmd = &cobra.Command{
 					break
 				}
 				// Clear screen
-				fmt.Print("\033[H\033[2J")
+				// fmt.Print("\033[H\033[2J")
+				screen.Clear()
 			}
 
 			return nil
 		}
 		// Output results of a performance profile
 		profileID := args[0]
-
-		tm.Clear() // Clear current screen
+		screen.Clear() // make screen clear
 
 		for {
-			// By moving cursor to top-left position we ensure that console output
-			// will be overwritten each time, instead of adding new.
-			tm.MoveCursor(1, 1)
-
+			// Moves the cursor to the top left corner of the screen
+			screen.MoveTopLeft()
 			data, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
 				return err
 			} else if len(data) > 0 {
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
-			} else {
-				fmt.Printf("End of the results.")
-				break
+				if page == totalResults/25+1 {
+					fmt.Printf("\nEnd of the results.")
+					break
+				}
 			}
 			// ask user for confirmation
 			userResponse := utils.AskForConfirmation("Go to next page")
@@ -98,7 +100,9 @@ var listCmd = &cobra.Command{
 				fmt.Printf("Closing.")
 				break
 			}
-			tm.Flush() // Call it every time at the end of rendering
+			// Clear screen
+			// fmt.Print("\033[H\033[2J")
+			screen.Clear()
 		}
 		return nil
 	},
@@ -164,20 +168,33 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 
 	}
 
-	var data [][]string
-	for _, profile := range dataMap {
-		id := profile.ID
-		results := profile.Results
-		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
-		data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), lastRun})
-	}
 	//increase the page count and set totalResults
 	page += 1
 	totalResults = uint64(response.TotalCount)
 
+	var data [][]string
+	// append data for all profiles
+	if profileID == "" {
+		for _, profile := range dataMap {
+			id := profile.ID
+			results := profile.Results
+			lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+			data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), lastRun})
+		}
+		return data, nil
+	}
+	// append data for single profile
+	for _, result := range response.Results {
+		serviceMesh := "No Mesh"
+		if result.Mesh != "" {
+			serviceMesh = result.Mesh
+		}
+		startTime := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(result.TestStartTime.Month()), result.TestStartTime.Day(), result.TestStartTime.Year(), result.TestStartTime.Hour(), result.TestStartTime.Minute(), result.TestStartTime.Second())
+		p50 := result.RunnerResults.DurationHistogram.Percentiles[0].Value
+		p99_9 := result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value
+		timeDuration := strings.SplitAfterN(strconv.FormatUint(uint64(result.RunnerResults.Duration), 10), "", 5)
+		duration := fmt.Sprintf("%s%s.%s%ss", timeDuration[0], timeDuration[1], timeDuration[2], timeDuration[3])
+		data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
+	}
 	return data, nil
-}
-
-func init() {
-	listCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "(optional) Path to meshery auth config")
 }
