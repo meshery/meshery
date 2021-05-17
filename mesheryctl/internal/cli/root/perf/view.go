@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -66,7 +67,7 @@ var viewCmd = &cobra.Command{
 				fmt.Printf("Test run duration %v\n", i.(map[string]interface{})["duration"])
 				return nil
 			}
-			fmt.Printf("Performance profile `%s` not found. Use `mesheryctl perf list` to see a list of performance profiles. \n", proName)
+			log.Fatalf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", proName)
 		}
 		return nil
 	},
