@@ -6,8 +6,8 @@ replicaCount: 1
 restartPolicy: Always
 
 image:
-  repository: local/meshery:stable-latest
-  pullPolicy: Never
+  repository: layer5/meshery:stable-latest
+  pullPolicy: Always
 
 env:
   EVENT: mesheryLocal
@@ -51,7 +51,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: LoadBalancer
   port: 9081
   target_port: 8080
   annotations: {}
