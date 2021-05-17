@@ -97,7 +97,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			formatOutput(rw, resp, format)
+			formatPatternOutput(rw, resp, format)
 			return
 		}
 
@@ -107,7 +107,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		formatOutput(rw, byt, format)
+		formatPatternOutput(rw, byt, format)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		formatOutput(rw, resp, format)
+		formatPatternOutput(rw, resp, format)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			formatOutput(rw, resp, format)
+			formatPatternOutput(rw, resp, format)
 			return
 		}
 
@@ -171,7 +171,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		formatOutput(rw, byt, format)
+		formatPatternOutput(rw, byt, format)
 		return
 	}
 }
@@ -236,7 +236,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func formatOutput(rw http.ResponseWriter, content []byte, format string) {
+func formatPatternOutput(rw http.ResponseWriter, content []byte, format string) {
 	contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
 
 	if err := json.Unmarshal(content, &contentMesheryPatternSlice); err != nil {

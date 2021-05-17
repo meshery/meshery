@@ -79,52 +79,65 @@ var updateCmd = &cobra.Command{
 			}
 
 		case "kubernetes":
+			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
+			if !utils.SkipResetFlag {
 
-			log.Debug("creating new Clientset...")
-			// Create a new client
-			client, err := meshkitkube.New([]byte(""))
+				log.Debug("creating new Clientset...")
+				// Create a new client
+				client, err := meshkitkube.New([]byte(""))
 
-			if err != nil {
-				return errors.Wrap(err, "failed to create new client")
-			}
+				if err != nil {
+					return errors.Wrap(err, "failed to create new client")
+				}
 
-			version := currCtx.Version
-			RequestedAdapters := currCtx.Adapters
+				version := currCtx.Version
+				RequestedAdapters := currCtx.Adapters
 
-			if version == "latest" {
-				if currCtx.Channel == "edge" {
-					version = "master"
-				} else {
-					version, err = utils.GetLatestStableReleaseTag()
-					if err != nil {
-						return err
+				if version == "latest" {
+					if currCtx.Channel == "edge" {
+						version = "master"
+					} else {
+						version, err = utils.GetLatestStableReleaseTag()
+						if err != nil {
+							return err
+						}
 					}
 				}
-			}
 
-			// fetch the manifest files corresponding to the version specified
-			manifests, err := utils.FetchManifests(version)
+				// fetch the manifest files corresponding to the version specified
+				manifests, err := utils.FetchManifests(version)
+
+				if err != nil {
+					return err
+				}
+
+				// downloaded required files successfully now apply the manifest files
+				log.Info("Updating Meshery...")
+
+				log.Info("applying the manifests to Kubernetes cluster...")
+
+				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
+				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
+
+				if err != nil {
+					return err
+				}
+			}
+			// restart the pods in meshery namespace
+			err = restart()
 
 			if err != nil {
 				return err
 			}
 
-			// downloaded required files successfully now apply the manifest files
-			log.Info("Updating Meshery...")
-
-			log.Info("applying the manifests to Kubernetes cluster...")
-
-			// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-			err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
-
-			if err != nil {
-				return err
-			}
 			log.Info("... updated Meshery in the Kubernetes Cluster.")
-
 		}
 
 		log.Info("Meshery is now up-to-date")
 		return nil
 	},
+}
+
+func init() {
+	updateCmd.Flags().BoolVarP(&utils.SkipResetFlag, "skip-reset", "", false, "(optional) skip checking for new Meshery manifest files.")
 }

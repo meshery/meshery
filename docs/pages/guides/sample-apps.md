@@ -7,7 +7,7 @@ type: Guides
 ---
 
 Sample Applications are used to interact and exemplify the features of your service mesh. They are often a collection of microservices which you can be used by the user as a sandbox playground to experiment and learn about the service mesh and it's exhaustive set of features.
-Before deploying a sample app on top of your service mesh, the application needs to be exposed and allowed external access to the available services in a cluster. There are a myriad of ways to do this, specific to the service mesh you are using. 
+Before deploying a sample app on top of your service mesh, the application needs to be exposed and allowed external access to the available services in a cluster. There are a myriad of ways to do this, specific to the service mesh you are using.
 
 A popular way of exposing your cluster is by using [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/), an API object that defines rules which allow external access to services in a cluster. 
 
@@ -16,12 +16,13 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 
 ## Deploy a sample app on Meshery
 
-1. Go to the management page of any [service mesh]({{ site.baseurl }}/service-meshes) and install any of its stable versions
+1. Go to the management page of any [service mesh]({{ site.baseurl }}/service-meshes) and install any of its stable versions.
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png"><img alt="Consul-install" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-install.png" /></a>
-2. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a drop down menu with the available sample applications.
 
+1. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a dropdown menu with the available sample applications.
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png" /></a>
-3. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed
+
+1. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png" /></a>
 
 ### [BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)

@@ -209,6 +209,30 @@ func start() error {
 			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
 
+		//applying operator manifest
+		kubeClient, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.CreateManifestsFolder()
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.DownloadOperatorManifest()
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+		if err != nil {
+			return err
+		}
+
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
@@ -313,6 +337,12 @@ func start() error {
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(client, false, false)
 
 		if err != nil {
 			return err

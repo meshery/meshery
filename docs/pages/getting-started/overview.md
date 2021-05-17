@@ -11,15 +11,16 @@ As the service mesh management plane, Meshery enables the adoption, operation, a
 Meshery features can be categorized by:
 
 1. Service Mesh Performance Management
-   - Workload and service mesh benchmarking
-   - Prometheus and Grafana Integration
+   - Workload and service mesh performance characterization
+   - Prometheus and Grafana integration
 1. Service Mesh Configuration Management
    - Configuration best practices
 1. Service Mesh Lifecycle Management
    - Service mesh provisioning and workload onboarding
    - Meshery Operator and MeshSync
+   - Service mesh patterns and Open Application Model integration
 1. Data Plane Intelligence
-   - WebAssembly filters for Envoy
+   - Registry and configuration of WebAssembly filters for Envoy
 1. Service Mesh Interoperability and Federation
    - Manage multiple service meshes concurrently
    - Connect to multiple clusters independently
@@ -62,9 +63,8 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 #### **Stable**
 
-| Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Service Mesh | Status |
+| :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "stable" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
@@ -73,20 +73,18 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 
 ##### **Beta**
 
-| Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Service Mesh | Status |
+| :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "beta" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
 
-##### **Alpha** - Service mesh adapters adapters for which we are seeking community-contributed support.
+##### **Alpha** - Service mesh adapters for which we are seeking community-contributed support.
 
-| Platform &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Status |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
-
+| Service Mesh | Status |
+| :----------- | -----: |
 {% for adapter in site.adapters -%}
 {% if adapter.project_status == "alpha" -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |

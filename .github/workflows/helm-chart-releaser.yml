@@ -46,7 +46,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Configure Git
         env:
-          GITHUB_ACTOR: Aisuko
+          GITHUB_ACTOR: l5io
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
@@ -58,7 +58,7 @@ jobs:
         run: |
           helm repo add meshery https://meshery.io/charts/
       - name: Helm Chart Releaser For Remote
-        uses: Aisuko/chart-releaser-action@v1.0.0-alpha.14
+        uses: layer5io/helm-chart-releaser@v0.1.0
         with:
           charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
@@ -81,15 +81,15 @@ jobs:
           path: ${{ env.REPO_PATH }}
       - name: Copy index to new repo
         env:
-          SOURCE: /home/runner/work/meshery/meshery/.cr-index/index.yaml
+          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
           TARGET: meshery.io/charts
         run:
           cp ${{ env.SOURCE }} ${{ env.TARGET }}
       - name: Push
         env:
           REPO_PATH: meshery.io
-          GIT_USERNAME: Aisuko
-          GIT_EMAIL: Aisuko@users.noreply.github.com
+          GIT_USERNAME: l5io
+          GIT_EMAIL: l5io@users.noreply.github.com
         run: |
           cd ${{ env.REPO_PATH }}
           git config --local user.name "${{ env.GIT_USERNAME }}"

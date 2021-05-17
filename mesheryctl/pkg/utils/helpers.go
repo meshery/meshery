@@ -50,6 +50,8 @@ const (
 	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
 	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
 	OperatorURL      = baseConfigURL + "manifests/default.yaml"
+	BrokerURL        = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL      = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 )
 
 const (
@@ -71,6 +73,8 @@ const (
 var (
 	// ResetFlag indicates if a reset is required
 	ResetFlag bool
+	// SkipResetFlag indicates if fetching the updated manifest files is required
+	SkipResetFlag bool
 	// MesheryEndpoint is the default URL in which Meshery is exposed
 	MesheryEndpoint = "http://localhost:9081"
 	// MesheryFolder is the default relative location of the meshery config
@@ -335,13 +339,19 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			}
 
 			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			_, err = podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
 
-			return true, err
+			for _, pod := range podList.Items {
+				if strings.Contains(pod.GetName(), "meshery") {
+					return true, nil
+				}
+			}
+
+			return false, err
 		}
 	}
 
@@ -748,4 +758,15 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
+}
+
+// StringContainedInSlice returns the index in which a string is a substring in a list of strings
+func StringContainedInSlice(str string, slice []string) int {
+	for index, ele := range slice {
+		// Return index even if only a part of the string is present
+		if strings.Contains(ele, str) {
+			return index
+		}
+	}
+	return -1
 }

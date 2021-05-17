@@ -25,12 +25,12 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
   </tr>
 </thead>
 <tbody>
-  {% for files in site.data.errorref %}    
+  {% for files in site.data.errorref %}
     {% for eachFile in files %}
       {% for component in eachFile  %}
           {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-            {% if thecycle == 'even' %}             
+            {% if thecycle == 'even' %}
             <tr>
               <td align="right">{{ component[1].component_type }}</td>
               <td class="title"><a href="#{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}">{{ component[1].component_name }}</a></td>
@@ -42,7 +42,6 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
 </tbody>
 </table>
 
-
 <hr />
 
   {% for files in site.data.errorref %}    
@@ -50,16 +49,23 @@ Meshery and it's components use a common framework (defined within MeshKit) to g
       {% for component in eachFile  %}
           {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
            {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-            {% if thecycle == 'even' %}    
+            {% if thecycle == 'even' %}
             {% if component[1].component_type == 'adapter' %}
               {% capture heading %}
-              Meshery Adapter for {{ component[1].component_name }}
-              {% endcapture %}
-            {% else %}
-              {% capture heading %}
-              {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+               Meshery Adapter for {{ component[1].component_name }}
               {% endcapture %}
             {% endif %}
+            {% if component[1].component_type == 'client' %}
+              {% capture heading %}
+               {{ component[1].component_name }} client
+              {% endcapture %}
+            {% endif %}
+            {% if component[1].component_type == 'library' %}
+              {% capture heading %}
+                {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+              {% endcapture %}
+            {% endif %}
+
 <h2> {{ heading }} </h2>
   <table>
   <thead>
