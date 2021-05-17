@@ -5,6 +5,8 @@ on:
       - 'master'
     paths:
       - 'mesheryctl/**'
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches:
       - 'master'
