@@ -25,7 +25,7 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		pro_name := args[0]
+		proName := args[0]
 		var req *http.Request
 		url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
 
@@ -44,7 +44,7 @@ var viewCmd = &cobra.Command{
 		}
 		if resp.StatusCode != 200 {
 			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			return errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", pro_name)
+			return errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", proName)
 		}
 		defer resp.Body.Close()
 		data, err := ioutil.ReadAll(resp.Body)
@@ -59,13 +59,14 @@ var viewCmd = &cobra.Command{
 
 		for _, i := range dat["profiles"].([]interface{}) {
 			t := i.(map[string]interface{})["name"]
-			if pro_name == t {
+			if proName == t {
 				fmt.Printf("name: %v\n", i.(map[string]interface{})["name"])
 				fmt.Printf("endpoint: %v\n", i.(map[string]interface{})["endpoints"])
 				fmt.Printf("load_generators %v\n", i.(map[string]interface{})["load_generators"])
 				fmt.Printf("Test run duration %v\n", i.(map[string]interface{})["duration"])
+				return nil
 			}
-			return errors.Errorf("Performance profile `%s` not found. Use `mesheryctl perf list` to see a list of performance profiles. \n", pro_name)
+			fmt.Printf("Performance profile `%s` not found. Use `mesheryctl perf list` to see a list of performance profiles. \n", proName)
 		}
 		return nil
 	},
