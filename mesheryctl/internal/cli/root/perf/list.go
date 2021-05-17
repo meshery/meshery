@@ -29,8 +29,8 @@ var (
 
 var listCmd = &cobra.Command{
 	Use:     "list",
-	Short:   "List Performance profiles",
-	Long:    `List all the available performance profiles`,
+	Short:   "List Performance profiles and Results of profiles",
+	Long:    `List all the available performance profiles and results of a performance profile`,
 	Args:    cobra.MaximumNArgs(1),
 	Example: "mesheryctl perf list \nmesheryctl perf list [profile-id]",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -51,9 +51,8 @@ var listCmd = &cobra.Command{
 				if err != nil {
 					return err
 				} else if len(data) > 0 {
-
 					log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
-					utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
+					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
 					if page == totalPage || len(data) == 0 {
 						fmt.Printf("End of the results.")
 						break
@@ -140,7 +139,7 @@ func fetchPerformanceProfiles(url string) ([][]string, error) {
 
 	for _, profile := range response.Profiles {
 		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
-		data = append(data, []string{profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
+		data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
 	}
 
 	//increase the page count and set totalPage and totalResults
