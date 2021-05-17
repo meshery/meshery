@@ -27,6 +27,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/briandowns/spinner"
+
 	log "github.com/sirupsen/logrus"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -769,4 +771,11 @@ func StringContainedInSlice(str string, slice []string) int {
 		}
 	}
 	return -1
+}
+
+func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+	s.Suffix = " " + suffix
+	s.FinalMSG = finalMsg + "\n"
+	return s
 }

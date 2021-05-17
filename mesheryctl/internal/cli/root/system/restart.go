@@ -62,6 +62,21 @@ func restart() error {
 			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
 
+		s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated")
+		s.Start()
+		for {
+			ok, err := utils.IsMesheryRunning("kubernetes")
+
+			if !ok {
+				break
+			}
+
+			if err != nil {
+				return err
+			}
+		}
+		s.Stop()
+
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
 		}
