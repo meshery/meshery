@@ -2,6 +2,7 @@ package perf
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -9,8 +10,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -26,9 +25,9 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		pattern := args[0]
+		pro_name := args[0]
 		var req *http.Request
-		url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + pattern
+		url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
 
 		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
@@ -45,7 +44,7 @@ var viewCmd = &cobra.Command{
 		}
 		if resp.StatusCode != 200 {
 			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", resp.StatusCode)
+			return errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", pro_name)
 		}
 		defer resp.Body.Close()
 		data, err := ioutil.ReadAll(resp.Body)
@@ -56,7 +55,18 @@ var viewCmd = &cobra.Command{
 		if err = json.Unmarshal(data, &dat); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
-		log.Info(string(data))
+		//s := dat["profiles"].([]interface{})
+
+		for _, i := range dat["profiles"].([]interface{}) {
+			t := i.(map[string]interface{})["name"]
+			if pro_name == t {
+				fmt.Printf("name: %v\n", i.(map[string]interface{})["name"])
+				fmt.Printf("endpoint: %v\n", i.(map[string]interface{})["endpoints"])
+				fmt.Printf("load_generators %v\n", i.(map[string]interface{})["load_generators"])
+				fmt.Printf("Test run duration %v\n", i.(map[string]interface{})["duration"])
+			}
+			return errors.Errorf("Performance profile `%s` not found. Use `mesheryctl perf list` to see a list of performance profiles. \n", pro_name)
+		}
 		return nil
 	},
 }
