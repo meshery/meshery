@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -22,17 +21,11 @@ import (
 )
 
 var (
-	page         uint64
-	totalResults uint64
-	limitResults uint64 = 10
+	page         uint
+	totalPage    uint
+	totalResults uint
+	limitResults uint = 10
 )
-
-// ProfileStruct to store profile related data
-type ProfileStruct struct {
-	ID      string
-	LastRun *time.Time
-	Results uint
-}
 
 var listCmd = &cobra.Command{
 	Use:     "list",
@@ -54,13 +47,14 @@ var listCmd = &cobra.Command{
 			for {
 				// Moves the cursor to the top-left position of the screen
 				screen.MoveTopLeft()
-				data, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/results", "")
+				data, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
 				if err != nil {
 					return err
 				} else if len(data) > 0 {
-					log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
+
+					log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"ID", "RESULTS", "LAST-RUN"}, data)
-					if page == totalResults/limitResults+1 {
+					if page == totalPage || len(data) == 0 {
 						fmt.Printf("End of the results.")
 						break
 					}
@@ -86,13 +80,13 @@ var listCmd = &cobra.Command{
 		for {
 			// Moves the cursor to the top left corner of the screen
 			screen.MoveTopLeft()
-			data, err := fetchPerformanceAPIResponse(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
+			data, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
 				return err
 			} else if len(data) > 0 {
 				log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
-				if page == totalResults/limitResults+1 {
+				if page == totalResults/limitResults+1 || len(data) == 0 {
 					fmt.Printf("End of the results.")
 					break
 				}
@@ -112,10 +106,59 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, error) {
+// Fetch all the profiles
+func fetchPerformanceProfiles(url string) ([][]string, error) {
 	client := &http.Client{}
-	var response *models.PerformanceAPIResponse
+	var response *models.PerformanceProfilesAPIResponse
+	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
+	req, err := http.NewRequest("GET", tempURL, nil)
+	if err != nil {
+		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+	}
+	err = utils.AddAuthDetails(req, tokenPath)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+	if resp.StatusCode != 200 {
+		return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	var data [][]string
 
+	for _, profile := range response.Profiles {
+		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+		data = append(data, []string{profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
+	}
+
+	//increase the page count and set totalPage and totalResults
+	page++
+	totalResults = response.TotalCount
+	if response.TotalCount%limitResults == 0 {
+		totalPage = response.TotalCount / limitResults
+	} else {
+		totalPage = response.TotalCount/limitResults + 1
+	}
+
+	return data, nil
+}
+
+// Fetch results for a specific profile
+func fetchPerformanceProfileResults(url string, profileID string) ([][]string, error) {
+	client := &http.Client{}
+	var response *models.PerformanceResultsAPIResponse
 	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
 	if err != nil {
@@ -130,11 +173,7 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-		if profileID != "" {
-			return nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
-		}
-		return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		return nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -146,46 +185,8 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 		return nil, errors.Wrap(err, "failed to unmarshal response body")
 	}
 
-	// map to store profile related data wrt profile-id
-	dataMap := make(map[string]*ProfileStruct)
-	for _, result := range response.Results {
-		// id assigned to the tests performed before introducing profiles
-		id := ""
-		if result.PerformanceProfile != nil {
-			id = result.PerformanceProfile.String()
-		}
-		if _, present := dataMap[id]; !present {
-			//Add new profile struct for new profile-id
-			dataMap[id] = &ProfileStruct{
-				ID:      id,
-				LastRun: result.TestStartTime,
-				Results: 1,
-			}
-		} else {
-			// Increase the result count for the performance profile
-			dataMap[id].Results = dataMap[id].Results + 1
-			// Update time if the current result's LastRun is after the stored-one
-			if dataMap[id].LastRun.After(*result.TestStartTime) {
-				dataMap[id].LastRun = result.TestStartTime
-			}
-		}
-	}
-
-	//increase the page count and set totalResults
-	page++
-	totalResults = uint64(response.TotalCount)
-
 	var data [][]string
-	// append data for all profiles
-	if profileID == "" {
-		for _, profile := range dataMap {
-			id := profile.ID
-			results := profile.Results
-			lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
-			data = append(data, []string{id, strconv.FormatUint(uint64(results), 10), lastRun})
-		}
-		return data, nil
-	}
+
 	// append data for single profile
 	for _, result := range response.Results {
 		serviceMesh := "No Mesh"
@@ -198,6 +199,14 @@ func fetchPerformanceAPIResponse(url string, profileID string) ([][]string, erro
 		timeDuration := strings.SplitAfterN(strconv.FormatUint(uint64(result.RunnerResults.Duration), 10), "", 5)
 		duration := fmt.Sprintf("%s%s.%s%ss", timeDuration[0], timeDuration[1], timeDuration[2], timeDuration[3])
 		data = append(data, []string{result.Name, serviceMesh, startTime, fmt.Sprintf("%f", result.RunnerResults.QPS), duration, fmt.Sprintf("%f", p50), fmt.Sprintf("%f", p99_9)})
+	}
+	//increase the page count and set totalPage and totalResults
+	page++
+	totalResults = response.TotalCount
+	if response.TotalCount%limitResults == 0 {
+		totalPage = response.TotalCount / limitResults
+	} else {
+		totalPage = response.TotalCount/limitResults + 1
 	}
 	return data, nil
 }
