@@ -1,11 +1,11 @@
 name: Meshery
 on:
-  push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - 'docs/**'
-      - 'mesheryctl/**'
+#   push:
+#     branches:
+#       - 'master'
+#     paths-ignore:
+#       - 'docs/**'
+#       - 'mesheryctl/**'
   pull_request:
     branches:
       - 'master'

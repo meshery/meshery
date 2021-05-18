@@ -1,3 +1,4 @@
-name: name 
+name: --name 
 description: A memorable name for the test. (default) a random string
-usage: 
+usage: |
+  mesheryctl perf --name "name" --url [URL]

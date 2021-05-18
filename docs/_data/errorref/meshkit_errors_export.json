@@ -1,0 +1,170 @@
+{
+    "errors_export": {
+        "component_name": "MeshKit",
+        "component_type": "library",
+        "errors": {
+            "1000": {
+                "name": "ErrGetName",
+                "code": "1000",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1001": {
+                "name": "ErrInstallMesh",
+                "code": "1001",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1002": {
+                "name": "ErrMeshConfig",
+                "code": "1002",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1003": {
+                "name": "ErrPortForward",
+                "code": "1003",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1004": {
+                "name": "ErrClientConfig",
+                "code": "1004",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1005": {
+                "name": "ErrClientSet",
+                "code": "1005",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1006": {
+                "name": "ErrStreamEvent",
+                "code": "1006",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1007": {
+                "name": "ErrOpInvalid",
+                "code": "1007",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1008": {
+                "name": "ErrApplyOperation",
+                "code": "1008",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "1009": {
+                "name": "ErrListOperations",
+                "code": "1009",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "11000": {
+                "name": "ErrConnectCode",
+                "code": "11000",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "11001": {
+                "name": "ErrPublishCode",
+                "code": "11001",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "600": {
+                "name": "ErrPanic",
+                "code": "600",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "601": {
+                "name": "ErrGrpcListener",
+                "code": "601",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "602": {
+                "name": "ErrGrpcServer",
+                "code": "602",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "700": {
+                "name": "ErrEmptyConfig",
+                "code": "700",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "701": {
+                "name": "ErrInMem",
+                "code": "701",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            },
+            "702": {
+                "name": "ErrViper",
+                "code": "702",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            }
+        }
+    }
+}

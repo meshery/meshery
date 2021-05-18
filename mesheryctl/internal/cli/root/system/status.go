@@ -15,14 +15,12 @@
 package system
 
 import (
-	"context"
 	"fmt"
 	"os/exec"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -40,8 +38,6 @@ var statusCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Long:  `Check status of Meshery and Meshery adapters.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("Meshery status... \n")
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -55,6 +51,15 @@ var statusCmd = &cobra.Command{
 		}
 		currPlatform := currCtx.Platform
 
+		ok, err := utils.IsMesheryRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			log.Error("Meshery is not running. Run `mesheryctl system start` to start Meshery.")
+			return nil
+		}
+
 		switch currPlatform {
 		case "docker":
 			// List the running Meshery containers
@@ -66,11 +71,13 @@ var statusCmd = &cobra.Command{
 			}
 
 			outputString := string(outputStd)
+
 			if strings.Contains(outputString, "meshery") {
 				log.Info(outputString)
-			} else {
-				log.Info("Meshery is not running, run `mesheryctl system start` to start Meshery")
 			}
+
+			// Also print the status of pods in the MesheryNamespace
+			fallthrough
 
 		case "kubernetes":
 			// if the platform is kubernetes, use kubernetes go-client to
@@ -83,17 +90,8 @@ var statusCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			// podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
-			// Create a deployment interface for the MesheryNamespace
-			deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
-
 			// List the pods in the MesheryNamespace
-			// podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-
-			// List the deployments in the MesheryNamespace
-			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := utils.GetPods(client, utils.MesheryNamespace)
 
 			if err != nil {
 				return err
@@ -101,41 +99,45 @@ var statusCmd = &cobra.Command{
 
 			var data [][]string
 
-			// List all the deployments similar to kubectl get deployments -n MesheryNamespace
-			for _, deployment := range deploymentList.Items {
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+				// Calculate the age of the pod
+				podCreationTime := pod.GetCreationTimestamp()
+				age := time.Since(podCreationTime.Time).Round(time.Second)
 
-				// Calculate the age of the deployment
-				deploymentCreationTime := deployment.GetCreationTimestamp()
-				age := time.Since(deploymentCreationTime.Time).Round(time.Second)
+				// Get the status of each of the pods
+				podStatus := pod.Status
 
-				// Get the status of each of the deployments
-				deploymentStatus := deployment.Status
+				var containerRestarts int32
+				var containerReady int
+				var totalContainers int
 
-				// Get the values from the deployment status
-				name := deployment.GetName()
-				ready := fmt.Sprintf("%d/%d", deploymentStatus.ReadyReplicas, deploymentStatus.Replicas)
-				updated := fmt.Sprintf("%d", deploymentStatus.UpdatedReplicas)
-				available := fmt.Sprintf("%d", deploymentStatus.AvailableReplicas)
+				if len(pod.Spec.Containers) > 0 {
+					// If a pod has multiple containers, get the status from all
+					for container := range pod.Spec.Containers {
+						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
+						if podStatus.ContainerStatuses[container].Ready {
+							containerReady++
+						}
+						totalContainers++
+					}
+				}
+
+				// Get the values from the pod status
+				name := utils.CleanPodNames(pod.GetName())
+				ready := fmt.Sprintf("%v/%v", containerReady, containerReady)
+				status := fmt.Sprintf("%v", podStatus.Phase)
+				restarts := fmt.Sprintf("%v", containerRestarts)
 				ageS := age.String()
 
 				// Append this to data to be printed in a table
-				data = append(data, []string{name, ready, updated, available, ageS})
+				data = append(data, []string{name, ready, status, restarts, ageS})
 			}
 
 			// Print the data to a table for readability
-			utils.PrintToTable([]string{"Name", "Ready", "Up-to-date", "Available", "Age"}, data)
+			utils.PrintToTable([]string{"Name", "Ready", "Status", "Restarts", "Age"}, data)
 
-			// List all the pods
-			// for i, pod := range podList.Items {
-			// 	// Get the status from all the pods
-			// 	podstatusPhase := string(pod.Status.Phase)
-			// 	podCreationTime := pod.GetCreationTimestamp()
-			// 	age := time.Since(podCreationTime.Time).Round(time.Second)
-
-			// 	// Log the status
-			// 	podInfo := fmt.Sprintf("[%d] Pod: %s, Phase: %s , Created: %s, Age: %s", i, pod.GetName(), podstatusPhase, podCreationTime, age.String())
-			// 	fmt.Println(podInfo)
-			// }
+			log.Info("\nMeshery endpoint is " + mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint)
 		}
 		return nil
 	},

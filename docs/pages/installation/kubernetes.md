@@ -11,41 +11,75 @@ image: /assets/img/platforms/kubernetes.svg
 
 {% include installation_prerequisites.html %}
 
-**To set up and run Meshery on Kubernetes** 
+## Available Deployment Methods
 
-- [ Use Helm and set up a Kubernetes cluster](#using-helm)
-- [Run Meshery on existing Kubernetes cluster](#using-kubernetes-manifests)
+- [Using `mesheryctl`](#using-mesheryctl)
+- [Using `helm`](#using-helm)
+- [Using Kubernetes manifests](#using-kubernetes-manifests)
 
-### **Using Helm**
+### **Using mesheryctl**
+Ensure that your `current-context` has `platform: kubernetes` configured in `~/.meshery/config.yaml`. Example context:
 
-#### 1. **Helm v3**
-Run the following:
+```
+➜  ~ mesheryctl system context view
+endpoint: http://localhost:9081
+token: Default
+platform: kubernetes
+adapters:
+- meshery-istio
+- meshery-linkerd
+- meshery-consul
+- meshery-nsm
+- meshery-kuma
+- meshery-cpx
+- meshery-osm
+- meshery-traefik-mesh
+channel: stable
+version: latest
+```
+
+Deploy Meshery to your Kubernetes cluster by executing:
+
+<pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+    $ mesheryctl system start
+ </div></div>
+</pre>
+
+
+### **Using Helm Charts**
+
+Run the following for default:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create namespace meshery
- $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
+ $ helm repo add meshery https://meshery.io/charts/
+ $ helm install my-meshery meshery/meshery --version 2.1.2
  </div></div>
  </pre>
 
-#### 2. **Helm v2**
-Run the following:
+Customize of deployment the Meshery adapters:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create namespace meshery
- $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | kubectl apply -f -
+ $ helm repo add meshery https://meshery.io/charts/
+
+ # Manually disable the adapters you do not want to deploy
+ $ helm install --set key=value --set key=value my-meshery meshery/meshery --version 2.1.2
+
+ # Example : Disabled the Linkerd2 adapter and check the deployment manifest that the helm will deploy
+ $ helm install --set meshery-linkerd.enabled=false meshery/meshery --version 2.1.2 --dry-run
  </div></div>
  </pre>
+
+The key of Meshery adapters you can find [here](https://artifacthub.io/packages/helm/meshery/meshery#values)
 
 ### **Using Kubernetes Manifests**
 Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; 
+ $ git clone https://github.com/layer5io/meshery.git;
  $ cd meshery
  </div></div>
  </pre>
@@ -68,9 +102,9 @@ All the needed deployment yamls for deploying Meshery are included in the *insta
 
 Once the yaml files are deployed, we need to expose the *meshery* service to be able to access the service from outside the cluster. There are several ways a service can be exposed on Kubernetes. Here we will describe 3 common ways we can expose a service:
 
-#### **Ingress** 
+#### **Ingress**
 
-If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to expose Meshery: 
+If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to expose Meshery:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
@@ -87,8 +121,9 @@ If your Kubernetes cluster has a functional Ingress Controller, then you can con
      paths:
      - path: /
          backend:
+        # Please kindly check your service name and service port to confirm the Ingress can work well
          serviceName: meshery-service
-         servicePort: 8080
+         servicePort: 9081
  </div></div>
  </pre>
 

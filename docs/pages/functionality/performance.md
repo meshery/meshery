@@ -9,6 +9,16 @@ list: include
 
 Key to the efficient operation of any service mesh is the measurement and management of it's performance.
 
+## Performance Profiles
+
+Performance Profile is a new and improved way to save performance test configurations, schedule performance tests, etc. Meshery Performance Profiles offers the following features:
+1. Saving Test Configurations
+2. Create schedules for running tests automatically. 
+3. Meshery offers UI for describing the schedules which are as powerful as CRON but without the hassle of remembering its syntax!
+4. All the tests performed are under Profiles which has multiple advantages like:
+    - Access test results ran under a certain profiles at one place.
+    - If running ad-hoc tests, user can anytime come back and rename the performance profiles for re-use.
+
 ## Load Generators
 
 Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.

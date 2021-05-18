@@ -1,0 +1,96 @@
+syntax="proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "layer5/service-mesh-performance/protos/service_mesh.proto";
+import "layer5/meshery/meshes/metadata.proto";
+
+package meshes;
+option go_package = "github.com/layer5io/meshery/meshes;meshes";
+
+message RegisterRequest {
+    bytes kubeconfig = 1;
+    Identity identity = 2;
+}
+
+message RegisterResponse {
+    string id = 1;
+    metadata.RequestStatus status = 2;
+}
+
+message InfoResponse {
+    metadata.Component component = 1;
+    smp.ServiceMesh mesh_type = 2;
+    metadata.Server server = 3;
+    repeated Operation operations = 4;
+    metadata.ComponentStatus status = 5;
+    map<string,string> properties = 6;
+}
+
+enum OperationType {
+    CREATE = 1;
+    DELETE = 2;
+    UPDATE = 3;
+}
+
+enum OperationCategory {
+    INSTALL = 0;
+    SAMPLE_APPLICATION = 1;
+    CONFIGURE = 2;
+    VALIDATE = 3;
+    CUSTOM = 4;
+    LABS = 5;
+}
+
+message Operation{
+    OperationCategory category = 1;
+    string description = 2;
+    google.protobuf.Struct Details = 3;
+}
+
+message OperationResponse {
+    string id = 1;
+    metadata.RequestStatus status = 2;
+}
+
+message OAMRequest {
+    repeated string oam_comps = 1;
+    string oam_config = 2;
+}
+
+message OperationRequest {
+    string name = 1;
+    OperationType type = 2;
+    string user = 3;
+    bytes custom_body = 4;
+    oneof inputs_oneof {
+        string namespace = 1;
+        OAMRequest inputs = 2;
+        google.protobuf.Struct inputs = 3;
+    }
+}
+
+message ApplyOperationRequest {
+    bytes kubeconfig = 1;
+    OperationRequest operation = 2;
+}
+
+message ApplyOperationResponse {
+    string operation_id = 1;
+    metadata.RequestStatus status = 2;
+    string details = 3;
+}
+
+message StreamEventsRequest {}
+
+message StreamEventsResponse {
+    string adapter_id = 1;
+    Message message = 2;
+}
+
+service AdapterService {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Info(google.protobuf.Empty) returns (InfoResponse) {}
+    rpc ApplyOperation(ApplyOperationRequest) returns (ApplyOperationResponse) {}
+    rpc StreamEvents(ApplyOperationRequest) returns (ApplyOperationResponse) {}
+}

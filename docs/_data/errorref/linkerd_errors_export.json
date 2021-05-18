@@ -1,0 +1,17 @@
+{
+    "errors_export": {
+        "component_name": "Linkerd",
+        "component_type": "adapter",
+        "errors": {
+            "11300": {
+                "name": "ErrEmptyConfigCode",
+                "code": "11300",
+                "severity": "",
+                "long_description": "",
+                "short_description": "",
+                "probable_cause": "",
+                "suggested_remediation": ""
+            }
+        }
+    }
+}

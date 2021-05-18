@@ -90,6 +90,8 @@
       url: guides/sample-apps
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
+    - title: Troubleshooting Guide
+      url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
     - title: Using mesheryctl
@@ -105,8 +107,12 @@
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
+    - title: "REST & GraphQL APIs"
+      url: extensibility/api
 - title: Reference
   url: reference
   links:
-    - title: mesheryctl Command Reference
+    - title: mesheryctl Commands
       url: reference/mesheryctl
+    - title: Error Codes
+      url: reference/error-codes

@@ -55,6 +55,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	// operatingSystem, err := exec.Command("uname", "-s").Output()
+	// if err != nil {
+	// 	logrus.Error(err)
+	// }
+
 	ctx := context.Background()
 
 	viper.AutomaticEnv()
@@ -62,6 +67,7 @@ func main() {
 	viper.SetDefault("PORT", 8080)
 	viper.SetDefault("ADAPTER_URLS", "")
 	viper.SetDefault("BUILD", version)
+	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
 
@@ -153,6 +159,7 @@ func main() {
 		meshsyncmodel.Object{},
 		models.PerformanceProfile{},
 		models.MesheryResult{},
+		models.MesheryPattern{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -165,6 +172,8 @@ func main() {
 		SmiResultPersister:           smiResultPersister,
 		TestProfilesPersister:        testConfigPersister,
 		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
+		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
+		MesheryFilterPersister:       &models.MesheryFilterPersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,

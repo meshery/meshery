@@ -21,7 +21,7 @@ import Divider from "@material-ui/core/Divider";
 
 const styles = (theme) => ({
   root: {
-    padding: "80px 0px",
+    padding: "170px 0px",
     textAlign: "center",
   },
   container: {
@@ -48,10 +48,14 @@ const styles = (theme) => ({
   providerLink: {
     color: "darkcyan",
     cursor: "pointer",
+    fontWeight: 700,
   },
   providerDesc: {
     whiteSpace: "pre",
   },
+  chartTitle:{
+    fontWeight: 700,
+  }
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -122,7 +126,7 @@ class ProviderComponent extends React.Component {
   };
 
   handleMenuItemClick = (index) => {
-    this.setState({ selectedProvider: index });
+    this.setState({ selectedProvider: index, open: false });
   };
 
   handleToggle() {

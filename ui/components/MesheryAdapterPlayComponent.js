@@ -149,7 +149,7 @@ const styles = (theme) => ({
   },
   paneSection: {
     backgroundColor: "#fff",
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
     borderRadius: 4,
   },
   chipNamespace: {

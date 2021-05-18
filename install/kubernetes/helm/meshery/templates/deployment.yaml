@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "meshery.fullname" . }}
+  name: {{ include "meshery.name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "meshery.labels" . | nindent 4 }}

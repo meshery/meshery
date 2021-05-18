@@ -21,7 +21,7 @@ docker:
 
 # Runs Meshery in a container locally and points to locally-running
 #  Meshery Cloud for user authentication.
-docker-run-local-cloud: 
+docker-run-local-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	--link meshery-cloud:meshery-cloud \
@@ -33,7 +33,7 @@ docker-run-local-cloud:
 
 # Runs Meshery in a container locally and points to remote
 #  Meshery Cloud for user authentication.
-docker-run-cloud: 
+docker-run-cloud:
 	(docker rm -f meshery) || true
 	docker run --name meshery -d \
 	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -47,7 +47,7 @@ docker-run-cloud:
 # Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
-run-local-cloud: 
+run-local-cloud:
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
@@ -59,7 +59,7 @@ run-local-cloud:
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local: 
+run-local:
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -71,6 +71,7 @@ run-local:
 
 run-fast:
 	cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
@@ -91,11 +92,13 @@ golangci-run:
 	$(GOPATH)/bin/golangci-lint run
 
 proto:
+	# see https://grpc.io/docs/languages/go/quickstart/
 	# go get -u google.golang.org/grpc
-	# go get -u github.com/golang/protobuf/protoc-gen-go
+	# go get -u google.golang.org/protobuf/cmd/protoc-gen-go \
+	#         google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	# PATH=$(PATH):`pwd`/../protoc/bin:$(GOPATH)/bin
 	# export PATH=$PATH:`pwd`/../protoc/bin:$GOPATH/bin
-	protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/
+	protoc -I meshes/ meshes/meshops.proto --go-grpc_out=./meshes/ --go_out=./meshes/
 
 # Installs dependencies for building the user interface.
 setup-ui-libs:

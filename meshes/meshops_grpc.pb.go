@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // MeshServiceClient is the client API for MeshService service.
@@ -19,10 +20,12 @@ const _ = grpc.SupportPackageIsVersion7
 type MeshServiceClient interface {
 	CreateMeshInstance(ctx context.Context, in *CreateMeshInstanceRequest, opts ...grpc.CallOption) (*CreateMeshInstanceResponse, error)
 	MeshName(ctx context.Context, in *MeshNameRequest, opts ...grpc.CallOption) (*MeshNameResponse, error)
+	MeshVersions(ctx context.Context, in *MeshVersionsRequest, opts ...grpc.CallOption) (*MeshVersionsResponse, error)
 	ApplyOperation(ctx context.Context, in *ApplyRuleRequest, opts ...grpc.CallOption) (*ApplyRuleResponse, error)
 	SupportedOperations(ctx context.Context, in *SupportedOperationsRequest, opts ...grpc.CallOption) (*SupportedOperationsResponse, error)
 	StreamEvents(ctx context.Context, in *EventsRequest, opts ...grpc.CallOption) (MeshService_StreamEventsClient, error)
 	ProcessOAM(ctx context.Context, in *ProcessOAMRequest, opts ...grpc.CallOption) (*ProcessOAMResponse, error)
+	ComponentInfo(ctx context.Context, in *ComponentInfoRequest, opts ...grpc.CallOption) (*ComponentInfoResponse, error)
 }
 
 type meshServiceClient struct {
@@ -51,6 +54,15 @@ func (c *meshServiceClient) MeshName(ctx context.Context, in *MeshNameRequest, o
 	return out, nil
 }
 
+func (c *meshServiceClient) MeshVersions(ctx context.Context, in *MeshVersionsRequest, opts ...grpc.CallOption) (*MeshVersionsResponse, error) {
+	out := new(MeshVersionsResponse)
+	err := c.cc.Invoke(ctx, "/meshes.MeshService/MeshVersions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *meshServiceClient) ApplyOperation(ctx context.Context, in *ApplyRuleRequest, opts ...grpc.CallOption) (*ApplyRuleResponse, error) {
 	out := new(ApplyRuleResponse)
 	err := c.cc.Invoke(ctx, "/meshes.MeshService/ApplyOperation", in, out, opts...)
@@ -70,7 +82,7 @@ func (c *meshServiceClient) SupportedOperations(ctx context.Context, in *Support
 }
 
 func (c *meshServiceClient) StreamEvents(ctx context.Context, in *EventsRequest, opts ...grpc.CallOption) (MeshService_StreamEventsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MeshService_serviceDesc.Streams[0], "/meshes.MeshService/StreamEvents", opts...)
+	stream, err := c.cc.NewStream(ctx, &MeshService_ServiceDesc.Streams[0], "/meshes.MeshService/StreamEvents", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -110,16 +122,27 @@ func (c *meshServiceClient) ProcessOAM(ctx context.Context, in *ProcessOAMReques
 	return out, nil
 }
 
+func (c *meshServiceClient) ComponentInfo(ctx context.Context, in *ComponentInfoRequest, opts ...grpc.CallOption) (*ComponentInfoResponse, error) {
+	out := new(ComponentInfoResponse)
+	err := c.cc.Invoke(ctx, "/meshes.MeshService/ComponentInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MeshServiceServer is the server API for MeshService service.
 // All implementations must embed UnimplementedMeshServiceServer
 // for forward compatibility
 type MeshServiceServer interface {
 	CreateMeshInstance(context.Context, *CreateMeshInstanceRequest) (*CreateMeshInstanceResponse, error)
 	MeshName(context.Context, *MeshNameRequest) (*MeshNameResponse, error)
+	MeshVersions(context.Context, *MeshVersionsRequest) (*MeshVersionsResponse, error)
 	ApplyOperation(context.Context, *ApplyRuleRequest) (*ApplyRuleResponse, error)
 	SupportedOperations(context.Context, *SupportedOperationsRequest) (*SupportedOperationsResponse, error)
 	StreamEvents(*EventsRequest, MeshService_StreamEventsServer) error
 	ProcessOAM(context.Context, *ProcessOAMRequest) (*ProcessOAMResponse, error)
+	ComponentInfo(context.Context, *ComponentInfoRequest) (*ComponentInfoResponse, error)
 	mustEmbedUnimplementedMeshServiceServer()
 }
 
@@ -133,6 +156,9 @@ func (UnimplementedMeshServiceServer) CreateMeshInstance(context.Context, *Creat
 func (UnimplementedMeshServiceServer) MeshName(context.Context, *MeshNameRequest) (*MeshNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MeshName not implemented")
 }
+func (UnimplementedMeshServiceServer) MeshVersions(context.Context, *MeshVersionsRequest) (*MeshVersionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MeshVersions not implemented")
+}
 func (UnimplementedMeshServiceServer) ApplyOperation(context.Context, *ApplyRuleRequest) (*ApplyRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApplyOperation not implemented")
 }
@@ -145,6 +171,9 @@ func (UnimplementedMeshServiceServer) StreamEvents(*EventsRequest, MeshService_S
 func (UnimplementedMeshServiceServer) ProcessOAM(context.Context, *ProcessOAMRequest) (*ProcessOAMResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessOAM not implemented")
 }
+func (UnimplementedMeshServiceServer) ComponentInfo(context.Context, *ComponentInfoRequest) (*ComponentInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ComponentInfo not implemented")
+}
 func (UnimplementedMeshServiceServer) mustEmbedUnimplementedMeshServiceServer() {}
 
 // UnsafeMeshServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -155,7 +184,7 @@ type UnsafeMeshServiceServer interface {
 }
 
 func RegisterMeshServiceServer(s grpc.ServiceRegistrar, srv MeshServiceServer) {
-	s.RegisterService(&_MeshService_serviceDesc, srv)
+	s.RegisterService(&MeshService_ServiceDesc, srv)
 }
 
 func _MeshService_CreateMeshInstance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -190,6 +219,24 @@ func _MeshService_MeshName_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MeshServiceServer).MeshName(ctx, req.(*MeshNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeshService_MeshVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MeshVersionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeshServiceServer).MeshVersions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meshes.MeshService/MeshVersions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeshServiceServer).MeshVersions(ctx, req.(*MeshVersionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -269,7 +316,28 @@ func _MeshService_ProcessOAM_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-var _MeshService_serviceDesc = grpc.ServiceDesc{
+func _MeshService_ComponentInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ComponentInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeshServiceServer).ComponentInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meshes.MeshService/ComponentInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeshServiceServer).ComponentInfo(ctx, req.(*ComponentInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// MeshService_ServiceDesc is the grpc.ServiceDesc for MeshService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var MeshService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "meshes.MeshService",
 	HandlerType: (*MeshServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -282,6 +350,10 @@ var _MeshService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _MeshService_MeshName_Handler,
 		},
 		{
+			MethodName: "MeshVersions",
+			Handler:    _MeshService_MeshVersions_Handler,
+		},
+		{
 			MethodName: "ApplyOperation",
 			Handler:    _MeshService_ApplyOperation_Handler,
 		},
@@ -292,6 +364,10 @@ var _MeshService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProcessOAM",
 			Handler:    _MeshService_ProcessOAM_Handler,
+		},
+		{
+			MethodName: "ComponentInfo",
+			Handler:    _MeshService_ComponentInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

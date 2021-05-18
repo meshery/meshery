@@ -1,6 +1,6 @@
 # mesheryctl
 
-`mesheryctl` is the CLI Client for Meshery.
+`mesheryctl` is the CLI client for Meshery.
 
 # Contributing
 

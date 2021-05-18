@@ -2,7 +2,7 @@
 layout: default
 title: "Extensibility: APIs"
 permalink: extensibility/api
-type: Reference
+type: Extensibility
 abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
 #redirect_from: extensibility
 ---
@@ -26,7 +26,162 @@ Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints be
 
 ## GraphQL
 
-Meshery provides a GraphQl API available through the default port of `/tcp`.
+Meshery provides its GraphQl API at `localhost:9081/api/system/graphql/query`. A GraphQL request can be made as a POST request to the endpoint with the query as the payload.
+
+Explore the Meshery GraphQL API using the `interactive Playground` provided with meshery instance at `localhost:9081/api/system/graphql/playground`.
+
+Meshery GrahphQL API can be used to perform three operations:
+
+- Queries for data retrieval.
+- Mutations for creating, updating, and deleting data.
+- Subscriptions for watching for any data changes.
+
+### Queries
+
+{% for data in site.data.GraphQL.Queries %}
+#### `{{data.name}}`
+
+{{data.description}}
+
+{% if data.arguments %}
+**Arguments**
+
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+    {% for arg in data.arguments %}
+    <tr>
+        <td><code>{{arg.name}}</code></td>
+        <td><code>{{arg.type}}</code></td>
+        <td>{{arg.desc}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+_No Arguments needed._
+{% endif %}
+{% endfor %}
+
+### Mutations
+
+{% for data in site.data.GraphQL.Mutations %}
+#### `{{data.name}}`
+
+{{data.description}}
+
+{% if data.arguments %}
+**Arguments**
+
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+    {% for arg in data.arguments %}
+    <tr>
+        <td><code>{{arg.name}}</code></td>
+        <td><code>{{arg.type}}</code></td>
+        <td>{{arg.desc}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+_No Arguments needed._
+{% endif %}
+{% endfor %}
+
+### Subscriptions
+
+{% for data in site.data.GraphQL.Subscriptions %}
+#### `{{data.name}}`
+
+{{data.description}}
+
+{% if data.arguments %}
+**Arguments**
+
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+</thead>
+    {% for arg in data.arguments %}
+    <tr>
+        <td><code>{{arg.name}}</code></td>
+        <td><code>{{arg.type}}</code></td>
+        <td>{{arg.desc}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+_No Arguments needed._
+{% endif %}
+{% endfor %}
+
+### Object Types
+
+{% for data in site.data.GraphQL.ObjectTypes %}
+#### `{{data.name}}`
+
+{{data.description}}
+
+{% if data.arguments %}
+**Arguments**
+
+<table>
+<thead>
+    <tr>
+        <th>Field</th>
+        <th>Type</th>
+    </tr>
+</thead>
+    {% for arg in data.arguments %}
+    <tr>
+        <td><code>{{arg.name}}</code></td>
+        <td><code>{{arg.type}}</code></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endfor %}
+
+### Enumeration Types
+
+{% for data in site.data.GraphQL.EnumerationTypes %}
+#### `{{data.name}}`
+
+{{data.description}}
+
+{% if data.arguments %}
+**Arguments**
+
+<table>
+<thead>
+    <tr>
+        <th>Value</th>
+        <th>Description</th>
+    </tr>
+</thead>
+    {% for arg in data.arguments %}
+    <tr>
+        <td><code>{{arg.value}}</code></td>
+        <td>{{arg.desc}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endfor %}
 
 ## REST
 

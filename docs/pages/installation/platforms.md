@@ -13,6 +13,7 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 
 ## Platform Compatibility Matrix
+
 Find installation instructions for the Supported Platforms in the compatibility table.
 
 | Platform                                                                                                                                              |        Version        |

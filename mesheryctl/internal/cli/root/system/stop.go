@@ -39,10 +39,7 @@ var stopCmd = &cobra.Command{
 	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if tempContext != "" {
-			return utils.PreReqCheck(cmd.Use, tempContext)
-		}
-		return utils.PreReqCheck(cmd.Use, "")
+		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := stop(); err != nil {
@@ -66,13 +63,16 @@ func stop() error {
 	}
 
 	// Get the current platform and the specified adapters in the config.yaml
-	currPlatform := currCtx.Platform
 	RequestedAdapters := currCtx.Adapters
 
-	switch currPlatform {
+	switch currCtx.Platform {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
-		if !utils.IsMesheryRunning() {
+		ok, err := utils.IsMesheryRunning(currCtx.Platform)
+		if err != nil {
+			return err
+		}
+		if !ok {
 			log.Info("Meshery is not running. Nothing to stop.")
 			return nil
 		}
@@ -101,6 +101,17 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
+		client, err := meshkitkube.New([]byte(""))
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(client, false, true)
+
+		if err != nil {
+			return err
+		}
+
 		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
 		// to start from scratch with a fresh install.
 		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
@@ -109,6 +120,14 @@ func stop() error {
 
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
+		ok, err := utils.IsMesheryRunning(currCtx.Platform)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			log.Info("Meshery is not running. Nothing to stop.")
+			return nil
+		}
 
 		userResponse := false
 		if utils.SilentFlag {
@@ -125,7 +144,6 @@ func stop() error {
 
 		// create an kubernetes client
 		client, err := meshkitkube.New([]byte(""))
-
 		if err != nil {
 			return err
 		}
@@ -163,6 +181,12 @@ func stop() error {
 
 		// delete the Meshery deployment using the manifest files to stop Meshery
 		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, true)
+
+		if err != nil {
+			return err
+		}
+
+		err = utils.ApplyOperatorManifest(client, false, true)
 
 		if err != nil {
 			return err

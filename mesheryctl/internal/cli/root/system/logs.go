@@ -32,7 +32,6 @@ import (
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	apiCorev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,7 +42,7 @@ var logsCmd = &cobra.Command{
 	Use:   "logs",
 	Short: "Print logs",
 	Long:  `Print history of Meshery's container logs and begin tailing them.`,
-	Args:  cobra.NoArgs,
+	Args:  cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("Starting Meshery logging...")
 
@@ -63,7 +62,11 @@ var logsCmd = &cobra.Command{
 		// switch statement for multiple platform
 		switch currPlatform {
 		case "docker":
-			if ok := utils.IsMesheryRunning(); !ok {
+			ok, err := utils.IsMesheryRunning(currPlatform)
+			if err != nil {
+				return err
+			}
+			if !ok {
 				log.Error("No logs to show. Meshery is not running.")
 				return nil
 			}
@@ -96,6 +99,15 @@ var logsCmd = &cobra.Command{
 			// if the platform is kubernetes, use kubernetes go-client to
 			// display pod status in the MesheryNamespace
 
+			ok, err := utils.IsMesheryRunning(currPlatform)
+			if err != nil {
+				return err
+			}
+			if !ok {
+				log.Error("No logs to show. Meshery is not running.")
+				return nil
+			}
+
 			// create an kubernetes client
 			client, err := meshkitkube.New([]byte(""))
 
@@ -103,39 +115,69 @@ var logsCmd = &cobra.Command{
 				return err
 			}
 
-			// Create a pod interface for the MesheryNamespace
-			podInterface := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace)
-
 			// List the pods in the MesheryNamespace
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			podList, err := utils.GetPods(client, utils.MesheryNamespace)
+			availablePods := podList.Items
+
 			if err != nil {
 				return err
 			}
 
 			var data []string
-			podLogOpts := apiCorev1.PodLogOptions{}
+			var requiredPods []string
 
-			// List all the pods similar to kubectl get pods -n MesheryNamespace
-			for _, pod := range podList.Items {
-				// Get the values from the pod status
-				name := pod.GetName()
-				req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
+			// If the user specified logs from any particular pods, then show only that
+			if len(args) > 0 {
+				// Get the actual pod names even when the user specifes incomplete pod names
+				requiredPods, err = utils.GetRequiredPods(args, availablePods)
 
-				logs, err := req.Stream(context.TODO())
+				// error when the specified pod is invalid
 				if err != nil {
 					return err
 				}
-				defer logs.Close()
+			}
 
-				buf := new(bytes.Buffer)
-				_, err = io.Copy(buf, logs)
-				if err != nil {
-					return fmt.Errorf("error in copy information from logs to buf")
+			// List all the pods similar to kubectl get pods -n MesheryNamespace
+			for _, pod := range podList.Items {
+
+				// Get the values from the pod status
+				name := pod.GetName()
+
+				// Only print the logs from the required pods
+				if len(requiredPods) > 0 {
+					if !utils.IsPodRequired(requiredPods, name) {
+						continue
+					}
 				}
 
-				// Append this to data to be printed
-				for _, str := range strings.Split(buf.String(), "\n") {
-					data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+				// If a pod has multiple containers, get the logs from all the containers
+				for container := range pod.Spec.Containers {
+					containerName := pod.Spec.Containers[container].Name
+
+					// Get the logs from a container within the pod
+					podLogOpts := apiCorev1.PodLogOptions{
+						Container: containerName,
+					}
+
+					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
+
+					logs, err := req.Stream(context.TODO())
+					if err != nil {
+						return err
+					}
+					defer logs.Close()
+
+					buf := new(bytes.Buffer)
+					_, err = io.Copy(buf, logs)
+					if err != nil {
+						return fmt.Errorf("error in copy information from logs to buf")
+					}
+
+					// Append this to data to be printed
+					for _, str := range strings.Split(buf.String(), "\n") {
+						data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+					}
+					data = append(data, "\n")
 				}
 			}
 

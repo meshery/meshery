@@ -475,6 +475,7 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 	}
 	result := &models.MesheryResult{
 		ID:                resultUUID,
+		TestID:            config.TestUUID,
 		ServerMetrics:     queryResults,
 		ServerBoardConfig: board,
 	}
