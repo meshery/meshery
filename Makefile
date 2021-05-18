@@ -65,7 +65,7 @@ run-local:
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
+	ADAPTER_URLS="" \
 	./meshery; \
 	cd ..
 
