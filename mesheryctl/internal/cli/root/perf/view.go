@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -19,18 +18,12 @@ import (
 
 var outFormatFlag string
 
-type ProResponse struct {
-	name           string
-	endpoint       string
-	loadgenerators string
-	test           time.Duration
-}
-
 var viewCmd = &cobra.Command{
-	Use:   "view",
-	Short: "view perf profile",
-	Long:  `See the configuration of your performance profile`,
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "view",
+	Short:   "view perf profile",
+	Long:    `See the configuration of your performance profile`,
+	Example: "mesheryctl perf view [ performance test profile name ]",
+	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -87,8 +80,8 @@ var viewCmd = &cobra.Command{
 				fmt.Printf("endpoint: %v\n", map2["endpoints"])
 				fmt.Printf("load_generators %v\n", map2["load_generators"])
 				fmt.Printf("Test run duration %v\n", map2["duration"])
-				return nil
-			} else if outFormatFlag != "json" {
+			}
+			if outFormatFlag != "json" && outFormatFlag != "" {
 				return errors.New("output-format choice invalid, use json")
 			}
 		}
