@@ -36,8 +36,6 @@ Guides to using and troubleshooting Meshery's various features and components.
 
 {% include toc.html page=Guides %}
 
-{:toc}
-
 <!-- {% comment %}
 #
 #  Change date order by adding '| reversed'

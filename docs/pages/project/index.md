@@ -3,8 +3,7 @@ layout: default
 title: Layer5 Community
 permalink: project
 description: Meshery Project
-redirect_from:
- - /project/
+redirect_from: project/
 ---
 
 The Meshery project is maintained by the [Layer5 community](https://layer5.io/community). We are an open source organization that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Our projects advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Layer5 projects forward.

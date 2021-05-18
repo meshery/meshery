@@ -2,6 +2,7 @@
 layout: default
 title: Troubleshooting Guide
 permalink: guides/troubleshooting
+redirect_from: guides/troubleshooting/
 language: en
 ---
 
