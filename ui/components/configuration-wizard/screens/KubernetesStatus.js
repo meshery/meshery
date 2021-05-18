@@ -94,10 +94,10 @@ class KubernetesStatus extends React.Component {
         <div className={classes.infoContainer}>
           <Typography className={classes.infoStatus}>Status</Typography>
           <Typography className={classes.infoContext}>
-            Current-Context:{inClusterConfig ? "Using In Cluster Config" : contextName}
+            Current-Context:  {inClusterConfig ? "Using In Cluster Config" : contextName}
           </Typography>
           <Typography className={classes.infoContext}>
-            Cluster: {inClusterConfig ? "Using In Cluster Config" : "Using Out Of Cluster Config"}
+            Cluster:  {inClusterConfig ? "Using In Cluster Config" : "Using Out Of Cluster Config"}
           </Typography>
         </div>
       </>
