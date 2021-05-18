@@ -29,6 +29,14 @@ describe('Settings', () => {
         .get('[data-cy="itemListContextName"] > .MuiListItemText-secondary')
         .should('have.text', 'kind-kind-cluster')
     })
+
+    it('enable Meshery Operator switch', () => {
+      cy.intercept('POST', '/api/system/graphql/query').as('OperatorStatusMutation')
+
+      cy.get('[data-cy="operator-switch"]').click()
+
+      cy.wait('@OperatorStatusMutation')
+    });
   })
 
   describe('Service Meshes', () => {

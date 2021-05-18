@@ -201,9 +201,9 @@ class MeshConfigComponent extends React.Component {
         configuredServer,
         ts: props.ts,
       }
-      
+
       // If contextsFromFile is empty then add the default value to it
-      if (!state.contextsFromFile?.length) newState = { ...newState, contextsFromFile: [{ contextName, currentContext: true }] } 
+      if (!state.contextsFromFile?.length) newState = { ...newState, contextsFromFile: [{ contextName, currentContext: true }] }
       return newState;
     }
     return {};
@@ -225,7 +225,7 @@ class MeshConfigComponent extends React.Component {
         next: res => {
           self.setOperatorState(res)
         },
-        error: (err) => console.log("error at operator scan: " + err), 
+        error: (err) => console.log("error at operator scan: " + err),
       })
   }
 
@@ -238,12 +238,12 @@ class MeshConfigComponent extends React.Component {
 
     if (res.operator?.status === "ENABLED") {
       res.operator?.controllers?.forEach(controller => {
-        if(controller.name === "broker" && controller.status == "ENABLED"){
+        if (controller.name === "broker" && controller.status == "ENABLED") {
           self.setState({
             NATSInstalled: true,
             NATSVersion: controller.version,
           })
-        } else if(controller.name === "meshsync" && controller.status == "ENABLED"){
+        } else if (controller.name === "meshsync" && controller.status == "ENABLED") {
           self.setState({
             meshSyncInstalled: true,
             meshSyncVersion: controller.version,
@@ -253,7 +253,7 @@ class MeshConfigComponent extends React.Component {
       self.setState({
         operatorInstalled: true,
         operatorSwitch: true,
-        operatorVersion:res.operator?.version,
+        operatorVersion: res.operator?.version,
       })
       return
     }
@@ -263,9 +263,9 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
-      operatorVersion:"N/A",
-      meshSyncVersion:"N/A",
-      NATSVersion:"N/A",
+      operatorVersion: "N/A",
+      meshSyncVersion: "N/A",
+      NATSVersion: "N/A",
     })
   }
 
@@ -281,7 +281,7 @@ class MeshConfigComponent extends React.Component {
       if (errors !== undefined) {
         self.handleError("Operator action failed")
       }
-      self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+      self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), {
         variant: 'success',
         autoHideDuration: 2000,
         action: (key) => (
@@ -393,13 +393,13 @@ class MeshConfigComponent extends React.Component {
                 status: "DISABLED",
               }
               self.props.updateProgress({ showProgress: true })
-                    
+
               changeOperatorState((response, errors) => {
                 self.props.updateProgress({ showProgress: false });
                 if (errors !== undefined) {
                   self.handleError("Operator action failed")
                 }
-                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), {
                   variant: 'success',
                   autoHideDuration: 2000,
                   action: (key) => (
@@ -453,7 +453,7 @@ class MeshConfigComponent extends React.Component {
       if (typeof result !== 'undefined') {
         this.props.enqueueSnackbar('Kubernetes was successfully pinged!', {
           variant: 'success',
-          "data-cy":"k8sSuccessSnackbar",
+          "data-cy": "k8sSuccessSnackbar",
           autoHideDuration: 2000,
           action: (key) => (
             <IconButton
@@ -533,13 +533,13 @@ class MeshConfigComponent extends React.Component {
                 status: "DISABLED",
               }
               self.props.updateProgress({ showProgress: true })
-                    
+
               changeOperatorState((response, errors) => {
                 self.props.updateProgress({ showProgress: false });
                 if (errors !== undefined) {
                   self.handleError("Operator action failed")
                 }
-                self.props.enqueueSnackbar('Operator '+response.operatorStatus.toLowerCase(), {
+                self.props.enqueueSnackbar('Operator ' + response.operatorStatus.toLowerCase(), {
                   variant: 'success',
                   autoHideDuration: 2000,
                   action: (key) => (
@@ -702,7 +702,7 @@ class MeshConfigComponent extends React.Component {
         <div className={classes.grey}>
           <FormGroup>
             <FormControlLabel
-              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary" />}
+              control={<Switch checked={operatorSwitch} onClick={self.handleOperatorSwitch} name="OperatorSwitch" color="primary" data-cy="operator-switch" />}
               label="Meshery Operator"
             />
           </FormGroup>
