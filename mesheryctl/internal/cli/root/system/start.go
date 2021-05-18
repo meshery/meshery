@@ -116,6 +116,7 @@ func start() error {
 			return err
 		}
 
+		//changing the port mapping in docker compose
 		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
 		userPort := strings.Split(currCtx.Endpoint, ":")
@@ -123,6 +124,7 @@ func start() error {
 		containerPort := strings.Split(services["meshery"].Ports[0], ":")
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
 		services["meshery"].Ports[0] = userPortMapping
+
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
@@ -193,18 +195,32 @@ func start() error {
 		}
 
 		var endpoint meshkitutils.HostPort
-		endpoint.Address = utils.EndpointProtocol + "://localhost"
+
+		userResponse := false
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		}
+
+		if userResponse {
+			endpoint.Address = utils.EndpointProtocol + "://localhost"
+			currCtx.Endpoint = endpoint.Address + ":" + userPort[len(userPort)-1]
+
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
+		} else {
+			endpoint.Address = userPort[0]
+		}
+
 		tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
 		if err != nil {
 			return err
 		}
 		endpoint.Port = int32(tempPort)
-		currCtx.Endpoint = endpoint.Address + ":" + userPort[len(userPort)-1]
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
-		}
 
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
