@@ -1,6 +1,6 @@
 {
     "errors_export": {
-        "component_name": "linkerd",
+        "component_name": "Linkerd",
         "component_type": "adapter",
         "errors": {
             "11300": {

@@ -1,18 +1,23 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+
+	v1core "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -97,10 +102,31 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 		}
 	}
 
+	if err := DownloadOperatorManifest(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DownloadOperatorManifest downloads the operator manifest files
+func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
 	err := DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
+	}
+
+	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
+	err = DownloadFile(brokerFilepath, BrokerURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
+	}
+
+	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
+	err = DownloadFile(meshsyncFilepath, MeshsyncURL)
+	if err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
 	}
 
 	return nil
@@ -120,17 +146,11 @@ func FetchManifests(version string) ([]Manifest, error) {
 		return nil, errors.Wrap(err, "failed to make GET request")
 	}
 
-	log.Debug("deleting ~/.meshery/manifests folder...")
-	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	err = CreateManifestsFolder()
+
+	if err != nil {
 		return nil, err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
-	// create a manifests folder under ~/.meshery to store the manifest files
-	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
-		return nil, errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
-	}
-	log.Debug("created manifests folder...")
 
 	gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
 	log.Info("downloading manifest files from ", gitHubFolder)
@@ -288,8 +308,19 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 	}
 
+	log.Debug("applied manifests to the Kubernetes cluster.")
+
+	return nil
+}
+
+// ApplyOperatorManifest applies/updates/deletes the operator manifest
+func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool) error {
+	// path to the manifest files ~/.meshery/manifests
+	manifestFiles := filepath.Join(MesheryFolder, ManifestsFolder)
+
 	//applying meshery operator file
 	MesheryOperatorManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperator))
+
 	if err != nil {
 		return errors.Wrap(err, "failed to read operator manifest files")
 	}
@@ -298,11 +329,35 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		return err
 	}
 
-	log.Debug("applied manifests to the Kubernetes cluster.")
+	//condition to check for system stop
+	if !delete {
+		MesheryBrokerManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorBroker))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to read broker manifest files")
+		}
+
+		if err = ApplyManifest([]byte(MesheryBrokerManifest), client, update, delete); err != nil {
+			return err
+		}
+
+		MesheryMeshsyncManifest, err := meshkitutils.ReadLocalFile(filepath.Join(manifestFiles, MesheryOperatorMeshsync))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to read meshsync manifest files")
+		}
+
+		if err = ApplyManifest([]byte(MesheryMeshsyncManifest), client, update, delete); err != nil {
+			return err
+		}
+	}
+
+	log.Debug("applied operator manifest.")
 
 	return nil
 }
 
+// ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
 func ChangeManifestVersion(fileName string, version string, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
@@ -348,4 +403,78 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	}
 
 	return nil
+}
+
+// CreateManifestsFolder creates a new folder (.meshery/manifests)
+func CreateManifestsFolder() error {
+	log.Debug("deleting ~/.meshery/manifests folder...")
+	// delete manifests folder if it already exists
+	if err := os.RemoveAll(ManifestsFolder); err != nil {
+		return err
+	}
+	log.Info("creating ~/.meshery/manifests folder...")
+	// create a manifests folder under ~/.meshery to store the manifest files
+	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
+		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
+	}
+	log.Debug("created manifests folder...")
+
+	return nil
+}
+
+// GetPods lists all the available pods in the MesheryNamespace
+func GetPods(client *meshkitkube.Client, namespace string) (*v1core.PodList, error) {
+	// Create a pod interface for the given namespace
+	podInterface := client.KubeClient.CoreV1().Pods(namespace)
+
+	// List the pods in the given namespace
+	podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+
+	if err != nil {
+		return nil, err
+	}
+	return podList, nil
+}
+
+// IsPodRequired checks if a given pod is specified in the required pods
+func IsPodRequired(requiredPods []string, pod string) bool {
+	for _, rp := range requiredPods {
+		if rp == pod {
+			return true
+		}
+	}
+	return false
+}
+
+// GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
+func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
+	var requiredPods []string
+	var availablePodsName []string
+	for _, pod := range availablePods {
+		availablePodsName = append(availablePodsName, pod.GetName())
+	}
+	for _, sp := range specifiedPods {
+		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
+			requiredPods = append(requiredPods, availablePodsName[index])
+		} else {
+			return nil, errors.New(fmt.Sprintf("Invalid pod \"%s\" specified. Run mesheryctl `system status` to view the available pods.", sp))
+		}
+	}
+	return requiredPods, nil
+}
+
+// CleanPodNames cleans the pod names in the MesheryNamespace to make it more readable
+func CleanPodNames(name string) string {
+	// The pod names are of the form meshery-<component name>-dasd67qwe-jka244asd where the last characters are generated by kubernetes
+	// Only the first two splits contain useful information
+	split := strings.Split(name, "-")[:2]
+
+	// Checks if the string in the split contains any useful info
+	var IsRequired = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
+
+	if IsRequired(split[1]) {
+		return strings.Join(split, "-")
+	}
+
+	return split[0]
 }
