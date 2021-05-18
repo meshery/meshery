@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -16,11 +17,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+var outFormatFlag string
+
+type ProResponse struct {
+	name           string
+	endpoint       string
+	loadgenerators string
+	test           time.Duration
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view perf profile",
 	Long:  `See the configuration of your performance profile`,
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -60,15 +70,32 @@ var viewCmd = &cobra.Command{
 
 		for _, i := range dat["profiles"].([]interface{}) {
 			t := i.(map[string]interface{})["name"]
-			if proName == t {
-				fmt.Printf("name: %v\n", i.(map[string]interface{})["name"])
-				fmt.Printf("endpoint: %v\n", i.(map[string]interface{})["endpoints"])
-				fmt.Printf("load_generators %v\n", i.(map[string]interface{})["load_generators"])
-				fmt.Printf("Test run duration %v\n", i.(map[string]interface{})["duration"])
-				return nil
+			map2 := make(map[string]interface{})
+			for k, v := range i.(map[string]interface{}) {
+				if k == "name" || k == "endpoints" || k == "qps" || k == "duration" || k == "load_generators" {
+					map2[k] = v
+				}
 			}
-			log.Fatalf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", proName)
+			if outFormatFlag == "json" && proName == t {
+				// create a second map to copy the informations we want to
+				if data, err = json.MarshalIndent(map2, "", "  "); err != nil {
+					return err
+				}
+				log.Info(string(data))
+			} else if proName == t {
+				fmt.Printf("name: %v\n", map2["name"])
+				fmt.Printf("endpoint: %v\n", map2["endpoints"])
+				fmt.Printf("load_generators %v\n", map2["load_generators"])
+				fmt.Printf("Test run duration %v\n", map2["duration"])
+				return nil
+			} else if outFormatFlag != "json" {
+				return errors.New("output-format choice invalid, use [json]")
+			}
 		}
 		return nil
 	},
+}
+
+func init() {
+	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 }
