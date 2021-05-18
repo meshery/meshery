@@ -14,7 +14,7 @@ import (
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	OAM "github.com/layer5io/meshery/models/oam"
-	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
 )
 

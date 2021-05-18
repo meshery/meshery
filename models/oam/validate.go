@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/qri-io/jsonschema"
 )
 
