@@ -89,7 +89,7 @@ var viewCmd = &cobra.Command{
 				fmt.Printf("Test run duration %v\n", map2["duration"])
 				return nil
 			} else if outFormatFlag != "json" {
-				return errors.New("output-format choice invalid, use [json]")
+				return errors.New("output-format choice invalid, use json")
 			}
 		}
 		return nil
@@ -97,5 +97,5 @@ var viewCmd = &cobra.Command{
 }
 
 func init() {
-	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in json")
 }
