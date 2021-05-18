@@ -2,6 +2,7 @@
 layout: default
 title: Operation Guides
 permalink: guides
+redirect_from: guides/
 language: en
 list: exclude
 ---
