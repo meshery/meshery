@@ -14,7 +14,7 @@ import (
 // ExtensionInput - input for a plugin
 type ExtensionInput struct {
 	DBHandler       *database.Handler
-	MeshSyncChannel chan *struct{}
+	MeshSyncChannel *chan struct{}
 	Logger          logger.Handler
 }
 
