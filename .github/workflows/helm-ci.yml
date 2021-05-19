@@ -58,7 +58,7 @@ jobs:
         run: |
           helm repo add meshery https://meshery.io/charts/
       - name: Helm Chart Releaser For Remote
-        uses: layer5io/helm-chart-releaser
+        uses: layer5io/helm-chart-releaser@v0.1.0
         with:
           charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
