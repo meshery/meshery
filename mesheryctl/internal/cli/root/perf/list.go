@@ -10,7 +10,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/inancgumus/screen"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
@@ -28,6 +27,10 @@ var (
 	totalResults uint
 	limitResults uint = 10
 )
+
+func reset() {
+	term.Sync() // cosmestic purpose
+}
 
 var listCmd = &cobra.Command{
 	Use:     "list",
@@ -59,14 +62,17 @@ var listCmd = &cobra.Command{
 					log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
 					if page == totalPage || len(data) == 0 {
-						fmt.Printf("End of the results.")
+						fmt.Printf("End of the results.\n")
 						break mainProfileLoop
 					}
+				} else if len(data) == 0 {
+					fmt.Printf("End of the results.")
+					break mainProfileLoop
 				}
 				// askProfileLoop ask for keypress to output profiles on next page
+				fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 			askProfileLoop:
 				for {
-					fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 					switch ev := term.PollEvent(); ev.Type {
 					case term.EventKey:
 						switch ev.Key {
@@ -77,10 +83,10 @@ var listCmd = &cobra.Command{
 						}
 					}
 				}
-				screen.Clear()       // make screen clear
-				screen.MoveTopLeft() // move cursor to top-left
+				reset() // make screen clear
 			}
 			// unhide cursor as termbox will hide it.
+			// term.Close()
 			fmt.Println("\x1b[?25h")
 			return nil
 		}
@@ -100,15 +106,18 @@ var listCmd = &cobra.Command{
 			} else if len(data) > 0 {
 				log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
-				if page == totalResults/limitResults+1 || len(data) == 0 {
+				if page == totalPage || len(data) == 0 {
 					fmt.Printf("End of the results.")
 					break
 				}
+			} else if len(data) == 0 {
+				fmt.Printf("End of the results.")
+				break
 			}
+			fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 			// askResultLoop ask for keypress to output results on next page
 		askResultLoop:
 			for {
-				fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 				switch ev := term.PollEvent(); ev.Type {
 				case term.EventKey:
 					switch ev.Key {
@@ -119,8 +128,7 @@ var listCmd = &cobra.Command{
 					}
 				}
 			}
-			screen.Clear()       // make screen clear
-			screen.MoveTopLeft() // move cursor to top-left
+			reset() //Clear screen
 		}
 		// unhide cursor as termbox will hide it.
 		fmt.Println("\x1b[?25h")
