@@ -25,7 +25,7 @@ var createContextCmd = &cobra.Command{
 		tempContext := utils.TemplateContext
 		log.Printf("url: `%s`", url)
 		err := utils.ValidateURL(url)
-		
+
 		if err != nil {
 			return err
 		}
