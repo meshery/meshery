@@ -34,6 +34,7 @@ require (
 	github.com/layer5io/nighthawk-go v1.0.2
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.1
+	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/prologic/bitcask v0.3.9

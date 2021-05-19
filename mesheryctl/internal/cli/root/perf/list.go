@@ -16,6 +16,8 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/pkg/errors"
 
+	term "github.com/nsf/termbox-go"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -42,65 +44,86 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "error processing config")
 		}
 		if len(args) == 0 {
-			// Clear screen
-			screen.Clear()
+			// initialize termbox
+			err := term.Init()
+			if err != nil {
+				panic(err)
+			}
+			// mainProfileLoop outputs profiles with pagination
+		mainProfileLoop:
 			for {
-				// Moves the cursor to the top-left position of the screen
-				screen.MoveTopLeft()
 				data, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
 				if err != nil {
 					return err
 				} else if len(data) > 0 {
-					log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
+					log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
 					if page == totalPage || len(data) == 0 {
 						fmt.Printf("End of the results.")
-						break
+						break mainProfileLoop
 					}
 				}
-				// ask user for confirmation
-				userResponse := utils.AskForConfirmation("Go to next page")
-
-				if !userResponse {
-					fmt.Printf("Closing.")
-					break
+				// askProfileLoop ask for keypress to output profiles on next page
+			askProfileLoop:
+				for {
+					fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
+					switch ev := term.PollEvent(); ev.Type {
+					case term.EventKey:
+						switch ev.Key {
+						case term.KeySpace:
+							break askProfileLoop
+						case term.KeyCtrlC:
+							break mainProfileLoop
+						}
+					}
 				}
-				// Clear screen
-				// fmt.Print("\033[H\033[2J")
-				screen.Clear()
+				screen.Clear()       // make screen clear
+				screen.MoveTopLeft() // move cursor to top-left
 			}
-
+			// unhide cursor as termbox will hide it.
+			fmt.Println("\x1b[?25h")
 			return nil
 		}
 		// Output results of a performance profile
 		profileID := args[0]
-		screen.Clear() // make screen clear
-
+		// initialize termbox
+		err = term.Init()
+		if err != nil {
+			panic(err)
+		}
+		// mainResultloop outputs results of a profile with pagination
+	mainResultloop:
 		for {
-			// Moves the cursor to the top left corner of the screen
-			screen.MoveTopLeft()
 			data, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
 				return err
 			} else if len(data) > 0 {
-				log.Debug(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
+				log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 				if page == totalResults/limitResults+1 || len(data) == 0 {
 					fmt.Printf("End of the results.")
 					break
 				}
 			}
-			// ask user for confirmation
-			userResponse := utils.AskForConfirmation("Go to next page")
-
-			if !userResponse {
-				fmt.Printf("Closing.")
-				break
+			// askResultLoop ask for keypress to output results on next page
+		askResultLoop:
+			for {
+				fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
+				switch ev := term.PollEvent(); ev.Type {
+				case term.EventKey:
+					switch ev.Key {
+					case term.KeySpace:
+						break askResultLoop
+					case term.KeyCtrlC:
+						break mainResultloop
+					}
+				}
 			}
-			// Clear screen
-			// fmt.Print("\033[H\033[2J")
-			screen.Clear()
+			screen.Clear()       // make screen clear
+			screen.MoveTopLeft() // move cursor to top-left
 		}
+		// unhide cursor as termbox will hide it.
+		fmt.Println("\x1b[?25h")
 		return nil
 	},
 }
@@ -109,7 +132,7 @@ var listCmd = &cobra.Command{
 func fetchPerformanceProfiles(url string) ([][]string, error) {
 	client := &http.Client{}
 	var response *models.PerformanceProfilesAPIResponse
-	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
+	tempURL := fmt.Sprintf("%s?page_size=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
 	if err != nil {
 		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
