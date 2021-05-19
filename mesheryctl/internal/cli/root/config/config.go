@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	"regexp"
+	"net/http"
 )
 
 // Version unmarshals the json response from the server's version api
@@ -81,16 +81,24 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	matched, err := regexp.MatchString(`v[0-9]+.[0-9]+.[0-9]+[-a-z0-9]*`, ctx.Version)
-	if err != nil || !matched {
-		return errors.New("invalid version " + ctx.Version + " specified")
+	url := "https://api.github.com/repos/layer5io/meshery/git/trees/" + ctx.Version + "?recursive=1"
+	resp, err := http.Get(url)
+
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			log.Error(cerr)
+		}
+	}()
+
+	if resp.StatusCode == 404 {
+		log.Fatal("version " + ctx.Version + " not in list of releases")
 	}
 
-	if matched {
-		return nil
+	if err != nil {
+		return errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 
-	return errors.New("invalid version " + ctx.Version + " specified")
+	return nil
 }
 
 // GetBaseMesheryURL returns the base meshery server URL
