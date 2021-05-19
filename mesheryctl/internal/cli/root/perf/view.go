@@ -6,11 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
+	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,12 +17,20 @@ import (
 
 var outFormatFlag string
 
+type result struct {
+	Name          string
+	Endpoint      string
+	QPS           int
+	Duration      string
+	Loadgenerator string
+}
+
 var viewCmd = &cobra.Command{
 	Use:     "view",
 	Short:   "view perf profile",
 	Long:    `See the configuration of your performance profile`,
 	Example: "mesheryctl perf view [ performance test profile name ]",
-	Args:    cobra.MaximumNArgs(1),
+	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -31,8 +38,8 @@ var viewCmd = &cobra.Command{
 		}
 		proName := args[0]
 		var req *http.Request
-		url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles"
-
+		url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles?search=" + proName
+		var response *models.PerformanceProfilePage
 		req, err = http.NewRequest("GET", url, nil)
 		if err != nil {
 			return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
@@ -55,35 +62,35 @@ var viewCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, utils.PerfError("failed to read response body"))
 		}
-		var dat map[string]interface{}
-		if err = json.Unmarshal(data, &dat); err != nil {
+
+		if err = json.Unmarshal(data, &response); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
-		//s := dat["profiles"].([]interface{})
-
-		for _, i := range dat["profiles"].([]interface{}) {
-			t := i.(map[string]interface{})["name"]
-			map2 := make(map[string]interface{})
-			for k, v := range i.(map[string]interface{}) {
-				if k == "name" || k == "endpoints" || k == "qps" || k == "duration" || k == "load_generators" {
-					map2[k] = v
-				}
+		var a result
+		for _, profile := range response.Profiles {
+			a = result{
+				Name:          profile.Name,
+				Endpoint:      profile.Endpoints[0],
+				QPS:           profile.QPS,
+				Duration:      profile.Duration,
+				Loadgenerator: profile.LoadGenerators[0],
 			}
-			if outFormatFlag == "json" && proName == t {
+			if outFormatFlag == "json" {
 				// create a second map to copy the informations we want to
-				if data, err = json.MarshalIndent(map2, "", "  "); err != nil {
+				if data, err = json.MarshalIndent(&a, "", "  "); err != nil {
 					return err
 				}
-				log.Info(string(data))
-			} else if proName == t {
-				fmt.Printf("name: %v\n", map2["name"])
-				fmt.Printf("endpoint: %v\n", map2["endpoints"])
-				fmt.Printf("load_generators %v\n", map2["load_generators"])
-				fmt.Printf("Test run duration %v\n", map2["duration"])
-			}
-			if outFormatFlag != "json" && outFormatFlag != "" {
+				fmt.Println(string(data))
+			} else if outFormatFlag == "" {
+				fmt.Printf("name: %v\n", a.Name)
+				fmt.Printf("endpoint: %v\n", a.Endpoint)
+				fmt.Printf("load_generators %v\n", a.Loadgenerator)
+				fmt.Printf("Test run duration %v\n", a.Duration)
+				fmt.Println("#####################")
+			} else {
 				return errors.New("output-format choice invalid, use json")
 			}
+
 		}
 		return nil
 	},
