@@ -3,20 +3,19 @@ layout: default
 title: mesheryctl Command Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
-redirect_from: 
-#  - guides/mesheryctl
-#  - guides/mesheryctl-commands
+redirect_from: reference/mesheryctl/commands/
 type: Reference
 ---
 ## Categories and Command Structure
 
 Meshery CLI commands are categorized by function, which are:
 
-- `mesheryctl` - Global flags
+- `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management
-- `mesheryctl perf` -  Service Mesh Performance Management
-- `mesheryctl pattern` - Service Mesh Pattern Configuration & Management
+- `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl perf` -  Service Mesh Performance Management: Workload and service mesh performance characterization
+- `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
+- `mesheryctl fitler` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
 
 ## Global Commands and Flags
 

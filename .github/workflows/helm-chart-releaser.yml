@@ -81,7 +81,7 @@ jobs:
           path: ${{ env.REPO_PATH }}
       - name: Copy index to new repo
         env:
-          SOURCE: /home/runner/work/meshery/meshery/.cr-index/index.yaml
+          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
           TARGET: meshery.io/charts
         run:
           cp ${{ env.SOURCE }} ${{ env.TARGET }}
