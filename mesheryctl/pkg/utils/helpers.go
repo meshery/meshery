@@ -110,6 +110,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
+	ViperDocker = viper.New()
 	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
 	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
