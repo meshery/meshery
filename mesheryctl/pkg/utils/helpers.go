@@ -35,28 +35,29 @@ import (
 )
 
 const (
+	// Meshery Docker Deployment URLs
 	dockerComposeWebURL         = "https://api.github.com/repos/docker/compose/releases/latest"
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
-	// Usage URLs
-	docsBaseURL = "https://docs.meshery.io/"
-
-	EndpointProtocol = "http"
-	rootUsageURL     = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
-	perfUsageURL     = docsBaseURL + "guides/mesheryctl/#performance-management"
-	systemUsageURL   = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
-	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
+	// Meshery Kubernetes Deployment URLs
 	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
 	OperatorURL      = baseConfigURL + "manifests/default.yaml"
 	BrokerURL        = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
 	MeshsyncURL      = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
-)
 
-const (
+	// Documentation URLs
+	docsBaseURL 	 = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
+	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
 
-	// Repo Details
+	// Meshery Server Location
+	EndpointProtocol = "http"	
+
+	// Meshery Repository Location
 	mesheryGitHubOrg  string = "layer5io"
 	mesheryGitHubRepo string = "meshery"
 )
@@ -109,6 +110,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
+	ViperDocker = viper.New()
 	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
 	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
@@ -120,7 +123,7 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
-	Endpoint: "http://localhost:9081",
+	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
 	Platform: "docker",
 	Adapters: ListOfAdapters,
