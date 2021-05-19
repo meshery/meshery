@@ -10,6 +10,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/models"
@@ -22,10 +23,11 @@ import (
 )
 
 var (
-	page         uint
-	totalPage    uint
-	totalResults uint
-	limitResults uint = 10
+	outputFormatFlag string
+	page             uint
+	totalPage        uint
+	totalResults     uint
+	limitResults     uint = 10
 )
 
 var listCmd = &cobra.Command{
@@ -42,6 +44,11 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+
+		if outputFormatFlag != "" {
+			return printOutputInFormat(mctlCfg, args)
+		}
+
 		if len(args) == 0 {
 			// initialize termbox
 			err := term.Init()
@@ -51,7 +58,7 @@ var listCmd = &cobra.Command{
 			// mainProfileLoop outputs profiles with pagination
 		mainProfileLoop:
 			for {
-				data, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
+				data, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
 				if err != nil {
 					break mainProfileLoop
 				} else if len(data) > 0 {
@@ -84,6 +91,7 @@ var listCmd = &cobra.Command{
 					break mainProfileLoop
 				}
 			}
+			// term.Close() // close termbox to reset terminal
 			// unhide cursor as termbox will hide it.
 			fmt.Println("\x1b[?25h")
 			return err
@@ -98,7 +106,7 @@ var listCmd = &cobra.Command{
 		// mainResultloop outputs results of a profile with pagination
 	mainResultloop:
 		for {
-			data, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
+			data, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
 				break mainResultloop
 			} else if len(data) > 0 {
@@ -131,6 +139,7 @@ var listCmd = &cobra.Command{
 				break mainResultloop
 			}
 		}
+		// term.Close() // close termbox to reset terminal
 		// unhide cursor as termbox will hide it.
 		fmt.Println("\x1b[?25h")
 		return err
@@ -138,34 +147,34 @@ var listCmd = &cobra.Command{
 }
 
 // Fetch all the profiles
-func fetchPerformanceProfiles(url string) ([][]string, error) {
+func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceProfilesAPIResponse
 	tempURL := fmt.Sprintf("%s?page_size=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
 	if err != nil {
-		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+		return nil, nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 	if resp.StatusCode != 200 {
-		return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+		return nil, nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal response body")
+		return nil, nil, errors.Wrap(err, "failed to unmarshal response body")
 	}
 	var data [][]string
 
@@ -183,37 +192,37 @@ func fetchPerformanceProfiles(url string) ([][]string, error) {
 		totalPage = response.TotalCount/limitResults + 1
 	}
 
-	return data, nil
+	return data, body, nil
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(url string, profileID string) ([][]string, error) {
+func fetchPerformanceProfileResults(url string, profileID string) ([][]string, []byte, error) {
 	client := &http.Client{}
 	var response *models.PerformanceResultsAPIResponse
 	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
 	if err != nil {
-		return nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
+		return nil, nil, errors.Wrapf(err, utils.PerfError("Failed to fetch performance results"))
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if resp.StatusCode != 200 {
-		return nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
+		return nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
+		return nil, nil, errors.Wrap(err, utils.PerfError("failed to read response body"))
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal response body")
+		return nil, nil, errors.Wrap(err, "failed to unmarshal response body")
 	}
 
 	var data [][]string
@@ -239,5 +248,46 @@ func fetchPerformanceProfileResults(url string, profileID string) ([][]string, e
 	} else {
 		totalPage = response.TotalCount/limitResults + 1
 	}
-	return data, nil
+	return data, body, nil
+}
+
+func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error {
+	// set the number of results equal to 25
+	limitResults = 25
+	//Print profiles in given format
+	if len(args) == 0 {
+		_, body, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
+		if err != nil {
+			return err
+		}
+		if outputFormatFlag == "yaml" {
+			if body, err = yaml.JSONToYAML(body); err != nil {
+				return errors.Wrap(err, "failed to convert json to yaml")
+			}
+		} else if outputFormatFlag != "json" {
+			return errors.New("output-format choice invalid, use [json|yaml]")
+		}
+		log.Info(string(body))
+
+		return nil
+	}
+	// print results in given format
+	_, body, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+args[0]+"/results", args[0])
+	if err != nil {
+		return err
+	}
+	if outputFormatFlag == "yaml" {
+		if body, err = yaml.JSONToYAML(body); err != nil {
+			return errors.Wrap(err, "failed to convert json to yaml")
+		}
+	} else if outputFormatFlag != "json" {
+		return errors.New("output-format choice invalid, use [json|yaml]")
+	}
+	log.Info(string(body))
+
+	return nil
+}
+
+func init() {
+	listCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 }
