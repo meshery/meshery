@@ -28,10 +28,6 @@ var (
 	limitResults uint = 10
 )
 
-func reset() {
-	term.Sync() // cosmestic purpose
-}
-
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List Performance profiles and Results of profiles",
@@ -57,7 +53,7 @@ var listCmd = &cobra.Command{
 			for {
 				data, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
 				if err != nil {
-					return err
+					break mainProfileLoop
 				} else if len(data) > 0 {
 					log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
@@ -66,7 +62,7 @@ var listCmd = &cobra.Command{
 						break mainProfileLoop
 					}
 				} else if len(data) == 0 {
-					fmt.Printf("End of the results.")
+					fmt.Printf("End of the results.\n")
 					break mainProfileLoop
 				}
 				// askProfileLoop ask for keypress to output profiles on next page
@@ -83,12 +79,14 @@ var listCmd = &cobra.Command{
 						}
 					}
 				}
-				reset() // make screen clear
+				err = term.Sync() // make screen clear
+				if err != nil {
+					break mainProfileLoop
+				}
 			}
 			// unhide cursor as termbox will hide it.
-			// term.Close()
 			fmt.Println("\x1b[?25h")
-			return nil
+			return err
 		}
 		// Output results of a performance profile
 		profileID := args[0]
@@ -102,17 +100,17 @@ var listCmd = &cobra.Command{
 		for {
 			data, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
-				return err
+				break mainResultloop
 			} else if len(data) > 0 {
 				log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 				if page == totalPage || len(data) == 0 {
-					fmt.Printf("End of the results.")
-					break
+					fmt.Printf("End of the results.\n")
+					break mainResultloop
 				}
 			} else if len(data) == 0 {
-				fmt.Printf("End of the results.")
-				break
+				fmt.Printf("End of the results.\n")
+				break mainResultloop
 			}
 			fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 			// askResultLoop ask for keypress to output results on next page
@@ -128,11 +126,14 @@ var listCmd = &cobra.Command{
 					}
 				}
 			}
-			reset() //Clear screen
+			err = term.Sync() // make screen clear
+			if err != nil {
+				break mainResultloop
+			}
 		}
 		// unhide cursor as termbox will hide it.
 		fmt.Println("\x1b[?25h")
-		return nil
+		return err
 	},
 }
 
