@@ -3,9 +3,7 @@ layout: default
 title: mesheryctl Command Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
-redirect_from: 
-#  - guides/mesheryctl
-#  - guides/mesheryctl-commands
+redirect_from: reference/mesheryctl/commands/
 type: Reference
 ---
 ## Categories and Command Structure
