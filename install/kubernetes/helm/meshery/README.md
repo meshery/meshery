@@ -18,7 +18,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |------------|------|---------|
 |  | meshery-consul | 2.0.1 |
 |  | meshery-istio | 2.0.1 |
-|  | meshery-kuma | 2.0.1 |
+|  | meshery-kuma | 2.0.1 | 
 |  | meshery-linkerd | 2.0.1 |
 |  | meshery-nsm | 1.0.1 |
 |  | meshery-osm | 1.0.1 |
