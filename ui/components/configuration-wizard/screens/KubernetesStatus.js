@@ -6,7 +6,6 @@ import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import { updateK8SConfig, updateProgress } from "../../../lib/store";
-import dataFetch from "../../../lib/data-fetch";
 
 const styles = () => ({
   infoContainer: {
@@ -88,7 +87,7 @@ class KubernetesStatus extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { inClusterConfig, contextName, clusterConfigured, configuredServer } = this.state;
+    const { inClusterConfig, contextName  } = this.state;
     return (
       <>
         <div className={classes.infoContainer}>

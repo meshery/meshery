@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, Container, Typography } from "@material-ui/core/";
+import { makeStyles, Container  } from "@material-ui/core/";
 
 import KubernetesInput from "./KubernetesInput";
 import KubernetesStatus from "./KubernetesStatus";
@@ -35,8 +35,7 @@ const KubernetesScreen = ({ handleConnectToKubernetes }) => {
         Icon={KubernetesIcon}
         KubernetesInput={KubernetesInput}
       />
-      {isChecked ? <KubernetesStatus /> : null}
-      
+      {isChecked ? <KubernetesStatus isChecked={isChecked}/> : null}
     </Container>
   );
 };
