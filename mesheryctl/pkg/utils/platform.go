@@ -77,7 +77,7 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/git/trees/" + version + "?recursive=1"
+	url := "https://api.github.com/repos/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -199,11 +199,11 @@ func FetchManifests(version string) ([]Manifest, error) {
 		return nil, err
 	}
 
-	gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
+	gitHubFolder := "https://github.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/tree/" + version + "/install/deployment_yamls/k8s"
 	log.Info("downloading manifest files from ", gitHubFolder)
 
 	// download all the manifest files to the ~/.meshery/manifests folder
-	rawManifestsURL := "https://raw.githubusercontent.com/layer5io/meshery/" + version + "/install/deployment_yamls/k8s/"
+	rawManifestsURL := "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/" + version + "/install/deployment_yamls/k8s/"
 	err = DownloadManifests(manifests, rawManifestsURL)
 
 	if err != nil {
