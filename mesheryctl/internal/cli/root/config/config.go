@@ -91,7 +91,7 @@ func (ctx *Context) ValidateVersion() error {
 	}()
 
 	if resp.StatusCode == 404 {
-		log.Fatal("version " + ctx.Version + " not in list of releases")
+		log.Fatal("version " + ctx.Version + " is not a valid Meshery release")
 	}
 
 	if err != nil {
