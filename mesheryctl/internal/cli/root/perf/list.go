@@ -30,6 +30,13 @@ var (
 	limitResults     uint = 10
 )
 
+// handle termbox and errors
+func outputError(err error) error {
+	// term.Close() // reset terminal
+	fmt.Println("\x1b[?25h") // unhide cursor as termbox will hide it.
+	return err
+}
+
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List Performance profiles and Results of profiles",
@@ -60,7 +67,7 @@ var listCmd = &cobra.Command{
 			for {
 				data, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
 				if err != nil {
-					break mainProfileLoop
+					return outputError(err)
 				} else if len(data) > 0 {
 					log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
@@ -88,13 +95,13 @@ var listCmd = &cobra.Command{
 				}
 				err = term.Sync() // make screen clear
 				if err != nil {
-					break mainProfileLoop
+					return outputError(err)
 				}
 			}
 			// term.Close() // close termbox to reset terminal
 			// unhide cursor as termbox will hide it.
 			fmt.Println("\x1b[?25h")
-			return err
+			return nil
 		}
 		// Output results of a performance profile
 		profileID := args[0]
@@ -108,7 +115,7 @@ var listCmd = &cobra.Command{
 		for {
 			data, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
-				break mainResultloop
+				return outputError(err)
 			} else if len(data) > 0 {
 				log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
@@ -136,13 +143,13 @@ var listCmd = &cobra.Command{
 			}
 			err = term.Sync() // make screen clear
 			if err != nil {
-				break mainResultloop
+				return outputError(err)
 			}
 		}
 		// term.Close() // close termbox to reset terminal
 		// unhide cursor as termbox will hide it.
 		fmt.Println("\x1b[?25h")
-		return err
+		return nil
 	},
 }
 
@@ -290,4 +297,6 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 
 func init() {
 	listCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	_ = listCmd.MarkFlagRequired("token")
+
 }
