@@ -34,18 +34,22 @@ list: exclude
 <!-- All possible example use cases of the command -->
 ## Examples
 
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
   {{ flag.usage }}
-  {% endfor %}
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
-  {{ subcommand.usage }}
-  {% endfor %}
   </div>
 </pre>
+{% endfor %}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ subcommand.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
 
 
