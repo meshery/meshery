@@ -29,7 +29,7 @@ serviceAccount:
   create: true
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery-kuma-service-account
+  name: meshery-adapter-kuma
 
 podSecurityContext: {}
   # fsGroup: 2000
