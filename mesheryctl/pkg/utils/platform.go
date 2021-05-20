@@ -215,7 +215,7 @@ func FetchManifests(version string) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	url := "https://api.github.com/repos/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -259,7 +259,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
@@ -267,7 +267,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/" + ctx.Version + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
