@@ -32,8 +32,8 @@ var (
 
 // handle termbox and errors
 func outputError(err error) error {
-	// term.Close() // reset terminal
-	fmt.Println("\x1b[?25h") // unhide cursor as termbox will hide it.
+	term.Close() // reset terminal
+	// fmt.Println("\x1b[?25h") // unhide cursor as termbox will hide it.
 	return err
 }
 
@@ -71,16 +71,20 @@ var listCmd = &cobra.Command{
 				} else if len(data) > 0 {
 					log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalPage, totalResults))
 					utils.PrintToTable([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
-					if page == totalPage || len(data) == 0 {
-						fmt.Printf("End of the results.\n")
-						break mainProfileLoop
+					if page == totalPage {
+						fmt.Printf("\nEnd of the results.\n")
 					}
 				} else if len(data) == 0 {
-					fmt.Printf("End of the results.\n")
 					break mainProfileLoop
 				}
+				// check if the displayed page is the last page
+				if page != totalPage {
+					fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
+				} else {
+					// we're on the last page.
+					fmt.Println("Press Spacebar or Ctrl+C to close.")
+				}
 				// askProfileLoop ask for keypress to output profiles on next page
-				fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
 			askProfileLoop:
 				for {
 					switch ev := term.PollEvent(); ev.Type {
@@ -98,9 +102,7 @@ var listCmd = &cobra.Command{
 					return outputError(err)
 				}
 			}
-			// term.Close() // close termbox to reset terminal
-			// unhide cursor as termbox will hide it.
-			fmt.Println("\x1b[?25h")
+			term.Close() // close termbox to reset terminal
 			return nil
 		}
 		// Output results of a performance profile
@@ -119,15 +121,19 @@ var listCmd = &cobra.Command{
 			} else if len(data) > 0 {
 				log.Info(fmt.Sprintf("Page %d out of %d | Total Results: %d", page, totalResults/limitResults+1, totalResults))
 				utils.PrintToTable([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
-				if page == totalPage || len(data) == 0 {
-					fmt.Printf("End of the results.\n")
-					break mainResultloop
+				if page == totalPage {
+					fmt.Printf("\nEnd of the results.\n")
 				}
 			} else if len(data) == 0 {
-				fmt.Printf("End of the results.\n")
 				break mainResultloop
 			}
-			fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
+			// check if the displayed page is the last page.
+			if page != totalPage {
+				fmt.Println("Press Spacebar to advance, Ctrl+C to stop.")
+			} else {
+				// we're on the last page.
+				fmt.Println("Press Spacebar or Ctrl+C to close.")
+			}
 			// askResultLoop ask for keypress to output results on next page
 		askResultLoop:
 			for {
@@ -146,9 +152,7 @@ var listCmd = &cobra.Command{
 				return outputError(err)
 			}
 		}
-		// term.Close() // close termbox to reset terminal
-		// unhide cursor as termbox will hide it.
-		fmt.Println("\x1b[?25h")
+		term.Close() // close termbox to reset terminal
 		return nil
 	},
 }
