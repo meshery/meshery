@@ -18,6 +18,8 @@ list: exclude
 
 ## Description
 
+##### The container images are updated by `mesheryctl system update`, not `mesheryctl` itself. If you want to update mesheryctl, see <a href = "{{site.baseurl}}/guides/upgrade">Upgrade Guide</a>
+
 {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}
