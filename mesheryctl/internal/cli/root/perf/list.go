@@ -298,5 +298,4 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 func init() {
 	listCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	_ = listCmd.MarkFlagRequired("token")
-
 }
