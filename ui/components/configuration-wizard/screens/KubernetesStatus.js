@@ -7,33 +7,42 @@ import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import { updateK8SConfig, updateProgress } from "../../../lib/store";
 
-const styles = () => ({
-  infoContainer: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    width: "20rem",
-    padding: "5rem 1rem",
-    boxShadow: "0px 1px 6px 1px rgba(0,0,0,0.75)",
-  },
-  infoStatus: {
-    position: "absolute",
-    bottom: "12.50rem",
-    right: "10rem",
-    color: "#647881",
-    background: "#F1F3F4",
-    padding: ".5rem 5rem .75rem 1.5rem",
-    borderRadius: "0.25rem",
-    fontSize: ".8rem",
-  },
-  infoContext: {
-    fontSize: ".9rem",
-  },
-  infoKind: {
-    fontSize: ".75rem",
-    color: "#CACACA",
-  },
-});
+const styles = (theme) => (
+  console.log("theme", theme),
+  {
+    infoContainer: {
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      width: "20rem",
+      padding: "5rem 1rem",
+      boxShadow: "0px 1px 6px 1px rgba(0,0,0,0.75)",
+    },
+    infoTitle: {
+      position: "absolute",
+      bottom: "12.50rem",
+      right: "10rem",
+      color: "#647881",
+      background: "#F1F3F4",
+      padding: ".5rem 5rem .75rem 1.5rem",
+      borderRadius: "0.25rem",
+      fontSize: ".8rem",
+    },
+    infoItemContainer: {
+      display: "flex",
+      flexDirection: "row",
+    },
+    infoLabel: {
+      fontSize: ".9rem",
+      color: theme.palette.text.primary,
+      marginRight: "1rem",
+    },
+    infoData: {
+      fontSize: ".9rem",
+      color: theme.palette.text.secondary,
+    },
+  }
+);
 
 class KubernetesStatus extends React.Component {
   constructor(props) {
@@ -87,17 +96,23 @@ class KubernetesStatus extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { inClusterConfig, contextName  } = this.state;
+    const { inClusterConfig, contextName } = this.state;
     return (
       <>
         <div className={classes.infoContainer}>
-          <Typography className={classes.infoStatus}>Status</Typography>
-          <Typography className={classes.infoContext}>
-            Current-Context:  {inClusterConfig ? "Using In Cluster Config" : contextName}
-          </Typography>
-          <Typography className={classes.infoContext}>
-            Cluster:  {inClusterConfig ? "Using In Cluster Config" : "Using Out Of Cluster Config"}
-          </Typography>
+          <Typography className={classes.infoTitle}>Status</Typography>
+          <div className={classes.infoItemContainer}>
+            <Typography className={classes.infoLabel}>Current-Context:</Typography>
+            <Typography className={classes.infoData}>
+              {inClusterConfig ? "Using In Cluster Config" : contextName}
+            </Typography>
+          </div>
+          <div className={classes.infoItemContainer}>
+            <Typography className={classes.infoLabel}>Cluster:</Typography>
+            <Typography className={classes.infoData}>
+              {inClusterConfig ? "Using In Cluster Config" : "Using Out Of Cluster Config"}
+            </Typography>
+          </div>
         </div>
       </>
     );
