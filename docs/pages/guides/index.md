@@ -2,6 +2,7 @@
 layout: default
 title: Operation Guides
 permalink: guides
+redirect_from: guides/
 language: en
 list: exclude
 ---
@@ -34,8 +35,6 @@ Guides to using and troubleshooting Meshery's various features and components.
 </ul>
 
 {% include toc.html page=Guides %}
-
-{:toc}
 
 <!-- {% comment %}
 #

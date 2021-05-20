@@ -28,9 +28,10 @@ The following points of extension are currently incorporated into Meshery.
 
 ## Types of Extension Points
 
-1. [Providers]({{site.baseurl}}/extensibility/providers)
-1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-1. [REST API](/extensibility/api#rest)
+   - Messsaging Framework (CloudEvents and NATS)
 1. [GraphQL API](/extensibility/api#graphql)
-1. CloudEvents Integration
+1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
+1. Patterns (Open Application Model (OAM))
+1. [Providers]({{site.baseurl}}/extensibility/providers)
+1. [REST API](/extensibility/api#rest)
