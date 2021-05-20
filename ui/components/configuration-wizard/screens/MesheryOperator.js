@@ -21,7 +21,6 @@ import subscribeOperatorStatusEvents from "../../graphql/subscriptions/OperatorS
 import subscribeMeshSyncStatusEvents from "../../graphql/subscriptions/MeshSyncStatusSubscription";
 import changeOperatorState from "../../graphql/mutations/OperatorStatusMutation";
 import fetchMesheryOperatorStatus from "../../graphql/queries/OperatorStatusQuery";
-
 import MesheryOperatorIcon from "../icons/MesheryOperatorIcon";
 
 const styles = () => ({
