@@ -62,11 +62,11 @@ jobs:
         with:
           charts_dir: install/kubernetes/helm/meshery
           owner: layer5io
-          repo: layer5io/meshery.io
+          repo: layer5io/meshery
           # For helm charts index
           charts_repo_url: https://meshery.io/charts/
           pages_branch: master
-          activity: none
+          activity: push
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout target repo
