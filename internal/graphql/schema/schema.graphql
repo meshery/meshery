@@ -36,6 +36,11 @@ type AddonList {
 	endpoint: String!
 }
 
+input AddonStatusInput {
+	selector: MeshType,
+	targetStatus: Status!
+}
+
 # ============== CONTROL PLANE =======================
 input ControlPlaneFilter {
     type: MeshType
@@ -61,6 +66,10 @@ type OperatorStatus {
 	error: Error
 }
 
+input OperatorStatusInput {
+	targetStatus: Status!
+}
+
 type OperatorControllerStatus {
 	name: String!
     version: String!
@@ -82,8 +91,8 @@ type Query {
 }
 
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
-	changeOperatorStatus(targetStatus: Status!): Status!
+	changeAddonStatus(input: AddonStatusInput): Status!
+	changeOperatorStatus(input: OperatorStatusInput): Status!
 }
 
 type Subscription {
