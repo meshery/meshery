@@ -74,8 +74,7 @@ const styles = (theme) => ({
     color: "black",
     display: "flex",
     flex: "auto"
-  }
-
+  },
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -284,7 +283,7 @@ class ProviderComponent extends React.Component {
                               {Object.keys(availableProviders).map((key) => (
                                 <MenuItem key={key} onClick={() => self.handleMenuItemClick(key)}>
                                   <a href={`/api/provider?provider=${encodeURIComponent(key)}`}
-                                    className={classes.providerLinkRef}>
+                                    className={classes.providerLinkRef} >
                                     {key}
                                   </a>
                                 </MenuItem>
