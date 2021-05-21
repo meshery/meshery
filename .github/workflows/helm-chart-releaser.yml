@@ -60,9 +60,9 @@ jobs:
       - name: Helm Chart Releaser For Remote
         uses: layer5io/helm-chart-releaser@v0.1.0
         with:
-          charts_dir: install/kubernetes/helm/meshery
+          charts_dir: charts
           owner: layer5io
-          repo: layer5io/meshery
+          repo: layer5io/meshery.io
           # For helm charts index
           charts_repo_url: https://meshery.io/charts/
           pages_branch: master
