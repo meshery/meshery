@@ -62,7 +62,7 @@ jobs:
         with:
           charts_dir: charts
           owner: layer5io
-          repo: layer5io/meshery.io
+          repo: meshery.io
           # For helm charts index
           charts_repo_url: https://meshery.io/charts/
           pages_branch: master
@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v2
         env:
           REPO: layer5io/meshery.io
-          REPO_PATH: meshery.io
+          REPO_PATH: charts
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +81,7 @@ jobs:
           path: ${{ env.REPO_PATH }}
       - name: Copy index to new repo
         env:
-          SOURCE: /home/runner/work/layer5io/meshery.io/charts/index.yaml
+          SOURCE: /home/runner/work/layer5io/meshery/install/kubernetes/helm/meshery
 #          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
           TARGET: meshery.io/charts
         run:
