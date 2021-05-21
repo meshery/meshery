@@ -22,7 +22,7 @@ cmd: {{include.cmd}}
 <!-- All possible example use cases of the command -->
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{cmd}}.flags %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.flags %}
 {% assign flag = flag_hash[1] %}
 <div class="cmd-caption">{{ flag.description }}
 <pre class="codeblock-pre">
@@ -33,7 +33,7 @@ cmd: {{include.cmd}}
 </div>
 {% endfor %}
 {% for subcommand_hash in 
-  site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.subcommands %}
+  site.data.mesheryctlcommands.lifecycle.{{command_name}}.subcommands %}
 {% assign subcommand = subcommand_hash[1] %}
 <div class="cmd-caption">{{ subcommand.description }}
 <pre class="codeblock-pre">
@@ -50,7 +50,7 @@ cmd: {{include.cmd}}
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.flags %}{% assign flag = flag_hash[1] %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.flags %}{% assign flag = flag_hash[1] %}
   {{ flag.name }} # {{ flag.description }}
   {% endfor %}
   </div>
