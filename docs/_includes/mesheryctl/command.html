@@ -1,44 +1,16 @@
-<!-- {% capture command %}{{ include.cmd }}{% endcapture %} -->
-<!-- {% assign cmd = include.command_name %} -->
-<!-- title: {{page.title}}
-command: {{command}}
-include.cmd: {{include.cmd}} -->
-cmd: {{include.cmd}}
-<!-- Description of the command. Preferably a paragraph -->
-## Description
+{% for cmd in site.data.mesheryctlcommands.cmds %}
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.commands %}
-{% assign command = command_hash[0] %}
-{{ command.description }}
-{% endfor %}
+Category: {{cmd.name}}
+Name: {{cmd.description}}
 
-<!-- Basic usage of the command -->
+<p>{{ cmd }}</p>: {{ site.data.mesheryctlcommands.cmds }}
+
+
+
+<div class="cmd-caption">{{ cmd.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl {{command_name}} [flags] 
-  </div>
-</pre>
-
-<!-- All possible example use cases of the command -->
-## Examples
-
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.flags %}
-{% assign flag = flag_hash[1] %}
-<div class="cmd-caption">{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-</div>
-{% endfor %}
-{% for subcommand_hash in 
-  site.data.mesheryctlcommands.lifecycle.{{command_name}}.subcommands %}
-{% assign subcommand = subcommand_hash[1] %}
-<div class="cmd-caption">{{ subcommand.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ subcommand.usage }}
+  {{ cmd.usage }}
   </div>
 </pre>
 </div>
@@ -50,12 +22,15 @@ cmd: {{include.cmd}}
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.flags %}{% assign flag = flag_hash[1] %}
-  {{ flag.name }} # {{ flag.description }}
+    {% for cmd in site.data.mesheryctlcommands.cmds %}
+      {{ cmd.name.flags[0].name }} # {{ cmd.flag.description }}
   {% endfor %}
   </div>
 </pre>
 <br/>
+
+
+
 
 ## Options inherited from parent commands
 <pre class="codeblock-pre">

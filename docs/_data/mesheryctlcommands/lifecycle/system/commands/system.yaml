@@ -3,8 +3,3 @@ name : system
 description: Lifecycle management of Meshery deployments
 usage: |
     `mesheryctl system`
-
-example: 
-- description: Generates completion script.
-- usage: |
-    mesheryctl system completion [bash\|zsh\|fish]
