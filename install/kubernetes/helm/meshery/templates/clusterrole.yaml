@@ -17,11 +17,6 @@ rules:
   - update
   - patch
   - delete
-#{{- if .Values.rbac.nodes }}
-#- apiGroups:
-#  - ""
-#  resources:
-#  - nodes
-#  verbs:
-#  - "watch"
-#{{- end }}
+- nonResourceURLs: ["/metrics", "/health", "/ping"]
+  verbs:
+  - get
