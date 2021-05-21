@@ -15,7 +15,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: install/kubernetes/helm/meshery/charts
           charts_url: https://meshery.io/charts
-          owner: layer5
+          owner: layer5io
           repository: meshery.io
           branch: master
           target_dir: charts
