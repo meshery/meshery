@@ -6,11 +6,11 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 
 ## Maintainers
 
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
-| aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| Name           | Email                 | Url |
+| ----           | ------                | --- |
+| Layer5 Authors | community@layer5.io   |     |
+| aisuko         | urakiny@gmail.com     |     |
+| leecalcote     | lee.calcote@layer5.io |     |
 
 ## Requirements
 
