@@ -2,10 +2,12 @@
 layout: default
 title: Service Mesh Pattern Management
 permalink: functionality/pattern-management
+redirect_from: functionality/pattern-management/
 type: functionality
 language: en
 list: include
 ---
+
 
 ## Use Meshery to Deploy a Service Mesh Pattern
 
@@ -13,7 +15,12 @@ You can use Meshery to deploy a service mesh pattern. Service mesh patterns are 
 
 ### Pattern Repository
 
-Patterns are available in the [Service Mesh Patterns](https://github.com/service-mesh-patterns) repository. In this repository, you will find each of Meshery's patterns. Each service mesh pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your service mesh deployment’s adherence to a pattern.
+You may bring your own patterns or find them available through your chosen provider. Each service mesh pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your service mesh deployment’s adherence to a pattern.
+
+{% include alert.html 
+    type="info" 
+    title="Future Pattern Repository" 
+    content="A central set of patterns will available in the <a href='https://github.com/service-mesh-patterns'>Service Mesh Patterns repository</a>. In this repository, you will find each of Meshery's patterns, which will also be available through the Local Provider." %}
 
 #### To deploy a pattern, execute this command:
 
