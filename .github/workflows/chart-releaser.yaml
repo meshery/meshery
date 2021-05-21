@@ -13,7 +13,7 @@ jobs:
         uses: stefanprodan/helm-gh-pages@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-          charts_dir: install/kubernetes/helm/meshery
+          charts_dir: install/kubernetes/helm/meshery/Chart.yaml
           charts_url: https://meshery.io
           owner: layer5io
           repository: meshery.io
