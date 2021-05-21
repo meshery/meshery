@@ -3,9 +3,7 @@ layout: default
 title: mesheryctl Command Reference
 abstract: "A guide to Meshery's CLI: mesheryctl"
 permalink: reference/mesheryctl
-redirect_from: 
-#  - guides/mesheryctl
-#  - guides/mesheryctl-commands
+redirect_from: reference/mesheryctl/commands/
 type: Reference
 ---
 ## Categories and Command Structure
@@ -100,6 +98,19 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <td>{{ subcommand.description }}</td>
     </tr>
     {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+  {% endfor %}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.update.command %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/update">{{ subcommand.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.update.flag %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.flag }}</td>
         <td>{{ flag.description }}</td>

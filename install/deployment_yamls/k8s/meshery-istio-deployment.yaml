@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-istio
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-istio:stable-latest
         name: meshery-istio

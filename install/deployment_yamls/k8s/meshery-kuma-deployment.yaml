@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-kuma
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-kuma:stable-latest
         name: meshery-kuma

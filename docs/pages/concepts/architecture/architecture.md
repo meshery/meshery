@@ -13,17 +13,18 @@ list: include
 
 Meshery and its components are written using the following languages and technologies.
 
-| Components                                    | Languages and Technologies                                                        |
+| Components                                    | Languages and Technologies      |
 | :-------------------------------------------- | :-------------------------------------------------------------------------------- |
-| Meshery Server                                | Golang, gRPC, GraphQL, SQLlite                                                    |
-| Meshery Adapters                              | Golang, gRPC                                                                      |
-| Meshery WASM Filters                          | Rust and C++                                                                      |
-| Meshery UI                                    | ReactJS, NextJS, BillboardJS                                                      |
-| Meshery Provider UI                           | ReactJS, NextJS                                                                   |
-| Meshery Remote Providers                      | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility}}) |
-| Meshery Operator                              | Golang, NATS                                                                      |
-| MeshSync                                      | Golang                                                                            |
-| [Meshery Database](#database)                 | Golang, SQL                                                                       |
+| Meshery Server                                | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io), [SMI](https://smi-spec.io) |
+| [Meshery Adapters](/concepts/architecture/adapters) | Golang, gRPC, CloudEvents |
+| Meshery WASM Filters                          | Rust and C++ |
+| Meshery UI                                    | ReactJS, NextJS, BillboardJS |
+| Meshery Provider UI                           | ReactJS, NextJS |
+| [Meshery Remote Providers](/extensibility/providers) | _any_ - must adhere to Meshery [Extension Points]( {{site.baseurl}}/extensibility ) |
+| [Meshery Operator](/concepts/architecture/operator)                 | Golang |
+| &nbsp;&nbsp;&nbsp;&nbsp; [MeshSync](/concepts/architecture/meshsync)| Golang |
+| &nbsp;&nbsp;&nbsp;&nbsp; [Broker](/concepts/architecture/broker) | Golang, NATS |
+| [Meshery Database](/concepts/architecture/database)              | Golang, SQLlite |
 
 ## Deployments
 
@@ -58,15 +59,15 @@ Meshery Operator is the multi-service mesh operator (a Kubernetes custom control
 [![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
 
-See the [**Operator**]({{ site.baseurl }}/architecture/operator) section for more information on the function of an operator and [**MeshSync**]({{ site.baseurl }}/architecture/meshsync) section for more information on the function of meshsync.
+See the [**Operator**]({{ site.baseurl }}/concepts/architecture/operator) section for more information on the function of an operator and [**MeshSync**]({{ site.baseurl }}/concepts/architecture/meshsync) section for more information on the function of meshsync.
 
 ## Database
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)
+[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-database.svg)]({{ site.baseurl }}/concepts/architecture/database)
 
-_See the [**Database**]({{ site.baseurl }}/architecture/database) section for more information on the function of the database._
+_See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
 
 ### **Network Ports**
 
@@ -91,7 +92,7 @@ Meshery uses the following list of network ports to interface with its various c
 {% endif -%}
 {% endfor %}
 
-See the [**Adapters**]({{ site.baseurl }}/architecture/adapters) section for more information on the function of an adapter.
+See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
 
 ### **Statefulness in Meshery components**
 
