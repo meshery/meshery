@@ -53,22 +53,28 @@ const styles = (theme) => ({
   providerDesc: {
     whiteSpace: "pre",
   },
-  chartTitle:{
+  chartTitle: {
     fontWeight: 700,
   },
   providerTitle: {
     fontWeight: 700,
   },
   providerDivider: {
-    backgroundColor: "#c1c8d2", 
-    marginLeft:"10px", 
-    marginRight:"10px"
+    backgroundColor: "#c1c8d2",
+    marginLeft: "10px",
+    marginRight: "10px"
   },
-  providerDisabled:{
+  providerDisabled: {
     // color: "darkcyan",
     display: "flex",
     justifyContent: "space-between",
   },
+  providerLinkRef: {
+    textDecoration: "none",
+    color: "black",
+    display: "flex",
+    flex: "auto"
+  }
 
 });
 
@@ -255,26 +261,14 @@ class ProviderComponent extends React.Component {
                       size="large"
                       aria-controls={open ? "split-button-menu" : undefined}
                       aria-expanded={open ? "true" : undefined}
-                      onClick={self.handleToggle()}
-                      href={
-                        selectedProvider == "" ? "" : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`
-                      }
-                    >
-                      {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
-                      <ArrowDropDownIcon />
-                    </Button>
-                    {/* <Button
-                      color="primary"
-                      size="small"
-                      aria-controls={open ? "split-button-menu" : undefined}
-                      aria-expanded={open ? "true" : undefined}
                       aria-label="Select Provider"
                       data-cy="select_provider"
                       aria-haspopup="menu"
                       onClick={self.handleToggle()}
                     >
+                      {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
                       <ArrowDropDownIcon />
-                    </Button> */}
+                    </Button>
                   </ButtonGroup>
                   <Popper open={open} anchorEl={self.anchorRef} role={undefined} transition disablePortal>
                     {({ TransitionProps, placement }) => (
@@ -289,10 +283,13 @@ class ProviderComponent extends React.Component {
                             <MenuList id="split-button-menu">
                               {Object.keys(availableProviders).map((key) => (
                                 <MenuItem key={key} onClick={() => self.handleMenuItemClick(key)}>
-                                  {key}
+                                  <a href={`/api/provider?provider=${encodeURIComponent(key)}`}
+                                    className={classes.providerLinkRef}>
+                                    {key}
+                                  </a>
                                 </MenuItem>
                               ))}
-                              <Divider className={classes.providerDivider}/>
+                              <Divider className={classes.providerDivider} />
                               <MenuItem disabled={true} key="SMI" className={classes.providerDisabled}>
                                 SMI Conformance <span>Disabled</span>
                               </MenuItem>
