@@ -1,6 +1,6 @@
 name: Release Charts
 on:
-  release:
+  push:
     branches:
       - master
       
@@ -21,4 +21,5 @@ jobs:
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
-          chart_version: ${GITHUB_REF/refs\/tags\//}
+          #if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+          # chart_version: ${GITHUB_REF/refs\/tags\//}
