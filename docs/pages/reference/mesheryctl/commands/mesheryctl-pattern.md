@@ -32,15 +32,15 @@ list: exclude
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
   {{ subcommand.usage }}
-  {% endfor %}
   </div>
- </pre>
- <br/>
+</pre>
+{% endfor %}
+<br/>
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags

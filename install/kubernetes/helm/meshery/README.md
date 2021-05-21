@@ -69,7 +69,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | service.annotations | object | `{}` |  |
 | service.port | int | `9081` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.name | string | `"meshery-service-account"` |  |
+| serviceAccount.name | string | `"meshery:server"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
