@@ -31,7 +31,7 @@ jobs:
           version: v3.4.1
       - name: Helm lint
         env:
-          CHARTS_PATH: install/kubernetes/helm/meshery/Chart.yaml
+          CHARTS_PATH: install/kubernetes/helm/meshery
         run:
           helm lint ${{ env.CHARTS_PATH }}
 
@@ -81,7 +81,7 @@ jobs:
           path: ${{ env.REPO_PATH }}
       - name: Copy index to new repo
         env:
-          SOURCE: /home/runner/work/layer5io/meshery/install/kubernetes/helm/meshery
+          SOURCE: /home/runner/work/layer5io/meshery/install/kubernetes/helm/meshery/Chart.yaml
 #          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
           TARGET: meshery.io/charts
         run:
