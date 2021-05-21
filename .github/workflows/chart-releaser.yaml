@@ -13,8 +13,8 @@ jobs:
         uses: stefanprodan/helm-gh-pages@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          charts_dir: chart
-          charts_url: https://meshery.io
+          charts_dir: install/kubernetes/meshery
+          charts_url: https://meshery.io/charts
           owner: layer5
           repository: meshery.io
           branch: master
