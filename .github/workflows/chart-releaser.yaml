@@ -1,8 +1,9 @@
 name: Release Charts
 on:
   push:
-    tags: '*'
-
+    branches:
+      - master
+      
 jobs:
   release-chart:
     runs-on: ubuntu-latest
