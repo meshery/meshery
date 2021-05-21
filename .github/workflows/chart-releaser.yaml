@@ -14,10 +14,11 @@ jobs:
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm/meshery/charts
-          charts_url: https://meshery.io/charts
+          charts_url: https://meshery.io
           owner: layer5io
           repository: meshery.io
           branch: master
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
+          chart_version: stable-${GITHUB_REF/refs\/tags\//}
