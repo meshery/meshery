@@ -40,6 +40,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.2.1
         with:
           charts_dir: install/kubernetes/meshery
-          pages_branch: master
+          charts_repo_url: https://meshery.io/charts/
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
