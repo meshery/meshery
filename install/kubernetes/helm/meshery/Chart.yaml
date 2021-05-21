@@ -16,7 +16,7 @@ source:
 
 engine: gotpl
 
-deprecated: false
+deprecated: false 
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -49,7 +49,7 @@ dependencies:
   version: 2.0.1
   condition: meshery-consul.enabled
 - name: meshery-kuma
-  version: 1.0.1
+  version: 2.0.1
   condition: meshery-kuma.enabled
 - name: meshery-osm
   version: 1.0.1
