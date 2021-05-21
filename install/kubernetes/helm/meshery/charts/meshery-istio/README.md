@@ -39,7 +39,7 @@ Meshery Adapter for Istio chart.
 | service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-istio-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-istio"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

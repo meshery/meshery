@@ -21,7 +21,7 @@ spec:
       labels:
         io.kompose.service: meshery-octarine
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
         - image: layer5/meshery-octarine:stable-latest
           name: meshery-octarine
