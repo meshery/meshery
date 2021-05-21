@@ -22,7 +22,6 @@ list: exclude
 {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
 {{ command.description }}
 {% endfor %}
-<br/>
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
@@ -34,14 +33,6 @@ list: exclude
 <!-- All possible example use cases of the command -->
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-{% endfor %}
 {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
@@ -50,18 +41,34 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
-
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
-
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.flags %}{% assign flag = flag_hash[1] %}
-  {{ flag.flag }} # {{ flag.description }}
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+  {{ subcommand.name }} # {{ subcommand.description }}
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.arg }} # {{ flag.description }}
   {% endfor %}
   </div>
 </pre>
 <br/>
+
+## Options inherited from parent commands
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  --help, -h # Shows help for the command
+  </div>
+</pre>
