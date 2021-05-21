@@ -1,55 +1,61 @@
-
-<!-- Name of the command -->
-# mesheryctl &#60;command name&#62;
-
+{% capture command %}{{ include.cmd }}{% endcapture %}
+<!-- title: {{page.title}}
+command: {{command}}
+include.cmd: {{include.cmd}} -->
 <!-- Description of the command. Preferably a paragraph -->
-Description of the command preferably in a paragraph.
-<br/>
+## Description
+
+
+{% for command_hash in site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.commands %}{% assign command = command_hash[0] %}
+{{ command.description }}
+{% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  mesheryctl &#60;command&#62; [flags] 
-    </div>
+  mesheryctl {{ include.cmd }} [flags] 
   </div>
 </pre>
 
 <!-- All possible example use cases of the command -->
 ## Examples
 
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command}}.flags %}{% assign flag = flag_hash[1] %}
+<div class="cmd-caption">{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-<!-- All possible use cases of the command should go here -->
-  # use case 1 (brief description)
-  mesheryctl &#60;command&#62; [flags]
-  
-  # use case 2 (brief description)
-  mesheryctl &#60;command&#62; [flags] 
-    </div>
+  {{ flag.usage }}
   </div>
- </pre>
+</pre>
+</div>
+{% endfor %}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.{{ include.cmd }}.subcommands %}
+{% assign subcommand = subcommand_hash[1] %}
+<div class="cmd-caption">{{ subcommand.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ subcommand.usage }}
+  </div>
+</pre>
+</div>
+{% endfor %}
+
 
 <!-- Options/Flags available in this command -->
-## Options
+## Options & Flags
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  [flag] (data type) short description
-    </div>
+  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.name }} # {{ flag.description }}
+  {% endfor %}
   </div>
 </pre>
 <br/>
 
-<!-- If any Options/Flags are inherited from any parent commands, add here -->
 ## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">
-    <div class="clipboardjs">
-  Possible Options inherited from parent command
-    </div>
+  --help, -h # Shows help for the command
   </div>
 </pre>
-<br/>
