@@ -68,9 +68,6 @@ permalink: /:year/:title/
 markdown: kramdown
 exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
 
-# plugins:
-#   - jekyll-redirect-from
-
 sass:
     sass_dir: _sass
     style: compact

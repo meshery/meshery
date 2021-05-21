@@ -6,8 +6,8 @@ replicaCount: 1
 restartPolicy: Always
 
 image:
-  repository: local/meshery:stable-latest
-  pullPolicy: Never
+  repository: layer5/meshery:stable-latest
+  pullPolicy: Always
 
 env:
   EVENT: mesheryLocal
@@ -32,10 +32,9 @@ rbac:
   nodes: false
 
 serviceAccount:
-
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: meshery
+  name: "meshery-server"
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -51,7 +50,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: LoadBalancer
   port: 9081
   target_port: 8080
   annotations: {}

@@ -2,7 +2,7 @@
 layout: default
 title: Extensibility
 permalink: extensibility
-type: Reference
+type: Extensibility
 abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
 redirect_from: reference/extensibility
 ---
@@ -28,9 +28,10 @@ The following points of extension are currently incorporated into Meshery.
 
 ## Types of Extension Points
 
-1. [Providers]({{site.baseurl}}/extensibility/providers)
-1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-1. [REST API](/extensibility/api#rest)
+   - Messsaging Framework (CloudEvents and NATS)
 1. [GraphQL API](/extensibility/api#graphql)
-1. CloudEvents Integration
+1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
+1. Patterns (Open Application Model (OAM))
+1. [Providers]({{site.baseurl}}/extensibility/providers)
+1. [REST API](/extensibility/api#rest)

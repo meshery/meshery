@@ -1,6 +1,6 @@
 {
     "errors_export": {
-        "component_name": "meshkit",
+        "component_name": "MeshKit",
         "component_type": "library",
         "errors": {
             "1000": {

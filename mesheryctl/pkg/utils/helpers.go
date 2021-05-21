@@ -35,28 +35,29 @@ import (
 )
 
 const (
+	// Meshery Docker Deployment URLs
 	dockerComposeWebURL         = "https://api.github.com/repos/docker/compose/releases/latest"
 	defaultDockerComposeVersion = "1.24.1/docker-compose"
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
-	// Usage URLs
-	docsBaseURL = "https://docs.meshery.io/"
+	// Meshery Kubernetes Deployment URLs
+	baseConfigURL = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL   = baseConfigURL + "manifests/default.yaml"
+	BrokerURL     = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
+	// Documentation URLs
+	docsBaseURL    = "https://docs.meshery.io/"
+	rootUsageURL   = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL   = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL = docsBaseURL + "reference/mesheryctl/system"
+	meshUsageURL   = docsBaseURL + "reference/mesheryctl/mesh"
+
+	// Meshery Server Location
 	EndpointProtocol = "http"
-	rootUsageURL     = docsBaseURL + "guides/mesheryctl/#global-commands-and-flags"
-	perfUsageURL     = docsBaseURL + "guides/mesheryctl/#performance-management"
-	systemUsageURL   = docsBaseURL + "guides/mesheryctl/#meshery-lifecycle-management"
-	meshUsageURL     = docsBaseURL + "guides/mesheryctl/#service-mesh-lifecycle-management"
-	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
-	OperatorURL      = baseConfigURL + "manifests/default.yaml"
-	BrokerURL        = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
-	MeshsyncURL      = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
-)
 
-const (
-
-	// Repo Details
+	// Meshery Repository Location
 	mesheryGitHubOrg  string = "layer5io"
 	mesheryGitHubRepo string = "meshery"
 )
@@ -109,6 +110,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
+	ViperDocker = viper.New()
 	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes
 	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
@@ -120,7 +123,7 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
-	Endpoint: "http://localhost:9081",
+	Endpoint: EndpointProtocol + "://localhost:9081",
 	Token:    "Default",
 	Platform: "docker",
 	Adapters: ListOfAdapters,
@@ -758,4 +761,15 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
+}
+
+// StringContainedInSlice returns the index in which a string is a substring in a list of strings
+func StringContainedInSlice(str string, slice []string) int {
+	for index, ele := range slice {
+		// Return index even if only a part of the string is present
+		if strings.Contains(ele, str) {
+			return index
+		}
+	}
+	return -1
 }
