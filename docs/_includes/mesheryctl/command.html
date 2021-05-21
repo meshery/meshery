@@ -1,26 +1,29 @@
-{% capture command %}{{ include.cmd }}{% endcapture %}
+<!-- {% capture command %}{{ include.cmd }}{% endcapture %} -->
+{% assign cmd = include.command_name %}
 <!-- title: {{page.title}}
 command: {{command}}
 include.cmd: {{include.cmd}} -->
+cmd: {{cmd}}
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.commands %}{% assign command = command_hash[0] %}
+{% for command_hash in site.data.mesheryctlcommands.lifecycle.{{command_name}}.commands %}
+{% assign command = command_hash[0] %}
 {{ command.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl {{ include.cmd }} [flags] 
+  mesheryctl {{command_name}} [flags] 
   </div>
 </pre>
 
 <!-- All possible example use cases of the command -->
 ## Examples
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{command}}.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.{{cmd}}.flags %}
+{% assign flag = flag_hash[1] %}
 <div class="cmd-caption">{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -29,7 +32,8 @@ include.cmd: {{include.cmd}} -->
 </pre>
 </div>
 {% endfor %}
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.{{ include.cmd }}.subcommands %}
+{% for subcommand_hash in 
+  site.data.mesheryctlcommands.lifecycle.{{include.cmd}}.subcommands %}
 {% assign subcommand = subcommand_hash[1] %}
 <div class="cmd-caption">{{ subcommand.description }}
 <pre class="codeblock-pre">

@@ -17,8 +17,8 @@ list: exclude
 <!-- Name of the command -->
 # mesheryctl {{ page.title }}
 
-{% capture command %}{{ page.title }}{% endcapture %}
+{% capture command_name %}{{ page.title }}{% endcapture %}
 
-{% include mesheryctl/command.html cmd=command %}
+{% include mesheryctl/command.html cmd=command_name %}
 
 
