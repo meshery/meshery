@@ -475,7 +475,6 @@ func ChangeManifestServiceType(fileName string, serviceType string, filePath str
 		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
 	}
 
-
 	compose.Spec.Type = serviceType
 
 	ViperK8s.Set("apiVersion", compose.APIVersion)

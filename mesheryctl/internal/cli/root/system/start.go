@@ -408,7 +408,6 @@ func start() error {
 			log.Info("Meshery is deployed in your cluster internally at " + currCtx.Endpoint)
 		} else {
 			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-			log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
 			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
 			if err != nil {
@@ -419,6 +418,8 @@ func start() error {
 			if err != nil {
 				return err
 			}
+
+			log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 		}
 
 		// switch to default case if the platform specified is not supported

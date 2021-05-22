@@ -123,12 +123,12 @@ var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consu
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
-	Endpoint: EndpointProtocol + "://localhost:9081",
-	Token:    "Default",
-	Platform: "docker",
-	Adapters: ListOfAdapters,
-	Channel:  "stable",
-	Version:  "latest",
+	Endpoint:    EndpointProtocol + "://localhost:9081",
+	Token:       "Default",
+	Platform:    "docker",
+	Adapters:    ListOfAdapters,
+	Channel:     "stable",
+	Version:     "latest",
 	ServiceType: "LoadBalancer",
 }
 

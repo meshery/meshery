@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	url       = ""
-	tokenPath = ""
-	set       = false
-	adapters  = []string{}
-	platform  = ""
+	url         = ""
+	tokenPath   = ""
+	set         = false
+	adapters    = []string{}
+	platform    = ""
 	serviceType = ""
 )
 
