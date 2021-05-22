@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -77,7 +78,7 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/git/trees/" + version + "?recursive=1"
+	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -199,11 +200,11 @@ func FetchManifests(version string) ([]Manifest, error) {
 		return nil, err
 	}
 
-	gitHubFolder := "https://github.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/tree/" + version + "/install/deployment_yamls/k8s"
+	gitHubFolder := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/tree/" + version + "/install/deployment_yamls/k8s"
 	log.Info("downloading manifest files from ", gitHubFolder)
 
 	// download all the manifest files to the ~/.meshery/manifests folder
-	rawManifestsURL := "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/" + version + "/install/deployment_yamls/k8s/"
+	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + version + "/install/deployment_yamls/k8s/"
 	err = DownloadManifests(manifests, rawManifestsURL)
 
 	if err != nil {
@@ -215,7 +216,7 @@ func FetchManifests(version string) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/releases/latest"
+	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -259,7 +260,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/master/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
@@ -267,7 +268,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/" + mesheryGitHubOrg + "/" + mesheryGitHubRepo + "/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}

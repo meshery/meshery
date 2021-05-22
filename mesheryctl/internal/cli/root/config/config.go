@@ -5,6 +5,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+
 	"net/http"
 )
 
@@ -81,7 +83,7 @@ func (ctx *Context) ValidateVersion() error {
 		return nil
 	}
 
-	url := "https://api.github.com/repos/layer5io/meshery/git/trees/" + ctx.Version + "?recursive=1"
+	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
 	resp, err := http.Get(url)
 
 	defer func() {
