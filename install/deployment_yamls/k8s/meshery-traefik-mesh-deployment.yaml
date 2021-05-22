@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-traefik-mesh
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-traefik-mesh:stable-latest
         name: meshery-traefik-mesh
