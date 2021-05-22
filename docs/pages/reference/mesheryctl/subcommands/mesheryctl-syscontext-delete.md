@@ -16,30 +16,32 @@ list: exclude
 <!-- Name of the command -->
 # mesheryctl system context delete
 
-## Description
+## Description 
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 {% endfor %}
+
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system context delete [flags]
+    mesheryctl system context delete [context-name] [flags]
   </div>
-</pre>
+</pre> 
 
+<!-- All possible example use cases of the command -->
 ## Examples
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ command.usage }}
+  {{ subcommand.usage }}
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -49,13 +51,13 @@ list: exclude
 {% endfor %}
 <br/>
 
-
 <!-- Options/Flags available in this command -->
-## Options
+## Options & Flags
+
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.flag %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.flags %}{% assign flag = flag_hash[1] %}
     {{ flag.flag }} # {{ flag.description }}
     {% endfor %}
   </div>

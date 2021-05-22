@@ -180,20 +180,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-      {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-        <tr>
-          <td>{{ subcommand.name }}</td>
-          <td></td>
-          <td>{{ subcommand.description }}</td>
-        </tr>
-      {% endfor %}
-      {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.arg }}</td>
-          <td>{{ flag.flag }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
       {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.command %}{% assign subcommand = subcommand_hash[1] %}
         <tr>
           <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/view">{{ subcommand.name }}</a></td>
@@ -205,6 +191,20 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <tr>
           <td>{{ flag.flag }}</td>
           <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.switch.command %}{% assign subcommand = subcommand_hash[1] %}
+        <tr>
+          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/switch">{{ subcommand.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand.description }}</td>
+        </tr>
+      {% endfor %}
+      {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.delete.command %}{% assign subcommand = subcommand_hash[1] %}
+        <tr>
+          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/delete">{{ subcommand.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand.description }}</td>
         </tr>
       {% endfor %}
   {% endfor %}
