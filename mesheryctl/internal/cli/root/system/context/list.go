@@ -1,7 +1,6 @@
 package context
 
 import (
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -23,7 +22,9 @@ var listContextCmd = &cobra.Command{
 		}
 		var contexts = configuration.Contexts
 		if contexts == nil {
-			return errors.New("no available contexts")
+			// return errors.New("no available contexts")
+			log.Print("No contexts available. Use `mesheryctl system context create <name>` to create a new Meshery deployment context.\n")
+			return nil
 		}
 
 		if currContext == "" {
