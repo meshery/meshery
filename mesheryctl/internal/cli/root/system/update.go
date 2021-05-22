@@ -67,15 +67,51 @@ var updateCmd = &cobra.Command{
 
 		switch currCtx.Platform {
 		case "docker":
-			log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
-			err = utils.DownloadDockerComposeFile(currCtx, true)
-			if err != nil {
-				return errors.Wrap(err, "failed to fetch docker-compose file")
+			if !utils.SkipResetFlag {
+
+				log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
+				err = utils.DownloadDockerComposeFile(currCtx, true)
+				if err != nil {
+					return errors.Wrap(err, "failed to fetch docker-compose file")
+				}
+
+				err = utils.UpdateMesheryContainers()
+				if err != nil {
+					return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+				}
+
+				//applying operator manifest
+				kubeClient, err := meshkitkube.New([]byte(""))
+				if err != nil {
+					return err
+				}
+
+				err = utils.CreateManifestsFolder()
+
+				if err != nil {
+					return err
+				}
+
+				err = utils.DownloadOperatorManifest()
+
+				if err != nil {
+					return err
+				}
+
+				log.Info("Updating Meshery...")
+
+				err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+				if err != nil {
+					return err
+				}
 			}
 
-			err = utils.UpdateMesheryContainers()
+			// restart the pods in meshery namespace
+			err = restart()
+
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+				return err
 			}
 
 		case "kubernetes":
