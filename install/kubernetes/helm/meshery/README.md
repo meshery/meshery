@@ -18,7 +18,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |------------|------|---------|
 |  | meshery-consul | 2.0.1 |
 |  | meshery-istio | 2.0.1 |
-|  | meshery-kuma | 1.0.1 |
+|  | meshery-kuma | 2.0.1 |
 |  | meshery-linkerd | 2.0.1 |
 |  | meshery-nsm | 1.0.1 |
 |  | meshery-osm | 1.0.1 |
@@ -69,7 +69,7 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | service.annotations | object | `{}` |  |
 | service.port | int | `9081` |  |
 | service.type | string | `"ClusterIP"` |  |
-| serviceAccount.name | string | `"meshery-service-account"` |  |
+| serviceAccount.name | string | `"meshery:server"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

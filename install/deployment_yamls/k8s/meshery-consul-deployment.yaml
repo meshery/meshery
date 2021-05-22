@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-consul
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-consul:stable-latest
         name: meshery-consul
