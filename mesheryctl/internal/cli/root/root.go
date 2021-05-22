@@ -93,7 +93,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "docker", "platform to deploy Meshery to")
+	RootCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
@@ -157,7 +157,8 @@ func initConfig() {
 				}
 
 				// If the user has specified a platform, then the initial config file should be of that platform
-				if utils.PlatformFlag != "" {
+				if utils.PlatformFlag == "" {
+					utils.PlatformFlag = utils.AskForInput("Choose the platform to deploy Meshery to", []string{"docker", "kubernetes"})
 					utils.TemplateContext.Platform = utils.PlatformFlag
 				}
 
