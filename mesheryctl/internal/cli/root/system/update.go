@@ -158,6 +158,12 @@ var updateCmd = &cobra.Command{
 				if err != nil {
 					return err
 				}
+
+				err = utils.ApplyOperatorManifest(client, true, false)
+
+				if err != nil {
+					return err
+				}
 			}
 			// restart the pods in meshery namespace
 			err = restart()
