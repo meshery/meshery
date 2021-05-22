@@ -41,7 +41,7 @@ Meshery Adapter for Open Service Mesh
 | service.port | int | `10009` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-osm-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-osm"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

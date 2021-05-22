@@ -94,8 +94,12 @@ const styles = (theme) => ({
   },
   itemActiveItem: {
     color: '#00B39F',
-
   },
+  headerIcons:{
+    fontSize: '1.5rem',
+    height: '1.5rem',
+    width: '1.5rem',
+  }
 });
 
 class Header extends React.Component {
@@ -115,7 +119,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon />
+                      <MenuIcon className={classes.headerIcons} />
                     </IconButton>
                   </Grid>
                 </Hidden>
@@ -135,7 +139,7 @@ class Header extends React.Component {
                   <div data-test="index-button">
                     <IconButton color="inherit">
                       <Link href="/">
-                        <DashboardIcon className={title === 'System Dashboard' ? classes.itemActiveItem : ''} />
+                        <DashboardIcon className={ classes.headerIcons +" "+(title === 'System Dashboard' ? classes.itemActiveItem : '')} />
                         {/* <FontAwesomeIcon icon={faHome} transform="shrink-2" fixedWidth className={title === 'Dashboard' && classes.itemActiveItem} /> */}
                       </Link>
                     </IconButton>
@@ -144,7 +148,7 @@ class Header extends React.Component {
                   <div data-test="settings-button">
                     <IconButton color="inherit">
                       <Link href="/settings">
-                        <SettingsIcon className={title === 'Settings' ? classes.itemActiveItem : ''} />
+                        <SettingsIcon className={classes.headerIcons +" "+(title === 'Settings' ? classes.itemActiveItem : '')} />
                       </Link>
                     </IconButton>
                   </div>

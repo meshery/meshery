@@ -97,3 +97,7 @@ func restart() error {
 	}
 	return nil
 }
+
+func init() {
+	restartCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+}

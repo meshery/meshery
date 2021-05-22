@@ -71,6 +71,11 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'flex-end'
   },
+  HeaderItem: {
+    fontSize: '1.6rem',
+    height: '1.6rem',
+    width: '1.6rem',
+  },
 });
 
 /**
@@ -120,12 +125,12 @@ function getNotificationCount(events) {
 /**
  * NotificationIcon is a wrapper react component for rendering
  * icons based on the "type" prop
- * @param {{ type: string }} props 
+ * @param {{ type: string,className: string }} props 
  */
-function NotificationIcon ({ type }) {
-  if (type === "error") return <ErrorIcon />
+function NotificationIcon ({ type, className}) {
+  if (type === "error") return <ErrorIcon className={className}/>
 
-  return <BellIcon />
+  return <BellIcon className={className}/>
 }
 
 class MesheryNotification extends React.Component {
@@ -313,7 +318,7 @@ class MesheryNotification extends React.Component {
               onClick={this.handleToggle}
             >
               <Badge badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                <NotificationIcon type={badgeColorVariant} />
+                <NotificationIcon className={classes.HeaderItem} type={badgeColorVariant} />
               </Badge>
             </IconButton>
           </Tooltip>
@@ -336,7 +341,7 @@ class MesheryNotification extends React.Component {
                         style={{ padding: '0 0.25rem 0 0' }}
                         onClick={this.handleNotifFiltering('*')}
                       >
-                        <BellIcon />
+                        <BellIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Show error notifications">
@@ -345,7 +350,7 @@ class MesheryNotification extends React.Component {
                         style={{ padding: '0 0 0 0.25rem' }}
                         onClick={this.handleNotifFiltering('error')}
                       >
-                        <ErrorIcon />
+                        <ErrorIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -361,7 +366,7 @@ class MesheryNotification extends React.Component {
                         style={{ padding: '0' }}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <ClearAllIcon />
+                        <ClearAllIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                   </div>

@@ -2,7 +2,7 @@
 layout: default
 title: "Extensibility: Providers"
 permalink: extensibility/providers
-type: Reference
+type: Extensibility
 #redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
 language: en

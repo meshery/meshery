@@ -125,17 +125,17 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return errors.New("!! cannot initialize the client")
+		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
 	}
 	if !isPreRunExecution {
-		log.Info("√ can initialize the client")
+		log.Info("√ can initialize Kubernetes client")
 	}
 
 	//Check whether kubernetes can be queried
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
-		return errors.New("!! cannot query the Kubernetes API")
+		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
 	}
 	if !isPreRunExecution {
 		log.Info("√ can query the Kubernetes API")
