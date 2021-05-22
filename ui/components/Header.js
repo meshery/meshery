@@ -136,7 +136,7 @@ class Header extends React.Component {
                       onClick={onDrawerToggle}
                       className={classes.menuButton}
                     >
-                      <MenuIcon />
+                      <MenuIcon className={classes.headerIcons} />
                     </IconButton>
                   </Grid>
                 </Hidden>
