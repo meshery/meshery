@@ -32,7 +32,7 @@ var createContextCmd = &cobra.Command{
 			tempContext.Endpoint = url
 		}
 
-		log.Printf("url: `%s`", tempContext.Endpoint)
+		log.Debug("url: `%s`", tempContext.Endpoint)
 
 		if platform != "" {
 			tempContext.Platform = platform
