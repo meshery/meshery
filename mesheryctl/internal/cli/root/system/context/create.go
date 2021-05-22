@@ -23,19 +23,26 @@ var createContextCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tempContext := utils.TemplateContext
-		log.Printf("url: `%s`", url)
-		err := utils.ValidateURL(url)
 
-		if err != nil {
-			return err
+		if url != "" {
+			err := utils.ValidateURL(url)
+			if err != nil {
+				return err
+			}
+			tempContext.Endpoint = url
 		}
-		tempContext.Endpoint = url
-		tempContext.Platform = platform
+
+		log.Printf("url: `%s`", tempContext.Endpoint)
+
+		if platform != "" {
+			tempContext.Platform = platform
+		}
+
 		if len(adapters) >= 1 {
 			tempContext.Adapters = adapters
 		}
 
-		err = utils.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
+		err := utils.AddContextToConfig(args[0], tempContext, viper.ConfigFileUsed(), set)
 		if err != nil {
 			return err
 		}
@@ -46,8 +53,8 @@ var createContextCmd = &cobra.Command{
 }
 
 func init() {
-	createContextCmd.Flags().StringVarP(&url, "url", "u", utils.MesheryEndpoint, "Meshery Server URL with Port")
+	createContextCmd.Flags().StringVarP(&url, "url", "u", "", "Meshery Server URL with Port")
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&adapters, "adapters", "a", []string{}, "List of adapters")
-	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "docker", "Platform to deploy Meshery")
+	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
 }
