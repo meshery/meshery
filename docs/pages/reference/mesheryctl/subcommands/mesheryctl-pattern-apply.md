@@ -14,7 +14,7 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl pattern pattern
+# mesheryctl pattern apply
 
 <!-- Description of the command. Preferably a paragraph -->
 ## Description
