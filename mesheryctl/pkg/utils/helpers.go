@@ -116,6 +116,8 @@ var (
 	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
+	// PlatformFlag sets the platform for the initial config file
+	PlatformFlag string
 )
 
 // ListOfAdapters returns the list of adapters available

@@ -14,6 +14,32 @@
 
 #!/usr/bin/env bash
 
+# DEFAULT PLATFORM
+PLATFORM="docker"
+
+while getopts ":p:" opt; do
+  case $opt in
+  p)
+    case $OPTARG in
+    docker)
+      PLATFORM="docker"
+      ;;
+    kubernetes)
+      PLATFORM="kubernetes"
+      ;;
+    esac
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    exit 1
+    ;;
+  :)
+    echo "Option -$OPTARG requires a platform argument." >&2
+    exit 1
+    ;;
+  esac
+done
+
 ####### COMMON FUNCTIONS
 ############################
 command_exists() {
@@ -109,4 +135,4 @@ fi
 printf "Removing installation files and opening Meshery..."
 rm -rf meshery.zip LICENSE README.md
 
-mesheryctl system start --yes
+mesheryctl system start --yes -p $PLATFORM
