@@ -802,8 +802,7 @@ func AskForInput(prompt string, allowed []string) string {
 
 		if StringInSlice(response, allowed) {
 			return response
-		} else {
-			log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 		}
+		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
 }
