@@ -1,0 +1,5 @@
+flag: --skip-reset
+arg: update
+description: Pull the latest manifest files
+usage: |
+    mesheryctl system update --skip-reset
