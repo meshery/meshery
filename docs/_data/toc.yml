@@ -52,6 +52,8 @@
   links:
     - title: Lifecycle Management
       url: functionality/lifecycle-management
+    - title: Pattern Management
+      url: functionality/pattern-management
     - title: Performance Management
       url: functionality/performance-management
     - title: Service Mesh Interface (SMI)

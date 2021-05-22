@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-cpx
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-cpx:stable-latest
         name: meshery-cpx

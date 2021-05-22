@@ -41,7 +41,7 @@ Meshery Adapter for Network Service Mesh.
 | service.port | int | `10004` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-nsm-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-nsm"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
