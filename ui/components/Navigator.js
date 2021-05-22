@@ -292,6 +292,14 @@ const categories = [
         show: false,
         link: true,
       },
+      {
+        id: "Filters",
+        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/filters",
+        title: "Meshery Filters",
+        show: false,
+        link: true,
+      },
     ],
   },
   {
