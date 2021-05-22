@@ -20,11 +20,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "1.25rem",
     boxShadow: theme.shadows[5],
   },
+  title: {
+    color: "white",
+    fontWeight: "300",
+    letterSpacing: ".05rem",
+    textTransform: "none",
+    paddingLeft: "1rem",
+  },
   text: {
     color: "white",
     fontWeight: "300",
     letterSpacing: ".05rem",
     textTransform: "none",
+    padding: "0 5rem 0 1rem",
   },
   buttonContainer: {
     alignSelf: "flex-start",
@@ -54,6 +62,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#607D8B",
     },
   },
+  buttonText: {
+    color: "white",
+    fontWeight: "300",
+    letterSpacing: ".05rem",
+    textTransform: "none",
+    marginLeft: "2rem",
+  },
   link: {
     textDecoration: "none",
     color: "white",
@@ -76,7 +91,7 @@ const PopUp = ({ open, handleClose }) => {
               variant="h4"
               gutterBottom="true"
               paragraph="true"
-              className={classes.text}
+              className={classes.title}
               id="simple-modal-title"
             >
               Configuration Wizard
@@ -97,7 +112,7 @@ const PopUp = ({ open, handleClose }) => {
               <Checkbox color="default" />
               <Typography className={classes.label}>Dont show this again</Typography>
             </div>
-            <Button onClick={handleClose} className={classes.text}>
+            <Button onClick={handleClose} className={classes.buttonText}>
               Skip
             </Button>
             <Link href="/wizard" className={classes.link}>

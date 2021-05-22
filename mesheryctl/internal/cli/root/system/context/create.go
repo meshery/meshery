@@ -23,8 +23,9 @@ var createContextCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		tempContext := utils.TemplateContext
-
+		log.Printf("url: `%s`", url)
 		err := utils.ValidateURL(url)
+
 		if err != nil {
 			return err
 		}
