@@ -138,18 +138,14 @@ setup-wrk2:
 setup-nighthawk:
 	cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd wrk2; make setup; cd ..
 
-#Incorporating Make docs commands from the Docs Makefile
-jekyll=bundle exec jekyll
-
-docs:
-	$(jekyll) serve --drafts --livereload
+site:
+	cd docs; bundle install; bundle exec jekyll serve --drafts --livereload
 
 build-docs:
 	$(jekyll) build --drafts --livereload
 
 docker-docs:
 	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
-
 
 .PHONY: chart-readme
 chart-readme:
