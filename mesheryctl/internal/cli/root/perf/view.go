@@ -54,7 +54,6 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 		if resp.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 			return errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", proName)
 		}
 		defer resp.Body.Close()
@@ -66,8 +65,15 @@ var viewCmd = &cobra.Command{
 		if err = json.Unmarshal(data, &response); err != nil {
 			return errors.Wrap(err, "failed to unmarshal response body")
 		}
+
 		var a result
+		if response.TotalCount == 0 {
+			return errors.New("profile does not exit. Please get a profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles")
+		}
 		for _, profile := range response.Profiles {
+			if response.Profiles == nil {
+				return errors.New("profile name not provide. Please get a profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles")
+			}
 			a = result{
 				Name:          profile.Name,
 				Endpoint:      profile.Endpoints[0],
@@ -76,7 +82,6 @@ var viewCmd = &cobra.Command{
 				Loadgenerator: profile.LoadGenerators[0],
 			}
 			if outFormatFlag == "json" {
-				// create a second map to copy the informations we want to
 				if data, err = json.MarshalIndent(&a, "", "  "); err != nil {
 					return err
 				}
@@ -98,4 +103,6 @@ var viewCmd = &cobra.Command{
 
 func init() {
 	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "", "(optional) format to display in json")
+	viewCmd.Flags().StringVarP(&tokenPath, "token", "t", utils.AuthConfigFile, "(required) Path to meshery auth config")
+	_ = viewCmd.MarkFlagRequired("token")
 }
