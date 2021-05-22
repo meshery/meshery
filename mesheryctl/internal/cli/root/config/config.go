@@ -36,6 +36,7 @@ type Context struct {
 	Adapters []string `mapstructure:"adapters,omitempty"`
 	Channel  string   `mapstructure:"channel,omitempty"`
 	Version  string   `mapstructure:"version,omitempty"`
+	ServiceType string `mapstructure:"serviceType,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object.

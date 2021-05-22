@@ -13,6 +13,8 @@ type Spec struct {
 	Selector interface{} `yaml:"selector,omitempty"`
 	Strategy interface{} `yaml:"strategy,omitempty"`
 	Template Template    `yaml:"template,omitempty"`
+	Ports    interface{} `yaml:"ports,omitempty"`
+	Type     string      `yaml:"type,omitempty"`
 }
 
 type Template struct {

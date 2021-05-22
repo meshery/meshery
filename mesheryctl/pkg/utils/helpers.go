@@ -129,6 +129,7 @@ var TemplateContext = config.Context{
 	Adapters: ListOfAdapters,
 	Channel:  "stable",
 	Version:  "latest",
+	ServiceType: "LoadBalancer",
 }
 
 // TemplateToken is the template token provided when creating a config file
