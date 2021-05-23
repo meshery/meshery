@@ -127,7 +127,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceholder, bottomInputPlaceholder }) => {
+const ConfigCard = ({ handleSwitch, Icon, name, topInputPlaceholder, bottomInputPlaceholder }) => {
   const [isChecked, setIsChecked] = React.useState(false);
   const classes = useStyles();
 
@@ -161,25 +161,16 @@ const ConfigCard = ({ handleSwitch, Icon, KubernetesInput, name, topInputPlaceho
           />
         </div>
         <div className={classes.contentBottomChecked}>
-          <>
-            {name === "Kubernetes" ? (
-              <KubernetesInput/>
-            ) : (
-              <>
-                {" "}
-                <Input
-                  placeholder={topInputPlaceholder}
-                  disableUnderline="false"
-                  className={classes.contentBottomInput}
-                ></Input>
-                <Input
-                  placeholder={bottomInputPlaceholder}
-                  disableUnderline="false"
-                  className={classes.contentBottomInput}
-                ></Input>
-              </>
-            )}
-          </>
+          <Input
+            placeholder={topInputPlaceholder}
+            disableUnderline="false"
+            className={classes.contentBottomInput}
+          ></Input>
+          <Input
+            placeholder={bottomInputPlaceholder}
+            disableUnderline="false"
+            className={classes.contentBottomInput}
+          ></Input>
         </div>
       </CardContent>
     </Card>

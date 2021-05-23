@@ -22,7 +22,6 @@ import {
 import BackupIcon from "@material-ui/icons/Backup";
 import CloseIcon from "@material-ui/icons/Close";
 
-import KubernetesStatus from "./KubernetesStatus";
 import KubernetesIcon from "../icons/KubernetesIcon";
 
 const MeshySwitch = withStyles({
@@ -39,7 +38,7 @@ const MeshySwitch = withStyles({
   track: {},
 })(Switch);
 
-const styles = () => ({
+const styles = (theme) => ({
   // Container
   cardContainer: {
     position: "relative",
@@ -171,6 +170,38 @@ const styles = () => ({
     marginBottom: "-1rem",
     fontSize: "0.75rem",
     marginTop: "0",
+  },
+  // Status
+  infoContainer: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    width: "20rem",
+    padding: "5rem 1rem",
+    boxShadow: "0px 1px 6px 1px rgba(0,0,0,0.75)",
+  },
+  infoTitle: {
+    position: "absolute",
+    bottom: "12.50rem",
+    right: "10rem",
+    color: "#647881",
+    background: "#F1F3F4",
+    padding: ".5rem 5rem .75rem 1.5rem",
+    borderRadius: "0.25rem",
+    fontSize: ".8rem",
+  },
+  infoItemContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  infoLabel: {
+    fontSize: ".9rem",
+    color: theme.palette.text.primary,
+    marginRight: "1rem",
+  },
+  infoData: {
+    fontSize: ".9rem",
+    color: theme.palette.text.secondary,
   },
 });
 
@@ -398,6 +429,7 @@ class KubernetesScreen extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { inClusterConfig, contextName } = this.state;
     return (
       <Container className={classes.cardContainer}>
         <Card className={`${classes.card} ${classes.cardChecked}`} variant="outlined">
@@ -470,7 +502,21 @@ class KubernetesScreen extends React.Component {
           </CardContent>
         </Card>
         {this.props.k8sconfig?.k8sfile || this.state?.contextName ? (
-          <KubernetesStatus isChecked={this.state.isChecked} />
+          <div className={classes.infoContainer}>
+            <Typography className={classes.infoTitle}>Status</Typography>
+            <div className={classes.infoItemContainer}>
+              <Typography className={classes.infoLabel}>Current-Context:</Typography>
+              <Typography className={classes.infoData}>
+                {inClusterConfig ? "Using In Cluster Config" : contextName}
+              </Typography>
+            </div>
+            <div className={classes.infoItemContainer}>
+              <Typography className={classes.infoLabel}>Cluster:</Typography>
+              <Typography className={classes.infoData}>
+                {inClusterConfig ? "Using In Cluster Config" : "Using Out Of Cluster Config"}
+              </Typography>
+            </div>
+          </div>
         ) : null}
       </Container>
     );
