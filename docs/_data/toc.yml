@@ -118,3 +118,5 @@
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
+    - title: Contributing Guidelines
+      url: reference/contributing-guide
