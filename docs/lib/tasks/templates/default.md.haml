@@ -49,6 +49,19 @@
   \
 
 :plain
+  ## `Subscription` type
+
+  The `Subscription` type contains all the Subscriptions you can listen to.
+
+
+\
+
+
+- subscriptions.each do |field|
+  = render_full_field(field, heading_level: 3, owner: 'Subscription')
+  \
+
+:plain
   ## Object types
 
   Object types represent the resources that the Meshery GraphQL API can return.
@@ -161,6 +174,9 @@
 
   Only general use input types are listed here. For mutation input types,
   see the associated mutation type above.
+
+  For more information, read about [Scalar Types](https://graphql.org/learn/schema/#input-types) on `graphql.org`.
+
 \
 
 - input_types.each do |type|

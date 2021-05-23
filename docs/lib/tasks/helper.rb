@@ -218,10 +218,25 @@ module Graphql
         end
       end
 
+
+      def subscriptions
+        graphql_object_types.each do |object|
+            if object[:name] == @schema.root_type_for_operation("subscription").graphql_name
+              @subscriptions ||= object
+                .values_at(:fields, :connections)
+                .flatten
+                .then { |fields| sorted_by_name(fields) }
+
+                return @subscriptions
+            end
+          end
+      end
+
+
       # We assume that the mutations have been processed first, marking their
       # inputs as `seen_type?`
       def input_types
-        mutations # ensure that mutations have seen their inputs first
+        mutations
         graphql_input_object_types.reject { |t| seen_type?(t[:name]) }
       end
 

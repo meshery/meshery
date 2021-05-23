@@ -109,6 +109,38 @@ Returns [`Status!`](#status).
 | ---- | ---- | ----------- |
 | <a id="mutationchangeoperatorstatuschangeoperatorstatusinput"></a>`input` | [`OperatorStatusInput`](#operatorstatusinput) |  |
 
+## `Subscription` type
+
+The `Subscription` type contains all the Subscriptions you can listen to.
+
+### `Subscription.listenToAddonState`
+
+Returns [`[AddonList!]!`](#addonlist).
+
+#### Arguments
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) |  |
+
+### `Subscription.listenToControlPlaneState`
+
+Returns [`[ControlPlane!]!`](#controlplane).
+
+#### Arguments
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) |  |
+
+### `Subscription.listenToMeshSyncEvents`
+
+Returns [`OperatorControllerStatus!`](#operatorcontrollerstatus).
+
+### `Subscription.listenToOperatorState`
+
+Returns [`OperatorStatus!`](#operatorstatus).
+
 ## Object types
 
 Object types represent the resources that the Meshery GraphQL API can return.
