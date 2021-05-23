@@ -1,9 +1,9 @@
 ---
 layout: default
-title: "Extensibility: GraphQL Docs"
+title: "Extensibility: GraphQL Docs Reference"
 permalink: extensibility/graphql-reference
 type: Extensibility
-abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
+abstract: 'Meshery Reference for its GraphQL API'
 #redirect_from: extensibility
 ---
 
@@ -40,7 +40,7 @@ Returns [`[AddonList!]!`](#addonlist).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetavailableaddonsselector"></a>`selector` | [`MeshType`](#meshtype) |  |
+| <a id="querygetavailableaddonsselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
 
 ### `Query.getAvailableNamespaces`
 
@@ -58,7 +58,7 @@ Returns [`[ControlPlane!]!`](#controlplane).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) |  |
+| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Query.getOperatorStatus`
 
@@ -115,7 +115,7 @@ Returns [`[AddonList!]!`](#addonlist).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) |  |
+| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
 
 ### `Subscription.listenToControlPlaneState`
 
@@ -127,7 +127,7 @@ Returns [`[ControlPlane!]!`](#controlplane).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) |  |
+| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
 
@@ -246,7 +246,7 @@ on `graphql.org`.
 
 ### `MeshType`
 
-Service Meshes.
+Service Mesh Types.
 
 | Value | Description |
 | ----- | ----------- |

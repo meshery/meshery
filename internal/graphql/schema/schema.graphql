@@ -1,6 +1,10 @@
+# We assume a few things about the schema. We use the graphql-ruby gem to generate docs, which enforces:
+    # - All mutations have a single input field named 'input'
+# If these things change, then doc geneartion for GraphQL will break.
+
 # ================= COMMONS =========================
 
-# Service Meshes
+# Service Mesh Types
 enum MeshType {
 
 	# All meshes that Meshery supports
@@ -186,10 +190,16 @@ type NameSpace {
 type Query {
 	
 	# Query details about Addons available (Eg. Prometheus and Grafana)
-	getAvailableAddons(selector: MeshType): [AddonList!]!
+	getAvailableAddons(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
 
 	# Query Control Plane data for a Service Mesh (or all) in your cluster
-    getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
+    getControlPlanes(
+		# Filter Control Plane Query 
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
     
 	# Query status of Meshery Operator in your cluster
 	getOperatorStatus: OperatorStatus
@@ -197,6 +207,8 @@ type Query {
 	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
 }
+
+# 
 
 type Mutation {
 
@@ -210,10 +222,16 @@ type Mutation {
 type Subscription {
 
 	# Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
-    listenToAddonState(selector: MeshType): [AddonList!]!
+    listenToAddonState(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
 
 	# Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
-    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+    listenToControlPlaneState(
+		# Filter Control Plane Query
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
 
 	# Listen to changes in status of Meshery Operator in your cluster
     listenToOperatorState: OperatorStatus!

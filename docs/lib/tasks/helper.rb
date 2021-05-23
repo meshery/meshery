@@ -99,10 +99,10 @@ module Graphql
         <<-MD.strip_heredoc
           ---
           layout: default
-          title: "Extensibility: GraphQL Docs"
+          title: "Extensibility: GraphQL Docs Reference"
           permalink: extensibility/graphql-reference
           type: Extensibility
-          abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
+          abstract: 'Meshery Reference for its GraphQL API'
           #redirect_from: extensibility
           ---
 
