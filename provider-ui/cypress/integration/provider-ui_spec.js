@@ -15,7 +15,6 @@ describe('Provider UI', () => {
     cy
       .get('[data-cy="select_provider"]').click()
       .get('#split-button-menu').contains('None').click()
-      .get('[data-cy="select_provider"]').click()
   })
 
   it('opens and closes modal to learn more about providers', () => {

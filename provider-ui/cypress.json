@@ -1,5 +1,6 @@
 {
   "baseUrl": "http://localhost:3001",
+  "chromeWebSecurity": false,
   "projectId": "gpe84y",
   "env": {
     "codeCoverage": {
