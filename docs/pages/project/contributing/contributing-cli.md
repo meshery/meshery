@@ -1,0 +1,44 @@
+---
+layout: page
+title: Contributing to mesheryctl
+permalink: project/contributing-cli
+description: How to contribute to Meshery Command Line Interface.
+language: en
+type: project
+---
+
+
+### <a name="contributing-mesheryctl">mesheryctl Contribution Flow</a>
+
+`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
+
+The [`/mesheryctl`](https://github.com/layer5io/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
+
+After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
+
+#### mesheryctl command reference
+
+Detailed documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
+
+#### Guidelines and resources for contributing to mesheryctl
+
+`mesheryctl` might be the interface that the users first have with Meshery. As such, `mesheryctl` needs to provide a great UX.
+
+The following principles should be taken in mind while designing `mesheryctl` commands-
+
+1. Provide user experiences that are familiar.
+2. Make the commands and their behavior intuitive.
+3. Avoid long commands with chained series of flags.
+4. Design with automated testing in mind, e.g. provide possibility to specify output format as json (-o json) for easy inspection of command response.
+
+Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl`, we should take inspiration from and deliver similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md), [code](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl/cmd/config).
+
+`mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarise yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts).
+
+For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
+
+A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/config.go` file. These are updated and should be used for getting the Meshery configuration.
+
+For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
+
+`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
