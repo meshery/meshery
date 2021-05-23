@@ -116,6 +116,8 @@ var (
 	ViperK8s = viper.New()
 	// SilentFlag skips waiting for user input and proceeds with default options
 	SilentFlag bool
+	// PlatformFlag sets the platform for the initial config file
+	PlatformFlag string
 )
 
 // ListOfAdapters returns the list of adapters available
@@ -772,4 +774,35 @@ func StringContainedInSlice(str string, slice []string) int {
 		}
 	}
 	return -1
+}
+
+// StringInSlice checks if a string is present in a slice
+func StringInSlice(str string, slice []string) bool {
+	for _, ele := range slice {
+		if ele == str {
+			return true
+		}
+	}
+	return false
+}
+
+// AskForInput asks the user for an input and checks if it is in the available values
+func AskForInput(prompt string, allowed []string) string {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s %s: ", prompt, allowed)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if StringInSlice(response, allowed) {
+			return response
+		}
+		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
+	}
 }
