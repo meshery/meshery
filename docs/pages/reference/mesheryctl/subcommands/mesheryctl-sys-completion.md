@@ -1,7 +1,7 @@
 ---
 layout: default
-title: completion
-permalink: reference/mesheryctl/system/completion
+title: stop
+permalink: reference/mesheryctl/system/stop
 type: reference
 display-title: "false"
 language: en
@@ -14,32 +14,32 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl system completion
+# mesheryctl system stop
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system completion [flags]
+    mesheryctl system stop [flags]
   </div>
 </pre>
 
 ## Examples
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign command = command_hash[1] %}
-{{ command.description }}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ command.usage }}
+  {{ subcommand.usage }}
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -55,7 +55,7 @@ list: exclude
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
     {{ flag.flag }} # {{ flag.description }}
     {% endfor %}
   </div>
