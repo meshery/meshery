@@ -41,13 +41,6 @@
   \
 
 
-
-- connection_object_types.each do |type|
-  = render_name_and_description(type, level: 4)
-  \
-  = render_object_fields(type[:fields], owner: type, level_bump: 1)
-  \
-
 :plain
   ## `Subscription` type
 

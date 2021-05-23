@@ -204,10 +204,9 @@ module Graphql
           inputs = t[:input_fields]
           input = inputs.first
           name = t[:name]
-
           assert!(inputs.one?, "Expected exactly 1 input field named #{name}. Found #{inputs.count} instead.")
           assert!(input[:name] == 'input', "Expected the input of #{name} to be named 'input'")
-          
+
           input_type_name = input[:type][:name]
           input_type = graphql_input_object_types.find { |t| t[:name] == input_type_name }
           assert!(input_type.present?, "Cannot find #{input_type_name} for #{name}.input")
@@ -216,6 +215,7 @@ module Graphql
           seen_type!(input_type_name)
           t.merge(arguments: arguments)
         end
+        return @mutations
       end
 
 
@@ -296,8 +296,8 @@ module Graphql
         fields = mutation[:return_fields]
         return if fields.blank?
 
-        name = owner.to_s + mutation[:name]
-        render_object_fields(fields, owner: { name: name })
+        render_return_type(fields.first)
+
       end
 
       def render_connection_note(field)
