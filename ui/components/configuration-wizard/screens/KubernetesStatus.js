@@ -52,7 +52,6 @@ class KubernetesStatus extends React.Component {
       k8sfileError: false,
       ts: new Date(),
     };
-    console.log("cc", clusterConfigured);
   }
 
   static getDerivedStateFromProps(props, state) {
