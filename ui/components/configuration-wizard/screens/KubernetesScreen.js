@@ -1,5 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { withRouter } from "next/router";
+import { withSnackbar } from "notistack";
+import { updateK8SConfig, updateProgress } from "../../../lib/store";
+import dataFetch from "../../../lib/data-fetch";
 import {
   withStyles,
   FormGroup,
@@ -9,17 +14,16 @@ import {
   Container,
   Switch,
   FormControlLabel,
-  Input,
   Card,
   CardContent,
   Typography,
+  IconButton,
 } from "@material-ui/core/";
 import BackupIcon from "@material-ui/icons/Backup";
+import CloseIcon from "@material-ui/icons/Close";
 
-import KubernetesInput from "./KubernetesInput";
 import KubernetesStatus from "./KubernetesStatus";
 import KubernetesIcon from "../icons/KubernetesIcon";
-import ConfigCard from "./ConfigCard";
 
 const MeshySwitch = withStyles({
   switchBase: {
@@ -173,19 +177,23 @@ const styles = () => ({
 class KubernetesScreen extends React.Component {
   constructor(props) {
     super(props);
-    const { k8sconfig, handleConnectToKubernetes } = this.props;
+    const { inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = this.props;
     this.state = {
-      inClusterConfig: k8sconfig.inClusterConfig, // read from store
-      k8sfile: k8sconfig.k8sfile, // read from store
-      isClusterConfigured: k8sconfig.clusterConfigured,
-      contextName: k8sconfig.contextName, // read from store
-      contextNameForForm: "",
+      inClusterConfig, // read from store
+      inClusterConfigForm: inClusterConfig,
+      k8sfile, // read from store
       k8sfileElementVal: "",
+      contextName, // read from store
+      contextNameForForm: "",
+      contextsFromFile: [],
+      clusterConfigured, // read from store
+      configuredServer,
       k8sfileError: false,
       ts: new Date(),
-      isChecked: this.props.k8sconfig ? true : false,
+      isChecked: false,
     };
   }
+
   static getDerivedStateFromProps(props, state) {
     const { inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
     if (props.ts > state.ts) {
@@ -201,8 +209,17 @@ class KubernetesScreen extends React.Component {
     }
     return {};
   }
+  componentDidMount() {
+    const { inClusterConfig, contextName } = this.state;
+    const { handleConnectToKubernetes } = this.props;
+    if (inClusterConfig || contextName) {
+      this.setState({ isChecked: true });
+      handleConnectToKubernetes(true);
+    }
+  }
   handleSwitch = (name, checked) => {
-    if (this.props.k8sconfig) {
+    const { inClusterConfig, contextName } = this.state;
+    if (inClusterConfig || contextName) {
       this.setState({ isChecked: checked });
       if (this.props.handleConnectToKubernetes) {
         this.props.handleConnectToKubernetes(checked);
@@ -227,6 +244,158 @@ class KubernetesScreen extends React.Component {
       this.handleSubmit();
     };
   };
+  fetchContexts = () => {
+    const { inClusterConfigForm } = this.state;
+    const fileInput = document.querySelector("#k8sfile");
+    const formData = new FormData();
+    if (inClusterConfigForm) {
+      return;
+    }
+    if (fileInput.files.length == 0) {
+      this.setState({ contextsFromFile: [], contextNameForForm: "" });
+      return;
+    }
+    // formData.append('contextName', contextName);
+    formData.append("k8sfile", fileInput.files[0]);
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch(
+      "/api/k8sconfig/contexts",
+      {
+        credentials: "same-origin",
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      },
+      (result) => {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined") {
+          let ctName = "";
+          result.forEach(({ contextName, currentContext }) => {
+            if (currentContext) {
+              ctName = contextName;
+            }
+          });
+          self.setState({ contextsFromFile: result, contextNameForForm: ctName });
+          self.submitConfig();
+        }
+      },
+      self.handleError("Kubernetes config could not be validated")
+    );
+  };
+
+  submitConfig = () => {
+    const { inClusterConfigForm, k8sfile, contextNameForForm } = this.state;
+    const fileInput = document.querySelector("#k8sfile");
+    const formData = new FormData();
+    formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
+    if (!inClusterConfigForm) {
+      formData.append("contextName", contextNameForForm);
+      formData.append("k8sfile", fileInput.files[0]);
+    }
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    dataFetch(
+      "/api/k8sconfig",
+      {
+        credentials: "same-origin",
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      },
+      (result) => {
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined") {
+          //prompt
+          const modal = this.ref.current;
+          const self = this;
+          if (self.state.operatorSwitch) {
+            setTimeout(async () => {
+              let response = await modal.show({
+                title: "Do you wanna remove Operator from this cluster?",
+                subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'",
+                options: ["yes", "no"],
+              });
+              if (response == "yes") {
+                const variables = {
+                  status: "DISABLED",
+                };
+                self.props.updateProgress({ showProgress: true });
+
+                changeOperatorState((response, errors) => {
+                  self.props.updateProgress({ showProgress: false });
+                  if (errors !== undefined) {
+                    self.handleError("Operator action failed");
+                  }
+                  self.props.enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), {
+                    variant: "success",
+                    autoHideDuration: 2000,
+                    action: (key) => (
+                      <IconButton
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        onClick={() => self.props.closeSnackbar(key)}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    ),
+                  });
+                  self.setState((state) => ({ operatorSwitch: !state.operatorSwitch }));
+                }, variables);
+              }
+            }, 100);
+          }
+          this.setState({
+            clusterConfigured: true,
+            configuredServer: result.configuredServer,
+            contextName: result.contextName,
+          });
+          this.props.enqueueSnackbar("Kubernetes config was successfully validated!", {
+            variant: "success",
+            autoHideDuration: 2000,
+            action: (key) => (
+              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+                <CloseIcon />
+              </IconButton>
+            ),
+          });
+          this.props.updateK8SConfig({
+            k8sConfig: {
+              inClusterConfig: inClusterConfigForm,
+              k8sfile,
+              contextName: result.contextName,
+              clusterConfigured: true,
+              configuredServer: result.configuredServer,
+            },
+          });
+        }
+      },
+      self.handleError("Kubernetes config could not be validated")
+    );
+  };
+  handleSubmit = () => {
+    const { inClusterConfigForm, k8sfile } = this.state;
+    if (!inClusterConfigForm && k8sfile === "") {
+      this.setState({ k8sfileError: true });
+      return;
+    }
+    this.submitConfig();
+  };
+  handleError = (msg) => (error) => {
+    this.props.updateProgress({ showProgress: false });
+    const self = this;
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant: "error",
+      action: (key) => (
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+          <CloseIcon />
+        </IconButton>
+      ),
+      autoHideDuration: 7000,
+    });
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -300,17 +469,23 @@ class KubernetesScreen extends React.Component {
             </div>
           </CardContent>
         </Card>
-        {this.props.k8sconfig ? <KubernetesStatus isChecked={this.state.isChecked}/> : null}
+        {this.props.k8sconfig?.k8sfile || this.state?.contextName ? (
+          <KubernetesStatus isChecked={this.state.isChecked} />
+        ) : null}
       </Container>
     );
   }
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
 const mapStateToProps = (state) => {
   const k8sconfig = state.get("k8sConfig").toJS();
-  return {
-    k8sconfig,
-  };
+  return k8sconfig;
 };
 
-export default withStyles(styles)(connect(mapStateToProps)(KubernetesScreen));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(KubernetesScreen)))
+);

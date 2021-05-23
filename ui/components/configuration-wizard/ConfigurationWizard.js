@@ -112,7 +112,7 @@ const ConfigurationWizard = () => {
                   </Button>
                 )}
                 <Button
-                  //disabled={activeStep === 0 && !kubernetesConnected}
+                  disabled={activeStep === 0 && !kubernetesConnected}
                   variant="contained"
                   onClick={handleNext}
                   className={classes.button}
