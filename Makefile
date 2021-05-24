@@ -154,3 +154,12 @@ docker-docs:
 .PHONY: chart-readme
 chart-readme:
 	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
+
+swagger-spec:
+	swagger generate spec -o ./swagger/swagger.yaml --scan-models
+
+swagger-docs:swagger-spec
+	swagger serve ./swagger/swagger.yaml
+
+swagger-run:swagger-spec
+	go run ./swagger/main.go
