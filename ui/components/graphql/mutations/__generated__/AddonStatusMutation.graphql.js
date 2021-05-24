@@ -8,11 +8,14 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type MeshType = "CITRIX" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "NGINXSM" | "NSM" | "OCTARINE" | "OSM" | "TRAEFIKMESH" | "%future added value";
+export type MeshType = "ALL_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "INVALID_MESH" | "ISTIO" | "KUMA" | "LINKERD" | "NETWORK_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "OCTARINE" | "OPEN_SERVICE_MESH" | "TANZU" | "TRAEFIK_MESH" | "%future added value";
 export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type AddonStatusMutationVariables = {|
+export type AddonStatusInput = {|
   selector?: ?MeshType,
   targetStatus: Status,
+|};
+export type AddonStatusMutationVariables = {|
+  input?: ?AddonStatusInput
 |};
 export type AddonStatusMutationResponse = {|
   +addonstate: Status
@@ -26,10 +29,9 @@ export type AddonStatusMutation = {|
 
 /*
 mutation AddonStatusMutation(
-  $selector: MeshType
-  $targetStatus: Status!
+  $input: AddonStatusInput
 ) {
-  addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)
+  addonstate: changeAddonStatus(input: $input)
 }
 */
 
@@ -38,12 +40,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "selector"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "targetStatus"
+    "name": "input"
   }
 ],
 v1 = [
@@ -52,13 +49,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "selector",
-        "variableName": "selector"
-      },
-      {
-        "kind": "Variable",
-        "name": "targetStatus",
-        "variableName": "targetStatus"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "kind": "ScalarField",
@@ -84,16 +76,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "bc81997a1e9bb3d2db83a11e0a4150b7",
+    "cacheID": "4f11c7d338b4a51b255fae5554424d74",
     "id": null,
     "metadata": {},
     "name": "AddonStatusMutation",
     "operationKind": "mutation",
-    "text": "mutation AddonStatusMutation(\n  $selector: MeshType\n  $targetStatus: Status!\n) {\n  addonstate: changeAddonStatus(selector: $selector, targetStatus: $targetStatus)\n}\n"
+    "text": "mutation AddonStatusMutation(\n  $input: AddonStatusInput\n) {\n  addonstate: changeAddonStatus(input: $input)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '37539d93c0e9392117292e6633d6be1c';
+(node/*: any*/).hash = 'eaed3737aff98e45fc02f51c97601092';
 
 module.exports = node;
