@@ -9,8 +9,6 @@
     - title: Contributing
       url: project/contributing
       children:
-        - title: Contributing Guidelines
-          url: project/contributing-guide
         - title: Meshery CLI
           url: project/contributing-cli
         - title: Meshery UI
