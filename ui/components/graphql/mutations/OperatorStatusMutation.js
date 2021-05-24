@@ -2,14 +2,16 @@ import { graphql, commitMutation } from "react-relay";
 import environment from "../../../lib/relayEnvironment";
 
 const operatorStatusMutation = graphql`
-  mutation OperatorStatusMutation($targetStatus: Status!) {
-    operatorStatus: changeOperatorStatus(targetStatus: $targetStatus) 
+  mutation OperatorStatusMutation($input: OperatorStatusInput) {
+    operatorStatus: changeOperatorStatus(input: $input) 
   }
 `;
 
 export default function changeOperatorState(onComplete, variables) {
   const vars = {
-    targetStatus:variables.status
+    input: {
+      targetStatus:variables.status,
+    }
   };
 
   commitMutation(environment,{

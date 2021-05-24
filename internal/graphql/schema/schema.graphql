@@ -1,0 +1,241 @@
+# We assume a few things about the schema. We use the graphql-ruby gem to generate docs, which enforces:
+    # - All mutations have a single input field named 'input'
+# If these things change, then doc geneartion for GraphQL will break.
+
+# ================= COMMONS =========================
+
+# Service Mesh Types
+enum MeshType {
+
+	# All meshes that Meshery supports
+    ALL_MESH
+
+	# Invalid Mesh
+	INVALID_MESH
+
+	# AWS App Mesh
+    APP_MESH
+
+	# Citrix Service Mesh
+    CITRIX_SERVICE_MESH
+
+	# Consul by HashiCorp
+    CONSUL
+
+	# Istio Service Mesh
+    ISTIO
+
+	# Kuma
+    KUMA
+
+	# LinkerD Service Mesh
+    LINKERD
+
+	# Traefik Mesh
+    TRAEFIK_MESH
+
+	# Octarine Mesh 
+    OCTARINE
+
+	# Network Service Mesh
+    NETWORK_SERVICE_MESH
+
+	# VMware Tanzu Service Mesh
+    TANZU
+
+	# Open Service Mesh
+    OPEN_SERVICE_MESH
+
+	# NGINX Service Mesh
+    NGINX_SERVICE_MESH
+}
+
+enum Status {
+
+	# Enabled
+	ENABLED
+
+	# Disabled
+	DISABLED
+
+	# Processing
+	PROCESSING
+
+	# Unknown
+	UNKNOWN
+}
+
+type Error {
+
+	# Error Code
+	code: String!
+
+	# Error Details
+	description: String!
+}
+
+# =================== ADDONS =====================
+
+# Input for changing Addon Status
+input AddonStatusInput {
+	
+	# Filter by Serice Mesh
+	selector: MeshType,
+
+	# Desired Status
+	targetStatus: Status!
+}
+
+# Deatils about the Addon Component
+type AddonList {
+
+	# Name
+    name: String!
+
+	# Owner
+	owner: String!
+
+	# Endpoint (if applicable)
+	endpoint: String!
+}
+
+
+# ============== CONTROL PLANE =======================
+
+# Filter Control Plane Query
+input ControlPlaneFilter {
+
+	# Filter by Service Mesh
+    type: MeshType
+}
+
+# Control Plane data for a particular Mesh
+type ControlPlane {
+
+	# Service Mesh Name
+	name: String!
+
+	# Members of the Mesh
+	members: [ControlPlaneMember!]!
+}
+
+# Member Details
+type ControlPlaneMember {
+
+	# Name
+	name: String!
+
+	# Component
+	component: String!
+
+	# Version
+	version: String!
+
+	# Namespace
+	namespace: String!
+}
+
+# ============== OPERATOR =============================
+
+# Input for status change of Meshery Operator
+input OperatorStatusInput {
+
+	# Desired status for Meshery Operator
+	targetStatus: Status!
+}
+
+# Status of Meshery Operator and its controllers
+type OperatorStatus {
+
+	# Status of Meshery Operator
+	status: Status!
+
+	# Verion of Meshery Operator
+    version: String!
+
+	# Details about various Controllers of Meshery Operator
+    controllers: [OperatorControllerStatus!]!
+
+	# Error Logs encountered by Meshery Operator
+	error: Error
+}
+
+# Controllers of Meshery Operator
+type OperatorControllerStatus {
+
+	# Controller Name
+	name: String!
+
+	# Controller Verison
+    version: String!
+
+	# Controller Status
+	status: Status!
+
+	# Controller Error Log
+	error: Error
+}
+
+# ============== NAMESPACE =============================
+
+# Type to define a k8s Namespace
+type NameSpace {
+	
+	# Namespace Name
+	namespace: String!
+}
+
+# ============== ROOT =================================
+
+type Query {
+	
+	# Query details about Addons available (Eg. Prometheus and Grafana)
+	getAvailableAddons(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
+
+	# Query Control Plane data for a Service Mesh (or all) in your cluster
+    getControlPlanes(
+		# Filter Control Plane Query 
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
+    
+	# Query status of Meshery Operator in your cluster
+	getOperatorStatus: OperatorStatus
+
+	# Query available Namesapces in your cluster
+	getAvailableNamespaces: [NameSpace!]!
+}
+
+# 
+
+type Mutation {
+
+	# Change the Addon Status
+	changeAddonStatus(input: AddonStatusInput): Status!
+
+	# Change the Operator Status
+	changeOperatorStatus(input: OperatorStatusInput): Status!
+}
+
+type Subscription {
+
+	# Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
+    listenToAddonState(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
+
+	# Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
+    listenToControlPlaneState(
+		# Filter Control Plane Query
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
+
+	# Listen to changes in status of Meshery Operator in your cluster
+    listenToOperatorState: OperatorStatus!
+
+	# Listen to changes in the list of available Namesapces in your cluster
+    listenToMeshSyncEvents: OperatorControllerStatus!
+}
