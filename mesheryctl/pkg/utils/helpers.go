@@ -56,10 +56,6 @@ const (
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
-
-	// Meshery Repository Location
-	mesheryGitHubOrg  string = "layer5io"
-	mesheryGitHubRepo string = "meshery"
 )
 
 type cmdType string
@@ -208,16 +204,6 @@ func DownloadFile(filepath string, url string) error {
 	}
 
 	return nil
-}
-
-// GetMesheryGitHubOrg retrieves the name of the GitHub organization under which the Meshery repository resides.
-func GetMesheryGitHubOrg() string {
-	return mesheryGitHubOrg
-}
-
-// GetMesheryGitHubRepo retrieves the name of the Meshery repository
-func GetMesheryGitHubRepo() string {
-	return mesheryGitHubRepo
 }
 
 func prereq() ([]byte, []byte, error) {
