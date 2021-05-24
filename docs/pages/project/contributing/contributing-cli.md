@@ -54,7 +54,7 @@ The following principles should be taken in mind while designing `mesheryctl` co
 
 **1. Consistency is quality.**
 
-- _Consistency of interaction drives a *quality* user experience. Whether that experience is delightful or painful is a related, but separate consideration. Meshery's behavior of user interactions should be consistent even when their user experience is poor._
+- _Consistency of interaction drives a quality user experience. Whether that experience is delightful or painful is a related, but separate consideration. Meshery's behavior of user interactions should be consistent even when their user experience is poor._
 
 **2. Intuitive user experiences feel natural to users.**
 
