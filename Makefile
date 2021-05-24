@@ -142,7 +142,7 @@ setup-nighthawk:
 jekyll=bundle exec jekyll
 
 site:
-	cd docs; bundle install; $(jekyll) serve --drafts --livereload
+	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
 
 
 build-docs:

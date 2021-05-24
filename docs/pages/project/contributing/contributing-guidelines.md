@@ -1,15 +1,19 @@
 ---
 layout: default
 title: Meshery Contributing Guidelines
-abstract: "A guide to contributing to Meshery"
-permalink: reference/contributing-guide
-type: Reference
+abstract: "Design principles and code conventions."
+permalink: project/contributing-guide
+type: project
 ---
 These guidelines are a collection of principles and conventions that need to be followed while designing mesheryctl commands.
 
-## Principles
+## Design Principles 
 
-### Intuition vs Consistency
+**1. Consistency is quality.**
+ - _Consistency of interaction drives a *quality* user experience. Whether that experience is delightful or painful is a related, but separate consideration. Meshery's behavior of user interactions should be consistent even when their user experience is poor._
+
+**2. Intuitive user experiences feel natural to users.**
+ - _When being designed, each of Meshery's user experiences should be examined first from the user's perspective._
 
 Commands should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation.
 
@@ -31,17 +35,11 @@ These assumed defaults should be easily overriden by the user with flags.
 
 For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overriden with the `--platform` flag.
 
-### GUI vs CLI
+### User Experience: GUI vs CLI
 
-For all the functionalities in mesheryctl, it is safe to assume that the CLI should provide the same user experience as it does in the GUI unless it is explicitly specified.
+Ideally, all functionaly provided in Meshery UI should be available to users via CLI (in `mesherctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
 
-For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
-
-### Reduce user effort
-
-CLI is not as visually intuitive as GUIs which makes it difficult for the user to interact with it.
-
-To make it easy and reduce the amount of effort needed for the user, the following should be taken care of-
+Command line interfaces offer less context to the user, which makes them inherently less intuitive compared to graphical user interfaces. Both of these user interfaces, however, are the same in that they are both clients of Meshery Server. Both clients *are* a user experience and as such, to be attended to in this way. The following considerations should be accounted for when designing `mesheryctl` experiences:
 
 * Provide only relevant output. Use "debug" logs that can be accessed with `--verbose` flag wherever needed.
 * Add headers to output to give context to the user.

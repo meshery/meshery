@@ -2,6 +2,9 @@
 layout: default
 title: Releases
 permalink: project/releases
+description: List of released Meshery versions and their release notes.
+language: en
+type: project
 ---
 {% assign sorted_release = site.releases | sort: 'date' | reverse %}
 <table>
