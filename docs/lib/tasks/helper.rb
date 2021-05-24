@@ -447,7 +447,6 @@ module Graphql
       end
 
       # returns the deprecation information for a field or argument
-      # See: Gitlab::Graphql::Deprecation
       def schema_deprecation(type_name, field_name)
         key = [*Array.wrap(type_name), field_name].join('.')
         deprecations[key]
