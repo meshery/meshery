@@ -39,6 +39,7 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
+	__Directive() __DirectiveResolver
 }
 
 type DirectiveRoot struct {
@@ -69,8 +70,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChangeAddonStatus    func(childComplexity int, selector *model.MeshType, targetStatus model.Status) int
-		ChangeOperatorStatus func(childComplexity int, targetStatus model.Status) int
+		ChangeAddonStatus    func(childComplexity int, input *model.AddonStatusInput) int
+		ChangeOperatorStatus func(childComplexity int, input *model.OperatorStatusInput) int
 	}
 
 	NameSpace struct {
@@ -107,8 +108,8 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	ChangeAddonStatus(ctx context.Context, selector *model.MeshType, targetStatus model.Status) (model.Status, error)
-	ChangeOperatorStatus(ctx context.Context, targetStatus model.Status) (model.Status, error)
+	ChangeAddonStatus(ctx context.Context, input *model.AddonStatusInput) (model.Status, error)
+	ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, selector *model.MeshType) ([]*model.AddonList, error)
@@ -121,6 +122,9 @@ type SubscriptionResolver interface {
 	ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
 	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
 	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
+}
+type __DirectiveResolver interface {
+	IsRepeatable(ctx context.Context, obj *introspection.Directive) (bool, error)
 }
 
 type executableSchema struct {
@@ -225,7 +229,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status)), true
+		return e.complexity.Mutation.ChangeAddonStatus(childComplexity, args["input"].(*model.AddonStatusInput)), true
 
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
@@ -237,7 +241,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["targetStatus"].(model.Status)), true
+		return e.complexity.Mutation.ChangeOperatorStatus(childComplexity, args["input"].(*model.OperatorStatusInput)), true
 
 	case "NameSpace.namespace":
 		if e.complexity.NameSpace.Namespace == nil {
@@ -459,98 +463,245 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "schema/schema.graphqls", Input: `# ================= COMMONS =========================
+	{Name: "schema/schema.graphql", Input: `# We assume a few things about the schema. We use the graphql-ruby gem to generate docs, which enforces:
+    # - All mutations have a single input field named 'input'
+# If these things change, then doc geneartion for GraphQL will break.
+
+# ================= COMMONS =========================
+
+# Service Mesh Types
 enum MeshType {
+
+	# All meshes that Meshery supports
     ALL_MESH
+
+	# Invalid Mesh
 	INVALID_MESH
+
+	# AWS App Mesh
     APP_MESH
+
+	# Citrix Service Mesh
     CITRIX_SERVICE_MESH
+
+	# Consul by HashiCorp
     CONSUL
+
+	# Istio Service Mesh
     ISTIO
+
+	# Kuma
     KUMA
+
+	# LinkerD Service Mesh
     LINKERD
+
+	# Traefik Mesh
     TRAEFIK_MESH
+
+	# Octarine Mesh 
     OCTARINE
+
+	# Network Service Mesh
     NETWORK_SERVICE_MESH
+
+	# VMware Tanzu Service Mesh
     TANZU
+
+	# Open Service Mesh
     OPEN_SERVICE_MESH
+
+	# NGINX Service Mesh
     NGINX_SERVICE_MESH
 }
 
 enum Status {
+
+	# Enabled
 	ENABLED
+
+	# Disabled
 	DISABLED
+
+	# Processing
 	PROCESSING
+
+	# Unknown
 	UNKNOWN
 }
 
 type Error {
+
+	# Error Code
 	code: String!
+
+	# Error Details
 	description: String!
 }
 
 # =================== ADDONS =====================
 
+# Input for changing Addon Status
+input AddonStatusInput {
+	
+	# Filter by Serice Mesh
+	selector: MeshType,
+
+	# Desired Status
+	targetStatus: Status!
+}
+
+# Deatils about the Addon Component
 type AddonList {
+
+	# Name
     name: String!
+
+	# Owner
 	owner: String!
+
+	# Endpoint (if applicable)
 	endpoint: String!
 }
 
+
 # ============== CONTROL PLANE =======================
+
+# Filter Control Plane Query
 input ControlPlaneFilter {
+
+	# Filter by Service Mesh
     type: MeshType
 }
 
+# Control Plane data for a particular Mesh
 type ControlPlane {
+
+	# Service Mesh Name
 	name: String!
+
+	# Members of the Mesh
 	members: [ControlPlaneMember!]!
 }
 
+# Member Details
 type ControlPlaneMember {
+
+	# Name
 	name: String!
+
+	# Component
 	component: String!
+
+	# Version
 	version: String!
+
+	# Namespace
 	namespace: String!
 }
 
 # ============== OPERATOR =============================
+
+# Input for status change of Meshery Operator
+input OperatorStatusInput {
+
+	# Desired status for Meshery Operator
+	targetStatus: Status!
+}
+
+# Status of Meshery Operator and its controllers
 type OperatorStatus {
+
+	# Status of Meshery Operator
 	status: Status!
+
+	# Verion of Meshery Operator
     version: String!
+
+	# Details about various Controllers of Meshery Operator
     controllers: [OperatorControllerStatus!]!
+
+	# Error Logs encountered by Meshery Operator
 	error: Error
 }
 
+# Controllers of Meshery Operator
 type OperatorControllerStatus {
+
+	# Controller Name
 	name: String!
+
+	# Controller Verison
     version: String!
+
+	# Controller Status
 	status: Status!
+
+	# Controller Error Log
 	error: Error
 }
 
 # ============== NAMESPACE =============================
+
+# Type to define a k8s Namespace
 type NameSpace {
+	
+	# Namespace Name
 	namespace: String!
 }
 
 # ============== ROOT =================================
+
 type Query {
-	getAvailableAddons(selector: MeshType): [AddonList!]!
-    getControlPlanes(filter: ControlPlaneFilter): [ControlPlane!]!
-    getOperatorStatus: OperatorStatus
+	
+	# Query details about Addons available (Eg. Prometheus and Grafana)
+	getAvailableAddons(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
+
+	# Query Control Plane data for a Service Mesh (or all) in your cluster
+    getControlPlanes(
+		# Filter Control Plane Query 
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
+    
+	# Query status of Meshery Operator in your cluster
+	getOperatorStatus: OperatorStatus
+
+	# Query available Namesapces in your cluster
 	getAvailableNamespaces: [NameSpace!]!
 }
 
+# 
+
 type Mutation {
-	changeAddonStatus(selector: MeshType, targetStatus: Status!): Status!
-	changeOperatorStatus(targetStatus: Status!): Status!
+
+	# Change the Addon Status
+	changeAddonStatus(input: AddonStatusInput): Status!
+
+	# Change the Operator Status
+	changeOperatorStatus(input: OperatorStatusInput): Status!
 }
 
 type Subscription {
-    listenToAddonState(selector: MeshType): [AddonList!]!
-    listenToControlPlaneState(filter: ControlPlaneFilter): [ControlPlane!]!
+
+	# Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
+    listenToAddonState(
+		# Select Mesh Type
+		selector: MeshType
+	): [AddonList!]!
+
+	# Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
+    listenToControlPlaneState(
+		# Filter Control Plane Query
+		filter: ControlPlaneFilter
+	): [ControlPlane!]!
+
+	# Listen to changes in status of Meshery Operator in your cluster
     listenToOperatorState: OperatorStatus!
+
+	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
 }
 `, BuiltIn: false},
@@ -564,39 +715,30 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_changeAddonStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.MeshType
-	if tmp, ok := rawArgs["selector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
-		arg0, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, tmp)
+	var arg0 *model.AddonStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAddonStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonStatusInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["selector"] = arg0
-	var arg1 model.Status
-	if tmp, ok := rawArgs["targetStatus"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg1, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["targetStatus"] = arg1
+	args["input"] = arg0
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_changeOperatorStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.Status
-	if tmp, ok := rawArgs["targetStatus"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
-		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, tmp)
+	var arg0 *model.OperatorStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["targetStatus"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -1123,7 +1265,7 @@ func (ec *executionContext) _Mutation_changeAddonStatus(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["selector"].(*model.MeshType), args["targetStatus"].(model.Status))
+		return ec.resolvers.Mutation().ChangeAddonStatus(rctx, args["input"].(*model.AddonStatusInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1165,7 +1307,7 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["targetStatus"].(model.Status))
+		return ec.resolvers.Mutation().ChangeOperatorStatus(rctx, args["input"].(*model.OperatorStatusInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2042,6 +2184,41 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	res := resTmp.([]introspection.InputValue)
 	fc.Result = res
 	return ec.marshalN__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValueᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.__Directive().IsRepeatable(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) (ret graphql.Marshaler) {
@@ -2994,6 +3171,34 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, obj interface{}) (model.AddonStatusInput, error) {
+	var it model.AddonStatusInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "selector":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+			it.Selector, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "targetStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
+			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputControlPlaneFilter(ctx context.Context, obj interface{}) (model.ControlPlaneFilter, error) {
 	var it model.ControlPlaneFilter
 	var asMap = obj.(map[string]interface{})
@@ -3005,6 +3210,26 @@ func (ec *executionContext) unmarshalInputControlPlaneFilter(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
 			it.Type, err = ec.unmarshalOMeshType2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐMeshType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Context, obj interface{}) (model.OperatorStatusInput, error) {
+	var it model.OperatorStatusInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "targetStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
+			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3429,20 +3654,34 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 		case "name":
 			out.Values[i] = ec.___Directive_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "isRepeatable":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec.___Directive_isRepeatable(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4182,6 +4421,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAddonStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐAddonStatusInput(ctx context.Context, v interface{}) (*model.AddonStatusInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddonStatusInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4242,6 +4489,14 @@ func (ec *executionContext) marshalOOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorStatusInput(ctx context.Context, v interface{}) (*model.OperatorStatusInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputOperatorStatusInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
