@@ -2,10 +2,13 @@
 layout: page
 title: Contributing
 permalink: project/contributing
+description: How to contribute to the Meshery project.
+language: en
+type: project
 ---
 
 
-Please do! Thanks for your help! :balloon:
+Please do! Thanks for your help! 🎈
 
 This project is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md). 
 ## Not sure where to start? 
@@ -23,7 +26,7 @@ Follow these steps and you'll be right at home.
   - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/layer5io/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/layer5io/meshery/issues/new/choose). All [pull requests](https://github.com/layer5io/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 
 **Sections**
-- General Contribution Flow
+- [General Contribution Flow]({{site.baseurl}}/project/contributing#general-contribution-flow)
 - <a href="#commit-signing">Developer Certificate of Origin</a>
 - Meshery Contribution Flow
   - <a href="#contributing-docs">Meshery Documentation</a>
@@ -34,7 +37,7 @@ Relevant coding style guidelines are the Go Code Review Comments and the Formatt
 
 ## <a name="contributing">General Contribution Flow</a>
 
-To contribute to Meshery, please follow the fork-and-pull request workflow described [here](CONTRIBUTING-gitflow.md).
+To contribute to Meshery, please follow the fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/CONTRIBUTING-gitflow.md).
 
 ### <a name="commit-signing">Signing-off on Commits (Developer Certificate of Origin)</a>
 
@@ -134,81 +137,3 @@ Meshery uses adapters to provision and interact with different service meshes. F
 
 _Tip:_ The [Meshery Adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery Adapter written in Go.
 
-### <a name="contributing-mesheryctl">mesheryctl Contribution Flow</a>
-
-`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
-
-The [`/mesheryctl`](https://github.com/layer5io/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
-
-After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
-
-#### mesheryctl command reference
-
-Detailed documentation of the `mesheryctl` commands is available in the [Meshery Docs](https://docs.meshery.io/reference/mesheryctl).
-
-#### Guidelines and resources for contributing to mesheryctl
-
-`mesheryctl` might be the interface that the users first have with Meshery. As such, `mesheryctl` needs to provide a great UX.
-
-The following principles should be taken in mind while designing `mesheryctl` commands-
-
-1. Provide user experiences that are familiar.
-2. Make the commands and their behavior intuitive.
-3. Avoid long commands with chained series of flags.
-4. Design with automated testing in mind, e.g. provide possibility to specify output format as json (-o json) for easy inspection of command response.
-
-Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl`, we should take inspiration from and deliver similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md), [code](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl/cmd/config).
-
-`mesheryctl` uses the [Cobra](https://github.com/spf13/cobra) framework. A good first-step towards contributing to `mesheryctl` would be to familiarise yourself with the [Cobra concepts](https://github.com/spf13/cobra#concepts).
-
-For manipulating config files, `mesheryctl` uses [Viper](https://github.com/spf13/viper).
-
-A central `struct` is maintained in the `mesheryctl/internal/cli/root/config/config.go` file. These are updated and should be used for getting the Meshery configuration.
-
-For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
-
-`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
-
-### <a name="contributing-ui">UI Contribution Flow</a>
-Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
-
-#### Install UI dependencies
-To install/update the UI dependencies:
-```
-make setup-ui-libs
-```
-
-#### Build and export UI
-To build and export the UI code:
-```
-make build-ui
-```
-
-Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
-Any time changes are made to the UI code, the above code will have to run to rebuild the UI.
-
-#### UI Development Server
-If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
-```
-make run-ui-dev
-```
-
-Make sure to have Meshery server configured, up and running on the default port `http://localhost:9081` before proceeding to access and work on the UI server at `http://localhost:3000`.
-Any UI changes made now will automatically be recompiled and served in the browser.
-
-#### Running Meshery from IDE
-If you want to run Meshery from IDE like Goland, VSCode. set below environment variable
-```
-PROVIDER_BASE_URLS="https://meshery.layer5.io"
-PORT=9081
-DEBUG=true
-ADAPTER_URLS=mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10005 mesherylocal.layer5.io:10006 mesherylocal.layer5.io:10007 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009
-```
-go tool argument
-```shell
--tags draft
-```
-update /etc/hosts
-```shell
-127.0.0.1 mesherylocal.layer5.io
-```

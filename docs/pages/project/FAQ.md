@@ -2,6 +2,9 @@
 layout: page
 title: FAQ
 permalink: project/faq
+description: General commonly asked questions and answers about Meshery.
+language: en
+type: project
 ---
 
 ## Question: Why was Meshery created?
