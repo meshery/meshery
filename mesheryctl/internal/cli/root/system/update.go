@@ -75,21 +75,30 @@ var updateCmd = &cobra.Command{
 					return errors.Wrap(err, "failed to fetch docker-compose file")
 				}
 
+				log.Info("Updating Meshery...")
+
 				err = utils.UpdateMesheryContainers()
 				if err != nil {
 					return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
 				}
 
-				//applying operator manifest
+				// applying operator manifest
 				kubeClient, err := meshkitkube.New([]byte(""))
 				if err != nil {
 					return err
 				}
 
-				err = utils.CreateManifestsFolder()
-
+				running, err := utils.IsMesheryRunning(currCtx.Platform)
 				if err != nil {
 					return err
+				}
+
+				if !running {
+					err = utils.CreateManifestsFolder()
+
+					if err != nil {
+						return err
+					}
 				}
 
 				err = utils.DownloadOperatorManifest()
@@ -98,8 +107,6 @@ var updateCmd = &cobra.Command{
 					return err
 				}
 
-				log.Info("Updating Meshery...")
-
 				err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 				if err != nil {
@@ -107,7 +114,7 @@ var updateCmd = &cobra.Command{
 				}
 			}
 
-			// restart the pods in meshery namespace
+			// restart the containers and the operator pods
 			err = restart()
 
 			if err != nil {
