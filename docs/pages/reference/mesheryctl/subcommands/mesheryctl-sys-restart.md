@@ -1,7 +1,7 @@
 ---
 layout: default
 title: switch
-permalink: reference/mesheryctl/system/context/restart
+permalink: reference/mesheryctl/system/restart
 type: reference
 display-title: "false"
 language: en
