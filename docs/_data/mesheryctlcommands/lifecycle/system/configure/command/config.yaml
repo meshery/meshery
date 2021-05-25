@@ -1,4 +1,4 @@
 name: config
-description: Configures Meshery to use a Kubernetes cluster.
+description: Configures Meshery with kubeconfig. Generated with the help of user details to provide access for public clouds(GKE/EKS)
 usage: |
     mesheryctl system config gke --token [path to token]
