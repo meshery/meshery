@@ -32,14 +32,14 @@ list: exclude
 
 ## Examples
 
+{% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
-    # {{ flag.description }}
-    {{ flag.usage }}
-    {% endfor %}
+  {{ flag.usage }}
   </div>
 </pre>
+{% endfor %}
 <br/>
 
 ## Options & Flags

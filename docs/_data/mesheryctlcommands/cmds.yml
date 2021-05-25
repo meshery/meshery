@@ -1,0 +1,56 @@
+---
+- name: system
+  description: Lifecycle management of Meshery deployments
+  usage: "mesheryctl system"
+  flags:
+    context:
+      name: --context, -c
+      arg: system
+      description: Temporarily change the current context.
+      usage: |
+        mesheryctl system reset -c [temporary context name]
+  subcommands:
+    start:
+      name: start
+      arg: system
+      description: Start Meshery
+      usage: |
+        mesheryctl system start
+      flags:
+        skip-update:
+          name: --skip-update
+          description: skip updating Meshery
+        reset:
+          arg: start
+          description: Reset Meshery’s configuration file to default settings.
+          usage: |
+              mesheryctl system start --reset   
+    stop:
+      name: stop
+      arg: system
+      description: Stop Meshery
+      usage: |
+        mesheryctl system start
+    
+- name: perf
+  description: Performance management of Meshery deployments
+  usage: "mesheryctl perf"
+  flags:
+    context:
+      name: --context, -c
+      arg: system
+      description: Temporarily change the current context.
+      usage: |
+        mesheryctl system reset -c [temporary context name]
+  subcommands:
+    start:
+      name: start
+      arg: system
+      description: Start Meshery
+      usage: |
+        mesheryctl system start
+    flags:
+      skip-update:
+        name: --skip-update
+        description: skip updating Meshery    
+

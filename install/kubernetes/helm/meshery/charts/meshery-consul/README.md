@@ -40,7 +40,7 @@ Meshery Adapter for Consul chart.
 | service.port | int | `10002` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-consul-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-consul"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

@@ -42,20 +42,20 @@ const (
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
 	// Meshery Kubernetes Deployment URLs
-	baseConfigURL    = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
-	OperatorURL      = baseConfigURL + "manifests/default.yaml"
-	BrokerURL        = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
-	MeshsyncURL      = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
+	baseConfigURL = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/"
+	OperatorURL   = baseConfigURL + "manifests/default.yaml"
+	BrokerURL     = baseConfigURL + "samples/meshery_v1alpha1_broker.yaml"
+	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL 	 = "https://docs.meshery.io/"
-	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
-	meshUsageURL     = docsBaseURL + "reference/mesheryctl/mesh"
+	docsBaseURL    = "https://docs.meshery.io/"
+	rootUsageURL   = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL   = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL = docsBaseURL + "reference/mesheryctl/system"
+	meshUsageURL   = docsBaseURL + "reference/mesheryctl/mesh"
 
 	// Meshery Server Location
-	EndpointProtocol = "http"	
+	EndpointProtocol = "http"
 
 	// Meshery Repository Location
 	mesheryGitHubOrg  string = "layer5io"
