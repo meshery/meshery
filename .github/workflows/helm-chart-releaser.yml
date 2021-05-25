@@ -60,20 +60,20 @@ jobs:
       - name: Helm Chart Releaser For Remote
         uses: layer5io/helm-chart-releaser@v0.1.0
         with:
-          charts_dir: install/kubernetes/helm/meshery
+          charts_dir: charts
           owner: layer5io
-          repo: layer5io/meshery.io
+          repo: meshery.io
           # For helm charts index
           charts_repo_url: https://meshery.io/charts/
           pages_branch: master
-          activity: none
+          activity: push
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout target repo
         uses: actions/checkout@v2
         env:
           REPO: layer5io/meshery.io
-          REPO_PATH: meshery.io
+          REPO_PATH: charts
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +81,8 @@ jobs:
           path: ${{ env.REPO_PATH }}
       - name: Copy index to new repo
         env:
-          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
+          SOURCE: /home/runner/work/layer5io/meshery/install/kubernetes/helm/meshery/Chart.yaml
+#          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
           TARGET: meshery.io/charts
         run:
           cp ${{ env.SOURCE }} ${{ env.TARGET }}

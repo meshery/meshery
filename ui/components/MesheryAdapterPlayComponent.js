@@ -197,8 +197,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       selectionError: false,
 
       namespace: {
-        value: "default",
-        label: "default"
+        value: "",
+        label: ""
       },
       namespaceError: false,
 
@@ -265,7 +265,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           namespaces.sort((a, b) => (
             a.value > b.value? 1: -1
           ))
-          self.setState({ namespaceList: namespaces, namespace: namespaces[0] })
+          self.setState({ namespaceList: namespaces})
         },
         error: (err) => console.log("error at namespace fetch: " + err),
       })
