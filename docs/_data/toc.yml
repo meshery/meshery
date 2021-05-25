@@ -1,23 +1,27 @@
-- title: Documentation
-  url: ""
+- title: Quick Start
+  url: installation/quick-start
+  
+- title: Overview
+  url: project
   links:
-    - title: Overview
-      url: overview
-    - title: Project
-      url: project
+    - title: Community
+      url: project/community
+    - title: Contributing
+      url: project/contributing
       children:
-        - title: Contributing
-          url: project/contributing
-        - title: Releases
-          url: project/releases
-        - title: Build & Release (CI)
-          url: project/build-and-release
-        - title: Vulnerabilities
-          url: project/security-vulnerabilities
-        - title: FAQ
-          url: project/faq
-    - title: Quick Start
-      url: installation/quick-start
+        - title: Meshery CLI
+          url: project/contributing-cli
+        - title: Meshery UI
+          url: project/contributing-ui
+    - title: Releases
+      url: project/releases
+    - title: Build & Release (CI)
+      url: project/build-and-release
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
+    - title: FAQ
+      url: project/faq
+
       children:
         - title: Installing mesheryctl
           url: installation/mesheryctl
@@ -52,6 +56,8 @@
   links:
     - title: Lifecycle Management
       url: functionality/lifecycle-management
+    - title: Pattern Management
+      url: functionality/pattern-management
     - title: Performance Management
       url: functionality/performance-management
     - title: Service Mesh Interface (SMI)
@@ -109,6 +115,8 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
+    - title: "GraphQL Reference"
+      url: extensibility/graphql-reference
 - title: Reference
   url: reference
   links:

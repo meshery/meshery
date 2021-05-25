@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-nsm
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
         - image: layer5/meshery-nsm:stable-latest
           name: meshery-nsm

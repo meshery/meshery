@@ -172,6 +172,6 @@ func init() {
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
 	_ = PerfCmd.MarkFlagRequired("token")
 
-	availableSubcommands = []*cobra.Command{listCmd}
+	availableSubcommands = []*cobra.Command{listCmd, viewCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }
