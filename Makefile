@@ -142,7 +142,7 @@ setup-nighthawk:
 jekyll=bundle exec jekyll
 
 site:
-	cd docs; bundle install; $(jekyll) serve --drafts --livereload
+	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
 
 
 build-docs:
@@ -156,10 +156,10 @@ chart-readme:
 	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
 
 swagger-spec:
-	swagger generate spec -o ./swagger/swagger.yaml --scan-models
-
-swagger-docs:swagger-spec
-	swagger serve ./swagger/swagger.yaml
+	swagger generate spec -o ./swagger.yaml --scan-models
 
 swagger-run:swagger-spec
-	go run ./swagger/main.go
+	swagger serve ./swagger.yaml
+
+swagger-docs:
+	swagger generate spec -o ./docs/_data/swagger.yml --scan-models
