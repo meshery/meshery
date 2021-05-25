@@ -1,6 +1,6 @@
 ---
 layout: default
-title: switch
+title: reset
 permalink: reference/mesheryctl/system/reset
 type: reference
 display-title: "false"

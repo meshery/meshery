@@ -1,6 +1,6 @@
 ---
 layout: default
-title: switch
+title: logs
 permalink: reference/mesheryctl/system/logs
 type: reference
 display-title: "false"
