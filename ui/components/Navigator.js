@@ -294,10 +294,10 @@ const categories = [
       },
       {
         id: "Filters",
-        icon: <img src="/static/img/pattern_trans.svg" style={{ width: "1.21rem" }} />,
+        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
         href: "/configuration/filters",
         title: "Meshery Filters",
-        show: false,
+        show: true,
         link: true,
       },
     ],

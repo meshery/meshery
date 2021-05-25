@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import Head from 'next/head';
 import { getPath } from "../../lib/path";
+import { resolveHref } from "next/dist/next-server/lib/router/router";
+import dataFetch from "../../lib/data-fetch";
 
 const styles = {
   paper: {
@@ -14,10 +16,32 @@ const styles = {
   }
 }
 
-class newFilters extends React.Component {
+class NewFilters extends React.Component {
   componentDidMount () {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path: getPath() });
+  }
+
+  async componentsDidMount() {
+    await new Promise(resolve => {
+      dataFetch(
+        `/api/experimental/filter${query}`,
+        {
+          credentials: "include",
+        },
+        (result) => {
+          console.log("FilterFile API", `/api/experimental/filter${query}`);
+          updateProgress({ showProgress: false });
+          if (result) {
+            setFilters(result.filters || []);
+            setPage(result.page || 0);
+            setPageSize(result.page_size || 0);
+            setCount(result.total_count || 0);
+          }
+        },
+        handleError
+      );
+    })
   }
 
   render () {
@@ -41,4 +65,4 @@ const mapDispatchToProps = dispatch => ({
 export default withStyles(styles)(connect(
   null,
   mapDispatchToProps
-)(newFilters));
+)(NewFilters));
