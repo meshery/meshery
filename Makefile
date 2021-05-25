@@ -141,15 +141,15 @@ setup-nighthawk:
 #Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll
 
-docs:
-	$(jekyll) serve --drafts --livereload
+site:
+	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
+
 
 build-docs:
-	$(jekyll) build --drafts --livereload
+	cd docs; $(jekyll) build --drafts
 
 docker-docs:
-	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
-
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 .PHONY: chart-readme
 chart-readme:

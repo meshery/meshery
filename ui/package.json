@@ -16,7 +16,7 @@
     "test-integration": "cypress run --spec 'cypress/integration/integration/**/*'",
     "test-e2e": "cypress run --spec 'cypress/integration/e2e/**/*'",
     "ci-test-integration": "start-server-and-test dev http://localhost:3000 test-integration",
-    "relay": "relay-compiler --src ./components --schema ../internal/graphql/schema/schema.graphqls"
+    "relay": "relay-compiler --src ./components --schema ../internal/graphql/schema/schema.graphql"
   },
   "husky": {
     "hooks": {

@@ -14,6 +14,49 @@
 
 #!/usr/bin/env bash
 
+# Get the platform to deploy Meshery from the flag
+while getopts ":p:" opt; do
+    case $opt in
+    p)
+        case $OPTARG in
+        docker)
+            PLATFORM="docker"
+            ;;
+        kubernetes)
+            PLATFORM="kubernetes"
+            ;;
+        *)
+            echo "Invalid platform: $OPTARG"
+            exit 1
+            ;;
+        esac
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires a platform argument." >&2
+        exit 1
+        ;;
+    esac
+done
+
+# If no flag is present, prompt the user for a platform
+if [ ! "$PLATFORM" ]; then
+    echo Enter a platform to deploy Meshery. Available platforms [docker, kubernetes]:
+    read PLATFORM
+fi
+
+case "$PLATFORM" in
+docker | kubernetes) ;;
+
+*)
+    echo "Invalid platform: $PLATFORM"
+    exit 1
+    ;;
+esac
+
 ####### COMMON FUNCTIONS
 ############################
 command_exists() {
@@ -109,4 +152,4 @@ fi
 printf "Removing installation files and opening Meshery..."
 rm -rf meshery.zip LICENSE README.md
 
-mesheryctl system start --yes
+mesheryctl system start --yes -p $PLATFORM

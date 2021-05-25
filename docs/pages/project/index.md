@@ -1,85 +1,117 @@
 ---
 layout: default
-title: Layer5 Community
+title: Project
 permalink: project
-description: Meshery Project
 redirect_from: project/
+language: en
+display-title: "false"
+list: exclude
+---
+# Meshery Overview
+
+As the service mesh management plane, Meshery enables the adoption, operation, and management of any service mesh and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's multi-mesh management functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+
+##### **Meshery as a project and its community**
+
+{% assign sorted_pages = site.pages | sort: "type" | reverse %}
+
+<ul>
+    {% for item in sorted_pages %}
+    {% if item.type=="project" and item.language=="en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.description != " " %}
+        -  {{ item.description }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
+
+{% include toc.html page=project %}
+
 ---
 
-The Meshery project is maintained by the [Layer5 community](https://layer5.io/community). We are an open source organization that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Our projects advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Layer5 projects forward.
+## Meshery's Functionality
 
-#### [**Community First**](https://layer5.io/community)
+Meshery features can be categorized by:
 
-<p>The <a href="https://layer5.io">Layer5</a> community represents the largest collection of service mesh projects and their maintainers in the world.</p>
-The Meshery project is community-built and welcomes collaboration! 
-<br /><a href="https://github.com/layer5io/meshery"><i class="fab fa-github"></i> Fork here on Github</a>
+1. Service Mesh Performance Management
+   - Workload and service mesh performance characterization
+   - Prometheus and Grafana integration
+1. Service Mesh Configuration Management
+   - Configuration best practices
+1. Service Mesh Lifecycle Management
+   - Service mesh provisioning and workload onboarding
+   - Meshery Operator and MeshSync
+   - Service mesh patterns and Open Application Model integration
+1. Data Plane Intelligence
+   - Registry and configuration of WebAssembly filters for Envoy
+1. Service Mesh Interoperability and Federation
+   - Manage multiple service meshes concurrently
+   - Connect to multiple clusters independently
 
-* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](/assets/projects/meshery/Meshery-Community-Meeting.ics). 
-    - Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calendar](https://bit.ly/2SbrRhe).
+### Meshery is for Developers, Operators, and Product Owners
 
-* Access the [community drive](https://drive.google.com/drive/u/4/folders/0ABH8aabN4WAKUk9PVA) (request access).
+Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
-## Getting involved in the Community
+### Meshery is for service mesh patterns
 
-Want to get involved with project, join [our Slack](http://slack.layer5.io) and one of the community members will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
-If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
+Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns.
 
-Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
+### Meshery is for performance management
 
-## Presentations
+Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
+In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 
-<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be:
 
-<div style="text-align:center;width:100%"><emphasis>Delivered at Service Mesh Day 2019</emphasis></div>
+- Involved
+- Misinterpreted
 
-Past presentations of Meshery:
+Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between service meshes and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.
 
-- [O'Reilly OSCON 2020](https://conferences.oreilly.com/oscon/oscon-or)
-- [O'Reilly Infrastructure & Ops 2020](https://conferences.oreilly.com/infrastructure-ops/io-ca/public/schedule/speaker/226795)
-- [InnoTech Dallas 2020](https://innotechdallas2020.sched.com/event/aN7E/a-management-plane-for-service-meshes)
-- [KubeCon EU 2020](https://kccnceu20.sched.com/event/Zetg/discreetly-studying-the-effects-of-individual-traffic-control-functions-lee-calcote-layer5?iframe=no&w=100%&sidebar=yes&bg=no)
-- DockerCon 2020 ([deck](https://calcotestudios.com/talks/decks/slides-dockercon-2020-service-meshing-with-docker-desktop-and-webassembly.html), [video](https://www.youtube.com/watch?v=5BrbbKZOctw&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=4&t=0s))
-- [Open Source 101 at Home](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html)
-- [Docker Captains Roundtable 2020](https://calcotestudios.com/talks/decks/slides-docker-captains-2020-meshery-the-multi-service-mesh-manager.html)
-- [Cloud Native Austin 2020](https://www.meetup.com/Cloud-Native-Austin/events/267784090/)
-- NSMCon 2019 talk ([video](https://www.youtube.com/watch?v=4xKixsDTtdM), [deck](https://calcotestudios.com/talks/decks/slides-nsmcon-kubecon-na-2019-adopting-network-service-mesh-with-meshery.html))
-- [Service Mesh Day 2019](https://youtu.be/CFj1O_uyhhs)
-- [DockerCon 2019 Open Source Summit](https://www.docker.com/dockercon/2019-videos?watch=open-source-summit-service-mesh)
-- KubeCon EU 2019 ([video](https://www.youtube.com/watch?v=LxP-yHrKL4M&list=PLYjO73_1efChX9NuRaU7WocTbgrfvCoPE), [deck](https://calcotestudios.com/talks/decks/slides-kubecon-eu-2019-service-meshes-at-what-cost.html))
-- [KubeCon EU 2019 Istio Founders Meetup](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
-- [Cloud Native Rejekts EU 2019](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
-- [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
-- Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/),[video](https://www.youtube.com/watch?v=Q1zSWbO0RmI&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=2&t=0s))
+Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.
 
-## Talking about Meshery?
+1. By leveraging Meshery you could achieve apples-to-apples performance comparison of service meshes
+1. Track your service mesh performance from release to release.
+1. Understand behavioral differences between service meshes.
+1. Track your application performance from version to version.
 
-Giving a talk or hosting a meetup about Meshery? Leverage existing slides or request swag to support your talk.
+<a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
+Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
-<div class="wrapper">
-    <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://forms.gle/xLqGE14GhkorG51z8"><div class="overview">Access slides and resources</div></a>
-</div>
+## Meshery is for any service mesh
 
-<!-- 
-// TODO: Section pending review and revision; @leecalcote
+Infrastructure diversity is a reality for any enterprise. Whether you're running a single service mesh or multiple types of service meshes, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
 
-## Other Resources
+### Supported Service Meshes
 
-<div class="row">
-<div class="column">
-  <a target="_blank" href="https://layer5.io/landscape">
-  <img class="img-thumbnail" src="/assets/img/resources/landscape.png" alt="Service Mesh Landscape" style="width:150px"><span class="caption">Service Mesh Comparison</span></a>
-</div>
-<div class="column">
-<a target="_blank" href="https://layer5.io/landscape#tools">
-  <img class="img-thumbnail" src="/assets/img/resources/settings.svg" alt="Service Mesh Landscape Tools" style="width:150px" /><span class="caption">Service Mesh Tools</span></a>
-</div>
-<div class="column">
-<a target="_blank" href="https://layer5.io/books">
-  <img  class="img-thumbnail" src="/assets/img/resources/book.jpeg" alt="Service Mesh Books" style="width:150px" /> <span class="caption">Service Mesh Books</span> </a>
-</div>
-<div class="column">
-<a target="_blank" href="https://layer5.io/workshops">
-  <img  class="img-thumbnail" src="/assets/img/resources/workshops.svg" alt="Service Mesh Workshops" style="width:150px" /> <span class="caption">Service Mesh Workshops</span></a>
-</div>
-</div> -->
+#### **Stable**
+
+| Service Mesh | Status |
+| :----------- | -----: |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "stable" -%}
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
+
+##### **Beta**
+
+| Service Mesh | Status |
+| :----------- | -----: |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "beta" -%}
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
+
+##### **Alpha** - Service mesh adapters for which we are seeking community-contributed support.
+
+| Service Mesh | Status |
+| :----------- | -----: |
+{% for adapter in site.adapters -%}
+{% if adapter.project_status == "alpha" -%}
+| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
+{% endif -%}
+{% endfor %}
