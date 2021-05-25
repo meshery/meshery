@@ -257,6 +257,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
+    webrick (1.7.0)
     zeitwerk (2.4.2)
 
 PLATFORMS
@@ -264,9 +265,10 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
+  webrick (~> 1.7)
 
 RUBY VERSION
-   ruby 2.7.1p83
+   ruby 3.0.0p0
 
 BUNDLED WITH
    2.2.17
