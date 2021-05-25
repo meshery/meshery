@@ -1,4 +1,4 @@
-name: apply
+name: file
 description: apply pattern file will trigger deploy of the pattern file
 usage: |
     mesheryctl pattern apply [flags]

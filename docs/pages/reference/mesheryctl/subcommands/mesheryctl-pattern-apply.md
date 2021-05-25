@@ -26,7 +26,7 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl pattern apply [flags] 
+  mesheryctl exp pattern apply --file [path to pattern file] 
   </div>
 </pre>
 
