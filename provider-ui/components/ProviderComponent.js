@@ -53,9 +53,28 @@ const styles = (theme) => ({
   providerDesc: {
     whiteSpace: "pre",
   },
-  chartTitle:{
+  chartTitle: {
     fontWeight: 700,
-  }
+  },
+  providerTitle: {
+    fontWeight: 700,
+  },
+  providerDivider: {
+    backgroundColor: "#c1c8d2",
+    marginLeft: "10px",
+    marginRight: "10px"
+  },
+  providerDisabled: {
+    // color: "darkcyan",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  providerLinkRef: {
+    textDecoration: "none",
+    color: "black",
+    display: "flex",
+    flex: "auto"
+  },
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -202,19 +221,19 @@ class ProviderComponent extends React.Component {
                 {Object.keys(availableProviders).map((key) => {
                   return (
                     <React.Fragment key={availableProviders[key]["provider_name"]}>
-                      <p>{availableProviders[key]["provider_name"]}</p>
+                      <p className={classes.providerTitle}>{availableProviders[key]["provider_name"]}</p>
                       <ul>
                         {availableProviders[key]["provider_description"]?.map((desc, i) => <li key={`desc-${i}`}>{desc}</li>)}
                       </ul>
                     </React.Fragment>
                   );
                 })}
-                <p>Provider: SMI Conformance</p>
+                <p className={classes.providerTitle}>SMI Conformance</p>
                 <ul>
                   <li>Remote provider for SMI Conformance Testing</li>
                   <li>Provides provenence of test results and their persistence</li>
                 </ul>
-                <p>Provider: The University of Texas at Austin</p>
+                <p className={classes.providerTitle}>The University of Texas at Austin</p>
                 <ul>
                   <li>Academic research and advanced studies by Ph.D. researchers</li>
                   <li>Used by school of Electrical and Computer Engineering (ECE)</li>
@@ -222,7 +241,7 @@ class ProviderComponent extends React.Component {
               </Typography>
             </DialogContent>
             <DialogActions>
-              <Button autoFocus onClick={self.handleModalClose()} color="primary" data-cy="providers-modal-button-ok">
+              <Button autoFocus onClick={self.handleModalClose()} color="primary" data-cy="providers-modal-button-ok" variant="contained">
                 OK
               </Button>
             </DialogActions>
@@ -239,15 +258,6 @@ class ProviderComponent extends React.Component {
                   >
                     <Button
                       size="large"
-                      href={
-                        selectedProvider == "" ? "" : `/api/provider?provider=${encodeURIComponent(selectedProvider)}`
-                      }
-                    >
-                      {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
-                    </Button>
-                    <Button
-                      color="primary"
-                      size="small"
                       aria-controls={open ? "split-button-menu" : undefined}
                       aria-expanded={open ? "true" : undefined}
                       aria-label="Select Provider"
@@ -255,6 +265,7 @@ class ProviderComponent extends React.Component {
                       aria-haspopup="menu"
                       onClick={self.handleToggle()}
                     >
+                      {selectedProvider !== "" ? selectedProvider : "Select Your Provider"}
                       <ArrowDropDownIcon />
                     </Button>
                   </ButtonGroup>
@@ -271,15 +282,18 @@ class ProviderComponent extends React.Component {
                             <MenuList id="split-button-menu">
                               {Object.keys(availableProviders).map((key) => (
                                 <MenuItem key={key} onClick={() => self.handleMenuItemClick(key)}>
-                                  {key}
+                                  <a href={`/api/provider?provider=${encodeURIComponent(key)}`}
+                                    className={classes.providerLinkRef} >
+                                    {key}
+                                  </a>
                                 </MenuItem>
                               ))}
-                              <Divider />
-                              <MenuItem disabled={true} key="SMI">
-                                SMI Conformance
+                              <Divider className={classes.providerDivider} />
+                              <MenuItem disabled={true} key="SMI" className={classes.providerDisabled}>
+                                SMI Conformance <span>Disabled</span>
                               </MenuItem>
-                              <MenuItem disabled={true} key="UT Austin">
-                                The University of Texas at Austin
+                              <MenuItem disabled={true} key="UT Austin" className={classes.providerDisabled}>
+                                The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
                               </MenuItem>
                             </MenuList>
                           </ClickAwayListener>

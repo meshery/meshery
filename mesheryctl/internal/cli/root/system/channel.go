@@ -130,7 +130,7 @@ var setCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-
+		log.Infof("Channel set to %s-%s", channelNameSeperated[0], channelNameSeperated[1])
 		return nil
 	},
 }

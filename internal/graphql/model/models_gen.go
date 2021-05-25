@@ -14,6 +14,11 @@ type AddonList struct {
 	Endpoint string `json:"endpoint"`
 }
 
+type AddonStatusInput struct {
+	Selector     *MeshType `json:"selector"`
+	TargetStatus Status    `json:"targetStatus"`
+}
+
 type ControlPlane struct {
 	Name    string                `json:"name"`
 	Members []*ControlPlaneMember `json:"members"`
@@ -51,6 +56,10 @@ type OperatorStatus struct {
 	Version     string                      `json:"version"`
 	Controllers []*OperatorControllerStatus `json:"controllers"`
 	Error       *Error                      `json:"error"`
+}
+
+type OperatorStatusInput struct {
+	TargetStatus Status `json:"targetStatus"`
 }
 
 type MeshType string
