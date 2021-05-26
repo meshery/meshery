@@ -162,4 +162,5 @@ swagger-run:swagger-spec
 	swagger serve ./swagger.yaml
 
 swagger-docs:
-	swagger generate spec -o ./docs/_data/swagger.yml --scan-models
+	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
+	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml

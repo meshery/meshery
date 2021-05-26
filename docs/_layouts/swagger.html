@@ -72,43 +72,33 @@ layout: default
                     <span class="swagger-response-code">{{ response[0] }}</span>
                     {{ response[1].description }}
                 </h5>
-                <!-- <table class="swagger-parameters-table">
+                {% if response[1].schema.properties %}
+                 <table class="swagger-parameters-table">
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Located in</th>
-                            <th>Description</th>
+                            <th>Format</th>
                             <th>Type</th>
                         <tr>
                     </thead>
                     <tbody>
                         {% for parameter in response[1].schema.properties %}
                         <tr>
+                            <td>{{ parameter[0] }}</td>
                             <td>
-                                {% if parameter.required %}
-                                <span class="swagger-parameter-required">
-                                {% endif %}
-                                {{ parameter.name }}
-                                {% if parameter.required %}
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td>{{ parameter.in }}</td>
-                            <td>{{ parameter.description }}</td>
-                            <td>
-                                {% if parameter.type %}
-                                {{ parameter.type | capitalize }}
-                                {% if parameter.items %}
-                                of {{ parameter.items.type | capitalize }}
-                                {% endif %}
+                                {% if parameter[1].format %}
+                                {{ parameter[1].format }}
                                 {% else %}
-                                String
+                                Object
                                 {% endif %}
+
                             </td>
+                            <td>{{ parameter[1].type }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table> -->
+                </table>
+                {% endif %}
                 {% for content_type in swagger.produces %}
                     {% if response[1].examples[content_type] %}
                         {% assign example = response[1].examples[content_type] %}

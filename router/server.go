@@ -205,8 +205,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
 	gMux.Handle("/docs", swaggerSh)
-	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-
+	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../")))
+	// gMux.Handle("/docs", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	// 	http.Redirect(w, req, "/api/docs", http.StatusFound)
+	// }))
 	// gMux.Handle("/", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// 	handlers.ServeUI(w, r, "", "../ui/out/")
 	// }))))
