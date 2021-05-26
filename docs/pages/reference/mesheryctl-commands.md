@@ -66,7 +66,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=15><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
+      <td rowspan=16><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>

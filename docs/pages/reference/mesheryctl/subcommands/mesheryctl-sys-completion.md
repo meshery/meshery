@@ -1,7 +1,7 @@
 ---
 layout: default
-title: stop
-permalink: reference/mesheryctl/system/stop
+title: completion
+permalink: reference/mesheryctl/system/completion
 type: reference
 display-title: "false"
 language: en
@@ -14,7 +14,7 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl system stop
+#  mesheryctl system completion
 
 ## Description
 
@@ -25,7 +25,7 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system stop [flags]
+    mesheryctl system completion [bash|zsh|fish]
   </div>
 </pre>
 
