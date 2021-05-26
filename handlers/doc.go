@@ -37,14 +37,14 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// returns all meshery patterns
+// Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {
 	// in: body
 	Body models.PatternsAPIResponse
 }
 
-// returns a single meshery pattern
+// Returns a single meshery pattern
 // swagger:response mesheryPatternResponseWrapper
 type mesheryPatternResponseWrapper struct {
 	// in: body

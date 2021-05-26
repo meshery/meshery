@@ -877,11 +877,11 @@ produces:
 - application/json
 responses:
   mesheryPatternResponseWrapper:
-    description: returns a single meshery pattern
+    description: Returns a single meshery pattern
     schema:
       $ref: '#/definitions/MesheryPattern'
   mesheryPatternsResponseWrapper:
-    description: returns all meshery patterns
+    description: Returns all meshery patterns
     schema:
       $ref: '#/definitions/PatternsAPIResponse'
   noContentWrapper:

@@ -55,7 +55,7 @@ layout: default
                                 of {{ parameter.items.type | capitalize }}
                                 {% endif %}
                                 {% else %}
-                                String
+                                Unknown
                                 {% endif %}
                             </td>
                         </tr>
@@ -72,6 +72,43 @@ layout: default
                     <span class="swagger-response-code">{{ response[0] }}</span>
                     {{ response[1].description }}
                 </h5>
+                <!-- <table class="swagger-parameters-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Located in</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                        <tr>
+                    </thead>
+                    <tbody>
+                        {% for parameter in response[1].schema.properties %}
+                        <tr>
+                            <td>
+                                {% if parameter.required %}
+                                <span class="swagger-parameter-required">
+                                {% endif %}
+                                {{ parameter.name }}
+                                {% if parameter.required %}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ parameter.in }}</td>
+                            <td>{{ parameter.description }}</td>
+                            <td>
+                                {% if parameter.type %}
+                                {{ parameter.type | capitalize }}
+                                {% if parameter.items %}
+                                of {{ parameter.items.type | capitalize }}
+                                {% endif %}
+                                {% else %}
+                                String
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table> -->
                 {% for content_type in swagger.produces %}
                     {% if response[1].examples[content_type] %}
                         {% assign example = response[1].examples[content_type] %}
@@ -106,7 +143,7 @@ function $$(expr, parent) {
     return slice.call((parent || document).querySelectorAll(expr));
 }
 
-$.bind = function(element, o) {
+bind = function(element, o) {
     if (element) {
         for (var event in o) {
             var callback = o[event];
@@ -118,7 +155,7 @@ $.bind = function(element, o) {
     }
 };
 
-$.toggleDetails = function (element) {
+toggleDetails = function(element) {
     if (element.classList.contains('open')) {
         element.classList.remove('open');
     }
@@ -131,10 +168,10 @@ $.toggleDetails = function (element) {
 
 function init() {
     $$('.swagger-method-title').forEach(function (title) {
-        $.bind(title, {
+        bind(title, {
             'click': function (e) {
                 var details = $('.swagger-method-details', title.parentNode)
-                $.toggleDetails(details);
+                toggleDetails(details[0]);
                 e.preventDefault();
             }
         });
