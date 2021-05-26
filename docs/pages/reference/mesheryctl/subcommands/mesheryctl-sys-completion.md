@@ -18,7 +18,7 @@ list: exclude
 
 ## Description
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}
 
@@ -31,7 +31,7 @@ list: exclude
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.completion.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -39,7 +39,7 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -55,7 +55,7 @@ list: exclude
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
     {{ flag.flag }} # {{ flag.description }}
     {% endfor %}
   </div>
