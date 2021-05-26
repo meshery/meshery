@@ -50,7 +50,7 @@ var updateCmd = &cobra.Command{
 		}
 		if currCtx.Version != "latest" {
 			// ask confirmation if user has pinned the version in config
-			log.Infof("You have pinned version: %s in your current conext", currCtx.Version)
+			log.Infof("You have pinned version: %s in your current context", currCtx.Version)
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true
