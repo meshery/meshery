@@ -79,7 +79,7 @@ var updateCmd = &cobra.Command{
 
 				err = utils.UpdateMesheryContainers()
 				if err != nil {
-					return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+					return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
 				}
 
 				// applying operator manifest

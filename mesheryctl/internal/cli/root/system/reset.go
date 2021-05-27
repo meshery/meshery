@@ -77,7 +77,7 @@ func resetMesheryConfig() error {
 			return errors.Wrap(err, "failed to fetch docker-compose file")
 		}
 
-		log.Printf("Fetching operator manifests...\n")
+		log.Printf("Fetching Meshery Operator manifests...\n")
 		err = utils.DownloadOperatorManifest()
 
 		if err != nil {
@@ -100,7 +100,7 @@ func resetMesheryConfig() error {
 			}
 		}
 
-		log.Printf("Fetching kubernetes and operator manifests...")
+		log.Printf("Fetching Meshery Server and Meshery Operator manifests...")
 		// fetch the manifest files corresponding to the version specified
 		_, err := utils.FetchManifests(version)
 
@@ -108,7 +108,7 @@ func resetMesheryConfig() error {
 			return err
 		}
 
-		log.Info("...Meshery config files  now reset to default settings.")
+		log.Info("...meshconfig has been reset to default settings.")
 
 	default:
 		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currCtx.Platform, utils.MesheryFolder)
