@@ -114,9 +114,28 @@ var updateCmd = &cobra.Command{
 				}
 			}
 
-			// restart the containers and the operator pods
+			skipUpdateFlag = true
 			err = restart()
 
+			if err != nil {
+				return err
+			}
+
+			utils.ViperDocker.SetConfigFile(utils.DefaultConfigPath)
+			err := utils.ViperDocker.ReadInConfig()
+			if err != nil {
+				return err
+			}
+
+			dockerCompose := &config.MesheryCtlConfig{}
+			err = utils.ViperDocker.Unmarshal(&dockerCompose)
+			if err != nil {
+				return err
+			}
+
+			utils.ViperDocker.Set("contexts."+mctlCfg.CurrentContext, currCtx)
+
+			err = utils.ViperDocker.WriteConfig()
 			if err != nil {
 				return err
 			}
@@ -172,9 +191,31 @@ var updateCmd = &cobra.Command{
 					return err
 				}
 			}
+
+			skipUpdateFlag = true
+
 			// restart the pods in meshery namespace
 			err = restart()
 
+			if err != nil {
+				return err
+			}
+
+			utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
+			err := utils.ViperK8s.ReadInConfig()
+			if err != nil {
+				return err
+			}
+
+			kubeCompose := &config.MesheryCtlConfig{}
+			err = utils.ViperK8s.Unmarshal(&kubeCompose)
+			if err != nil {
+				return err
+			}
+
+			utils.ViperK8s.Set("contexts."+mctlCfg.CurrentContext, currCtx)
+
+			err = utils.ViperK8s.WriteConfig()
 			if err != nil {
 				return err
 			}
