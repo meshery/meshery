@@ -23,8 +23,8 @@ display-title: "false"
         <div class="overview">Quick&nbsp;Start</div>
     </a>
     <ul><b>Getting Started</b>
-        <li><a href="{{ site.baseurl }}/overview">Introducing Meshery</a></li>
-        <li><a href="{{ site.baseurl }}/project">Project and Community</a></li>        
+        <li><a href="{{ site.baseurl }}/getting-started/overview">Introducing Meshery</a></li>
+        <li><a href="{{ site.baseurl }}/project/community">Project and Community</a></li>        
     </ul>
     <ul><b><a href="{{ site.baseurl }}/installation/platforms" class="text-black">Supported Platforms</a></b>
         {% for item in sorted_pages %}
