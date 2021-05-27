@@ -188,7 +188,7 @@ const MeshySwitch = withStyles({
   track: {},
 })(Switch);
 
-class MesheryOperator extends React.Component {
+class MesheryOperatorScreen extends React.Component {
   constructor(props) {
     super(props);
     const { inClusterConfig, contextName, clusterConfigured, k8sfile, configuredServer } = props;
@@ -367,7 +367,7 @@ class MesheryOperator extends React.Component {
   }
 }
 
-MesheryOperator.propTypes = {
+MesheryOperatorScreen.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -381,5 +381,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryOperator)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryOperatorScreen)))
 );

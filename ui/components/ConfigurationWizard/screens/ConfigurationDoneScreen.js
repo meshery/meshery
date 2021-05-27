@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const ConfigurationDone = ({ handleUserClick }) => {
+const ConfigurationDoneScreen = ({ handleUserClick }) => {
   const classes = useStyles()
   return (
     <Container className={classes.container}>
@@ -72,4 +72,4 @@ const ConfigurationDone = ({ handleUserClick }) => {
   )
 }
 
-export default ConfigurationDone
+export default ConfigurationDoneScreen

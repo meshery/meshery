@@ -16,7 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import BuildIcon from "@material-ui/icons/Build";
 import MesheryNotification from './MesheryNotification';
 import User from './User';
-import PopUp from './configuration-wizard/PopUp'
+import Modal from './ConfigurationWizard/utilities/Modal'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHome } from '@fortawesome/free-solid-svg-icons';
 
@@ -173,7 +173,7 @@ class Header extends React.Component {
                   <div data-test="wizard-button">
                     <IconButton color="inherit">
                       <BuildIcon onClick={this.handleOpen} className={title === 'Wizard' ? classes.itemActiveItem : ''} />
-                      <PopUp open={this.state.open} handleClose={this.handleClose} />
+                      <Modal open={this.state.open} handleClose={this.handleClose} />
                     </IconButton>
                   </div>
 

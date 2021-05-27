@@ -9,7 +9,7 @@ import {
   StepConnector,
 } from "@material-ui/core/";
 
-import svgIcons from "./icons/icons";
+import svgIcons from "../icons/icons";
 
 const ColorlibConnector = withStyles({
   alternativeLabel: {
