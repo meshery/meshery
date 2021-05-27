@@ -71,7 +71,7 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 		if failure == 0 {
 			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
 		} else {
-			log.Info("\n--------------\n--------------\n!! Meshery prerequisites didn't met")
+			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
 		}
 	}
 	return nil
