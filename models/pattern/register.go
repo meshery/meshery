@@ -175,7 +175,7 @@ func RegisterMesheryOAMWorkloads() error {
 	// accordingly
 	rootPath, _ := filepath.Abs("../oam/workloads")
 
-	return registerMesheryServerOAM(rootPath, []string{}, RegisterWorkload)
+	return registerMesheryServerOAM(rootPath, []string{"application"}, RegisterWorkload)
 }
 
 // registerMesheryServerOAM will read the oam definition file and its corresponding schema file
