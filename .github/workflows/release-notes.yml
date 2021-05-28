@@ -54,7 +54,7 @@ jobs:
             release-team
             maintainers
           # milestone: 1
-          draft: false
+          draft: true
 
       - name: Verify PR
         run: |
