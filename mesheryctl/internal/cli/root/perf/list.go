@@ -75,6 +75,11 @@ var listCmd = &cobra.Command{
 						fmt.Printf("\nEnd of the results.\n")
 					}
 				} else if len(data) == 0 {
+					if page == 1 { // No profiles exist in database
+						term.Close()
+						log.Info("No Performance Profiles to display")
+						return nil
+					}
 					break mainProfileLoop
 				}
 				// check if the displayed page is the last page
@@ -125,6 +130,11 @@ var listCmd = &cobra.Command{
 					fmt.Printf("\nEnd of the results.\n")
 				}
 			} else if len(data) == 0 {
+				if page == 1 { // No results exist in database
+					term.Close()
+					log.Info("No Results to display")
+					return nil
+				}
 				break mainResultloop
 			}
 			// check if the displayed page is the last page.
