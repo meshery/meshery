@@ -75,19 +75,6 @@ var updateCmd = &cobra.Command{
 					return errors.Wrap(err, "failed to fetch docker-compose file")
 				}
 
-				log.Info("Updating Meshery...")
-
-				err = utils.UpdateMesheryContainers()
-				if err != nil {
-					return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
-				}
-
-				// applying operator manifest
-				kubeClient, err := meshkitkube.New([]byte(""))
-				if err != nil {
-					return err
-				}
-
 				running, err := utils.IsMesheryRunning(currCtx.Platform)
 				if err != nil {
 					return err
@@ -107,35 +94,29 @@ var updateCmd = &cobra.Command{
 					return err
 				}
 
-				err = utils.ApplyOperatorManifest(kubeClient, true, false)
+				log.Info("Updating Meshery...")
 
-				if err != nil {
-					return err
-				}
 			}
 
-			skipUpdateFlag = true
-			err = restart()
+			err = utils.UpdateMesheryContainers()
+			if err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
+			}
+
+			// applying operator manifest
+			kubeClient, err := meshkitkube.New([]byte(""))
+			if err != nil {
+				return err
+			}
+
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 			if err != nil {
 				return err
 			}
 
-			utils.ViperDocker.SetConfigFile(utils.DefaultConfigPath)
-			err := utils.ViperDocker.ReadInConfig()
-			if err != nil {
-				return err
-			}
+			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
 
-			dockerCompose := &config.MesheryCtlConfig{}
-			err = utils.ViperDocker.Unmarshal(&dockerCompose)
-			if err != nil {
-				return err
-			}
-
-			utils.ViperDocker.Set("contexts."+mctlCfg.CurrentContext, currCtx)
-
-			err = utils.ViperDocker.WriteConfig()
 			if err != nil {
 				return err
 			}
@@ -201,21 +182,8 @@ var updateCmd = &cobra.Command{
 				return err
 			}
 
-			utils.ViperK8s.SetConfigFile(utils.DefaultConfigPath)
-			err := utils.ViperK8s.ReadInConfig()
-			if err != nil {
-				return err
-			}
+			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
 
-			kubeCompose := &config.MesheryCtlConfig{}
-			err = utils.ViperK8s.Unmarshal(&kubeCompose)
-			if err != nil {
-				return err
-			}
-
-			utils.ViperK8s.Set("contexts."+mctlCfg.CurrentContext, currCtx)
-
-			err = utils.ViperK8s.WriteConfig()
 			if err != nil {
 				return err
 			}
