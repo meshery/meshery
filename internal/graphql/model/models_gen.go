@@ -40,6 +40,20 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type LogStream struct {
+	ID    string `json:"id"`
+	Data  string `json:"data"`
+	Error string `json:"error"`
+}
+
+type LogStreamRequest struct {
+	ID            string `json:"id"`
+	PodName       string `json:"podName"`
+	Namespace     string `json:"namespace"`
+	ContainerName string `json:"containerName"`
+	Signal        Signal `json:"signal"`
+}
+
 type NameSpace struct {
 	Namespace string `json:"namespace"`
 }
@@ -124,6 +138,47 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MeshType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Signal string
+
+const (
+	SignalStart Signal = "START"
+	SignalStop  Signal = "STOP"
+)
+
+var AllSignal = []Signal{
+	SignalStart,
+	SignalStop,
+}
+
+func (e Signal) IsValid() bool {
+	switch e {
+	case SignalStart, SignalStop:
+		return true
+	}
+	return false
+}
+
+func (e Signal) String() string {
+	return string(e)
+}
+
+func (e *Signal) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Signal(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Signal", str)
+	}
+	return nil
+}
+
+func (e Signal) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

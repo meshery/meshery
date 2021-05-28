@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -240,16 +241,25 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 				Address: strings.Split(broker.Status.Endpoint.External, ":")[0],
 				Port:    int32(port),
 			}, nil) {
-				if utils.TcpCheck(&utils.HostPort{
+				if !utils.TcpCheck(&utils.HostPort{
 					Address: "host.docker.internal",
 					Port:    int32(port),
 				}, nil) {
+					u, _ := url.Parse(r.KubeClient.RestConfig.Host)
+					if utils.TcpCheck(&utils.HostPort{
+						Address: u.Hostname(),
+						Port:    int32(port),
+					}, nil) {
+						endpoint = fmt.Sprintf("%s:%d", u.Hostname(), int32(port))
+					}
+				} else {
 					endpoint = fmt.Sprintf("host.docker.internal:%d", int32(port))
 				}
 			}
 		}
 	}
 
+	r.Log.Info("Connecting to ", endpoint, ".....")
 	// subscribing to nats
 	r.brokerConn, err = nats.New(nats.Options{
 		URLS:           []string{endpoint},

@@ -5,8 +5,6 @@ import (
 
 	"github.com/layer5io/meshery/internal/graphql/model"
 	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -35,27 +33,25 @@ var (
 )
 
 // listernToEvents - scale this function with the number of channels
-func listernToEvents(log logger.Handler,
-	handler *database.Handler,
-	datach chan *broker.Message,
-	meshsyncCh chan struct{},
-) {
+func (r *Resolver) listernToEvents() {
 	var wg sync.WaitGroup
 	wg.Wait()
 	for {
 		select {
-		case msg := <-datach:
+		case msg := <-r.brokerChannel:
 			wg.Add(1)
-			go persistData(*msg, log, handler, meshsyncCh, &wg)
+			switch msg.ObjectType {
+			case broker.MeshSync:
+				go r.persistData(*msg, &wg)
+			case broker.LogStreamObject:
+				go r.processLogs(msg.Object)
+			}
 		}
 	}
 }
 
 // persistData - scale this function with the number of events to persist
-func persistData(msg broker.Message,
-	log logger.Handler,
-	handler *database.Handler,
-	meshsyncCh chan struct{},
+func (r *Resolver) persistData(msg broker.Message,
 	wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
@@ -65,19 +61,19 @@ func persistData(msg broker.Message,
 		object := meshsyncmodel.Object{}
 		err := utils.Unmarshal(string(objectJSON), &object)
 		if err != nil {
-			log.Error(err)
+			r.Log.Error(err)
 			return
 		}
 
 		// persist the object
-		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		err = recordMeshSyncData(msg.EventType, handler, &object)
+		r.Log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		err = recordMeshSyncData(msg.EventType, r.DBHandler, &object)
 		if err != nil {
-			log.Error(err)
+			r.Log.Error(err)
 			return
 		}
-		meshsyncCh <- struct{}{}
+		r.MeshSyncChannel <- struct{}{}
 	case broker.SMI:
-		log.Info("Received SMI Result")
+		r.Log.Info("Received SMI Result")
 	}
 }

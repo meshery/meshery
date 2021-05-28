@@ -70,6 +70,10 @@ func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context) (<-ch
 	return r.listenToMeshSyncEvents(ctx)
 }
 
+func (r *subscriptionResolver) SubscribeLogStream(ctx context.Context, selector []*model.LogStreamRequest) (<-chan *model.LogStream, error) {
+	return r.subscribeLogStream(ctx, selector)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

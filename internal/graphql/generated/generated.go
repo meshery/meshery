@@ -68,6 +68,12 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 	}
 
+	LogStream struct {
+		Data  func(childComplexity int) int
+		Error func(childComplexity int) int
+		ID    func(childComplexity int) int
+	}
+
 	Mutation struct {
 		ChangeAddonStatus    func(childComplexity int, input *model.AddonStatusInput) int
 		ChangeOperatorStatus func(childComplexity int, input *model.OperatorStatusInput) int
@@ -103,6 +109,7 @@ type ComplexityRoot struct {
 		ListenToControlPlaneState func(childComplexity int, filter *model.ControlPlaneFilter) int
 		ListenToMeshSyncEvents    func(childComplexity int) int
 		ListenToOperatorState     func(childComplexity int) int
+		SubscribeLogStream        func(childComplexity int, selector []*model.LogStreamRequest) int
 	}
 }
 
@@ -121,6 +128,7 @@ type SubscriptionResolver interface {
 	ListenToControlPlaneState(ctx context.Context, filter *model.ControlPlaneFilter) (<-chan []*model.ControlPlane, error)
 	ListenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error)
 	ListenToMeshSyncEvents(ctx context.Context) (<-chan *model.OperatorControllerStatus, error)
+	SubscribeLogStream(ctx context.Context, selector []*model.LogStreamRequest) (<-chan *model.LogStream, error)
 }
 
 type executableSchema struct {
@@ -214,6 +222,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Error.Description(childComplexity), true
+
+	case "LogStream.data":
+		if e.complexity.LogStream.Data == nil {
+			break
+		}
+
+		return e.complexity.LogStream.Data(childComplexity), true
+
+	case "LogStream.error":
+		if e.complexity.LogStream.Error == nil {
+			break
+		}
+
+		return e.complexity.LogStream.Error(childComplexity), true
+
+	case "LogStream.id":
+		if e.complexity.LogStream.ID == nil {
+			break
+		}
+
+		return e.complexity.LogStream.ID(childComplexity), true
 
 	case "Mutation.changeAddonStatus":
 		if e.complexity.Mutation.ChangeAddonStatus == nil {
@@ -378,6 +407,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.ListenToOperatorState(childComplexity), true
 
+	case "Subscription.subscribeLogStream":
+		if e.complexity.Subscription.SubscribeLogStream == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribeLogStream_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.SubscribeLogStream(childComplexity, args["selector"].([]*model.LogStreamRequest)), true
+
 	}
 	return 0, false
 }
@@ -526,6 +567,15 @@ enum Status {
 	UNKNOWN
 }
 
+enum Signal {
+
+    # Start signal
+    START
+
+    # Stop signal
+    STOP
+}
+
 type Error {
 
 	# Error Code
@@ -646,6 +696,24 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== LOGSTREAM =============================
+
+# Type that defines the options to configure a logstream request
+input LogStreamRequest {
+    id: String!
+    podName: String!
+    namespace: String!
+    containerName: String!
+    signal: Signal!
+}
+
+# Type that defines the output of a logstream
+type LogStream {
+    id: String!
+    data: String!
+    error: String!
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -699,6 +767,9 @@ type Subscription {
 
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
+
+    # Subscribe to a logstream of the selected container
+    subscribeLogStream(selector: [LogStreamRequest!]!): LogStream!
 }
 `, BuiltIn: false},
 }
@@ -810,6 +881,21 @@ func (ec *executionContext) field_Subscription_listenToControlPlaneState_args(ct
 		}
 	}
 	args["filter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_subscribeLogStream_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*model.LogStreamRequest
+	if tmp, ok := rawArgs["selector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("selector"))
+		arg0, err = ec.unmarshalNLogStreamRequest2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStreamRequestᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["selector"] = arg0
 	return args, nil
 }
 
@@ -1220,6 +1306,111 @@ func (ec *executionContext) _Error_description(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LogStream_id(ctx context.Context, field graphql.CollectedField, obj *model.LogStream) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LogStream",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LogStream_data(ctx context.Context, field graphql.CollectedField, obj *model.LogStream) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LogStream",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Data, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LogStream_error(ctx context.Context, field graphql.CollectedField, obj *model.LogStream) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LogStream",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Error, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2040,6 +2231,58 @@ func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Con
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
 			ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_subscribeLogStream(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Subscription_subscribeLogStream_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().SubscribeLogStream(rctx, args["selector"].([]*model.LogStreamRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *model.LogStream)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNLogStream2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStream(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -3180,6 +3423,58 @@ func (ec *executionContext) unmarshalInputControlPlaneFilter(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputLogStreamRequest(ctx context.Context, obj interface{}) (model.LogStreamRequest, error) {
+	var it model.LogStreamRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "podName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("podName"))
+			it.PodName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "namespace":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+			it.Namespace, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "containerName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("containerName"))
+			it.ContainerName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "signal":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("signal"))
+			it.Signal, err = ec.unmarshalNSignal2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐSignal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputOperatorStatusInput(ctx context.Context, obj interface{}) (model.OperatorStatusInput, error) {
 	var it model.OperatorStatusInput
 	var asMap = obj.(map[string]interface{})
@@ -3337,6 +3632,43 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "description":
 			out.Values[i] = ec._Error_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var logStreamImplementors = []string{"LogStream"}
+
+func (ec *executionContext) _LogStream(ctx context.Context, sel ast.SelectionSet, obj *model.LogStream) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, logStreamImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LogStream")
+		case "id":
+			out.Values[i] = ec._LogStream_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "data":
+			out.Values[i] = ec._LogStream_data(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "error":
+			out.Values[i] = ec._LogStream_error(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3596,6 +3928,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_listenToOperatorState(ctx, fields[0])
 	case "listenToMeshSyncEvents":
 		return ec._Subscription_listenToMeshSyncEvents(ctx, fields[0])
+	case "subscribeLogStream":
+		return ec._Subscription_subscribeLogStream(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -4002,6 +4336,46 @@ func (ec *executionContext) marshalNControlPlaneMember2ᚖgithubᚗcomᚋlayer5i
 	return ec._ControlPlaneMember(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNLogStream2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStream(ctx context.Context, sel ast.SelectionSet, v model.LogStream) graphql.Marshaler {
+	return ec._LogStream(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLogStream2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStream(ctx context.Context, sel ast.SelectionSet, v *model.LogStream) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._LogStream(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLogStreamRequest2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStreamRequestᚄ(ctx context.Context, v interface{}) ([]*model.LogStreamRequest, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.LogStreamRequest, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNLogStreamRequest2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStreamRequest(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNLogStreamRequest2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐLogStreamRequest(ctx context.Context, v interface{}) (*model.LogStreamRequest, error) {
+	res, err := ec.unmarshalInputLogStreamRequest(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -4112,6 +4486,16 @@ func (ec *executionContext) marshalNOperatorStatus2ᚖgithubᚗcomᚋlayer5ioᚋ
 		return graphql.Null
 	}
 	return ec._OperatorStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSignal2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐSignal(ctx context.Context, v interface{}) (model.Signal, error) {
+	var res model.Signal
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSignal2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐSignal(ctx context.Context, sel ast.SelectionSet, v model.Signal) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {

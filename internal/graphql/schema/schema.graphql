@@ -65,6 +65,15 @@ enum Status {
 	UNKNOWN
 }
 
+enum Signal {
+
+    # Start signal
+    START
+
+    # Stop signal
+    STOP
+}
+
 type Error {
 
 	# Error Code
@@ -185,6 +194,24 @@ type NameSpace {
 	namespace: String!
 }
 
+# ============== LOGSTREAM =============================
+
+# Type that defines the options to configure a logstream request
+input LogStreamRequest {
+    id: String!
+    podName: String!
+    namespace: String!
+    containerName: String!
+    signal: Signal!
+}
+
+# Type that defines the output of a logstream
+type LogStream {
+    id: String!
+    data: String!
+    error: String!
+}
+
 # ============== ROOT =================================
 
 type Query {
@@ -238,4 +265,7 @@ type Subscription {
 
 	# Listen to changes in the list of available Namesapces in your cluster
     listenToMeshSyncEvents: OperatorControllerStatus!
+
+    # Subscribe to a logstream of the selected container
+    subscribeLogStream(selector: [LogStreamRequest!]!): LogStream!
 }

@@ -25,8 +25,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		go listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
-
+		go r.listernToEvents()
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
 		// extension to notify other channel when data comes in
