@@ -1,19 +1,11 @@
 name: Release Notes Publisher
 
-on:
-  push:
-    branches:
-      - '!*'
-    tags:
-      - 'v*'
+on: [push, pull_request]
 
 jobs:
   create_release_draft:
       runs-on: ubuntu-latest
       steps:
-        - name: Checkout release notes
-          uses: actions/checkout@v2
-
         - name: Drafting release
           id: release_drafter
           uses: release-drafter/release-drafter@v5
@@ -22,49 +14,12 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
 
-        - name: Write release notes to markdown file
-          run: |
-            printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-
         - name: Checkout release notes
           uses: actions/checkout@v2
 
         - name: Write release notes to markdown file
           run: |
+            ls -la
+            echo ${{ steps.release_drafter.outputs.tag_name }}
             printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-
-  create_release_notes_pr:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.RELEASE_NOTES_PAT }}
-          commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
-          committer: l5io <ci@layer5.io>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: true
-          branch: docs/automated-release-notes
-          delete-branch: true
-          base: master
-          title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
-          body: |
-            An auto-generated pull request to document release notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}
-          labels: |
-            area/ci
-            kind/chore
-          # assignees:
-          # reviewers:
-          team-reviewers: |
-            release-team
-            maintainers
-          # milestone: 1
-          draft: false
-
-      - name: Verify PR
-        run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+            ls -la
