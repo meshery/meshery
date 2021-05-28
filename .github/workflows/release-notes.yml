@@ -1,6 +1,6 @@
 name: Release Notes Publisher
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   create_release_draft:
