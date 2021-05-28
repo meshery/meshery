@@ -1,6 +1,9 @@
 name: Release Notes Publisher
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - "ramrodo-fixes-2612"
 
 jobs:
   create_release_draft:
