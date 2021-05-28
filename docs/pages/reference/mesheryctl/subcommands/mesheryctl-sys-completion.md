@@ -68,7 +68,7 @@ bash >= 4.0
 
 <br/>
 
-bash <= 3.2 on osx
+bash <= 3.2 on OSX
 <pre class="codeblock-pre">
   <div class="codeblock">
   brew install bash-completion # ensure you have bash-completion 1.3+
@@ -78,7 +78,7 @@ bash <= 3.2 on osx
 
 <br/>
 
-bash >= 4.0 on osx
+bash >= 4.0 on OSX
 <pre class="codeblock-pre">
   <div class="codeblock">
   brew install bash-completion@2
@@ -101,7 +101,7 @@ Might need to start a new shell for this setup to take effect.
 
 <br/>
 
-zsh on osx / oh-my-zsh
+zsh on OSX / oh-my-zsh
 <pre class="codeblock-pre">
   <div class="codeblock">
   mesheryctl system completion zsh > "${fpath[1]}/_mesheryctl"
