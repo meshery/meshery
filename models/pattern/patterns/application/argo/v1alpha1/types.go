@@ -356,10 +356,10 @@ type RolloutExperimentStep struct {
 	// Duration is a duration string (e.g. 30s, 5m, 1h) that the experiment should run for
 	// +optional
 	Duration DurationString `json:"duration,omitempty" protobuf:"bytes,2,opt,name=duration,casttype=DurationString"`
-	// Analyses reference which analysis templates to run with the experiment
+	// Analyzes reference which analysis templates to run with the experiment
 	// +patchMergeKey=name
 	// +patchStrategy=merge
-	Analyses []RolloutExperimentStepAnalysisTemplateRef `json:"analyses,omitempty" patchStrategy:"merge" patchMergeKey:"name" protobuf:"bytes,3,rep,name=analyses"`
+	Analyzes []RolloutExperimentStepAnalysisTemplateRef `json:"analyses,omitempty" patchStrategy:"merge" patchMergeKey:"name" protobuf:"bytes,3,rep,name=analyses"` //nolint
 }
 
 type RolloutExperimentStepAnalysisTemplateRef struct {

@@ -24,17 +24,17 @@ const (
 	argo rolloutEngine = "argo"
 )
 
-type ApplicationPatternSetting struct {
+type PatternSetting struct {
 	Replicas   int                      `json:"replicas,omitempty"`
 	Mesh       serviceMesh              `json:"mesh,omitempty"`
 	Containers []RolloutEngineContainer `json:"containers,omitempty"`
 }
 
-type ApplicationPatternConfiguration struct {
-	RolloutStrategy *ApplicationPatternConfigurationRolloutStrategy `json:"rollout_strategy,omitempty"`
+type PatternConfiguration struct {
+	RolloutStrategy *PatternConfigurationRolloutStrategy `json:"rollout_strategy,omitempty"`
 }
 
-type ApplicationPatternConfigurationRolloutStrategy struct {
+type PatternConfigurationRolloutStrategy struct {
 }
 
 // Deploy will deploy the application
@@ -100,12 +100,12 @@ func Deploy(
 	return fmt.Errorf("%s is not an application pattern", oamComp.Spec.Type)
 }
 
-func getApplicationPatternSettings(oamComp v1alpha1.Component) (ApplicationPatternSetting, error) {
-	var settings ApplicationPatternSetting
+func getApplicationPatternSettings(oamComp v1alpha1.Component) (PatternSetting, error) {
+	var settings PatternSetting
 
 	jsonByt, err := json.Marshal(oamComp.Spec.Settings)
 	if err != nil {
-		return ApplicationPatternSetting{}, err
+		return PatternSetting{}, err
 	}
 
 	if err := json.Unmarshal(jsonByt, &settings); err != nil {
@@ -115,8 +115,8 @@ func getApplicationPatternSettings(oamComp v1alpha1.Component) (ApplicationPatte
 	return settings, nil
 }
 
-func getApplicationPatternConfiguration(compName string, oamConfig v1alpha1.Configuration) (ApplicationPatternConfiguration, error) {
-	var config ApplicationPatternConfiguration
+func getApplicationPatternConfiguration(compName string, oamConfig v1alpha1.Configuration) (PatternConfiguration, error) {
+	var config PatternConfiguration
 
 	for _, cfg := range oamConfig.Spec.Components {
 		if cfg.ComponentName == compName {

@@ -104,31 +104,14 @@ func (ar *ArgoRollout) Canary(opt RolloutEngineCanaryOptions) error {
 func (ar *ArgoRollout) istioCanary(opt RolloutEngineCanaryOptions) error {
 	// Performing canary requires 4 steps:
 	// 1. Create a rollout
-	ar.createOrUpdateRollout(opt)
+	// ar.createOrUpdateRollout(opt)
 	// 2. Create a service for stable
-	ar.createOrUpdateService(opt.Namespace, &v1.Service{})
+	// ar.createOrUpdateService(opt.Namespace, &v1.Service{})
 	// 3. Create a service for the canary
-	ar.createOrUpdateService(opt.Namespace, &v1.Service{})
+	// ar.createOrUpdateService(opt.Namespace, &v1.Service{})
 	// 4. Create a virtual service for routing
 	// invoke remote operation
 	return nil
-}
-
-func (ar *ArgoRollout) createOrUpdateService(namespace string, svc *v1.Service) error {
-	return patternUtils.CreateK8sResource(ar.kubeclient.DynamicKubeClient, "", "v1", "service", svc, false)
-}
-
-func (ar *ArgoRollout) createOrUpdateRollout(opt RolloutEngineCanaryOptions) error {
-	rollout := createIstioCanaryArgoResource(opt)
-
-	return patternUtils.CreateK8sResource(
-		ar.kubeclient.DynamicKubeClient,
-		"argoproj.io",
-		"v1alpha1",
-		"rollout",
-		rollout,
-		false,
-	)
 }
 
 func createIstioCanaryArgoResource(opt RolloutEngineCanaryOptions) v1alpha1.Rollout {

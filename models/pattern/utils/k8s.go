@@ -70,7 +70,7 @@ func CreateK8sResource(
 			FieldManager: "meshery",
 		}); err != nil {
 		if !errors.IsAlreadyExists(err) {
-			logrus.Error("error occured while creating resource: ", err)
+			logrus.Error("error occurred while creating resource: ", err)
 			return err
 		}
 
