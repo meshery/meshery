@@ -5,9 +5,6 @@ mesheryctl/mesheryctl
 mesheryctl/default.profraw
 main
 
-# swagger
-swagger/swagger.yaml
-swagger.yaml
 
 # Binaries for programs and plugins
 *.exe
