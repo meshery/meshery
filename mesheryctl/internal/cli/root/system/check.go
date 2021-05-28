@@ -21,6 +21,7 @@ import (
 var (
 	preflight bool
 	pre       bool
+	failure   int = 0
 )
 
 var checkCmd = &cobra.Command{
@@ -67,7 +68,11 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 		return err
 	}
 	if !isPreRunExecution {
-		log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+		if failure == 0 {
+			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+		} else {
+			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
+		}
 	}
 	return nil
 }
@@ -78,39 +83,39 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 		log.Info("\nDocker \n--------------")
 	}
 	//Check whether docker daemon is running or not
-	if err := exec.Command("docker", "ps").Run(); err != nil {
+	err := exec.Command("docker", "ps").Run()
+	if err != nil && isPreRunExecution { // if this is PreRunExec we trigger self installation
 		log.Warn("!! Docker is not running")
 		//If preRunExecution and the current platform is docker then we trigger docker installation
-		if isPreRunExecution {
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
-			}
-			err = utils.Startdockerdaemon(subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker.")
-			}
+		//No auto installation of docker for windows
+		if runtime.GOOS == "windows" {
+			return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started.", subcommand)
 		}
-	}
-	if !isPreRunExecution {
+		err = utils.Startdockerdaemon(subcommand)
+		if err != nil {
+			return errors.Wrapf(err, "failed to start Docker.")
+		}
+	} else if err != nil { // warn incase of preflight check
+		log.Warn("!! Docker is not running")
+	} else if !isPreRunExecution { // log incase of preflight check
 		log.Info("√ Docker is running")
 	}
 
 	//Check for installed docker-compose on client system
-	if err := exec.Command("docker-compose", "-v").Run(); err != nil {
+	err = exec.Command("docker-compose", "-v").Run()
+	if err != nil && isPreRunExecution { // if PreRunExec we trigger self installation
 		log.Warn("!! docker-compose is not available")
-		if isPreRunExecution {
-			//No auto installation of Docker-compose for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
-			err = utils.InstallprereqDocker()
-			if err != nil {
-				return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
-			}
+		//No auto installation of Docker-compose for windows
+		if runtime.GOOS == "windows" {
+			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
-	}
-	if !isPreRunExecution {
+		err = utils.InstallprereqDocker()
+		if err != nil {
+			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
+		}
+	} else if err != nil { // this is preflight check we just log a warning
+		log.Warn("!! docker-compose is not available")
+	} else if !isPreRunExecution { // log incase of preflight check
 		log.Info("√ docker-compose is available")
 	}
 
@@ -124,20 +129,26 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	}
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
-	if err != nil {
+	if err != nil && !isPreRunExecution { // this is preflight check
+		log.Warn("!! cannot initialize Kubernetes client")
+		log.Warn("!! cannot query the Kubernetes API")
+		failure++ // increase failure count
+		return nil
+	} else if err != nil {
 		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
-	}
-	if !isPreRunExecution {
+	} else if !isPreRunExecution { // log in case of preflight check
 		log.Info("√ can initialize Kubernetes client")
 	}
 
 	//Check whether kubernetes can be queried
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
-	if err != nil {
+	if err != nil && !isPreRunExecution { // this is preflight check
+		log.Warn("!! cannot query the Kubernetes API")
+		failure++ // increase failure count
+	} else if err != nil {
 		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
-	}
-	if !isPreRunExecution {
+	} else if !isPreRunExecution { // log in case of preflight check
 		log.Info("√ can query the Kubernetes API")
 	}
 
@@ -154,19 +165,33 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	var kubeVersion *k8sVersion.Info
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
-		return err
-	}
-	if err = utils.CheckK8sVersion(kubeVersion); err != nil {
-		return err
-	}
-	if !isPreRunExecution {
-		log.Info("√ is running the minimum Kubernetes version")
+		// probably kubernetes isn't running
+		if !isPreRunExecution { // log incase of preflight checks
+			log.Warn("!! cannot check Kubernetes version")
+		} else { // return as error in case of PreRunE
+			return err
+		}
+		failure++ // increase failure count
+	} else {
+		// kubernetes is running so check the version
+		err = utils.CheckK8sVersion(kubeVersion)
+		if err != nil && !isPreRunExecution { // warn incase of preflight check
+			log.Warn(err)
+			failure++
+		} else if err != nil { // incase of PreRunExec return the error
+			return err
+		} else if !isPreRunExecution { // log incase of perflight check
+			log.Info("√ is running the minimum Kubernetes version")
+		}
 	}
 
-	if err = utils.CheckKubectlVersion(); err != nil {
+	err = utils.CheckKubectlVersion()
+	if err != nil && !isPreRunExecution { // warn incase of preflight check
+		log.Warn(err)
+		failure++
+	} else if err != nil {
 		return err
-	}
-	if !isPreRunExecution {
+	} else if !isPreRunExecution { // log incase of preflight check
 		log.Info("√ is running the minimum kubectl version")
 	}
 
