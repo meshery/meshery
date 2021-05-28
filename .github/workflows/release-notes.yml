@@ -19,7 +19,7 @@ jobs:
 
         - name: Write release notes to markdown file
           run: |
-            ls -la
+            ls -la ./docs/_releases/
             echo ${{ steps.release_drafter.outputs.tag_name }}
             printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: ${{ steps.release_drafter.outputs.tag_name }}\n---\n\n${{ steps.release_drafter.outputs.body }} " > ./docs/_releases/${{ steps.release_drafter.outputs.tag_name }}.md
-            ls -la
+            ls -la ./docs/_releases/
