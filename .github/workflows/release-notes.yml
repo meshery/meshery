@@ -35,12 +35,12 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          token: ${{ secrets.RELEASEDRAFTER_PAT }}
           commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
           committer: l5io <ci@layer5.io>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
-          branch: docs/automated-release-notes
+          branch: docs/automated-release-notes-pr
           base: master
           title: '[Docs] Release Notes for Meshery ${{ steps.release_drafter.outputs.tag_name }}'
           body: |
