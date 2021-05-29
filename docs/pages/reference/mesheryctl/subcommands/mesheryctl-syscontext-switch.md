@@ -1,6 +1,6 @@
 ---
 layout: default
-title: switch
+title: mesheryctl system context switch | Meshery
 permalink: reference/mesheryctl/system/context/switch
 type: reference
 display-title: "false"

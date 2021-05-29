@@ -1,6 +1,6 @@
 ---
 layout: default
-title: completion
+title: mesheryctl system completion | Meshery
 permalink: reference/mesheryctl/system/completion
 type: reference
 display-title: "false"
