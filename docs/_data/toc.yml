@@ -115,8 +115,6 @@
       url: extensibility/providers
     - title: "REST & GraphQL APIs"
       url: extensibility/api
-    - title: "GraphQL Reference"
-      url: extensibility/graphql-reference
 - title: Reference
   url: reference
   links:
@@ -124,3 +122,7 @@
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
+    - title: "GraphQL API Reference"
+      url: reference/graphql-apis
+    - title: "REST API Reference"
+      url: reference/rest-apis

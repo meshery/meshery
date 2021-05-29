@@ -1,0 +1,142 @@
+
+// Our variables
+$base-font-family: Helvetica, Arial, sans-serif;
+$base-font-size:   16px;
+$small-font-size:  $base-font-size * 0.875;
+$base-line-height: 1.5;
+
+$spacing-unit:     30px;
+
+$text-color:       #111;
+$background-color: #fdfdfd;
+$brand-color:      #2a7ae2;
+
+$grey-color:       #828282;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark:  darken($grey-color, 25%);
+
+// Width of the content area
+$content-width:    800px;
+
+$on-palm:          600px;
+$on-laptop:        800px;
+
+@mixin swagger-method($color) {
+    border: 1px solid $color;
+
+    .swagger-method-title {
+        background: lighten($color, 30%);
+    }
+
+    .swagger-method-link {
+        color: darken($color, 20%);
+    }
+
+    .swagger-method-name {
+        background: $color;
+    }
+}
+
+.swagger-path {
+    font-size: $base-font-size * 1.2;
+    margin: 25px 0 10px 0;
+    font-family: Courier New,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono, monospace;
+}
+
+.swagger-method {
+    padding: 0;
+    margin: 10px 0;
+    border-radius: 5px;
+
+}
+
+.swagger-method-title {
+    font-size: $base-font-size;
+    margin: 0;
+    cursor: pointer;
+}
+
+.swagger-method-link {
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.swagger-method-name {
+    padding: 6px 0;
+    display: inline-block;
+    width: 80px;
+    text-align: center;
+    color: white;
+    margin-right: 10px;
+}
+
+.swagger-method-get {
+    @include swagger-method(#6BBD5B);
+}
+
+.swagger-method-post {
+    @include swagger-method(#248FB2);
+}
+
+.swagger-method-put {
+    @include swagger-method(#9B708B);
+}
+
+.swagger-method-patch {
+    @include swagger-method(#D88541);
+}
+
+.swagger-method-delete {
+    @include swagger-method(#E27A7A);
+}
+
+.swagger-method-details {
+    margin: 0;
+    padding: 15px;
+    display: none;
+
+    &.open {
+        display: block;
+    }
+}
+
+.swagger-response {
+    font-size: $base-font-size;
+
+    h5 {
+        margin: 10px 0 5px 0;
+    }
+}
+
+.swagger-response-code {
+    font-weight: 600;
+
+    &:after {
+        content: ' — ';
+    }
+}
+
+.swagger-parameters-table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    margin-bottom: $spacing-unit;
+    width: 100%;
+
+    th, td {
+        border: 1px solid darken($grey-color-light, 5%);
+        padding: 4px 10px;
+    }
+
+    th {
+        background: lighten($grey-color-light, 6%);
+    }
+}
+
+.swagger-parameter-required {
+    &:after {
+        content: ' *';
+        color: red;
+    }
+}
+
