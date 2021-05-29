@@ -29,8 +29,8 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Pull new Meshery images/manifest files and operator manifests.",
-	Long:  `Pull new Meshery container images/manifests and operator manifests from Github/Docker Hub and pull if new version(s) are available.`,
+	Short: "Pull new Meshery images/manifest files.",
+	Long:  `Pull new Meshery container images/manifest files from Github/Docker Hub and pull if new version(s) are available.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -55,7 +55,7 @@ var updateCmd = &cobra.Command{
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files and Meshery operator manifests will supersede the version to latest. Are you sure you want to continue")
+				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
 			}
 
 			if !userResponse {
