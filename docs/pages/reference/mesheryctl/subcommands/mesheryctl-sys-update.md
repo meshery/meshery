@@ -1,6 +1,6 @@
 ---
 layout: default
-title: update
+title: mesheryctl system update | Meshery
 permalink: reference/mesheryctl/system/update
 type: reference
 display-title: "false"
