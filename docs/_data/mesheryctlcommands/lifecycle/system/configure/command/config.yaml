@@ -1,4 +1,4 @@
 name: config
-description: Configures Meshery with kubeconfig. Generated with the help of user details to provide access for public clouds(GKE/EKS)
+description: This command updates your kubeconfig to provide Meshery with access to your managed Kubernetes instance.
 usage: |
     mesheryctl system config gke --token [path to token]

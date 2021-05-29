@@ -1,0 +1,5 @@
+flag: -c, --context string
+arg: config
+description: (optional) temporarily change the current context.
+usage: |
+    mesheryctl system config -c

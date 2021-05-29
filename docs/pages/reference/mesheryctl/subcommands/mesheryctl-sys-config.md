@@ -1,6 +1,6 @@
 ---
 layout: default
-title: config
+title: meshery system config | Meshery
 permalink: reference/mesheryctl/system/config
 type: reference
 display-title: "false"
@@ -18,6 +18,7 @@ list: exclude
 
 ## Description
 
+<p>Configures Meshery to use a Kubernetes cluster.</p>
 {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.configure.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}
@@ -25,24 +26,28 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system config [flags]
+    mesheryctl system config < managed kubernetes service name > [flags]
   </div>
 </pre>
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.configure.command %}{% assign subcommand =subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.configure.command %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
   {{ subcommand.usage }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.configure.flag %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
-  {% endfor %}
   </div>
 </pre>
+{% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.configure.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
 
 
