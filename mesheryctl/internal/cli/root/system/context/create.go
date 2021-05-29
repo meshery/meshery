@@ -31,7 +31,7 @@ var createContextCmd = &cobra.Command{
 			}
 			tempContext.Endpoint = url
 		}
-
+    
 		log.Debug("url: `" + tempContext.Endpoint + "`")
 
 		if platform != "" {
