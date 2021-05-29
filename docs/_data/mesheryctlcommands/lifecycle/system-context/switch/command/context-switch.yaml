@@ -1,0 +1,4 @@
+name: switch
+description: configure mesheryctl to actively use one one context vs. the another context
+usage: |
+    mesheryctl system context switch [context name]

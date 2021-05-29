@@ -41,7 +41,7 @@ function CustomToolbar(onClick) {
     return (
       <>
         <label htmlFor="upload-button">
-          <input type="file" accept=".yaml, .yml" hidden onChange={onClick} id="upload-button" name="upload-button" />
+          <input type="file" accept=".yaml, .yml, .json" hidden onChange={onClick} id="upload-button" name="upload-button" />
           <Tooltip title="Upload Filter">
             <IconButton aria-label="Upload" component="span">
               <UploadIcon />

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: perf
+title: mesheryctl perf | Meshery
 permalink: reference/mesheryctl/perf
 type: reference
 display-title: "false"

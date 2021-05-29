@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl system channel view | Meshery
-permalink: reference/mesheryctl/system/channel/view
+title: mesheryctl pattern apply | Meshery
+permalink: reference/mesheryctl/pattern/apply
 type: reference
 display-title: "false"
 language: en
@@ -14,24 +14,25 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl system channel view
+# mesheryctl pattern apply
 
+<!-- Description of the command. Preferably a paragraph -->
 ## Description
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in site.data.mesheryctlcommands.pattern.apply.commands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system channel view [flags]
+  mesheryctl exp pattern apply --file [path to pattern file] 
   </div>
 </pre>
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.command %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in site.data.mesheryctlcommands.pattern.apply.commands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -39,7 +40,7 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.pattern.apply.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -49,15 +50,14 @@ list: exclude
 {% endfor %}
 <br/>
 
-
 <!-- Options/Flags available in this command -->
-## Options
+## Options & Flags
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.view.flag %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.pattern.apply.flags %}{% assign flag = flag_hash[1] %}
+  {{ flag.name }} # {{ flag.description }}
+  {% endfor %}
   </div>
 </pre>
 <br/>
