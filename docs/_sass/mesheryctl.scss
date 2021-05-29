@@ -1,3 +1,14 @@
+table.mesherycomponents {
+    th {
+        background-color: $charcoal;
+        color:white;
+    }
+    td.childcomponent {
+        color:white;
+        background-color: $tealblue;
+    }
+}
+
 .cmd-caption {
     margin-bottom: 2rem;
 }
