@@ -1,0 +1,4 @@
+name: --file, -f
+description: apply pattern file will trigger deploy of the pattern file and also supports file retrieval from GitHub
+usage: |
+    mesheryctl exp pattern apply --file [path to pattern file]
