@@ -1,6 +1,6 @@
 ---
 layout: default
-title: start
+title: mesheryctl system start | Meshery
 permalink: reference/mesheryctl/system/start
 type: reference
 display-title: "false"
