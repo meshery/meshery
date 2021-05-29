@@ -132,7 +132,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-         <td>{{ subcommand.name }}</td>
+        <td>{{ subcommand.name }}</td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>

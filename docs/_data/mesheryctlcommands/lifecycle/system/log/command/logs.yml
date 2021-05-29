@@ -1,4 +1,0 @@
-name: logs
-description: starts tailing Meshery server debug logs
-usage: |
-    mesheryctl system logs
