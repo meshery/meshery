@@ -71,20 +71,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
             lint: true,
             mode: "text/x-yaml",
           }}
-          onChange={(_, data, val) => setYaml(val)}
+          onChange={(val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Filter">
-          <IconButton
-            aria-label="Update"
-            color="primary"
-            onClick={() => onSubmit(yaml, filter.id, filter.name, "update")}
-          >
-            <UpdateIcon />
-          </IconButton>
-        </Tooltip>
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
