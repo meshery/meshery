@@ -1,3 +1,0 @@
-#!/bin/bash
-docker build -t layer5/meshery:latest .
-docker tag layer5/meshery:latest layer5/meshery:$SOURCE_COMMIT
