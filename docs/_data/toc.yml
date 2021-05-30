@@ -11,6 +11,8 @@
       children:
         - title: Meshery CLI
           url: project/contributing-cli
+        - title: Meshery Docs
+          url: project/contributing-docs
         - title: Meshery UI
           url: project/contributing-ui
     - title: Releases
@@ -21,7 +23,6 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-
       children:
         - title: Installing mesheryctl
           url: installation/mesheryctl

@@ -39,7 +39,7 @@ Click on (+) and choose the {{page.version}} of the {{page.mesh_name}} service m
 
 The following sample applications are available in this adapter.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### SMI Conformance Capability
