@@ -19,10 +19,10 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
 #### Environment
-<!-- Add screenshots, if applicable, to help explain your problem. -->
 
 - Host OS: Mac Linux Windows
-- Meshery Version: stable-v
+- Meshery Server Version: stable-v
+- Meshery Client Version: stable-v
 - Platform: Docker or Kubernetes
 
 <!-- Optional for feature requests -->

@@ -12,12 +12,13 @@ jobs:
       - name: Publish Helm chart
         uses: stefanprodan/helm-gh-pages@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          charts_dir: install/kubernetes/helm/meshery
-          charts_url: https://meshery.io/charts
-          owner: layer5
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm/meshery/charts
+          owner: layer5io
           repository: meshery.io
           branch: master
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
+          #if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+          # chart_version: ${GITHUB_REF/refs\/tags\//}

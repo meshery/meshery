@@ -141,16 +141,26 @@ setup-nighthawk:
 #Incorporating Make docs commands from the Docs Makefile
 jekyll=bundle exec jekyll
 
-docs:
-	$(jekyll) serve --drafts --livereload
+site:
+	cd docs; bundle install; $(jekyll) serve --drafts --livereload --config _config_dev.yml
+
 
 build-docs:
-	$(jekyll) build --drafts --livereload
+	cd docs; $(jekyll) build --drafts
 
 docker-docs:
-	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
-
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 .PHONY: chart-readme
 chart-readme:
 	go run github.com/norwoodj/helm-docs/cmd/helm-docs -c install/kubernetes/helm/
+
+swagger-spec:
+	swagger generate spec -o ./swagger.yaml --scan-models
+
+swagger-run:swagger-spec
+	swagger serve ./swagger.yaml
+
+swagger-docs:
+	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
+	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml

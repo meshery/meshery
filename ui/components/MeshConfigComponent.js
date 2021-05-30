@@ -62,6 +62,10 @@ const styles = (theme) => ({
     width: '100%',
   },
   fileLabelText: {
+    cursor: 'pointer',
+    "& *":{
+      cursor: 'pointer',
+    }
   },
   inClusterLabel: {
     paddingRight: theme.spacing(2),
@@ -74,7 +78,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(2),
   },
   fileInputStyle: {
-    opacity: '0.01',
+    display:'none',
   },
   icon: {
     width: theme.spacing(2.5),
@@ -764,7 +768,6 @@ class MeshConfigComponent extends React.Component {
                           </InputAdornment>
                         ),
                       }}
-                      disabled
                     />
                   </FormGroup>
                   <TextField

@@ -13,7 +13,7 @@ type PerformanceProfile struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name              string         `json:"name,omitempty"`
-	LastRun           string         `json:"last_run,omitempty"`
+	LastRun           *time.Time     `json:"last_run,omitempty"`
 	Schedule          *uuid.UUID     `json:"schedule,omitempty"`
 	LoadGenerators    pq.StringArray `json:"load_generators,omitempty" gorm:"type:text[]"`
 	Endpoints         pq.StringArray `json:"endpoints,omitempty" gorm:"type:text[]"`
