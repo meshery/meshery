@@ -34,7 +34,7 @@ import (
 )
 
 var (
-	view                 = ""
+	availableSubcommands []*cobra.Command
 	testURL              = ""
 	testName             = ""
 	testMesh             = ""
@@ -44,7 +44,6 @@ var (
 	loadGenerator        = ""
 	filePath             = ""
 	tokenPath            = ""
-	availableSubcommands []*cobra.Command
 )
 
 // PerfCmd represents the Performance Management CLI command
@@ -53,8 +52,11 @@ var PerfCmd = &cobra.Command{
 	Short:   "Performance Management",
 	Long:    `Performance Management & Benchmarking using Meshery CLI.`,
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
-	Args:    cobra.NoArgs,
+	Args:    cobra.MinimumNArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
+		}
 		//Check prerequisite
 		return system.RunPreflightHealthChecks(true, cmd.Use)
 	},
@@ -165,9 +167,11 @@ func init() {
 	PerfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
 	PerfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
 	PerfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	PerfCmd.Flags().StringVar(&tokenPath, "token", utils.AuthConfigFile, "(required) Path to meshery auth config")
 	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
 	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-	availableSubcommands = []*cobra.Command{viewCmd}
+	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
+	_ = PerfCmd.MarkFlagRequired("token")
+
+	availableSubcommands = []*cobra.Command{listCmd, viewCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }
