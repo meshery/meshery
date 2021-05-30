@@ -26,7 +26,7 @@ list: exclude
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl exp pattern delete --file [path to pattern file] 
+  mesheryctl pattern delete --file [path to pattern file] 
   </div>
 </pre>
 
