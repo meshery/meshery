@@ -1,0 +1,4 @@
+name: --file, -f
+description: delete pattern file will remove deployment of the pattern file
+usage: |
+    mesheryctl exp pattern delete --file [path to pattern file]

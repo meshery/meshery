@@ -1,0 +1,4 @@
+name: delete
+description: delete pattern file will remove deployments of the pattern file using specific flags
+usage: |
+    mesheryctl pattern delete [flags]
