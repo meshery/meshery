@@ -18,7 +18,6 @@ list: exclude
 
 ## Description
 
-<p>Configures Meshery to use a Kubernetes cluster.</p>
 {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.configure.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 {% endfor %}

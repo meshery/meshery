@@ -1,0 +1,5 @@
+flag: aks --token [path to token]
+arg: config
+description: To configure Meshery to use Azure Kubernetes Service-
+usage: |
+    mesheryctl system config aks --token [path to token]
