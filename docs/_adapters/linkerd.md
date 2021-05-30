@@ -46,16 +46,16 @@ Note: Linkerd's control plane will be deployed to the `linkerd` namespace. Linke
 
 The {{ page.name }} includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emoji.voto)
+- [Emojivoto]({{ site.baseurl }}/guides/deploying-sample-apps#emoji.voto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
-- [Linkerd Books]({{ site.baseurl }}/guides/sample-apps#linkerdbooks)
+- [Linkerd Books]({{ site.baseurl }}/guides/deploying-sample-apps#linkerdbooks)
     - A sample application built for demonstrating  manage your bookshelf.
 
-- [HTTPbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
+- [HTTPbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
     - A simple HTTP Request & Response Service.
 
 Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.

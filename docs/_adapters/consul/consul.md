@@ -50,11 +50,11 @@ A number of [sample applications](#sample-applications) for {{page.mesh_name}} c
 
 Meshery supports the deployment of a variety of sample applications on {{ page.name }}. Use Meshery to deploy any of these sample applications.
 
-- [httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
+- [httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [Image Hub]({{ site.baseurl }}/guides/sample-apps/imagehub)
+- [Image Hub]({{ site.baseurl }}/guides/deploying-sample-apps/imagehub)
     - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 [![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/service-meshes/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
