@@ -392,7 +392,7 @@ DEPENDENCIES
   rake
 
 RUBY VERSION
-   ruby 2.7.0p0
+   ruby 2.7.1p83
 
 BUNDLED WITH
    2.2.17
