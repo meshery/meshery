@@ -26,13 +26,13 @@ The {{page.name}} can install **{{page.version}}** of {{page.mesh_name}}. A numb
 
 The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto]({{ site.baseurl }}/guides/sample-apps#emoji.voto)
+- [Emojivoto]({{ site.baseurl }}/guides/deploying-sample-apps#emoji.voto)
     - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo)
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo)
     - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery. 
 
-- [Httpbin]({{ site.baseurl }}/guides/sample-apps#httpbin)
+- [Httpbin]({{ site.baseurl }}/guides/deploying-sample-apps#httpbin)
     - Httpbin is a simple HTTP request and response service.
 
 - [Nginx Servce Mesh Books](https://github.com/BuoyantIO/booksapp)
