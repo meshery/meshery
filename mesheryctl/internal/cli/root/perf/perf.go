@@ -35,15 +35,8 @@ import (
 
 var (
 	availableSubcommands []*cobra.Command
-	testURL              = ""
-	testName             = ""
-	testMesh             = ""
-	qps                  = ""
-	concurrentRequests   = ""
-	testDuration         = ""
-	loadGenerator        = ""
-	filePath             = ""
-	tokenPath            = ""
+	outputFormatFlag     string
+	tokenPath            string
 )
 
 // PerfCmd represents the Performance Management CLI command
@@ -161,17 +154,9 @@ var PerfCmd = &cobra.Command{
 }
 
 func init() {
-	PerfCmd.Flags().StringVar(&testURL, "url", "", "(required) Endpoint URL to test")
-	PerfCmd.Flags().StringVar(&testName, "name", "", "(optional) Name of the Test")
-	PerfCmd.Flags().StringVar(&testMesh, "mesh", "", "(optional) Name of the Service Mesh")
-	PerfCmd.Flags().StringVar(&qps, "qps", "0", "(optional) Queries per second")
-	PerfCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "1", "(optional) Number of Parallel Requests")
-	PerfCmd.Flags().StringVar(&testDuration, "duration", "30s", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	PerfCmd.Flags().StringVar(&loadGenerator, "load-generator", "fortio", "(optional) Load-Generator to be used (fortio/wrk2)")
-	PerfCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	PerfCmd.PersistentFlags().StringVarP(&tokenPath, "token", "t", "", "(required) Path to meshery auth config")
-	_ = PerfCmd.MarkFlagRequired("token")
+	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 
-	availableSubcommands = []*cobra.Command{listCmd, viewCmd}
+	availableSubcommands = []*cobra.Command{listCmd, viewCmd, applyCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }

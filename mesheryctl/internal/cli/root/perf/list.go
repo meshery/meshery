@@ -23,11 +23,10 @@ import (
 )
 
 var (
-	outputFormatFlag string
-	page             uint
-	totalPage        uint
-	totalResults     uint
-	limitResults     uint = 10
+	page         uint
+	totalPage    uint
+	totalResults uint
+	limitResults uint = 10
 )
 
 // handle termbox and errors
