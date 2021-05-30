@@ -71,6 +71,7 @@ Open Powershell in administrator mode and run:
 Set the default version to *WSL2*, which will be inherited by any distro you wish to use.
 
 Enable VM (Virtual Machine) feature:
+Open Powershell in administrator mode and run:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -114,6 +115,7 @@ Docker Toolbox uses Linux-specific kernel features, and can’t run natively on 
 ### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
 In this tutorial, [Ubuntu 18.04](https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q?activetab=pivot:overviewtab) will be the distro used. Feel free to use any distro of your choice.
 
+<strong>Note:</strong> You can also do the same without installing any distro. Just do the above steps till step 1. and follow the following steps from step 3 skipping step 2.
 
 ### 3. <b>Enable Docker</b>
 
@@ -137,6 +139,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 ### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
+Enable the Kubernetes from the settings in Docker Desktop application.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">
@@ -147,6 +150,15 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   </div></div>
   </pre>
 
+If using scoop, run this in the powershell to install Kubernetes cluster:
+
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  scoop install k3d
+  k3d cluster create
+  export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"
+  </div></div>
+  </pre>
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
@@ -156,3 +168,27 @@ Follow the [installation steps]({{ site.baseurl }}/installation#windows) to inst
   ./mesheryctl system start
   </div></div>
   </pre>
+
+Type a 'yes' while being asked for whether to configure a file or not. Eventually choose your platform as Docker when asked to choose a platform to deploy Meshery. And get started with Meshery.
+
+### 6. <a name="step6"> <b>Aftermath errors</b></a>
+
+While configuring your connection to Kubernetes, a common error faced is that you need to manually update your .kube config file to the platform, the kubernetes connection may still not be established. Follow the steps to make it right.
+
+In the powershell to view all the contexts Kubernetes has, run:
+
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  kubectl config get-contexts
+  </div></div>
+  </pre>
+
+Change your current context to docker-desktop:
+
+  <pre class="codeblock-pre">
+  <div class="codeblock"><div class="clipboardjs">
+  kubectl config use-context docker-desktop
+  </div></div>
+  </pre>
+
+Restart the mesheryctl and the error should be fixed.
