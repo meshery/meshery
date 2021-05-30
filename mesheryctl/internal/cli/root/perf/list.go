@@ -178,7 +178,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag.")
+		return nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -227,7 +227,7 @@ func fetchPerformanceProfileResults(url string, profileID string) ([][]string, [
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag.")
+		return nil, nil, errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 	}
 	resp, err := client.Do(req)
 	if err != nil {
