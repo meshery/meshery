@@ -312,6 +312,142 @@ definitions:
         x-go-name: TotalCount
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  PerformanceProfile:
+    description: |-
+      PerformanceProfile represents the performance profile that needs
+      to be saved
+    properties:
+      concurrent_request:
+        format: int64
+        type: integer
+        x-go-name: ConcurrentRequest
+      content_type:
+        type: string
+        x-go-name: ContentType
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      duration:
+        type: string
+        x-go-name: Duration
+      endpoints:
+        $ref: '#/definitions/StringArray'
+      id:
+        $ref: '#/definitions/UUID'
+      last_run:
+        format: date-time
+        type: string
+        x-go-name: LastRun
+      load_generators:
+        $ref: '#/definitions/StringArray'
+      name:
+        type: string
+        x-go-name: Name
+      qps:
+        format: int64
+        type: integer
+        x-go-name: QPS
+      request_body:
+        type: string
+        x-go-name: RequestBody
+      request_cookies:
+        type: string
+        x-go-name: RequestCookies
+      request_headers:
+        type: string
+        x-go-name: RequestHeaders
+      schedule:
+        $ref: '#/definitions/UUID'
+      service_mesh:
+        type: string
+        x-go-name: ServiceMesh
+      total_results:
+        format: int64
+        type: integer
+        x-go-name: TotalResults
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceProfilesAPIResponse:
+    description: PerformanceProfilesAPIResponse response retruned by performance endpoint
+      on meshery server
+    properties:
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      profiles:
+        items:
+          $ref: '#/definitions/PerformanceProfile'
+        type: array
+        x-go-name: Profiles
+      total_count:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceResult:
+    description: PerformanceResult represents the result of a performance test
+    properties:
+      mesh:
+        type: string
+        x-go-name: Mesh
+      meshery_id:
+        $ref: '#/definitions/UUID'
+      name:
+        type: string
+        x-go-name: Name
+      performance_profile:
+        $ref: '#/definitions/UUID'
+      runner_results:
+        $ref: '#/definitions/RunnerResults'
+      server_board_config:
+        type: object
+        x-go-name: ServerBoardConfig
+      server_metrics:
+        type: object
+        x-go-name: ServerMatrics
+      test_id:
+        type: string
+        x-go-name: TestID
+      test_start_time:
+        format: date-time
+        type: string
+        x-go-name: TestStartTime
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceResultsAPIResponse:
+    description: PerformanceResultsAPIResponse response retruned by performance endpoint
+      on meshery server
+    properties:
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      results:
+        items:
+          $ref: '#/definitions/PerformanceResult'
+        type: array
+        x-go-name: Results
+      total_count:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   Plugin:
     description: Plugin A plugin for the Engine API
     properties:
@@ -668,6 +804,35 @@ definitions:
     - Type
     type: object
     x-go-package: github.com/docker/docker/api/types
+  RunnerResults:
+    properties:
+      ActualDuration:
+        format: uint64
+        type: integer
+        x-go-name: Duration
+      ActualQPS:
+        format: double
+        type: number
+        x-go-name: QPS
+      DurationHistogram:
+        properties:
+          Percentiles:
+            items:
+              properties:
+                Percentile:
+                  format: double
+                  type: number
+                Value:
+                  format: double
+                  type: number
+              type: object
+            type: array
+        type: object
+      StartTime:
+        format: date-time
+        type: string
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   ServiceUpdateResponse:
     description: ServiceUpdateResponse service update response
     properties:
@@ -678,6 +843,13 @@ definitions:
         type: array
     type: object
     x-go-package: github.com/docker/docker/api/types
+  StringArray:
+    items:
+      type: string
+    title: StringArray represents a one-dimensional array of the PostgreSQL character
+      types.
+    type: array
+    x-go-package: github.com/lib/pq
   UUID:
     items:
       format: uint8
@@ -805,7 +977,6 @@ definitions:
     - Size
     type: object
     x-go-package: github.com/docker/docker/api/types
-host: localhost:30611
 info:
   description: |-
     the purpose of this application is to provide an application
@@ -819,7 +990,32 @@ info:
   title: Meshery API.
   version: 0.4.27
 paths:
-  /api/experimental/pattern:
+  /api/oam/{type}:
+    get:
+      description: |-
+        Getting list of workloads/traits/scopes
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idGETOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles the get requests for the OAM objects
+      tags:
+      - PatternsAPI
+    post:
+      description: |-
+        Adding a workload/trait/scope
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idPOSTOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles registering OMA objects
+      tags:
+      - PatternsAPI
+  /api/pattern:
     get:
       description: |-
         Returns the list of all the patterns saved by the current user
@@ -840,16 +1036,17 @@ paths:
       summary: Handle POST requests for patterns
       tags:
       - PatternsAPI
-  /api/experimental/pattern/{id}:
+  /api/pattern/{id}:
     delete:
       description: 'Deletes a meshery pattern with ID: id'
       operationId: idDeleteMesheryPattern
       parameters:
-      - $ref: '#/definitions/UUID'
-        description: id to fetch the item
+      - description: id for a specific
+        format: uuid
         in: path
         name: id
         required: true
+        type: string
         x-go-name: ID
       responses:
         "200":
@@ -861,11 +1058,12 @@ paths:
       description: Fetches the pattern with the given id
       operationId: idGetMesheryPattern
       parameters:
-      - $ref: '#/definitions/UUID'
-        description: id to fetch the item
+      - description: id for a specific
+        format: uuid
         in: path
         name: id
         required: true
+        type: string
         x-go-name: ID
       responses:
         "200":
@@ -873,6 +1071,205 @@ paths:
       summary: Handle GET for a Meshery Pattern
       tags:
       - PatternsAPI
+  /api/user/performance/profiles:
+    get:
+      description: Returns the list of all the performance profiles saved by the current
+        user
+      operationId: idGetPerformanceProfiles
+      responses:
+        "200":
+          $ref: '#/responses/performanceProfilesResponseWrapper'
+      summary: Handle GET requests for performance profiles
+      tags:
+      - PerformanceAPI
+    post:
+      description: Save performance profile using the current provider's persistence
+        mechanism
+      operationId: idSavePerformanceProfile
+      parameters:
+      - in: body
+        name: name
+        required: true
+        schema:
+          type: string
+        x-go-name: Name
+      - description: array of load generators
+        in: query
+        items:
+          type: string
+        name: load_generators
+        required: true
+        type: array
+        x-go-name: LoadGenerators
+      - description: array of urls of performance results
+        in: query
+        items:
+          type: string
+        name: endpoints
+        required: true
+        type: array
+        x-go-name: Endpoints
+      - description: service mesh for performance tests
+        in: query
+        name: service_mesh
+        required: true
+        type: string
+        x-go-name: ServiceMesh
+      - description: number of concurrent requests
+        format: int64
+        in: query
+        name: concurrent_request
+        required: true
+        type: integer
+        x-go-name: ConcurrentRequest
+      - description: qps in integer
+        format: int64
+        in: query
+        name: qps
+        required: true
+        type: integer
+        x-go-name: QPS
+      - description: duration of tests e.g. 30s
+        in: query
+        name: duration
+        required: true
+        type: string
+        x-go-name: Duration
+      responses:
+        "200":
+          $ref: '#/responses/performanceProfileResponseWrapper'
+      summary: Handle POST requests for saving performance profile
+      tags:
+      - PerformanceAPI
+  /api/user/performance/profiles/{id}:
+    delete:
+      description: Deletes a performance profile with the given id
+      operationId: idDeletePerformanceProfile
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete requests for performance profiles
+      tags:
+      - PerformanceProfile
+    get:
+      description: Returns single performance profile with the given id
+      operationId: idGetSinglePerformanceProfile
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/performanceProfileResponseWrapper'
+      summary: Handle GET requests for performance results of a profile
+      tags:
+      - PerformanceAPI
+  /api/user/performance/profiles/{id}/results:
+    get:
+      description: Fetchs pages of results from Remote Provider for the given id
+      operationId: idGETProfileResults
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/performanceResultsResponseWrapper'
+      summary: Handle GET request for results of a profile
+      tags:
+      - PerformanceAPI
+  /api/user/performance/profiles/{id}/run:
+    get:
+      description: Runs the load test with the given parameters
+      operationId: idRunPerformanceTest
+      parameters:
+      - description: test-id of pre-existing test
+        format: uuid
+        in: query
+        name: uuid
+        type: string
+        x-go-name: TestID
+      - description: name of performance test
+        in: query
+        name: name
+        type: string
+        x-go-name: Name
+      - description: load generator for performance test
+        in: query
+        name: loadGenerator
+        required: true
+        type: string
+        x-go-name: LoadGenerator
+      - description: url for test
+        in: query
+        name: url
+        required: true
+        type: string
+        x-go-name: URL
+      - description: service mesh for performance test
+        in: query
+        name: mesh
+        required: true
+        type: string
+        x-go-name: ServiceMesh
+      - description: concurrent request in number
+        format: int64
+        in: query
+        name: c
+        required: true
+        type: integer
+        x-go-name: ConcurrentRequest
+      - description: qps in number
+        format: int64
+        in: query
+        name: qps
+        required: true
+        type: integer
+        x-go-name: QPS
+      - description: time in integer e.g. 30
+        format: int64
+        in: query
+        name: t
+        required: true
+        type: integer
+        x-go-name: Time
+      - description: duration e.g. s for second
+        in: query
+        name: dur
+        type: string
+        x-go-name: Duration
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request to run a performance test
+      tags:
+      - PerformanceAPI
+  /api/user/performance/profiles/results:
+    get:
+      description: Returns pages of all the performance results from Remote Provider
+      operationId: idGetAllPerformanceResults
+      responses:
+        "200":
+          $ref: '#/responses/performanceResultsResponseWrapper'
+      summary: Handles GET requests for performance results
+      tags:
+      - PerformanceAPI
 produces:
 - application/json
 responses:
@@ -886,13 +1283,26 @@ responses:
       $ref: '#/definitions/PatternsAPIResponse'
   noContentWrapper:
     description: ""
+  performanceProfileResponseWrapper:
+    description: Returns a single performance profile
+    schema:
+      $ref: '#/definitions/PerformanceProfile'
+  performanceProfilesResponseWrapper:
+    description: Returns all the performance profiles
+    schema:
+      $ref: '#/definitions/PerformanceProfilesAPIResponse'
+  performanceResultsResponseWrapper:
+    description: Returns all performance results
+    schema:
+      $ref: '#/definitions/PerformanceResultsAPIResponse'
 schemes:
 - http
 security:
-- token: []
+- token:
+  - '[]'
 securityDefinitions:
   token:
     in: cookie
     name: token
-    type: JWT
+    type: apiKey
 swagger: "2.0"

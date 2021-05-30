@@ -125,6 +125,16 @@ func (h *Handler) OAMRegisterHandler(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route POST /api/oam/{type} PatternsAPI idPOSTOAMMesheryPattern
+// Handles registering OMA objects
+//
+// Adding a workload/trait/scope
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
+
 // POSTOAMRegisterHandler handles registering OMA objects
 func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 	// Get the body
@@ -145,6 +155,16 @@ func POSTOAMRegisterHandler(typ string, r *http.Request) error {
 
 	return nil
 }
+
+// swagger:route GET /api/oam/{type} PatternsAPI idGETOAMMesheryPattern
+// Handles the get requests for the OAM objects
+//
+// Getting list of workloads/traits/scopes
+//
+// {type} being of either trait, scope, workload; registration of adapter capabilities.
+//
+// responses:
+// 	200:
 
 // GETOAMRegisterHandler handles the get requests for the OAM objects
 func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {

@@ -18,6 +18,7 @@ require (
 	github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.19.28
+	github.com/go-openapi/strfmt v0.19.5
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
@@ -56,7 +57,6 @@ require (
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	gorm.io/gorm v1.20.10
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12

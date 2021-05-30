@@ -17,10 +17,34 @@ info:
     name: Apache-2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.txt
   version: 0.4.27
-host: localhost:30611
 basePath: /
 paths:
-  /api/experimental/pattern:
+  /api/oam/{type}:
+    get:
+      description: |-
+        Getting list of workloads/traits/scopes
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      tags:
+      - PatternsAPI
+      summary: Handles the get requests for the OAM objects
+      operationId: idGETOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+    post:
+      description: |-
+        Adding a workload/trait/scope
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      tags:
+      - PatternsAPI
+      summary: Handles registering OMA objects
+      operationId: idPOSTOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+  /api/pattern:
     get:
       description: |-
         Returns the list of all the patterns saved by the current user
@@ -149,7 +173,7 @@ paths:
                 type: string
                 x-go-name: UserID
             x-go-package: github.com/layer5io/meshery/models
-  /api/experimental/pattern/{id}:
+  /api/pattern/{id}:
     get:
       description: Fetches the pattern with the given id
       tags:
@@ -157,13 +181,10 @@ paths:
       summary: Handle GET for a Meshery Pattern
       operationId: idGetMesheryPattern
       parameters:
-      - type: array
-        items:
-          type: integer
-          format: uint8
+      - type: string
+        format: uuid
         x-go-name: ID
-        x-go-package: github.com/gofrs/uuid
-        description: id to fetch the item
+        description: id for a specific
         name: id
         in: path
         required: true
@@ -220,16 +241,661 @@ paths:
       summary: Handle Delete for a Meshery Pattern
       operationId: idDeleteMesheryPattern
       parameters:
-      - type: array
-        items:
-          type: integer
-          format: uint8
+      - type: string
+        format: uuid
         x-go-name: ID
-        x-go-package: github.com/gofrs/uuid
-        description: id to fetch the item
+        description: id for a specific
         name: id
         in: path
         required: true
+      responses:
+        "200":
+          description: ""
+  /api/user/performance/profiles:
+    get:
+      description: Returns the list of all the performance profiles saved by the current
+        user
+      tags:
+      - PerformanceAPI
+      summary: Handle GET requests for performance profiles
+      operationId: idGetPerformanceProfiles
+      responses:
+        "200":
+          description: Returns all the performance profiles
+          schema:
+            description: PerformanceProfilesAPIResponse response retruned by performance
+              endpoint on meshery server
+            type: object
+            properties:
+              page:
+                type: integer
+                format: uint64
+                x-go-name: Page
+              page_size:
+                type: integer
+                format: uint64
+                x-go-name: PageSize
+              profiles:
+                type: array
+                items:
+                  description: |-
+                    PerformanceProfile represents the performance profile that needs
+                    to be saved
+                  type: object
+                  properties:
+                    concurrent_request:
+                      type: integer
+                      format: int64
+                      x-go-name: ConcurrentRequest
+                    content_type:
+                      type: string
+                      x-go-name: ContentType
+                    created_at:
+                      type: string
+                      format: date-time
+                      x-go-name: CreatedAt
+                    duration:
+                      type: string
+                      x-go-name: Duration
+                    endpoints:
+                      type: array
+                      title: StringArray represents a one-dimensional array of the
+                        PostgreSQL character types.
+                      items:
+                        type: string
+                      x-go-package: github.com/lib/pq
+                    id:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    last_run:
+                      type: string
+                      format: date-time
+                      x-go-name: LastRun
+                    load_generators:
+                      type: array
+                      title: StringArray represents a one-dimensional array of the
+                        PostgreSQL character types.
+                      items:
+                        type: string
+                      x-go-package: github.com/lib/pq
+                    name:
+                      type: string
+                      x-go-name: Name
+                    qps:
+                      type: integer
+                      format: int64
+                      x-go-name: QPS
+                    request_body:
+                      type: string
+                      x-go-name: RequestBody
+                    request_cookies:
+                      type: string
+                      x-go-name: RequestCookies
+                    request_headers:
+                      type: string
+                      x-go-name: RequestHeaders
+                    schedule:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    service_mesh:
+                      type: string
+                      x-go-name: ServiceMesh
+                    total_results:
+                      type: integer
+                      format: int64
+                      x-go-name: TotalResults
+                    updated_at:
+                      type: string
+                      format: date-time
+                      x-go-name: UpdatedAt
+                  x-go-package: github.com/layer5io/meshery/models
+                x-go-name: Profiles
+              total_count:
+                type: integer
+                format: uint64
+                x-go-name: TotalCount
+            x-go-package: github.com/layer5io/meshery/models
+    post:
+      description: Save performance profile using the current provider's persistence
+        mechanism
+      tags:
+      - PerformanceAPI
+      summary: Handle POST requests for saving performance profile
+      operationId: idSavePerformanceProfile
+      parameters:
+      - x-go-name: Name
+        name: name
+        in: body
+        required: true
+        schema:
+          type: string
+      - type: array
+        items:
+          type: string
+        x-go-name: LoadGenerators
+        description: array of load generators
+        name: load_generators
+        in: query
+        required: true
+      - type: array
+        items:
+          type: string
+        x-go-name: Endpoints
+        description: array of urls of performance results
+        name: endpoints
+        in: query
+        required: true
+      - type: string
+        x-go-name: ServiceMesh
+        description: service mesh for performance tests
+        name: service_mesh
+        in: query
+        required: true
+      - type: integer
+        format: int64
+        x-go-name: ConcurrentRequest
+        description: number of concurrent requests
+        name: concurrent_request
+        in: query
+        required: true
+      - type: integer
+        format: int64
+        x-go-name: QPS
+        description: qps in integer
+        name: qps
+        in: query
+        required: true
+      - type: string
+        x-go-name: Duration
+        description: duration of tests e.g. 30s
+        name: duration
+        in: query
+        required: true
+      responses:
+        "200":
+          description: Returns a single performance profile
+          schema:
+            description: |-
+              PerformanceProfile represents the performance profile that needs
+              to be saved
+            type: object
+            properties:
+              concurrent_request:
+                type: integer
+                format: int64
+                x-go-name: ConcurrentRequest
+              content_type:
+                type: string
+                x-go-name: ContentType
+              created_at:
+                type: string
+                format: date-time
+                x-go-name: CreatedAt
+              duration:
+                type: string
+                x-go-name: Duration
+              endpoints:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              last_run:
+                type: string
+                format: date-time
+                x-go-name: LastRun
+              load_generators:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              name:
+                type: string
+                x-go-name: Name
+              qps:
+                type: integer
+                format: int64
+                x-go-name: QPS
+              request_body:
+                type: string
+                x-go-name: RequestBody
+              request_cookies:
+                type: string
+                x-go-name: RequestCookies
+              request_headers:
+                type: string
+                x-go-name: RequestHeaders
+              schedule:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              service_mesh:
+                type: string
+                x-go-name: ServiceMesh
+              total_results:
+                type: integer
+                format: int64
+                x-go-name: TotalResults
+              updated_at:
+                type: string
+                format: date-time
+                x-go-name: UpdatedAt
+            x-go-package: github.com/layer5io/meshery/models
+  /api/user/performance/profiles/results:
+    get:
+      description: Returns pages of all the performance results from Remote Provider
+      tags:
+      - PerformanceAPI
+      summary: Handles GET requests for performance results
+      operationId: idGetAllPerformanceResults
+      responses:
+        "200":
+          description: Returns all performance results
+          schema:
+            description: PerformanceResultsAPIResponse response retruned by performance
+              endpoint on meshery server
+            type: object
+            properties:
+              page:
+                type: integer
+                format: uint64
+                x-go-name: Page
+              page_size:
+                type: integer
+                format: uint64
+                x-go-name: PageSize
+              results:
+                type: array
+                items:
+                  description: PerformanceResult represents the result of a performance
+                    test
+                  type: object
+                  properties:
+                    mesh:
+                      type: string
+                      x-go-name: Mesh
+                    meshery_id:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    name:
+                      type: string
+                      x-go-name: Name
+                    performance_profile:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    runner_results:
+                      type: object
+                      properties:
+                        ActualDuration:
+                          type: integer
+                          format: uint64
+                          x-go-name: Duration
+                        ActualQPS:
+                          type: number
+                          format: double
+                          x-go-name: QPS
+                        DurationHistogram:
+                          type: object
+                          properties:
+                            Percentiles:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  Percentile:
+                                    type: number
+                                    format: double
+                                  Value:
+                                    type: number
+                                    format: double
+                        StartTime:
+                          type: string
+                          format: date-time
+                      x-go-package: github.com/layer5io/meshery/models
+                    server_board_config:
+                      type: object
+                      x-go-name: ServerBoardConfig
+                    server_metrics:
+                      type: object
+                      x-go-name: ServerMatrics
+                    test_id:
+                      type: string
+                      x-go-name: TestID
+                    test_start_time:
+                      type: string
+                      format: date-time
+                      x-go-name: TestStartTime
+                  x-go-package: github.com/layer5io/meshery/models
+                x-go-name: Results
+              total_count:
+                type: integer
+                format: uint64
+                x-go-name: TotalCount
+            x-go-package: github.com/layer5io/meshery/models
+  /api/user/performance/profiles/{id}:
+    get:
+      description: Returns single performance profile with the given id
+      tags:
+      - PerformanceAPI
+      summary: Handle GET requests for performance results of a profile
+      operationId: idGetSinglePerformanceProfile
+      parameters:
+      - type: string
+        format: uuid
+        x-go-name: ID
+        description: id for a specific
+        name: id
+        in: path
+        required: true
+      responses:
+        "200":
+          description: Returns a single performance profile
+          schema:
+            description: |-
+              PerformanceProfile represents the performance profile that needs
+              to be saved
+            type: object
+            properties:
+              concurrent_request:
+                type: integer
+                format: int64
+                x-go-name: ConcurrentRequest
+              content_type:
+                type: string
+                x-go-name: ContentType
+              created_at:
+                type: string
+                format: date-time
+                x-go-name: CreatedAt
+              duration:
+                type: string
+                x-go-name: Duration
+              endpoints:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              last_run:
+                type: string
+                format: date-time
+                x-go-name: LastRun
+              load_generators:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              name:
+                type: string
+                x-go-name: Name
+              qps:
+                type: integer
+                format: int64
+                x-go-name: QPS
+              request_body:
+                type: string
+                x-go-name: RequestBody
+              request_cookies:
+                type: string
+                x-go-name: RequestCookies
+              request_headers:
+                type: string
+                x-go-name: RequestHeaders
+              schedule:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              service_mesh:
+                type: string
+                x-go-name: ServiceMesh
+              total_results:
+                type: integer
+                format: int64
+                x-go-name: TotalResults
+              updated_at:
+                type: string
+                format: date-time
+                x-go-name: UpdatedAt
+            x-go-package: github.com/layer5io/meshery/models
+    delete:
+      description: Deletes a performance profile with the given id
+      tags:
+      - PerformanceProfile
+      summary: Handle Delete requests for performance profiles
+      operationId: idDeletePerformanceProfile
+      parameters:
+      - type: string
+        format: uuid
+        x-go-name: ID
+        description: id for a specific
+        name: id
+        in: path
+        required: true
+      responses:
+        "200":
+          description: ""
+  /api/user/performance/profiles/{id}/results:
+    get:
+      description: Fetchs pages of results from Remote Provider for the given id
+      tags:
+      - PerformanceAPI
+      summary: Handle GET request for results of a profile
+      operationId: idGETProfileResults
+      parameters:
+      - type: string
+        format: uuid
+        x-go-name: ID
+        description: id for a specific
+        name: id
+        in: path
+        required: true
+      responses:
+        "200":
+          description: Returns all performance results
+          schema:
+            description: PerformanceResultsAPIResponse response retruned by performance
+              endpoint on meshery server
+            type: object
+            properties:
+              page:
+                type: integer
+                format: uint64
+                x-go-name: Page
+              page_size:
+                type: integer
+                format: uint64
+                x-go-name: PageSize
+              results:
+                type: array
+                items:
+                  description: PerformanceResult represents the result of a performance
+                    test
+                  type: object
+                  properties:
+                    mesh:
+                      type: string
+                      x-go-name: Mesh
+                    meshery_id:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    name:
+                      type: string
+                      x-go-name: Name
+                    performance_profile:
+                      type: array
+                      title: UUID is an array type to represent the value of a UUID,
+                        as defined in RFC-4122.
+                      items:
+                        type: integer
+                        format: uint8
+                      x-go-package: github.com/gofrs/uuid
+                    runner_results:
+                      type: object
+                      properties:
+                        ActualDuration:
+                          type: integer
+                          format: uint64
+                          x-go-name: Duration
+                        ActualQPS:
+                          type: number
+                          format: double
+                          x-go-name: QPS
+                        DurationHistogram:
+                          type: object
+                          properties:
+                            Percentiles:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  Percentile:
+                                    type: number
+                                    format: double
+                                  Value:
+                                    type: number
+                                    format: double
+                        StartTime:
+                          type: string
+                          format: date-time
+                      x-go-package: github.com/layer5io/meshery/models
+                    server_board_config:
+                      type: object
+                      x-go-name: ServerBoardConfig
+                    server_metrics:
+                      type: object
+                      x-go-name: ServerMatrics
+                    test_id:
+                      type: string
+                      x-go-name: TestID
+                    test_start_time:
+                      type: string
+                      format: date-time
+                      x-go-name: TestStartTime
+                  x-go-package: github.com/layer5io/meshery/models
+                x-go-name: Results
+              total_count:
+                type: integer
+                format: uint64
+                x-go-name: TotalCount
+            x-go-package: github.com/layer5io/meshery/models
+  /api/user/performance/profiles/{id}/run:
+    get:
+      description: Runs the load test with the given parameters
+      tags:
+      - PerformanceAPI
+      summary: Handle GET request to run a performance test
+      operationId: idRunPerformanceTest
+      parameters:
+      - type: string
+        format: uuid
+        x-go-name: TestID
+        description: test-id of pre-existing test
+        name: uuid
+        in: query
+      - type: string
+        x-go-name: Name
+        description: name of performance test
+        name: name
+        in: query
+      - type: string
+        x-go-name: LoadGenerator
+        description: load generator for performance test
+        name: loadGenerator
+        in: query
+        required: true
+      - type: string
+        x-go-name: URL
+        description: url for test
+        name: url
+        in: query
+        required: true
+      - type: string
+        x-go-name: ServiceMesh
+        description: service mesh for performance test
+        name: mesh
+        in: query
+        required: true
+      - type: integer
+        format: int64
+        x-go-name: ConcurrentRequest
+        description: concurrent request in number
+        name: c
+        in: query
+        required: true
+      - type: integer
+        format: int64
+        x-go-name: QPS
+        description: qps in number
+        name: qps
+        in: query
+        required: true
+      - type: integer
+        format: int64
+        x-go-name: Time
+        description: time in integer e.g. 30
+        name: t
+        in: query
+        required: true
+      - type: string
+        x-go-name: Duration
+        description: duration e.g. s for second
+        name: dur
+        in: query
       responses:
         "200":
           description: ""
@@ -601,6 +1267,350 @@ definitions:
           x-go-package: github.com/layer5io/meshery/models
         x-go-name: Patterns
       total_size:
+        type: integer
+        format: uint64
+        x-go-name: TotalCount
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceProfile:
+    description: |-
+      PerformanceProfile represents the performance profile that needs
+      to be saved
+    type: object
+    properties:
+      concurrent_request:
+        type: integer
+        format: int64
+        x-go-name: ConcurrentRequest
+      content_type:
+        type: string
+        x-go-name: ContentType
+      created_at:
+        type: string
+        format: date-time
+        x-go-name: CreatedAt
+      duration:
+        type: string
+        x-go-name: Duration
+      endpoints:
+        type: array
+        title: StringArray represents a one-dimensional array of the PostgreSQL character
+          types.
+        items:
+          type: string
+        x-go-package: github.com/lib/pq
+      id:
+        type: array
+        title: UUID is an array type to represent the value of a UUID, as defined
+          in RFC-4122.
+        items:
+          type: integer
+          format: uint8
+        x-go-package: github.com/gofrs/uuid
+      last_run:
+        type: string
+        format: date-time
+        x-go-name: LastRun
+      load_generators:
+        type: array
+        title: StringArray represents a one-dimensional array of the PostgreSQL character
+          types.
+        items:
+          type: string
+        x-go-package: github.com/lib/pq
+      name:
+        type: string
+        x-go-name: Name
+      qps:
+        type: integer
+        format: int64
+        x-go-name: QPS
+      request_body:
+        type: string
+        x-go-name: RequestBody
+      request_cookies:
+        type: string
+        x-go-name: RequestCookies
+      request_headers:
+        type: string
+        x-go-name: RequestHeaders
+      schedule:
+        type: array
+        title: UUID is an array type to represent the value of a UUID, as defined
+          in RFC-4122.
+        items:
+          type: integer
+          format: uint8
+        x-go-package: github.com/gofrs/uuid
+      service_mesh:
+        type: string
+        x-go-name: ServiceMesh
+      total_results:
+        type: integer
+        format: int64
+        x-go-name: TotalResults
+      updated_at:
+        type: string
+        format: date-time
+        x-go-name: UpdatedAt
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceProfilesAPIResponse:
+    description: PerformanceProfilesAPIResponse response retruned by performance endpoint
+      on meshery server
+    type: object
+    properties:
+      page:
+        type: integer
+        format: uint64
+        x-go-name: Page
+      page_size:
+        type: integer
+        format: uint64
+        x-go-name: PageSize
+      profiles:
+        type: array
+        items:
+          description: |-
+            PerformanceProfile represents the performance profile that needs
+            to be saved
+          type: object
+          properties:
+            concurrent_request:
+              type: integer
+              format: int64
+              x-go-name: ConcurrentRequest
+            content_type:
+              type: string
+              x-go-name: ContentType
+            created_at:
+              type: string
+              format: date-time
+              x-go-name: CreatedAt
+            duration:
+              type: string
+              x-go-name: Duration
+            endpoints:
+              type: array
+              title: StringArray represents a one-dimensional array of the PostgreSQL
+                character types.
+              items:
+                type: string
+              x-go-package: github.com/lib/pq
+            id:
+              type: array
+              title: UUID is an array type to represent the value of a UUID, as defined
+                in RFC-4122.
+              items:
+                type: integer
+                format: uint8
+              x-go-package: github.com/gofrs/uuid
+            last_run:
+              type: string
+              format: date-time
+              x-go-name: LastRun
+            load_generators:
+              type: array
+              title: StringArray represents a one-dimensional array of the PostgreSQL
+                character types.
+              items:
+                type: string
+              x-go-package: github.com/lib/pq
+            name:
+              type: string
+              x-go-name: Name
+            qps:
+              type: integer
+              format: int64
+              x-go-name: QPS
+            request_body:
+              type: string
+              x-go-name: RequestBody
+            request_cookies:
+              type: string
+              x-go-name: RequestCookies
+            request_headers:
+              type: string
+              x-go-name: RequestHeaders
+            schedule:
+              type: array
+              title: UUID is an array type to represent the value of a UUID, as defined
+                in RFC-4122.
+              items:
+                type: integer
+                format: uint8
+              x-go-package: github.com/gofrs/uuid
+            service_mesh:
+              type: string
+              x-go-name: ServiceMesh
+            total_results:
+              type: integer
+              format: int64
+              x-go-name: TotalResults
+            updated_at:
+              type: string
+              format: date-time
+              x-go-name: UpdatedAt
+          x-go-package: github.com/layer5io/meshery/models
+        x-go-name: Profiles
+      total_count:
+        type: integer
+        format: uint64
+        x-go-name: TotalCount
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceResult:
+    description: PerformanceResult represents the result of a performance test
+    type: object
+    properties:
+      mesh:
+        type: string
+        x-go-name: Mesh
+      meshery_id:
+        type: array
+        title: UUID is an array type to represent the value of a UUID, as defined
+          in RFC-4122.
+        items:
+          type: integer
+          format: uint8
+        x-go-package: github.com/gofrs/uuid
+      name:
+        type: string
+        x-go-name: Name
+      performance_profile:
+        type: array
+        title: UUID is an array type to represent the value of a UUID, as defined
+          in RFC-4122.
+        items:
+          type: integer
+          format: uint8
+        x-go-package: github.com/gofrs/uuid
+      runner_results:
+        type: object
+        properties:
+          ActualDuration:
+            type: integer
+            format: uint64
+            x-go-name: Duration
+          ActualQPS:
+            type: number
+            format: double
+            x-go-name: QPS
+          DurationHistogram:
+            type: object
+            properties:
+              Percentiles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Percentile:
+                      type: number
+                      format: double
+                    Value:
+                      type: number
+                      format: double
+          StartTime:
+            type: string
+            format: date-time
+        x-go-package: github.com/layer5io/meshery/models
+      server_board_config:
+        type: object
+        x-go-name: ServerBoardConfig
+      server_metrics:
+        type: object
+        x-go-name: ServerMatrics
+      test_id:
+        type: string
+        x-go-name: TestID
+      test_start_time:
+        type: string
+        format: date-time
+        x-go-name: TestStartTime
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceResultsAPIResponse:
+    description: PerformanceResultsAPIResponse response retruned by performance endpoint
+      on meshery server
+    type: object
+    properties:
+      page:
+        type: integer
+        format: uint64
+        x-go-name: Page
+      page_size:
+        type: integer
+        format: uint64
+        x-go-name: PageSize
+      results:
+        type: array
+        items:
+          description: PerformanceResult represents the result of a performance test
+          type: object
+          properties:
+            mesh:
+              type: string
+              x-go-name: Mesh
+            meshery_id:
+              type: array
+              title: UUID is an array type to represent the value of a UUID, as defined
+                in RFC-4122.
+              items:
+                type: integer
+                format: uint8
+              x-go-package: github.com/gofrs/uuid
+            name:
+              type: string
+              x-go-name: Name
+            performance_profile:
+              type: array
+              title: UUID is an array type to represent the value of a UUID, as defined
+                in RFC-4122.
+              items:
+                type: integer
+                format: uint8
+              x-go-package: github.com/gofrs/uuid
+            runner_results:
+              type: object
+              properties:
+                ActualDuration:
+                  type: integer
+                  format: uint64
+                  x-go-name: Duration
+                ActualQPS:
+                  type: number
+                  format: double
+                  x-go-name: QPS
+                DurationHistogram:
+                  type: object
+                  properties:
+                    Percentiles:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          Percentile:
+                            type: number
+                            format: double
+                          Value:
+                            type: number
+                            format: double
+                StartTime:
+                  type: string
+                  format: date-time
+              x-go-package: github.com/layer5io/meshery/models
+            server_board_config:
+              type: object
+              x-go-name: ServerBoardConfig
+            server_metrics:
+              type: object
+              x-go-name: ServerMatrics
+            test_id:
+              type: string
+              x-go-name: TestID
+            test_start_time:
+              type: string
+              format: date-time
+              x-go-name: TestStartTime
+          x-go-package: github.com/layer5io/meshery/models
+        x-go-name: Results
+      total_count:
         type: integer
         format: uint64
         x-go-name: TotalCount
@@ -1587,6 +2597,35 @@ definitions:
         description: type
         type: string
     x-go-package: github.com/docker/docker/api/types
+  RunnerResults:
+    type: object
+    properties:
+      ActualDuration:
+        type: integer
+        format: uint64
+        x-go-name: Duration
+      ActualQPS:
+        type: number
+        format: double
+        x-go-name: QPS
+      DurationHistogram:
+        type: object
+        properties:
+          Percentiles:
+            type: array
+            items:
+              type: object
+              properties:
+                Percentile:
+                  type: number
+                  format: double
+                Value:
+                  type: number
+                  format: double
+      StartTime:
+        type: string
+        format: date-time
+    x-go-package: github.com/layer5io/meshery/models
   ServiceUpdateResponse:
     description: ServiceUpdateResponse service update response
     type: object
@@ -1597,6 +2636,13 @@ definitions:
         items:
           type: string
     x-go-package: github.com/docker/docker/api/types
+  StringArray:
+    type: array
+    title: StringArray represents a one-dimensional array of the PostgreSQL character
+      types.
+    items:
+      type: string
+    x-go-package: github.com/lib/pq
   UUID:
     type: array
     title: UUID is an array type to represent the value of a UUID, as defined in RFC-4122.
@@ -1931,10 +2977,293 @@ responses:
       x-go-package: github.com/layer5io/meshery/models
   noContentWrapper:
     description: ""
+  performanceProfileResponseWrapper:
+    description: Returns a single performance profile
+    schema:
+      description: |-
+        PerformanceProfile represents the performance profile that needs
+        to be saved
+      type: object
+      properties:
+        concurrent_request:
+          type: integer
+          format: int64
+          x-go-name: ConcurrentRequest
+        content_type:
+          type: string
+          x-go-name: ContentType
+        created_at:
+          type: string
+          format: date-time
+          x-go-name: CreatedAt
+        duration:
+          type: string
+          x-go-name: Duration
+        endpoints:
+          type: array
+          title: StringArray represents a one-dimensional array of the PostgreSQL
+            character types.
+          items:
+            type: string
+          x-go-package: github.com/lib/pq
+        id:
+          type: array
+          title: UUID is an array type to represent the value of a UUID, as defined
+            in RFC-4122.
+          items:
+            type: integer
+            format: uint8
+          x-go-package: github.com/gofrs/uuid
+        last_run:
+          type: string
+          format: date-time
+          x-go-name: LastRun
+        load_generators:
+          type: array
+          title: StringArray represents a one-dimensional array of the PostgreSQL
+            character types.
+          items:
+            type: string
+          x-go-package: github.com/lib/pq
+        name:
+          type: string
+          x-go-name: Name
+        qps:
+          type: integer
+          format: int64
+          x-go-name: QPS
+        request_body:
+          type: string
+          x-go-name: RequestBody
+        request_cookies:
+          type: string
+          x-go-name: RequestCookies
+        request_headers:
+          type: string
+          x-go-name: RequestHeaders
+        schedule:
+          type: array
+          title: UUID is an array type to represent the value of a UUID, as defined
+            in RFC-4122.
+          items:
+            type: integer
+            format: uint8
+          x-go-package: github.com/gofrs/uuid
+        service_mesh:
+          type: string
+          x-go-name: ServiceMesh
+        total_results:
+          type: integer
+          format: int64
+          x-go-name: TotalResults
+        updated_at:
+          type: string
+          format: date-time
+          x-go-name: UpdatedAt
+      x-go-package: github.com/layer5io/meshery/models
+  performanceProfilesResponseWrapper:
+    description: Returns all the performance profiles
+    schema:
+      description: PerformanceProfilesAPIResponse response retruned by performance
+        endpoint on meshery server
+      type: object
+      properties:
+        page:
+          type: integer
+          format: uint64
+          x-go-name: Page
+        page_size:
+          type: integer
+          format: uint64
+          x-go-name: PageSize
+        profiles:
+          type: array
+          items:
+            description: |-
+              PerformanceProfile represents the performance profile that needs
+              to be saved
+            type: object
+            properties:
+              concurrent_request:
+                type: integer
+                format: int64
+                x-go-name: ConcurrentRequest
+              content_type:
+                type: string
+                x-go-name: ContentType
+              created_at:
+                type: string
+                format: date-time
+                x-go-name: CreatedAt
+              duration:
+                type: string
+                x-go-name: Duration
+              endpoints:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              last_run:
+                type: string
+                format: date-time
+                x-go-name: LastRun
+              load_generators:
+                type: array
+                title: StringArray represents a one-dimensional array of the PostgreSQL
+                  character types.
+                items:
+                  type: string
+                x-go-package: github.com/lib/pq
+              name:
+                type: string
+                x-go-name: Name
+              qps:
+                type: integer
+                format: int64
+                x-go-name: QPS
+              request_body:
+                type: string
+                x-go-name: RequestBody
+              request_cookies:
+                type: string
+                x-go-name: RequestCookies
+              request_headers:
+                type: string
+                x-go-name: RequestHeaders
+              schedule:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              service_mesh:
+                type: string
+                x-go-name: ServiceMesh
+              total_results:
+                type: integer
+                format: int64
+                x-go-name: TotalResults
+              updated_at:
+                type: string
+                format: date-time
+                x-go-name: UpdatedAt
+            x-go-package: github.com/layer5io/meshery/models
+          x-go-name: Profiles
+        total_count:
+          type: integer
+          format: uint64
+          x-go-name: TotalCount
+      x-go-package: github.com/layer5io/meshery/models
+  performanceResultsResponseWrapper:
+    description: Returns all performance results
+    schema:
+      description: PerformanceResultsAPIResponse response retruned by performance
+        endpoint on meshery server
+      type: object
+      properties:
+        page:
+          type: integer
+          format: uint64
+          x-go-name: Page
+        page_size:
+          type: integer
+          format: uint64
+          x-go-name: PageSize
+        results:
+          type: array
+          items:
+            description: PerformanceResult represents the result of a performance
+              test
+            type: object
+            properties:
+              mesh:
+                type: string
+                x-go-name: Mesh
+              meshery_id:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              name:
+                type: string
+                x-go-name: Name
+              performance_profile:
+                type: array
+                title: UUID is an array type to represent the value of a UUID, as
+                  defined in RFC-4122.
+                items:
+                  type: integer
+                  format: uint8
+                x-go-package: github.com/gofrs/uuid
+              runner_results:
+                type: object
+                properties:
+                  ActualDuration:
+                    type: integer
+                    format: uint64
+                    x-go-name: Duration
+                  ActualQPS:
+                    type: number
+                    format: double
+                    x-go-name: QPS
+                  DurationHistogram:
+                    type: object
+                    properties:
+                      Percentiles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            Percentile:
+                              type: number
+                              format: double
+                            Value:
+                              type: number
+                              format: double
+                  StartTime:
+                    type: string
+                    format: date-time
+                x-go-package: github.com/layer5io/meshery/models
+              server_board_config:
+                type: object
+                x-go-name: ServerBoardConfig
+              server_metrics:
+                type: object
+                x-go-name: ServerMatrics
+              test_id:
+                type: string
+                x-go-name: TestID
+              test_start_time:
+                type: string
+                format: date-time
+                x-go-name: TestStartTime
+            x-go-package: github.com/layer5io/meshery/models
+          x-go-name: Results
+        total_count:
+          type: integer
+          format: uint64
+          x-go-name: TotalCount
+      x-go-package: github.com/layer5io/meshery/models
 securityDefinitions:
   token:
-    type: JWT
+    type: apiKey
     name: token
     in: cookie
 security:
-- token: []
+- token:
+  - '[]'
