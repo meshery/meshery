@@ -16,12 +16,21 @@ Getting Meshery up and running locally on a Docker-enabled system or in Kubernet
 
 Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/mesheryctl), to install and start Meshery. Begin with Meshery by installing its command line client: [mesheryctl]({{ site.baseurl }}/guides/mesheryctl). If you are on a MacOS or Linux system, you can download, install, and run to the management plane with the command shown in the figure.
 
+ <span style="font-size: 20px">`Install on Docker`</span>
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://git.io/meshery | bash - 
+ $ curl -L https://git.io/meshery | PLATFORM=docker bash - 
  </div></div>
  </pre>
+ <br>
 
+ <span style="font-size: 20px">`Install on Kubernetes`</span>
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash - 
+ </div></div>
+ </pre>
+ 
 _Download, install, and run Meshery in a single command._
 
 ## Access Meshery
