@@ -52,10 +52,10 @@ dependencies:
   version: 2.0.1
   condition: meshery-kuma.enabled
 - name: meshery-osm
-  version: 1.0.1
+  version: 2.0.1
   condition: meshery-osm.enabled
 - name: meshery-nsm
-  version: 1.0.1
+  version: 2.0.1
   condition: meshery-nsm.enabled
 
 maintainers:
