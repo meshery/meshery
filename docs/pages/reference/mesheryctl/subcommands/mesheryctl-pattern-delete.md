@@ -5,7 +5,6 @@ permalink: reference/mesheryctl/pattern/delete
 type: reference
 display-title: "false"
 language: en
-lang: en
 categories: en
 list: exclude
 # image: /assets/img/platforms/brew.png
