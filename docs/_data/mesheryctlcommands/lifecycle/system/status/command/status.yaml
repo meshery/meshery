@@ -1,0 +1,4 @@
+name: status
+description: Check status of Meshery and Meshery adapters.
+usage: |
+    mesheryctl system status [flags]

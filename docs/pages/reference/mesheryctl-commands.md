@@ -130,6 +130,19 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
     {% endfor %}  
   {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.status.command %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.status.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
+  {% endfor %}
     {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
         <td>{{ subcommand.name }}</td>
