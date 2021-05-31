@@ -1,6 +1,6 @@
 ---
 layout: default
-title: view
+title: mesheryctl system context view | Meshery
 permalink: reference/mesheryctl/system/context/view
 type: reference
 display-title: "false"

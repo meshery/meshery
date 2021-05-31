@@ -160,6 +160,7 @@ func main() {
 		models.PerformanceProfile{},
 		models.MesheryResult{},
 		models.MesheryPattern{},
+		models.MesheryFilter{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
