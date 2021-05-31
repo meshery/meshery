@@ -199,7 +199,10 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	var data [][]string
 
 	for _, profile := range response.Profiles {
-		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+		lastRun := ""
+		if profile.LastRun != nil {
+			lastRun = fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+		}
 		data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
 	}
 
@@ -309,6 +312,5 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 }
 
 func init() {
-	listCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	_ = listCmd.MarkFlagRequired("token")
 }
