@@ -65,48 +65,25 @@ var updateCmd = &cobra.Command{
 			currCtx.Version = "latest"
 		}
 
+		log.Debug("creating new Clientset...")
+		// Create a new client
+		kubeClient, err := meshkitkube.New([]byte(""))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to create new client")
+		}
+
 		switch currCtx.Platform {
 		case "docker":
 			if !utils.SkipResetFlag {
-
-				log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
-				err = utils.DownloadDockerComposeFile(currCtx, true)
-				if err != nil {
-					return errors.Wrap(err, "failed to fetch docker-compose file")
-				}
-
-				running, err := utils.IsMesheryRunning(currCtx.Platform)
-				if err != nil {
-					return err
-				}
-
-				if !running {
-					err = utils.CreateManifestsFolder()
-
-					if err != nil {
-						return err
-					}
-				}
-
-				err = utils.DownloadOperatorManifest()
-
-				if err != nil {
-					return err
-				}
-
-				log.Info("Updating Meshery...")
-
+				resetMesheryConfig()
 			}
+
+			log.Info("Updating Meshery...")
 
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
-			}
-
-			// applying operator manifest
-			kubeClient, err := meshkitkube.New([]byte(""))
-			if err != nil {
-				return err
 			}
 
 			err = utils.ApplyOperatorManifest(kubeClient, true, false)
@@ -124,15 +101,6 @@ var updateCmd = &cobra.Command{
 		case "kubernetes":
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
-
-				log.Debug("creating new Clientset...")
-				// Create a new client
-				client, err := meshkitkube.New([]byte(""))
-
-				if err != nil {
-					return errors.Wrap(err, "failed to create new client")
-				}
-
 				version := currCtx.Version
 				RequestedAdapters := currCtx.Adapters
 
@@ -160,13 +128,13 @@ var updateCmd = &cobra.Command{
 				log.Info("applying the manifests to Kubernetes cluster...")
 
 				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
+				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
 
 				if err != nil {
 					return err
 				}
 
-				err = utils.ApplyOperatorManifest(client, true, false)
+				err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 				if err != nil {
 					return err

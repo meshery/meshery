@@ -79,6 +79,17 @@ func start() error {
 		}
 	}
 
+	kubeClient, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return err
+	}
+
+	err = utils.CreateManifestsFolder()
+
+	if err != nil {
+		return err
+	}
+
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -231,30 +242,6 @@ func start() error {
 			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
 		}
 
-		//applying operator manifest
-		kubeClient, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
-		err = utils.CreateManifestsFolder()
-
-		if err != nil {
-			return err
-		}
-
-		err = utils.DownloadOperatorManifest()
-
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyOperatorManifest(kubeClient, false, false)
-
-		if err != nil {
-			return err
-		}
-
 		checkFlag := 0 //flag to check
 
 		//connection to docker-client
@@ -279,13 +266,6 @@ func start() error {
 		//check for container meshery_meshery_1 running status
 		for _, container := range containers {
 			if container.Names[0] == "/meshery_meshery_1" {
-				log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
-
-				err := utils.NavigateToBrowser(currCtx.Endpoint)
-				if err != nil {
-					return err
-				}
-
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
@@ -319,14 +299,6 @@ func start() error {
 
 	case "kubernetes":
 
-		log.Debug("creating new Clientset...")
-		// Create a new client
-		client, err := meshkitkube.New([]byte(""))
-
-		if err != nil {
-			return errors.Wrap(err, "failed to create new client")
-		}
-
 		version := currCtx.Version
 		if version == "latest" {
 			if currCtx.Channel == "edge" {
@@ -358,13 +330,7 @@ func start() error {
 		log.Info("Starting Meshery...")
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, false, false)
-
-		if err != nil {
-			return err
-		}
-
-		err = utils.ApplyOperatorManifest(client, false, false)
+		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
 
 		if err != nil {
 			return err
@@ -372,12 +338,12 @@ func start() error {
 
 		log.Info("...Meshery deployed on Kubernetes.")
 
-		clientset := client.KubeClient
+		clientset := kubeClient.KubeClient
 
 		var opts meshkitkube.ServiceOptions
 		opts.Name = "meshery"
 		opts.Namespace = utils.MesheryNamespace
-		opts.APIServerURL = client.RestConfig.Host
+		opts.APIServerURL = kubeClient.RestConfig.Host
 
 		var endpoint *meshkitutils.Endpoint
 
@@ -398,14 +364,8 @@ func start() error {
 		}
 
 		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-		log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
 
 		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
-		}
-
-		err = utils.NavigateToBrowser(currCtx.Endpoint)
 		if err != nil {
 			return err
 		}
@@ -413,6 +373,25 @@ func start() error {
 		// switch to default case if the platform specified is not supported
 	default:
 		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
+	}
+
+	err = utils.DownloadOperatorManifest()
+
+	if err != nil {
+		return err
+	}
+
+	err = utils.ApplyOperatorManifest(kubeClient, false, false)
+
+	if err != nil {
+		return err
+	}
+
+	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
+
+	err = utils.NavigateToBrowser(currCtx.Endpoint)
+	if err != nil {
+		return err
 	}
 
 	return nil
