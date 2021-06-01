@@ -173,7 +173,7 @@ Type a 'yes' while being asked for whether to configure a file or not. Eventuall
 
 ### 6. <a name="step6"> <b>Aftermath errors</b></a>
 
-While configuring your connection to Kubernetes, a common error faced is that you need to manually update your .kube config file to the platform, the kubernetes connection may still not be established. Follow the steps to make it right.
+Meshery is unable to detect the Kubernetes connection running on your local system, even after manually uploading the `.kube config` file :
 
 In the powershell to view all the contexts Kubernetes has, run:
 
