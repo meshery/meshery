@@ -1,4 +1,4 @@
 name: --file, -f
-description: send a DELETE request to /api/experimental/pattern/deploy, does not deletes the file from the persisters rather it deletes the resources that were created using that pattern file, for example if a pattern file was used to provision istio service mesh, then this command will basically deprovision istio service mesh
+description: send a DELETE request to '/api/experimental/pattern/deploy', does not deletes the file from the persisters, rather it deletes the resources that were created using that pattern file
 usage: |
     mesheryctl pattern delete -f [path to pattern file]
