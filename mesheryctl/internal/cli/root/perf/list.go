@@ -200,7 +200,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	var data [][]string
 
 	for _, profile := range response.Profiles {
-		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
+		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Time.Month()), profile.LastRun.Time.Day(), profile.LastRun.Time.Year(), profile.LastRun.Time.Hour(), profile.LastRun.Time.Minute(), profile.LastRun.Time.Second())
 		data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
 	}
 
