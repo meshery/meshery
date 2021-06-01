@@ -1,4 +1,4 @@
 name: --file, -f
-description: send a DELETE request to '/api/experimental/pattern/deploy', does not deletes the file from the persisters, rather it deletes the resources that were created using that pattern file
+description: deletes the resources that were created, using that pattern file
 usage: |
     mesheryctl pattern delete -f [path to pattern file]
