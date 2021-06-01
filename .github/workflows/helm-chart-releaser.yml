@@ -22,7 +22,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+    if: github.event_name == 'pull_request'
     steps:
     - uses: actions/checkout@v2
     - name: validate
