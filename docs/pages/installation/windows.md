@@ -175,7 +175,7 @@ Type **yes** when prompted to choose to configure a file. To get started, choose
 
 Meshery is unable to detect the Kubernetes connection running on your local system, even after manually uploading the `.kube config` file :
 
-In the powershell to view all the contexts Kubernetes has, run:
+1. To display a list of the contexts in Kubernetes, run:
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
