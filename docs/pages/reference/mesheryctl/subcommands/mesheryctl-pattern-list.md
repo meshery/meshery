@@ -1,6 +1,6 @@
 ---
 layout: default
-title: list
+title: mesheryctl pattern list
 permalink: reference/mesheryctl/pattern/list
 type: reference
 display-title: "false"
@@ -32,19 +32,23 @@ list: exclude
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.pattern.list.commands %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
   {{ subcommand.usage }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.pattern.list.flags %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
-  {% endfor %}
   </div>
- </pre>
- <br/>
+</pre>
+{% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.pattern.list.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
+<br/>
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags

@@ -9,8 +9,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type Status = "DISABLED" | "ENABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusMutationVariables = {|
+export type OperatorStatusInput = {|
   targetStatus: Status
+|};
+export type OperatorStatusMutationVariables = {|
+  input?: ?OperatorStatusInput
 |};
 export type OperatorStatusMutationResponse = {|
   +operatorStatus: Status
@@ -24,9 +27,9 @@ export type OperatorStatusMutation = {|
 
 /*
 mutation OperatorStatusMutation(
-  $targetStatus: Status!
+  $input: OperatorStatusInput
 ) {
-  operatorStatus: changeOperatorStatus(targetStatus: $targetStatus)
+  operatorStatus: changeOperatorStatus(input: $input)
 }
 */
 
@@ -35,7 +38,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "targetStatus"
+    "name": "input"
   }
 ],
 v1 = [
@@ -44,8 +47,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "targetStatus",
-        "variableName": "targetStatus"
+        "name": "input",
+        "variableName": "input"
       }
     ],
     "kind": "ScalarField",
@@ -71,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f0f81d6685889dd15748788bd1e2d206",
+    "cacheID": "86d68e3b96cd8684338daf88a6f49ab5",
     "id": null,
     "metadata": {},
     "name": "OperatorStatusMutation",
     "operationKind": "mutation",
-    "text": "mutation OperatorStatusMutation(\n  $targetStatus: Status!\n) {\n  operatorStatus: changeOperatorStatus(targetStatus: $targetStatus)\n}\n"
+    "text": "mutation OperatorStatusMutation(\n  $input: OperatorStatusInput\n) {\n  operatorStatus: changeOperatorStatus(input: $input)\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f18b68bf4a817f8c1752cabe5235bf1f';
+(node/*: any*/).hash = 'fc306fe156aa1a0f9984281666bd7693';
 
 module.exports = node;

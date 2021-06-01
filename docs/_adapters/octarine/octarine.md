@@ -5,7 +5,7 @@ name: Meshery Adapter for Octarine
 mesh_name: Octarine
 version: v1.0
 port: 10003/tcp
-project_status: stable
+project_status: retiring
 github_link: https://github.com/layer5io/meshery-octarine
 image: /assets/img/service-meshes/octarine.svg
 permalink: service-meshes/adapters/octarine
@@ -72,7 +72,7 @@ Once the Octarine's data plane services are deployed, the adapter can be used to
 
 The {{ page.name }} includes the below sample application operation. Meshery can be use to deploy this sample application.
 
-- [Bookinfo]({{ site.baseurl }}/guides/sample-apps#bookinfo) 
+- [Bookinfo]({{ site.baseurl }}/guides/deploying-sample-apps#bookinfo) 
     - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 
 ### Suggested Topics

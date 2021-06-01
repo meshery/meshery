@@ -40,7 +40,7 @@ Mesherylinkerd chart for deploying meshery-linkerd.
 | service.port | int | `10001` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-linkerd-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-linkerd"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

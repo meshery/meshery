@@ -2,6 +2,7 @@
 layout: default
 title: Troubleshooting Guide
 permalink: guides/troubleshooting
+redirect_from: guides/troubleshooting/
 language: en
 ---
 
@@ -17,7 +18,7 @@ Troubleshooting guides to using Meshery's various features and components.
     {% endfor %}
 </ul>
 
-See also:
+#### See Also
 
 - [Error Code Reference](/reference/error-codes)
 <!-- {:toc} -->

@@ -223,7 +223,15 @@ const styles = (theme) => ({
     paddingLeft: "16px",
     paddingRight: "16px",
   },
+  drawerIcons: { 
+    height: "1.21rem", 
+    width: "1.21rem", 
+    fontSize: "1.21rem" 
+  }
 });
+
+const drawerIconsStyle={ height: "1.21rem", width: "1.21rem", fontSize: "1.21rem" };
+const externalLinkIconStyle={height: "1.11rem", width: "1.11rem", fontSize: "1.11rem" };
 
 const categories = [
   {
@@ -235,7 +243,8 @@ const categories = [
   },
   {
     id: "Performance",
-    icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
+    icon:
+      <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" style={drawerIconsStyle} />,
     href: "/performance",
     title: "Performance Profile Management",
     show: true,
@@ -243,7 +252,7 @@ const categories = [
     children: [
       {
         id: "Profiles",
-        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
         href: "/performance/profiles",
         title: "Performance Profiles",
         show: true,
@@ -260,7 +269,7 @@ const categories = [
   }, // title is used for comparison in the Header.js file as well
   {
     id: "Conformance",
-    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" fixedWidth />,
+    icon: <FontAwesomeIcon icon={faTasks} transform="shrink-2" style={drawerIconsStyle} />,
     href: "/smi_results", //Temp
     title: "Conformance",
     show: true,
@@ -268,7 +277,7 @@ const categories = [
     children: [
       {
         id: "SMI Results",
-        icon: <FontAwesomeIcon icon={faPollH} fixedWidth />,
+        icon: <FontAwesomeIcon icon={faPollH} style={drawerIconsStyle} />,
         href: "/smi_results",
         title: "Service Mesh Interface Results",
         show: true,
@@ -292,11 +301,19 @@ const categories = [
         show: false,
         link: true,
       },
+      {
+        id: "Filters",
+        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/filters",
+        title: "Meshery Filters",
+        show: true,
+        link: true,
+      },
     ],
   },
   {
     id: "Management",
-    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" fixedWidth />,
+    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
     href: "/management",
     title: "Management",
     show: true,
@@ -387,34 +404,36 @@ const categories = [
   },
 ];
 
+const ExternalLinkIcon = <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
+
 const externlinks = [
   {
     id: "doc",
     href: "http://docs.meshery.io",
     title: "Documentation",
-    icon: <DescriptionOutlinedIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
+    icon: <DescriptionOutlinedIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
   {
     id: "community",
     href: "http://slack.layer5.io",
     title: "Community",
-    icon: <FontAwesomeIcon icon={faSlack} transform="shrink-2" fixedWidth />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
+    icon: <FontAwesomeIcon style={drawerIconsStyle} icon={faSlack} transform="shrink-2" />,
+    external_icon: ExternalLinkIcon,
   },
   {
     id: "mailinglist",
     href: "https://meshery.io/subscribe",
     title: "Mailing List",
-    icon: <MailIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
+    icon: <MailIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
   {
     id: "issues",
     href: "https://github.com/layer5io/meshery/issues/new/choose",
     title: "Issues",
-    icon: <GitHubIcon />,
-    external_icon: <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-7" />,
+    icon: <GitHubIcon style={drawerIconsStyle} />,
+    external_icon: ExternalLinkIcon,
   },
 ];
 
@@ -690,7 +709,7 @@ class Navigator extends React.Component {
       if (children && children.length > 1) {
         return (
           <List disablePadding>
-            {children.map(({ id: idc,title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
+            {children.map(({ id: idc, title: titlec, icon: iconc, href: hrefc, show: showc, link: linkc, children: childrenc }) => {
               if (typeof showc !== "undefined" && !showc) {
                 return "";
               }

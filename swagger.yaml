@@ -1,0 +1,898 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  AuthenticateOKBody:
+    description: AuthenticateOKBody authenticate o k body
+    properties:
+      IdentityToken:
+        description: An opaque token used to authenticate a user after a successful
+          login
+        type: string
+      Status:
+        description: The status of the authentication
+        type: string
+    required:
+    - IdentityToken
+    - Status
+    type: object
+    x-go-package: github.com/docker/docker/api/types/registry
+  ContainerChangeResponseItem:
+    description: ContainerChangeResponseItem change item in response to ContainerChanges
+      operation
+    properties:
+      Kind:
+        description: Kind of change
+        format: uint8
+        type: integer
+      Path:
+        description: Path to file that has changed
+        type: string
+    required:
+    - Kind
+    - Path
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ContainerCreateCreatedBody:
+    description: ContainerCreateCreatedBody OK response to ContainerCreate operation
+    properties:
+      Id:
+        description: The ID of the created container
+        type: string
+        x-go-name: ID
+      Warnings:
+        description: Warnings encountered when creating the container
+        items:
+          type: string
+        type: array
+    required:
+    - Id
+    - Warnings
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ContainerTopOKBody:
+    description: ContainerTopOKBody OK response to ContainerTop operation
+    properties:
+      Processes:
+        description: Each process running in the container, where each is process
+          is an array of values corresponding to the titles
+        items:
+          items:
+            type: string
+          type: array
+        type: array
+      Titles:
+        description: The ps column titles
+        items:
+          type: string
+        type: array
+    required:
+    - Processes
+    - Titles
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ContainerUpdateOKBody:
+    description: ContainerUpdateOKBody OK response to ContainerUpdate operation
+    properties:
+      Warnings:
+        description: warnings
+        items:
+          type: string
+        type: array
+    required:
+    - Warnings
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ContainerWaitOKBody:
+    description: ContainerWaitOKBody OK response to ContainerWait operation
+    properties:
+      Error:
+        $ref: '#/definitions/ContainerWaitOKBodyError'
+      StatusCode:
+        description: Exit code of the container
+        format: int64
+        type: integer
+    required:
+    - Error
+    - StatusCode
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ContainerWaitOKBodyError:
+    description: ContainerWaitOKBodyError container waiting error, if any
+    properties:
+      Message:
+        description: Details of an error
+        type: string
+    type: object
+    x-go-package: github.com/docker/docker/api/types/container
+  ErrorResponse:
+    properties:
+      message:
+        description: The error message.
+        type: string
+        x-go-name: Message
+    required:
+    - message
+    title: ErrorResponse Represents an error.
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  GraphDriverData:
+    properties:
+      Data:
+        additionalProperties:
+          type: string
+        description: data
+        type: object
+      Name:
+        description: name
+        type: string
+    required:
+    - Data
+    - Name
+    title: GraphDriverData Information about a container's graph driver.
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  HistoryResponseItem:
+    description: HistoryResponseItem individual image layer information in response
+      to ImageHistory operation
+    properties:
+      Comment:
+        description: comment
+        type: string
+      Created:
+        description: created
+        format: int64
+        type: integer
+      CreatedBy:
+        description: created by
+        type: string
+      Id:
+        description: Id
+        type: string
+        x-go-name: ID
+      Size:
+        description: size
+        format: int64
+        type: integer
+      Tags:
+        description: tags
+        items:
+          type: string
+        type: array
+    required:
+    - Comment
+    - Created
+    - CreatedBy
+    - Id
+    - Size
+    - Tags
+    type: object
+    x-go-package: github.com/docker/docker/api/types/image
+  IdResponse:
+    description: IDResponse Response to an API call that returns just an Id
+    properties:
+      Id:
+        description: The id of the newly created object.
+        type: string
+        x-go-name: ID
+    required:
+    - Id
+    type: object
+    x-go-name: IDResponse
+    x-go-package: github.com/docker/docker/api/types
+  ImageDeleteResponseItem:
+    description: ImageDeleteResponseItem image delete response item
+    properties:
+      Deleted:
+        description: The image ID of an image that was deleted
+        type: string
+      Untagged:
+        description: The image ID of an image that was untagged
+        type: string
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  ImageSummary:
+    description: ImageSummary image summary
+    properties:
+      Containers:
+        description: containers
+        format: int64
+        type: integer
+      Created:
+        description: created
+        format: int64
+        type: integer
+      Id:
+        description: Id
+        type: string
+        x-go-name: ID
+      Labels:
+        additionalProperties:
+          type: string
+        description: labels
+        type: object
+      ParentId:
+        description: parent Id
+        type: string
+        x-go-name: ParentID
+      RepoDigests:
+        description: repo digests
+        items:
+          type: string
+        type: array
+      RepoTags:
+        description: repo tags
+        items:
+          type: string
+        type: array
+      SharedSize:
+        description: shared size
+        format: int64
+        type: integer
+      Size:
+        description: size
+        format: int64
+        type: integer
+      VirtualSize:
+        description: virtual size
+        format: int64
+        type: integer
+    required:
+    - Containers
+    - Created
+    - Id
+    - Labels
+    - ParentId
+    - RepoDigests
+    - RepoTags
+    - SharedSize
+    - Size
+    - VirtualSize
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  Map:
+    additionalProperties:
+      type: object
+    description: |-
+      It implements native SQL driver interfaces and hence can
+      be used for SQL json or jsonb types as a drop in replacement
+      of golang native maps
+    title: Map type is an alias for map[string]interface{}
+    type: object
+    x-go-package: github.com/layer5io/meshery/internal/sql
+  MesheryPattern:
+    description: MesheryPattern represents the patterns that needs to be saved
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      id:
+        $ref: '#/definitions/UUID'
+      location:
+        $ref: '#/definitions/Map'
+      name:
+        type: string
+        x-go-name: Name
+      pattern_file:
+        type: string
+        x-go-name: PatternFile
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+      user_id:
+        description: |-
+          Meshery doesn't have the user id fields
+          but the remote provider is allowed to provide one
+        type: string
+        x-go-name: UserID
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PatternsAPIResponse:
+    description: PatternsAPIResponse response retruned by patternfile endpoint on
+      meshery server
+    properties:
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      patterns:
+        items:
+          $ref: '#/definitions/MesheryPattern'
+        type: array
+        x-go-name: Patterns
+      total_size:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  Plugin:
+    description: Plugin A plugin for the Engine API
+    properties:
+      Config:
+        $ref: '#/definitions/PluginConfig'
+      Enabled:
+        description: True if the plugin is running. False if the plugin is not running,
+          only installed.
+        type: boolean
+      Id:
+        description: Id
+        type: string
+        x-go-name: ID
+      Name:
+        description: name
+        type: string
+      PluginReference:
+        description: plugin remote reference used to push/pull the plugin
+        type: string
+      Settings:
+        $ref: '#/definitions/PluginSettings'
+    required:
+    - Config
+    - Enabled
+    - Name
+    - Settings
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfig:
+    properties:
+      Args:
+        $ref: '#/definitions/PluginConfigArgs'
+      Description:
+        description: description
+        type: string
+      DockerVersion:
+        description: Docker Version used to create the plugin
+        type: string
+      Documentation:
+        description: documentation
+        type: string
+      Entrypoint:
+        description: entrypoint
+        items:
+          type: string
+        type: array
+      Env:
+        description: env
+        items:
+          $ref: '#/definitions/PluginEnv'
+        type: array
+      Interface:
+        $ref: '#/definitions/PluginConfigInterface'
+      IpcHost:
+        description: ipc host
+        type: boolean
+      Linux:
+        $ref: '#/definitions/PluginConfigLinux'
+      Mounts:
+        description: mounts
+        items:
+          $ref: '#/definitions/PluginMount'
+        type: array
+      Network:
+        $ref: '#/definitions/PluginConfigNetwork'
+      PidHost:
+        description: pid host
+        type: boolean
+      PropagatedMount:
+        description: propagated mount
+        type: string
+      User:
+        $ref: '#/definitions/PluginConfigUser'
+      WorkDir:
+        description: work dir
+        type: string
+      rootfs:
+        $ref: '#/definitions/PluginConfigRootfs'
+    required:
+    - Args
+    - Description
+    - Documentation
+    - Entrypoint
+    - Env
+    - Interface
+    - IpcHost
+    - Linux
+    - Mounts
+    - Network
+    - PidHost
+    - PropagatedMount
+    - WorkDir
+    title: PluginConfig The config of a plugin.
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigArgs:
+    description: PluginConfigArgs plugin config args
+    properties:
+      Description:
+        description: description
+        type: string
+      Name:
+        description: name
+        type: string
+      Settable:
+        description: settable
+        items:
+          type: string
+        type: array
+      Value:
+        description: value
+        items:
+          type: string
+        type: array
+    required:
+    - Description
+    - Name
+    - Settable
+    - Value
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigInterface:
+    description: PluginConfigInterface The interface between Docker and the plugin
+    properties:
+      ProtocolScheme:
+        description: Protocol to use for clients connecting to the plugin.
+        type: string
+      Socket:
+        description: socket
+        type: string
+      Types:
+        description: types
+        items:
+          $ref: '#/definitions/PluginInterfaceType'
+        type: array
+    required:
+    - Socket
+    - Types
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigLinux:
+    description: PluginConfigLinux plugin config linux
+    properties:
+      AllowAllDevices:
+        description: allow all devices
+        type: boolean
+      Capabilities:
+        description: capabilities
+        items:
+          type: string
+        type: array
+      Devices:
+        description: devices
+        items:
+          $ref: '#/definitions/PluginDevice'
+        type: array
+    required:
+    - AllowAllDevices
+    - Capabilities
+    - Devices
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigNetwork:
+    description: PluginConfigNetwork plugin config network
+    properties:
+      Type:
+        description: type
+        type: string
+    required:
+    - Type
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigRootfs:
+    description: PluginConfigRootfs plugin config rootfs
+    properties:
+      diff_ids:
+        description: diff ids
+        items:
+          type: string
+        type: array
+        x-go-name: DiffIds
+      type:
+        description: type
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginConfigUser:
+    description: PluginConfigUser plugin config user
+    properties:
+      GID:
+        description: g ID
+        format: uint32
+        type: integer
+      UID:
+        description: UID
+        format: uint32
+        type: integer
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginDevice:
+    description: PluginDevice plugin device
+    properties:
+      Description:
+        description: description
+        type: string
+      Name:
+        description: name
+        type: string
+      Path:
+        description: path
+        type: string
+      Settable:
+        description: settable
+        items:
+          type: string
+        type: array
+    required:
+    - Description
+    - Name
+    - Path
+    - Settable
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginEnv:
+    description: PluginEnv plugin env
+    properties:
+      Description:
+        description: description
+        type: string
+      Name:
+        description: name
+        type: string
+      Settable:
+        description: settable
+        items:
+          type: string
+        type: array
+      Value:
+        description: value
+        type: string
+    required:
+    - Description
+    - Name
+    - Settable
+    - Value
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginInterfaceType:
+    description: PluginInterfaceType plugin interface type
+    properties:
+      Capability:
+        description: capability
+        type: string
+      Prefix:
+        description: prefix
+        type: string
+      Version:
+        description: version
+        type: string
+    required:
+    - Capability
+    - Prefix
+    - Version
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginMount:
+    description: PluginMount plugin mount
+    properties:
+      Description:
+        description: description
+        type: string
+      Destination:
+        description: destination
+        type: string
+      Name:
+        description: name
+        type: string
+      Options:
+        description: options
+        items:
+          type: string
+        type: array
+      Settable:
+        description: settable
+        items:
+          type: string
+        type: array
+      Source:
+        description: source
+        type: string
+      Type:
+        description: type
+        type: string
+    required:
+    - Description
+    - Destination
+    - Name
+    - Options
+    - Settable
+    - Source
+    - Type
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  PluginSettings:
+    properties:
+      Args:
+        description: args
+        items:
+          type: string
+        type: array
+      Devices:
+        description: devices
+        items:
+          $ref: '#/definitions/PluginDevice'
+        type: array
+      Env:
+        description: env
+        items:
+          type: string
+        type: array
+      Mounts:
+        description: mounts
+        items:
+          $ref: '#/definitions/PluginMount'
+        type: array
+    required:
+    - Args
+    - Devices
+    - Env
+    - Mounts
+    title: PluginSettings Settings that can be modified by users.
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  Port:
+    description: Port An open port on a container
+    properties:
+      IP:
+        description: Host IP address that the container's port is mapped to
+        type: string
+      PrivatePort:
+        description: Port on the container
+        format: uint16
+        type: integer
+      PublicPort:
+        description: Port exposed on the host
+        format: uint16
+        type: integer
+      Type:
+        description: type
+        type: string
+    required:
+    - PrivatePort
+    - Type
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  ServiceUpdateResponse:
+    description: ServiceUpdateResponse service update response
+    properties:
+      Warnings:
+        description: Optional warning messages
+        items:
+          type: string
+        type: array
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  UUID:
+    items:
+      format: uint8
+      type: integer
+    title: UUID is an array type to represent the value of a UUID, as defined in RFC-4122.
+    type: array
+    x-go-package: github.com/gofrs/uuid
+  Volume:
+    description: Volume volume
+    properties:
+      CreatedAt:
+        description: Date/Time the volume was created.
+        type: string
+      Driver:
+        description: Name of the volume driver used by the volume.
+        type: string
+      Labels:
+        additionalProperties:
+          type: string
+        description: User-defined key/value metadata.
+        type: object
+      Mountpoint:
+        description: Mount path of the volume on the host.
+        type: string
+      Name:
+        description: Name of the volume.
+        type: string
+      Options:
+        additionalProperties:
+          type: string
+        description: The driver specific options used when creating the volume.
+        type: object
+      Scope:
+        description: The level at which the volume exists. Either `global` for cluster-wide,
+          or `local` for machine level.
+        type: string
+      Status:
+        additionalProperties:
+          type: object
+        description: |-
+          Low-level details about the volume, provided by the volume driver.
+          Details are returned as a map with key/value pairs:
+          `{"key":"value","key2":"value2"}`.
+
+          The `Status` field is optional, and is omitted if the volume driver
+          does not support this feature.
+        type: object
+      UsageData:
+        $ref: '#/definitions/VolumeUsageData'
+    required:
+    - Driver
+    - Labels
+    - Mountpoint
+    - Name
+    - Options
+    - Scope
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+  VolumeCreateBody:
+    description: VolumeCreateBody Volume configuration
+    properties:
+      Driver:
+        description: Name of the volume driver to use.
+        type: string
+      DriverOpts:
+        additionalProperties:
+          type: string
+        description: A mapping of driver options and values. These options are passed
+          directly to the driver and are driver specific.
+        type: object
+      Labels:
+        additionalProperties:
+          type: string
+        description: User-defined key/value metadata.
+        type: object
+      Name:
+        description: The new volume's name. If not specified, Docker generates a name.
+        type: string
+    required:
+    - Driver
+    - DriverOpts
+    - Labels
+    - Name
+    type: object
+    x-go-package: github.com/docker/docker/api/types/volume
+  VolumeListOKBody:
+    description: VolumeListOKBody Volume list response
+    properties:
+      Volumes:
+        description: List of volumes
+        items:
+          $ref: '#/definitions/Volume'
+        type: array
+      Warnings:
+        description: Warnings that occurred when fetching the list of volumes
+        items:
+          type: string
+        type: array
+    required:
+    - Volumes
+    - Warnings
+    type: object
+    x-go-package: github.com/docker/docker/api/types/volume
+  VolumeUsageData:
+    description: |-
+      VolumeUsageData Usage details about the volume. This information is used by the
+      `GET /system/df` endpoint, and omitted in other endpoints.
+    properties:
+      RefCount:
+        description: |-
+          The number of containers referencing this volume. This field
+          is set to `-1` if the reference-count is not available.
+        format: int64
+        type: integer
+      Size:
+        description: |-
+          Amount of disk space used by the volume (in bytes). This information
+          is only available for volumes created with the `"local"` volume
+          driver. For volumes created with other volume drivers, this field
+          is set to `-1` ("not available")
+        format: int64
+        type: integer
+    required:
+    - RefCount
+    - Size
+    type: object
+    x-go-package: github.com/docker/docker/api/types
+host: localhost:30611
+info:
+  description: |-
+    the purpose of this application is to provide an application
+    that is using plain go code to define an API
+
+    This should demonstrate all the possible comment annotations
+    that are available to turn go code into a fully compliant swagger 2.0 spec
+  license:
+    name: Apache-2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.txt
+  title: Meshery API.
+  version: 0.4.27
+paths:
+  /api/experimental/pattern:
+    get:
+      description: |-
+        Returns the list of all the patterns saved by the current user
+        This will return all the patterns with their details
+      operationId: idGetPatternFiles
+      responses:
+        "200":
+          $ref: '#/responses/mesheryPatternsResponseWrapper'
+      summary: Handle GET request for patterns
+      tags:
+      - PatternsAPI
+    post:
+      description: Edit/update a meshery pattern
+      operationId: idPostPatternFile
+      responses:
+        "200":
+          $ref: '#/responses/mesheryPatternResponseWrapper'
+      summary: Handle POST requests for patterns
+      tags:
+      - PatternsAPI
+  /api/experimental/pattern/{id}:
+    delete:
+      description: 'Deletes a meshery pattern with ID: id'
+      operationId: idDeleteMesheryPattern
+      parameters:
+      - $ref: '#/definitions/UUID'
+        description: id to fetch the item
+        in: path
+        name: id
+        required: true
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/noContentWrapper'
+      summary: Handle Delete for a Meshery Pattern
+      tags:
+      - PatternsAPI
+    get:
+      description: Fetches the pattern with the given id
+      operationId: idGetMesheryPattern
+      parameters:
+      - $ref: '#/definitions/UUID'
+        description: id to fetch the item
+        in: path
+        name: id
+        required: true
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/mesheryPatternResponseWrapper'
+      summary: Handle GET for a Meshery Pattern
+      tags:
+      - PatternsAPI
+produces:
+- application/json
+responses:
+  mesheryPatternResponseWrapper:
+    description: Returns a single meshery pattern
+    schema:
+      $ref: '#/definitions/MesheryPattern'
+  mesheryPatternsResponseWrapper:
+    description: Returns all meshery patterns
+    schema:
+      $ref: '#/definitions/PatternsAPIResponse'
+  noContentWrapper:
+    description: ""
+schemes:
+- http
+security:
+- token: []
+securityDefinitions:
+  token:
+    in: cookie
+    name: token
+    type: JWT
+swagger: "2.0"

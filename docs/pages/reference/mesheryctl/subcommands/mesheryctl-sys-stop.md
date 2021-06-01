@@ -1,6 +1,6 @@
 ---
 layout: default
-title: stop
+title: mesheryctl system stop
 permalink: reference/mesheryctl/system/stop
 type: reference
 display-title: "false"
@@ -31,18 +31,22 @@ list: exclude
 
 ## Examples
 
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
+{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.stop.command %}{% assign subcommand = subcommand_hash[1] %}
-  # {{ subcommand.description }}
   {{ subcommand.usage }}
-  {% endfor %}
-  {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
-  {{ flag.usage }}
-  {% endfor %}
   </div>
 </pre>
+{% endfor %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.stop.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  {{ flag.usage }}
+  </div>
+</pre>
+{% endfor %}
 <br/>
 
 

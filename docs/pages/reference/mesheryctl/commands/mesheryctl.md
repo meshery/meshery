@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl 
+title: mesheryctl
 permalink: reference/mesheryctl/mesheryctl
 type: reference
 display-title: "false"
@@ -29,14 +29,14 @@ Global command
 
 ## Examples
 
+{% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.global.flags %}{% assign flag = flag_hash[1] %}
-  # {{ flag.description }}
   {{ flag.usage }}
-  {% endfor %}
   </div>
 </pre>
+{% endfor %}
 <br/>
 
 

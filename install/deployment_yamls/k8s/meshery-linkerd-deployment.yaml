@@ -20,7 +20,7 @@ spec:
       labels:
         io.kompose.service: meshery-linkerd
     spec:
-      serviceAccount: meshery
+      serviceAccount: meshery-server
       containers:
       - image: layer5/meshery-linkerd:stable-latest
         name: meshery-linkerd

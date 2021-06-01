@@ -3,9 +3,10 @@ layout: default
 title: "Extensibility: APIs"
 permalink: extensibility/api
 type: Extensibility
-abstract: 'Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs.'
+abstract: "Meshery architecture is extensible, offering an array of extension points and REST and GraphQL APIs."
 #redirect_from: extensibility
 ---
+
 ## Meshery's APIs
 
 Each of Meshery's APIs are subject to the following authentication and authorization system.
@@ -24,11 +25,11 @@ Each of the API endpoints are exposed through [server.go](https://github.com/lay
 
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
-## GraphQL
+#### GraphQL
 
-Meshery provides its GraphQl API at `localhost:9081/api/system/graphql/query`. A GraphQL request can be made as a POST request to the endpoint with the query as the payload.
+Meshery provides its GraphQl API at `hostname:9081/api/graphql/query`. A GraphQL request can be made as a POST request to the endpoint with the query as the payload.
 
-Explore the Meshery GraphQL API using the `interactive Playground` provided with meshery instance at `localhost:9081/api/system/graphql/playground`.
+Explore the Meshery GraphQL API using the `interactive Playground` provided with Meshery instance at `localhost:9081/api/system/graphql/playground`.
 
 Meshery GrahphQL API can be used to perform three operations:
 
@@ -36,153 +37,14 @@ Meshery GrahphQL API can be used to perform three operations:
 - Mutations for creating, updating, and deleting data.
 - Subscriptions for watching for any data changes.
 
-### Queries
+{% include alert.html type="dark" title="Meshery's GraphQL Schema" content="See <a href='/reference/graphql-apis'>GraphQL API Reference</a> Self-generated API documentation for Meshery’s GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery’s GraphQL schema. Each table below documents a GraphQL type." %}
 
-{% for data in site.data.GraphQL.Queries %}
-#### `{{data.name}}`
-
-{{data.description}}
-
-{% if data.arguments %}
-**Arguments**
-
-<table>
-<thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-</thead>
-    {% for arg in data.arguments %}
-    <tr>
-        <td><code>{{arg.name}}</code></td>
-        <td><code>{{arg.type}}</code></td>
-        <td>{{arg.desc}}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-_No Arguments needed._
-{% endif %}
-{% endfor %}
-
-### Mutations
-
-{% for data in site.data.GraphQL.Mutations %}
-#### `{{data.name}}`
-
-{{data.description}}
-
-{% if data.arguments %}
-**Arguments**
-
-<table>
-<thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-</thead>
-    {% for arg in data.arguments %}
-    <tr>
-        <td><code>{{arg.name}}</code></td>
-        <td><code>{{arg.type}}</code></td>
-        <td>{{arg.desc}}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-_No Arguments needed._
-{% endif %}
-{% endfor %}
-
-### Subscriptions
-
-{% for data in site.data.GraphQL.Subscriptions %}
-#### `{{data.name}}`
-
-{{data.description}}
-
-{% if data.arguments %}
-**Arguments**
-
-<table>
-<thead>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-    </tr>
-</thead>
-    {% for arg in data.arguments %}
-    <tr>
-        <td><code>{{arg.name}}</code></td>
-        <td><code>{{arg.type}}</code></td>
-        <td>{{arg.desc}}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-_No Arguments needed._
-{% endif %}
-{% endfor %}
-
-### Object Types
-
-{% for data in site.data.GraphQL.ObjectTypes %}
-#### `{{data.name}}`
-
-{{data.description}}
-
-{% if data.arguments %}
-**Arguments**
-
-<table>
-<thead>
-    <tr>
-        <th>Field</th>
-        <th>Type</th>
-    </tr>
-</thead>
-    {% for arg in data.arguments %}
-    <tr>
-        <td><code>{{arg.name}}</code></td>
-        <td><code>{{arg.type}}</code></td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
-{% endfor %}
-
-### Enumeration Types
-
-{% for data in site.data.GraphQL.EnumerationTypes %}
-#### `{{data.name}}`
-
-{{data.description}}
-
-{% if data.arguments %}
-**Arguments**
-
-<table>
-<thead>
-    <tr>
-        <th>Value</th>
-        <th>Description</th>
-    </tr>
-</thead>
-    {% for arg in data.arguments %}
-    <tr>
-        <td><code>{{arg.value}}</code></td>
-        <td>{{arg.desc}}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
-{% endfor %}
-
-## REST
+#### REST
 
 Meshery provides a REST API available through the default port of `9081/tcp`.
+
+{% include alert.html type="dark" title="Meshery's REST API Reference" content="See <a href='/reference/rest-apis'>REST API Reference</a> Self-generated API documentation for Meshery’s REST API. Documentation is generated from Meshery’s Open API schema." %}
+
+## See Also
+
+- [Extension Points]({{site.baseurl}}/extensibility}})

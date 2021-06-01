@@ -41,7 +41,7 @@ Meshery Adapter for Kuma.
 | service.port | int | `10007` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-kuma-service-account"` |  |
+| serviceAccount.name | string | `"meshery-adapter-kuma"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
