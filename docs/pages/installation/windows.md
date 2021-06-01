@@ -191,4 +191,10 @@ Meshery is unable to detect the Kubernetes connection running on your local syst
   </div></div>
   </pre>
 
+<<<<<<< Updated upstream
 Restart the mesheryctl and the error should be fixed.
+=======
+3. Restart mesheryctl.
+
+Stuck at another error? [Tell us about it](http://slack.layer5.io/)
+>>>>>>> Stashed changes
