@@ -48,7 +48,7 @@ var (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Run 'docker-compose' to start Meshery and each of its service mesh adapters.`,
+	Long:  `Start Meshery and each of its service mesh adapters.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
