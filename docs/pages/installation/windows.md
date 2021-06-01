@@ -150,7 +150,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   </div></div>
   </pre>
 
-If using scoop, run this in the powershell to install Kubernetes cluster:
+If using scoop, run the following in the powershell to install  a Kubernetes cluster :
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
