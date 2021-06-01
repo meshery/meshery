@@ -203,7 +203,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 		if profile.LastRun != nil {
 			lastRun = fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Month()), profile.LastRun.Day(), profile.LastRun.Year(), profile.LastRun.Hour(), profile.LastRun.Minute(), profile.LastRun.Second())
 		}
-		data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
+    data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
 	}
 
 	//increase the page count and set totalPage and totalResults
