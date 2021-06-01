@@ -76,7 +76,11 @@ var updateCmd = &cobra.Command{
 		switch currCtx.Platform {
 		case "docker":
 			if !utils.SkipResetFlag {
-				resetMesheryConfig()
+				err := resetMesheryConfig()
+
+				if err != nil {
+					return err
+				}
 			}
 
 			log.Info("Updating Meshery...")
