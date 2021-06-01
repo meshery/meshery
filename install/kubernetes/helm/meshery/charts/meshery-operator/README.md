@@ -1,16 +1,15 @@
-# meshery-consul
+# meshery-operator
 
 ![Version: stable-latest](https://img.shields.io/badge/Version-stable-latest-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
-Meshery Adapter for Consul chart.
+Meshery Operator chart.
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | community@layer5.io |  |
 | aisuko | urakiny@gmail.com |  |
-| leecalcote | lee.calcote@layer5.io |  |
+| leecalcote | leecalcote@gmail.com |  |
 
 ## Values
 
@@ -21,7 +20,7 @@ Meshery Adapter for Consul chart.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"layer5/meshery-consul:stable-latest"` |  |
+| image.repository | string | `"layer5/meshery-operator:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
 | ingress.enabled | bool | `false` |  |
@@ -37,10 +36,10 @@ Meshery Adapter for Consul chart.
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
-| service.port | int | `10002` |  |
+| service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-consul"` |  |
+| serviceAccount.name | string | `"meshery-operator"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

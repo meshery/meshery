@@ -16,12 +16,12 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | meshery-consul | 2.0.1 |
-|  | meshery-istio | 2.0.1 |
-|  | meshery-kuma | 2.0.1 |
-|  | meshery-linkerd | 2.0.1 |
-|  | meshery-nsm | 2.0.1 |
-|  | meshery-osm | 2.0.1 |
+|  | meshery-consul | stable-latest |
+|  | meshery-istio | stable-latest |
+|  | meshery-kuma | stable-latest |
+|  | meshery-linkerd | stable-latest |
+|  | meshery-nsm | stable-latest |
+|  | meshery-osm | stable-latest |
 
 ## Values
 

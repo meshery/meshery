@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+  labels:
+{{- include "meshery-traefix-mesh.labels" . | nindent 4 }}
+rules:
+- apiGroups: ["networking.traefix-mesh.io"]
+  resources:
+  - virtualservices
+  - destinationrules
+  - serviceentries
+  - gateways
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
