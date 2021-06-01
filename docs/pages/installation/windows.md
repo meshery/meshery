@@ -139,7 +139,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 ### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
-Enable the Kubernetes from the settings in Docker Desktop application.
+Under settings in the Docker Desktop application, enable *Kubernetes*.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">
