@@ -183,7 +183,7 @@ In the powershell to view all the contexts Kubernetes has, run:
   </div></div>
   </pre>
 
-Change your current context to docker-desktop:
+2. Change your current context to docker-desktop:
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
