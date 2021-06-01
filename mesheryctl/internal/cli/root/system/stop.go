@@ -62,6 +62,11 @@ func stop() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
+	client, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return err
+	}
+
 	// Get the current platform and the specified adapters in the config.yaml
 	RequestedAdapters := currCtx.Adapters
 
@@ -101,22 +106,11 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
 		err = utils.ApplyOperatorManifest(client, false, true)
 
 		if err != nil {
 			return err
 		}
-
-		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
-		// to start from scratch with a fresh install.
-		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-		// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-		// }
 
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
@@ -140,12 +134,6 @@ func stop() error {
 		if !userResponse {
 			log.Info("Stop aborted.")
 			return nil
-		}
-
-		// create an kubernetes client
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
 		}
 
 		// check if the manifest folder exists on the machine
