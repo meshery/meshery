@@ -26,10 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: validate
-      uses: wtag/helm-lint-action@master
-      with:
-        chart_directory: install/kubernetes/helm
-        chart_name: meshery
+      run: helm lint install/kubernetes/helm/meshery --with-subcharts
   release-chart:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
