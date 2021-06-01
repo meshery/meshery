@@ -6,7 +6,6 @@ type: reference
 display-title: "false"
 language: en
 lang: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
