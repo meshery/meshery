@@ -47,6 +47,34 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
+
+<br/>
+
+To configure Meshery to use Google Kubernetes Engine-
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  mesheryctl system config gke --token [path to token]
+  </div>
+</pre>
+
+<br/>
+
+To configure Meshery to use Azure Kubernetes Service-
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  mesheryctl system config aks --token [path to token]
+  </div>
+</pre>
+
+<br/>
+
+To configure Meshery to use Elastic Kubernetes Service-
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  mesheryctl system config eks --token [path to token]
+  </div>
+</pre> 
+
 <br/>
 
 
