@@ -5,6 +5,7 @@ permalink: project/contributing-cli
 description: How to contribute to Meshery Command Line Interface.
 language: en
 type: project
+category: contributing
 ---
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
@@ -12,7 +13,7 @@ type: project
 {% include alert.html
     type="info"
     title="Meshery CLI Reference Documents"
-    content='<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker: Status of mesheryctl commands - their implementation and platform compatibility.</a></li>
+    content='<ul><li><a href="https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0">Meshery Command Tracker</a>: Status of mesheryctl command implementation and platform compatibility.</li>
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
 	<li><a href="https://github.com/layer5io/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>' %}
 
@@ -74,7 +75,7 @@ Command structure and command behavior should be designed in such a way that the
 
 Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistant verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier.
 
-** Flags **
+**Flags**
 
 Consistency should also be enforced when chaining commands and using flags. For example, if `mesheryctl pattern` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
@@ -99,36 +100,43 @@ Command line interfaces offer less context to the user, which makes them inheren
 - Anticipate user actions. If the user creates a new context with `mesheryctl system context create` then the next action might be `mesheryctl system start` to start Meshery ot `mesheryctl system context switch` to switch context names.
 - Anticipate user errors. For example, if the user types in `mesheryctl system satrt`, using the inbuilt features with the [cobra library](https://github.com/spf13/cobra), we can correct it to `start` and alert the user.
 
-## Process
+## Designing Commands
 
-When designing for the CLI, consider:
+If you are working on a new command or adding a new feature on an existing command, it is recommended to setup a design spec so that other contributors can weigh in on the design before you start to code. Broader features should have a design spec made in Google Doc using [this template](https://drive.google.com/drive/folders/1KHtJc4ToklBQ_UUsDgAL2sVZNhOQGzbh). For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
 
-### What the command does
+When designing for the command line interface, ask and consider the following questions.
 
-What makes sense to do from a terminal? What doesn’t?
-What might people want to automate?
-What is the default behavior? What flags might you need to change that behavior?
-What might people try and fail to do and how can you anticipate that?
+##### What the command does
 
-### What the command is called
+- What makes sense to do from a terminal? What doesn’t?
+- What might people want to automate?
+- What is the default behavior? What flags might you need to change that behavior?
+- What might people try and fail to do and how can you anticipate that?
 
-What should be the command language? (`mesheryctl <command> <subcommand> [args] [flags] [value]`)
-What should be a command vs a flag?
-How can you align the language of the new command with the existing commands?
+###### What the command is called
 
-### What the command outputs
+- What should be the command language? (`mesheryctl <command> <subcommand> [args] [flags] [value]`)
+- What should be a command vs a flag?
+- How can you align the language of the new command with the existing commands?
 
-How can you make the GUI and the CLI outputs similar?
-What should be outputted normally and what falls into debug logs?
+##### What the command outputs
 
-### How you explain your command
+- How can you make the GUI and the CLI outputs similar?
+- What should be outputted normally and what falls into debug logs?
+
+##### How you explain your command
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
-## Creating design specifications
+# Suggested Reading
 
-If you are working on a new command or adding a new feature on an existing command, it is recommended to setup a design spec so that other contributors can weigh in on the design before you start to code.
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
 
-Broader features should have a design spec made in Google Doc using [this template](https://drive.google.com/drive/folders/1KHtJc4ToklBQ_UUsDgAL2sVZNhOQGzbh).
-
-For small changes, communicating over the [issue tracker](https://github.com/layer5io/meshery/issues) or the [discussions](https://github.com/layer5io/meshery/discussions) will be helpful.
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>
