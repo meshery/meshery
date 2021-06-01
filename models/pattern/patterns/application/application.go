@@ -143,10 +143,6 @@ func getApplicationPatternConfiguration(compName string, oamConfig v1alpha1.Conf
 
 // detectServiceMesh will detect available service mesh in the k8s cluster
 func detectServiceMesh(kclient *meshkube.Client) serviceMesh {
-	if detectIstioServiceMesh(kclient) {
-		return istio
-	}
-
 	return ""
 }
 
@@ -157,33 +153,6 @@ func detectRolloutEngine(kclient *meshkube.Client) rolloutEngine {
 	}
 
 	return ""
-}
-
-// detectIstioServiceMesh returns true if k8s cluster has istio service mesh installed
-func detectIstioServiceMesh(kclient *meshkube.Client) bool {
-	svcs := []string{"istiod"}
-	nsList := findNamespaces(kclient)
-
-	for _, deployment := range svcs {
-		for _, ns := range nsList {
-			if _, err := kclient.
-				DynamicKubeClient.
-				Resource(schema.GroupVersionResource{
-					Group:    "",
-					Version:  "v1",
-					Resource: "services",
-				}).
-				Namespace(ns).
-				Get(context.TODO(), deployment, v1.GetOptions{}); err == nil {
-				logrus.Debug("found istio in the cluster")
-				return true
-			}
-
-			logrus.Debugf("%s not found in namespace %s", deployment, ns)
-		}
-	}
-
-	return true
 }
 
 // detectArgoRollout returns true if argo rollout is present in the cluster
