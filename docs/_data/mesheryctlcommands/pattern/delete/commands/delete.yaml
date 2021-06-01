@@ -1,4 +1,4 @@
 name: delete
-description: delete pattern file will simply remove the pattern file using specific flags
+description: deprovision the resources/ service mesh using the pattern file 
 usage: |
     mesheryctl pattern delete [flags]
