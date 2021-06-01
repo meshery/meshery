@@ -13,6 +13,10 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+var (
+	newContext = ""
+)
+
 // deleteContextCmd represents the delete command
 var deleteContextCmd = &cobra.Command{
 	Use:   "delete <context-name>",
@@ -38,23 +42,38 @@ var deleteContextCmd = &cobra.Command{
 				return nil
 			}
 
-			var listContexts []string
-			for context := range configuration.Contexts {
-				if context != args[0] {
-					listContexts = append(listContexts, context)
+			var result string
+
+			if newContext != "" {
+				_, exists := configuration.Contexts[newContext]
+				if !exists {
+					return errors.New("new context wrongly set")
 				}
-			}
 
-			prompt := promptui.Select{
-				Label: "Select context",
-				Items: listContexts,
-			}
+				if newContext == args[0] {
+					return errors.New("choose a new context other than the context being deleted")
+				}
 
-			_, result, err := prompt.Run()
+				result = newContext
+			} else {
+				var listContexts []string
+				for context := range configuration.Contexts {
+					if context != args[0] {
+						listContexts = append(listContexts, context)
+					}
+				}
 
-			if err != nil {
-				fmt.Printf("Prompt failed %v\n", err)
-				return err
+				prompt := promptui.Select{
+					Label: "Select context",
+					Items: listContexts,
+				}
+
+				_, result, err = prompt.Run()
+
+				if err != nil {
+					fmt.Printf("Prompt failed %v\n", err)
+					return err
+				}
 			}
 
 			fmt.Printf("The current context is now %q\n", result)
@@ -67,4 +86,8 @@ var deleteContextCmd = &cobra.Command{
 
 		return err
 	},
+}
+
+func init() {
+	deleteContextCmd.Flags().StringVarP(&newContext, "set", "s", "", "New context to deploy Meshery")
 }
