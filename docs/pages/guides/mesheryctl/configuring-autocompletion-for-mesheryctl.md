@@ -53,13 +53,14 @@ If you would like to have `mesheryctl` commands automatically completed for use 
  </div></div>
  </pre><br>
 
-If shell completion is not already enabled in your environment you will need to enable it.  You can execute the following once:
+If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  ~/.zshrc > echo "autoload -U compinit; compinit" 
  </div></div>
  </pre>
+
 _Note_ : You might need to restart your shell for this setup to take effect.
 
 #### zsh on MacOS and Oh My zsh
@@ -79,6 +80,7 @@ _Note_ : You might need to restart your shell for this setup to take effect.
  </pre><br>
 
 To load fish shell completions for each session, execute once:
+
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  mesheryctl system completion fish > ~/.config/fish/completions/mesheryctl.fish
@@ -87,5 +89,20 @@ To load fish shell completions for each session, execute once:
 
 # Suggested Reading
 
-- For an exhaustive list of commands and syntax, refer to the **[`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl)**.
-- To upgrade `mesheryctl`, refer to the **[Upgrade Guide]({{ site.baseurl }}/guides/upgrade)**.
+For an exhaustive list of `mesheryctl` commands and syntax:
+
+- See [`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl).
+
+Guides to using Meshery's various features and components.
+
+{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+
+<ul>
+  <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></lI>
+  {% for item in sorted_guides %}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

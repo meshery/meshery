@@ -29,7 +29,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.12
-	github.com/layer5io/meshkit v0.2.10
+	github.com/layer5io/meshkit v0.2.11
 	github.com/layer5io/meshsync v0.1.17
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
@@ -56,7 +56,6 @@ require (
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.4.0
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	gorm.io/gorm v1.20.10
 	k8s.io/api v0.18.12
 	k8s.io/apimachinery v0.18.12

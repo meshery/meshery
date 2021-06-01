@@ -9,7 +9,6 @@ list: exclude
 
 <a name="getting-started"></a>
 
-
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms).
 
 ## Install Meshery
@@ -22,22 +21,23 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </div></div>
  </pre>
 
-_Download, install, and run Meshery in a single command._
+_Download, install, and run Meshery in a single command. See all [installation methods]({{ site.baseurl }}/installation/platforms)._
 
 ## Access Meshery
 
 Visit Meshery's web-based user interface `http://<hostname>:9081`. When Meshery is installed on a Docker host, your default browser will be opened and navigated to `http://localhost:9081`.
 
 ## Select a Provider
+
 Select from the list of [Providers]({{site.baseurl}}/extensibility#providers) in order to login to Meshery. Authenticate with your chosen your Provider.
 
 <a href="/assets/img/meshery-server-page.png">
   <img style="width:300px;" src="/assets/img/meshery-server-page.png" />
 </a>
 
-
 ## Configure Connection to Kubernetes
-Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your your Kubernetes cluster. 
+
+Meshery attempts to auto detect your kubeconfig if it is stored in the default path (`$HOME/.kube`) on your system. In most deployments, Meshery will automatically connect to your Kubernetes cluster. Ensure that Meshery is connected to your your Kubernetes cluster.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
@@ -48,14 +48,15 @@ Visit <i class="fas fa-cog"></i> Settings:
 If your config has not been auto-detected, you may manually locate and upload your **kube config** file and select the **context name** (docker-desktop, kind-clsuter, minikube etc.)
 
 ## Verify Meshery's Deployment
+
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to Kubernetes by clicking on your configuration `context` name. You will be notified of your connection status. You can also verify a successful connection between Meshery and its adapters by clicking on any of the available [Adapter Ports]({{ site.baseurl }}/concepts/architecture#adapter-ports).
 
 <a href="/assets/img/adapters/meshery-ui.png">
 <img style="width:450px;height=auto;" src="/assets/img/adapters/meshery-ui.png" />
 </a>
 
-
 ## Operate service meshes and their workloads
+
 You may now proceed to install and work with any [service mesh]({{ site.baseurl }}/service-meshes) supported by Meshery.
 
 <video class="videoTest" width="750" height="auto" autoplay muted loop>
