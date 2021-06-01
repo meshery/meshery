@@ -143,11 +143,11 @@ Meshery documentation is made of these components:
   ```bash
   $ make site
   ```
-  - If that gives an error run:
-  ```bash
-    $ bundle exec jekyll serve
-  ```
-  _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
+- If that gives an error run:
+```bash
+  $ bundle exec jekyll serve
+```
+ _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
 
 ### Create a Pull Request
 
