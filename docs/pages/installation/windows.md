@@ -115,7 +115,7 @@ Docker Toolbox uses Linux-specific kernel features, and can’t run natively on 
 ### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
 In this tutorial, [Ubuntu 18.04](https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q?activetab=pivot:overviewtab) will be the distro used. Feel free to use any distro of your choice.
 
-<strong>Note:</strong> You can also do the same without installing any distro. Just do the above steps till step 1. and follow the following steps from step 3 skipping step 2.
+<strong>Note:</strong> If you choose to run Meshery without installing a distro, skip [step 2](#2-install-a-new-distro).
 
 ### 3. <b>Enable Docker</b>
 
