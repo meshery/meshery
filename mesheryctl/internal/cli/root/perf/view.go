@@ -217,7 +217,6 @@ func viewResults(args []string, mctlCfg *config.MesheryCtlConfig) error {
 			return errors.New("output-format not supported, use [json|yaml]")
 		}
 		log.Info(string(data))
-
 	}
 	return nil
 }

@@ -91,21 +91,21 @@ var applyCmd = &cobra.Command{
 				if profileName == "" {
 					return errors.New(utils.PerfError("please enter a profile-name"))
 				}
-				conv_req, err := strconv.Atoi(concurrentRequests)
+				convReq, err := strconv.Atoi(concurrentRequests)
 				if err != nil {
 					return errors.New("failed to convert concurrent-request")
 				}
-				conv_qps, err := strconv.Atoi(qps)
+				convQps, err := strconv.Atoi(qps)
 				if err != nil {
 					return errors.New("failed to convert qps")
 				}
 				values := map[string]interface{}{
-					"concurrent_request": conv_req,
+					"concurrent_request": convReq,
 					"duration":           testDuration,
 					"endpoints":          []string{testURL},
 					"load_generators":    []string{loadGenerator},
 					"name":               profileName,
-					"qps":                conv_qps,
+					"qps":                convQps,
 					"service_mesh":       testMesh,
 				}
 
@@ -220,5 +220,4 @@ func init() {
 	applyCmd.Flags().StringVar(&filePath, "file", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 
 	_ = listCmd.MarkFlagRequired("token")
-
 }
