@@ -7,11 +7,11 @@ on:
       - 'v*'
     paths:
       - 'install/kubernetes/**'
-  #pull_request:
-  #  branches:
-  #    - 'master'
-  #  paths:
-  #    - 'install/kubernetes/**'
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'install/kubernetes/**'
   workflow_dispatch:
     inputs:
       logLevel:
@@ -20,8 +20,19 @@ on:
         default: 'warning'
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+    steps:
+    - uses: actions/checkout@v2
+    - name: validate
+      uses: wtag/helm-lint-action@master
+      with:
+        chart_directory: install/kubernetes/helm
+        chart_name: meshery
   release-chart:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v2
       - name: Publish Helm chart for edge latest
