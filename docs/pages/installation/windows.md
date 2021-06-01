@@ -169,7 +169,7 @@ Follow the [installation steps]({{ site.baseurl }}/installation#windows) to inst
   </div></div>
   </pre>
 
-Type a 'yes' while being asked for whether to configure a file or not. Eventually choose your platform as Docker when asked to choose a platform to deploy Meshery. And get started with Meshery.
+Type **yes** when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery.
 
 ### 6. <a name="step6"> <b>Aftermath errors</b></a>
 
