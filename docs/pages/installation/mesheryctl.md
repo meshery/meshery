@@ -13,11 +13,20 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 
 ## Bash
 
-**Install** and **Upgrade**
+**Install** on `Docker`
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ curl -L https://git.io/meshery | PLATFORM=docker bash -
+ </div></div>
+ </pre>
+ <br>
+
+ **Install** on `Kubernetes`
+
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">
+ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
@@ -61,6 +70,41 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> Checking for dependents of upgraded formulae...
 ==> No dependents found!
 ```
+
+## Kubernetes 
+
+**Install**
+
+`Using mesheryctl`
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system context create k8s -p kubernetes -s
+ mesheryctl system start
+ </div></div>
+</pre>
+Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
+
+`Using Helm`
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ kubectl create ns meshery
+ helm repo add meshery https://meshery.io/charts/
+ helm install meshery meshery/meshery -n meshery
+ </div></div>
+</pre>
+Not a Helm user? Use the Meshery manifests directly.
+
+`Using Manifests`
+
+<pre class="codeblock-pre"><div  class="codeblock">
+ <div class="clipboardjs">
+ $ git clone https://github.com/layer5io/meshery.git; cd meshery
+ $ kubectl create ns meshery
+ $ kubectl -n meshery apply -f install/deployment_yamls/k8s
+ </div></div>
+</pre>
 
 ## Scoop
 
