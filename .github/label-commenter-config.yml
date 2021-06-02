@@ -11,6 +11,12 @@ labels:
       issue:
         body: This issue has been labeled with 'design-required'. Note that prior to commencing on implementation a design specification needs to be reviewed and approved. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
         action: open
+  - name: component/ui
+    labeled:
+      issue:
+        body: This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing-ui).
+        action: open
+
       # pr:
       #   body: Hi, please note that this issue will need an approved design specification before implementation proceeds. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
       #   action: open
