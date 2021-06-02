@@ -91,6 +91,8 @@ func (mrp *MesheryResultsPersister) WriteResult(key uuid.UUID, result []byte) er
 		return err
 	}
 
+	data.ID = key
+
 	t := time.Now()
 	data.TestStartTime = &t
 	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error

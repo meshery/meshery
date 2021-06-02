@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl pattern apply | Meshery
+title: mesheryctl pattern apply
 permalink: reference/mesheryctl/pattern/apply
 type: reference
 display-title: "false"
