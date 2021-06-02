@@ -1,4 +1,4 @@
-package oam
+package pattern
 
 // Plan struct represents a node of an execution plan
 type Plan struct {

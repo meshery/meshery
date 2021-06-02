@@ -13,8 +13,10 @@ import (
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/oam"
-	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	OAM "github.com/layer5io/meshery/models/pattern"
+	"github.com/layer5io/meshery/models/pattern/patterns"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 )
 
@@ -80,6 +82,18 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	if h.kubeclient.DynamicKubeClient == nil {
+		kc, err := meshkube.New(prefObj.K8SConfig.Config)
+		if err != nil {
+			logrus.Error("failed to create kube client: ", err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(rw, "Error:%s", err)
+			return
+		}
+
+		h.kubeclient = kc
+	}
+
 	msg, err := createCompConfigPairsAndExecuteAction(
 		r.Context(),
 		plan,
@@ -87,6 +101,7 @@ func (h *Handler) PatternFileHandler(
 		prefObj,
 		user,
 		isDel,
+		h.kubeclient,
 	)
 
 	if err != nil {
@@ -95,7 +110,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	fmt.Fprintf(rw, "Messages:\n%s", msg)
+	fmt.Fprintf(rw, "%s", msg)
 }
 
 // OAMRegisterHandler handles OAM registry related operations
@@ -185,6 +200,7 @@ func createCompConfigPairsAndExecuteAction(
 	prefObj *models.Preference,
 	user *models.User,
 	isDel bool,
+	kclient *meshkube.Client,
 ) (string, error) {
 	var internalErrs []error
 	var msgs []string
@@ -226,7 +242,7 @@ func createCompConfigPairsAndExecuteAction(
 		// Get component from the configuration file
 		configComp, ok := getComponentFromConfiguration(aConfig, comp.Name)
 		if !ok {
-			msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel)
+			msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
 			msgs = append(msgs, msg)
 			if err != nil {
 				internalErrs = append(internalErrs, err)
@@ -254,7 +270,7 @@ func createCompConfigPairsAndExecuteAction(
 
 		compcon.Configuration = aConfig
 
-		msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel)
+		msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
 		msgs = append(msgs, msg)
 		if err != nil {
 			internalErrs = append(internalErrs, err)
@@ -273,6 +289,7 @@ func handleCompConfigPairAction(
 	prefObj *models.Preference,
 	user *models.User,
 	isDel bool,
+	kclient *meshkube.Client,
 ) (string, error) {
 	var msgs []string
 
@@ -311,6 +328,7 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
+			kclient,
 		)
 		if err != nil {
 			msgs = append(msgs, err.Error())
@@ -378,6 +396,7 @@ func executeAction(
 	callType patternCallType,
 	oamComps []string,
 	oamConfig string,
+	kClient *meshkube.Client,
 ) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
@@ -388,7 +407,9 @@ func executeAction(
 	}
 
 	if callType == noneLocal {
-		return "success", nil
+		resp, err := patterns.ProcessOAM(kClient, oamComps, oamConfig, delete)
+
+		return resp, err
 	}
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, adapter)

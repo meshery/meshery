@@ -1,4 +1,4 @@
-package oam
+package pattern
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/internal/store"
-	"github.com/layer5io/meshery/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -175,7 +175,7 @@ func RegisterMesheryOAMWorkloads() error {
 	// accordingly
 	rootPath, _ := filepath.Abs("../oam/workloads")
 
-	return registerMesheryServerOAM(rootPath, []string{}, RegisterWorkload)
+	return registerMesheryServerOAM(rootPath, []string{"application"}, RegisterWorkload)
 }
 
 // registerMesheryServerOAM will read the oam definition file and its corresponding schema file

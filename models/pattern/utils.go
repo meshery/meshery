@@ -1,4 +1,4 @@
-package oam
+package pattern
 
 import "fmt"
 
