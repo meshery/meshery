@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl version | Meshery
+title: mesheryctl version
 permalink: reference/mesheryctl/mesheryctl/version
 type: reference
 display-title: "false"
