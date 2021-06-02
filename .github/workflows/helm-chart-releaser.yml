@@ -25,6 +25,10 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
     - uses: actions/checkout@v2
+    - uses: azure/setup-helm@v1
+      with:
+        version: 'v3.6.0' # default is latest stable
+      id: install
     - name: validate
       run: helm lint install/kubernetes/helm/meshery --with-subcharts
   release-chart:
