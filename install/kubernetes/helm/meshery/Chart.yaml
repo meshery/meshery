@@ -13,7 +13,7 @@ keywords:
   - meshery-nsm
   - meshery-traefik-mesh
   - meshery-cpx
-  - meshery-adapter
+  - meshery-operator
 source: 
   - https://github.com/layer5io/meshery
 
