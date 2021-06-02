@@ -1,10 +1,11 @@
 apiVersion: v2
-name: meshery-osm
-description: Meshery Adapter for Open Service Mesh
+name: meshery-cpx
+description: Meshery Adapter for Citrix chart.
 source: 
-  - https://github.com/layer5io/meshery-osm
+  - https://github.com/layer5io/meshery-cpx
 
 deprecated: false
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -25,9 +26,7 @@ version: 2.1.2
 appVersion: stable-latest
 
 maintainers:
-  - name: Layer5 Authors
-    email: community@layer5.io
   - name: aisuko
     email: urakiny@gmail.com
   - name: leecalcote
-    email: lee.calcote@layer5.io
+    email: leecalcote@gmail.com
