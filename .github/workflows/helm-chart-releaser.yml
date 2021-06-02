@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - 'master'
+    tags:
+      - 'v*'
     paths:
       - 'install/kubernetes/**'
   pull_request:
@@ -18,83 +20,58 @@ on:
         default: 'warning'
 
 jobs:
-  lint-test:
+  validate:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.4.1
-      - name: Helm lint
-        env:
-          CHARTS_PATH: install/kubernetes/helm/meshery
-        run:
-          helm lint ${{ env.CHARTS_PATH }}
-
-  release:
+    - uses: actions/checkout@v2
+    - uses: azure/setup-helm@v1
+      with:
+        version: 'v3.6.0' # default is latest stable
+      id: install
+    - name: validate
+      run: helm lint install/kubernetes/helm/meshery --with-subcharts
+  release-chart:
     runs-on: ubuntu-latest
-    needs: [lint-test]
+    if: github.event_name != 'pull_request'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Publish Helm chart for edge latest
+        if: startsWith(github.ref, 'refs/tags/') != true && success()
+        uses: stefanprodan/helm-gh-pages@master
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Configure Git
-        env:
-          GITHUB_ACTOR: l5io
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.4.1
-      - name: Add dependency chart repos
-        run: |
-          helm repo add meshery https://meshery.io/charts/
-      - name: Helm Chart Releaser For Remote
-        uses: layer5io/helm-chart-releaser@v0.1.0
-        with:
-          charts_dir: charts
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm
           owner: layer5io
-          repo: meshery.io
-          # For helm charts index
-          charts_repo_url: https://meshery.io/charts/
-          pages_branch: master
-          activity: push
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Checkout target repo
-        uses: actions/checkout@v2
-        env:
-          REPO: layer5io/meshery.io
-          REPO_PATH: charts
+          repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: l5io@layer5.io
+          chart_version: edge-latest
+      - name: Publish Helm chart for stable latest
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: stefanprodan/helm-gh-pages@master
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: "${{ env.REPO }}"
-          path: ${{ env.REPO_PATH }}
-      - name: Copy index to new repo
-        env:
-          SOURCE: /home/runner/work/layer5io/meshery/install/kubernetes/helm/meshery/Chart.yaml
-#          SOURCE: /home/runner/work/layer5io/meshery/.cr-index/index.yaml
-          TARGET: meshery.io/charts
-        run:
-          cp ${{ env.SOURCE }} ${{ env.TARGET }}
-      - name: Push
-        env:
-          REPO_PATH: meshery.io
-          GIT_USERNAME: l5io
-          GIT_EMAIL: l5io@users.noreply.github.com
-        run: |
-          cd ${{ env.REPO_PATH }}
-          git config --local user.name "${{ env.GIT_USERNAME }}"
-          git config --local user.email "${{ env.GIT_EMAIL }}"
-          git add .
-          git commit -s -m "Github Actions Automatically Built in `date +"%Y-%m-%d %H:%M"`"
-          git push
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm
+          owner: layer5io
+          repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: l5io@layer5.io
+          chart_version: stable-latest
+      - name: Publish Helm chart for release version
+        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          charts_dir: install/kubernetes/helm
+          owner: layer5io
+          repository: meshery.io
+          branch: master
+          target_dir: charts
+          commit_username: l5io
+          commit_email: l5io@layer5.io
+          chart_version: ${GITHUB_REF/refs\/tags\//}
