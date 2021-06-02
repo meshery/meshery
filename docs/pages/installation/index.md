@@ -24,7 +24,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </pre>
  <br>
 
- <span style="font-size: 20px">`Install on Kubernetes`</span>
+ ###### Install on Kubernetes
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash - 
