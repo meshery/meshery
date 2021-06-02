@@ -35,7 +35,11 @@ var deleteContextCmd = &cobra.Command{
 
 		if viper.GetString("current-context") == args[0] {
 			var res bool
-			res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+			if utils.SilentFlag {
+				res = true
+			} else {
+				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+			}
 
 			if !res {
 				log.Printf("Delete aborted")
