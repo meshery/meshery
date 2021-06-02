@@ -1,21 +1,21 @@
 dependencies:
 - name: meshery-istio
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 - name: meshery-linkerd
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 - name: meshery-consul
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 - name: meshery-kuma
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 - name: meshery-osm
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 - name: meshery-nsm
   repository: ""
-  version: stable-latest
+  version: 2.1.2
 digest: sha256:369a55dfa9c363b2788eaac5fb349e6a99a93441d665282b94b9a08447c41e2f
 generated: "2021-05-31T18:03:43.820886+05:30"

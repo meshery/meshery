@@ -40,22 +40,22 @@ appVersion: stable-latest
 
 dependencies:
 - name: meshery-istio
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-istio.enabled
 - name: meshery-linkerd
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-linkerd.enabled
 - name: meshery-consul
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-consul.enabled
 - name: meshery-kuma
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-kuma.enabled
 - name: meshery-osm
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-osm.enabled
 - name: meshery-nsm
-  version: stable-latest
+  version: 2.1.2
   condition: meshery-nsm.enabled
 
 maintainers:
