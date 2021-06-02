@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "meshery-traefix-mesh.fullname" . }}-test-connection"
+  name: "{{ include "meshery-traefik-mesh.fullname" . }}-test-connection"
   labels:
-{{ include "meshery-traefix-mesh.labels" . | nindent 4 }}
+{{ include "meshery-traefik-mesh.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test-success
 spec:
@@ -12,6 +12,6 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args:  ['{{ include "meshery-traefix-mesh.fullname" . }}:{{ .Values.service.port }}']
+      args:  ['{{ include "meshery-traefik-mesh.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
 {{- end -}}

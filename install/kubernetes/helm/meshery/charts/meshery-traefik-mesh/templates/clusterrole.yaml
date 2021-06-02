@@ -1,11 +1,11 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+  name: {{ include "meshery-traefik-mesh.serviceAccountName" . }}
   labels:
-{{- include "meshery-traefix-mesh.labels" . | nindent 4 }}
+{{- include "meshery-traefik-mesh.labels" . | nindent 4 }}
 rules:
-- apiGroups: ["networking.traefix-mesh.io"]
+- apiGroups: ["networking.traefik-mesh.io"]
   resources:
   - virtualservices
   - destinationrules

@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "meshery-traefix-mesh.name" -}}
+{{- define "meshery-traefik-mesh.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "meshery-traefix-mesh.fullname" -}}
+{{- define "meshery-traefik-mesh.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,16 +27,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "meshery-traefix-mesh.chart" -}}
+{{- define "meshery-traefik-mesh.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "meshery-traefix-mesh.labels" -}}
-helm.sh/chart: {{ include "meshery-traefix-mesh.chart" . }}
-{{ include "meshery-traefix-mesh.selectorLabels" . }}
+{{- define "meshery-traefik-mesh.labels" -}}
+helm.sh/chart: {{ include "meshery-traefik-mesh.chart" . }}
+{{ include "meshery-traefik-mesh.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -46,17 +46,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "meshery-traefix-mesh.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "meshery-traefix-mesh.name" . }}
+{{- define "meshery-traefik-mesh.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "meshery-traefik-mesh.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "meshery-traefix-mesh.serviceAccountName" -}}
+{{- define "meshery-traefik-mesh.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "meshery-traefix-mesh.fullname" .) .Values.serviceAccount.name }}
+    {{ default (include "meshery-traefik-mesh.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}

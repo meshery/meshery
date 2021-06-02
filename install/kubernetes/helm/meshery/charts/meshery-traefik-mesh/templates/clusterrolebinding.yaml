@@ -1,14 +1,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+  name: {{ include "meshery-traefik-mesh.serviceAccountName" . }}
   labels:
-{{- include "meshery-traefix-mesh.labels" . | nindent 4 }}
+{{- include "meshery-traefik-mesh.labels" . | nindent 4 }}
 roleRef:
   kind: ClusterRole
-  name: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+  name: {{ include "meshery-traefik-mesh.serviceAccountName" . }}
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
-  name: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+  name: {{ include "meshery-traefik-mesh.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}

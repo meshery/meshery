@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "meshery-traefix-mesh.fullname" . }}
+  name: {{ include "meshery-traefik-mesh.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "meshery-traefix-mesh.labels" . | nindent 4 }}
+    {{- include "meshery-traefik-mesh.labels" . | nindent 4 }}
   annotations:
     {{- toYaml .Values.annotations | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "meshery-traefix-mesh.selectorLabels" . | nindent 6 }}
+      {{- include "meshery-traefik-mesh.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "meshery-traefix-mesh.selectorLabels" . | nindent 8 }}
+        {{- include "meshery-traefik-mesh.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "meshery-traefix-mesh.serviceAccountName" . }}
+      serviceAccountName: {{ include "meshery-traefik-mesh.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          # TODO: Need to confirm the meshery-traefix-mesh image version
+          # TODO: Need to confirm the meshery-traefik-mesh image version
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

@@ -1,8 +1,8 @@
 apiVersion: v2
-name: meshery-traefix-mesh
-description: Meshery Adapter for Traefix Mesh chart.
+name: meshery-traefik-mesh
+description: Meshery Adapter for Traefik Mesh chart.
 source: 
-  - https://github.com/layer5io/meshery-traefix-mesh
+  - https://github.com/layer5io/meshery-traefik-mesh
 
 deprecated: false
 

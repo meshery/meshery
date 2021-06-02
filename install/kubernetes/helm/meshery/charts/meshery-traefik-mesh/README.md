@@ -1,8 +1,8 @@
-# meshery-traefix-mesh
+# meshery-traefik-mesh
 
 ![Version: 2.1.2](https://img.shields.io/badge/Version-2.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: stable-latest](https://img.shields.io/badge/AppVersion-stable--latest-informational?style=flat-square)
 
-Meshery Adapter for Traefix Mesh chart.
+Meshery Adapter for Traefik Mesh chart.
 
 ## Maintainers
 
@@ -20,7 +20,7 @@ Meshery Adapter for Traefix Mesh chart.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"layer5/meshery-traefix-mesh:stable-latest"` |  |
+| image.repository | string | `"layer5/meshery-traefik-mesh:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | string | `nil` |  |
 | ingress.enabled | bool | `false` |  |
@@ -39,7 +39,7 @@ Meshery Adapter for Traefix Mesh chart.
 | service.port | int | `10000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `"meshery-adapter-traefix-mesh"` |  |
+| serviceAccount.name | string | `"meshery-adapter-traefik-mesh"` |  |
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 

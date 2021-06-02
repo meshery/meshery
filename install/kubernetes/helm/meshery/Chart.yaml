@@ -11,6 +11,9 @@ keywords:
   - meshery-kuma
   - meshery-osm
   - meshery-nsm
+  - meshery-traefik-mesh
+  - meshery-cpx
+  - meshery-adapter
 source: 
   - https://github.com/layer5io/meshery
 
