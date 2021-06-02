@@ -35,7 +35,7 @@
     "babel-eslint": "^10.1.0",
     "cypress": "^7.2.0",
     "eslint": "^7.27.0",
-    "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-cypress": "^2.11.3",
     "eslint-plugin-react": "^7.23.2",
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.7",
