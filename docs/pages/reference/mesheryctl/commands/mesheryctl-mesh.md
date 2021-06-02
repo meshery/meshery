@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl mesh | Meshery
+title: mesheryctl mesh
 permalink: reference/mesheryctl/mesh
 type: reference
 display-title: "false"
