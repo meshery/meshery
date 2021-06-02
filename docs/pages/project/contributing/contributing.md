@@ -32,10 +32,11 @@ Follow these steps and you'll be right at home.
 - [General Contribution Flow]({{site.baseurl}}/project/contributing#general-contribution-flow)
 - <a href="#commit-signing">Developer Certificate of Origin</a>
 - Meshery Contribution Flow
-  - <a href="#contributing-docs">Meshery Documentation</a>
+  - <a href="{{site.baseurl}}/project/contributing-docs">Meshery Documentation</a>
+  - <a href="{{site.baseurl}}/project/contributing-cli">Meshery CLI</a>
   - <a href="#contributing-meshery">Meshery Backend</a>
     - <a href="#adapter">Writing a Meshery Adapter</a>
-  - <a href="#contributing-ui">Meshery UI</a>
+  - <a href="{{site.baseurl}}/project/contributing-ui">Meshery UI</a>
     Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 
 ## <a name="contributing">General Contribution Flow</a>
