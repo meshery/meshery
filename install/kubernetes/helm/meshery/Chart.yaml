@@ -11,6 +11,9 @@ keywords:
   - meshery-kuma
   - meshery-osm
   - meshery-nsm
+  - meshery-traefik-mesh
+  - meshery-cpx
+  - meshery-operator
 source: 
   - https://github.com/layer5io/meshery
 
@@ -40,23 +43,32 @@ appVersion: stable-latest
 
 dependencies:
 - name: meshery-istio
-  version: 2.0.1
+  version: 2.1.2
   condition: meshery-istio.enabled
 - name: meshery-linkerd
-  version: 2.0.1
+  version: 2.1.2
   condition: meshery-linkerd.enabled
 - name: meshery-consul
-  version: 2.0.1
+  version: 2.1.2
   condition: meshery-consul.enabled
 - name: meshery-kuma
-  version: 2.0.1
+  version: 2.1.2
   condition: meshery-kuma.enabled
 - name: meshery-osm
-  version: 1.0.1
+  version: 2.1.2
   condition: meshery-osm.enabled
 - name: meshery-nsm
-  version: 1.0.1
+  version: 2.1.2
   condition: meshery-nsm.enabled
+- name: meshery-traefik-mesh
+  version: 2.1.2
+  condition: meshery-traefik-mesh.enabled
+- name: meshery-cpx
+  version: 2.1.2
+  condition: meshery-cpx.enabled
+- name: meshery-operator
+  version: 2.1.2
+  condition: meshery-operator.enabled
 
 maintainers:
   - name: Layer5 Authors
