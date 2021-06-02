@@ -46,7 +46,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 10000
+  port: 10006
   annotations: {}
 
 ingress:

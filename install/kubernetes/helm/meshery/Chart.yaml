@@ -57,6 +57,15 @@ dependencies:
 - name: meshery-nsm
   version: 2.1.2
   condition: meshery-nsm.enabled
+- name: meshery-traefik-mesh
+  version: 2.1.2
+  condition: meshery-traefik-mesh.enabled
+- name: meshery-cpx
+  version: 2.1.2
+  condition: meshery-cpx.enabled
+- name: meshery-operator
+  version: 2.1.2
+  condition: meshery-operator.enabled
 
 maintainers:
   - name: Layer5 Authors
