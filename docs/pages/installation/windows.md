@@ -71,7 +71,7 @@ Open Powershell in administrator mode and run:
 Set the default version to *WSL2*, which will be inherited by any distro you wish to use.
 
 Enable VM (Virtual Machine) feature:
-Open Powershell in administrator mode and run:
+Open PowerShell in administrator mode and run:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
@@ -139,7 +139,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 ### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
-Under settings in the Docker Desktop application, enable *Kubernetes*.
+Under "Settings" in the Docker Desktop application, enable *Kubernetes*.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">
@@ -150,7 +150,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   </div></div>
   </pre>
 
-If using scoop, run the following in the powershell to install  a Kubernetes cluster :
+If using Scoop, run the following in the PowerShell to install a Kubernetes cluster :
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">
@@ -191,6 +191,6 @@ Meshery is unable to detect the Kubernetes connection running on your local syst
   </div></div>
   </pre>
 
-3. Restart mesheryctl.
+3. Restart Meshery.
 
 Stuck at another error? [Tell us about it](http://slack.layer5.io/)
