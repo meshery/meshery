@@ -1,4 +1,4 @@
 name: delete
-description: deprovision the resources/ service mesh using the pattern file 
+description: Deprovision the resources/ service mesh using the pattern file
 usage: |
     mesheryctl pattern delete [flags]
