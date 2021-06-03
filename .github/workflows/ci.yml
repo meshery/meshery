@@ -40,6 +40,7 @@ jobs:
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
   unit-tests:
+    needs: [golangci]
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
