@@ -1,0 +1,4 @@
+name: --file, -f
+description: Deletes the resources that were created, using pattern file
+usage: |
+    mesheryctl pattern delete -f [path to pattern file]

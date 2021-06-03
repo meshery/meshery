@@ -315,7 +315,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.pattern.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command.name }}</a></td>
+      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -362,6 +362,20 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ subcommand.description }}</td>
       </tr>
       {% for flag_hash in site.data.mesheryctlcommands.pattern.view.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+      </tr>
+      {% endfor %}
+    {% endfor %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.pattern.delete.commands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/delete">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in site.data.mesheryctlcommands.pattern.delete.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td></td>
           <td>{{ flag.name }}</td>
