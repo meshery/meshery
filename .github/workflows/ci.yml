@@ -39,8 +39,8 @@ jobs:
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
-  coverage:
-    name: go-coverage
+  unit-tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,27 +58,6 @@ jobs:
           files: ./coverage.txt
           flags: unittests
           fail_ci_if_error: true
-  server-tests:
-    needs: [tests-ui, golangci, build-backend]
-    name: Server tests
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@master
-      with:
-        fetch-depth: 1
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ secrets.GO_VERSION }}
-    - name: Setup Cache
-      uses: actions/cache@v1
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    - run: GOPROXY=direct GOSUMDB=off GO111MODULE=on go test -tags draft ./...
   build-backend:
     name: Backend build
     runs-on: ubuntu-latest
