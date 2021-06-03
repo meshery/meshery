@@ -38,15 +38,12 @@ var PerfCmd = &cobra.Command{
 	Long:    `Performance Management & Benchmarking using Meshery CLI.`,
 	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
 	Args:    cobra.MinimumNArgs(1),
-	PreRunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
 		//Check prerequisite
 		return system.RunPreflightHealthChecks(true, cmd.Use)
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
 	},
 }
 
