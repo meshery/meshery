@@ -208,7 +208,9 @@ func start() error {
 		var endpoint meshkitutils.HostPort
 
 		userResponse := false
-		if utils.SilentFlag {
+
+		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
+		if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
 			userResponse = true
 		} else {
 			// ask user for confirmation
