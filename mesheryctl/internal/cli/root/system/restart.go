@@ -33,7 +33,7 @@ import (
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
-	Long:  `Restart all Meshery containers/ pods.`,
+	Long:  `Restart all Meshery containers / pods.`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return restart()
