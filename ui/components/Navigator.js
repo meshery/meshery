@@ -56,6 +56,9 @@ const styles = (theme) => ({
     fontSize: 24,
     fontFamily: theme.typography.fontFamily,
     color: theme.palette.common.white,
+    position: "sticky",
+    top: 0,
+    zIndex: 5
   },
   link: {
     display: "inline-flex",
