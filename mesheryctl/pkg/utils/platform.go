@@ -178,11 +178,6 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
-
-	if err := DownloadOperatorManifest(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -489,7 +484,7 @@ func CreateManifestsFolder() error {
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
+	log.Debug("creating ~/.meshery/manifests folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))

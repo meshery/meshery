@@ -77,6 +77,12 @@ func resetMesheryConfig() error {
 			return errors.Wrap(err, "failed to fetch docker-compose file")
 		}
 
+		err = utils.CreateManifestsFolder()
+
+		if err != nil {
+			return err
+		}
+
 		log.Printf("Fetching Meshery Operator manifests...\n")
 		err = utils.DownloadOperatorManifest()
 
