@@ -95,7 +95,7 @@ var applyCmd = &cobra.Command{
 				if err != nil {
 					return errors.New("failed to convert concurrent-request")
 				}
-				convQps, err := strconv.Atoi(qps)
+				convQPS, err := strconv.Atoi(qps)
 				if err != nil {
 					return errors.New("failed to convert qps")
 				}
@@ -105,7 +105,7 @@ var applyCmd = &cobra.Command{
 					"endpoints":          []string{testURL},
 					"load_generators":    []string{loadGenerator},
 					"name":               profileName,
-					"qps":                convQps,
+					"qps":                convQPS,
 					"service_mesh":       testMesh,
 				}
 
