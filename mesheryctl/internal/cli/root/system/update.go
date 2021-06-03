@@ -30,7 +30,7 @@ import (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
-	Long:  `Pull new Meshery container images/manifest files from Docker Hub/ GitHub.`,
+	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
