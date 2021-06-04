@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"runtime"
 
@@ -69,9 +70,9 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	}
 	if !isPreRunExecution {
 		if failure == 0 {
-			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+			fmt.Printf("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
 		} else {
-			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
+			fmt.Printf("\n--------------\n--------------\n!! Meshery prerequisites not met")
 		}
 	}
 	return nil
@@ -80,7 +81,7 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 //Run healthchecks to verify if docker is running and active
 func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform string) error {
 	if !isPreRunExecution {
-		log.Info("\nDocker \n--------------")
+		fmt.Printf("\nDocker \n--------------\n")
 	}
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
@@ -96,9 +97,9 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 			return errors.Wrapf(err, "failed to start Docker.")
 		}
 	} else if err != nil { // warn incase of preflight check
-		log.Warn("!! Docker is not running")
+		log.Warn("!! Docker is not running\n")
 	} else if !isPreRunExecution { // log incase of preflight check
-		log.Info("√ Docker is running")
+		fmt.Printf("√ Docker is running\n")
 	}
 
 	//Check for installed docker-compose on client system
@@ -116,7 +117,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 	} else if err != nil { // this is preflight check we just log a warning
 		log.Warn("!! docker-compose is not available")
 	} else if !isPreRunExecution { // log incase of preflight check
-		log.Info("√ docker-compose is available")
+		fmt.Printf("√ docker-compose is available\n")
 	}
 
 	return nil
@@ -125,7 +126,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 //Run healthchecks to verify if kubernetes client can be initialized and can be queried
 func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	if !isPreRunExecution {
-		log.Info("\nKubernetes API \n--------------")
+		fmt.Printf("\nKubernetes API \n--------------\n")
 	}
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
@@ -137,7 +138,7 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	} else if err != nil {
 		return errors.New("ctlK8sClient1000: !! cannot initialize a Kubernetes client. See https://docs.meshery.io/reference/error-codes")
 	} else if !isPreRunExecution { // log in case of preflight check
-		log.Info("√ can initialize Kubernetes client")
+		fmt.Printf("√ can initialize Kubernetes client\n")
 	}
 
 	//Check whether kubernetes can be queried
@@ -149,7 +150,7 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	} else if err != nil {
 		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
 	} else if !isPreRunExecution { // log in case of preflight check
-		log.Info("√ can query the Kubernetes API")
+		fmt.Printf("√ can query the Kubernetes API\n")
 	}
 
 	return nil
@@ -159,7 +160,7 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 // minimum compatible versions
 func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	if !isPreRunExecution {
-		log.Info("\nKubernetes Version \n--------------")
+		fmt.Printf("\nKubernetes Version \n--------------\n")
 	}
 	//Check whether system has minimum supported versions of kubernetes and kubectl
 	var kubeVersion *k8sVersion.Info
@@ -181,7 +182,7 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 		} else if err != nil { // incase of PreRunExec return the error
 			return err
 		} else if !isPreRunExecution { // log incase of perflight check
-			log.Info("√ is running the minimum Kubernetes version")
+			fmt.Printf("√ is running the minimum Kubernetes version\n")
 		}
 	}
 
@@ -192,7 +193,7 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	} else if err != nil {
 		return err
 	} else if !isPreRunExecution { // log incase of preflight check
-		log.Info("√ is running the minimum kubectl version")
+		fmt.Printf("√ is running the minimum kubectl version\n")
 	}
 
 	return nil
