@@ -31,25 +31,34 @@ func Diff(expected, actual interface{}) []string {
 	return pretty.Diff(expected, actual)
 }
 
-// Path to Golden file
-func (tf *GoldenFile) path() string {
-	tf.t.Helper()
+// Path to the current file
+func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		tf.t.Fatal("problems recovering caller information")
+		t.Fatal("problems recovering caller information")
 	}
 
-	return filepath.Join(filepath.Dir(filename), tf.dir, tf.name)
+	return filepath.Dir(filename)
 }
 
-// Load a testing file
+// Load a Golden file
 func (tf *GoldenFile) Load() string {
 	tf.t.Helper()
-
-	content, err := ioutil.ReadFile(tf.path())
+	path := filepath.Join(tf.dir, tf.name)
+	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
 
 	return string(content)
+}
+
+// write a Golden file
+func (tf *GoldenFile) Write(content string) {
+	tf.t.Helper()
+	path := filepath.Join(tf.dir, tf.name)
+	err := ioutil.WriteFile(path, []byte(content), 0644)
+	if err != nil {
+		tf.t.Fatalf("could not write %s: %v", tf.name, err)
+	}
 }
