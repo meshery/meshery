@@ -181,7 +181,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("outdated authentication token")
 	}
 	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 	if resp.StatusCode != 200 {
@@ -233,7 +233,7 @@ func fetchPerformanceProfileResults(url string, profileID string) ([][]string, [
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("outdated authentication token")
 	}
 	if resp.StatusCode != 200 {
 		return nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
