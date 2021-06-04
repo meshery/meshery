@@ -53,11 +53,8 @@ const styles = (theme) => ({
     paddingBottom: 16,
   },
   firebase: {
-    fontSize: 24,
-    fontFamily: theme.typography.fontFamily,
-    color: theme.palette.common.white,
-    position: "sticky",
     top: 0,
+    position: "sticky",
     zIndex: 5
   },
   link: {
