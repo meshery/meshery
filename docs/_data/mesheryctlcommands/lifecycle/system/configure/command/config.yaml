@@ -1,4 +1,4 @@
 name: config
 description: Configures Meshery to use a Kubernetes cluster.
 usage: |
-    mesheryctl system config < managed Kubernetes service > [flags]
+    mesheryctl system config [minikube | gke | aks | eks ] [flags] [flags]
