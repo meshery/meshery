@@ -5,6 +5,7 @@ permalink: project/contributing-ui
 description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
+category: contributing
 ---
 
 ### <a name="contributing-ui">UI Contribution Flow</a>
@@ -50,3 +51,16 @@ update /etc/hosts
 ```shell
 127.0.0.1 mesherylocal.layer5.io
 ```
+
+# Suggested Reading
+
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
+
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

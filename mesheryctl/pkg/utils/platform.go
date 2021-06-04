@@ -15,6 +15,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/spf13/viper"
+
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
@@ -71,6 +74,32 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// ChangeContextVersion changes the version of the specified context to the specified version
+func ChangeContextVersion(contextName, version string) error {
+	viperConfig := viper.New()
+
+	viperConfig.SetConfigFile(DefaultConfigPath)
+	err := viperConfig.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	meshConfig := &config.MesheryCtlConfig{}
+	err = viperConfig.Unmarshal(&meshConfig)
+	if err != nil {
+		return err
+	}
+
+	viperConfig.Set("contexts."+contextName+".version", version)
+
+	err = viperConfig.WriteConfig()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -149,11 +178,6 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
-
-	if err := DownloadOperatorManifest(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -460,7 +484,7 @@ func CreateManifestsFolder() error {
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
+	log.Debug("creating ~/.meshery/manifests folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
