@@ -71,7 +71,7 @@ To configure Meshery to use Azure Kubernetes Service-
 To configure Meshery to use Elastic Kubernetes Service-
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl system config eks --token [path to token]
+  mesheryctl system config eks --token <path-to-token>
   </div>
 </pre> 
 
