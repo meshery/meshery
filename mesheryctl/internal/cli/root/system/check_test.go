@@ -20,31 +20,26 @@ func TestPreflightCmd(t *testing.T) {
 			Name:             "Run preflight check",
 			Args:             []string{"check", "--pre"},
 			ExpectedResponse: "default-check-output.golden",
-			MockResponse:     "default-check-input.golden",
 		},
 		{
 			Name:             "Run preflight check",
 			Args:             []string{"check", "--preflight"},
 			ExpectedResponse: "default-check-output.golden",
-			MockResponse:     "default-check-input.golden",
 		},
 		// {
 		// 	Name:             "Docker not available",
 		// 	Args:             []string{"check", "--pre"},
 		// 	ExpectedResponse: "docker-not-check-output.golden",
-		// 	MockResponse:     "docker-not-check-input.golden",
 		// },
 		// {
 		// 	Name:             "Kubernetes not available",
 		// 	Args:             []string{"check", "--pre"},
 		// 	ExpectedResponse: "k8s-not-check-output.golden",
-		// 	MockResponse:     "k8s-not-check-input.golden",
 		// },
 		// {
 		// 	Name:             "No requirments met",
 		// 	Args:             []string{"check", "--pre"},
 		// 	ExpectedResponse: "no-req-met-check-output.golden",
-		// 	MockResponse:     "no-req-met-check-input.golden",
 		// },
 	}
 

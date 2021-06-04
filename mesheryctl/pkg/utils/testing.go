@@ -13,7 +13,6 @@ type CmdTestInput struct {
 	Name             string
 	Args             []string
 	ExpectedResponse string
-	MockResponse     string
 }
 
 type GoldenFile struct {
