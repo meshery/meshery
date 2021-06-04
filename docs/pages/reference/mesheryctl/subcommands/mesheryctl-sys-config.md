@@ -53,7 +53,7 @@ list: exclude
 To configure Meshery to use Google Kubernetes Engine-
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl system config gke --token [path to token]
+  mesheryctl system config gke --token <path-to-token>
   </div>
 </pre>
 
