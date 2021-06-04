@@ -11,7 +11,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
@@ -86,7 +85,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
 	if err != nil && isPreRunExecution { // if this is PreRunExec we trigger self installation
-		log.Warn("!! Docker is not running")
+		fmt.Printf("!! Docker is not running\n")
 		//If preRunExecution and the current platform is docker then we trigger docker installation
 		//No auto installation of docker for windows
 		if runtime.GOOS == "windows" {
@@ -97,7 +96,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 			return errors.Wrapf(err, "failed to start Docker.")
 		}
 	} else if err != nil { // warn incase of preflight check
-		log.Warn("!! Docker is not running\n")
+		fmt.Printf("!! Docker is not running\n")
 	} else if !isPreRunExecution { // log incase of preflight check
 		fmt.Printf("√ Docker is running\n")
 	}
@@ -105,7 +104,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 	//Check for installed docker-compose on client system
 	err = exec.Command("docker-compose", "-v").Run()
 	if err != nil && isPreRunExecution { // if PreRunExec we trigger self installation
-		log.Warn("!! docker-compose is not available")
+		fmt.Printf("!! docker-compose is not available\n")
 		//No auto installation of Docker-compose for windows
 		if runtime.GOOS == "windows" {
 			return errors.Wrapf(err, "please install docker-compose. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
@@ -115,7 +114,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 			return errors.Wrapf(err, "failed to install prerequisites. Run `mesheryctl system %s` after docker-compose is installed.", subcommand)
 		}
 	} else if err != nil { // this is preflight check we just log a warning
-		log.Warn("!! docker-compose is not available")
+		fmt.Printf("!! docker-compose is not available\n")
 	} else if !isPreRunExecution { // log incase of preflight check
 		fmt.Printf("√ docker-compose is available\n")
 	}
@@ -131,8 +130,8 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	//Check whether k8s client can be initialized
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil && !isPreRunExecution { // this is preflight check
-		log.Warn("!! cannot initialize Kubernetes client")
-		log.Warn("!! cannot query the Kubernetes API")
+		fmt.Printf("!! cannot initialize Kubernetes client\n")
+		fmt.Printf("!! cannot query the Kubernetes API\n")
 		failure++ // increase failure count
 		return nil
 	} else if err != nil {
@@ -145,7 +144,7 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	podInterface := client.KubeClient.CoreV1().Pods("")
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil && !isPreRunExecution { // this is preflight check
-		log.Warn("!! cannot query the Kubernetes API")
+		fmt.Printf("!! cannot query the Kubernetes API\n")
 		failure++ // increase failure count
 	} else if err != nil {
 		return errors.New("ctlK8sConnect1001: !! cannot query the Kubernetes API. See https://docs.meshery.io/reference/error-codes")
@@ -168,7 +167,7 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	if err != nil {
 		// probably kubernetes isn't running
 		if !isPreRunExecution { // log incase of preflight checks
-			log.Warn("!! cannot check Kubernetes version")
+			fmt.Printf("!! cannot check Kubernetes version\n")
 		} else { // return as error in case of PreRunE
 			return err
 		}
@@ -177,7 +176,7 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 		// kubernetes is running so check the version
 		err = utils.CheckK8sVersion(kubeVersion)
 		if err != nil && !isPreRunExecution { // warn incase of preflight check
-			log.Warn(err)
+			fmt.Printf("%s\n", err)
 			failure++
 		} else if err != nil { // incase of PreRunExec return the error
 			return err
@@ -188,7 +187,7 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 
 	err = utils.CheckKubectlVersion()
 	if err != nil && !isPreRunExecution { // warn incase of preflight check
-		log.Warn(err)
+		fmt.Printf("%s\n", err)
 		failure++
 	} else if err != nil {
 		return err
