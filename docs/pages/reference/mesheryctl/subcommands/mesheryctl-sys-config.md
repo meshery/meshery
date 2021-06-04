@@ -62,7 +62,7 @@ To configure Meshery to use Google Kubernetes Engine-
 To configure Meshery to use Azure Kubernetes Service-
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl system config aks --token [path to token]
+  mesheryctl system config aks --token <path-to-token>
   </div>
 </pre>
 
