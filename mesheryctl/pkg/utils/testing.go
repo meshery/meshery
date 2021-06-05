@@ -9,10 +9,23 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/kr/pretty"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 )
+
+type TestHelper struct {
+	Version string
+	BaseURL string
+}
+
+func NewTestHelper(t *testing.T) *TestHelper {
+	return &TestHelper{
+		Version: "v0.5.10",
+		BaseURL: "http://localhost:9081",
+	}
+}
 
 type CmdTestInput struct {
 	Name             string
@@ -115,4 +128,13 @@ func SetupContextEnv(t *testing.T) {
 	if err != nil {
 		t.Error("error processing config", err)
 	}
+}
+
+func StartMockery(t *testing.T) {
+	// activate http mocking
+	httpmock.Activate()
+}
+
+func StopMockery(t *testing.T) {
+	httpmock.DeactivateAndReset()
 }
