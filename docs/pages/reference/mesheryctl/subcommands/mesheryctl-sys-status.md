@@ -16,7 +16,7 @@ lang: en
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.start.command %}{% assign command = command_hash[1] %}
+{% for command_hash in site.data.mesheryctlcommands.lifecycle.system.status.command %}{% assign command = command_hash[1] %}
 {{ command.description }}
 {% endfor %}
 
