@@ -122,13 +122,13 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 
 	gMux.Handle("/api/experimental/pattern/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileHandler)))).
 		Methods("POST", "DELETE")
-	gMux.Handle("/api/pattern", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
+	gMux.Handle("/api/experimental/pattern", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler)))).
 		Methods("POST", "GET")
-	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
+	gMux.Handle("/api/experimental/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler)))).
 		Methods("GET")
-	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
+	gMux.Handle("/api/experimental/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler)))).
 		Methods("DELETE")
-	gMux.HandleFunc("/api/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
+	gMux.HandleFunc("/api/experimental/oam/{type}", h.OAMRegisterHandler).Methods("GET", "POST")
 
 	gMux.Handle("/api/experimental/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler)))).
 		Methods("POST", "GET")

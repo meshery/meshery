@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/oam"
+	OAM "github.com/layer5io/meshery/models/pattern"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -21,7 +21,7 @@ type MesheryPatternRequestBody struct {
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/pattern
+// on the route /api/experimental/pattern
 func (h *Handler) PatternFileRequestHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -40,7 +40,7 @@ func (h *Handler) PatternFileRequestHandler(
 	}
 }
 
-// swagger:route POST /api/pattern PatternsAPI idPostPatternFile
+// swagger:route POST /api/experimental/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
 //
 // Edit/update a meshery pattern
@@ -183,7 +183,7 @@ func (h *Handler) handlePatternPOST(
 	}
 }
 
-// swagger:route GET /api/pattern PatternsAPI idGetPatternFiles
+// swagger:route GET /api/experimental/pattern PatternsAPI idGetPatternFiles
 // Handle GET request for patterns
 //
 // Returns the list of all the patterns saved by the current user
@@ -211,7 +211,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route DELETE /api/pattern/{id} PatternsAPI idDeleteMesheryPattern
+// swagger:route DELETE /api/experimental/pattern/{id} PatternsAPI idDeleteMesheryPattern
 // Handle Delete for a Meshery Pattern
 //
 // Deletes a meshery pattern with ID: id
@@ -238,7 +238,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
+// swagger:route GET /api/experimental/pattern/{id} PatternsAPI idGetMesheryPattern
 // Handle GET for a Meshery Pattern
 //
 // Fetches the pattern with the given id
