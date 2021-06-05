@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/models"
-	OAM "github.com/layer5io/meshery/models/pattern"
+	OAM "github.com/layer5io/meshery/models/oam"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
