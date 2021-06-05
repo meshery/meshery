@@ -792,3 +792,25 @@ func AskForInput(prompt string, allowed []string) string {
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
 }
+
+// PrintToTableInStringFormat prints the given data into a table format but return as a string
+func PrintToTableInStringFormat(header []string, data [][]string) string {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.Render()         // Render the table
+
+	return tableString.String()
+}
