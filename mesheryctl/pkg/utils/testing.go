@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/kr/pretty"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 )
@@ -50,11 +49,6 @@ func Equals(tb testing.TB, exp, act interface{}) {
 		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
 		tb.FailNow()
 	}
-}
-
-// Print difference
-func Diff(expected, actual interface{}) []string {
-	return pretty.Diff(expected, actual)
 }
 
 // Path to the current file
