@@ -16,7 +16,6 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 func TestFetchList(t *testing.T) {
-
 	utils.SetupContextEnv(t)
 	// Get viper instance used for context
 	mctlCfg, _ := config.GetMesheryCtl(viper.GetViper())
@@ -61,7 +60,10 @@ func TestFetchList(t *testing.T) {
 				// Test request parameters
 				utils.Equals(t, req.URL.String(), tt.URL)
 				// Send response to be tested
-				rw.Write([]byte(apiResponse))
+				_, err := rw.Write([]byte(apiResponse))
+				if err != nil {
+					t.Fatal(err)
+				}
 			}))
 			// t.Log(string(apiResponse))
 
@@ -94,9 +96,9 @@ func TestFetchList(t *testing.T) {
 				golden.Write(string(actualResponse))
 			}
 			// t.Log(string(actualResponse))
-			// expectedResponse := golden.LoadByte()
+			expectedResponse := golden.LoadByte()
 
-			utils.Equals(t, apiResponse, string(actualResponse))
+			utils.Equals(t, string(expectedResponse), string(actualResponse))
 		})
 	}
 }
