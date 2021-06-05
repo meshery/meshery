@@ -16,7 +16,6 @@ package system
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -107,8 +106,10 @@ var setCmd = &cobra.Command{
 				}
 			} else if channelNameSeperated[0] == "stable" {
 				if channelNameSeperated[1] != "latest" {
-					matched, err := regexp.Match("v\\d+\\.\\d+.\\d+\\-(?:alpha|beta|rc)-\\d+", []byte(channelNameSeperated[1]))
-					if err != nil || !matched && channelNameSeperated[1] != "latest" {
+					currCtx := mctlCfg.Contexts[focusedContext]
+					currCtx.Version = channelNameSeperated[1]
+					err := (&currCtx).ValidateVersion()
+					if err != nil {
 						return errors.New(fmt.Sprintf("%v is not a valid version tag", channelNameSeperated[1]))
 					}
 				}
