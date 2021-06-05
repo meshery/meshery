@@ -45,6 +45,7 @@ var listCmd = &cobra.Command{
 	Example: "mesheryctl perf list \nmesheryctl perf list [profile-id]",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page = 0 //Set the page number for API response to be zero
+		client := &http.Client{}
 
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -53,7 +54,7 @@ var listCmd = &cobra.Command{
 		}
 
 		if outputFormatFlag != "" {
-			return printOutputInFormat(mctlCfg, args)
+			return printOutputInFormat(client, mctlCfg, args)
 		}
 
 		if len(args) == 0 {
@@ -65,7 +66,7 @@ var listCmd = &cobra.Command{
 			// mainProfileLoop outputs profiles with pagination
 		mainProfileLoop:
 			for {
-				data, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
+				data, _, err := fetchPerformanceProfiles(client, mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles")
 				if err != nil {
 					return outputError(err)
 				} else if len(data) > 0 {
@@ -120,7 +121,7 @@ var listCmd = &cobra.Command{
 		// mainResultloop outputs results of a profile with pagination
 	mainResultloop:
 		for {
-			data, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
+			data, _, err := fetchPerformanceProfileResults(client, mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/results", profileID)
 			if err != nil {
 				return outputError(err)
 			} else if len(data) > 0 {
@@ -168,8 +169,7 @@ var listCmd = &cobra.Command{
 }
 
 // Fetch all the profiles
-func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
-	client := &http.Client{}
+func fetchPerformanceProfiles(client *http.Client, url string) ([][]string, []byte, error) {
 	var response *models.PerformanceProfilesAPIResponse
 	tempURL := fmt.Sprintf("%s?page_size=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
@@ -217,8 +217,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 }
 
 // Fetch results for a specific profile
-func fetchPerformanceProfileResults(url string, profileID string) ([][]string, []byte, error) {
-	client := &http.Client{}
+func fetchPerformanceProfileResults(client *http.Client, url string, profileID string) ([][]string, []byte, error) {
 	var response *models.PerformanceResultsAPIResponse
 	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, limitResults, page)
 	req, err := http.NewRequest("GET", tempURL, nil)
@@ -272,12 +271,12 @@ func fetchPerformanceProfileResults(url string, profileID string) ([][]string, [
 	return data, body, nil
 }
 
-func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error {
+func printOutputInFormat(client *http.Client, mctlCfg *config.MesheryCtlConfig, args []string) error {
 	// set the number of results equal to 25
 	limitResults = 25
 	//Print profiles in given format
 	if len(args) == 0 {
-		_, body, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles")
+		_, body, err := fetchPerformanceProfiles(client, mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles")
 		if err != nil {
 			return err
 		}
@@ -293,7 +292,7 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 		return nil
 	}
 	// print results in given format
-	_, body, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+args[0]+"/results", args[0])
+	_, body, err := fetchPerformanceProfileResults(client, mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+args[0]+"/results", args[0])
 	if err != nil {
 		return err
 	}
