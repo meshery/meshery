@@ -37,6 +37,7 @@ func TestFetchList(t *testing.T) {
 		Fixture          string
 		URL              string
 		Token            string
+		ExpectError      bool
 	}{
 		{
 			Name:             "Fetch Profiles",
@@ -44,6 +45,7 @@ func TestFetchList(t *testing.T) {
 			Fixture:          "profile.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
 		},
 		{
 			Name:             "Fetch Results",
@@ -51,6 +53,23 @@ func TestFetchList(t *testing.T) {
 			Fixture:          "result.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Fetch Profiles with no token",
+			ExpectedResponse: "profile.no.token.golden",
+			Fixture:          "profile.api.response.golden",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles",
+			Token:            "",
+			ExpectError:      true,
+		},
+		{
+			Name:             "Fetch Results with No token",
+			ExpectedResponse: "result.no.token.golden",
+			Fixture:          "result.api.response.golden",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
+			Token:            "",
+			ExpectError:      true,
 		},
 	}
 
@@ -71,19 +90,25 @@ func TestFetchList(t *testing.T) {
 			var err error
 			if tt.Name == "Fetch Profiles" {
 				_, actualResponse, err = fetchPerformanceProfiles(tt.URL)
-				if err != nil {
-					t.Fatal(err)
-				}
 			} else {
 				_, actualResponse, err = fetchPerformanceProfileResults(tt.URL, "ecddef09-7411-4b9e-b06c-fd55ff5debbc")
-				if err != nil {
-					t.Fatal(err)
-				}
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
+			// if we're supposed to get an error
+			if tt.ExpectError {
+				if *update {
+					golden.Write(err.Error())
+				}
+				expectedResponse := golden.Load()
+
+				utils.Equals(t, expectedResponse, err.Error())
+				return
+			}
+
+			// when we're supposed to fetch data
 			if *update {
 				golden.Write(string(actualResponse))
 			}
@@ -92,5 +117,7 @@ func TestFetchList(t *testing.T) {
 			utils.Equals(t, string(expectedResponse), string(actualResponse))
 		})
 	}
+
+	// stop mock server
 	utils.StopMockery(t)
 }
