@@ -13,34 +13,19 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestPreflightCmd(t *testing.T) {
+func TestDefaultPreflightCmd(t *testing.T) {
 	SetupContextEnv(t)
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "Run preflight check",
 			Args:             []string{"check", "--pre"},
-			ExpectedResponse: "default-check-output.golden",
+			ExpectedResponse: "check.output.golden",
 		},
 		{
 			Name:             "Run preflight check",
 			Args:             []string{"check", "--preflight"},
-			ExpectedResponse: "default-check-output.golden",
+			ExpectedResponse: "check.output.golden",
 		},
-		// {
-		// 	Name:             "Docker not available",
-		// 	Args:             []string{"check", "--pre"},
-		// 	ExpectedResponse: "docker-not-check-output.golden",
-		// },
-		// {
-		// 	Name:             "Kubernetes not available",
-		// 	Args:             []string{"check", "--pre"},
-		// 	ExpectedResponse: "k8s-not-check-output.golden",
-		// },
-		// {
-		// 	Name:             "No requirments met",
-		// 	Args:             []string{"check", "--pre"},
-		// 	ExpectedResponse: "no-req-met-check-output.golden",
-		// },
 	}
 
 	for _, tt := range tests {
