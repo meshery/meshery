@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -184,23 +185,27 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 			r.Log.Error(err)
 			return
 		}
-
-		select {
-		case <-r.MeshSyncChannel:
-			status, err := r.getOperatorStatus(ctx)
-			if err != nil {
-				r.Log.Error(ErrOperatorSubscription(err))
-				return
-			}
-
-			if status.Status != model.StatusEnabled {
-				_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
+		for {
+			select {
+			case <-r.MeshSyncChannel:
+				status, err := r.getOperatorStatus(ctx)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
 					return
 				}
+
+				if status.Status != model.StatusEnabled {
+					_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
+					if err != nil {
+						r.Log.Error(ErrOperatorSubscription(err))
+						return
+					}
+				}
+				r.operatorChannel <- status
+			case <-ctx.Done():
+				r.Log.Info("Operator subscription flushed")
+				return
 			}
-			r.operatorChannel <- status
 		}
 	}()
 
@@ -240,10 +245,18 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 				Address: strings.Split(broker.Status.Endpoint.External, ":")[0],
 				Port:    int32(port),
 			}, nil) {
-				if utils.TcpCheck(&utils.HostPort{
+				if !utils.TcpCheck(&utils.HostPort{
 					Address: "host.docker.internal",
 					Port:    int32(port),
 				}, nil) {
+					u, _ := url.Parse(r.KubeClient.RestConfig.Host)
+					if utils.TcpCheck(&utils.HostPort{
+						Address: u.Hostname(),
+						Port:    int32(port),
+					}, nil) {
+						endpoint = fmt.Sprintf("%s:%d", u.Hostname(), int32(port))
+					}
+				} else {
 					endpoint = fmt.Sprintf("host.docker.internal:%d", int32(port))
 				}
 			}
