@@ -65,7 +65,7 @@ func TestDefaultPreflightCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
-				t.Fatalf("diff: %v", utils.Diff(expectedResponse, actualResponse))
+				utils.Equals(t, expectedResponse, actualResponse)
 				// t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
 		})
