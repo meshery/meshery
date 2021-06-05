@@ -1,1 +1,2 @@
-{"page":0,"page_size":10,"total_count":1,"profiles":[{"id":"ecddef09-7411-4b9e-b06c-fd55ff5debbc","name":"New","user_id":"5157b2ae-4f7c-44b8-b7d6-4e13a177ef20","load_generators":["fortio"],"endpoints":["https://soundcloud.com/saqib-zaidi-741169929/te-amo-ash-king-harrlin-flip"],"service_mesh":"app mesh","duration":"30s","last_run":"2021-06-04T17:44:31.223231Z","total_results":1,"created_at":"2021-06-04T04:38:09.63034Z","updated_at":"2021-06-04T04:38:09.63035Z"}]}
+NAME	ID                                  	RESULTS	LAST-RUN          
+New 	ecddef09-7411-4b9e-b06c-fd55ff5debbc	1      	6-4-2021 17:44:31	

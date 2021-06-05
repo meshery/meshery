@@ -33,6 +33,7 @@ func TestFetchList(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []struct {
 		Name             string
+		Fetch            string
 		ExpectedResponse string
 		Fixture          string
 		URL              string
@@ -41,6 +42,7 @@ func TestFetchList(t *testing.T) {
 	}{
 		{
 			Name:             "Fetch Profiles",
+			Fetch:            "Profiles",
 			ExpectedResponse: "profile.output.golden",
 			Fixture:          "profile.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles",
@@ -49,6 +51,7 @@ func TestFetchList(t *testing.T) {
 		},
 		{
 			Name:             "Fetch Results",
+			Fetch:            "Results",
 			ExpectedResponse: "result.output.golden",
 			Fixture:          "result.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
@@ -57,6 +60,7 @@ func TestFetchList(t *testing.T) {
 		},
 		{
 			Name:             "Fetch Profiles with no token",
+			Fetch:            "Profiles",
 			ExpectedResponse: "profile.no.token.golden",
 			Fixture:          "profile.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles",
@@ -65,6 +69,7 @@ func TestFetchList(t *testing.T) {
 		},
 		{
 			Name:             "Fetch Results with No token",
+			Fetch:            "Results",
 			ExpectedResponse: "result.no.token.golden",
 			Fixture:          "result.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
@@ -86,12 +91,12 @@ func TestFetchList(t *testing.T) {
 			httpmock.RegisterResponder("GET", tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
 
-			var actualResponse []byte
+			var data [][]string
 			var err error
-			if tt.Name == "Fetch Profiles" {
-				_, actualResponse, err = fetchPerformanceProfiles(tt.URL)
+			if tt.Fetch == "Profiles" {
+				data, _, err = fetchPerformanceProfiles(tt.URL)
 			} else {
-				_, actualResponse, err = fetchPerformanceProfileResults(tt.URL, "ecddef09-7411-4b9e-b06c-fd55ff5debbc")
+				data, _, err = fetchPerformanceProfileResults(tt.URL, "ecddef09-7411-4b9e-b06c-fd55ff5debbc")
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
@@ -99,6 +104,7 @@ func TestFetchList(t *testing.T) {
 
 			// if we're supposed to get an error
 			if tt.ExpectError {
+				// write it in file
 				if *update {
 					golden.Write(err.Error())
 				}
@@ -107,14 +113,21 @@ func TestFetchList(t *testing.T) {
 				utils.Equals(t, expectedResponse, err.Error())
 				return
 			}
-
 			// when we're supposed to fetch data
-			if *update {
-				golden.Write(string(actualResponse))
+			var actualResponse string
+			if tt.Fetch == "Profiles" {
+				actualResponse = utils.PrintToTableInStringFormat([]string{"Name", "ID", "RESULTS", "LAST-RUN"}, data)
+			} else {
+				actualResponse = utils.PrintToTableInStringFormat([]string{"NAME", "MESH", "START-TIME", "QPS", "DURATION", "P50", "P99.9"}, data)
 			}
-			expectedResponse := golden.LoadByte()
 
-			utils.Equals(t, string(expectedResponse), string(actualResponse))
+			// write it in file
+			if *update {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			utils.Equals(t, expectedResponse, actualResponse)
 		})
 	}
 
