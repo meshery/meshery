@@ -60,6 +60,7 @@ func persistData(msg broker.Message,
 ) {
 	defer wg.Done()
 	objectJSON, _ := utils.Marshal(msg.Object)
+	log.Info("Type:", msg.ObjectType)
 	switch msg.ObjectType {
 	case broker.MeshSync:
 		object := meshsyncmodel.Object{}

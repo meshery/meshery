@@ -171,7 +171,7 @@ Meshery is the service-mesh-neutral utility for uniformly managing the performan
 
 <p style="clear:both;">
 
-Meshery provides tooling to validate any service mesh that claims to implement and <a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="45%" align="left" /></a>conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface), it essentially provides:
+Meshery provides tooling to validate any service mesh that claims to implement and <a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="45%" align="left" /></a>conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface-conformance), it essentially provides:
 
 ✔︎ Defines compliant behavior.<br />
 ✔︎ Produces compatibility matrix. <br />

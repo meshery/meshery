@@ -18,7 +18,6 @@ function fetchQuery(operation, variables) {
 
 function setupSubscription(config, variables, cacheConfig, observer) {
   const query = config.text;
-  console.log("ws://"+window.location.host+":"+window.location.port+"/api/system/graphql/query")
   const subscriptionClient = new SubscriptionClient("ws://"+window.location.host+"/api/system/graphql/query", {
     reconnect: true,
   });
