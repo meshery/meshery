@@ -52,14 +52,4 @@ list: exclude
 <br/>
 
 <!-- Options/Flags available in this command -->
-## Options & Flags
 
-
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.logs.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
-  </div>
-</pre>
-<br/>

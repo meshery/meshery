@@ -66,7 +66,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=16><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
+      <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -151,13 +151,13 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
     {% endfor %}
   {% endfor %}
-  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.log.command %}{% assign subcommand = subcommand_hash[1] %}
+    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.logs.command %}{% assign subcommand = subcommand_hash[1] %}
     <tr>
-      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/log">{{ subcommand.name }}</a></td>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/logs">{{ subcommand.name }}</a></td>
       <td></td>
       <td>{{ subcommand.description }}</td>
     </tr>
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.log.flag %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.logs.flag %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.flag }}</td>
         <td>{{ flag.description }}</td>
