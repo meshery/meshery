@@ -232,8 +232,8 @@ class MeshConfigComponent extends React.Component {
   setOperatorState = (res) => {
     const self = this;
     if (res.operator?.error) {
-      self.handleError(res.operator?.error?.description || "Operator could not be reached");
-      return;
+      self.handleError("Operator could not be reached")(res.operator?.error?.description)
+      return false
     }
 
     if (res.operator?.status === "ENABLED") {
@@ -253,9 +253,9 @@ class MeshConfigComponent extends React.Component {
       self.setState({
         operatorInstalled: true,
         operatorSwitch: true,
-        operatorVersion: res.operator?.version,
-      });
-      return;
+        operatorVersion:res.operator?.version,
+      })
+      return true
     }
 
     self.setState({
@@ -263,11 +263,13 @@ class MeshConfigComponent extends React.Component {
       NATSInstalled: false,
       meshSyncInstalled: false,
       operatorSwitch: false,
-      operatorVersion: "N/A",
-      meshSyncVersion: "N/A",
-      NATSVersion: "N/A",
-    });
-  };
+      operatorVersion:"N/A",
+      meshSyncVersion:"N/A",
+      NATSVersion:"N/A",
+    })
+
+    return false
+  }
 
   handleOperatorSwitch = () => {
     const self = this;
@@ -482,27 +484,35 @@ class MeshConfigComponent extends React.Component {
   };
 
   handleOperatorClick = () => {
-    var variant = "success";
-    var message = "Meshery Operator successfully pinged";
-    if (this.state.operatorInstalled == false) {
-      variant = "error";
-      message = "Meshery Operator is not installed";
-    } else {
-      if (this.state.operatorVersion == "N/A") {
-        variant = "error";
-        message = "Meshery Operator is disconnected";
-      }
-    }
-    this.props.enqueueSnackbar(message, {
-      variant: variant,
-      autoHideDuration: 2000,
-      action: (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-    });
-  };
+    this.props.updateProgress({ showProgress: true });
+    const self = this;
+    fetchMesheryOperatorStatus()
+      .subscribe({
+        next: res => {
+          let state = self.setOperatorState(res)
+          self.props.updateProgress({ showProgress: false });
+          if (state == true) {
+            this.props.enqueueSnackbar('Operator was successfully pinged!', {
+              variant: 'success',
+              autoHideDuration: 2000,
+              action: (key) => (
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => self.props.closeSnackbar(key)}
+                >
+                  <CloseIcon />
+                </IconButton>
+              ),
+            });
+          } else {
+            self.handleError("Operator could not be reached")("Operator is disabled")
+          }
+        },
+        error: self.handleError("Operator could not be pinged"),
+      })
+  }
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress: false });
