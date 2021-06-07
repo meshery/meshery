@@ -152,7 +152,7 @@ jobs:
         npm test
         cd ..
     - name: Upload coverage to Codecov (ui)
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v1.0.6
       with:
         files: ./provider-ui/coverage/coverage-summary.json
         directory: ./provider-ui/coverage/lcov-report

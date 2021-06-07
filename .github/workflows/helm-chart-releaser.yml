@@ -74,4 +74,5 @@ jobs:
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
+          linting: off
           chart_version: ${GITHUB_REF/refs\/tags\//}
