@@ -14,10 +14,20 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 ## Bash
 
 **Install** and **Upgrade**
-
+<h6>Install on docker</h6>
  <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">
- curl -L https://git.io/meshery | bash -
+ <div class="codeblock">
+ <div class="clipboardjs">
+ curl -L https://git.io/meshery | PLATFORM=docker bash -
+ </div></div>
+ </pre>
+ 
+
+<h6>Install on Kubernetes</h6>
+ <pre class="codeblock-pre">
+ <div class="codeblock">
+ <div class="clipboardjs">
+ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
@@ -35,6 +45,19 @@ To install `mesheryctl` using homebrew, execute the following commands.
 </pre>
 
 You need to have `brew` installed on your Mac or Linux system to perform these actions.
+
+You're ready to run Meshery. To do so, execute the following command.
+
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+mesheryctl system start
+
+</div></div>
+</pre>
+
+`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
+
+If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
 
 **Upgrade**
 
@@ -61,6 +84,44 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> Checking for dependents of upgraded formulae...
 ==> No dependents found!
 ```
+
+## Kubernetes 
+
+**Install**
+
+<h6>Using mesheryctl</h6>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system context create k8s -p kubernetes -s
+ mesheryctl system start
+ </div></div>
+</pre>
+Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
+
+<h6>Using Helm</h6>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+ <div class="clipboardjs">
+ kubectl create ns meshery
+ helm repo add meshery https://meshery.io/charts/
+ helm install meshery meshery/meshery -n meshery
+ </div></div>
+</pre>
+Not a Helm user? Use the Meshery manifests directly.
+
+<h6>Using Manifests</h6>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+ <div class="clipboardjs">
+ $ git clone https://github.com/layer5io/meshery.git; cd meshery
+ $ kubectl create ns meshery
+ $ kubectl -n meshery apply -f install/deployment_yamls/k8s
+ </div></div>
+</pre>
 
 ## Scoop
 
