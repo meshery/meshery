@@ -92,7 +92,7 @@ const infoloadGenerators = <>Which load generators does Meshery support?<ul>
   <li>fortio - Fortio load testing library, command line tool, advanced echo server and web UI in go (golang). Allows to specify a set query-per-second load and record latency histograms and other useful stats. </li>
   <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li> 
   <li> nighthawk - Enables users to run distributed performance tests to better mimic real-world, distributed systems scenarios.</li></ul>
-  <Link style={{textDecoration: 'underline'}} color='inherit' href="https://docs.meshery.io/functionality/performance-management">   Performance Management</Link></>
+<Link style={{textDecoration: 'underline'}} color='inherit' href="https://docs.meshery.io/functionality/performance-management">   Performance Management</Link></>
 const styles = (theme) => ({
   root: {
     padding: theme.spacing(10),
