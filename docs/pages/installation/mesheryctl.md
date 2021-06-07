@@ -14,7 +14,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
 ## Bash
 
 **Install** and **Upgrade**
-<h6>Install on docker</h6>
+<h6>Install on Docker</h6>
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
