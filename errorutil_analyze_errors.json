@@ -1,0 +1,286 @@
+{
+  "entries": [
+    {
+      "name": "ErrInvalidKubeConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrInvalidK8sContextName",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrInvalidRequestCode",
+      "old_code": "test_code",
+      "code": "1000",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNilClientCode",
+      "old_code": "test_code",
+      "code": "1001",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrCreateDataCode",
+      "old_code": "test_code",
+      "code": "1002",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrQueryCode",
+      "old_code": "test_code",
+      "code": "1003",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrMeshsyncSubscriptionCode",
+      "old_code": "test_code",
+      "code": "1004",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrOperatorSubscriptionCode",
+      "old_code": "test_code",
+      "code": "1005",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrAddonSubscriptionCode",
+      "old_code": "test_code",
+      "code": "1006",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrControlPlaneSubscriptionCode",
+      "old_code": "test_code",
+      "code": "1007",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrMesheryClientCode",
+      "old_code": "test_code",
+      "code": "1008",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrSubscribeChannelCode",
+      "old_code": "test_code",
+      "code": "1009",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoMeshSyncCode",
+      "old_code": "test_code",
+      "code": "1010",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrInvalidRequest",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoMeshSync",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrEmptyHandler",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    }
+  ],
+  "literal_codes": {
+    "test_code": [
+      {
+        "name": "ErrInvalidRequestCode",
+        "old_code": "test_code",
+        "code": "1000",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrNilClientCode",
+        "old_code": "test_code",
+        "code": "1001",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrCreateDataCode",
+        "old_code": "test_code",
+        "code": "1002",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrQueryCode",
+        "old_code": "test_code",
+        "code": "1003",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrMeshsyncSubscriptionCode",
+        "old_code": "test_code",
+        "code": "1004",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrOperatorSubscriptionCode",
+        "old_code": "test_code",
+        "code": "1005",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrAddonSubscriptionCode",
+        "old_code": "test_code",
+        "code": "1006",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrControlPlaneSubscriptionCode",
+        "old_code": "test_code",
+        "code": "1007",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrMesheryClientCode",
+        "old_code": "test_code",
+        "code": "1008",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrSubscribeChannelCode",
+        "old_code": "test_code",
+        "code": "1009",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      },
+      {
+        "name": "ErrNoMeshSyncCode",
+        "old_code": "test_code",
+        "code": "1010",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "internal/graphql/resolver/error.go"
+      }
+    ]
+  },
+  "call_expr_codes": [
+    {
+      "name": "ErrInvalidKubeConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrInvalidK8sContextName",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/k8sconfig_handler.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrInvalidRequest",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoMeshSync",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrEmptyHandler",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "internal/graphql/resolver/error.go"
+    }
+  ],
+  "deprecated_new_default": [
+    "internal/graphql/resolver/error.go"
+  ],
+  "errors_raw": {}
+}

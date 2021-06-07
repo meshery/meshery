@@ -1,0 +1,32 @@
+{
+  "min_code": 9223372036854775807,
+  "max_code": -9223372036854775808,
+  "duplicate_codes": {
+    "test_code": [
+      "ErrInvalidRequestCode",
+      "ErrNilClientCode",
+      "ErrCreateDataCode",
+      "ErrQueryCode",
+      "ErrMeshsyncSubscriptionCode",
+      "ErrOperatorSubscriptionCode",
+      "ErrAddonSubscriptionCode",
+      "ErrControlPlaneSubscriptionCode",
+      "ErrMesheryClientCode",
+      "ErrSubscribeChannelCode",
+      "ErrNoMeshSyncCode"
+    ]
+  },
+  "duplicate_names": [],
+  "call_expr_codes": [
+    "ErrInvalidKubeConfig",
+    "ErrInvalidK8sContextName",
+    "ErrNilClient",
+    "ErrInvalidRequest",
+    "ErrNoMeshSync",
+    "ErrEmptyHandler"
+  ],
+  "int_codes": null,
+  "deprecated_new_default": [
+    "internal/graphql/resolver/error.go"
+  ]
+}
