@@ -75,15 +75,6 @@ var applyCmd = &cobra.Command{
 				log.Debug("Using random test name: ", testName)
 			}
 
-			if testURL == "" {
-				return errors.New(utils.PerfError("please enter a test URL"))
-			}
-
-			// Method to check if the entered Test URL is valid or not
-			if validURL := govalidator.IsURL(testURL); !validURL {
-				return errors.New(utils.PerfError("please enter a valid test URL"))
-			}
-
 			// If profile-id not passed than create a profile
 			if len(args) == 0 { // First need to create a profile id
 				log.Debug("Creating new performance profile")
@@ -91,6 +82,7 @@ var applyCmd = &cobra.Command{
 				if profileName == "" {
 					return errors.New(utils.PerfError("please enter a profile-name"))
 				}
+
 				convReq, err := strconv.Atoi(concurrentRequests)
 				if err != nil {
 					return errors.New("failed to convert concurrent-request")
@@ -148,6 +140,57 @@ var applyCmd = &cobra.Command{
 				log.Debug("New profile created")
 			} else { // set profile-id from args
 				profileID = args[0]
+
+				// what if user passed profile-id but didn't passed the url
+				// we fetch performance profile first
+				if testURL == "" {
+					log.Debug("Fetching performance profile")
+
+					req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID, nil)
+					if err != nil {
+						return err
+					}
+
+					err = utils.AddAuthDetails(req, tokenPath)
+					if err != nil {
+						return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
+					}
+
+					resp, err := client.Do(req)
+					if err != nil {
+						return err
+					}
+
+					var response *models.PerformanceProfile
+					// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
+					if resp.StatusCode != 200 {
+						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+					}
+					defer resp.Body.Close()
+					body, err := ioutil.ReadAll(resp.Body)
+					if err != nil {
+						return errors.Wrap(err, utils.PerfError("failed to read response body"))
+					}
+					err = json.Unmarshal(body, &response)
+					if err != nil {
+						return errors.Wrap(err, "failed to unmarshal response body")
+					}
+
+					profileID = response.ID.String()
+					profileName = response.Name
+					testURL = response.Endpoints[0]
+				}
+			}
+
+			if testURL == "" {
+				return errors.New(utils.PerfError("please enter a test URL"))
+			}
+
+			log.Debugf("test-url set to %s", testURL)
+
+			// Method to check if the entered Test URL is valid or not
+			if validURL := govalidator.IsURL(testURL); !validURL {
+				return errors.New(utils.PerfError("please enter a valid test URL"))
 			}
 
 			req, err = http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
