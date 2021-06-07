@@ -102,6 +102,15 @@ func start() error {
 		return err
 	}
 
+	if utils.PlatformFlag != "" {
+		currCtx.Platform = utils.PlatformFlag
+		err := utils.ChangePlatform(mctlCfg.CurrentContext, currCtx)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	currPlatform := currCtx.Platform
 	RequestedAdapters := currCtx.Adapters // Requested Adapters / Services
 
@@ -374,7 +383,7 @@ func start() error {
 
 		// switch to default case if the platform specified is not supported
 	default:
-		log.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder)
+		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
 	}
 
 	err = utils.DownloadOperatorManifest()
@@ -400,6 +409,7 @@ func start() error {
 }
 
 func init() {
+	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 }
