@@ -185,6 +185,21 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 			r.Log.Error(err)
 			return
 		}
+
+		// Enforce enable operator
+		status, err := r.getOperatorStatus(ctx)
+		if err != nil {
+			r.Log.Error(ErrOperatorSubscription(err))
+			return
+		}
+		if status.Status != model.StatusEnabled {
+			_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
+			if err != nil {
+				r.Log.Error(ErrOperatorSubscription(err))
+				return
+			}
+		}
+
 		for {
 			select {
 			case <-r.MeshSyncChannel:
@@ -192,14 +207,6 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
 					return
-				}
-
-				if status.Status != model.StatusEnabled {
-					_, err = r.changeOperatorStatus(ctx, model.StatusEnabled)
-					if err != nil {
-						r.Log.Error(ErrOperatorSubscription(err))
-						return
-					}
 				}
 				r.operatorChannel <- status
 			case <-ctx.Done():
