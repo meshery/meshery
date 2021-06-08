@@ -83,11 +83,19 @@ Sub-components deploy as a unit, however, they do not share the same version num
 
 ### Meshery Docker Deployments
 
-In order to upgrade Meshery Server, Adapters, and UI, execute the following command:
+In order to pull the latest images for Meshery Server, Adapters, and UI, execute the following command:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
  mesheryctl system update
+ </div></div>
+ </pre>
+
+If you wish to update a running Meshery deployment with the images you just pulled, you'll also have to execute:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">
+ mesheryctl system restart
  </div></div>
  </pre>
 

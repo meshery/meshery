@@ -32,10 +32,11 @@ Follow these steps and you'll be right at home.
 - [General Contribution Flow]({{site.baseurl}}/project/contributing#general-contribution-flow)
 - <a href="#commit-signing">Developer Certificate of Origin</a>
 - Meshery Contribution Flow
-  - <a href="#contributing-docs">Meshery Documentation</a>
+  - <a href="{{site.baseurl}}/project/contributing-docs">Meshery Documentation</a>
+  - <a href="{{site.baseurl}}/project/contributing-cli">Meshery CLI</a>
   - <a href="#contributing-meshery">Meshery Backend</a>
     - <a href="#adapter">Writing a Meshery Adapter</a>
-  - <a href="#contributing-ui">Meshery UI</a>
+  - <a href="{{site.baseurl}}/project/contributing-ui">Meshery UI</a>
     Relevant coding style guidelines are the Go Code Review Comments and the Formatting and style section of Peter Bourgon's Go: Best Practices for Production Environments.
 
 ## <a name="contributing">General Contribution Flow</a>
@@ -80,23 +81,6 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 <a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
-### <a name="contributing-docs">Documentation Contribution Flow</a>
-
-Please contribute! Meshery documentation uses GitHub Pages to host the docs site. Learn more about [Meshery's documentation framework](https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit?usp=sharing). The process of contributing follows this flow:
-
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
-1. In the local copy of your fork, navigate to the docs folder.
-   `cd docs`
-1. Create and checkout a new branch to make changes within
-   `git checkout -b <my-changes>`
-1. Edit/add documentation.
-   `vi <specific page>.md`
-1. Run site locally to preview changes.
-   `make site`
-1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
-   `git push origin <my-changes>`
-1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
-
 ### <a name="contributing-meshery">Meshery Contribution Flow</a>
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
@@ -132,23 +116,6 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 ```sh
 make docker
 ```
-
-#### <a name="adapter">Writing a Meshery Adapter</a>
-
-Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
-
-1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
-1. Generate code
-   1. Using Go as an example, do the following:
-      - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
-      - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-      - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
-   1. For other languages, please refer to gRPC.io for language-specific guides.
-1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
-
-_Tip:_ The [Meshery Adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery Adapter written in Go.
 
 # Suggested Reading
 
