@@ -18,7 +18,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | PLATFORM=docker bash -
+ $ curl -L https://git.io/meshery | PLATFORM=docker bash -
  </div></div>
  </pre>
  
@@ -27,7 +27,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
- curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+ $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
@@ -50,7 +50,7 @@ You're ready to run Meshery. To do so, execute the following command.
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-mesheryctl system start
+ $ mesheryctl system start
 
 </div></div>
 </pre>
@@ -94,8 +94,8 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 <pre class="codeblock-pre">
 <div class="codeblock">
  <div class="clipboardjs">
- mesheryctl system context create k8s -p kubernetes -s
- mesheryctl system start
+ $ mesheryctl system context create k8s -p kubernetes -s
+ $ mesheryctl system start
  </div></div>
 </pre>
 Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
@@ -105,9 +105,9 @@ Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
 <pre class="codeblock-pre">
 <div class="codeblock">
  <div class="clipboardjs">
- kubectl create ns meshery
- helm repo add meshery https://meshery.io/charts/
- helm install meshery meshery/meshery -n meshery
+ $ kubectl create ns meshery
+ $ helm repo add meshery https://meshery.io/charts/
+ $ helm install meshery meshery/meshery -n meshery
  </div></div>
 </pre>
 Not a Helm user? Use the Meshery manifests directly.
@@ -130,8 +130,8 @@ Not a Helm user? Use the Meshery manifests directly.
 **Install**
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
-scoop install mesheryctl
+ $ scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+ $ scoop install mesheryctl
 
 </div></div>
 </pre>
@@ -142,7 +142,7 @@ You're ready to run Meshery. To do so, execute the following command.
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-mesheryctl system start
+ $ mesheryctl system start
 
 </div></div>
 </pre>
@@ -157,7 +157,7 @@ To upgrade `mesheryctl`, just execute the following command.
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
-scoop update mesheryctl
+ $ scoop update mesheryctl
 
 </div></div>
 </pre>
