@@ -64,7 +64,7 @@ type IDParameterWrapper struct {
 	ID uuid.UUID `json:"id"`
 }
 
-// swagger:parameters idPostGrafanaConfig idDeleteGrafanaConfig
+// swagger:parameters idPostGrafanaConfig
 type grafanaConfigParamsWrapper struct {
 	// in: body
 	// required: true
@@ -83,4 +83,33 @@ type grafanaBoardsResponseWrapper struct {
 type v1ServicesMapResponseWrapper struct {
 	// in: body
 	Body map[string][]v1.Service
+}
+
+// Parameters for persisting or deleting prometheus url
+// swagger:parameters idPostPrometheusConfig
+type prometheusConfigParamsWrapper struct {
+	// in: body
+	PrometheusURL string `json:"prometheusURL,omitempty"`
+}
+
+// Response for prometheus board import
+// swagger:response prometheusBoardImportRespWrapper
+type prometheusBoardImportRespWrapper struct {
+	// in: body
+	Body *models.GrafanaBoard
+}
+
+// Returns Prometheus static board
+// swagger:response prometheusStaticBoardRespWrapper
+type prometheusStaticBoardRespWrapper struct {
+	// in: body
+	Body map[string]*models.GrafanaBoard
+}
+
+// Save selected Prometheus boards
+// swagger:parameters idPostPrometheusBoard
+type prometheusBoardParamsWrapper struct {
+	// in: body
+	// required: true
+	Body []*models.SelectedGrafanaConfig
 }

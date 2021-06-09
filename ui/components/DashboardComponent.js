@@ -589,7 +589,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/prometheus/ping",
+      "/api/telemetry/metrics/ping",
       {
         credentials: "same-origin",
         credentials: "include",

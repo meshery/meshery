@@ -97,6 +97,20 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 	}
 }
 
+// swagger:route POST /api/telemetry/metrics/config PrometheusAPI idPostPrometheusConfig
+// Handle POST for Prometheus configuration
+//
+// Used for persisting Prometheus configuration
+// responses:
+//  200:
+
+// swagger:route DELETE /api/telemetry/metrics/config PrometheusAPI idDeletePrometheusConfig
+// Handle DELETE for Prometheus configuration
+//
+// Used for deleting Prometheus configuration
+// responses:
+//  200:
+
 // PrometheusConfigHandler is used for persisting prometheus configuration
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
@@ -138,6 +152,13 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	_, _ = w.Write([]byte("{}"))
 }
 
+// swagger:route GET /api/telemetry/metrics/ping PrometheusAPI idGetPrometheusPing
+// Handle GET request for Prometheus Ping
+//
+// Used to ping prometheus
+// responses:
+// 	200:
+
 // PrometheusPingHandler - fetches server version to simulate ping
 func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodGet {
@@ -163,6 +184,13 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 	_, _ = w.Write([]byte("{}"))
 }
+
+// swagger:route POST /api/telemetry/metrics/board_import PrometheusAPI idPostPrometheusBoardImport
+// Handle POST request for Prometheus board import
+//
+// Used for importing Grafana board for Prometheus
+// responses:
+// 	200: prometheusBoardImportRespWrapper
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -201,6 +229,13 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 		return
 	}
 }
+
+// swagger:route GET /api/telemetry/metrics/query PrometheusAPI idGetPrometheusQuery
+// Handle GET request for Prometheus Query
+//
+// Used to prometheus queries
+// responses:
+// 	200:
 
 // PrometheusQueryHandler handles prometheus queries
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -256,6 +291,13 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	_, _ = w.Write(data)
 }
 
+// swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard
+// Handle GET request for Prometheus static board
+//
+// Used to fetch the static board
+// responses:
+// 	200: prometheusStaticBoardRespWrapper
+
 // PrometheusStaticBoardHandler returns the static board
 func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	// if req.Method != http.MethodGet {
@@ -306,6 +348,13 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		return
 	}
 }
+
+// swagger:route POST /api/telemetry/metrics/boards PrometheusAPI idPostPrometheusBoard
+// Handle POST request for Prometheus board
+//
+// Used to persist selected board and panels
+// responses:
+// 	200:
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

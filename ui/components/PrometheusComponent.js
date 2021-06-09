@@ -68,7 +68,7 @@ export const submitPrometheusConfigure = (self, cb) => {
     .join("&");
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    "/api/prometheus/config",
+    "/telemetry/metrics/config",
     {
       credentials: "same-origin",
       method: "POST",
@@ -195,7 +195,7 @@ class PrometheusComponent extends Component {
     const self = this;
     self.props.updateProgress({ showProgress: true });
     dataFetch(
-      "/api/prometheus/config",
+      "/telemetry/metrics/config",
       {
         credentials: "same-origin",
         method: "DELETE",
@@ -225,7 +225,7 @@ class PrometheusComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/prometheus/ping",
+      "/api/telemetry/metrics/ping",
       {
         credentials: "same-origin",
         credentials: "include",
