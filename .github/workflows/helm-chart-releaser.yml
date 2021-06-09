@@ -36,6 +36,9 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v2
+      - name: set env
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       #- name: Publish Helm chart for edge latest
       #  if: startsWith(github.ref, 'refs/tags/') != true && success()
       #  uses: stefanprodan/helm-gh-pages@master
@@ -74,5 +77,4 @@ jobs:
           target_dir: charts
           commit_username: l5io
           commit_email: l5io@layer5.io
-          linting: off
-          chart_version: ${GITHUB_REF/refs\/tags\//}
+          chart_version: ${{ steps.vars.outputs.tag }}
