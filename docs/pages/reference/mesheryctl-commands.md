@@ -88,6 +88,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td></td>
         <td>{{ command.description }}</td>
       </tr>
+    {% endfor %}
     {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.flag }}</td>
