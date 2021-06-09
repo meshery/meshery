@@ -66,6 +66,7 @@ jobs:
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         uses: stefanprodan/helm-gh-pages@master
         with:
+          helm_version: 'v3.6.0'
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm
           owner: layer5io
