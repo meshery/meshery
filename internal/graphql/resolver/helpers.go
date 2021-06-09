@@ -74,7 +74,7 @@ func persistData(msg broker.Message,
 
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-operator" {
+		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
 			operatorSyncChannel <- struct{}{}
 		}
 		err = recordMeshSyncData(msg.EventType, handler, &object)
