@@ -19,13 +19,15 @@ jobs:
         repo: layer5labs/meshery-extensions
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         version: master
+    - name: set env
+      if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
     - name: trigger plugins for release
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: layer5io/trigger-remote-provider-action@master
-      env:
-        RELEASE_VERSION: $(echo ${GITHUB_REF/refs\/tags\//})
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
         token: ${{ secrets.GITHUB_PAT }}
-        version: ${{ env.RELEASE_VERSION }}
+        version: ${{ steps.vars.outputs.tag }}
