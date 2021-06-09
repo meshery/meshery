@@ -83,6 +83,16 @@ var applyCmd = &cobra.Command{
 					return errors.New(utils.PerfError("please enter a profile-name"))
 				}
 
+				// ask for test url first
+				if testURL == "" {
+					return errors.New(utils.PerfError("please enter a test URL"))
+				}
+
+				// Method to check if the entered Test URL is valid or not
+				if validURL := govalidator.IsURL(testURL); !validURL {
+					return errors.New(utils.PerfError("please enter a valid test URL"))
+				}
+
 				convReq, err := strconv.Atoi(concurrentRequests)
 				if err != nil {
 					return errors.New("failed to convert concurrent-request")
