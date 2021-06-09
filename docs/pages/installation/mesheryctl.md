@@ -27,7 +27,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
+  $ curl -L https://git.io/meshery | PLATFORM=kubernetes bash -
  </div></div>
  </pre>
 
