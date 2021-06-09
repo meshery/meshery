@@ -67,6 +67,13 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 	}
 }
 
+// swagger:route GET /api/telemetry/metrics/grafana/scan GrafanaAPI idGetGrafana
+// Handle GET request for Grafana
+//
+// Fetches and returns Grafana
+// responses:
+// 	200: v1ServicesMapResponseWrapper
+
 // ScanGrafanaHandler - fetches  Grafana
 func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {

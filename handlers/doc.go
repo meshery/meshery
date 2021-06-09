@@ -35,6 +35,7 @@ package handlers
 import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models"
+	v1 "k8s.io/api/core/v1"
 )
 
 // Returns all meshery patterns
@@ -61,4 +62,25 @@ type IDParameterWrapper struct {
 	// in: path
 	// required: true
 	ID uuid.UUID `json:"id"`
+}
+
+// swagger:parameters idPostGrafanaConfig idDeleteGrafanaConfig
+type grafanaConfigParamsWrapper struct {
+	// in: body
+	// required: true
+	Body *models.GrafanaConfigParams
+}
+
+// Returns Grafana boards and panels
+// swagger:response grafanaBoardsResponseWrapper
+type grafanaBoardsResponseWrapper struct {
+	// in: body
+	Body []*models.GrafanaBoard
+}
+
+// Returns a map for v1 services
+// swagger:response v1ServicesMapResponseWrapper
+type v1ServicesMapResponseWrapper struct {
+	// in: body
+	Body map[string][]v1.Service
 }

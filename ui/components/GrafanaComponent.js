@@ -63,7 +63,7 @@ const getGrafanaBoards = (self, cb) => {
   }
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    `/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`,
+    `/api/telemetry/metrics/grafana/boards?dashboardSearch=${grafanaBoardSearch}`,
     {
       credentials: "same-origin",
       method: "GET",
@@ -104,7 +104,7 @@ export const submitGrafanaConfigure = (self, cb) => {
   // console.log(`data to be submitted for load test: ${params}`);
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    "/api/grafana/config",
+    "/api/telemetry/metrics/grafana/config",
     {
       credentials: "same-origin",
       method: "POST",
@@ -244,7 +244,7 @@ class GrafanaComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/grafana/config",
+      "/api/telemetry/metrics/grafana/config",
       {
         credentials: "same-origin",
         method: "DELETE",
@@ -280,7 +280,7 @@ class GrafanaComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/grafana/ping",
+      "/api/telemetry/metrics/grafana/ping",
       {
         credentials: "same-origin",
         credentials: "include",
@@ -325,7 +325,7 @@ class GrafanaComponent extends Component {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch } = this.state;
     const self = this;
     dataFetch(
-      "/api/grafana/boards",
+      "/api/telemetry/metrics/grafana/boards",
       {
         credentials: "same-origin",
         method: "POST",
