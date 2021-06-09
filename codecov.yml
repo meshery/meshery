@@ -5,3 +5,37 @@ coverage:
   precision: 2
   round: down
   range: "0...30"
+  status:
+    project:
+      # These flags should match with those in the Github Action ci.yml
+      front-end-integration-tests:
+        flags:
+          - integrationtests
+      front-end-e2e-tests:
+        flags:
+          - e2etests
+      backend:
+        flags:
+          - unittests
+
+flags:
+  # Filter the folders to be measured by that flag
+  front-end-integration-tests:
+    paths:
+      - ui/cypress/integration/integration
+    carryforward: true
+  front-end-e2e-tests:
+    paths:
+      - ui/cypress/integration/e2e
+    carryforward: true
+  backend:
+    paths:
+      - cmd
+      - handlers
+      - helpers
+      - internal
+      - mesheryctl
+      - meshes
+      - models
+      - router
+    carryforward: true
