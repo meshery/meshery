@@ -74,6 +74,11 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, selector *model.MeshT
 					return nil, err
 				}
 
+				if endpoint.External == nil {
+					r.Log.Error(ErrNoExternalEndpoint(obj.ObjectMeta.Name))
+					return nil, ErrNoExternalEndpoint(obj.ObjectMeta.Name)
+				}
+
 				addonlist = append(addonlist, &model.AddonList{
 					Name:     obj.ObjectMeta.Name,
 					Owner:    strings.ToLower(selector.String()),
