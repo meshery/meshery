@@ -18,7 +18,7 @@ Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your s
  <pre class="codeblock-pre">
  <div class="codeblock">
  <div class="clipboardjs">
- $ curl -L https://git.io/meshery | PLATFORM=docker bash -
+  $ curl -L https://git.io/meshery | PLATFORM=docker bash -
  </div></div>
  </pre>
  
@@ -163,4 +163,3 @@ To upgrade `mesheryctl`, just execute the following command.
 </pre>
 
 Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platforms).
-
