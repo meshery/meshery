@@ -1,4 +1,4 @@
 name: status
 description: Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 usage: |
-    mesheryctl system status [flags]
+    mesheryctl system status
