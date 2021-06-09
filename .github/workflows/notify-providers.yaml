@@ -29,5 +29,5 @@ jobs:
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
-        token: ${{ secrets.GITHUB_PAT }}
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
         version: ${{ steps.vars.outputs.tag }}
