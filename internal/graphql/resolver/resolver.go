@@ -20,6 +20,7 @@ type Resolver struct {
 
 	brokerConn broker.Handler
 
+	operatorSyncChannel chan struct{}
 	operatorChannel     chan *model.OperatorStatus
 	brokerChannel       chan *broker.Message
 	addonChannel        chan []*model.AddonList

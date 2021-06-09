@@ -164,6 +164,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context) (*model.OperatorStatus
 func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.OperatorStatus, error) {
 	if r.operatorChannel == nil {
 		r.operatorChannel = make(chan *model.OperatorStatus)
+		r.operatorSyncChannel = make(chan struct{})
 	}
 
 	go func() {
@@ -190,7 +191,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 
 		for {
 			select {
-			case <-r.MeshSyncChannel:
+			case <-r.operatorSyncChannel:
 				status, err := r.getOperatorStatus(ctx)
 				if err != nil {
 					r.Log.Error(ErrOperatorSubscription(err))
@@ -281,7 +282,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 }
 
 func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
-	if kubeclient == nil || kubeclient.KubeClient == nil {
+	if kubeclient == nil || kubeclient.KubeClient == nil || kubeclient.KubeClient.AppsV1() == nil {
 		return nil, ErrMesheryClient(nil)
 	}
 
