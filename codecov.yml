@@ -19,7 +19,7 @@ coverage:
           - unittests
 
 flags:
-  # Filter the folders to be measured by that flag
+  # Filter the folders to be measured by each flag
   front-end-integration-tests:
     paths:
       - ui/cypress/integration/integration
