@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl system channel view | Meshery
+title: mesheryctl system channel view
 permalink: reference/mesheryctl/system/channel/view
 type: reference
 display-title: "false"

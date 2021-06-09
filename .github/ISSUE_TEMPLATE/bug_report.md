@@ -28,3 +28,8 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 -->
+
+---
+
+**Contributor Resources:**
+- (Contributing Docs](https://docs.meshery.io/project/contributing)

@@ -13,7 +13,7 @@ env:
   EVENT: mesheryLocal
   SAAS_BASE_URL: https://meshery.layer5.io
   PROVIDER_BASE_URLS: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nsm:10004 meshery-traefik-mesh:10006 meshery-cpx:10008
 
 probe:
   #TODO: Need to confirm the health check path of meshery. 
@@ -116,6 +116,18 @@ meshery-osm:
 meshery-nsm:
   enabled: true
   fullnameOverride: meshery-nsm
+
+meshery-traefik-mesh:
+  enabled: true
+  fullnameOverride: meshery-traefik-mesh
+
+meshery-cpx:
+  enabled: true
+  fullnameOverride: meshery-cpx
+
+meshery-operator:
+  enabled: true
+  fullnameOverride: meshery-operator
 
 # If there need the test cases set it as true.
 #

@@ -39,6 +39,7 @@ func listernToEvents(log logger.Handler,
 	handler *database.Handler,
 	datach chan *broker.Message,
 	meshsyncCh chan struct{},
+	operatorSyncChannel chan struct{},
 ) {
 	var wg sync.WaitGroup
 	wg.Wait()
@@ -46,7 +47,7 @@ func listernToEvents(log logger.Handler,
 		select {
 		case msg := <-datach:
 			wg.Add(1)
-			go persistData(*msg, log, handler, meshsyncCh, &wg)
+			go persistData(*msg, log, handler, meshsyncCh, operatorSyncChannel, &wg)
 		}
 	}
 }
@@ -56,10 +57,12 @@ func persistData(msg broker.Message,
 	log logger.Handler,
 	handler *database.Handler,
 	meshsyncCh chan struct{},
+	operatorSyncChannel chan struct{},
 	wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 	objectJSON, _ := utils.Marshal(msg.Object)
+	log.Info("Type:", msg.ObjectType)
 	switch msg.ObjectType {
 	case broker.MeshSync:
 		object := meshsyncmodel.Object{}
@@ -71,6 +74,9 @@ func persistData(msg broker.Message,
 
 		// persist the object
 		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
+			operatorSyncChannel <- struct{}{}
+		}
 		err = recordMeshSyncData(msg.EventType, handler, &object)
 		if err != nil {
 			log.Error(err)

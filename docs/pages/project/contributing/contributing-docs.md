@@ -5,6 +5,7 @@ permalink: project/contributing-docs
 description: How to contribute to Meshery Docs.
 language: en
 type: project
+category: contributing
 ---
 
 Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
@@ -93,3 +94,36 @@ code snippet          or         ```code snippet```
 ````
 
 Whenever the code tags are detected, the clipboard javascript file is automatically loaded. Each code element is given a custom id and a clipboard-copy icon to copy the content.
+
+## Documentation Contribution Flow Summary
+
+The following is a concise summary of the steps to contribute to Meshery documentation.
+
+1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. In the local copy of your fork, navigate to the docs folder.
+   `cd docs`
+1. Create and checkout a new branch to make changes within
+   `git checkout -b <my-changes>`
+1. Edit/add documentation.
+   `vi <specific page>.md`
+1. Run site locally to preview changes.
+   `make site`
+1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
+   `git push origin <my-changes>`
+1. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
+
+
+# Suggested Reading
+
+{% assign sorted_reading = site.pages | sort: page.title | reverse %}
+
+<ul>
+  {% for item in sorted_reading %}
+  {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+
