@@ -312,6 +312,22 @@ const categories = [
     ],
   },
   {
+    id: "NewManagement",
+    icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
+    href: "/management",
+    title: "New Management",
+    show: true,
+    children: [
+      {
+        id: "Istio",
+        href: "/management/istio",
+        title: "Istio",
+        show: true,
+        link: true
+      }
+    ]
+  },
+  {
     id: "Management",
     icon: <FontAwesomeIcon icon={faTerminal} transform="shrink-4" style={drawerIconsStyle} />,
     href: "/management",
