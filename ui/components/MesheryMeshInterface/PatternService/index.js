@@ -22,11 +22,12 @@ function componentType(jsonSchema) {
  * @param {{
  *  jsonSchema: Record<string, any>;
  *  onChange: Function;
+ *  onSubmit: Function;
  *  type: "trait" | "workload"
  * }} props
  * @returns
  */
-function PatternService({ jsonSchema, onChange, type }) {
+function PatternService({ jsonSchema, onChange, type, onSubmit }) {
   const ctype = componentType(jsonSchema);
 
   if (ctype === "rjsf")
@@ -36,6 +37,7 @@ function PatternService({ jsonSchema, onChange, type }) {
         hideTitle={type === "workload"}
         jsonSchema={jsonSchema}
         onChange={onChange}
+        onSubmit={onSubmit}
       />
     );
   if (ctype === "switch")
@@ -43,6 +45,7 @@ function PatternService({ jsonSchema, onChange, type }) {
       <Switch
         jsonSchema={jsonSchema}
         onChange={onChange}
+        onSubmit={onSubmit}
       />
     );
 

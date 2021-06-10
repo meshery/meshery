@@ -3,16 +3,27 @@ import React, { useEffect, useState } from "react";
 import { FormControlLabel } from "@material-ui/core";
 import MSwitch from "@material-ui/core/Switch";
 
-function Switch({ jsonSchema, onChange }) {
+function Switch({ jsonSchema, onChange, onSubmit }) {
   const [isOn, setIsOn] = useState(false); // TODO: Hook with meshsync
 
   useEffect(() => {
-    onChange?.(isOn)
-  }, [isOn])
+    onChange?.(isOn);
+  }, [isOn]);
 
   return (
     <FormControlLabel
-      control={<MSwitch name={jsonSchema?.title} checked={isOn} onChange={() => setIsOn((isOn) => !isOn)} />}
+      control={
+        <MSwitch
+          name={jsonSchema?.title}
+          checked={isOn}
+          onChange={() => {
+            setIsOn((isOn) => {
+              onSubmit?.();
+              return !isOn;
+            });
+          }}
+        />
+      }
       label={jsonSchema?.title}
     />
   );

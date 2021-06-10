@@ -40,10 +40,11 @@ function getPatternAttributeName(jsonSchema) {
  * @param {{
  *  schemaSet: { workload: any, traits: any[], type: string };
  *  onChange: Function;
+ *  onSubmit: Function;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onChange }) {
+function PatternServiceForm({ schemaSet, onChange, onSubmit }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings] = React.useState({});
   const [traits, setTraits] = React.useState({});
@@ -59,7 +60,9 @@ function PatternServiceForm({ schemaSet, onChange }) {
   const renderTraits = () => !!schemaSet.traits?.length;
 
   if (schemaSet.type === "addon") {
-    return <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} />;
+    return (
+      <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} onSubmit={onSubmit} />
+    );
   }
 
   return (
@@ -74,7 +77,7 @@ function PatternServiceForm({ schemaSet, onChange }) {
         </Tabs>
       </AppBar>
       <TabPanel value={tab} index={0}>
-        <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} />
+        <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} onSubmit={onSubmit} />
       </TabPanel>
       {renderTraits() ? (
         <TabPanel value={tab} index={1}>
@@ -82,6 +85,7 @@ function PatternServiceForm({ schemaSet, onChange }) {
             <PatternService
               type="trait"
               jsonSchema={trait}
+              onSubmit={onSubmit}
               onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
             />
           ))}

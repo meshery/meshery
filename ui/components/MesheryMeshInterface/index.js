@@ -125,22 +125,14 @@ async function getJSONSchemaSets(adapter) {
   });
 }
 
-function isObject(obj) {
-  return obj === Object(obj) && Object.prototype.toString.call(obj) !== "[object Array]";
-}
-
 function recursiveCleanObject(obj) {
-  if (isObject(obj)) {
-    const objMap = Object.keys(obj);
+  for (const k in obj) {
+    if (!obj[k] || typeof obj[k] !== "object") continue;
 
-    if (objMap.length === 0) return true;
+    recursiveCleanObject(obj[k]);
 
-    objMap.forEach((k) => {
-      if (recursiveCleanObject(obj[k])) delete obj[k];
-    });
+    if (Object.keys(obj[k]).length === 0) delete obj[k];
   }
-
-  return false;
 }
 
 /**
@@ -152,16 +144,37 @@ function recursiveCleanObject(obj) {
  * @param {*} config
  */
 function createPatternFromConfig(config) {
-  const pattern = {};
+  const pattern = {
+    name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    services: {},
+  };
 
   recursiveCleanObject(config);
 
   Object.keys(config).forEach((key) => {
     // Add it only if the settings are non empty or "true"
-    if (config[key].settings) pattern[key] = config[key];
+    if (config[key].settings) pattern.services[key] = config[key];
+  });
+
+  Object.keys(pattern.services).forEach((key) => {
+    // Delete the settings attribute/field if it is set to "true"
+    if (pattern.services[key].settings === true) delete pattern.services[key].settings;
+    else pattern.services[key].type = key;
   });
 
   return pattern;
+}
+
+async function submitPattern(pattern) {
+  const res = await fetch("/api/experimental/pattern/deploy", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(pattern),
+  });
+
+  return res.text();
 }
 
 function MesheryMeshInterface({ adapter }) {
@@ -173,9 +186,13 @@ function MesheryMeshInterface({ adapter }) {
   }, [config]);
 
   const updateConfig = (val) => {
-    setConfig((cfg) => {
-      return createPatternFromConfig({ ...cfg, ...val });
-    });
+    setConfig(createPatternFromConfig(val));
+  };
+
+  const handleSubmit = () => {
+    submitPattern(config)
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
@@ -184,7 +201,7 @@ function MesheryMeshInterface({ adapter }) {
 
   return (
     <Grid container spacing={1}>
-      <Grid item md={6} xs={12}>
+      <Grid item md={8} xs={12}>
         <div>
           <Grid container spacing={1}>
             {schemeSets
@@ -192,13 +209,13 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
-                  <PatternServiceForm schemaSet={s} onChange={updateConfig} />
+                  <PatternServiceForm schemaSet={s} onChange={updateConfig} onSubmit={handleSubmit} />
                 </Grid>
               ))}
           </Grid>
         </div>
       </Grid>
-      <Grid item md={6} xs={12}>
+      <Grid item md={4} xs={12}>
         <Paper style={{ padding: "1rem" }}>
           <Typography variant="h6" gutterBottom>
             Addons
@@ -209,7 +226,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item>
-                  <PatternServiceForm schemaSet={s} onChange={updateConfig} />
+                  <PatternServiceForm schemaSet={s} onChange={updateConfig} onSubmit={handleSubmit} />
                 </Grid>
               ))}
           </Grid>
