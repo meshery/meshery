@@ -149,7 +149,7 @@ build-docs:
 	cd docs; $(jekyll) build --drafts
 
 docker-docs:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 .PHONY: chart-readme
 chart-readme:

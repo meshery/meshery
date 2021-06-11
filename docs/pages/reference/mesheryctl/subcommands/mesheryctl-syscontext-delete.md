@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl system context delete | Meshery
+title: mesheryctl system context delete
 permalink: reference/mesheryctl/system/context/delete
 type: reference
 display-title: "false"
