@@ -164,3 +164,9 @@ swagger-run:swagger-spec
 swagger-docs:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+
+graphql-docs:
+	cd docs; build-docs; bundle exec rake graphql:compile_docs
+
+gqlgen-generate:
+	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
