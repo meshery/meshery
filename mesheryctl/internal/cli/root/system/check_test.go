@@ -1,6 +1,7 @@
 package system
 
 import (
+	"bytes"
 	"flag"
 	"io/ioutil"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -34,6 +36,9 @@ func TestDefaultPreflightCmd(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 
+			var buf bytes.Buffer
+			logrus.SetOutput(&buf)
+
 			SystemCmd.SetArgs(tt.Args)
 			SystemCmd.SetOut(rescueStdout)
 			err = SystemCmd.Execute()
@@ -42,11 +47,13 @@ func TestDefaultPreflightCmd(t *testing.T) {
 			}
 
 			w.Close()
-			out, _ := ioutil.ReadAll(r)
+			_, _ = ioutil.ReadAll(r)
 			os.Stdout = rescueStdout
 
-			actualResponse := string(out)
-
+			output := buf.String()
+			t.Log(output)
+			actualResponse := utils.TrimLogOutputsTesting(output)
+			t.Log(actualResponse)
 			// get current directory
 			_, filename, _, ok := runtime.Caller(0)
 			if !ok {
@@ -61,7 +68,6 @@ func TestDefaultPreflightCmd(t *testing.T) {
 			if *update {
 				golden.Write(actualResponse)
 			}
-			t.Log(actualResponse)
 			expectedResponse := golden.Load()
 
 			if expectedResponse != actualResponse {
