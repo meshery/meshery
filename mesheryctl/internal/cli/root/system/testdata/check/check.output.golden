@@ -1,18 +1,18 @@
 
 Docker 
 --------------
-√ Docker is running
-√ docker-compose is available
+✓ Docker is running
+✓ docker-compose is available
 
 Kubernetes API 
 --------------
-√ can initialize Kubernetes client
-√ can query the Kubernetes API
+✓ can initialize Kubernetes client
+✓ can query the Kubernetes API
 
 Kubernetes Version 
 --------------
-√ is running the minimum Kubernetes version
-√ is running the minimum kubectl version
+✓ is running the minimum Kubernetes version
+✓ is running the minimum kubectl version
 
 --------------
 --------------
