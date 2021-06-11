@@ -3,8 +3,6 @@ package system
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -32,28 +30,19 @@ func TestDefaultPreflightCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			rescueStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-
+			// setting up logrus to grab logs
 			var buf bytes.Buffer
 			logrus.SetOutput(&buf)
 
 			SystemCmd.SetArgs(tt.Args)
-			SystemCmd.SetOut(rescueStdout)
 			err = SystemCmd.Execute()
 			if err != nil {
 				t.Error(err)
 			}
 
-			w.Close()
-			_, _ = ioutil.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			output := buf.String()
-			t.Log(output)
 			actualResponse := utils.TrimLogOutputsTesting(output)
-			t.Log(actualResponse)
+
 			// get current directory
 			_, filename, _, ok := runtime.Caller(0)
 			if !ok {
