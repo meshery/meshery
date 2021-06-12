@@ -6,6 +6,9 @@ site: install
 build: install
 	$(jekyll) build --drafts
 
+build-graphql-docs:
+	bundle exec rake graphql:compile_docs
+
 install:
 	bundle install
 
