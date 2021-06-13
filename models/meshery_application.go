@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// MesheryApplication represents the patterns that needs to be saved
+// MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
@@ -25,7 +25,7 @@ type MesheryApplication struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
-// GetApplicationName takes in a stringified patternfile and extracts the name from it
+// GetApplicationName takes in a stringified applicationfile and extracts the name from it
 func GetApplicationName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}
 
@@ -36,7 +36,7 @@ func GetApplicationName(stringifiedFile string) (string, error) {
 	// Get Name from the file
 	name, ok := out["name"].(string)
 	if !ok {
-		return "", fmt.Errorf("invalid patternfile - name field is either not present or is not valid")
+		return "", fmt.Errorf("invalid applicationfile - name field is either not present or is not valid")
 	}
 
 	return name, nil
