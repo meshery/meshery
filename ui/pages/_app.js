@@ -72,6 +72,7 @@ let theme = createMuiTheme({
     primary: blueGrey,
     secondary: {
       main: '#EE5351',
+      dark: '#1E2117',
     },
   },
   shape: {
@@ -190,10 +191,10 @@ theme = {
 const drawerWidth = 256;
 
 const notificationColors = {
-  error: "#ff1744",
-  warning: "#ffc400",
-  success: "#6fbf73",
-  info: "#2196f3"
+  error: "#F91313",
+  warning: "#F0A303",
+  success: "#206D24",
+  info: "#2196F3"
 }
 
 const styles = {
@@ -249,19 +250,19 @@ const styles = {
     fontSize: 20,
   },
   notifSuccess: {
-    backgroundColor: "rgb(50, 50, 50) !important",
+    backgroundColor: "rgba(248, 252, 248) !important",
     color: `${notificationColors.success} !important`
   },
   notifInfo: {
-    backgroundColor: "rgb(50, 50, 50) !important",
+    backgroundColor: "rgba(250, 254, 255) !important",
     color: `${notificationColors.info} !important`
   },
   notifWarn: {
-    backgroundColor: "rgb(50, 50, 50) !important",
+    backgroundColor: "rgba(240, 163, 3, 0.04) !important",
     color: `${notificationColors.warning} !important`
   },
   notifError: {
-    backgroundColor: "rgb(50, 50, 50) !important",
+    backgroundColor: "rgba(255, 250, 250) !important",
     color: `${notificationColors.error} !important`
   },
 };

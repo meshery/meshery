@@ -10,8 +10,10 @@ import {
   Typography, 
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ClearIcon from '@material-ui/icons/Clear';
 import ErrorIcon from '@material-ui/icons/Error';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
+import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
@@ -23,13 +25,16 @@ import { withSnackbar } from 'notistack'
 
 const styles = (theme) => ({
   sidelist: {
-    width: 350,
+    width: 450,
   },
   notificationButton: {
     height: '100%',
   },
   notificationDrawer: {
     backgroundColor: '#FFFFFF',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   listTop: {
     display: 'grid',
@@ -41,7 +46,7 @@ const styles = (theme) => ({
     paddingBottom: theme.spacing(2),
   },
   notificationTitle: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   notifSelector: {
     display: 'flex',
@@ -76,6 +81,12 @@ const styles = (theme) => ({
     height: '1.6rem',
     width: '1.6rem',
   },
+  drawerButton: {
+    padding: '0.45rem',
+    margin: '0.2rem',
+    backgroundColor: theme.palette.secondary.dark,
+    color: '#FFFFFF'
+  }
 });
 
 /**
@@ -338,24 +349,15 @@ class MesheryNotification extends React.Component {
                     <Tooltip title="Show all notifications">
                       <IconButton
                         color="inherit"
-                        style={{ padding: '0 0.25rem 0 0' }}
+                        className={classes.drawerButton}
                         onClick={this.handleNotifFiltering('*')}
                       >
                         <BellIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Show error notifications">
-                      <IconButton
-                        color="inherit"
-                        style={{ padding: '0 0 0 0.25rem' }}
-                        onClick={this.handleNotifFiltering('error')}
-                      >
-                        <ErrorIcon className={classes.HeaderItem}/>
-                      </IconButton>
-                    </Tooltip>
                   </div>
                   <div className={classes.notificationTitle}>
-                    <Typography variant="subtitle2">
+                    <Typography variant="subtitle1">
                       Notifications
                     </Typography>
                   </div>
@@ -363,10 +365,18 @@ class MesheryNotification extends React.Component {
                     <Tooltip title="Clear all notifications">
                       <IconButton
                         color="inherit"
-                        style={{ padding: '0' }}
+                        className={classes.drawerButton}
                         onClick={this.handleClearAllNotifications()}
                       >
-                        <ClearAllIcon className={classes.HeaderItem}/>
+                        <DoneAllIcon className={classes.HeaderItem}/>
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="">
+                      <IconButton
+                        color="inherit"
+                        className={classes.drawerButton}
+                      >
+                        <ClearIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                   </div>
@@ -380,6 +390,19 @@ class MesheryNotification extends React.Component {
                     eventDetails={event.details || "Details Unavailable"}
                   />
                 ))}
+              </div>
+            </div>
+            <div className={classes.listTop}>
+              <div >
+                <Tooltip title="Close notifications drawer">
+                  <IconButton
+                    color="inherit"
+                    className={classes.drawerButton}
+                    onClick={this.handleToggle}
+                  >
+                    <ArrowForwardIosRoundedIcon className={classes.HeaderItem}/>
+                  </IconButton>
+                </Tooltip>
               </div>
             </div>
           </Drawer>

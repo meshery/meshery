@@ -99,7 +99,10 @@ function MesherySnackbarWrapper(props) {
 
   return (
     <SnackbarContent className={classes.root}>
-      <Card className={classNames(classes.card, classes[variant], className)}>
+      <Card className={classNames(classes.card, classes[variant], className)} 
+        onClick={handleExpandClick}
+        aria-label="Show more"
+      >
         <CardActions classes={{ root: classes.actionRoot }}>
           <Typography variant="subtitle2">
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -108,21 +111,22 @@ function MesherySnackbarWrapper(props) {
             </div>
           </Typography>
           <div className={classes.icons}>
-            <IconButton
+            { expanded && <IconButton
               aria-label="Show more"
               className={classnames(classes.expand, { [classes.expandOpen]: expanded })}
               onClick={handleExpandClick}
             >
               <ExpandMoreIcon style={{ color: "#fff" }} />
-            </IconButton>
+            </IconButton> 
+            }
             <IconButton className={classes.expand} onClick={onClose}>
               <CloseIcon style={{ color: "#fff" }} />
             </IconButton>
           </div>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Paper className={classes.collapse}>
-            <Typography gutterBottom>Details</Typography>
+          <Paper className={classes.collapse} square variant="outlined">
+            <Typography gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
         </Collapse>
