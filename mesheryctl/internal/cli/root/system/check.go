@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -16,6 +15,11 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"fmt"
+	"os"
+
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
 var (
@@ -42,7 +46,50 @@ var checkCmd = &cobra.Command{
 func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		userResponse := false
+
+		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("Do you want to create a new config file")
+		}
+
+		if !userResponse {
+			return err
+		}
+
+		cfgFile := utils.CfgFile
+		log.Println("Backing up " + cfgFile + " to original_config.yaml")
+		err := os.Rename(cfgFile, "original_config.yaml")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = os.Create(cfgFile)
+		if err != nil {
+			return err
+		}
+
+		// Add Token to context file
+		err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Add Context to context file
+		err = utils.AddContextToConfig("local", utils.TemplateContext, cfgFile, true)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println(
+			fmt.Sprintf("Default config file created at %s",
+				cfgFile,
+			))
+
+		return errors.New("created new default config.Modify it and restart")
 	}
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {

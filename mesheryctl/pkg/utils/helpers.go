@@ -116,6 +116,8 @@ var (
 	PlatformFlag string
 )
 
+var CfgFile string
+
 // ListOfAdapters returns the list of adapters available
 var ListOfAdapters = []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-cpx", "meshery-osm", "meshery-traefik-mesh"}
 

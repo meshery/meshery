@@ -115,6 +115,8 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
+	utils.CfgFile = cfgFile
 	// Allow user to override config file with use of --config global flag
 	if cfgFile != "" {
 		// Use config file from the flag.
