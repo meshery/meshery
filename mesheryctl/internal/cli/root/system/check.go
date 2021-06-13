@@ -2,12 +2,15 @@ package system
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,11 +18,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"fmt"
-	"os"
-
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
 var (
