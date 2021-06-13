@@ -125,7 +125,7 @@ function MesherySnackbarWrapper(props) {
           </div>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Paper className={classes.collapse} square variant="outlined">
+          <Paper className={classes.collapse} square variant="outlined" elevation={0}>
             <Typography gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
