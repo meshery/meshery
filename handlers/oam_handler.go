@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ghodss/yaml"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
@@ -55,6 +56,15 @@ func (h *Handler) PatternFileHandler(
 		rw.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(rw, "failed to read request body: %s", err)
 		return
+	}
+
+	if r.Header.Get("Content-Type") == "application/json" {
+		body, err = yaml.JSONToYAML(body)
+		if err != nil {
+			rw.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(rw, "failed to parse to PatternFile: %s", err)
+			return
+		}
 	}
 
 	isDel := r.Method == http.MethodDelete
