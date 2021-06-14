@@ -24,6 +24,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
+import Form from "@rjsf/core";
 
 const styles = (theme) => ({
   grid: {
@@ -34,6 +35,28 @@ const styles = (theme) => ({
     fontSize: 18,
   },
 });
+
+const Form = JSONSchemaForm.default;
+const schema = {
+  title: "name",
+  type: "object",
+  date: "10/6/2021",
+  history: "",
+  required: ["title"],
+  properties: {
+    title: { type: "string", title: "Title", default: "A new task" },
+    done: { type: "boolean", title: "Done?", default: false } } };
+
+const log = type => console.log.bind(console, type);
+
+ReactDOM.render( 
+React.createElement(Form, { schema: schema,
+  onChange: log("changed"),
+  onSubmit: log("submitted"),
+  onError: log("errors") })
+  //Render from form 
+  
+  );
 
 function CustomToolbar(onClick) {
   return function Toolbar() {
