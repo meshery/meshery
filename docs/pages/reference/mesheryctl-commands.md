@@ -66,7 +66,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=19><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
+      <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -205,7 +205,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     </tr>
   {% endfor %}
 
-  {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
           <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/">{{ command.name }}</a></td>

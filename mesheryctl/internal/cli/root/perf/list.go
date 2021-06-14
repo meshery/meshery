@@ -23,11 +23,10 @@ import (
 )
 
 var (
-	outputFormatFlag string
-	page             uint
-	totalPage        uint
-	totalResults     uint
-	limitResults     uint = 10
+	page         uint
+	totalPage    uint
+	totalResults uint
+	limitResults uint = 10
 )
 
 // handle termbox and errors
@@ -182,7 +181,7 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("invalid authentication token")
 	}
 	// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
 	if resp.StatusCode != 200 {
@@ -200,7 +199,10 @@ func fetchPerformanceProfiles(url string) ([][]string, []byte, error) {
 	var data [][]string
 
 	for _, profile := range response.Profiles {
-		lastRun := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Time.Month()), profile.LastRun.Time.Day(), profile.LastRun.Time.Year(), profile.LastRun.Time.Hour(), profile.LastRun.Time.Minute(), profile.LastRun.Time.Second())
+		lastRun := ""
+		if profile.LastRun != nil {
+			lastRun = fmt.Sprintf("%d-%d-%d %d:%d:%d", int(profile.LastRun.Time.Month()), profile.LastRun.Time.Day(), profile.LastRun.Time.Year(), profile.LastRun.Time.Hour(), profile.LastRun.Time.Minute(), profile.LastRun.Time.Second())
+		}
 		data = append(data, []string{profile.Name, profile.ID.String(), fmt.Sprintf("%d", profile.TotalResults), lastRun})
 	}
 
@@ -231,7 +233,7 @@ func fetchPerformanceProfileResults(url string, profileID string) ([][]string, [
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.New("invalid authentication token")
 	}
 	if resp.StatusCode != 200 {
 		return nil, nil, errors.Errorf("Performance profile `%s` not found. Please verify profile name and try again. Use `mesheryctl perf list` to see a list of performance profiles.", profileID)
@@ -310,6 +312,5 @@ func printOutputInFormat(mctlCfg *config.MesheryCtlConfig, args []string) error 
 }
 
 func init() {
-	listCmd.Flags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	_ = listCmd.MarkFlagRequired("token")
 }
