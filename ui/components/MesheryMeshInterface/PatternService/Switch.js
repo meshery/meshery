@@ -1,14 +1,10 @@
 // @ts-check
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FormControlLabel } from "@material-ui/core";
 import MSwitch from "@material-ui/core/Switch";
 
-function Switch({ jsonSchema, onChange, onSubmit }) {
+function Switch({ jsonSchema, onChange, onSubmit, onDelete }) {
   const [isOn, setIsOn] = useState(false); // TODO: Hook with meshsync
-
-  useEffect(() => {
-    onChange?.(isOn);
-  }, [isOn]);
 
   return (
     <FormControlLabel
@@ -18,8 +14,14 @@ function Switch({ jsonSchema, onChange, onSubmit }) {
           checked={isOn}
           onChange={() => {
             setIsOn((isOn) => {
-              onSubmit?.();
-              return !isOn;
+              const newState = !isOn;
+               
+              if (!newState) onDelete?.(!newState) // Trigger this before actually updating the state
+              onChange?.(newState, (state) => {
+                if (state) onSubmit?.(state); // Trigger this after state update
+              });
+
+              return newState;
             });
           }}
         />

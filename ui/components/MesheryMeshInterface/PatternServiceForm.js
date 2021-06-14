@@ -2,6 +2,7 @@
 import React from "react";
 import { Tab, Tabs, AppBar, Typography, Box, Card } from "@material-ui/core";
 import PatternService from "./PatternService";
+import useStateCB from "../../utils/hooks/useStateCB";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -34,24 +35,61 @@ function getPatternAttributeName(jsonSchema) {
   return jsonSchema?._internal?.patternAttributeName || "NA";
 }
 
+function recursiveCleanObject(obj) {
+  for (const k in obj) {
+    if (!obj[k] || typeof obj[k] !== "object") continue;
+
+    recursiveCleanObject(obj[k]);
+
+    if (Object.keys(obj[k]).length === 0) delete obj[k];
+  }
+}
+
+/**
+ * createPatternFromConfig will take in the form data
+ * and will create a valid pattern from it
+ *
+ * It will/may also perform some sanitization on the
+ * given inputs
+ * @param {*} config
+ */
+function createPatternFromConfig(config) {
+  const pattern = {
+    name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
+    services: {},
+  };
+
+  recursiveCleanObject(config);
+
+  Object.keys(config).forEach((key) => {
+    // Add it only if the settings are non empty or "true"
+    if (config[key].settings) pattern.services[key] = config[key];
+  });
+
+  Object.keys(pattern.services).forEach((key) => {
+    // Delete the settings attribute/field if it is set to "true"
+    if (pattern.services[key].settings === true) delete pattern.services[key].settings;
+
+    pattern.services[key].type = key;
+  });
+
+  return pattern;
+}
+
 /**
  * PatternServiceForm renders a form from the workloads schema and
  * traits schema
  * @param {{
  *  schemaSet: { workload: any, traits: any[], type: string };
- *  onChange: Function;
  *  onSubmit: Function;
+ *  onDelete: Function;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onChange, onSubmit }) {
+function PatternServiceForm({ schemaSet, onSubmit, onDelete }) {
   const [tab, setTab] = React.useState(0);
-  const [settings, setSettings] = React.useState({});
-  const [traits, setTraits] = React.useState({});
-
-  React.useEffect(() => {
-    onChange?.({ [getPatternAttributeName(schemaSet.workload)]: { settings, traits } });
-  }, [settings, traits]);
+  const [settings, setSettings] = useStateCB({});
+  const [traits, setTraits] = useStateCB({});
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -59,9 +97,29 @@ function PatternServiceForm({ schemaSet, onChange, onSubmit }) {
 
   const renderTraits = () => !!schemaSet.traits?.length;
 
+  const submitHandler = (val) => {
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }));
+  };
+
+  const deleteHandler = (val) => {
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }));
+  };
+
   if (schemaSet.type === "addon") {
     return (
-      <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} onSubmit={onSubmit} />
+      <PatternService
+        type="workload"
+        jsonSchema={schemaSet.workload}
+        onChange={setSettings}
+        onSubmit={(settings) => {
+          // THIS IS A HACK!
+          submitHandler({ settings });
+        }}
+        onDelete={(settings) => {
+          // THIS IS A HACK!
+          deleteHandler({ settings });
+        }}
+      />
     );
   }
 
@@ -77,7 +135,13 @@ function PatternServiceForm({ schemaSet, onChange, onSubmit }) {
         </Tabs>
       </AppBar>
       <TabPanel value={tab} index={0}>
-        <PatternService type="workload" jsonSchema={schemaSet.workload} onChange={setSettings} onSubmit={onSubmit} />
+        <PatternService
+          type="workload"
+          jsonSchema={schemaSet.workload}
+          onChange={setSettings}
+          onSubmit={() => submitHandler({ settings, traits })}
+          onDelete={() => deleteHandler({ settings, traits })}
+        />
       </TabPanel>
       {renderTraits() ? (
         <TabPanel value={tab} index={1}>
@@ -85,7 +149,6 @@ function PatternServiceForm({ schemaSet, onChange, onSubmit }) {
             <PatternService
               type="trait"
               jsonSchema={trait}
-              onSubmit={onSubmit}
               onChange={(val) => setTraits((t) => ({ ...t, [getPatternAttributeName(trait)]: val }))}
             />
           ))}

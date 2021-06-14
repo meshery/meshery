@@ -9,15 +9,15 @@ function deleteTitleFromJSONSchema(jsonSchema) {
   return { ...jsonSchema, title: "" };
 }
 
-function RJSFSubmit({ onSubmit }) {
+function RJSFButton({ handler, text }) {
   return (
-    <Button variant="contained" color="primary" onClick={() => onSubmit?.()} >
-      Submit
+    <Button variant="contained" color="primary" style={{ marginRight: "0.5rem" }} onClick={() => handler?.()} >
+      {text}
     </Button>
   );
 }
 
-function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit }) {
+function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit, onDelete }) {
   const [data, setData] = React.useState();
 
   React.useEffect(() => {
@@ -33,7 +33,8 @@ function RJSF({ jsonSchema, onChange, hideSubmit, hideTitle, onSubmit }) {
       liveValidate
       // noHtml5Validate
     >
-      {hideSubmit ? true : <RJSFSubmit onSubmit={onSubmit} />}
+      {hideSubmit ? true : <RJSFButton handler={onSubmit} text="Submit" />}
+      {hideSubmit ? true : <RJSFButton handler={onDelete} text="Delete" />}
     </Form>
   );
 }

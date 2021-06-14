@@ -125,52 +125,17 @@ async function getJSONSchemaSets(adapter) {
   });
 }
 
-function recursiveCleanObject(obj) {
-  for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object") continue;
-
-    recursiveCleanObject(obj[k]);
-
-    if (Object.keys(obj[k]).length === 0) delete obj[k];
+async function submitPattern(pattern, del = false) {
+  let a = 2;
+  if (a == 2) {
+    console.log({pattern, del})
+    return
   }
-}
-
-/**
- * createPatternFromConfig will take in the form data
- * and will create a valid pattern from it
- *
- * It will/may also perform some sanitization on the
- * given inputs
- * @param {*} config
- */
-function createPatternFromConfig(config) {
-  const pattern = {
-    name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
-    services: {},
-  };
-
-  recursiveCleanObject(config);
-
-  Object.keys(config).forEach((key) => {
-    // Add it only if the settings are non empty or "true"
-    if (config[key].settings) pattern.services[key] = config[key];
-  });
-
-  Object.keys(pattern.services).forEach((key) => {
-    // Delete the settings attribute/field if it is set to "true"
-    if (pattern.services[key].settings === true) delete pattern.services[key].settings;
-    else pattern.services[key].type = key;
-  });
-
-  return pattern;
-}
-
-async function submitPattern(pattern) {
   const res = await fetch("/api/experimental/pattern/deploy", {
     headers: {
       "Content-Type": "application/json",
     },
-    method: "POST",
+    method: del ? "DELETE" : "POST",
     body: JSON.stringify(pattern),
   });
 
@@ -179,18 +144,15 @@ async function submitPattern(pattern) {
 
 function MesheryMeshInterface({ adapter }) {
   const [schemeSets, setSchemaSets] = useState([]);
-  const [config, setConfig] = useState({});
 
-  useEffect(() => {
-    console.log(config);
-  }, [config]);
-
-  const updateConfig = (val) => {
-    setConfig(createPatternFromConfig(val));
+  const handleSubmit = (cfg) => {
+    submitPattern(cfg)
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
   };
 
-  const handleSubmit = () => {
-    submitPattern(config)
+  const handleDelete = (cfg) => {
+    submitPattern(cfg, true)
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
   };
@@ -209,7 +171,11 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
-                  <PatternServiceForm schemaSet={s} onChange={updateConfig} onSubmit={handleSubmit} />
+                  <PatternServiceForm
+                    schemaSet={s}
+                    onSubmit={handleSubmit}
+                    onDelete={handleDelete}
+                  />
                 </Grid>
               ))}
           </Grid>
@@ -226,7 +192,11 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item>
-                  <PatternServiceForm schemaSet={s} onChange={updateConfig} onSubmit={handleSubmit} />
+                  <PatternServiceForm
+                    schemaSet={s}
+                    onSubmit={handleSubmit}
+                    onDelete={handleDelete}
+                  />
                 </Grid>
               ))}
           </Grid>
