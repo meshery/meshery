@@ -53,7 +53,7 @@ function recursiveCleanObject(obj) {
  * given inputs
  * @param {*} config
  */
-function createPatternFromConfig(config) {
+function createPatternFromConfig(config, namespace) {
   const pattern = {
     name: `pattern-${Math.random().toString(36).substr(2, 5)}`,
     services: {},
@@ -71,6 +71,7 @@ function createPatternFromConfig(config) {
     if (pattern.services[key].settings === true) delete pattern.services[key].settings;
 
     pattern.services[key].type = key;
+    pattern.services[key].namespace = namespace;
   });
 
   return pattern;
@@ -83,10 +84,11 @@ function createPatternFromConfig(config) {
  *  schemaSet: { workload: any, traits: any[], type: string };
  *  onSubmit: Function;
  *  onDelete: Function;
+ *  namespace: string;
  * }} props
  * @returns
  */
-function PatternServiceForm({ schemaSet, onSubmit, onDelete }) {
+function PatternServiceForm({ schemaSet, onSubmit, onDelete, namespace }) {
   const [tab, setTab] = React.useState(0);
   const [settings, setSettings] = useStateCB({});
   const [traits, setTraits] = useStateCB({});
@@ -98,11 +100,11 @@ function PatternServiceForm({ schemaSet, onSubmit, onDelete }) {
   const renderTraits = () => !!schemaSet.traits?.length;
 
   const submitHandler = (val) => {
-    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }));
+    onSubmit?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace));
   };
 
   const deleteHandler = (val) => {
-    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }));
+    onDelete?.(createPatternFromConfig({ [getPatternAttributeName(schemaSet.workload)]: val }, namespace));
   };
 
   if (schemaSet.type === "addon") {

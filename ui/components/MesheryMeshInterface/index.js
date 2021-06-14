@@ -1,5 +1,5 @@
 // @ts-check
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, TextField, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { promisifiedDataFetch } from "../../lib/data-fetch";
 import PatternServiceForm from "./PatternServiceForm";
@@ -128,8 +128,8 @@ async function getJSONSchemaSets(adapter) {
 async function submitPattern(pattern, del = false) {
   let a = 2;
   if (a == 2) {
-    console.log({pattern, del})
-    return
+    console.log({ pattern, del });
+    return;
   }
   const res = await fetch("/api/experimental/pattern/deploy", {
     headers: {
@@ -144,6 +144,7 @@ async function submitPattern(pattern, del = false) {
 
 function MesheryMeshInterface({ adapter }) {
   const [schemeSets, setSchemaSets] = useState([]);
+  const [ns, setNS] = useState("default")
 
   const handleSubmit = (cfg) => {
     submitPattern(cfg)
@@ -163,6 +164,16 @@ function MesheryMeshInterface({ adapter }) {
 
   return (
     <Grid container spacing={1}>
+      <Grid item xs={12}>
+        <TextField
+          label="Namespace"
+          variant="filled"
+          value={ns}
+          onChange={(e) => setNS(e.target.value)}
+          fullWidth
+          required
+        />
+      </Grid>
       <Grid item md={8} xs={12}>
         <div>
           <Grid container spacing={1}>
@@ -171,11 +182,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item xs={12}>
-                  <PatternServiceForm
-                    schemaSet={s}
-                    onSubmit={handleSubmit}
-                    onDelete={handleDelete}
-                  />
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns} />
                 </Grid>
               ))}
           </Grid>
@@ -192,11 +199,7 @@ function MesheryMeshInterface({ adapter }) {
               .sort((a, b) => (a.workload?.title < b.workload?.title ? -1 : 1))
               .map((s) => (
                 <Grid item>
-                  <PatternServiceForm
-                    schemaSet={s}
-                    onSubmit={handleSubmit}
-                    onDelete={handleDelete}
-                  />
+                  <PatternServiceForm schemaSet={s} onSubmit={handleSubmit} onDelete={handleDelete} namespace={ns}/>
                 </Grid>
               ))}
           </Grid>
