@@ -27,7 +27,7 @@ const grafanaStyles = (theme) => ({
 class GrafanaConfigComponent extends Component {
     render = () => {
       const {
-        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options
+        classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options, handleChangeApiKey
       } = this.props;
       return (
         <NoSsr>
@@ -61,7 +61,7 @@ class GrafanaConfigComponent extends Component {
                         handleGrafanaConfigure();
                       }
                     }}
-                    onChange={handleChange('grafanaAPIKey')}
+                    onChange={handleChangeApiKey}
                   />
                 </Grid>
               </Grid>
