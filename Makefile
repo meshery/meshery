@@ -149,7 +149,7 @@ build-docs:
 	cd docs; $(jekyll) build --drafts
 
 docker-docs:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:3.8.5 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 .PHONY: chart-readme
 chart-readme:
@@ -164,3 +164,9 @@ swagger-run:swagger-spec
 swagger-docs:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+
+graphql-docs:
+	cd docs; build-docs; bundle exec rake graphql:compile_docs
+
+gqlgen-generate:
+	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate

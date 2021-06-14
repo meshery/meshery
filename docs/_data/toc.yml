@@ -11,6 +11,8 @@
       children:
         - title: Design and Code Conventions
           url: project/contributing-guide
+        - title: Meshery Adapters
+          url: project/contributing-adapters
         - title: Meshery CLI
           url: project/contributing-cli
         - title: Meshery Docs
