@@ -16,6 +16,7 @@ const (
 	ErrMesheryClientCode            = "1008"
 	ErrSubscribeChannelCode         = "1009"
 	ErrNoMeshSyncCode               = "1010"
+	ErrNoExternalEndpointCode       = "1011"
 )
 
 var (
@@ -66,4 +67,8 @@ func ErrMesheryClient(err error) error {
 		return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 	}
 	return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+}
+
+func ErrNoExternalEndpoint(service string) error {
+	return errors.New(ErrNoExternalEndpointCode, errors.Alert, []string{"Unable to find the External Endpoint"}, []string{"Unable to find External Endpoint for Service: " + service}, []string{"The service might not be exposed to External IP", "Meshsync cache is outdated"}, []string{"Check if the Service " + service + " is reachable Externally"})
 }
