@@ -1,6 +1,6 @@
 ---
 layout: default
-title: pattern
+title: mesheryctl pattern
 permalink: reference/mesheryctl/pattern
 type: reference
 display-title: "false"

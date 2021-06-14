@@ -6,9 +6,12 @@ type: functionality
 language: en
 list: include
 ---
+
 <a name="lifecycle-management"></a>
 
 Meshery supports a number of [different service meshes]({{ site.baseurl }}/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
+
+{% include alert.html type="info" title="Meshery's Capabilities Registry" content="See <a href='/concepts/architecture'>Architecture</a> for a description of Meshery's Capabilities Registry for an understanding of how Meshery Adapters deliver service mesh-specific functionality." %}
 
 ## Service Mesh Lifecycle Management
 
@@ -24,7 +27,7 @@ Just as Meshery automates the provisioning of various service meshes, so does it
 
 Users may bring their applications (perform workload onboarding) on the service mesh using the Custom Configuration operation.
 
-Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/sample-apps) across different service meshes.
+Commonly adjoining each service mesh is a sample application that facilitates demonstration of the value of the given service mesh. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/deploying-sample-apps) across different service meshes.
 
 ## Configuration Management
 

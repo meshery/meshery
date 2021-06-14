@@ -72,7 +72,7 @@ const styles = (theme) => ({
     padding: theme.spacing(20),
   },
   chip: {
-    height: "40px",
+    height: "50px",
     fontSize: "15px",
     position: "relative",
     top: theme.spacing(0.5),
@@ -153,11 +153,16 @@ const styles = (theme) => ({
     borderRadius: 4,
   },
   chipNamespace: {
-    margin: "0px 60px 0px 20px",
+    gap:'2rem',
+    margin: "0px",
   },
   cardMesh: {
     margin: "-8px 0px",
   },
+  inputContainer:{
+    flex:'1',
+    minWidth:'250px'
+  }
 });
 
 class MesheryAdapterPlayComponent extends React.Component {
@@ -197,8 +202,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       selectionError: false,
 
       namespace: {
-        value: "default",
-        label: "default"
+        value: "",
+        label: ""
       },
       namespaceError: false,
 
@@ -265,7 +270,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           namespaces.sort((a, b) => (
             a.value > b.value? 1: -1
           ))
-          self.setState({ namespaceList: namespaces, namespace: namespaces[0] })
+          self.setState({ namespaceList: namespaces})
         },
         error: (err) => console.log("error at namespace fetch: " + err),
       })
@@ -1103,13 +1108,11 @@ class MesheryAdapterPlayComponent extends React.Component {
                     Manage Service Mesh
                   </Typography>
                   <Grid container spacing={4}>
-                    <Grid container item xs={12} alignItems="center" justify="center" className={classes.chipNamespace}>
-                      <Grid item md={3} xs={12}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                          {adapterChip}
-                        </div>
-                      </Grid>
-                      <Grid item md={9} xs={12}>
+                    <Grid container item xs={12} alignItems="flex-start" justify="space-between" className={classes.chipNamespace}>
+                      <div>
+                        {adapterChip}
+                      </div>
+                      <div className={classes.inputContainer}>
                         <ReactSelectWrapper
                           label="Namespace"
                           value={namespace}
@@ -1117,7 +1120,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                           options={namespaceList}
                           onChange={this.handleNamespaceChange}
                         />
-                      </Grid>
+                      </div>
                     </Grid>
                     <Grid container spacing={1}>
                       <Grid

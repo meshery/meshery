@@ -1,23 +1,32 @@
-- title: Documentation
-  url: ""
+- title: Quick Start
+  url: installation/quick-start
+  
+- title: Overview
+  url: project
   links:
-    - title: Overview
-      url: overview
-    - title: Project
-      url: project
+    - title: Community
+      url: project/community
+    - title: Contributing
+      url: project/contributing
       children:
-        - title: Contributing
-          url: project/contributing
-        - title: Releases
-          url: project/releases
-        - title: Build & Release (CI)
-          url: project/build-and-release
-        - title: Vulnerabilities
-          url: project/security-vulnerabilities
-        - title: FAQ
-          url: project/faq
-    - title: Quick Start
-      url: installation/quick-start
+        - title: Design and Code Conventions
+          url: project/contributing-guide
+        - title: Meshery Adapters
+          url: project/contributing-adapters
+        - title: Meshery CLI
+          url: project/contributing-cli
+        - title: Meshery Docs
+          url: project/contributing-docs
+        - title: Meshery UI
+          url: project/contributing-ui
+    - title: Releases
+      url: project/releases
+    - title: Build & Release (CI)
+      url: project/build-and-release
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
+    - title: FAQ
+      url: project/faq
       children:
         - title: Installing mesheryctl
           url: installation/mesheryctl
@@ -118,5 +127,7 @@
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
-    - title: Contributing Guidelines
-      url: reference/contributing-guide
+    - title: "GraphQL API Reference"
+      url: reference/graphql-apis
+    - title: "REST API Reference"
+      url: reference/rest-apis

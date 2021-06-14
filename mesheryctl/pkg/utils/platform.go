@@ -12,8 +12,12 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/spf13/viper"
+
 	"gopkg.in/yaml.v2"
 
 	v1core "k8s.io/api/core/v1"
@@ -27,6 +31,31 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 )
+
+// ChangePlatform changes the platform specified in the current context to the specified platform
+func ChangePlatform(currCtx string, ctx config.Context) error {
+	ViperK8s.SetConfigFile(DefaultConfigPath)
+	err := ViperK8s.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	meshConfig := &config.MesheryCtlConfig{}
+	err = ViperK8s.Unmarshal(&meshConfig)
+	if err != nil {
+		return err
+	}
+
+	meshConfig.Contexts[currCtx] = ctx
+	ViperK8s.Set("contexts."+currCtx, ctx)
+
+	err = ViperK8s.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // ChangeConfigEndpoint changes the endpoint of the current context in meshconfig, based on the platform
 func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
@@ -75,9 +104,35 @@ func ChangeConfigEndpoint(currCtx string, ctx config.Context) error {
 	return nil
 }
 
+// ChangeContextVersion changes the version of the specified context to the specified version
+func ChangeContextVersion(contextName, version string) error {
+	viperConfig := viper.New()
+
+	viperConfig.SetConfigFile(DefaultConfigPath)
+	err := viperConfig.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	meshConfig := &config.MesheryCtlConfig{}
+	err = viperConfig.Unmarshal(&meshConfig)
+	if err != nil {
+		return err
+	}
+
+	viperConfig.Set("contexts."+contextName+".version", version)
+
+	err = viperConfig.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/git/trees/" + version + "?recursive=1"
+	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -148,11 +203,6 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			}
 		}
 	}
-
-	if err := DownloadOperatorManifest(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -199,11 +249,11 @@ func FetchManifests(version string) ([]Manifest, error) {
 		return nil, err
 	}
 
-	gitHubFolder := "https://github.com/layer5io/meshery/tree/" + version + "/install/deployment_yamls/k8s"
+	gitHubFolder := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/tree/" + version + "/install/deployment_yamls/k8s"
 	log.Info("downloading manifest files from ", gitHubFolder)
 
 	// download all the manifest files to the ~/.meshery/manifests folder
-	rawManifestsURL := "https://raw.githubusercontent.com/layer5io/meshery/" + version + "/install/deployment_yamls/k8s/"
+	rawManifestsURL := "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + version + "/install/deployment_yamls/k8s/"
 	err = DownloadManifests(manifests, rawManifestsURL)
 
 	if err != nil {
@@ -215,7 +265,7 @@ func FetchManifests(version string) ([]Manifest, error) {
 
 // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 func GetLatestStableReleaseTag() (string, error) {
-	url := "https://api.github.com/repos/layer5io/meshery/releases/latest"
+	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -259,7 +309,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 		fileURL := ""
 
 		if ctx.Channel == "edge" {
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/master/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
 				ctx.Version, err = GetLatestStableReleaseTag()
@@ -267,7 +317,7 @@ func DownloadDockerComposeFile(ctx config.Context, force bool) error {
 					return errors.Wrapf(err, fmt.Sprintf("failed to fetch latest stable release tag"))
 				}
 			}
-			fileURL = "https://raw.githubusercontent.com/layer5io/meshery/" + ctx.Version + "/docker-compose.yaml"
+			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ctx.Version + "/docker-compose.yaml"
 		} else {
 			return errors.Errorf("unknown channel %s", ctx.Channel)
 		}
@@ -459,7 +509,7 @@ func CreateManifestsFolder() error {
 	if err := os.RemoveAll(ManifestsFolder); err != nil {
 		return err
 	}
-	log.Info("creating ~/.meshery/manifests folder...")
+	log.Debug("creating ~/.meshery/manifests folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
 		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))

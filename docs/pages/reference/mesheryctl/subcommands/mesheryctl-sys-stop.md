@@ -1,6 +1,6 @@
 ---
 layout: default
-title: stop
+title: mesheryctl system stop
 permalink: reference/mesheryctl/system/stop
 type: reference
 display-title: "false"

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: system
+title: mesheryctl system
 permalink: reference/mesheryctl/system
 type: reference
 display-title: "false"
