@@ -18,6 +18,10 @@ type genericCapability struct {
 
 	// Host is the address of the grpc service registering the capability
 	Host string `json:"host,omitempty"`
+
+	Restricted bool `json:"restricted,omitempty"`
+
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
 // WorkloadCapability is the struct for capturing the workload definition
