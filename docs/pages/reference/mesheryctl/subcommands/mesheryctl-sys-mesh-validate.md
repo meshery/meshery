@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl system mesh validate | Meshery
+title: mesheryctl system mesh validate
 permalink: reference/mesheryctl/mesh/validate
 type: reference
 display-title: "false"
@@ -61,16 +61,17 @@ list: exclude
 <!-- Options/Flags available in this command -->
 <h2> Options & Flags </h2>
 
+{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
-  {{ flag.name }} # {{ flag.description }}
-  {% endfor %}
+  {{ flag.name }}
   </div>
 </pre>
+{% endfor %}
 <br/>
 
-<h2> Options inherited from parent commands </h2>
+## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">
   --help, -h # Shows help for the command
