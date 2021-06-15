@@ -1,11 +1,11 @@
 import React from "react";
-import MesheryPlayComponent from "../components/MesheryPlayComponent";
+import MesheryPlayComponent from "../../components/MesheryPlayComponent";
 import { NoSsr } from "@material-ui/core";
 import Head from "next/head";
-import { updatepagepath } from "../lib/store";
+import { updatepagepath } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { getPath } from "../lib/path";
+import { getPath } from "../../lib/path";
 class Manage extends React.Component {
   static getInitialProps = ({ query }) => {
     return { query };
@@ -46,3 +46,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(null, mapDispatchToProps)(Manage);
+
