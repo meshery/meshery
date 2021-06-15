@@ -108,14 +108,14 @@ func marshalMesheryApplicationPage(maap *MesheryApplicationPage) []byte {
 	return res
 }
 
-func marshalMesheryFilter(mf *MesheryFilter) []byte {
-	res, _ := json.Marshal(mf)
+func marshalMesheryApplication(ma *MesheryApplication) []byte {
+	res, _ := json.Marshal(ma)
 
 	return res
 }
 
-func marshalMesheryFilters(mps []MesheryFilter) []byte {
-	res, _ := json.Marshal(mps)
+func marshalMesheryApplications(mas []MesheryApplication) []byte {
+	res, _ := json.Marshal(mas)
 
 	return res
 }
