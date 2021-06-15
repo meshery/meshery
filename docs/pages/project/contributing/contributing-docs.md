@@ -24,11 +24,7 @@ Meshery documentation is made of these components:
 
 ## Set up your development environment
 
-<<<<<<< Updated upstream
-{% include alert.html type="info" title="Jekyll" content="The Meshery Docs site is built using Jekyll - a simple static site generator. Jekyll can be installed in the different platforms like Windows, Linux, and MacOs by the following steps:" %}
-=======
 {% include alert.html type="info" title="Jekyll" content="The Meshery Docs site is built using Jekyll - a simple static site generator. Jekyll can be installed on different platforms like Windows, Linux, and MacOS by the following steps " %}
->>>>>>> Stashed changes
 
 ### For Windows
 
@@ -69,90 +65,6 @@ Meshery documentation is made of these components:
     sudo apt-get update
     sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
   ```
-#### Installing rbenv
-
-- Cloning the rbenv repository
-  ```bash
-    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-  ```
-- Setting the path
-  ```bash
-    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-  ```
-- rbenv init
-  ```bash
-    echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-  ```
-- Reload your bashrc
-  ```bash
-    source ~/.bashrc
-  ```
-  <strong>Note:</strong> Change bashrc with your shell specific rc file, for eg: if you are using zsh then the filename is zshrc.
-  
-- Check installation
-  ```bash
-    type rbenv
-  ```
-#### Install Ruby
-
-- rbenv install version
-```bash
-  rbenv install 2.5.1
-```
-- To list all the versions that can be installed
-```bash
-  rbenv install --list-all
-```
-- Set which Ruby version you want to use
-```bash
-  rbenv global version
-```
-- Check Ruby installation
-```bash
-  ruby -v
-```
-
-### For MacOs
-
-- Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
-- After installing Ruby and Jekyll, run the following:
-```bash
-  bundle install
-  bundle config build.puma --with-cflags="-Wno-error=implicit-function-declaration"
-  gem install puma:4.3.5 -- --with-cflags="-Wno-error=implicit-function-declaration"
-  bundle install
-  make file
-```
-
-- Fire up your WSL VM and install the ruby version manager (RVM): 
-  ```bash
-  sudo apt update
-  sudo apt install curl g++ gnupg gcc autoconf automake bison build-essential libc6-dev \
-    	libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool \
-    	libyaml-dev make pkg-config sqlite3 zlib1g-dev libgmp-dev \
-    	libreadline-dev libssl-dev
-  sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  curl -sSL https://get.rvm.io | sudo bash -s stable
-  sudo usermod -a -G rvm `whoami`
-  ```
-
-  If `gpg --keyserver` gives an error, you can use:
-  ```bash
-    sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-  ```
-  or
-  ```bash
-    sudo gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-  ```
-  Restart your WSL VM before moving forward.
-
-### For Linux
-
-- Prerequisites
-  ```bash
-    sudo apt-get update
-    sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
-  ```
 
 #### Installing rbenv
 
@@ -198,7 +110,7 @@ Meshery documentation is made of these components:
   ruby -v
 ```
 
-### For MacOs
+### For MacOS
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
@@ -217,11 +129,8 @@ Meshery documentation is made of these components:
   $ gem install bundler
   $ bundle install
   ```
-<<<<<<< Updated upstream
+
   <strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
-=======
-<strong>Note:</strong> If you are a Mac user you do not need to install the Ruby dependencies, after moving on to the docs directory, you can serve the site.
->>>>>>> Stashed changes
 
 ### Serve the site
 
@@ -229,20 +138,12 @@ Meshery documentation is made of these components:
   ```bash
   $ make site
   ```
-<<<<<<< Updated upstream
 - If that gives an error run:
-```bash
-  $ bundle exec jekyll serve
-```
- _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
-=======
-  - If that gives an error run:
   ```bash
     $ bundle exec jekyll serve
   ```
 
   _Note: From the Makefile, this command is actually running `$ bundle exec jekyll serve --drafts --livereload`. There are two Jekyll configuration, `jekyll serve` for developing locally and `jekyll build` when you need to generate the site artifacts for production._
->>>>>>> Stashed changes
 
 ### Create a Pull Request
 
