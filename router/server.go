@@ -202,16 +202,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	}))
 
 	// Swagger Interactive Playground
-	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
+	swaggerFileGithub := "https://raw.githubusercontent.com/layer5io/meshery/master/helpers/swagger.yaml"
+	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: swaggerFileGithub}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
 	gMux.Handle("/docs", swaggerSh)
-	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../")))
-	// gMux.Handle("/docs", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	// 	http.Redirect(w, req, "/api/docs", http.StatusFound)
-	// }))
-	// gMux.Handle("/", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	handlers.ServeUI(w, r, "", "../ui/out/")
-	// }))))
 
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
