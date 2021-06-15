@@ -4,6 +4,7 @@ title: Supported Platforms
 permalink: installation/platforms
 type: installation
 display-title: "false"
+redirect_from: installation/platforms/
 language: en
 list: exclude
 ---
