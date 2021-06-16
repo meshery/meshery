@@ -1,0 +1,4 @@
+name: view
+description: Configuration of performance profile
+usage: |
+    mesheryctl perf view

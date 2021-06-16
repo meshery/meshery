@@ -1,4 +1,4 @@
 name: --mesh
-description: Name of the service mesh. (default) empty string
+description: Name of the service mesh.
 usage: |
-    mesheryctl perf --mesh [name] --url [URL]
+    mesheryctl perf --mesh [name] --url [URL] --token [path to auth config]

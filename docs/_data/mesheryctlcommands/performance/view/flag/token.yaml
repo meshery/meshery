@@ -1,0 +1,5 @@
+flag: --token, -t
+arg: view
+description: (required) Path to meshery auth config
+usage: |
+    mesheryctl perf view --token [path to auth config]
