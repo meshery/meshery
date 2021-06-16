@@ -1,4 +1,4 @@
 name: --name 
 description: A memorable name for the test. (default) a random string
 usage: |
-  mesheryctl perf --name "name" --url [URL]
+  mesheryctl perf --name "name" --url [URL] --token [path to auth config]
