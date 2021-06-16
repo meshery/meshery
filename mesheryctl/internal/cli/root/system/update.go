@@ -16,6 +16,7 @@ package system
 
 import (
 	"github.com/pkg/errors"
+	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -92,6 +93,7 @@ var updateCmd = &cobra.Command{
 
 				version := currCtx.Version
 				RequestedAdapters := currCtx.Adapters
+				serviceType := currCtx.ServiceType
 
 				if version == "latest" {
 					if currCtx.Channel == "edge" {
@@ -107,6 +109,13 @@ var updateCmd = &cobra.Command{
 				// fetch the manifest files corresponding to the version specified
 				manifests, err := utils.FetchManifests(version)
 
+				if err != nil {
+					return err
+				}
+
+				manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
+
+				err = utils.ChangeManifestServiceType(utils.MesheryService, serviceType, filepath.Join(manifestFiles, utils.MesheryService))
 				if err != nil {
 					return err
 				}

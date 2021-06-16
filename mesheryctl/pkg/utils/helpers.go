@@ -106,6 +106,8 @@ var (
 	ServiceAccount = "service-account.yaml"
 	// ViperCompose is an instance of viper for docker-compose
 	ViperCompose = viper.New()
+	// ViperK8sService is an instance of viper for meshery-service when platform is kubernetes
+	ViperK8sService = viper.New()
 	// ViperDocker is an instance of viper for the meshconfig file when the platform is docker
 	ViperDocker = viper.New()
 	// ViperK8s is an instance of viper for the meshconfig file when the platform is kubernetes

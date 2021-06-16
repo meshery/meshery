@@ -456,11 +456,11 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 // ChangeManifestServiceType changes the service type of meshery deployment
 func ChangeManifestServiceType(fileName string, serviceType string, filePath string) error {
 	// setting up config type to yaml files
-	ViperK8s.SetConfigType("yaml")
+	ViperK8sService.SetConfigType("yaml")
 
 	// setting up config file
-	ViperK8s.SetConfigFile(filePath)
-	err := ViperK8s.ReadInConfig()
+	ViperK8sService.SetConfigFile(filePath)
+	err := ViperK8sService.ReadInConfig()
 	if err != nil {
 		return fmt.Errorf("unable to read config %s | %s", fileName, err)
 	}
@@ -478,10 +478,10 @@ func ChangeManifestServiceType(fileName string, serviceType string, filePath str
 
 	compose.Spec.Type = serviceType
 
-	ViperK8s.Set("apiVersion", compose.APIVersion)
-	ViperK8s.Set("kind", compose.Kind)
-	ViperK8s.Set("metadata", compose.Metadata)
-	ViperK8s.Set("spec", compose.Spec)
+	ViperK8sService.Set("apiVersion", compose.APIVersion)
+	ViperK8sService.Set("kind", compose.Kind)
+	ViperK8sService.Set("metadata", compose.Metadata)
+	ViperK8sService.Set("spec", compose.Spec)
 
 	// Marshal the structs
 	newConfig, err := yaml.Marshal(compose)
