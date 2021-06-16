@@ -21,8 +21,8 @@ import (
 
 const (
 	namespace       = "meshery"
-	operatorSubject = "meshery.meshsync.core"
-	brokerQueue     = "meshery"
+	operatorSubject = "meshery.>"
+	operatorQueue   = "meshery"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
@@ -261,7 +261,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	}
 
 	// subscribing to nats
-	r.BrokerConn, err = nats.New(nats.Options{
+	r.brokerConn, err = nats.New(nats.Options{
 		URLS:           []string{endpoint},
 		ConnectionName: "meshery",
 		Username:       "",
@@ -274,7 +274,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 		return endpoint, err
 	}
 
-	err = r.BrokerConn.SubscribeWithChannel(operatorSubject, brokerQueue, datach)
+	err = r.brokerConn.SubscribeWithChannel(operatorSubject, operatorQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
 	}

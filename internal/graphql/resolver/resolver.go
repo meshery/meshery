@@ -16,8 +16,9 @@ type Resolver struct {
 	Log             logger.Handler
 	DBHandler       *database.Handler
 	KubeClient      *mesherykube.Client
-	BrokerConn      broker.Handler
 	MeshSyncChannel chan struct{}
+
+	brokerConn broker.Handler
 
 	operatorSyncChannel chan struct{}
 	operatorChannel     chan *model.OperatorStatus
