@@ -142,7 +142,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// DeleteMesheryApplicationHandler deletes an application with the given id
+// DeleteMesheryApplicationHandler deletes a application with the given id
 func (h *Handler) DeleteMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
