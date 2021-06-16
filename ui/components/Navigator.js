@@ -19,6 +19,7 @@ import NoSsr from "@material-ui/core/NoSsr";
 import Avatar from "@material-ui/core/Avatar";
 import { withRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faTasks,
   faTerminal,
@@ -53,9 +54,9 @@ const styles = (theme) => ({
     paddingBottom: 16,
   },
   firebase: {
-    fontSize: 24,
-    fontFamily: theme.typography.fontFamily,
-    color: theme.palette.common.white,
+    top: 0,
+    position: "sticky",
+    zIndex: 5
   },
   link: {
     display: "inline-flex",
@@ -299,6 +300,22 @@ const categories = [
         href: "/configuration/patterns",
         title: "Meshery Patterns",
         show: false,
+        link: true,
+      },
+      {
+        id: "Filters",
+        icon: <img src="/static/img/web-filters.svg" style={{ width: "1.21rem" }} />,
+        href: "/configuration/filters",
+        title: "Meshery Filters",
+        show: true,
+        link: true,
+      },
+      {
+        id: "Applications",
+        icon: <img src="/static/img/web-applications.svg" style={{ width: "1.21rem" }} />, 
+        href: "/configuration/applications",
+        title: "Meshery Applications",
+        show: true,
         link: true,
       },
     ],

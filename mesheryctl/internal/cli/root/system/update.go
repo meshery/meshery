@@ -30,8 +30,8 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Pull new Meshery images from Docker Hub.",
-	Long:  `Pull Docker Hub for new Meshery container images and pulls if new image version(s) are available.`,
+	Short: "Pull new Meshery images/manifest files.",
+	Long:  `Pull new Meshery container images and manifests from artifact repository.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -51,12 +51,12 @@ var updateCmd = &cobra.Command{
 		}
 		if currCtx.Version != "latest" {
 			// ask confirmation if user has pinned the version in config
-			log.Infof("You have pinned version: %s in your current conext", currCtx.Version)
+			log.Infof("You have pinned version: %s in your current context", currCtx.Version)
 			userResponse := false
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Updating Meshery container images will supersede the version to latest. Are you sure you want to continue")
+				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
 			}
 
 			if !userResponse {
@@ -66,31 +66,46 @@ var updateCmd = &cobra.Command{
 			currCtx.Version = "latest"
 		}
 
+		log.Debug("creating new Clientset...")
+		// Create a new client
+		kubeClient, err := meshkitkube.New([]byte(""))
+
+		if err != nil {
+			return errors.Wrap(err, "failed to create new client")
+		}
+
 		switch currCtx.Platform {
 		case "docker":
-			log.Printf("Fetching latest docker-compose file for channel: %s...\n", currCtx.Channel)
-			err = utils.DownloadDockerComposeFile(currCtx, true)
-			if err != nil {
-				return errors.Wrap(err, "failed to fetch docker-compose file")
+			if !utils.SkipResetFlag {
+				err := resetMesheryConfig()
+
+				if err != nil {
+					return err
+				}
 			}
+
+			log.Info("Updating Meshery...")
 
 			err = utils.UpdateMesheryContainers()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to update meshery containers"))
+				return errors.Wrap(err, utils.SystemError("failed to update Meshery containers"))
+			}
+
+			err = utils.ApplyOperatorManifest(kubeClient, true, false)
+
+			if err != nil {
+				return err
+			}
+
+			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
+
+			if err != nil {
+				return err
 			}
 
 		case "kubernetes":
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
-
-				log.Debug("creating new Clientset...")
-				// Create a new client
-				client, err := meshkitkube.New([]byte(""))
-
-				if err != nil {
-					return errors.Wrap(err, "failed to create new client")
-				}
-
 				version := currCtx.Version
 				RequestedAdapters := currCtx.Adapters
 				serviceType := currCtx.ServiceType
@@ -126,14 +141,29 @@ var updateCmd = &cobra.Command{
 				log.Info("applying the manifests to Kubernetes cluster...")
 
 				// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, client, true, false)
+				err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, true, false)
+
+				if err != nil {
+					return err
+				}
+
+				err = utils.ApplyOperatorManifest(kubeClient, true, false)
 
 				if err != nil {
 					return err
 				}
 			}
+
+			skipUpdateFlag = true
+
 			// restart the pods in meshery namespace
 			err = restart()
+
+			if err != nil {
+				return err
+			}
+
+			err = utils.ChangeContextVersion(mctlCfg.CurrentContext, "latest")
 
 			if err != nil {
 				return err

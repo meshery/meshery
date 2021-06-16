@@ -31,7 +31,7 @@ module Graphql
       end
 
       def write
-        filename = File.join(@output_dir, 'graphql-reference.md')
+        filename = File.join(@output_dir, 'graphql-api-reference.md')
 
         FileUtils.mkdir_p(@output_dir)
         File.write(filename, contents)

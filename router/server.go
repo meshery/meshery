@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-openapi/runtime/middleware"
+
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/models"
@@ -199,9 +201,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo/meshery-logo.svg")
 	}))
 
-	// gMux.Handle("/", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	handlers.ServeUI(w, r, "", "../ui/out/")
-	// }))))
+	// Swagger Interactive Playground
+	swaggerFileGithub := "https://raw.githubusercontent.com/layer5io/meshery/master/helpers/swagger.yaml"
+	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: swaggerFileGithub}
+	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
+	gMux.Handle("/docs", swaggerSh)
 
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
