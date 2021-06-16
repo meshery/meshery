@@ -10,13 +10,13 @@ import (
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"os"
 
+	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-	"github.com/layer5io/meshkit/utils"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -162,6 +162,14 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 }
 
 func (h *Handler) loadInClusterK8SConfig() (*models.K8SConfig, error) {
+	// try to load k8s config from incluster config
+	_, err := rest.InClusterConfig()
+	if err != nil {
+		err = errors.Wrap(err, "error parsing incluster k8s config")
+		logrus.Error(err)
+		return nil, err
+	}
+
 	return h.setupK8sConfig(true, nil, "")
 }
 
@@ -173,14 +181,14 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 		logrus.Error(err)
 		return nil, err
 	}
-	k8sConfigBytes, err := utils.ReadFileSource(fmt.Sprintf("file://%s", configFile))
+	k8sConfigBytes, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		err = errors.Wrapf(err, "error reading file: %s", configFile)
 		logrus.Error(err)
 		return nil, err
 	}
 
-	return h.setupK8sConfig(false, []byte(k8sConfigBytes), "")
+	return h.setupK8sConfig(false, k8sConfigBytes, "")
 }
 
 // ATM used only in the SessionSyncHandler
@@ -191,7 +199,7 @@ func (h *Handler) checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req *http.Reques
 			AnonymousPerfResults: true,
 		}
 	}
-	if prefObj.K8SConfig == nil || h.kubeclient == nil {
+	if prefObj.K8SConfig == nil {
 		kc, err := h.loadK8SConfigFromDisk()
 		if err != nil {
 			kc, err = h.loadInClusterK8SConfig()
@@ -217,16 +225,15 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	version, err := h.kubeclient.KubeClient.ServerVersion()
+	version, err := helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
 		err = errors.Wrap(err, "unable to ping Kubernetes")
 		logrus.Error(err)
 		http.Error(w, "unable to ping Kubernetes", http.StatusInternalServerError)
 		return
 	}
-
 	if err = json.NewEncoder(w).Encode(map[string]string{
-		"server_version": version.String(),
+		"server_version": version,
 	}); err != nil {
 		err = errors.Wrap(err, "unable to marshal the payload")
 		logrus.Error(err)
@@ -237,29 +244,48 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 
 func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, contextName string) (*models.K8SConfig, error) {
 	kc := &models.K8SConfig{
-		InClusterConfig:   inClusterConfig,
-		Config:            k8sConfigBytes,
-		ContextName:       contextName,
-		ClusterConfigured: inClusterConfig,
+		InClusterConfig: inClusterConfig,
 	}
 
-	mclient, err := mesherykube.New(k8sConfigBytes)
-	if err != nil {
-		return nil, err
+	if !inClusterConfig {
+		ccfg, err := clientcmd.Load(k8sConfigBytes)
+		if err != nil {
+			return nil, ErrInvalidKubeConfig
+		}
+
+		logrus.Debugf("current context: %s, contexts from config file: %v, clusters: %v", ccfg.CurrentContext, ccfg.Contexts, ccfg.Clusters)
+
+		if contextName != "" {
+			k8sCtx, ok := ccfg.Contexts[contextName]
+			if !ok || k8sCtx == nil {
+				return nil, ErrInvalidK8sContextName
+			}
+			ccfg.CurrentContext = contextName
+		}
+
+		kc.Config = k8sConfigBytes
+		kc.ContextName = ccfg.CurrentContext
+
+		k8sContext, ok := ccfg.Contexts[ccfg.CurrentContext]
+		if ok {
+			k8sServer, ok := ccfg.Clusters[k8sContext.Cluster]
+			if ok {
+				kc.Server = k8sServer.Server
+			}
+		}
 	}
+	kc.ClusterConfigured = true
 
-	kc.Server = mclient.RestConfig.Host
-
-	version, err := mclient.KubeClient.ServerVersion()
+	var err error
+	kc.ServerVersion, err = helpers.FetchKubernetesVersion(kc.Config, kc.ContextName)
 	if err != nil {
 		return nil, fmt.Errorf("unable to ping the Kubernetes server")
 	}
-	kc.ServerVersion = version.String()
 
-	//kc.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
-	//if err != nil {
-	//	return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
-	//}
-	h.kubeclient = mclient
+	kc.Nodes, err = helpers.FetchKubernetesNodes(kc.Config, kc.ContextName)
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
+	}
+
 	return kc, nil
 }

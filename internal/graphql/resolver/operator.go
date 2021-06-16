@@ -15,7 +15,6 @@ import (
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -288,8 +287,8 @@ func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
 	}
 
 	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
-		return nil, ErrMesheryClient(err)
+	if err != nil {
+		return nil, ErrQuery(err)
 	}
 
 	deploys := make([]*controller, 0)
@@ -324,7 +323,7 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 	}
 
 	broker, err = mesheryclient.CoreV1Alpha1().Brokers(namespace).Get(context.TODO(), "meshery-broker", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
+	if err != nil {
 		return controllers, ErrMesheryClient(err)
 	}
 	controllers = append(controllers, &controller{
@@ -333,7 +332,7 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 	})
 
 	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
-	if err != nil && !kubeerror.IsNotFound(err) {
+	if err != nil {
 		return controllers, ErrMesheryClient(err)
 	}
 	controllers = append(controllers, &controller{
