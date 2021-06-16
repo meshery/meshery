@@ -11,7 +11,7 @@ import (
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshkit/broker"
+	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -21,7 +21,8 @@ import (
 
 const (
 	namespace       = "meshery"
-	operatorSubject = "meshery.meshsync.core"
+	requestSubject  = "meshery.meshsync.request"
+	meshsyncSubject = "meshery.meshsync.core"
 	brokerQueue     = "meshery"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
@@ -209,7 +210,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 	return r.operatorChannel, nil
 }
 
-func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broker.Message) (string, error) {
+func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
@@ -274,9 +275,18 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 		return endpoint, err
 	}
 
-	err = r.BrokerConn.SubscribeWithChannel(operatorSubject, brokerQueue, datach)
+	err = r.BrokerConn.SubscribeWithChannel(meshsyncSubject, brokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
+	}
+
+	err = r.BrokerConn.Publish(requestSubject, &brokerpkg.Message{
+		Request: &brokerpkg.RequestObject{
+			Entity: brokerpkg.ReSyncDiscoveryEntity,
+		},
+	})
+	if err != nil {
+		return endpoint, ErrPublishBroker(err)
 	}
 
 	return endpoint, nil
