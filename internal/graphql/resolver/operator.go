@@ -303,20 +303,22 @@ func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
 	}
 
 	deploys := make([]*controller, 0)
-	version := ""
-	for _, container := range dep.Spec.Template.Spec.Containers {
-		if container.Name == "manager" {
-			version = strings.Split(container.Image, ":")[1]
+	if err == nil {
+		version := ""
+		for _, container := range dep.Spec.Template.Spec.Containers {
+			if container.Name == "manager" {
+				version = strings.Split(container.Image, ":")[1]
+			}
 		}
-	}
 
-	deploys = append(deploys, &controller{
-		version:    version,
-		name:       dep.ObjectMeta.Name,
-		kind:       dep.Kind,
-		apiversion: dep.APIVersion,
-		namespace:  dep.ObjectMeta.Namespace,
-	})
+		deploys = append(deploys, &controller{
+			version:    version,
+			name:       dep.ObjectMeta.Name,
+			kind:       dep.Kind,
+			apiversion: dep.APIVersion,
+			namespace:  dep.ObjectMeta.Namespace,
+		})
+	}
 
 	return deploys, nil
 }
@@ -337,19 +339,23 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
-	controllers = append(controllers, &controller{
-		name:    "broker",
-		version: broker.Labels["version"],
-	})
+	if err == nil {
+		controllers = append(controllers, &controller{
+			name:    "broker",
+			version: broker.Labels["version"],
+		})
+	}
 
 	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
-	controllers = append(controllers, &controller{
-		name:    "meshsync",
-		version: meshsync.Labels["version"],
-	})
+	if err == nil {
+		controllers = append(controllers, &controller{
+			name:    "meshsync",
+			version: meshsync.Labels["version"],
+		})
+	}
 	return controllers, nil
 }
 
