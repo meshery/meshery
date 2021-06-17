@@ -9,7 +9,6 @@ import IconButton from "@material-ui/core/IconButton";
 import { SnackbarContent } from 'notistack';
 import WarningIcon from "@material-ui/icons/Warning";
 import { withStyles } from "@material-ui/core/styles";
-import classnames from 'classnames';
 import Collapse from '@material-ui/core/Collapse';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -24,6 +23,13 @@ const variantIcon = {
   info: InfoIcon,
 };
 
+const variantHoverColor = {
+  success: "iconSuccess",
+  warning: "iconWarning",
+  error: "iconError",
+  info: "iconInfo",
+}
+
 const styles = (theme) => ({
   success: {
     color: "#6fbf73",
@@ -36,6 +42,33 @@ const styles = (theme) => ({
   },
   warning: {
     color: "#ffc400",
+  },
+  iconColor: {
+    color: "rgba(102, 102, 102, 1)"
+  },
+  iconSuccess: {
+    "&:hover" : {
+      color: "#6fbf73"
+
+    }
+  },
+  iconError: {
+    "&:hover" : {
+      color: "#ff1744"
+
+    }
+  },
+  iconInfo: {
+    "&:hover" : {
+      color: "#2196f3"
+
+    }
+  },
+  iconWarning: {
+    "&:hover" : {
+      color: "#ffc400"
+
+    }
   },
   icon: {
     fontSize: 20,
@@ -92,6 +125,7 @@ function MesherySnackbarWrapper(props) {
   const Icon = variantIcon[variant];
 
   const [expanded, setExpanded] = useState(false);
+  const [cardHover, setCardHover] = useState(false)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -102,8 +136,10 @@ function MesherySnackbarWrapper(props) {
       <Card className={classNames(classes.card, classes[variant], className)} 
         onClick={handleExpandClick}
         aria-label="Show more"
+        onMouseEnter={() => setCardHover(true)}
+        onMouseLeave={() => setCardHover(false)}
       >
-        <CardActions classes={{ root: classes.actionRoot }}>
+        <CardActions classes={{ root: classes.actionRoot }} >
           <Typography variant="subtitle2">
             <div style={{ display: "flex", alignItems: "center" }}>
               <Icon className={classNames(classes.icon, classes.iconVariant)} />
@@ -111,20 +147,24 @@ function MesherySnackbarWrapper(props) {
             </div>
           </Typography>
           <div className={classes.icons}>
-            { expanded && <IconButton
+            <IconButton
               aria-label="Show more"
-              className={classnames(classes.expand, { [classes.expandOpen]: expanded })}
+              className={classNames(classes.expand, { [classes.expandOpen]: expanded })}
               onClick={handleExpandClick}
             >
-              <ExpandMoreIcon style={{ color: "#fff" }} />
+              <ExpandMoreIcon className={classNames({[classes.iconColor]: !cardHover, [classes[variant]]: cardHover })} />
             </IconButton> 
-            }
+            
             <IconButton className={classes.expand} onClick={onClose}>
-              <CloseIcon style={{ color: "#fff" }} />
+              <CloseIcon 
+                className={classNames(classes.iconColor, classes[variantHoverColor[variant]]  )} 
+                onMouseEnter={() => setCardHover(false)} 
+                onMouseLeave={() => setCardHover(true)}
+              />
             </IconButton>
           </div>
         </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Collapse in={expanded} timeout="auto" unmountOnExit >
           <Paper className={classes.collapse} square variant="outlined" elevation={0}>
             <Typography gutterBottom>DETAILS</Typography>
             {details}

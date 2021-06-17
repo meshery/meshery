@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import ClearIcon from '@material-ui/icons/Clear';
 import ErrorIcon from '@material-ui/icons/Error';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import { withStyles } from '@material-ui/core/styles';
@@ -85,7 +84,11 @@ const styles = (theme) => ({
     padding: '0.45rem',
     margin: '0.2rem',
     backgroundColor: theme.palette.secondary.dark,
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    "&:hover" : {
+      backgroundColor: '#FFFFFF',
+      color: theme.palette.secondary.dark
+    }
   }
 });
 
@@ -369,14 +372,6 @@ class MesheryNotification extends React.Component {
                         onClick={this.handleClearAllNotifications()}
                       >
                         <DoneAllIcon className={classes.HeaderItem}/>
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="">
-                      <IconButton
-                        color="inherit"
-                        className={classes.drawerButton}
-                      >
-                        <ClearIcon className={classes.HeaderItem}/>
                       </IconButton>
                     </Tooltip>
                   </div>
