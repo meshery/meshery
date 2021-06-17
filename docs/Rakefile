@@ -5,7 +5,7 @@ require 'rails'
 require 'graphql/rake_task'
 
 namespace :graphql do
-  OUTPUT_DIR = File.expand_path("pages/extensibility", __dir__)
+  OUTPUT_DIR = File.expand_path("pages/reference", __dir__)
   SCHEMA_DIR = File.expand_path("../internal/graphql/schema/schema.graphql", __dir__)
   TEMPLATES_DIR = File.expand_path("lib/tasks/templates/default.md.haml", __dir__)
 
