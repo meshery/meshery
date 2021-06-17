@@ -55,7 +55,7 @@ const promStyles = (theme) => ({
   },
 });
 
-export const submitPrometheusConfigure = (self, cb) => {
+export const submitPrometheusConfigure = (self, cb = () => {}) => {
   const { prometheusURL, selectedPrometheusBoardsConfigs } = self.state;
   if (prometheusURL === "") {
     return;

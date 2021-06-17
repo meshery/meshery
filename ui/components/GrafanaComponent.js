@@ -56,7 +56,7 @@ const grafanaStyles = (theme) => ({
   },
 });
 
-const getGrafanaBoards = (self, cb) => {
+const getGrafanaBoards = (self, cb = () => {}) => {
   const { grafanaURL, grafanaAPIKey, grafanaBoardSearch, selectedBoardsConfigs } = self.state;
   if (typeof grafanaURL === "undefined" || grafanaURL === "") {
     return;
