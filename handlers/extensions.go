@@ -42,6 +42,7 @@ func (h *Handler) LoadExtensionFromPackage(w http.ResponseWriter, req *http.Requ
 	output, err := runFunction(&models.ExtensionInput{
 		DBHandler:       provider.GetGenericPersister(),
 		MeshSyncChannel: h.meshsyncChannel,
+		BrokerConn:      h.brokerConn,
 		Logger:          h.log,
 	})
 	if err != nil {
