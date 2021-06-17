@@ -1,4 +1,4 @@
 name: --file 
-description: Path to service mesh performance test configuration file. (default) empty string.
+description: 'Path to service mesh performance test configuration file (default: empty string).'
 usage: |
-    mesheryctl perf --file [path to file] --url [URL] --token [path to auth config]
+    mesheryctl perf --file [path to file] --url [URL] --token [path to access token]

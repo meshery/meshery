@@ -1,4 +1,4 @@
 name: --load-generator 
-description: Choice of load generator - fortio (OR) wrk2 (default) fortio
+description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
 usage: |
-    mesheryctl perf --load-generator [fortio/wrk2] --url [URL] --token [path to auth config]
+    mesheryctl perf --load-generator [fortio/wrk2] --url [URL] --token [path to access token]

@@ -1,4 +1,4 @@
 name: --duration
-description: Length of the test
+description: Length of the test.
 usage: |
-    mesheryctl perf --duration [time] --url [URL] --token [path to auth config]
+    mesheryctl perf --duration [time] --url [URL] --token [path to access token]

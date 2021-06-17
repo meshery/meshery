@@ -1,4 +1,4 @@
 name: --concurrent-requests  
-description: Number of Parallel Requests (default) 1
+description: 'Number of Parallel Requests (default: 1).'
 usage: |
     mesheryctl perf --concurrent-requests [number of requests] --url [URL] --token [path to auth config]
