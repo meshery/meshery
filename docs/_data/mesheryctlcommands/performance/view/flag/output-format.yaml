@@ -1,5 +1,5 @@
 flag: --output-format, -o
 arg: view
-description: (optional) format to display in json
+description: (optional) format to display in json.
 usage: |
-    mesheryctl perf view --token [path to auth config] --output-format [format]
+    mesheryctl perf view --token [path to access token] --output-format [format]
