@@ -668,10 +668,10 @@ github.com/layer5io/meshery-operator v0.2.17 h1:MmneicgxxbRBR6yXkzk7hufe3V51ohoQ
 github.com/layer5io/meshery-operator v0.2.17/go.mod h1:NmtCOQH7rAG3WWUN9Z1O15vBfvYgEKN9UOpcL0CWCu4=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
 github.com/layer5io/meshkit v0.2.10/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.2.12 h1:1EP2vvWLj9JAVM6ljHDAvqcS6NHHTH++niq27Rpclpk=
-github.com/layer5io/meshkit v0.2.12/go.mod h1:QPtkxJOzaLMCEcb77+HJ4ig14rV7sVP2zK6LVVZG/Ng=
-github.com/layer5io/meshsync v0.1.19 h1:rx3A7bVRprwNWVtEoimK6+mBOtMMr6Kox1qXG7hAAsw=
-github.com/layer5io/meshsync v0.1.19/go.mod h1:07ofTYKnZ1IV1TZQcVhVx2yBe++o3KStSJCLTFSsKnY=
+github.com/layer5io/meshkit v0.2.14 h1:LWfTG0Xw5K+XkBVg26TOUuy/FTKh7mSWD2eh42SNeWk=
+github.com/layer5io/meshkit v0.2.14/go.mod h1:QPtkxJOzaLMCEcb77+HJ4ig14rV7sVP2zK6LVVZG/Ng=
+github.com/layer5io/meshsync v0.1.20 h1:XiSTkGJhkbA3Az26qRZHhXaEOsVECrSpphzJVn9d0hg=
+github.com/layer5io/meshsync v0.1.20/go.mod h1:i/T/wmEtyvPXd2QD93rX9tpACTBjWGsCS6VDbIuwGXk=
 github.com/layer5io/nighthawk-go v1.0.3 h1:AGhip7TM8FjaDJ58jU/7BoPx+O45S7UNImfw7vC2Z0U=
 github.com/layer5io/nighthawk-go v1.0.3/go.mod h1:iKEQtXtfvcJ4zNVRqmCzMeamnfiiQrd4CNHgdQQC49Y=
 github.com/layer5io/service-mesh-performance v0.3.3 h1:KtouYXg64y+G0soPJwDeB0sM6PXolBpkV6Ke15aqwmk=
@@ -1019,6 +1019,7 @@ github.com/urfave/cli/v2 v2.1.1/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2
 github.com/vektah/dataloaden v0.2.1-0.20190515034641-a19b9a6e7c9e/go.mod h1:/HUdMve7rvxZma+2ZELQeNh88+003LL7Pf/CZ089j8U=
 github.com/vektah/gqlparser v1.1.2 h1:ZsyLGn7/7jDNI+y4SEhI4yAxRChlv15pUHMjijT+e68=
 github.com/vektah/gqlparser v1.1.2/go.mod h1:1ycwN7Ij5njmMkPPAOaRFY4rET2Enx7IkVv3vaXspKw=
+github.com/vektah/gqlparser/v2 v2.1.0 h1:uiKJ+T5HMGGQM2kRKQ8Pxw8+Zq9qhhZhz/lieYvCMns=
 github.com/vektah/gqlparser/v2 v2.1.0/go.mod h1:SyUiHgLATUR8BiYURfTirrTcGpcE+4XkV2se04Px1Ms=
 github.com/vektah/gqlparser/v2 v2.2.0 h1:bAc3slekAAJW6sZTi07aGq0OrfaCjj4jxARAaC7g2EM=
 github.com/vektah/gqlparser/v2 v2.2.0/go.mod h1:i3mQIGIrbK2PD1RrCeMTlVbkF2FJ6WkU1KJlJlC+3F4=
