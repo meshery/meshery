@@ -15,6 +15,7 @@ const (
 	ErrControlPlaneSubscriptionCode = "1007"
 	ErrMesheryClientCode            = "1008"
 	ErrSubscribeChannelCode         = "1009"
+	ErrPublishBrokerCode            = "1009"
 	ErrNoMeshSyncCode               = "1010"
 	ErrNoExternalEndpointCode       = "1011"
 )
@@ -60,6 +61,10 @@ func ErrControlPlaneSubscription(err error) error {
 
 func ErrSubscribeChannel(err error) error {
 	return errors.New(ErrSubscribeChannelCode, errors.Alert, []string{"Unable to subscribe to channel", err.Error()}, []string{"Unable to create a broker subscription"}, []string{"Could be a network issue", "Meshery Broker could have crashed"}, []string{"Check if Meshery Broker is reachable from Meshery Server", "Check if Meshery Broker is up and running inside the configured cluster"})
+}
+
+func ErrPublishBroker(err error) error {
+	return errors.New(ErrPublishBrokerCode, errors.Alert, []string{"Unable to publish to broker", err.Error()}, []string{"Unable to create a broker publisher"}, []string{"Could be a network issue", "Meshery Broker could have crashed"}, []string{"Check if Meshery Broker is reachable from Meshery Server", "Check if Meshery Broker is up and running inside the configured cluster"})
 }
 
 func ErrMesheryClient(err error) error {

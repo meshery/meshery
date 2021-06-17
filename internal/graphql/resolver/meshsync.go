@@ -40,7 +40,7 @@ func (r *Resolver) connectToBroker(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if r.brokerConn == nil && status != nil && status.Status == model.StatusEnabled {
+	if r.BrokerConn == nil && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := r.subscribeToBroker(r.KubeClient, r.brokerChannel)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))

@@ -11,7 +11,7 @@ import (
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	"github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/internal/graphql/model"
-	"github.com/layer5io/meshkit/broker"
+	brokerpkg "github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -21,8 +21,9 @@ import (
 
 const (
 	namespace       = "meshery"
-	operatorSubject = "meshery.>"
-	operatorQueue   = "meshery"
+	requestSubject  = "meshery.meshsync.request"
+	meshsyncSubject = "meshery.meshsync.core"
+	brokerQueue     = "meshery"
 
 	operatorYaml = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/manifests/default.yaml"
 	brokerYaml   = "https://raw.githubusercontent.com/layer5io/meshery-operator/master/config/samples/meshery_v1alpha1_broker.yaml"
@@ -209,7 +210,7 @@ func (r *Resolver) listenToOperatorState(ctx context.Context) (<-chan *model.Ope
 	return r.operatorChannel, nil
 }
 
-func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *broker.Message) (string, error) {
+func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	mesheryclient, err := client.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
@@ -261,7 +262,7 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 	}
 
 	// subscribing to nats
-	r.brokerConn, err = nats.New(nats.Options{
+	r.BrokerConn, err = nats.New(nats.Options{
 		URLS:           []string{endpoint},
 		ConnectionName: "meshery",
 		Username:       "",
@@ -274,9 +275,18 @@ func (r *Resolver) subscribeToBroker(mesheryKubeClient *mesherykube.Client, data
 		return endpoint, err
 	}
 
-	err = r.brokerConn.SubscribeWithChannel(operatorSubject, operatorQueue, datach)
+	err = r.BrokerConn.SubscribeWithChannel(meshsyncSubject, brokerQueue, datach)
 	if err != nil {
 		return endpoint, ErrSubscribeChannel(err)
+	}
+
+	err = r.BrokerConn.Publish(requestSubject, &brokerpkg.Message{
+		Request: &brokerpkg.RequestObject{
+			Entity: brokerpkg.ReSyncDiscoveryEntity,
+		},
+	})
+	if err != nil {
+		return endpoint, ErrPublishBroker(err)
 	}
 
 	return endpoint, nil
@@ -293,20 +303,22 @@ func getOperator(kubeclient *mesherykube.Client) ([]*controller, error) {
 	}
 
 	deploys := make([]*controller, 0)
-	version := ""
-	for _, container := range dep.Spec.Template.Spec.Containers {
-		if container.Name == "manager" {
-			version = strings.Split(container.Image, ":")[1]
+	if err == nil {
+		version := ""
+		for _, container := range dep.Spec.Template.Spec.Containers {
+			if container.Name == "manager" {
+				version = strings.Split(container.Image, ":")[1]
+			}
 		}
-	}
 
-	deploys = append(deploys, &controller{
-		version:    version,
-		name:       dep.ObjectMeta.Name,
-		kind:       dep.Kind,
-		apiversion: dep.APIVersion,
-		namespace:  dep.ObjectMeta.Namespace,
-	})
+		deploys = append(deploys, &controller{
+			version:    version,
+			name:       dep.ObjectMeta.Name,
+			kind:       dep.Kind,
+			apiversion: dep.APIVersion,
+			namespace:  dep.ObjectMeta.Namespace,
+		})
+	}
 
 	return deploys, nil
 }
@@ -327,19 +339,23 @@ func getControllersInfo(mesheryKubeClient *mesherykube.Client) ([]*controller, e
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
-	controllers = append(controllers, &controller{
-		name:    "broker",
-		version: broker.Labels["version"],
-	})
+	if err == nil {
+		controllers = append(controllers, &controller{
+			name:    "broker",
+			version: broker.Labels["version"],
+		})
+	}
 
 	meshsync, err = mesheryclient.CoreV1Alpha1().MeshSyncs(namespace).Get(context.TODO(), "meshery-meshsync", metav1.GetOptions{})
 	if err != nil && !kubeerror.IsNotFound(err) {
 		return controllers, ErrMesheryClient(err)
 	}
-	controllers = append(controllers, &controller{
-		name:    "meshsync",
-		version: meshsync.Labels["version"],
-	})
+	if err == nil {
+		controllers = append(controllers, &controller{
+			name:    "meshsync",
+			version: meshsync.Labels["version"],
+		})
+	}
 	return controllers, nil
 }
 
