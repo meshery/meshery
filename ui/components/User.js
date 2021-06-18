@@ -103,7 +103,7 @@ class User extends React.Component {
               <Avatar className={avatarClassName} src={avatar_url} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition keepMounted style={{zIndex: 10000}} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition  style={{zIndex: 10000}} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
