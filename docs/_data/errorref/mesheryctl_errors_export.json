@@ -9,7 +9,7 @@
         "code": "1000",
         "long_description": "Check whether `mesheryctl` can initialize a Kubernetes client.",
         "short_description": "Failure to create Kubernetes client.",
-        "probable_cause": "Missing certificate data in user's kubeconfic for one or more contexts.",
+        "probable_cause": "Missing certificate data in user's kubeconfig for one or more contexts.",
         "suggested_remediation": "Run `mesheryctl system config` to export your Kubernetes' cluster certificate data."
       },
       "1001": {
