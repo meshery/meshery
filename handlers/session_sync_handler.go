@@ -47,10 +47,10 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		//	prefObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 		//}
 
-		//// clearing out the config just for displaying purposes
-		//if len(prefObj.K8SConfig.Config) > 0 {
-		//	prefObj.K8SConfig.Config = nil
-		//}
+		// clearing out the config just for displaying purposes
+		if len(prefObj.K8SConfig.Config) > 0 {
+			prefObj.K8SConfig.Config = nil
+		}
 	} else {
 		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
 		if err != nil {
