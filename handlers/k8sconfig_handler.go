@@ -180,7 +180,14 @@ func (h *Handler) loadK8SConfigFromDisk() (*models.K8SConfig, error) {
 		return nil, err
 	}
 
-	return h.setupK8sConfig(false, []byte(k8sConfigBytes), "")
+	ccfg, err := clientcmd.Load([]byte(k8sConfigBytes))
+	if err != nil {
+		err = errors.Wrapf(err, "error parsing k8s config")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return h.setupK8sConfig(false, []byte(k8sConfigBytes), ccfg.CurrentContext)
 }
 
 // ATM used only in the SessionSyncHandler
@@ -237,14 +244,14 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 
 func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, contextName string) (*models.K8SConfig, error) {
 	kc := &models.K8SConfig{
-		InClusterConfig:   inClusterConfig,
-		Config:            k8sConfigBytes,
-		ContextName:       contextName,
-		ClusterConfigured: inClusterConfig,
+		InClusterConfig: inClusterConfig,
+		Config:          k8sConfigBytes,
+		ContextName:     contextName,
 	}
 
 	mclient, err := mesherykube.New(k8sConfigBytes)
 	if err != nil {
+		kc.ClusterConfigured = false
 		return nil, err
 	}
 
@@ -252,6 +259,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 
 	version, err := mclient.KubeClient.ServerVersion()
 	if err != nil {
+		kc.ClusterConfigured = false
 		return nil, fmt.Errorf("unable to ping the Kubernetes server")
 	}
 	kc.ServerVersion = version.String()
@@ -260,6 +268,7 @@ func (h *Handler) setupK8sConfig(inClusterConfig bool, k8sConfigBytes []byte, co
 	//if err != nil {
 	//	return nil, fmt.Errorf("unable to fetch nodes metadata from the Kubernetes server")
 	//}
-	h.kubeclient = mclient
+	*h.kubeclient = *mclient
+	kc.ClusterConfigured = true
 	return kc, nil
 }
