@@ -19,7 +19,7 @@ Fields that are deprecated are marked with **{warning-solid}**.
 
 <!-- vale off -->
 
-## `Query` type
+## **`Query`** type
 
 The `Query` type contains the API's top-level entry points for all executable queries.
 
@@ -27,9 +27,9 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 Query details about Addons available (Eg. Prometheus and Grafana).
 
-Returns [`[AddonList!]!`](#addonlist).
+###### **Returns** [`[AddonList!]!`](#addonlist).
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -39,15 +39,15 @@ Returns [`[AddonList!]!`](#addonlist).
 
 Query available Namesapces in your cluster.
 
-Returns [`[NameSpace!]!`](#namespace).
+###### **Returns** [`[NameSpace!]!`](#namespace).
 
 ### `Query.getControlPlanes`
 
 Query Control Plane data for a Service Mesh (or all) in your cluster.
 
-Returns [`[ControlPlane!]!`](#controlplane).
+###### **Returns** [`[ControlPlane!]!`](#controlplane).
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -57,9 +57,9 @@ Returns [`[ControlPlane!]!`](#controlplane).
 
 Query status of Meshery Operator in your cluster.
 
-Returns [`OperatorStatus`](#operatorstatus).
+###### **Returns** [`OperatorStatus`](#operatorstatus).
 
-## `Mutation` type
+## **`Mutation`** type
 
 The `Mutation` type contains all the mutations you can execute.
 
@@ -69,32 +69,32 @@ All mutations receive their arguments in a single input object named `input`.
 
 Change the Addon Status.
 
-Input type: `AddonStatusInput`
+###### **Input type:** `AddonStatusInput`
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="mutationchangeaddonstatusselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
 | <a id="mutationchangeaddonstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
 
-Returns [`Status!`](#status).
+###### **Returns** [`Status!`](#status).
 
 ### `Mutation.changeOperatorStatus`
 
 Change the Operator Status.
 
-Input type: `OperatorStatusInput`
+###### **Input type:** `OperatorStatusInput`
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
 
-Returns [`Status!`](#status).
+###### **Returns** [`Status!`](#status).
 
-## `Subscription` type
+## **`Subscription`** type
 
 The `Subscription` type contains all the Subscriptions you can listen to.
 
@@ -102,9 +102,9 @@ The `Subscription` type contains all the Subscriptions you can listen to.
 
 Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
 
-Returns [`[AddonList!]!`](#addonlist).
+###### **Returns** [`[AddonList!]!`](#addonlist).
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -114,9 +114,9 @@ Returns [`[AddonList!]!`](#addonlist).
 
 Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.
 
-Returns [`[ControlPlane!]!`](#controlplane).
+###### **Returns** [`[ControlPlane!]!`](#controlplane).
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -126,13 +126,13 @@ Returns [`[ControlPlane!]!`](#controlplane).
 
 Listen to changes in the list of available Namesapces in your cluster.
 
-Returns [`OperatorControllerStatus!`](#operatorcontrollerstatus).
+###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
 ### `Subscription.listenToOperatorState`
 
 Listen to changes in status of Meshery Operator in your cluster.
 
-Returns [`OperatorStatus!`](#operatorstatus).
+###### **Returns** [`OperatorStatus!`](#operatorstatus).
 
 ## Object types
 
@@ -149,9 +149,9 @@ on `graphql.org`.
 
 ### `AddonList`
 
-Deatils about the Addon Component.
+Details about the Addon Component.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -163,7 +163,7 @@ Deatils about the Addon Component.
 
 Control Plane data for a particular Mesh.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -174,7 +174,7 @@ Control Plane data for a particular Mesh.
 
 Member Details.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -185,7 +185,7 @@ Member Details.
 
 ### `Error`
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -196,7 +196,7 @@ Member Details.
 
 Type to define a k8s Namespace.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -206,7 +206,7 @@ Type to define a k8s Namespace.
 
 Controllers of Meshery Operator.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -219,7 +219,7 @@ Controllers of Meshery Operator.
 
 Status of Meshery Operator and its controllers.
 
-#### Fields
+###### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -300,7 +300,7 @@ For more information, read about [Scalar Types](https://graphql.org/learn/schema
 
 Filter Control Plane Query.
 
-#### Arguments
+###### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
