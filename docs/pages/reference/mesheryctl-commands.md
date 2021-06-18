@@ -207,7 +207,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
-          <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/">{{ command.name }}</a></td>
+          <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel">{{ command.name }}</a></td>
           <td></td>
           <td></td>
           <td>{{ command.description }}</td>
