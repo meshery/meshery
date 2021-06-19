@@ -51,11 +51,12 @@ lang: en
 <!-- Options/Flags available in this command -->
 ## Options
 
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.status.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.status.flag %}{% assign flag = flag_hash[1] %}
-    {{ flag.flag }} # {{ flag.description }}
-    {% endfor %}
+    {{ flag.flag }}
   </div>
 </pre>
+{% endfor %}
 <br/>
