@@ -48,23 +48,6 @@ lang: en
   </div>
 </pre>
 {% endfor %}
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.command %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ subcommand.usage }}
-  </div>
-</pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-{% endfor %}
-<br/>
 
 <!-- Options/Flags available in this command -->
 <!-- ## Options & Flags
