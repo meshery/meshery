@@ -219,9 +219,16 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
             <td>{{ subcommand.description }}</td>
           </tr>
         {% endfor %}
-          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
+          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.set.command %}{% assign flag = flag_hash[1] %}
             <tr>
-              <td>{{ flag.arg }}</td>
+              <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/set">{{ flag.arg }}</a></td>
+              <td>{{ flag.flag }}</td>
+              <td>{{ flag.description }}</td>
+            </tr>
+          {% endfor %}
+          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.switch.command %}{% assign flag = flag_hash[1] %}
+            <tr>
+              <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/switch">{{ flag.arg }}</a></td>
               <td>{{ flag.flag }}</td>
               <td>{{ flag.description }}</td>
             </tr>
