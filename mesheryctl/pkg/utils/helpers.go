@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
@@ -793,4 +794,12 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+
+	s.Suffix = " " + suffix
+	s.FinalMSG = finalMsg + "\n"
+	return s
 }

@@ -18,90 +18,106 @@
     },
     {
       "name": "ErrInvalidRequestCode",
-      "old_code": "test_code",
+      "old_code": "1000",
       "code": "1000",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrNilClientCode",
-      "old_code": "test_code",
+      "old_code": "1001",
       "code": "1001",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrCreateDataCode",
-      "old_code": "test_code",
+      "old_code": "1002",
       "code": "1002",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrQueryCode",
-      "old_code": "test_code",
+      "old_code": "1003",
       "code": "1003",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrMeshsyncSubscriptionCode",
-      "old_code": "test_code",
+      "old_code": "1004",
       "code": "1004",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrOperatorSubscriptionCode",
-      "old_code": "test_code",
+      "old_code": "1005",
       "code": "1005",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrAddonSubscriptionCode",
-      "old_code": "test_code",
+      "old_code": "1006",
       "code": "1006",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrControlPlaneSubscriptionCode",
-      "old_code": "test_code",
+      "old_code": "1007",
       "code": "1007",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrMesheryClientCode",
-      "old_code": "test_code",
+      "old_code": "1008",
       "code": "1008",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrSubscribeChannelCode",
-      "old_code": "test_code",
+      "old_code": "1009",
       "code": "1009",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrPublishBrokerCode",
+      "old_code": "1009",
+      "code": "1009",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
       "name": "ErrNoMeshSyncCode",
-      "old_code": "test_code",
+      "old_code": "1010",
       "code": "1010",
       "code_is_literal": true,
-      "code_is_int": false,
+      "code_is_int": true,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoExternalEndpointCode",
+      "old_code": "1011",
+      "code": "1011",
+      "code_is_literal": true,
+      "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
     },
     {
@@ -138,93 +154,131 @@
     }
   ],
   "literal_codes": {
-    "test_code": [
+    "1000": [
       {
         "name": "ErrInvalidRequestCode",
-        "old_code": "test_code",
+        "old_code": "1000",
         "code": "1000",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1001": [
       {
         "name": "ErrNilClientCode",
-        "old_code": "test_code",
+        "old_code": "1001",
         "code": "1001",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1002": [
       {
         "name": "ErrCreateDataCode",
-        "old_code": "test_code",
+        "old_code": "1002",
         "code": "1002",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1003": [
       {
         "name": "ErrQueryCode",
-        "old_code": "test_code",
+        "old_code": "1003",
         "code": "1003",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1004": [
       {
         "name": "ErrMeshsyncSubscriptionCode",
-        "old_code": "test_code",
+        "old_code": "1004",
         "code": "1004",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1005": [
       {
         "name": "ErrOperatorSubscriptionCode",
-        "old_code": "test_code",
+        "old_code": "1005",
         "code": "1005",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1006": [
       {
         "name": "ErrAddonSubscriptionCode",
-        "old_code": "test_code",
+        "old_code": "1006",
         "code": "1006",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1007": [
       {
         "name": "ErrControlPlaneSubscriptionCode",
-        "old_code": "test_code",
+        "old_code": "1007",
         "code": "1007",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1008": [
       {
         "name": "ErrMesheryClientCode",
-        "old_code": "test_code",
+        "old_code": "1008",
         "code": "1008",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
+      }
+    ],
+    "1009": [
       {
         "name": "ErrSubscribeChannelCode",
-        "old_code": "test_code",
+        "old_code": "1009",
         "code": "1009",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
       },
       {
+        "name": "ErrPublishBrokerCode",
+        "old_code": "1009",
+        "code": "1009",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "internal/graphql/resolver/error.go"
+      }
+    ],
+    "1010": [
+      {
         "name": "ErrNoMeshSyncCode",
-        "old_code": "test_code",
+        "old_code": "1010",
         "code": "1010",
         "code_is_literal": true,
-        "code_is_int": false,
+        "code_is_int": true,
+        "path": "internal/graphql/resolver/error.go"
+      }
+    ],
+    "1011": [
+      {
+        "name": "ErrNoExternalEndpointCode",
+        "old_code": "1011",
+        "code": "1011",
+        "code_is_literal": true,
+        "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
       }
     ]
@@ -279,8 +333,186 @@
       "path": "internal/graphql/resolver/error.go"
     }
   ],
-  "deprecated_new_default": [
-    "internal/graphql/resolver/error.go"
-  ],
-  "errors_raw": {}
+  "deprecated_new_default": null,
+  "errors_raw": {
+    "ErrAddonSubscriptionCode": [
+      {
+        "name": "ErrAddonSubscriptionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Addons stopped",
+        "short_description": "Addons Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrControlPlaneSubscriptionCode": [
+      {
+        "name": "ErrControlPlaneSubscriptionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Control Plane stopped",
+        "short_description": "Control Plane Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrCreateDataCode": [
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to write MeshSync data to the Meshery Database",
+        "short_description": "Error while writing meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      },
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to update MeshSync data to the Meshery Database",
+        "short_description": "Error while updating meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      },
+      {
+        "name": "ErrCreateDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to read MeshSync data to the Meshery Database",
+        "short_description": "Error while deleting meshsync data",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      }
+    ],
+    "ErrInvalidRequestCode": [
+      {
+        "name": "ErrInvalidRequestCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "The Graphql query requested is invalid",
+        "short_description": "Invalid query, please check syntax",
+        "probable_cause": "",
+        "suggested_remediation": "Check the query parameters and syntax of the query being run"
+      }
+    ],
+    "ErrMesheryClientCode": [
+      {
+        "name": "ErrMesheryClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Meshery kubernetes client not initialized",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
+      {
+        "name": "ErrMesheryClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Meshery kubernetes client not initialized",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      }
+    ],
+    "ErrMeshsyncSubscriptionCode": [
+      {
+        "name": "ErrMeshsyncSubscriptionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for MeshSync stopped",
+        "short_description": "MeshSync Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrNilClientCode": [
+      {
+        "name": "ErrNilClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      }
+    ],
+    "ErrNoExternalEndpointCode": [
+      {
+        "name": "ErrNoExternalEndpointCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to find the External Endpoint",
+        "probable_cause": "The service might not be exposed to External IP\nMeshsync cache is outdated",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrNoMeshSyncCode": [
+      {
+        "name": "ErrNoMeshSyncCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "MeshSync custom controller is not running in your kubernetes cluster",
+        "short_description": "MeshSync disabled",
+        "probable_cause": "Meshery Operator is not running in your cluster or is crashing",
+        "suggested_remediation": "Enable Meshery Operator from the settings page in the UI\nCheck for logs in the meshery-operator pods from inside the application for more information"
+      },
+      {
+        "name": "ErrNoMeshSyncCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Meshery Database handler is not accessible to perform operations",
+        "short_description": "Database handler not initialized",
+        "probable_cause": "Meshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      }
+    ],
+    "ErrOperatorSubscriptionCode": [
+      {
+        "name": "ErrOperatorSubscriptionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "GraphQL subscription for Operator stopped",
+        "short_description": "Operator Subscription failed",
+        "probable_cause": "Could be a network issue",
+        "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrPublishBrokerCode": [
+      {
+        "name": "ErrPublishBrokerCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to create a broker publisher",
+        "short_description": "Unable to publish to broker",
+        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      }
+    ],
+    "ErrQueryCode": [
+      {
+        "name": "ErrQueryCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Invalid Query performed in Meshery Database",
+        "short_description": "Error while querying data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrSubscribeChannelCode": [
+      {
+        "name": "ErrSubscribeChannelCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to create a broker subscription",
+        "short_description": "Unable to subscribe to channel",
+        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      }
+    ]
+  }
 }
