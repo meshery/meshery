@@ -5,8 +5,6 @@ permalink: reference/mesheryctl/pattern/delete
 type: reference
 display-title: "false"
 language: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -52,11 +50,12 @@ list: exclude
 <!-- Options/Flags available in this command -->
 ## Options & Flags
 
+{% for flag_hash in site.data.mesheryctlcommands.pattern.delete.flags %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {% for flag_hash in site.data.mesheryctlcommands.pattern.delete.flags %}{% assign flag = flag_hash[1] %}
-  {{ flag.name }} # {{ flag.description }}
-  {% endfor %}
+  {{ flag.name }}
   </div>
 </pre>
+{% endfor %}
 <br/>
