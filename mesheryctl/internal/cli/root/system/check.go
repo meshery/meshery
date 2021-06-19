@@ -57,7 +57,7 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 			return err
 		}
 
-		return errors.New("outdated config file found. Please re-run the command.")
+		return errors.New("outdated config file found. Please re-run the command")
 	}
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
