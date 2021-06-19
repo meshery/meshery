@@ -29,46 +29,13 @@ lang: en
 </pre>
 
 <!-- All possible example use cases of the command -->
-## Examples
+## Example
 
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+  mesheryctl system channel [options]
   </div>
 </pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ flag.usage }}
-  </div>
-</pre>
-{% endfor %}
-<br/>
-
-<!-- Options/Flags available in this command -->
-## Options & Flags
-
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-channel.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-{{ subcommand.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  {{ subcommand.name }}
-  </div>
-</pre>
-{% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
-{{ flag.description }}
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    {{ flag.arg }}
-  </div>
-</pre>
-{% endfor %}
-<br/>
 
 ## Options inherited from parent commands
 <pre class="codeblock-pre">
