@@ -29,35 +29,14 @@ language: en
 
 ## Examples
 
-(required) adapter to use for validation. Defaults to "meshery-osm:10010"
+{% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+{{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl mesh validate --adapter [name of the adapter]
+    {{ flag.usage }}
   </div>
 </pre>
-<br/>
-Kubernetes namespace to be used for deploying the validation tests and sample workload
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --namespace [namespace to be used]
-  </div>
-</pre>
-<br/>
-(required) specification to be used for conformance test. Defaults to "smi"
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --spec [specification to be used for conformance test]
-  </div>
-</pre>
-<br/>
-(required) path to token for authenticating to Meshery API
-<pre class="codeblock-pre">
-  <div class="codeblock">
-  mesheryctl mesh validate --tokenPath [path to token for authentication]
-  </div>
-</pre>
-<br/>
-
+{% endfor %}
 
 <!-- Options/Flags available in this command -->
 
