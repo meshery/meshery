@@ -2,9 +2,9 @@ package system
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 
 	"github.com/pkg/errors"
@@ -44,50 +44,20 @@ var checkCmd = &cobra.Command{
 func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		userResponse := false
-
-		//skip asking confirmation if -y flag used or host in meshconfig is already localhost
-		if utils.SilentFlag {
-			userResponse = true
-		} else {
-			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("Do you want to create a new config file")
-		}
-
-		if !userResponse {
-			return err
-		}
-
 		cfgFile := utils.CfgFile
-		log.Println("Backing up " + cfgFile + " to original_config.yaml")
-		err := os.Rename(cfgFile, "original_config.yaml")
-		if err != nil {
-			log.Fatal(err)
-		}
+		// extracting file and folder name from the meshconfig path
+		dir, file := filepath.Split(cfgFile)
+		// extracting extension
+		extension := filepath.Ext(file)
+		bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
 
-		_, err = os.Create(cfgFile)
+		log.Println("Backing up " + cfgFile + " to " + bakLocation)
+		err := os.Rename(cfgFile, bakLocation)
 		if err != nil {
 			return err
 		}
 
-		// Add Token to context file
-		err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Add Context to context file
-		err = utils.AddContextToConfig("local", utils.TemplateContext, cfgFile, true)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		log.Println(
-			fmt.Sprintf("Default config file created at %s",
-				cfgFile,
-			))
-
-		return errors.New("created new default config.Modify it and restart")
+		return errors.New("outdated config file found. Please re-run the command.")
 	}
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
