@@ -127,9 +127,9 @@ To load fish shell completions for each session, execute once:
 
 
 <!-- Options/Flags available in this command -->
-## Options
+<!-- ## Options -->
 
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
+<!-- {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.completion.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -138,3 +138,4 @@ To load fish shell completions for each session, execute once:
 </pre>
 {% endfor %}
 <br/>
+-->

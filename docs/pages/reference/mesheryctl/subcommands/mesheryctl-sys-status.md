@@ -23,11 +23,11 @@ lang: en
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl system status [flags]
+    mesheryctl system status 
   </div>
 </pre>
 
-## Examples
+<!--## Examples
 
 {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.status.command %}{% assign command = command_hash[1] %}
 {{ command.description }}
@@ -46,10 +46,10 @@ lang: en
 </pre>
 {% endfor %}
 <br/>
-
+-->
 
 <!-- Options/Flags available in this command -->
-## Options
+<!-- ## Options
 
 {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.status.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
@@ -60,3 +60,4 @@ lang: en
 </pre>
 {% endfor %}
 <br/>
+-->

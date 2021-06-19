@@ -45,7 +45,6 @@ lang: en
   </div>
 </pre>
 {% endfor %}
-
 <br/>
 
 To configure Meshery to use Google Kubernetes Engine-
@@ -54,7 +53,6 @@ To configure Meshery to use Google Kubernetes Engine-
   mesheryctl system config gke --token &#60;path-to-token&#62;
   </div>
 </pre>
-
 <br/>
 
 To configure Meshery to use Azure Kubernetes Service-
@@ -63,7 +61,6 @@ To configure Meshery to use Azure Kubernetes Service-
   mesheryctl system config aks --token &#60;path-to-token&#62;
   </div>
 </pre>
-
 <br/>
 
 To configure Meshery to use Elastic Kubernetes Service-
@@ -72,7 +69,6 @@ To configure Meshery to use Elastic Kubernetes Service-
   mesheryctl system config eks --token &#60;path-to-token&#62;
   </div>
 </pre> 
-
 <br/>
 
 
