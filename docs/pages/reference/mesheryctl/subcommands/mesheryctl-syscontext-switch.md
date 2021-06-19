@@ -50,7 +50,7 @@ lang: en
 <br/>
 
 <!-- Options/Flags available in this command -->
-## Options & Flags
+<!-- ## Options & Flags
 
 {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.switch.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
@@ -61,3 +61,4 @@ lang: en
 </pre>
 {% endfor %}
 <br/>
+-->
