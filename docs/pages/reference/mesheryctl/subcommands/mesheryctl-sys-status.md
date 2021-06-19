@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl system status | Meshery
+title: mesheryctl system status
 permalink: reference/mesheryctl/system/status
 type: reference
 display-title: "false"

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: meshery system config | Meshery
+title: meshery system config
 permalink: reference/mesheryctl/system/config
 type: reference
 display-title: "false"

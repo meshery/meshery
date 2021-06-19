@@ -1,6 +1,6 @@
 ---
 layout: default
-title: mesheryctl pattern delete | Meshery
+title: mesheryctl pattern delete
 permalink: reference/mesheryctl/pattern/delete
 type: reference
 display-title: "false"
