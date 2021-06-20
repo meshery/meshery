@@ -1,9 +1,8 @@
 package models
 
 import (
-	"time"
-
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/internal/sql"
 	"github.com/lib/pq"
 )
 
@@ -13,7 +12,7 @@ type PerformanceProfile struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name              string         `json:"name,omitempty"`
-	LastRun           *time.Time     `json:"last_run,omitempty"`
+	LastRun           *sql.Time      `json:"last_run,omitempty" gorm:"type:datetime"`
 	Schedule          *uuid.UUID     `json:"schedule,omitempty"`
 	LoadGenerators    pq.StringArray `json:"load_generators,omitempty" gorm:"type:text[]"`
 	Endpoints         pq.StringArray `json:"endpoints,omitempty" gorm:"type:text[]"`
@@ -28,6 +27,6 @@ type PerformanceProfile struct {
 	RequestBody    string `json:"request_body,omitempty"`
 	ContentType    string `json:"content_type,omitempty"`
 
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *sql.Time `json:"updated_at,omitempty"`
+	CreatedAt *sql.Time `json:"created_at,omitempty"`
 }

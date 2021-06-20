@@ -1,0 +1,105 @@
+{
+  "component_name": "meshery-server",
+  "component_type": "component",
+  "errors": {
+    "1000": {
+      "name": "ErrInvalidRequestCode",
+      "code": "1000",
+      "severity": "Alert",
+      "long_description": "The Graphql query requested is invalid",
+      "short_description": "Invalid query, please check syntax",
+      "probable_cause": "",
+      "suggested_remediation": "Check the query parameters and syntax of the query being run"
+    },
+    "1001": {
+      "name": "ErrNilClientCode",
+      "code": "1001",
+      "severity": "Alert",
+      "long_description": "Kubernetes config is not initialized with Meshery",
+      "short_description": "Kubernetes client not initialized",
+      "probable_cause": "",
+      "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+    },
+    "1002": {
+      "name": "ErrCreateDataCode",
+      "code": "1002",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "1003": {
+      "name": "ErrQueryCode",
+      "code": "1003",
+      "severity": "Alert",
+      "long_description": "Invalid Query performed in Meshery Database",
+      "short_description": "Error while querying data",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "1004": {
+      "name": "ErrMeshsyncSubscriptionCode",
+      "code": "1004",
+      "severity": "Alert",
+      "long_description": "GraphQL subscription for MeshSync stopped",
+      "short_description": "MeshSync Subscription failed",
+      "probable_cause": "Could be a network issue",
+      "suggested_remediation": "Check if meshery server is reachable from the browser"
+    },
+    "1005": {
+      "name": "ErrOperatorSubscriptionCode",
+      "code": "1005",
+      "severity": "Alert",
+      "long_description": "GraphQL subscription for Operator stopped",
+      "short_description": "Operator Subscription failed",
+      "probable_cause": "Could be a network issue",
+      "suggested_remediation": "Check if meshery server is reachable from the browser"
+    },
+    "1006": {
+      "name": "ErrAddonSubscriptionCode",
+      "code": "1006",
+      "severity": "Alert",
+      "long_description": "GraphQL subscription for Addons stopped",
+      "short_description": "Addons Subscription failed",
+      "probable_cause": "Could be a network issue",
+      "suggested_remediation": "Check if meshery server is reachable from the browser"
+    },
+    "1007": {
+      "name": "ErrControlPlaneSubscriptionCode",
+      "code": "1007",
+      "severity": "Alert",
+      "long_description": "GraphQL subscription for Control Plane stopped",
+      "short_description": "Control Plane Subscription failed",
+      "probable_cause": "Could be a network issue",
+      "suggested_remediation": "Check if meshery server is reachable from the browser"
+    },
+    "1008": {
+      "name": "ErrMesheryClientCode",
+      "code": "1008",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "1010": {
+      "name": "ErrNoMeshSyncCode",
+      "code": "1010",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "1011": {
+      "name": "ErrNoExternalEndpointCode",
+      "code": "1011",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to find the External Endpoint",
+      "probable_cause": "The service might not be exposed to External IP\nMeshsync cache is outdated",
+      "suggested_remediation": ""
+    }
+  }
+}

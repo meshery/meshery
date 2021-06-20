@@ -56,7 +56,7 @@ const grafanaStyles = (theme) => ({
   },
 });
 
-const getGrafanaBoards = (self, cb) => {
+const getGrafanaBoards = (self, cb = () => {}) => {
   const { grafanaURL, grafanaAPIKey, grafanaBoardSearch, selectedBoardsConfigs } = self.state;
   if (typeof grafanaURL === "undefined" || grafanaURL === "") {
     return;
@@ -207,6 +207,10 @@ class GrafanaComponent extends Component {
     }
 
     this.setState({ [name]: event.target.value });
+  };
+
+  handleChangeApiKey = (event) => {
+    this.setState({ grafanaAPIKey: event.target.value });
   };
 
   handleGrafanaConfigure = () => {
@@ -427,6 +431,7 @@ class GrafanaComponent extends Component {
             // Simulating event.target.value
             return (value) => this.handleChange(name)({ target: { value } });
           }}
+          handleChangeApiKey={this.handleChangeApiKey}
           handleGrafanaConfigure={this.handleGrafanaConfigure}
         />
       </NoSsr>

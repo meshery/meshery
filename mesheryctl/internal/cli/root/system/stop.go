@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -36,7 +37,7 @@ import (
 var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
-	Long:  `Stop all Meshery containers, remove their instances and prune their connected volumes.`,
+	Long:  `Stop all Meshery containers / remove all Meshery pods.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return RunPreflightHealthChecks(true, cmd.Use)
@@ -62,20 +63,26 @@ func stop() error {
 		return errors.Wrap(err, "failed to retrieve current-context")
 	}
 
+	client, err := meshkitkube.New([]byte(""))
+	if err != nil {
+		return err
+	}
+
+	ok, err := utils.IsMesheryRunning(currCtx.Platform)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		log.Info("Meshery is not running. Nothing to stop.")
+		return nil
+	}
+
 	// Get the current platform and the specified adapters in the config.yaml
 	RequestedAdapters := currCtx.Adapters
 
 	switch currCtx.Platform {
 	case "docker":
 		// if the platform is docker, then stop all the running containers
-		ok, err := utils.IsMesheryRunning(currCtx.Platform)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			log.Info("Meshery is not running. Nothing to stop.")
-			return nil
-		}
 		if _, err := os.Stat(utils.MesheryFolder); os.IsNotExist(err) {
 			if err := os.Mkdir(utils.MesheryFolder, 0777); err != nil {
 				return errors.Wrapf(err, utils.SystemError(fmt.Sprintf("failed to mkdir %s", utils.MesheryFolder)))
@@ -101,34 +108,14 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
-		}
-
 		err = utils.ApplyOperatorManifest(client, false, true)
 
 		if err != nil {
 			return err
 		}
 
-		// Mesheryctl uses a docker volume for persistence. This volume should only be cleared when user wants
-		// to start from scratch with a fresh install.
-		// if err := exec.Command("docker", "volume", "prune", "-f").Run(); err != nil {
-		// 	log.Fatal("[ERROR] Please install docker-compose. The error message: \n", err)
-		// }
-
 	case "kubernetes":
 		// if the platform is kubernetes, stop the deployment by deleting the manifest files
-		ok, err := utils.IsMesheryRunning(currCtx.Platform)
-		if err != nil {
-			return err
-		}
-		if !ok {
-			log.Info("Meshery is not running. Nothing to stop.")
-			return nil
-		}
-
 		userResponse := false
 		if utils.SilentFlag {
 			userResponse = true
@@ -140,12 +127,6 @@ func stop() error {
 		if !userResponse {
 			log.Info("Stop aborted.")
 			return nil
-		}
-
-		// create an kubernetes client
-		client, err := meshkitkube.New([]byte(""))
-		if err != nil {
-			return err
 		}
 
 		// check if the manifest folder exists on the machine
@@ -192,6 +173,26 @@ func stop() error {
 			return err
 		}
 	}
+
+	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated")
+	s.Start()
+
+	deadline := time.Now().Add(20 * time.Second)
+
+	for !(time.Now().After(deadline)) {
+		ok, err := utils.IsMesheryRunning("kubernetes")
+
+		if err != nil {
+			return err
+		}
+
+		if !ok {
+			break
+		} else {
+			time.Sleep(1 * time.Second)
+		}
+	}
+	s.Stop()
 
 	log.Info("Meshery is stopped.")
 

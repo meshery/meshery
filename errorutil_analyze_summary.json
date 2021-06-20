@@ -1,0 +1,38 @@
+{
+  "min_code": 1000,
+  "max_code": 1011,
+  "duplicate_codes": {
+    "1009": [
+      "ErrSubscribeChannelCode",
+      "ErrPublishBrokerCode"
+    ]
+  },
+  "duplicate_names": [
+    "ErrNoMeshSyncCode",
+    "ErrCreateDataCode",
+    "ErrMesheryClientCode"
+  ],
+  "call_expr_codes": [
+    "ErrInvalidKubeConfig",
+    "ErrInvalidK8sContextName",
+    "ErrNilClient",
+    "ErrInvalidRequest",
+    "ErrNoMeshSync",
+    "ErrEmptyHandler"
+  ],
+  "int_codes": [
+    1004,
+    1007,
+    1000,
+    1001,
+    1003,
+    1008,
+    1009,
+    1010,
+    1011,
+    1002,
+    1005,
+    1006
+  ],
+  "deprecated_new_default": null
+}

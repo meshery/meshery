@@ -30,5 +30,5 @@ spec:
     - destination:
         host: meshery
         port:
-          number: 80890810
+          number: 9081
 ---
