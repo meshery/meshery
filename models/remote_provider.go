@@ -88,9 +88,6 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	var err error
 
 	version := viper.GetString("BUILD")
-	if version == "edge-latest" {
-		version = "master"
-	}
 	os := viper.GetString("OS")
 	finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s", l.RemoteProviderURL, version, os)
 	finalURL = strings.TrimSuffix(finalURL, "\n")

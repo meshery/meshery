@@ -5,7 +5,6 @@ import (
 
 	"encoding/json"
 
-	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
 	"github.com/sirupsen/logrus"
 )
@@ -33,20 +32,29 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		logrus.Errorf("unable to save session: %v", err)
 	}
 
-	if prefObj.K8SConfig != nil {
+	if prefObj.K8SConfig != nil && h.kubeclient != nil {
 		if prefObj.K8SConfig.ServerVersion == "" {
 			// fetching server version, if it has not already been
-			prefObj.K8SConfig.ServerVersion, _ = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+			version, err := h.kubeclient.KubeClient.ServerVersion()
+			if err != nil {
+				logrus.Errorf("unable to ping the Kubernetes server")
+			}
+			prefObj.K8SConfig.ServerVersion = version.String()
 		}
 
-		if len(prefObj.K8SConfig.Nodes) == 0 {
-			// fetching nodes, if it has not already been
-			prefObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
-		}
+		//if len(prefObj.K8SConfig.Nodes) == 0 {
+		//	// fetching nodes, if it has not already been
+		//	prefObj.K8SConfig.Nodes, _ = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
+		//}
 
 		// clearing out the config just for displaying purposes
 		if len(prefObj.K8SConfig.Config) > 0 {
 			prefObj.K8SConfig.Config = nil
+		}
+	} else {
+		err = h.checkIfK8SConfigExistsOrElseLoadFromDiskOrK8S(req, user, prefObj, provider)
+		if err != nil {
+			logrus.Errorf("unable to initialize kubernetes config")
 		}
 	}
 
