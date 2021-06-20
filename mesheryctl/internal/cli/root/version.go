@@ -119,11 +119,11 @@ var versionCmd = &cobra.Command{
 }
 
 func checkMesheryctlClientVersion(build string) {
-	logrus.Infof("\nChecking for latest version of Meshery...")
+	logrus.Infof("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
 	_, err := handlers.CheckLatestVersion(build)
 	if err != nil {
-		logrus.Warn("\n  Unable to check for latest version of Meshery.")
+		logrus.Warn("\n  Unable to check for latest version of mesheryctl.")
 	}
 }

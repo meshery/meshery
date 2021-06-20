@@ -2,11 +2,16 @@ package system
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
 	"runtime"
 
 	"github.com/pkg/errors"
 
+	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -30,9 +35,24 @@ var checkCmd = &cobra.Command{
 	Long:  `Verify environment pre/post-deployment of Meshery.`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//incase --preflight or --pre has been passed as a flag
-		if preflight || pre {
-			return RunPreflightHealthChecks(false, cmd.Use)
+		// Run preflight checks
+		err := RunPreflightHealthChecks(false, cmd.Use)
+		if err != nil {
+			return err
+		}
+		// Run complete system dignostic
+		if !preflight && !pre {
+			err := RunPostDeplymentChecks()
+			if err != nil {
+				return err
+			}
+		}
+
+		// Print End
+		if failure == 0 {
+			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+		} else {
+			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
 		}
 		return nil
 	},
@@ -67,13 +87,7 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
 		return err
 	}
-	if !isPreRunExecution {
-		if failure == 0 {
-			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
-		} else {
-			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
-		}
-	}
+
 	return nil
 }
 
@@ -195,6 +209,72 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 		log.Info("√ is running the minimum kubectl version")
 	}
 
+	return nil
+}
+
+func RunPostDeplymentChecks() error {
+	// Run meshery component version check
+	err := runMesheryVersionHealthCheck()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func runMesheryVersionHealthCheck() error {
+	// Get viper instance used for context
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return errors.Wrap(err, "error processing config")
+	}
+
+	url := mctlCfg.GetBaseMesheryURL()
+	var serverVersion *config.Version
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
+	if err != nil {
+		log.Info("!! Failed to check server version")
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	// needs multiple defer as Body.Close needs a valid response
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Errorf("\n  Invalid response: %v", err)
+	}
+
+	err = json.Unmarshal(data, &serverVersion)
+	if err != nil {
+		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+	}
+
+	res, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+	if err != nil {
+		return err
+	}
+	if res.Latest {
+		log.Infof("✓ server is up-to-date (stable-v%s)", serverVersion.GetBuild())
+	} else {
+		log.Info("!! server is not up-to-date")
+	}
+
+	latest, err := utils.GetLatestStableReleaseTag()
+	if err != nil {
+		return err
+	}
+
+	version := ""
+	if latest == version {
+		log.Infof("✓ cli is up-to-date (stable-v%s)", version)
+	} else {
+		log.Info("!! cli is not up-to-date")
+	}
 	return nil
 }
 
