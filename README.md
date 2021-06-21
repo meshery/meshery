@@ -258,13 +258,11 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 
 <div>&nbsp;</div>
 
-## Contributing (yes!)
+## Contributing (please do!)
 
 We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the <a href="https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit">Meshery Contributors Welcome Guide</a> for a tour of resources available to you and how to get started.
 
-- [General Contributing](CONTRIBUTING.md/#contributing)
-- [Write an adapter](CONTRIBUTING.md/#adapter)
-- [Build the project](CONTRIBUTING.md/#building)
+See all [Contributor Guides](https://docs.meshery.io/project/contributing) in Meshery Docs.
 
 <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png"  style="margin-left:10px; margin-bottom:10px;" width="45%" align="right"/></a>
 
