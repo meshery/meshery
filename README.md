@@ -25,7 +25,11 @@
 
 [Meshery](https://meshery.io) is the multi-service mesh management plane offering lifecycle, configuration, and performance management of service meshes and their workloads.
 
-## <a name="running"></a>Run Meshery
+<h2><a name="running"></a>Run Meshery</h2>
+<p>Meshery runs as a set of containers inside or outside of your Kubernetes cluster.</p>
+
+<details>
+  <summary><strong>See all Supported Platforms</strong></summary>
 
 See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
@@ -52,8 +56,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
 
-## <a name="service-meshes"></a>Supported Service Meshes
+ </details>
+ 
+<h2><a name="service-meshes"></a>Supported Service Meshes</h2>
+<p>Meshery supports 10 diffferent service meshes.</p>
 
+<details>
+  <summary><strong>See all Support Service Meshes</strong></summary>
 <div class="container flex">
   <div class="text editable">
     <p>Service mesh adapters provision, configure, and manage their respective service meshes.
@@ -139,7 +148,8 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
     </table>
   </p>
 </div>
-
+ </details>
+ 
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
