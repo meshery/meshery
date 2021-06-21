@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -30,9 +30,10 @@ func TestDefaultPreflightCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			// setting up logrus to grab logs
+			// setting up log to grab logs
 			var buf bytes.Buffer
-			logrus.SetOutput(&buf)
+			log.SetOutput(&buf)
+			utils.SetupLogrusFormatter()
 
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
@@ -41,7 +42,7 @@ func TestDefaultPreflightCmd(t *testing.T) {
 			}
 
 			output := buf.String()
-			actualResponse := utils.TrimLogOutputsTesting(output)
+			actualResponse := output
 
 			// get current directory
 			_, filename, _, ok := runtime.Caller(0)

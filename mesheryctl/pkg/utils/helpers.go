@@ -816,25 +816,6 @@ func PrintToTableInStringFormat(header []string, data [][]string) string {
 	return tableString.String()
 }
 
-func TrimLogOutputsTesting(s string) string {
-	split := strings.Split(s, "\"\n")
-	output := ""
-	for _, str := range split {
-		out := strings.Split(str, "msg=\"")
-		if len(out) != 2 {
-			continue
-		}
-		out[1] = strings.ReplaceAll(out[1], "\\n", "\n")
-		if output == "" {
-			output += out[1]
-		} else {
-			output += "\n" + out[1]
-		}
-	}
-
-	return output
-}
-
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
