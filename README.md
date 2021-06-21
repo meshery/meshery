@@ -149,7 +149,14 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
   </p>
 </div>
  </details>
- 
+
+## Overview
+
+<a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><img src=".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png" width="50%" /></a>
+<p>
+  <a href="https://docs.google.com/presentation/d/14kxjwYSJ_FyE3K_6CDEd6oq2kqwn0OSE8RDJ4H-KlKU/edit?usp=sharing"><i>Project Overview Presentation</i></a>
+</p>
+
 ## <a name="functionality">Functionality</a>
 
 <p style="clear:both;">
