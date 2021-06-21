@@ -8,9 +8,9 @@
     ]
   },
   "duplicate_names": [
-    "ErrNoMeshSyncCode",
+    "ErrMesheryClientCode",
     "ErrCreateDataCode",
-    "ErrMesheryClientCode"
+    "ErrNoMeshSyncCode"
   ],
   "call_expr_codes": [
     "ErrInvalidKubeConfig",
@@ -21,18 +21,18 @@
     "ErrEmptyHandler"
   ],
   "int_codes": [
-    1004,
-    1007,
-    1000,
     1001,
     1003,
+    1006,
     1008,
     1009,
-    1010,
     1011,
+    1000,
     1002,
+    1004,
     1005,
-    1006
+    1007,
+    1010
   ],
   "deprecated_new_default": null
 }
