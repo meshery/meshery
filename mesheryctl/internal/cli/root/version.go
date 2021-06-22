@@ -23,6 +23,7 @@ import (
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -67,8 +68,8 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		url := mctlCfg.GetBaseMesheryURL()
-		build := version
-		commitsha := commitsha
+		build := constants.GetMesheryctlVersion()
+		commitsha := constants.GetMesheryctlCommitsha()
 
 		version := config.Version{
 			Build:          "unavailable",
