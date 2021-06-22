@@ -1,5 +1,4 @@
-flag: --output-format, -o
-arg: view
-description: (optional) format to display in json.
+name: --output-format, -o
+description: (optional) format to display in json or yaml.
 usage: |
     mesheryctl perf view --token [path to access token] --output-format [format]

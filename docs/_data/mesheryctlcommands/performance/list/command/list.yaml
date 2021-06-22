@@ -1,0 +1,6 @@
+name: list
+description: Lists all the available performance profiles and results of a performance profile
+usage: |
+
+    mesheryctl perf list 
+    mesheryctl perf list [profile-id]

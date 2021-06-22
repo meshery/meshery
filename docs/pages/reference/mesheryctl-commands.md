@@ -330,9 +330,35 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       </tr>
     {% endfor %}
   {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.performance.apply.command %}{% assign command = command_hash[1] %}
+      <tr>
+        <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/perf/apply">{{ command.name }}</a></td>
+        <td></td>
+        <td>{{ command.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.performance.apply.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign command = command_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/perf/list">{{ command.name }}</a></td>
+        <td></td>
+        <td>{{ command.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.performance.list.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+  {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.performance.view.command %}{% assign command = command_hash[1] %}
       <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/perf/view">{{ command.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/perf/view">{{ command.name }}</a></td>
         <td></td>
         <td>{{ command.description }}</td>
       </tr>

@@ -1,7 +1,7 @@
 ---
 layout: default
-title: mesheryctl perf view
-permalink: reference/mesheryctl/perf/view
+title: mesheryctl perf list
+permalink: reference/mesheryctl/perf/list
 type: reference
 display-title: "false"
 language: en
@@ -14,24 +14,24 @@ list: exclude
 <!-- Copy this template to create individual doc pages for each mesheryctl commands -->
 
 <!-- Name of the command -->
-# mesheryctl perf view
+# mesheryctl perf list
 
 ## Description
 
-{% for command_hash in site.data.mesheryctlcommands.performance.view.command %}{% assign command = command_hash[1] %}
+{% for command_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign command = command_hash[1] %}
 {{ command.description }}
 {% endfor %}
 
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-    mesheryctl perf view [flags]
+    mesheryctl perf list [flags]
   </div>
 </pre>
 
 ## Examples
 
-{% for subcommand_hash in site.data.mesheryctlcommands.performance.view.command %}{% assign subcommand = subcommand_hash[1] %}
+{% for subcommand_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -39,7 +39,8 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.performance.view.flags %}{% assign flag = flag_hash[1] %}
+
+{% for flag_hash in site.data.mesheryctlcommands.performance.list.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
