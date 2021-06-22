@@ -1,0 +1,12 @@
+name: apply
+description: Run Performance test using existing profiles or using flags
+usage: |
+
+    # Execute a Performance test with the specified performance profile
+    mesheryctl perf apply [profile-id] --flags
+
+    # Execute a Performance test without a specified performance profile
+    mesheryctl perf apply --profile [profile-name] --url [url]
+
+    # Run Performance test using SMP compatible test configuration
+    mesheryctl perf apply -f [filepath]

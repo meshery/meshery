@@ -1,4 +1,0 @@
-name: --mesh
-description: Name of the service mesh.
-usage: |
-    mesheryctl perf --mesh [name] --url [URL] --token [path to access token]
