@@ -190,7 +190,7 @@ var applyCmd = &cobra.Command{
 
 				index := 0
 				if len(response.Profiles) == 0 {
-					return errors.New("No profiles found with the given name")
+					return errors.New("no profiles found with the given name")
 				} else if len(response.Profiles) == 1 {
 					profileID = response.Profiles[0].ID.String()
 				} else {
