@@ -93,7 +93,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(setVerbose)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", utils.DefaultConfigPath, fmt.Sprintf("config file (default location is: %s)", utils.DefaultConfigPath))
 
 	// Preparing for an "edge" channel
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "edge", "", "flag to run Meshery as edge (one-time)")
