@@ -123,8 +123,18 @@ func checkMesheryctlClientVersion(build string) {
 	logrus.Infof("\nChecking for latest version of mesheryctl...")
 
 	// Inform user of the latest release version
-	_, err := handlers.CheckLatestVersion(build)
+	res, err := handlers.CheckLatestVersion(build)
 	if err != nil {
 		logrus.Warn("\n  Unable to check for latest version of mesheryctl.")
 	}
+	// If user is running an outdated release, let them know.
+	if res.Outdated {
+		logrus.Info("\n  ", build, " is not the latest release. Update to v", res.Current, ".")
+	}
+
+	// If user is running the latest release, let them know.
+	if res.Latest {
+		logrus.Info("\n  ", build, " is the latest release.")
+	}
+
 }

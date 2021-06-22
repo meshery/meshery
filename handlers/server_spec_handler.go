@@ -65,15 +65,6 @@ func CheckLatestVersion(serverVersion string) (*latest.CheckResponse, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to compare latest and current version")
 	}
-	// If user is running an outdated release, let them know.
-	if res.Outdated {
-		logrus.Info("\n  ", serverVersion, " is not the latest release. Update to v", res.Current, ". Run `mesheryctl system update`")
-	}
-
-	// If user is running the latest release, let them know.
-	if res.Latest {
-		logrus.Info("\n  ", serverVersion, " is the latest release.")
-	}
 
 	// Add "v" to the "Current" property of the CheckResponse
 	res.Current = fmt.Sprintf("v%s", res.Current)

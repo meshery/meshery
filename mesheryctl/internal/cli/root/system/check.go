@@ -8,12 +8,15 @@ import (
 	"net/http"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/handlers"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/models"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,6 +29,8 @@ import (
 var (
 	preflight bool
 	pre       bool
+	adapter   bool
+	operator  bool
 	failure   int = 0
 )
 
@@ -35,26 +40,33 @@ var checkCmd = &cobra.Command{
 	Long:  `Verify environment pre/post-deployment of Meshery.`,
 	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Run preflight checks
-		err := RunPreflightHealthChecks(false, cmd.Use)
+		// Get viper instance used for context
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return errors.Wrap(err, "error processing config")
 		}
-		// Run complete system dignostic
-		if !preflight && !pre {
-			err := RunPostDeplymentChecks()
+
+		// if --pre or --preflight has been passed we run preflight checks
+		if pre || preflight {
+			// Run preflight checks
+			err := RunPreflightHealthChecks(false, cmd.Use)
 			if err != nil {
 				return err
 			}
+			// Print End
+			if failure == 0 {
+				log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
+			} else {
+				log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
+			}
+			return nil
+		} else if adapter { // if --adapter has been passed we run checks related to adapters
+			return RunAdapterHealthChecks(mctlCfg)
+		} else if operator { // if --operator has been passed we run checks related to operator
+			return RunOperatorHealthChecks()
 		}
-
-		// Print End
-		if failure == 0 {
-			log.Info("\n--------------\n--------------\n✓✓ Meshery prerequisites met")
-		} else {
-			log.Info("\n--------------\n--------------\n!! Meshery prerequisites not met")
-		}
-		return nil
+		// if no flags passed we run complete system check
+		return RunSystemDignosysHealthChecks(mctlCfg)
 	},
 }
 
@@ -69,7 +81,7 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 		return err
 	}
 	platform := currCtx.Platform
-	//Docker healthchecks are only invoked when it's not a PreRunExecution
+	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker
 	if !isPreRunExecution || (isPreRunExecution && platform == "docker") {
 		//Run docker healthchecks
@@ -77,21 +89,19 @@ func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 			return err
 		}
 	}
-	//Kubernetes and KubernetesVersion healthchecks are invoked in
-	//both the cases PreRunExecution and !PreRunExecution
-	//Run k8s API healthchecks
-	if err = runKubernetesAPIHealthCheck(isPreRunExecution); err != nil {
-		return err
-	}
-	//Run k8s plus kubectl minimum version healthchecks
-	if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
-		return err
+	// Kubernetes healthchecks are only
+	// invoked when it's not a PreRunExecution
+	// or it's a PreRunExecution and current platform is kubernetes
+	if !isPreRunExecution || (isPreRunExecution && platform == "kubernetes") {
+		if err := RunKubernetesHealthChecks(isPreRunExecution); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-//Run healthchecks to verify if docker is running and active
+// Run healthchecks to verify if docker is running and active
 func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform string) error {
 	if !isPreRunExecution {
 		log.Info("\nDocker \n--------------")
@@ -136,7 +146,7 @@ func runDockerHealthCheck(isPreRunExecution bool, subcommand string, platform st
 	return nil
 }
 
-//Run healthchecks to verify if kubernetes client can be initialized and can be queried
+// Run healthchecks to verify if kubernetes client can be initialized and can be queried
 func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	if !isPreRunExecution {
 		log.Info("\nKubernetes API \n--------------")
@@ -169,7 +179,7 @@ func runKubernetesAPIHealthCheck(isPreRunExecution bool) error {
 	return nil
 }
 
-//Run healthchecks to verify kubectl and kubenetes version with
+// Run healthchecks to verify kubectl and kubenetes version with
 // minimum compatible versions
 func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	if !isPreRunExecution {
@@ -212,34 +222,35 @@ func runKubernetesVersionHealthCheck(isPreRunExecution bool) error {
 	return nil
 }
 
-func RunPostDeplymentChecks() error {
-	// Run meshery component version check
-	err := runMesheryVersionHealthCheck()
-	if err != nil {
+// RunKubernetesHealthChecks runs checks regarding k8s api and k8s plus kubectl version
+func RunKubernetesHealthChecks(isPreRunExecution bool) error {
+	// Run k8s API healthchecks
+	if err = runKubernetesAPIHealthCheck(isPreRunExecution); err != nil {
+		return err
+	}
+	// Run k8s plus kubectl minimum version healthchecks
+	if err := runKubernetesVersionHealthCheck(isPreRunExecution); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func runMesheryVersionHealthCheck() error {
-	// Get viper instance used for context
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
+// RunMesheryVersionHealthCheck runs checks regarding meshery version and mesheryctl version
+func RunMesheryVersionHealthCheck(mctlCfg *config.MesheryCtlConfig) error {
+	log.Info("\nMeshery Version \n--------------")
 
 	url := mctlCfg.GetBaseMesheryURL()
 	var serverVersion *config.Version
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/server/version", url), nil)
 	if err != nil {
-		log.Info("!! Failed to check server version")
+		return err
 	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		log.Info("!! Failed to check server version")
 	}
 
 	// needs multiple defer as Body.Close needs a valid response
@@ -259,7 +270,7 @@ func runMesheryVersionHealthCheck() error {
 		return err
 	}
 	if res.Latest {
-		log.Infof("✓ server is up-to-date (stable-v%s)", serverVersion.GetBuild())
+		log.Infof("✓ server is up-to-date (stable-%s)", serverVersion.GetBuild())
 	} else {
 		log.Info("!! server is not up-to-date")
 	}
@@ -269,16 +280,105 @@ func runMesheryVersionHealthCheck() error {
 		return err
 	}
 
-	version := ""
+	version := constants.GetMesheryctlVersion()
 	if latest == version {
-		log.Infof("✓ cli is up-to-date (stable-v%s)", version)
+		log.Infof("✓ cli is up-to-date (stable-%s)", version)
 	} else {
 		log.Info("!! cli is not up-to-date")
 	}
 	return nil
 }
 
+func RunAdapterHealthChecks(mctlCfg *config.MesheryCtlConfig) error {
+	log.Info("\nMeshery Adapters \n--------------")
+
+	url := mctlCfg.GetBaseMesheryURL()
+	client := &http.Client{}
+
+	// Request to grab running adapters and ports
+	req, err := http.NewRequest("GET", "http://localhost:9081/api/mesh/adapters", nil)
+	if err != nil {
+		return err
+	}
+
+	var adapters []*models.Adapter
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Info("!! Failed to grab running adapters")
+		return nil
+	}
+
+	// needs multiple defer as Body.Close needs a valid response
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Errorf("\n  Invalid response: %v", err)
+	}
+
+	log.Info(string(data))
+
+	err = json.Unmarshal(data, &adapters)
+	if err != nil {
+		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+	}
+
+	// check for each adapter
+	for _, adapter := range adapters {
+		name := strings.Split(adapter.Name, ":")[0]
+		if adapter.Ops == nil {
+			log.Infof("!! %s adapter is not running", name)
+			continue
+		}
+		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapter/ping?adapter=%s", url, adapter.Name), nil)
+		if err != nil {
+			return err
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Infof("!! Failed to check %s adapter", name)
+			continue
+		}
+
+		// needs multiple defer as Body.Close needs a valid response
+		defer resp.Body.Close()
+		if resp.StatusCode == 200 {
+			log.Infof("✓ %s adapter is running and reachable", name)
+		} else {
+			log.Infof("!! %s adapter is running but not reachable", name)
+		}
+	}
+	return nil
+}
+
+func RunOperatorHealthChecks() error {
+	//TODO
+	return nil
+}
+
+func RunSystemDignosysHealthChecks(mctlCfg *config.MesheryCtlConfig) error {
+	// Run meshery preflight check
+	err := RunPreflightHealthChecks(false, "")
+	if err != nil {
+		return err
+	}
+	// Run meshery component version check
+	err = RunMesheryVersionHealthCheck(mctlCfg)
+	if err != nil {
+		return err
+	}
+	// Run meshery adapter healthcheck
+	err = RunAdapterHealthChecks(mctlCfg)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func init() {
 	checkCmd.Flags().BoolVarP(&preflight, "preflight", "", false, "Verify environment readiness to deploy Meshery")
 	checkCmd.Flags().BoolVarP(&pre, "pre", "", false, "Verify environment readiness to deploy Meshery")
+	checkCmd.Flags().BoolVarP(&adapter, "adapter", "", false, "Check status of Meshery adapters")
+	checkCmd.Flags().BoolVarP(&operator, "operator", "", false, "Check status of Meshery operators")
 }

@@ -386,16 +386,19 @@ func start() error {
 		return errors.New(fmt.Sprintf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file.", currPlatform, utils.MesheryFolder))
 	}
 
-	err = utils.DownloadOperatorManifest()
+	// If k8s is available in case of platform docker than we deploy operator
+	if err = RunKubernetesHealthChecks(true); err != nil {
+		// Download operator manifest
+		err = utils.DownloadOperatorManifest()
+		if err != nil {
+			return err
+		}
 
-	if err != nil {
-		return err
-	}
-
-	err = utils.ApplyOperatorManifest(kubeClient, false, false)
-
-	if err != nil {
-		return err
+		// apply operator manifest
+		err = utils.ApplyOperatorManifest(kubeClient, false, false)
+		if err != nil {
+			return err
+		}
 	}
 
 	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
