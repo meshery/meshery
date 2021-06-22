@@ -2,4 +2,4 @@ flag: --load-generator
 arg: apply
 description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
 usage: |
-    mesheryctl perf apply --load-generator [fortio/wrk2] --url [URL] --token [path to access token]
+    mesheryctl perf apply [profile-id] --url [URL] --load-generator [fortio/wrk2]
