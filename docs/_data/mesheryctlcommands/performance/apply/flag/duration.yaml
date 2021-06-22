@@ -2,4 +2,4 @@ flag: --duration
 arg: apply
 description: Length of the test.
 usage: |
-    mesheryctl perf apply --duration [time] --url [URL] --token [path to access token]
+    mesheryctl perf apply [profile-id] --url [URL] --duration [time]

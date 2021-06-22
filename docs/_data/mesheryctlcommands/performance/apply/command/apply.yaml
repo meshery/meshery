@@ -1,5 +1,5 @@
 name: apply
-description: Run Performance test using existing profiles or using flags
+description: Runs Performance test using existing profiles or using flags.
 usage: |
 
     # Execute a Performance test with the specified performance profile

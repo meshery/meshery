@@ -332,7 +332,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% endfor %}
   {% for command_hash in site.data.mesheryctlcommands.performance.apply.command %}{% assign command = command_hash[1] %}
       <tr>
-        <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/perf/apply">{{ command.name }}</a></td>
+        <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/perf/apply">{{ command.name }}</a></td>
         <td></td>
         <td>{{ command.description }}</td>
       </tr>

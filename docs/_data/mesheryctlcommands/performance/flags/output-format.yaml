@@ -1,4 +1,4 @@
 name: --output-format, -o
-description: (optional) format to display in json or yaml.
+description: format to display in json or yaml.
 usage: |
-    mesheryctl perf view --token [path to access token] --output-format [format]
+    mesheryctl perf --token [path to access token] --output-format [format]

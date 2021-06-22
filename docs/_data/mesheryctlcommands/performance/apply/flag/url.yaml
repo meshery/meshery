@@ -2,4 +2,4 @@ flag: --url
 arg: apply
 description: (required) URL of the endpoint send load to during testing.
 usage: |
-    mesheryctl perf apply --url [URL] --token [path to access token]
+    mesheryctl perf apply [profile-id] --url [URL]
