@@ -136,5 +136,4 @@ func checkMesheryctlClientVersion(build string) {
 	if res.Latest {
 		logrus.Info("\n  ", build, " is the latest release.")
 	}
-
 }

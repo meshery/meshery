@@ -301,6 +301,12 @@ func RunAdapterHealthChecks(mctlCfg *config.MesheryCtlConfig) error {
 		return err
 	}
 
+	// Add authentication token
+	err = utils.AddAuthDetails(req, constants.GetAuthenticationToken())
+	if err != nil {
+		return errors.New("authentication token not found. please supply a valid user token")
+	}
+
 	var adapters []*models.Adapter
 	resp, err := client.Do(req)
 	if err != nil {
