@@ -318,12 +318,20 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey s
 		logrus.Error(err)
 		return nil, err
 	}
-	ds := queryData.Get("ds")
+
+	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+
+	ds, err := c.GetDatasourceByName(ctx, queryData.Get("ds"))
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+
 	var reqURL string
 	if g.promMode {
 		reqURL = fmt.Sprintf("%s/api/v1/query_range", BaseURL)
 	} else {
-		reqURL = fmt.Sprintf("%s/api/datasources/proxy/%s/api/v1/query_range", BaseURL, ds)
+		reqURL = fmt.Sprintf("%s/api/datasources/proxy/%d/api/v1/query_range", BaseURL, ds.ID)
 	}
 
 	newURL, _ := url.Parse(reqURL)

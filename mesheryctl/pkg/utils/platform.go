@@ -455,7 +455,7 @@ func ApplyOperatorManifest(client *meshkitkube.Client, update bool, delete bool)
 }
 
 // ChangeManifestVersion changes the tag of the images in the manifest according to the pinned version
-func ChangeManifestVersion(fileName string, version string, filePath string) error {
+func ChangeManifestVersion(fileName string, channel string, version string, filePath string) error {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
 
@@ -477,9 +477,15 @@ func ChangeManifestVersion(fileName string, version string, filePath string) err
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal config %s | %s", fileName, err)
 	}
+
+	// for edge channel only the latest tag exist in Docker Hub
+	if channel == "edge" {
+		version = "latest"
+	}
+
 	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
-	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], "stable", version)
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], channel, version)
 
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
