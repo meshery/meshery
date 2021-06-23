@@ -163,6 +163,7 @@ func main() {
 		models.MesheryResult{},
 		models.MesheryPattern{},
 		models.MesheryFilter{},
+		models.PatternResource{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -251,7 +252,9 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-	}, &kubeclient, meshsyncCh, log, brokerConn)
+	}, &kubeclient, meshsyncCh, log, brokerConn, handlers.LocalPersisters{
+		PatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
+	})
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)
