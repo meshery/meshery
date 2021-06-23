@@ -27,6 +27,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -65,6 +67,7 @@ var RootCmd = &cobra.Command{
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.RootError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
 		}
+
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -74,6 +77,12 @@ var RootCmd = &cobra.Command{
 			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
+
+		_, err = config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.BackupConfigFile(cfgFile)
+		}
+
 	},
 }
 
