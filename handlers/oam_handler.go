@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ghodss/yaml"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
@@ -92,6 +93,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	// If DynamicKubeClient hasn't been created yet then create one
 	if h.kubeclient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
@@ -112,6 +114,7 @@ func (h *Handler) PatternFileHandler(
 		user,
 		isDel,
 		h.kubeclient,
+		h.localPersisters,
 	)
 
 	if err != nil {
@@ -211,6 +214,7 @@ func createCompConfigPairsAndExecuteAction(
 	user *models.User,
 	isDel bool,
 	kclient *meshkube.Client,
+	localPersisters LocalPersisters,
 ) (string, error) {
 	var internalErrs []error
 	var msgs []string
@@ -225,12 +229,56 @@ func createCompConfigPairsAndExecuteAction(
 			Hosts: make(map[string]bool),
 		}
 
+		// Create an ID for the resource
+		_id, err := uuid.NewV4()
+		if err != nil {
+			internalErrs = append(internalErrs, err)
+			return false
+		}
+		id := _id.String()
+
 		// Convert the current service into application component
 		comp, err := patternFile.GetApplicationComponent(svcName)
 		if err != nil {
 			internalErrs = append(internalErrs, err)
 			return false
 		}
+
+		// Check if a similar resource has been previously provisioned
+		exists := localPersisters.PatternResourcePersister.Exists(
+			comp.Name,
+			comp.Namespace,
+			comp.Spec.Type,
+			"workload",
+		)
+
+		// If resource does not exists but a delete operation is insisted
+		// then return error
+		if !exists && isDel {
+			internalErrs = append(internalErrs, fmt.Errorf("cannot delete non-existent resource: %s", svcName))
+			return false
+		}
+
+		if exists {
+			resource, err := localPersisters.PatternResourcePersister.GetPatternResourceByAttributes(
+				comp.Name,
+				comp.Namespace,
+				comp.Spec.Type,
+				"workload",
+			)
+
+			if err != nil {
+				internalErrs = append(internalErrs, err)
+				return false
+			}
+
+			id = resource.ID.String()
+		}
+
+		// Assign ID to the component
+		comp.SetLabels(map[string]string{
+			"resource.pattern.meshery.io/id": id,
+		})
 
 		// Get workload definition corresponding to the type of the workload
 		workload, err := getWorkloadDefinition(comp.Spec.Type)
@@ -251,8 +299,17 @@ func createCompConfigPairsAndExecuteAction(
 
 		// Get component from the configuration file
 		configComp, ok := getComponentFromConfiguration(aConfig, comp.Name)
-		if !ok {
-			msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
+		if !ok { // If no configuration exists corresponding to the component then proceed
+			msg, err := handleCompConfigPairAction(
+				ctx,
+				compcon,
+				prefObj,
+				user,
+				isDel,
+				exists && !isDel,
+				kclient,
+				localPersisters,
+			)
 			msgs = append(msgs, msg)
 			if err != nil {
 				internalErrs = append(internalErrs, err)
@@ -262,6 +319,8 @@ func createCompConfigPairsAndExecuteAction(
 			return true
 		}
 
+		// Configuration exists for the component
+		// Processing the traits applied to the component
 		for _, tr := range configComp.Traits {
 			traitDef, err := getTraitDefinition(tr.Name)
 			if err != nil {
@@ -280,7 +339,16 @@ func createCompConfigPairsAndExecuteAction(
 
 		compcon.Configuration = aConfig
 
-		msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
+		msg, err := handleCompConfigPairAction(
+			ctx,
+			compcon,
+			prefObj,
+			user,
+			isDel,
+			exists && !isDel,
+			kclient,
+			localPersisters,
+		)
 		msgs = append(msgs, msg)
 		if err != nil {
 			internalErrs = append(internalErrs, err)
@@ -299,9 +367,12 @@ func handleCompConfigPairAction(
 	prefObj *models.Preference,
 	user *models.User,
 	isDel bool,
+	isUpdate bool,
 	kclient *meshkube.Client,
+	localPersisters LocalPersisters,
 ) (string, error) {
 	var msgs []string
+	var errs []error
 
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
@@ -339,15 +410,38 @@ func handleCompConfigPairAction(
 			[]string{string(jsonComp)},
 			string(jsonConfig),
 			kclient,
+			localPersisters,
 		)
 		if err != nil {
-			msgs = append(msgs, err.Error())
+			errs = append(errs, err)
 			continue
 		}
 
 		msgs = append(msgs, msg)
 	}
-	return strings.Join(msgs, "\n"), nil
+
+	// If no errors occured add the resource and it's NOT and update operation then
+	// create an entry corresponing to this resource in the database
+	if len(errs) == 0 && !isUpdate {
+		id := uuid.FromStringOrNil(ccp.Component.GetLabels()["resource.pattern.meshery.io/id"])
+		if isDel {
+			if err := localPersisters.PatternResourcePersister.DeletePatternResource(id); err != nil {
+				logrus.Error("failed to delete the pattern resource:", err)
+			}
+		} else {
+			if _, err := localPersisters.PatternResourcePersister.SavePatternResource(&models.PatternResource{
+				ID:        &id,
+				Name:      ccp.Component.Name,
+				Namespace: ccp.Component.Namespace,
+				Type:      ccp.Component.Spec.Type,
+				OAMType:   "workload",
+			}); err != nil {
+				logrus.Error("failed to save the pattern resource:", err)
+			}
+		}
+	}
+
+	return mergeMsgs(msgs), mergeErrors(errs)
 }
 
 func getWorkloadDefinition(key string) (interface{}, error) {
@@ -407,6 +501,7 @@ func executeAction(
 	oamComps []string,
 	oamConfig string,
 	kClient *meshkube.Client,
+	localPersisters LocalPersisters,
 ) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
@@ -478,4 +573,16 @@ func mergeMsgs(msgs []string) string {
 	}
 
 	return strings.Join(finalMsgs, "\n")
+}
+
+func (h *Handler) savePatternResource(pr models.PatternResource) {
+	// Check if the resource already exists in the database
+	if h.localPersisters.PatternResourcePersister.Exists(pr.Name, pr.Namespace, pr.Type, pr.OAMType) {
+		return
+	}
+
+	// If the resource does not exists then create the resource
+	if _, err := h.localPersisters.PatternResourcePersister.SavePatternResource(&pr); err != nil {
+		h.log.Debug("failed to save the pattern resource to the database: ", err)
+	}
 }
