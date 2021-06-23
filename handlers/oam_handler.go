@@ -420,8 +420,8 @@ func handleCompConfigPairAction(
 		msgs = append(msgs, msg)
 	}
 
-	// If no errors occured add the resource and it's NOT and update operation then
-	// create an entry corresponing to this resource in the database
+	// If no errors occurred add the resource and it's NOT and update operation then
+	// create an entry corresponding to this resource in the database
 	if len(errs) == 0 && !isUpdate {
 		id := uuid.FromStringOrNil(ccp.Component.GetLabels()["resource.pattern.meshery.io/id"])
 		if isDel {
