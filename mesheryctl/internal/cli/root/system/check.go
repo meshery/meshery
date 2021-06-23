@@ -296,7 +296,7 @@ func RunAdapterHealthChecks(mctlCfg *config.MesheryCtlConfig) error {
 	client := &http.Client{}
 
 	// Request to grab running adapters and ports
-	req, err := http.NewRequest("GET", "http://localhost:9081/api/mesh/adapters", nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/mesh/adapters", url), nil)
 	if err != nil {
 		return err
 	}
