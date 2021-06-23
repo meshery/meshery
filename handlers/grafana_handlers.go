@@ -40,6 +40,17 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	// 	return
 	// }
 
+	if req.Method == http.MethodGet {
+		err := json.NewEncoder(w).Encode(prefObj.Grafana)
+		if err != nil {
+			logrus.Errorf("error marshaling Grafana config: %v", err)
+			http.Error(w, "unable to marshal Grafana config", http.StatusInternalServerError)
+			return
+		}
+
+		return
+	}
+
 	if req.Method == http.MethodPost {
 		grafanaURL := req.FormValue("grafanaURL")
 		grafanaAPIKey := req.FormValue("grafanaAPIKey")

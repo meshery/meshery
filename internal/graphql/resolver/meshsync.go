@@ -25,7 +25,7 @@ func (r *Resolver) listenToMeshSyncEvents(ctx context.Context) (<-chan *model.Op
 
 	go func(ch chan *model.OperatorControllerStatus) {
 		r.Log.Info("MeshSync subscription started")
-		go listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel)
+		go listernToEvents(r.Log, r.DBHandler, r.brokerChannel, r.MeshSyncChannel, r.operatorSyncChannel)
 
 		// signal to install operator when initialized
 		r.MeshSyncChannel <- struct{}{}
@@ -40,7 +40,7 @@ func (r *Resolver) connectToBroker(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if r.brokerConn == nil && status != nil && status.Status == model.StatusEnabled {
+	if r.BrokerConn == nil && status != nil && status.Status == model.StatusEnabled {
 		endpoint, err := r.subscribeToBroker(r.KubeClient, r.brokerChannel)
 		if err != nil {
 			r.Log.Error(ErrAddonSubscription(err))

@@ -237,6 +237,72 @@ class DashboardComponent extends React.Component {
 
   fetchMetricComponents = () => {
     const self = this;
+
+    dataFetch(
+      "/api/prometheus/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "prometheus" && ( self.state.prometheusURL === "" || self.state.prometheusURL == undefined )) {
+                  self.setState({prometheusURL: "http://" + addon.endpoint})
+                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
+                }
+              });
+            },
+            error: (err) => console.log("error registering prometheus: " + err),
+          });
+        }
+      },
+      self.handleError("There was an error getting prometheus config")
+    )
+
+    dataFetch(
+      "/api/grafana/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
+      },
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="") {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "grafana" && ( self.state.grafanaURL === "" || self.state.grafanaURL == undefined )) {
+                  self.setState({grafanaURL: "http://" + addon.endpoint})
+                  submitGrafanaConfigure(self, () => {
+                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs)
+                    console.log("Grafana added")
+                  });
+                }
+              });
+            },
+            error: (err) => console.log("error registering grafana: " + err),
+          });
+        }
+      },
+      self.handleError("There was an error communicating with grafana config")
+    )
+
     let selector = {
       serviceMesh: "ALL_MESH",
     };

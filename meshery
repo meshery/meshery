@@ -106,8 +106,21 @@ if [ -z "$validFile" ] ; then
   exit;
 fi
 
-printf "\nExtracting %s...\n" "$NAME"
-unzip -o ${PWD}/meshery.zip
+# Generate a temporary folder to store intermediate installation files
+temporary_dir_name=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+if [ -z "$temporary_dir_name" ] ; then
+   temporary_dir_name="temp_extract_dir"
+fi
+
+mkdir $temporary_dir_name
+if [ $? -ne 0 ] ; then
+  rm ${PWD}/meshery.zip
+  printf "Disk space is low on the system, Re-try installation after cleaning up some files.\n"
+  exit 1;
+fi
+
+printf "\nExtracting %s to temporary folder %s...\n" "$NAME" "$temporary_dir_name"
+unzip ${PWD}/meshery.zip -d ${PWD}/$temporary_dir_name
 
 # Use user provided installation path from env variable(MESHERY_INSTALL_DIR)
 # by default its /usr/local/bin
@@ -119,10 +132,10 @@ fi
 
 printf "\nInstalling mesheryctl in $install_dir.\n"
 WHOAMI=$(whoami)
-if mv ${PWD}/mesheryctl $install_dir/mesheryctl ; then
+if mv ${PWD}/$temporary_dir_name/mesheryctl $install_dir/mesheryctl ; then
   echo "mesheryctl installed."
 else
-  if sudo mv ${PWD}/mesheryctl $install_dir/mesheryctl ; then
+  if sudo mv ${PWD}/$temporary_dir_name/mesheryctl $install_dir/mesheryctl ; then
     echo "Permission Resolved: mesheryctl installed using sudo permissions."
   else
     echo "Cannot install mesheryctl. Check permissions of $WHOAMI for $install_dir."
@@ -150,6 +163,6 @@ fi
 
 
 printf "Removing installation files and opening Meshery..."
-rm -rf meshery.zip LICENSE README.md
+rm -rf meshery.zip ${PWD}/$temporary_dir_name/
 
 mesheryctl system start --yes -p $PLATFORM

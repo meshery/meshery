@@ -392,8 +392,8 @@ class MeshConfigComponent extends React.Component {
           if (self.state.operatorSwitch) {
             setTimeout(async () => {
               let response = await modal.show({
-                title: "Do you wanna remove Operator from this cluster?",
-                subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'",
+                title: "Remove Meshery Operator from this cluster?",
+                subtitle: "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
                 options: ["yes", "no"],
               });
               if (response == "yes") {
@@ -546,8 +546,8 @@ class MeshConfigComponent extends React.Component {
           if (self.state.operatorSwitch) {
             setTimeout(async () => {
               let response = await modal.show({
-                title: "Do you wanna remove Operator from this cluster?",
-                subtitle: "The Meshery Operator will be uninstalled from the cluster if responded with 'yes'",
+                title: "Remove Meshery Operator from this cluster?",
+                subtitle: "Meshery is now disconnected from your Kubernetes cluster. Do you want to remove the Meshery Operator from your cluster as well?",
                 options: ["yes", "no"],
               });
               if (response == "yes") {

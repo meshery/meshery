@@ -91,7 +91,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 		Methods("GET")
 
 	gMux.Handle("/api/telemetry/metrics/grafana/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaConfigHandler)))).
-		Methods("POST", "DELETE")
+		Methods("GET", "POST", "DELETE")
 	gMux.Handle("/api/telemetry/metrics/grafana/boards", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardsHandler)))).
 		Methods("GET", "POST")
 	gMux.Handle("/api/telemetry/metrics/grafana/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaQueryHandler)))).
@@ -103,7 +103,7 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	gMux.Handle("/api/telemetry/metrics/grafana/scan", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ScanGrafanaHandler))))
 
 	gMux.Handle("/api/telemetry/metrics/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusConfigHandler)))).
-		Methods("POST", "DELETE")
+		Methods("GET", "POST", "DELETE")
 	gMux.Handle("/api/telemetry/metrics/board_import", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaBoardImportForPrometheusHandler)))).
 		Methods("POST")
 	gMux.Handle("/api/telemetry/metrics/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusQueryHandler)))).
@@ -202,16 +202,10 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 	}))
 
 	// Swagger Interactive Playground
-	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
+	swaggerFileGithub := "https://raw.githubusercontent.com/layer5io/meshery/master/helpers/swagger.yaml"
+	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: swaggerFileGithub}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
 	gMux.Handle("/docs", swaggerSh)
-	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../")))
-	// gMux.Handle("/docs", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	// 	http.Redirect(w, req, "/api/docs", http.StatusFound)
-	// }))
-	// gMux.Handle("/", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	handlers.ServeUI(w, r, "", "../ui/out/")
-	// }))))
 
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

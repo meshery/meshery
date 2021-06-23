@@ -66,11 +66,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system.commands %}{% assign command = command_hash[1] %}
     <tr>
-
       <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
-
-      <td rowspan=17><a href="{{ site.baseurl }}/reference/mesheryctl/system">{{ command.name }}</a></td>
-
       <td></td>
       <td></td>
       <td>{{ command.description }}</td>
@@ -88,6 +84,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td></td>
         <td>{{ command.description }}</td>
       </tr>
+    {% endfor %}
     {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.start.flag %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.flag }}</td>
@@ -184,17 +181,30 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ flag.flag }}</td>
         <td>{{ flag.description }}</td>
       </tr>
+    {% endfor %}
     {% endfor %}  
-
-        {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-          <tr>
-            <td>{{ subcommand.name }}</td>
-            <td></td>
-            <td>{{ subcommand.description }}</td>
-          </tr>
-        {% endfor %}
-
+   {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.status.command %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/status">{{ subcommand.name }}</a></td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.status.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}  
   {% endfor %}
+  
+  {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+    <tr>
+      <td>{{ subcommand.name }}</td>
+      <td></td>
+      <td>{{ subcommand.description }}</td>
+    </tr>
+  {% endfor %}
+
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
           <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/">{{ command.name }}</a></td>
@@ -330,33 +340,20 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
+    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.subcommand %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/validate">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flag %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
   {% endfor %}
-    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.init.commands %}{% assign subcommand = subcommand_hash[1] %}
-      <tr>
-        <td rowspan=4>{{ subcommand.name }}</td>
-        <td></td>
-        <td>{{ subcommand.description }}</td>
-      </tr>
-    {% endfor %}
-      {% for flag_hash in site.data.mesheryctlcommands.meshes.init.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% for subcommand_hash in site.data.mesheryctlcommands.meshes.validate.commands %}{% assign subcommand = subcommand_hash[1] %}
-      <tr>
-        <td rowspan=5>{{ subcommand.name }}</td>
-        <td></td>
-        <td>{{ subcommand.description }}</td>
-      </tr>
-    {% endfor %}
-      {% for flag_hash in site.data.mesheryctlcommands.meshes.validate.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
 </thead>
 </table>
 

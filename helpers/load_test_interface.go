@@ -29,7 +29,8 @@ import (
 )
 
 var (
-	nighthawkStatus sync.Mutex
+	nighthawkStatus  sync.Mutex
+	nighthawkRunning = false
 )
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
@@ -187,15 +188,27 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 
 func startNighthawkServer(timeout int64) error {
 	nighthawkStatus.Lock()
+	defer nighthawkStatus.Unlock()
 	command := "./nighthawk_service"
 	transformCommand := "./nighthawk_output_transform"
-	err := exec.Command(command).Start()
-	if err != nil {
-		nighthawkStatus.Unlock()
-		return err
+	cmd := exec.Command(command)
+	if !nighthawkRunning {
+		err := cmd.Start()
+		if err != nil {
+			nighthawkStatus.Unlock()
+			return err
+		}
+		nighthawkRunning = true
 	}
+	go func() {
+		err := cmd.Wait()
+		if err != nil {
+			nighthawkRunning = false
+			return
+		}
+	}()
 
-	_, err = os.Stat(transformCommand)
+	_, err := os.Stat(transformCommand)
 	if err != nil {
 		nighthawkStatus.Unlock()
 		return err
@@ -211,7 +224,6 @@ func startNighthawkServer(timeout int64) error {
 		timeout--
 		time.Sleep(1 * time.Second)
 	}
-	nighthawkStatus.Unlock()
 	return errors.New("unable to start nighthawk server")
 }
 
@@ -238,7 +250,20 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 	rURL := u.Host
 	if u.Hostname() == "localhost" {
-		rURL = fmt.Sprintf("0.0.0.0:%s", u.Port())
+		if u.Port() != "" {
+			rURL = fmt.Sprintf("0.0.0.0:%s", u.Port())
+		} else {
+			rURL = "0.0.0.0"
+		}
+	}
+
+	if u.Port() == "" {
+		if u.Scheme == "http" {
+			rURL = fmt.Sprintf("http://%s:80", u.Hostname())
+		} else {
+			rURL = fmt.Sprintf("https://%s:443", u.Hostname())
+		}
+		// Add support for more protocols here
 	}
 
 	ro := &nighthawk_proto.CommandLineOptions{
@@ -350,10 +375,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 			break
 		}
 	}
-
-	try, _ := json.Marshal(res1)
-
-	logrus.Debugf("original version of the test: %s", string(try))
 
 	d, err := nighthawk_client.Transform(res1, "fortio")
 	if err != nil {

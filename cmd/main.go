@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/models"
 	"github.com/layer5io/meshery/models/pattern"
 	"github.com/layer5io/meshery/router"
+	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -153,6 +154,7 @@ func main() {
 
 	kubeclient := mesherykube.Client{}
 	meshsyncCh := make(chan struct{})
+	var brokerConn broker.Handler
 
 	err = dbHandler.AutoMigrate(
 		meshsyncmodel.KeyValue{},
@@ -181,6 +183,7 @@ func main() {
 			DBHandler:       &dbHandler,
 			KubeClient:      &kubeclient,
 			MeshSyncChannel: meshsyncCh,
+			BrokerConn:      brokerConn,
 		}),
 		GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 			URL: "/api/system/graphql/query",
@@ -217,6 +220,7 @@ func main() {
 				DBHandler:       &dbHandler,
 				KubeClient:      &kubeclient,
 				MeshSyncChannel: meshsyncCh,
+				BrokerConn:      brokerConn,
 			}),
 			GraphqlPlayground: graphql.NewPlayground(graphql.Options{
 				URL: "/api/system/graphql/query",
@@ -247,7 +251,7 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-	}, &kubeclient, meshsyncCh, log)
+	}, &kubeclient, meshsyncCh, log, brokerConn)
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)

@@ -47,7 +47,7 @@ docker-run-cloud:
 # Runs Meshery on your local machine and points to locally-running
 #  Meshery Cloud for user authentication.
 
-run-local-cloud:
+run-local-cloud: error
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
@@ -59,7 +59,7 @@ run-local-cloud:
 
 # Builds and runs Meshery to run on your local machine.
 #  and points to remote Meshery Cloud for user authentication.
-run-local:
+run-local: error
 	cd cmd; go clean; rm meshery; go mod tidy; \
 	go build -ldflags="-w -s -X main.version=${GIT_VERSION} -X main.commitsha=${GIT_COMMITSHA} -X main.releasechannel=${RELEASE_CHANNEL}" -tags draft -a -o meshery; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -69,7 +69,7 @@ run-local:
 	./meshery; \
 	cd ..
 
-run-fast:
+run-fast: error
 	cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -78,7 +78,7 @@ run-fast:
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	go run main.go;
 
-run-fast-cloud:
+run-fast-cloud: error
 	cd cmd; go mod tidy; \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_DEV) \
 	PORT=9081 \
@@ -87,7 +87,7 @@ run-fast-cloud:
 	go run main.go;
 
 
-golangci-run:
+golangci-run: error
 	GO111MODULE=off GOPROXY=direct GOSUMDB=off go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.30.0;
 	$(GOPATH)/bin/golangci-lint run
 
@@ -164,3 +164,13 @@ swagger-run:swagger-spec
 swagger-docs:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+
+graphql-docs:
+	cd docs; build-docs; bundle exec rake graphql:compile_docs
+
+gqlgen-generate:
+	cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
+
+.PHONY: error
+error:
+	go run github.com/layer5io/meshkit/cmd/errorutil -d . update

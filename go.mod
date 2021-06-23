@@ -13,6 +13,7 @@ require (
 	fortio.org/fortio v1.15.2
 	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/briandowns/spinner v1.15.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
 	github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d
@@ -29,8 +30,8 @@ require (
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.2.17
-	github.com/layer5io/meshkit v0.2.12
-	github.com/layer5io/meshsync v0.1.19
+	github.com/layer5io/meshkit v0.2.14
+	github.com/layer5io/meshsync v0.1.20
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.3
 	github.com/lib/pq v1.10.2

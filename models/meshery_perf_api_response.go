@@ -28,7 +28,7 @@ type PerformanceResult struct {
 	Name               string        `json:"name,omitempty"`
 	Mesh               string        `json:"mesh,omitempty"`
 	PerformanceProfile *uuid.UUID    `json:"performance_profile,omitempty"`
-	TestID             string        `json:"test_id"`
+	UserID             *uuid.UUID    `json:"user_id"`
 	RunnerResults      RunnerResults `json:"runner_results"`
 	ServerMatrics      interface{}   `json:"server_metrics"`
 	ServerBoardConfig  interface{}   `json:"server_board_config,omitempty"`
@@ -36,10 +36,15 @@ type PerformanceResult struct {
 }
 
 type RunnerResults struct {
+	URL               string     `json:"URL"`
+	LoadGenerator     string     `json:"load-generator"`
 	Duration          uint64     `json:"ActualDuration"`
 	QPS               float64    `json:"ActualQPS"`
 	StartTime         *time.Time `json:"StartTime"`
 	DurationHistogram struct {
+		Average     float64 `json:"Avg,omitempty"`
+		Max         float64 `json:"Max,omitempty"`
+		Min         float64 `json:"Min,omitempty"`
 		Percentiles []struct {
 			Percentile float64 `json:"Percentile,omitempty"`
 			Value      float64 `json:"Value,omitempty"`
