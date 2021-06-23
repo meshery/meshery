@@ -39,7 +39,7 @@ lang: en
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.restart.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system.restart.flag %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
