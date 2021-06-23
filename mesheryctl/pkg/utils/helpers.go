@@ -806,7 +806,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
 	s.Suffix = " " + suffix
-	s.FinalMSG = finalMsg + "\n"
+	s.FinalMSG = "\n" + finalMsg + "\n"
 	return s
 =======
 // PrintToTableInStringFormat prints the given data into a table format but return as a string
