@@ -41,7 +41,7 @@ var applyCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 	Execute a Performance test with the specified performance profile
-	mesheryctl perf apply <profile id> --flags
+	mesheryctl perf apply <profile name> --flags
 
 	Execute a Performance test without a specified performance profile
 	mesheryctl perf apply --profile <profile-name> --url <url>
