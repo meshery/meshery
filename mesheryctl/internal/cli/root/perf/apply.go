@@ -78,7 +78,7 @@ var applyCmd = &cobra.Command{
 				log.Debug("Using random test name: ", testName)
 			}
 
-			// If --profile passed than create a profile
+			// If a profile is not provided, then create a new profile
 			if len(args) == 0 { // First need to create a profile id
 				log.Debug("Creating new performance profile")
 
