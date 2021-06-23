@@ -1,6 +1,150 @@
 {
   "entries": [
     {
+      "name": "ErrInvalidK8SConfigCode",
+      "old_code": "2000",
+      "code": "2000",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrNilClientCode",
+      "old_code": "2001",
+      "code": "2001",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusScanCode",
+      "old_code": "2002",
+      "code": "2002",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaScanCode",
+      "old_code": "2003",
+      "code": "2003",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRecordPreferencesCode",
+      "old_code": "2004",
+      "code": "2004",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaConfigCode",
+      "old_code": "2005",
+      "code": "2005",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusConfigCode",
+      "old_code": "2006",
+      "code": "2006",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaQueryCode",
+      "old_code": "2007",
+      "code": "2007",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusQueryCode",
+      "old_code": "2008",
+      "code": "2008",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaBoardsCode",
+      "old_code": "2009",
+      "code": "2009",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusBoardsCode",
+      "old_code": "2010",
+      "code": "2010",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStaticBoardsCode",
+      "old_code": "2011",
+      "code": "2011",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRequestBodyCode",
+      "old_code": "2012",
+      "code": "2012",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrInvalidK8SConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidKubeConfig",
       "old_code": "",
       "code": "",
@@ -98,14 +242,6 @@
     },
     {
       "name": "ErrPublishBrokerCode",
-      "old_code": "1009",
-      "code": "1009",
-      "code_is_literal": true,
-      "code_is_int": true,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrNoMeshSyncCode",
       "old_code": "1010",
       "code": "1010",
       "code_is_literal": true,
@@ -113,9 +249,17 @@
       "path": "internal/graphql/resolver/error.go"
     },
     {
-      "name": "ErrNoExternalEndpointCode",
+      "name": "ErrNoMeshSyncCode",
       "old_code": "1011",
       "code": "1011",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "internal/graphql/resolver/error.go"
+    },
+    {
+      "name": "ErrNoExternalEndpointCode",
+      "old_code": "1012",
+      "code": "1012",
       "code_is_literal": true,
       "code_is_int": true,
       "path": "internal/graphql/resolver/error.go"
@@ -252,19 +396,11 @@
         "code_is_literal": true,
         "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
-      },
-      {
-        "name": "ErrPublishBrokerCode",
-        "old_code": "1009",
-        "code": "1009",
-        "code_is_literal": true,
-        "code_is_int": true,
-        "path": "internal/graphql/resolver/error.go"
       }
     ],
     "1010": [
       {
-        "name": "ErrNoMeshSyncCode",
+        "name": "ErrPublishBrokerCode",
         "old_code": "1010",
         "code": "1010",
         "code_is_literal": true,
@@ -274,16 +410,196 @@
     ],
     "1011": [
       {
-        "name": "ErrNoExternalEndpointCode",
+        "name": "ErrNoMeshSyncCode",
         "old_code": "1011",
         "code": "1011",
         "code_is_literal": true,
         "code_is_int": true,
         "path": "internal/graphql/resolver/error.go"
       }
+    ],
+    "1012": [
+      {
+        "name": "ErrNoExternalEndpointCode",
+        "old_code": "1012",
+        "code": "1012",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "internal/graphql/resolver/error.go"
+      }
+    ],
+    "2000": [
+      {
+        "name": "ErrInvalidK8SConfigCode",
+        "old_code": "2000",
+        "code": "2000",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2001": [
+      {
+        "name": "ErrNilClientCode",
+        "old_code": "2001",
+        "code": "2001",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2002": [
+      {
+        "name": "ErrPrometheusScanCode",
+        "old_code": "2002",
+        "code": "2002",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2003": [
+      {
+        "name": "ErrGrafanaScanCode",
+        "old_code": "2003",
+        "code": "2003",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2004": [
+      {
+        "name": "ErrRecordPreferencesCode",
+        "old_code": "2004",
+        "code": "2004",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2005": [
+      {
+        "name": "ErrGrafanaConfigCode",
+        "old_code": "2005",
+        "code": "2005",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2006": [
+      {
+        "name": "ErrPrometheusConfigCode",
+        "old_code": "2006",
+        "code": "2006",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2007": [
+      {
+        "name": "ErrGrafanaQueryCode",
+        "old_code": "2007",
+        "code": "2007",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2008": [
+      {
+        "name": "ErrPrometheusQueryCode",
+        "old_code": "2008",
+        "code": "2008",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2009": [
+      {
+        "name": "ErrGrafanaBoardsCode",
+        "old_code": "2009",
+        "code": "2009",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2010": [
+      {
+        "name": "ErrPrometheusBoardsCode",
+        "old_code": "2010",
+        "code": "2010",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2011": [
+      {
+        "name": "ErrStaticBoardsCode",
+        "old_code": "2011",
+        "code": "2011",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2012": [
+      {
+        "name": "ErrRequestBodyCode",
+        "old_code": "2012",
+        "code": "2012",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
     ]
   },
   "call_expr_codes": [
+    {
+      "name": "ErrInvalidK8SConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrNilClient",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPrometheusConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGrafanaConfig",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
     {
       "name": "ErrInvalidKubeConfig",
       "old_code": "",
@@ -386,6 +702,79 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrGrafanaBoardsCode": [
+      {
+        "name": "ErrGrafanaBoardsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Grafana endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+      },
+      {
+        "name": "ErrGrafanaBoardsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Prometheus endpoint is correct.\nConnect to Prometheus from the settings page in the UI"
+      }
+    ],
+    "ErrGrafanaConfigCode": [
+      {
+        "name": "ErrGrafanaConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Cannot find valid Prometheus endpoint in user pref",
+        "short_description": "Prometheus endpoint not configured.",
+        "probable_cause": "",
+        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard."
+      },
+      {
+        "name": "ErrGrafanaConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Cannot find valid grafana endpoint in user pref",
+        "short_description": "Grafana endpoint not configured.",
+        "probable_cause": "",
+        "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard."
+      }
+    ],
+    "ErrGrafanaQueryCode": [
+      {
+        "name": "ErrGrafanaQueryCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Failed querying Grafana Client",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Grafana query is correct.\nConnect to Grafana from the settings page in the UI"
+      }
+    ],
+    "ErrGrafanaScanCode": [
+      {
+        "name": "ErrGrafanaScanCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Failed connecting to Grafna Client",
+        "short_description": "Unable to connect to grafana.",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Grafana Endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+      }
+    ],
+    "ErrInvalidK8SConfigCode": [
+      {
+        "name": "ErrInvalidK8SConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "No valid kubernetes config found",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      }
+    ],
     "ErrInvalidRequestCode": [
       {
         "name": "ErrInvalidRequestCode",
@@ -429,6 +818,15 @@
       }
     ],
     "ErrNilClientCode": [
+      {
+        "name": "ErrNilClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Kubernetes config is not initialized with Meshery",
+        "short_description": "Kubernetes client not initialized",
+        "probable_cause": "",
+        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      },
       {
         "name": "ErrNilClientCode",
         "code": "",
@@ -481,6 +879,28 @@
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       }
     ],
+    "ErrPrometheusQueryCode": [
+      {
+        "name": "ErrPrometheusQueryCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Failed querying Prometheus Client through Grafna Proxy",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Prometheus query is correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+      }
+    ],
+    "ErrPrometheusScanCode": [
+      {
+        "name": "ErrPrometheusScanCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Failed connecting to Prometheus Client through Grafna Proxy",
+        "short_description": "Unable to connect to prometheus.",
+        "probable_cause": "",
+        "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+      }
+    ],
     "ErrPublishBrokerCode": [
       {
         "name": "ErrPublishBrokerCode",
@@ -499,6 +919,39 @@
         "severity": "Alert",
         "long_description": "Invalid Query performed in Meshery Database",
         "short_description": "Error while querying data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrRecordPreferencesCode": [
+      {
+        "name": "ErrRecordPreferencesCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Failed to record User Preferences.",
+        "short_description": "unable to save user config data.",
+        "probable_cause": "User token might be invalid\ndb might be corrupted",
+        "suggested_remediation": "Relogin to Meshery"
+      }
+    ],
+    "ErrRequestBodyCode": [
+      {
+        "name": "ErrRequestBodyCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to read the request body.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrStaticBoardsCode": [
+      {
+        "name": "ErrStaticBoardsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "unable to get static board",
+        "short_description": "unable to get static board",
         "probable_cause": "",
         "suggested_remediation": ""
       }
