@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"
@@ -145,11 +146,25 @@ var switchCmd = &cobra.Command{
 		return RunPreflightHealthChecks(true, cmd.Use)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		userResponse := false
+
+		//skip asking confirmation if -y flag used
+		if utils.SilentFlag {
+			userResponse = true
+		} else {
+			// ask user for confirmation
+			userResponse = utils.AskForConfirmation("Your meshery deployments will be deleted. Are you sure you want to continue?")
+		}
+
+		if !userResponse {
+			return errors.New("channel switch aborted")
+		}
+
 		err = setCmd.RunE(cmd, args)
 		if err != nil {
 			return err
 		}
-		err = startCmd.RunE(cmd, args)
+		err = restartCmd.RunE(cmd, args)
 		if err != nil {
 			return err
 		}
