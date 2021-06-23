@@ -7,19 +7,19 @@ import (
 )
 
 const (
-	ErrInvalidK8SConfigCode  = "1000"
-	ErrNilClientCode         = "1001"
-	ErrPrometheusScanCode    = "1002"
-	ErrGrafanaScanCode       = "1003"
-	ErrRecordPreferencesCode = "1004"
-	ErrGrafanaConfigCode     = "1005"
-	ErrPrometheusConfigCode  = "1006"
-	ErrGrafanaQueryCode      = "1007"
-	ErrPrometheusQueryCode   = "1008"
-	ErrGrafanaBoardsCode     = "1009"
-	ErrPrometheusBoardsCode  = "1010"
-	ErrStaticBoardsCode      = "1011"
-	ErrRequestBodyCode       = "1012"
+	ErrInvalidK8SConfigCode  = "2000"
+	ErrNilClientCode         = "2001"
+	ErrPrometheusScanCode    = "2002"
+	ErrGrafanaScanCode       = "2003"
+	ErrRecordPreferencesCode = "2004"
+	ErrGrafanaConfigCode     = "2005"
+	ErrPrometheusConfigCode  = "2006"
+	ErrGrafanaQueryCode      = "2007"
+	ErrPrometheusQueryCode   = "2008"
+	ErrGrafanaBoardsCode     = "2009"
+	ErrPrometheusBoardsCode  = "2010"
+	ErrStaticBoardsCode      = "2011"
+	ErrRequestBodyCode       = "2012"
 )
 
 var (
@@ -55,7 +55,7 @@ func ErrPrometheusBoards(err error) error {
 }
 
 func ErrRecordPreferences(err error) error {
-	return errors.New(ErrRecordPreferencesCode, errors.Alert, []string{"unable to save user config data:", err.Error()}, []string{"Failed to record User Preferences for ", err.Error()}, []string{"User token is invalid"}, []string{"Relogin to Meshery"})
+	return errors.New(ErrRecordPreferencesCode, errors.Alert, []string{"unable to save user config data.", err.Error()}, []string{"Failed to record User Preferences.", err.Error()}, []string{"User token might be invalid", "db might be corrupted"}, []string{"Relogin to Meshery"})
 }
 
 func ErrRequestBody(err error) error {
