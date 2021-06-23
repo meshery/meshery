@@ -97,6 +97,16 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	// 	return
 	// }
 
+	if req.Method == http.MethodGet {
+		err := json.NewEncoder(w).Encode(prefObj.Prometheus)
+		if err != nil {
+			logrus.Errorf("error marshaling Prometheus config: %v", err)
+			http.Error(w, "unable to marshal Prometheus config", http.StatusInternalServerError)
+			return
+		}
+		return
+	}
+
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
