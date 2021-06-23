@@ -138,6 +138,22 @@ var TemplateToken = config.Token{
 	Location: AuthConfigFile,
 }
 
+func BackupConfigFile(cfgFile string) {
+	// extracting file and folder name from the meshconfig path
+	dir, file := filepath.Split(cfgFile)
+	// extracting extension
+	extension := filepath.Ext(file)
+	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
+
+	log.Println("Backing up " + cfgFile + " to " + bakLocation)
+	err := os.Rename(cfgFile, bakLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Fatal(errors.New("outdated config file found. Please re-run the command"))
+}
+
 type cryptoSource struct{}
 
 func (s cryptoSource) Seed(seed int64) {}

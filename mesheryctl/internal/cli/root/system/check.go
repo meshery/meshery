@@ -2,9 +2,7 @@ package system
 
 import (
 	"context"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 
 	"github.com/pkg/errors"
@@ -44,20 +42,7 @@ var checkCmd = &cobra.Command{
 func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		cfgFile := utils.CfgFile
-		// extracting file and folder name from the meshconfig path
-		dir, file := filepath.Split(cfgFile)
-		// extracting extension
-		extension := filepath.Ext(file)
-		bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
-
-		log.Println("Backing up " + cfgFile + " to " + bakLocation)
-		err := os.Rename(cfgFile, bakLocation)
-		if err != nil {
-			return err
-		}
-
-		return errors.New("outdated config file found. Please re-run the command")
+		utils.BackupConfigFile(utils.CfgFile)
 	}
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
