@@ -226,17 +226,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
-func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
-
-	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
-		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
-		return
-	}
 
 	reqQuery := req.URL.Query()
 
@@ -246,7 +240,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		h.config.QueryTracker.AddOrFlagQuery(req.Context(), testUUID, q, false)
 	}
 
-	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), reqQuery.Get("url"), &reqQuery)
 	if err != nil {
 		h.log.Error(ErrPrometheusQuery(err))
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)

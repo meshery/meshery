@@ -163,7 +163,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
-func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -171,13 +171,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	reqQuery := req.URL.Query()
 
-	if prefObj.Grafana == nil || prefObj.Grafana.GrafanaURL == "" {
-		h.log.Error(ErrGrafanaConfig)
-		http.Error(w, ErrGrafanaConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, &reqQuery)
+	data, err := h.config.GrafanaClientForQuery.GrafanaQueryRange(req.Context(), reqQuery.Get("url"), reqQuery.Get("api-key"), &reqQuery)
 	if err != nil {
 		h.log.Error(ErrGrafanaQuery(err))
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
@@ -230,5 +224,6 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
+	h.log.Info("Board selection updated")
 	_, _ = w.Write([]byte("{}"))
 }
