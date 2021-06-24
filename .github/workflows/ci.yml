@@ -81,7 +81,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           files: ./coverage.txt
-          flags: integrationtests
+          flags: gointegrationtests
           fail_ci_if_error: true
   build-backend:
     name: Backend build
