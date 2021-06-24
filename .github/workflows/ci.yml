@@ -52,7 +52,7 @@ jobs:
         with:
           go-version: ${{ secrets.GO_VERSION }}
       - name: Run coverage
-        run: go test ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
