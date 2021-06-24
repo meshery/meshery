@@ -2,4 +2,4 @@ flag: --name
 arg: apply
 description: 'A memorable name for the test (default: random string).'
 usage: |
-  mesheryctl perf apply [profile-id] --url [URL] --name "name"
+  mesheryctl perf apply --profile [profile-name] --url [URL] --name "name"
