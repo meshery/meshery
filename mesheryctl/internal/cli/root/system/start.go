@@ -344,12 +344,21 @@ func start() error {
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes.", "...Meshery deployed on Kubernetes.")
 		spinner.Start()
 
-		deadline := time.Now().Add(20 * time.Second)
+		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
+		err = utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
+		if err != nil {
+			break
+		}
 
+		deadline := time.Now().Add(10 * time.Second)
+
+		// check if the pods are running
 		for !(time.Now().After(deadline)) {
-			// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
-			err := utils.ApplyManifestFiles(manifests, RequestedAdapters, kubeClient, false, false)
-			if err == nil {
+			ok, err := utils.IsMesheryRunning("kubernetes")
+			if err != nil {
+				return err
+			}
+			if ok {
 				break
 			} else {
 				time.Sleep(1 * time.Second)
