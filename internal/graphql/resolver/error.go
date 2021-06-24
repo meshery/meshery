@@ -15,9 +15,9 @@ const (
 	ErrControlPlaneSubscriptionCode = "1007"
 	ErrMesheryClientCode            = "1008"
 	ErrSubscribeChannelCode         = "1009"
-	ErrPublishBrokerCode            = "1009"
-	ErrNoMeshSyncCode               = "1010"
-	ErrNoExternalEndpointCode       = "1011"
+	ErrPublishBrokerCode            = "1010"
+	ErrNoMeshSyncCode               = "1011"
+	ErrNoExternalEndpointCode       = "1012"
 )
 
 var (
