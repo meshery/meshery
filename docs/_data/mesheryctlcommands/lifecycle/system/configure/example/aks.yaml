@@ -1,0 +1,4 @@
+name: aks
+description: To configure Meshery to use Azure Kubernetes Service
+example: |
+    mesheryctl system config aks --token [path-to-token]
