@@ -2,4 +2,4 @@ flag: --mesh
 arg: apply
 description: Name of the service mesh.
 usage: |
-    mesheryctl perf apply --profile [profile-name] --url [URL] --mesh [name]
+    mesheryctl perf apply [profile-name] --url [URL] --mesh [name]
