@@ -78,6 +78,19 @@ var RootCmd = &cobra.Command{
 			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 		}
 
+		fo, err := os.Create(cfgFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		stat, err := fo.Stat()
+		if err != nil {
+			log.Fatal(err)
+		}
+		// check if config file is empty
+		if stat.Size() == 0 {
+			log.Fatal("empty meshconfig. Please populate it before running a command")
+		}
+
 		_, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.BackupConfigFile(cfgFile)
