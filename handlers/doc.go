@@ -71,6 +71,20 @@ type grafanaConfigParamsWrapper struct {
 	Body *models.GrafanaConfigParams
 }
 
+// Returns Grafana configs
+// swagger:response grafanaConfigResponseWrapper
+type grafanaConfigResponseWrapper struct {
+	// in: body
+	Body *models.Grafana
+}
+
+// Parameter to search a matching grafana board
+// swagger:parameters idGetGrafanaBoards
+type grafanaBoardsParamsWrapper struct {
+	// in: query
+	DashboardSearch string `json:"dashboardSearch"`
+}
+
 // Returns Grafana boards and panels
 // swagger:response grafanaBoardsResponseWrapper
 type grafanaBoardsResponseWrapper struct {
@@ -90,6 +104,13 @@ type v1ServicesMapResponseWrapper struct {
 type prometheusConfigParamsWrapper struct {
 	// in: body
 	PrometheusURL string `json:"prometheusURL,omitempty"`
+}
+
+// Returns prometheus configuration
+// swagger:response prometheusConfigResponseWrapper
+type prometheusConfigResponseWrapper struct {
+	// in: body
+	Body *models.Prometheus
 }
 
 // Response for prometheus board import

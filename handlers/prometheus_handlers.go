@@ -97,6 +97,13 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 	}
 }
 
+// swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
+// Handle GET for Prometheus configuration
+//
+// Used for fetching Prometheus configuration
+// responses:
+//  200: prometheusConfigResponseWrapper
+
 // swagger:route POST /api/telemetry/metrics/config PrometheusAPI idPostPrometheusConfig
 // Handle POST for Prometheus configuration
 //

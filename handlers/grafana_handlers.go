@@ -19,6 +19,13 @@ func init() {
 	gob.Register(&models.GrafanaClient{})
 }
 
+// swagger:route GET /api/telemetry/metrics/grafana/config GrafanaAPI idGetGrafanaConfig
+// Handle GET request for Grafana configuration
+//
+// Used for fetching Grafana configuration
+// responses:
+// 	200: grafanaConfigResponseWrapper
+
 // swagger:route POST /api/telemetry/metrics/grafana/config GrafanaAPI idPostGrafanaConfig
 // Handle POST request for Grafana configuration
 //
@@ -33,7 +40,7 @@ func init() {
 // responses:
 // 	200:
 
-// GrafanaConfigHandler is used for persisting or removing Grafana configuration
+// GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodDelete {
 	// 	w.WriteHeader(http.StatusNotFound)
