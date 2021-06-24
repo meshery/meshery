@@ -13,7 +13,12 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestDefaultPreflightCmd(t *testing.T) {
+// This is an Integration test
+func TestPreflightCmdIntegration(t *testing.T) {
+	// skipping this integration test with --short flag
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	SetupContextEnv(t)
 	tests := []utils.CmdTestInput{
 		{
