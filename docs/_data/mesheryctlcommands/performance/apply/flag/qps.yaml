@@ -2,4 +2,4 @@ flag: --qps
 arg: apply
 description: 'Queries per second (default: 0) (0 - means to use the CPU unbounded to generate as many requests as possible).'
 usage: |
-    mesheryctl perf apply --profile [profile-name] --url [URL] --qps [queries]
+    mesheryctl perf apply [profile-name] --url [URL] --qps [queries]

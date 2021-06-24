@@ -2,4 +2,4 @@ flag: --concurrent-requests
 arg: apply
 description: 'Number of Parallel Requests (default: 1).'
 usage: |
-    mesheryctl perf apply --profile [profile-name] --url [URL] --concurrent-requests [number of requests]
+    mesheryctl perf apply [profile-name] --url [URL] --concurrent-requests [number of requests]

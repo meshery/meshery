@@ -3,7 +3,7 @@ description: Runs Performance test using existing profiles or using flags.
 usage: |
 
     # Execute a Performance test with the specified performance profile
-    mesheryctl perf apply [profile-id] --flags
+    mesheryctl perf apply [profile-name] --flags
 
     # Execute a Performance test without a specified performance profile
     mesheryctl perf apply --profile [profile-name] --url [url]
