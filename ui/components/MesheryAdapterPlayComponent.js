@@ -1045,7 +1045,7 @@ class MesheryAdapterPlayComponent extends React.Component {
    * a note directing a user to install grafana and prometheus
    * @param {Array<{ board: any, panels: Array<any>, templateVars: Array<any>}>} boardConfigs grafana board configs
    * @param {string} grafanaURL grafana URL
-   * @param {string} grafanaAPIKey grafana API keey
+   * @param {string} grafanaAPIKey grafana API key
    */
   renderGrafanaCustomCharts(boardConfigs, grafanaURL, grafanaAPIKey) {
     return (
