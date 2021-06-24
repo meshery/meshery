@@ -1,23 +1,21 @@
 {
-  "min_code": 9223372036854775807,
-  "max_code": -9223372036854775808,
-  "duplicate_codes": {
-    "test_code": [
-      "ErrInvalidRequestCode",
-      "ErrNilClientCode",
-      "ErrCreateDataCode",
-      "ErrQueryCode",
-      "ErrMeshsyncSubscriptionCode",
-      "ErrOperatorSubscriptionCode",
-      "ErrAddonSubscriptionCode",
-      "ErrControlPlaneSubscriptionCode",
-      "ErrMesheryClientCode",
-      "ErrSubscribeChannelCode",
-      "ErrNoMeshSyncCode"
-    ]
-  },
-  "duplicate_names": [],
+  "min_code": 1000,
+  "max_code": 2012,
+  "duplicate_codes": {},
+  "duplicate_names": [
+    "ErrMesheryClientCode",
+    "ErrNilClientCode",
+    "ErrNoMeshSyncCode",
+    "ErrGrafanaBoardsCode",
+    "ErrCreateDataCode",
+    "ErrGrafanaConfigCode"
+  ],
   "call_expr_codes": [
+    "ErrInvalidK8SConfig",
+    "ErrNilClient",
+    "ErrPrometheusConfig",
+    "ErrGrafanaConfig",
+    "ErrStaticBoards",
     "ErrInvalidKubeConfig",
     "ErrInvalidK8sContextName",
     "ErrNilClient",
@@ -25,8 +23,33 @@
     "ErrNoMeshSync",
     "ErrEmptyHandler"
   ],
-  "int_codes": null,
-  "deprecated_new_default": [
-    "internal/graphql/resolver/error.go"
-  ]
+  "int_codes": [
+    2008,
+    2009,
+    2011,
+    1001,
+    2000,
+    2002,
+    2005,
+    2007,
+    1003,
+    1005,
+    1008,
+    1004,
+    1007,
+    1010,
+    2003,
+    2004,
+    2010,
+    1000,
+    2012,
+    1011,
+    1009,
+    1012,
+    2001,
+    2006,
+    1002,
+    1006
+  ],
+  "deprecated_new_default": null
 }

@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
@@ -329,15 +330,22 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 				return false, errors.Wrap(err, "failed to create new client")
 			}
 
-			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
-
-			for _, pod := range podList.Items {
-				if strings.Contains(pod.GetName(), "meshery") {
+			//for i, pod := range podList.Items {
+			//	fmt.Println(i, pod.GetName())
+			//	//if strings.Contains(pod.GetName(), "meshery") {
+			//	//	return true, nil
+			//	//}
+			//}
+			for _, deployment := range deploymentList.Items {
+				if deployment.GetName() == "meshery" {
 					return true, nil
 				}
 			}
@@ -791,4 +799,12 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
+	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+
+	s.Suffix = " " + suffix
+	s.FinalMSG = finalMsg + "\n"
+	return s
 }
