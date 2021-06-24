@@ -106,10 +106,12 @@ func stop() error {
 			return errors.Wrap(err, utils.SystemError("failed to stop meshery"))
 		}
 
-		err = utils.ApplyOperatorManifest(client, false, true)
-
-		if err != nil {
-			return err
+		// If k8s is available in case of platform docker than we remove operator
+		if err = RunKubernetesHealthChecks(true); err != nil {
+			err = utils.ApplyOperatorManifest(client, false, true)
+			if err != nil {
+				return err
+			}
 		}
 
 	case "kubernetes":
