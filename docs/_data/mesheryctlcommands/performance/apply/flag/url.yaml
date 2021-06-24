@@ -1,0 +1,5 @@
+flag: --url 
+arg: apply
+description: (required/optional) URL of the endpoint send load to during testing.
+usage: |
+    mesheryctl perf apply [profile-name] --url [URL]

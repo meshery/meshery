@@ -24,7 +24,7 @@ lang: en
 <!-- Basic usage of the command -->
 <pre class="codeblock-pre">
   <div class="codeblock">
-  mesheryctl perf [flags] 
+  mesheryctl perf [flags]
   </div>
 </pre>
 
