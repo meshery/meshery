@@ -71,7 +71,6 @@ module.exports = {
     "@material-ui/core/Slider": require("@material-ui/core/Slider"),
     notistack: require("notistack"),
     "react-dom/server": require("react-dom/server"),
-    "react-router": require("react-router"),
     "relay-runtime": require("relay-runtime"),
   },
 };
