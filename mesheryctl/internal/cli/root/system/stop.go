@@ -174,7 +174,7 @@ func stop() error {
 		}
 	}
 
-	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated")
+	s := utils.CreateDefaultSpinner("Terminating Meshery pods", "Pods terminated                 ")
 	s.Start()
 
 	deadline := time.Now().Add(20 * time.Second)
@@ -192,7 +192,6 @@ func stop() error {
 			time.Sleep(1 * time.Second)
 		}
 	}
-	s.Suffix = ""
 	s.Stop()
 
 	log.Info("Meshery is stopped.")
