@@ -331,7 +331,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/citrix",
         title: "Citrix Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -339,7 +339,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/consul",
         title: "Consul",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -347,7 +347,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/istio",
         title: "Istio",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -355,7 +355,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/kuma",
         title: "Kuma",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -363,7 +363,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/linkerd",
         title: "Linkerd",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -371,7 +371,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/nsm",
         title: "Network Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
       // Disable support for NGINX SM
@@ -388,7 +388,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/octarine",
         title: "Octarine",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -396,7 +396,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/osm",
         title: "Open Service Mesh",
-        link: false,
+        link: true,
         show: true,
       },
       {
@@ -404,7 +404,7 @@ const categories = [
         // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
         href: "/management/traefik-mesh",
         title: "Traefik Mesh",
-        link: false,
+        link: true,
         show: true,
       },
     ],
