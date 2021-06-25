@@ -69,14 +69,14 @@ module Graphql
     CONNECTION_ARGS = %w[after before first last].to_set
 
     FIELD_HEADER = <<~MD
-      #### Fields
+      ###### **Fields**
 
       | Name | Type | Description |
       | ---- | ---- | ----------- |
     MD
 
     ARG_HEADER = <<~MD
-      # Arguments
+      ### **Arguments**
 
       | Name | Type | Description |
       | ---- | ---- | ----------- |
@@ -254,7 +254,7 @@ module Graphql
       def render_return_type(query)
         return unless query[:type] # for example, mutations
 
-        "Returns #{render_field_type(query[:type])}."
+        "###### **Returns** #{render_field_type(query[:type])}."
       end
 
       def render_simple_fields(fields, type_name, header_prefix)
@@ -455,7 +455,7 @@ module Graphql
         input_field = query[:input_fields]&.first
         return unless input_field
 
-        "Input type: `#{input_field[:type][:name]}`"
+        "###### **Input type:** `#{input_field[:type][:name]}`"
       end
 
       def schema_field(type_name, field_name)
