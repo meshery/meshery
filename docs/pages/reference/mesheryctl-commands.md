@@ -15,7 +15,8 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
 - `mesheryctl perf` -  Service Mesh Performance Management: Workload and service mesh performance characterization
 - `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
-- `mesheryctl fitler` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
+- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (Coming soon!)
+
 
 ## Global Commands and Flags
 
@@ -207,7 +208,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 
   {% for command_hash in site.data.mesheryctlcommands.lifecycle.system-channel.commands %}{% assign command = command_hash[1] %}
         <tr>
-          <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/">{{ command.name }}</a></td>
+          <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel">{{ command.name }}</a></td>
           <td></td>
           <td></td>
           <td>{{ command.description }}</td>
@@ -219,9 +220,16 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
             <td>{{ subcommand.description }}</td>
           </tr>
         {% endfor %}
-          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.flags %}{% assign flag = flag_hash[1] %}
+          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.set.command %}{% assign flag = flag_hash[1] %}
             <tr>
-              <td>{{ flag.arg }}</td>
+              <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/set">{{ flag.arg }}</a></td>
+              <td>{{ flag.flag }}</td>
+              <td>{{ flag.description }}</td>
+            </tr>
+          {% endfor %}
+          {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-channel.switch.command %}{% assign flag = flag_hash[1] %}
+            <tr>
+              <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/channel/switch">{{ flag.arg }}</a></td>
               <td>{{ flag.flag }}</td>
               <td>{{ flag.description }}</td>
             </tr>
@@ -303,21 +311,63 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 <thead>
   <tr>
     <th>Main Command</th>
+    <th>Arguments</th>
     <th>Flag</th>
     <th>Function</th>
   </tr>
   {% for command_hash in site.data.mesheryctlcommands.performance.commands %}{% assign command = command_hash[1] %}
     <tr>
-      <td rowspan=11><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command.name }}</a></td>
+      <td rowspan=18><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command.name }}</a></td>
+      <td></td>
       <td></td>
       <td>{{ command.description }}</td>
     </tr>
     {% for flag_hash in site.data.mesheryctlcommands.performance.flags %}{% assign flag = flag_hash[1] %}
       <tr>
+        <td></td>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.performance.apply.command %}{% assign command = command_hash[1] %}
+      <tr>
+        <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/perf/apply">{{ command.name }}</a></td>
+        <td></td>
+        <td>{{ command.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.performance.apply.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.performance.list.command %}{% assign command = command_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/perf/list">{{ command.name }}</a></td>
+        <td></td>
+        <td>{{ command.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.performance.list.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for command_hash in site.data.mesheryctlcommands.performance.view.command %}{% assign command = command_hash[1] %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/perf/view">{{ command.name }}</a></td>
+        <td></td>
+        <td>{{ command.description }}</td>
+      </tr>
+  {% endfor %}
+  {% for flag_hash in site.data.mesheryctlcommands.performance.view.flag %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.flag }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
   {% endfor %}
 </thead>
 </table>
