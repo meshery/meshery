@@ -33,9 +33,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-//TerminalFormatter is exported
-type TerminalFormatter struct{}
-
 var (
 	cfgFile        string
 	mctlCfgFile    string
@@ -44,11 +41,6 @@ var (
 	releasechannel = "Not Set"
 	verbose        = false
 )
-
-//Format is exported
-func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
-	return append([]byte(entry.Message), '\n'), nil
-}
 
 var (
 	availableSubcommands = []*cobra.Command{}
@@ -103,7 +95,7 @@ var RootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
 	//log formatter for improved UX
-	log.SetFormatter(new(TerminalFormatter))
+	utils.SetupLogrusFormatter()
 	_ = RootCmd.Execute()
 }
 

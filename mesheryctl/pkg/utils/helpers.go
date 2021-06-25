@@ -348,15 +348,22 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 				return false, errors.Wrap(err, "failed to create new client")
 			}
 
-			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			//podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
+			deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
+			//podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
+			deploymentList, err := deploymentInterface.List(context.TODO(), v1.ListOptions{})
 
 			if err != nil {
 				return false, err
 			}
-
-			for _, pod := range podList.Items {
-				if strings.Contains(pod.GetName(), "meshery") {
+			//for i, pod := range podList.Items {
+			//	fmt.Println(i, pod.GetName())
+			//	//if strings.Contains(pod.GetName(), "meshery") {
+			//	//	return true, nil
+			//	//}
+			//}
+			for _, deployment := range deploymentList.Items {
+				if deployment.GetName() == "meshery" {
 					return true, nil
 				}
 			}
@@ -810,6 +817,28 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+// PrintToTableInStringFormat prints the given data into a table format but return as a string
+func PrintToTableInStringFormat(header []string, data [][]string) string {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.Render()         // Render the table
+
+	return tableString.String()
 }
 
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {

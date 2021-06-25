@@ -35,6 +35,7 @@ type DefaultLocalProvider struct {
 	PerformanceProfilesPersister *PerformanceProfilePersister
 	MesheryPatternPersister      *MesheryPatternPersister
 	MesheryFilterPersister       *MesheryFilterPersister
+	MesheryApplicationPersister  *MesheryApplicationPersister
 	GenericPersister             database.Handler
 	GraphqlHandler               http.Handler
 	GraphqlPlayground            http.Handler
@@ -592,6 +593,95 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 	return json.Marshal(ffs)
 }
 
+// SaveMesheryApplication saves given application with the provider
+func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
+	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
+}
+
+// GetMesheryApplications gives the applications stored with the provider
+func (l *DefaultLocalProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.MesheryApplicationPersister.GetMesheryApplications(search, order, pg, pgs)
+}
+
+// GetMesheryApplication gets application for the given applicationID
+func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.GetMesheryApplication(id)
+}
+
+// DeleteMesheryApplication deletes a meshery application with the given id
+func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(applicationID)
+	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
+}
+
+// RemoteApplicationFile takes in the
+func (l *DefaultLocalProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+	parsedURL, err := url.Parse(resourceURL)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if hostname is github
+	if parsedURL.Host == "github.com" {
+		parsedPath := strings.Split(parsedURL.Path, "/")
+		if len(parsedPath) < 3 {
+			return nil, fmt.Errorf("malformed URL: url should be of type github.com/<owner>/<repo>/[branch]")
+		}
+
+		owner := parsedPath[1]
+		repo := parsedPath[2]
+		branch := "main"
+
+		if len(parsedPath) == 4 {
+			branch = parsedPath[3]
+		}
+
+		pfs, err := githubRepoApplicationScan(owner, repo, path, branch)
+		if err != nil {
+			return nil, err
+		}
+
+		if save {
+			return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
+		}
+
+		return json.Marshal(pfs)
+	}
+
+	// Fallback to generic HTTP import
+	pfs, err := genericHTTPApplicationFile(resourceURL)
+	if err != nil {
+		return nil, err
+	}
+	if save {
+		return l.MesheryApplicationPersister.SaveMesheryApplications(pfs)
+	}
+
+	return json.Marshal(pfs)
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
@@ -858,6 +948,57 @@ func githubRepoFilterScan(
 	return result, err
 }
 
+func githubRepoApplicationScan(
+	owner,
+	repo,
+	path,
+	branch string,
+) ([]MesheryApplication, error) {
+	var mu sync.Mutex
+	ghWalker := walker.NewGithub()
+	result := make([]MesheryApplication, 0)
+
+	err := ghWalker.
+		Owner(owner).
+		Repo(repo).
+		Branch(branch).
+		Root(path).
+		RegisterFileInterceptor(func(data walker.GithubContentAPI) error {
+			ext := filepath.Ext(data.Name)
+			if ext == ".yml" || ext == ".yaml" {
+				decodedContent, err := base64.StdEncoding.DecodeString(data.Content)
+				if err != nil {
+					return err
+				}
+
+				name, err := GetApplicationName(string(decodedContent))
+				if err != nil {
+					return err
+				}
+
+				af := MesheryApplication{
+					Name:            name,
+					ApplicationFile: string(decodedContent),
+					Location: map[string]interface{}{
+						"type":   "github",
+						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
+						"path":   data.Path,
+						"branch": branch,
+					},
+				}
+
+				mu.Lock()
+				result = append(result, af)
+				mu.Unlock()
+			}
+
+			return nil
+		}).
+		Walk()
+
+	return result, err
+}
+
 func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
@@ -928,4 +1069,40 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 	}
 
 	return []MesheryFilter{ff}, nil
+}
+
+func genericHTTPApplicationFile(fileURL string) ([]MesheryApplication, error) {
+	resp, err := http.Get(fileURL)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	defer SafeClose(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	result := string(body)
+
+	name, err := GetApplicationName(result)
+	if err != nil {
+		return nil, err
+	}
+
+	af := MesheryApplication{
+		Name:            name,
+		ApplicationFile: result,
+		Location: map[string]interface{}{
+			"type":   "http",
+			"host":   fileURL,
+			"path":   "",
+			"branch": "",
+		},
+	}
+
+	return []MesheryApplication{af}, nil
 }

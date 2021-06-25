@@ -80,7 +80,8 @@ const styles = (theme) => ({
   },
   textDense: {},
   divider: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   mainLogo: {
     marginRight: theme.spacing(1),
@@ -111,9 +112,6 @@ const styles = (theme) => ({
     width: 170,
     height: "100%",
     borderRadius: "unset",
-  },
-  documentation: {
-    marginTop: theme.spacing(2),
   },
   settingsIcon: {
     marginLeft: theme.spacing(2),
@@ -878,7 +876,7 @@ class Navigator extends React.Component {
                   href={href}
                   target="_blank"
                   key={id}
-                  className={classNames(classes.item, classes.itemActionable, id == "doc" ? classes.documentation : "")}
+                  className={classNames(classes.item, classes.itemActionable)}
                 >
                   <div className={classNames(classes.link)}>
                     <Tooltip

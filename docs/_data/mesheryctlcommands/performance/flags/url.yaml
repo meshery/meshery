@@ -1,4 +1,0 @@
-name: --url 
-description: (required) URL of the endpoint send load to during testing.
-usage: |
-    mesheryctl perf --url [URL]
