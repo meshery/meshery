@@ -311,8 +311,9 @@ func start() error {
 	case "kubernetes":
 
 		version := currCtx.Version
+		channel := currCtx.Channel
 		if version == "latest" {
-			if currCtx.Channel == "edge" {
+			if channel == "edge" {
 				version = "master"
 			} else {
 				version, err = utils.GetLatestStableReleaseTag()
@@ -332,7 +333,7 @@ func start() error {
 		manifestFiles := filepath.Join(utils.MesheryFolder, utils.ManifestsFolder)
 
 		// change version in meshery-deployment manifest
-		err = utils.ChangeManifestVersion(utils.MesheryDeployment, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
+		err = utils.ChangeManifestVersion(utils.MesheryDeployment, channel, version, filepath.Join(manifestFiles, utils.MesheryDeployment))
 		if err != nil {
 			return err
 		}

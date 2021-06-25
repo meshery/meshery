@@ -1,4 +1,0 @@
-name: --mesh
-description: Name of the service mesh. (default) empty string
-usage: |
-    mesheryctl perf --mesh [name] --url [URL]

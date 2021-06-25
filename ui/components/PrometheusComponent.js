@@ -55,7 +55,7 @@ const promStyles = (theme) => ({
   },
 });
 
-export const submitPrometheusConfigure = (self, cb) => {
+export const submitPrometheusConfigure = (self, cb = () => {}) => {
   const { prometheusURL, selectedPrometheusBoardsConfigs } = self.state;
   if (prometheusURL === "") {
     return;
@@ -128,20 +128,37 @@ class PrometheusComponent extends Component {
 
   componentDidMount() {
     const self = this;
-    let selector = {
-      serviceMesh: "ALL_MESH",
-    };
-    fetchAvailableAddons(selector).subscribe({
-      next: (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && self.state.prometheusURL === "") {
-            self.setState({ prometheusURL: "http://" + addon.endpoint })
-            submitPrometheusConfigure(self);
-          }
-        });
+
+    dataFetch(
+      "/api/prometheus/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
       },
-      error: (err) => console.log("error registering prometheus: " + err),
-    });
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL !="") {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "prometheus" && self.state.prometheusURL === "") {
+                  self.setState({ prometheusURL: "http://" + addon.endpoint })
+                  submitPrometheusConfigure(self);
+                }
+              });
+            },
+            error: (err) => console.log("error registering prometheus: " + err),
+          });
+        }
+      },
+      self.handleError("There was an error communicating with grafana config")
+    )
   }
 
   static getDerivedStateFromProps(props, state) {

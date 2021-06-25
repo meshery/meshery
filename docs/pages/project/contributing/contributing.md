@@ -97,12 +97,28 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
 1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`. If you happen to checkout Meshery inside your `GOPATH` and you have a version of `Go` prior to version 1.13, please set an environment variable `GO111MODULE=on` to enable GO Modules.
 
-#### Build and run Meshery server
+#### Define and validate error
 
-To build & run the Meshery server code, run the following command:
+Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitely validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
 
 ```sh
-make run-local
+make error
+```
+
+For more details, <a href="{{ site.baseurl }}/project/contributing-error">Error Utility</a>
+
+#### Build and run Meshery server
+
+To build and run Meshery server from source: 
+
+1. Build the static assets for the UI by running
+```sh
+make setup-ui-libs
+make build-ui
+```
+2. Build & run the server code by running
+```sh
+make run-local // Or make run-fast
 ```
 
 Any time changes are made to the GO code, you will have to stop the server and run the above command again.

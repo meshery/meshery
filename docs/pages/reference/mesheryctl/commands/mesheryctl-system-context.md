@@ -6,8 +6,6 @@ type: reference
 display-title: "false"
 language: en
 lang: en
-categories: en
-list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -50,40 +48,28 @@ list: exclude
   </div>
 </pre>
 {% endfor %}
-{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.command %}{% assign subcommand = subcommand_hash[1] %}
+
+<!-- Options/Flags available in this command -->
+<!-- ## Options & Flags
+
+{% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.subcommands %}{% assign subcommand = subcommand_hash[1] %}
 {{ subcommand.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ subcommand.usage }}
+    {{ subcommand.name }}
   </div>
 </pre>
 {% endfor %}
-{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.view.flags %}{% assign flag = flag_hash[1] %}
+{% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.flags %}{% assign flag = flag_hash[1] %}
 {{ flag.description }}
 <pre class="codeblock-pre">
   <div class="codeblock">
-  {{ flag.usage }}
+    {{ flag.arg }}
   </div>
 </pre>
 {% endfor %}
 <br/>
-
-<!-- Options/Flags available in this command -->
-## Options & Flags
-
-
-<pre class="codeblock-pre">
-  <div class="codeblock">
-    {% for subcommand_hash in site.data.mesheryctlcommands.lifecycle.system-context.subcommands %}{% assign subcommand = subcommand_hash[1] %}
-    {{ subcommand.name }} # {{ subcommand.description }}
-    {% endfor %}
-    {% for flag_hash in site.data.mesheryctlcommands.lifecycle.system-context.flags %}{% assign flag = flag_hash[1] %}
-    {{ flag.arg }} # {{ flag.description }}
-    {% endfor %}
-  </div>
-</pre>
-<br/>
-
+-->
 ## Options inherited from parent commands
 <pre class="codeblock-pre">
   <div class="codeblock">
