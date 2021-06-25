@@ -43,8 +43,8 @@ func TestFetchList(t *testing.T) {
 		{
 			Name:             "Fetch Profiles",
 			Fetch:            "Profiles",
-			ExpectedResponse: "profile.output.golden",
-			Fixture:          "profile.api.response.golden",
+			ExpectedResponse: "list.profile.output.golden",
+			Fixture:          "list.profile.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
@@ -52,8 +52,8 @@ func TestFetchList(t *testing.T) {
 		{
 			Name:             "Fetch Results",
 			Fetch:            "Results",
-			ExpectedResponse: "result.output.golden",
-			Fixture:          "result.api.response.golden",
+			ExpectedResponse: "list.result.output.golden",
+			Fixture:          "list.result.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
@@ -61,8 +61,8 @@ func TestFetchList(t *testing.T) {
 		{
 			Name:             "Fetch Profiles with no token",
 			Fetch:            "Profiles",
-			ExpectedResponse: "profile.no.token.golden",
-			Fixture:          "profile.api.response.golden",
+			ExpectedResponse: "no.token.golden",
+			Fixture:          "list.profile.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles",
 			Token:            "",
 			ExpectError:      true,
@@ -70,8 +70,8 @@ func TestFetchList(t *testing.T) {
 		{
 			Name:             "Fetch Results with No token",
 			Fetch:            "Results",
-			ExpectedResponse: "result.no.token.golden",
-			Fixture:          "result.api.response.golden",
+			ExpectedResponse: "no.token.golden",
+			Fixture:          "list.result.api.response.golden",
 			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results",
 			Token:            "",
 			ExpectError:      true,

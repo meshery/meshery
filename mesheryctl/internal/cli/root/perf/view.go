@@ -51,7 +51,7 @@ var viewCmd = &cobra.Command{
 	View performance results with
 	mesheryctl perf view <profile-id> <test-name>
 	`,
-	Args: cobra.MaximumNArgs(2),
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
