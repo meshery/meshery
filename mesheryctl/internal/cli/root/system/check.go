@@ -42,7 +42,7 @@ var checkCmd = &cobra.Command{
 func RunPreflightHealthChecks(isPreRunExecution bool, subcommand string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.BackupConfigFile(utils.CfgFile)
+		return err
 	}
 	currCtx, err := mctlCfg.SetCurrentContext(tempContext)
 	if err != nil {
