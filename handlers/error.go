@@ -7,19 +7,23 @@ import (
 )
 
 const (
-	ErrInvalidK8SConfigCode  = "2000"
-	ErrNilClientCode         = "2001"
-	ErrPrometheusScanCode    = "2002"
-	ErrGrafanaScanCode       = "2003"
-	ErrRecordPreferencesCode = "2004"
-	ErrGrafanaConfigCode     = "2005"
-	ErrPrometheusConfigCode  = "2006"
-	ErrGrafanaQueryCode      = "2007"
-	ErrPrometheusQueryCode   = "2008"
-	ErrGrafanaBoardsCode     = "2009"
-	ErrPrometheusBoardsCode  = "2010"
-	ErrStaticBoardsCode      = "2011"
-	ErrRequestBodyCode       = "2012"
+	ErrInvalidK8SConfigCode     = "2000"
+	ErrNilClientCode            = "2001"
+	ErrPrometheusScanCode       = "2002"
+	ErrGrafanaScanCode          = "2003"
+	ErrRecordPreferencesCode    = "2004"
+	ErrGrafanaConfigCode        = "2005"
+	ErrPrometheusConfigCode     = "2006"
+	ErrGrafanaQueryCode         = "2007"
+	ErrPrometheusQueryCode      = "2008"
+	ErrGrafanaBoardsCode        = "2009"
+	ErrPrometheusBoardsCode     = "2010"
+	ErrStaticBoardsCode         = "2011"
+	ErrRequestBodyCode          = "2012"
+	ErrUserDataCode             = "2013"
+	ErrUserPreferenceObjectCode = "2014"
+	ErrSaveUserPreferenceCode   = "2015"
+	ErrEncodeUserPreferenceCode = "2016"
 )
 
 var (
@@ -68,4 +72,20 @@ func ErrMarshal(err error) error {
 
 func ErrUnmarshal(err error) error {
 	return utils.ErrUnmarshal(err)
+}
+
+func ErrUserData(err error) error {
+	return errors.New(ErrUserDataCode, errors.Alert, []string{"error getting user data.", err.Error()}, []string{"Failed to get the user data" + err.Error()}, []string{"unable to get session"}, []string{})
+}
+
+func ErrUserPreferenceObject(err error) error {
+	return errors.New(ErrUserPreferenceObjectCode, errors.Alert, []string{"Error encoding the user preference object.", err.Error()}, []string{"Failed to encode the user preference object" + err.Error()}, []string{"unable to encode the user preference object"}, []string{})
+}
+
+func ErrSaveUserPreference(err error) error {
+	return errors.New(ErrSaveUserPreferenceCode, errors.Alert, []string{"unable to save the user preferences.", err.Error()}, []string{"Failed to save the user preferences" + err.Error()}, []string{}, []string{})
+}
+
+func ErrEncodeUserPreference(err error) error {
+	return errors.New(ErrEncodeUserPreferenceCode, errors.Alert, []string{"unable to save the user preferences.", err.Error()}, []string{"Failed to save the user preferences" + err.Error()}, []string{"Unable to decode the preferences"}, []string{})
 }

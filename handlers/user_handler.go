@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 
 	"github.com/layer5io/meshery/models"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 // UserHandler returns info about the logged in user
@@ -19,8 +17,8 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 	// }
 
 	if err := json.NewEncoder(w).Encode(user); err != nil {
-		logrus.Errorf("error getting user data: %v", err)
-		http.Error(w, "unable to get session", http.StatusInternalServerError)
+		h.log.Error(ErrUserData(err))
+		http.Error(w, ErrUserData(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -29,8 +27,8 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
-			logrus.Errorf("Error encoding user preference object: %v", err)
-			http.Error(w, "Error encoding user preference object", http.StatusInternalServerError)
+			h.log.Error(ErrUserPreferenceObject(err))
+			http.Error(w, ErrUserPreferenceObject(err).Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -43,8 +41,8 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 	if usageStats != "" {
 		aUsageStats, err := strconv.ParseBool(usageStats)
 		if err != nil {
-			err = errors.Wrap(err, "unable to parse anonymousUsageStats")
-			logrus.Error(err)
+			h.log.Error(err)
+
 			http.Error(w, "please provide a valid value for anonymousUsageStats", http.StatusBadRequest)
 			return
 		}
@@ -56,23 +54,23 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 	if perfStats != "" {
 		aPerfStats, err := strconv.ParseBool(perfStats)
 		if err != nil {
-			err = errors.Wrap(err, "unable to parse anonymousPerfResults")
-			logrus.Error(err)
+			h.log.Error(err)
+
 			http.Error(w, "please provide a valid value for anonymousPerfResults", http.StatusBadRequest)
 			return
 		}
 		prefObj.AnonymousPerfResults = aPerfStats
 		if err = provider.RecordPreferences(req, user.UserID, prefObj); err != nil {
-			logrus.Errorf("unable to save user preferences: %v", err)
-			http.Error(w, "unable to save user preferences", http.StatusInternalServerError)
+			h.log.Error(ErrSaveUserPreference(err))
+			http.Error(w, ErrSaveUserPreference(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		trackStats = true
 	}
 	if trackStats {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
-			logrus.Errorf("unable to save user preferences: %v", err)
-			http.Error(w, "Unable to decode preferences", http.StatusInternalServerError)
+			h.log.Error(ErrEncodeUserPreference(err))
+			http.Error(w, ErrEncodeUserPreference(err).Error(), http.StatusInternalServerError)
 			return
 		}
 		return
