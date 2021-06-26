@@ -291,7 +291,7 @@ func multipleProfileConfirmation(profiles []models.PerformanceProfile) int {
 	}
 
 	for {
-		fmt.Printf("Enter the index of profile?? ")
+		fmt.Printf("Enter the index of profile: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			log.Fatal(err)
