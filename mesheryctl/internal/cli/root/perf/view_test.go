@@ -1,14 +1,14 @@
 package perf
 
 import (
-	"bytes"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 )
 
 func TestPerfView(t *testing.T) {
@@ -42,11 +42,11 @@ func TestPerfView(t *testing.T) {
 	}{
 		{
 			Name:             "View Profiles",
-			Args:             []string{"view", "test"},
+			Args:             []string{"view", "test", "--token", filepath.Join(fixturesDir, "token.golden")},
 			View:             "Profiles",
 			ExpectedResponse: "view.profile.output.golden",
 			Fixture:          "view.profile.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles?search=test",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles?page_size=25&search=test",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -56,7 +56,7 @@ func TestPerfView(t *testing.T) {
 			View:             "Results",
 			ExpectedResponse: "view.result.output.golden",
 			Fixture:          "view.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?search=app%20mesh",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?pageSize=25&search=app%20mesh",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -66,7 +66,7 @@ func TestPerfView(t *testing.T) {
 			View:             "Profiles",
 			ExpectedResponse: "no.token.golden",
 			Fixture:          "view.profile.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles?search=test",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles?page_size=25&search=test",
 			Token:            "",
 			ExpectError:      true,
 		},
@@ -76,7 +76,7 @@ func TestPerfView(t *testing.T) {
 			View:             "Results",
 			ExpectedResponse: "no.token.golden",
 			Fixture:          "view.result.api.response.golden",
-			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?search=app%20mesh",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles/ecddef09-7411-4b9e-b06c-fd55ff5debbc/results?pageSize=25&search=app%20mesh",
 			Token:            "",
 			ExpectError:      true,
 		},
@@ -99,34 +99,36 @@ func TestPerfView(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab outputs from console.
-			var buf bytes.Buffer
-			log.SetOutput(&buf)
-			utils.SetupLogrusFormatter()
+			// Grab console prints
+			rescueStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
 
 			PerfCmd.SetArgs(tt.Args)
-			PerfCmd.SetOutput(&buf)
-			t.Log("Executing command with args")
-			if err := PerfCmd.Execute(); err != nil {
-				// // if we're supposed to get an error
-				// t.Log("Error ocurred")
-				// if tt.ExpectError {
-				// 	// write it in file
-				// 	if *update {
-				// 		golden.Write(err.Error())
-				// 	}
-				// 	expectedResponse := golden.Load()
+			PerfCmd.SetOutput(rescueStdout)
+			err := PerfCmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *update {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
 
-				// 	utils.Equals(t, expectedResponse, err.Error())
-				// 	return
-				// } else {
-				// 	t.Error(err)
-				// }
-				t.Error(err)
+					utils.Equals(t, expectedResponse, err.Error())
+					return
+				} else {
+					t.Error(err)
+				}
 			}
 
+			w.Close()
+			out, _ := ioutil.ReadAll(r)
+			os.Stdout = rescueStdout
+
 			// response being printed in console
-			actualResponse := buf.String()
+			actualResponse := string(out)
 
 			// write it in file
 			if *update {

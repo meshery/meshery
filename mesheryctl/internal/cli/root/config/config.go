@@ -84,7 +84,15 @@ func (ctx *Context) ValidateVersion() error {
 	}
 
 	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + ctx.Version + "?recursive=1"
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
 
 	defer func() {
 		if cerr := resp.Body.Close(); cerr != nil {
@@ -107,7 +115,7 @@ func (ctx *Context) ValidateVersion() error {
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Fatal(err)
+		log.Warn(err)
 	}
 
 	return currentContext.Endpoint

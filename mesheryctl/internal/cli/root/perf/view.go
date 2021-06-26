@@ -70,7 +70,7 @@ var viewCmd = &cobra.Command{
 		}
 		err = utils.AddAuthDetails(req, tokenPath)
 		if err != nil {
-			return err
+			return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 		}
 		client := &http.Client{}
 		resp, err := client.Do(req)
@@ -139,14 +139,14 @@ func viewResults(args []string, mctlCfg *config.MesheryCtlConfig) error {
 	var req *http.Request
 	var response *models.PerformanceResultsAPIResponse
 
-	url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + profileID + "/results?page_size=25&search=" + testName
+	url := mctlCfg.GetBaseMesheryURL() + "/api/user/performance/profiles/" + profileID + "/results?pageSize=25&search=" + testName
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return errors.Wrapf(err, utils.PerfError("Failed to invoke performance test"))
 	}
 	err = utils.AddAuthDetails(req, tokenPath)
 	if err != nil {
-		return err
+		return errors.New("authentication token not found. please supply a valid user token with the --token (or -t) flag")
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
