@@ -372,14 +372,14 @@ func start() error {
 		}
 
 		if err != nil {
-			return err
-		}
+			log.Info("service endpoint not discovered. Meshery deployed on default endpoint")
+		} else {
+			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 
-		currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
-
-		err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
-		if err != nil {
-			return err
+			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
+			if err != nil {
+				return err
+			}
 		}
 
 		// switch to default case if the platform specified is not supported
