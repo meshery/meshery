@@ -93,6 +93,10 @@ var statusCmd = &cobra.Command{
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPods(client, utils.MesheryNamespace)
 
+			if len(podList.Items) == 0 {
+				log.Fatal("no pods up yet...try again in a while")
+			}
+
 			if err != nil {
 				return err
 			}
@@ -115,6 +119,9 @@ var statusCmd = &cobra.Command{
 				if len(pod.Spec.Containers) > 0 {
 					// If a pod has multiple containers, get the status from all
 					for container := range pod.Spec.Containers {
+						if len(podStatus.ContainerStatuses) <= container {
+							continue
+						}
 						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
 						if podStatus.ContainerStatuses[container].Ready {
 							containerReady++
