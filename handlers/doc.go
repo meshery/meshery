@@ -35,6 +35,7 @@ package handlers
 import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/models"
+	v1 "k8s.io/api/core/v1"
 )
 
 // Returns all meshery patterns
@@ -61,4 +62,75 @@ type IDParameterWrapper struct {
 	// in: path
 	// required: true
 	ID uuid.UUID `json:"id"`
+}
+
+// swagger:parameters idPostGrafanaConfig
+type grafanaConfigParamsWrapper struct {
+	// in: body
+	// required: true
+	Body *models.GrafanaConfigParams
+}
+
+// Returns Grafana configs
+// swagger:response grafanaConfigResponseWrapper
+type grafanaConfigResponseWrapper struct {
+	// in: body
+	Body *models.Grafana
+}
+
+// Parameter to search a matching grafana board
+// swagger:parameters idGetGrafanaBoards
+type grafanaBoardsParamsWrapper struct {
+	// in: query
+	DashboardSearch string `json:"dashboardSearch"`
+}
+
+// Returns Grafana boards and panels
+// swagger:response grafanaBoardsResponseWrapper
+type grafanaBoardsResponseWrapper struct {
+	// in: body
+	Body []*models.GrafanaBoard
+}
+
+// Returns a map for v1 services
+// swagger:response v1ServicesMapResponseWrapper
+type v1ServicesMapResponseWrapper struct {
+	// in: body
+	Body map[string][]v1.Service
+}
+
+// Parameters for persisting or deleting prometheus url
+// swagger:parameters idPostPrometheusConfig
+type prometheusConfigParamsWrapper struct {
+	// in: body
+	PrometheusURL string `json:"prometheusURL,omitempty"`
+}
+
+// Returns prometheus configuration
+// swagger:response prometheusConfigResponseWrapper
+type prometheusConfigResponseWrapper struct {
+	// in: body
+	Body *models.Prometheus
+}
+
+// Response for prometheus board import
+// swagger:response prometheusBoardImportRespWrapper
+type prometheusBoardImportRespWrapper struct {
+	// in: body
+	Body *models.GrafanaBoard
+}
+
+// Returns Prometheus static board
+// swagger:response prometheusStaticBoardRespWrapper
+type prometheusStaticBoardRespWrapper struct {
+	// in: body
+	Body map[string]*models.GrafanaBoard
+}
+
+// Save selected Prometheus boards
+// swagger:parameters idPostPrometheusBoard
+type prometheusBoardParamsWrapper struct {
+	// in: body
+	// required: true
+	Body []*models.SelectedGrafanaConfig
 }
