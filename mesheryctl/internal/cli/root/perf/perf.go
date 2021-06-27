@@ -33,11 +33,20 @@ var (
 
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
-	Use:     "perf",
-	Short:   "Performance Management",
-	Long:    `Performance Management & Benchmarking using Meshery CLI.`,
-	Example: "mesheryctl perf --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"",
-	Args:    cobra.MinimumNArgs(1),
+	Use:   "perf",
+	Short: "Performance Management",
+	Long:  `Performance Management & Benchmarking using Meshery CLI.`,
+	Example: `
+	// Run performance test
+	mesheryctl perf apply --profile test --name \"a quick stress test\" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token \"provider=Meshery\"
+	
+	// List performance profiles
+	mesheryctl perf list
+
+	// View performance profiles or results
+	mesheryctl perf view
+	`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
