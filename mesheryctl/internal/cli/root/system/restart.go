@@ -94,6 +94,16 @@ func restart() error {
 			}
 			log.Info("Restarting pod ", name)
 		}
+
+		ok, err := utils.IsMesheryRunning(currPlatform)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			if err := start(); err != nil {
+				return errors.Wrap(err, utils.SystemError("Failed to restart Meshery"))
+			}
+		}
 	}
 	return nil
 }
