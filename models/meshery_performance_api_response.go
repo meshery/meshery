@@ -25,7 +25,7 @@ type PerformanceProfileParameters struct {
 	Duration string `json:"duration,omitempty"`
 }
 
-// PerformanceTestParameters contains paramters to run a performance test
+// PerformanceTestParameters contains parameters to run a performance test
 type PerformanceTestParameters struct {
 	// test-id of pre-existing test
 	TestID strfmt.UUID `json:"uuid,omitempty"`
