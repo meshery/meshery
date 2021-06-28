@@ -28,8 +28,9 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 	if req.Method == http.MethodGet {
 		err := json.NewEncoder(w).Encode(prefObj.Grafana)
 		if err != nil {
-			h.log.Error(ErrMarshal(err))
-			http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+			obj := "Grafana config"
+			h.log.Error(ErrMarshal(err, obj))
+			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -131,8 +132,9 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "boards payload"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -209,8 +211,9 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	boards := []*models.SelectedGrafanaConfig{}
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err))
-		http.Error(w, ErrUnmarshal(err).Error(), http.StatusBadRequest)
+		obj := "request body"
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if len(boards) > 0 {

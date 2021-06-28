@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -20,10 +19,11 @@ const (
 	ErrPrometheusBoardsCode     = "2010"
 	ErrStaticBoardsCode         = "2011"
 	ErrRequestBodyCode          = "2012"
-	ErrUserDataCode             = "2013"
-	ErrUserPreferenceObjectCode = "2014"
-	ErrSaveUserPreferenceCode   = "2015"
-	ErrEncodeUserPreferenceCode = "2016"
+	ErrMarshalCode              = "2013"
+	ErrUnmarshalCode            = "2014"
+	ErrEncodingCode             = "2015"
+	ErrParseBoolCode            = "2016"
+	ErrEncodeUserPreferenceCode = "2017"
 )
 
 var (
@@ -66,24 +66,20 @@ func ErrRequestBody(err error) error {
 	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body.", err.Error()}, []string{"unable to read the request body" + err.Error()}, []string{}, []string{})
 }
 
-func ErrMarshal(err error) error {
-	return utils.ErrMarshal(err)
+func ErrMarshal(err error, obj string) error {
+	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the " + obj}, []string{"Failed to marshal the " + obj + ".", err.Error()}, []string{}, []string{})
 }
 
-func ErrUnmarshal(err error) error {
-	return utils.ErrUnmarshal(err)
+func ErrUnmarshal(err error, obj string) error {
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the " + obj}, []string{"Failed to unmarshal the " + obj + ".", err.Error()}, []string{}, []string{})
 }
 
-func ErrUserData(err error) error {
-	return errors.New(ErrUserDataCode, errors.Alert, []string{"error getting user data.", err.Error()}, []string{"Failed to get the user data" + err.Error()}, []string{"unable to get session"}, []string{})
+func ErrEncoding(err error, obj string) error {
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the " + obj}, []string{"Failed to encode the " + obj + ".", err.Error()}, []string{}, []string{})
 }
 
-func ErrUserPreferenceObject(err error) error {
-	return errors.New(ErrUserPreferenceObjectCode, errors.Alert, []string{"Error encoding the user preference object.", err.Error()}, []string{"Failed to encode the user preference object" + err.Error()}, []string{"unable to encode the user preference object"}, []string{})
-}
-
-func ErrSaveUserPreference(err error) error {
-	return errors.New(ErrSaveUserPreferenceCode, errors.Alert, []string{"unable to save the user preferences.", err.Error()}, []string{"Failed to save the user preferences" + err.Error()}, []string{}, []string{})
+func ErrParseBool(err error, obj string) error {
+	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse " + obj}, []string{"Failed to parse " + obj + ".", err.Error()}, []string{"Failed due to invalid value of " + obj}, []string{"please provide a valid value for " + obj})
 }
 
 func ErrEncodeUserPreference(err error) error {
