@@ -14,7 +14,7 @@ const grafanaStyles = (theme) => ({
     width: '100%',
   },
   column: {
-    flexBasis: '33.33%',
+    flex: '1',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -26,6 +26,14 @@ const grafanaStyles = (theme) => ({
   dateRangePicker: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  chartsHeaderOptions:{
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    marginBottom: "1rem", 
+    marginTop: "1rem", 
+    padding: "0px 2%", 
   },
   icon: {
     width: theme.spacing(2.5),
@@ -40,7 +48,7 @@ class GrafanaCustomCharts extends Component {
     const newStartDate = new Date();
     newStartDate.setMinutes(newStartDate.getMinutes() - 5);
     const {
-      startDate, from, endDate, to, liveTail,
+      startDate, from, endDate, to, liveTail, sparkline
     } = props;
     this.state = {
       startDate: startDate && startDate !== null ? startDate : newStartDate,
@@ -49,7 +57,7 @@ class GrafanaCustomCharts extends Component {
       to: to && to !== null ? to : 'now',
       liveTail: liveTail && liveTail !== null ? liveTail : true,
       refresh: '10s',
-
+      sparkline:sparkline && sparkline !== null ? true : false,
       chartDialogOpen: false,
       chartDialogPanelData: {},
       chartDialogPanel: {},
@@ -94,7 +102,7 @@ class GrafanaCustomCharts extends Component {
     render() {
       const {
         from, startDate, to, endDate, liveTail, refresh, chartDialogOpen, chartDialogPanel, chartDialogBoard,
-        chartDialogPanelData,
+        chartDialogPanelData,sparkline
       } = this.state;
       const { classes, boardPanelConfigs, boardPanelData } = this.props;
       const { grafanaURL, grafanaAPIKey, prometheusURL } = this.props;
@@ -109,10 +117,13 @@ class GrafanaCustomCharts extends Component {
             <div className={classes.root}>
               {!(boardPanelData && boardPanelData !== null)
                 && (
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                    <div>
-                      {enableGrafanaChip && this.GrafanaChip(grafanaURL)}
-                    </div>
+                  <div className={classes.chartsHeaderOptions}>
+                    {
+                      enableGrafanaChip && (
+                        <div>
+                          {this.GrafanaChip(grafanaURL)}
+                        </div>)
+                    }
                     <div className={classes.dateRangePicker}>
                       <GrafanaDateRangePicker
                         from={from}
@@ -193,9 +204,10 @@ class GrafanaCustomCharts extends Component {
                       {config.panels.map((panel, i) =>
                         // if(panel.type === 'graph'){
                         (
-                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={6}>
+                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline?12:6}>
                             <GrafanaCustomChart
                               board={config}
+                              sparkline={sparkline}
                               panel={panel}
                               handleChartDialogOpen={this.handleChartDialogOpen}
                               grafanaURL={grafanaURL}

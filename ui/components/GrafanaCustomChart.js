@@ -20,7 +20,7 @@ const grafanaStyles = (theme) => ({
     width: '100%',
   },
   column: {
-    flexBasis: '33.33%',
+    flex: '1',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -44,7 +44,8 @@ const grafanaStyles = (theme) => ({
   },
   card: {
     height: '100%',
-    width: "100%"
+    width: "100%",
+    background:'#f3efff',
   },
   cardContent: {
     height: '100%',
@@ -290,10 +291,11 @@ class GrafanaCustomChart extends Component {
         // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
         break;
     }
-
+    const {sparkline} = props;
     this.datasetIndex = {};
     this.state = {
       xAxis: [],
+      sparkline:sparkline && sparkline !== null ? true : false,
       chartData: [],
       error: '',
       errorCount: 0,
@@ -571,7 +573,7 @@ class GrafanaCustomChart extends Component {
       };
 
       const yAxes = {
-        show: showAxis,
+        show: showAxis &&!this.state.sparkline,
       };
       if (panel.yaxes) {
         panel.yaxes.forEach((ya) => {
@@ -616,6 +618,11 @@ class GrafanaCustomChart extends Component {
           //   console.log(JSON.stringify(args));
           // },
           bindto: self.chartRef,
+          size: this.state.sparkline?(
+            {
+              height: 150,
+            }
+          ):null,
           data: {
             x: 'x',
             xFormat: self.bbTimeFormat,
@@ -634,7 +641,7 @@ class GrafanaCustomChart extends Component {
           },
           grid,
           legend: {
-            show: shouldDisplayLegend,
+            show: shouldDisplayLegend && !this.state.sparkline,
           },
 
 
