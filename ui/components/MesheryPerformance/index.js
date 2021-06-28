@@ -548,7 +548,7 @@ class MesheryPerformanceComponent extends React.Component {
       return;
     }
     dataFetch(
-      "/api/prometheus/static_board",
+      "/api/telemetry/metrics/static-board",
       {
         credentials: "include",
       },

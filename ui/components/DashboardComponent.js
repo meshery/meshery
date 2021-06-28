@@ -558,7 +558,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/grafana/ping",
+      "/api/telemetry/metrics/grafana/ping",
       {
         credentials: "same-origin",
         credentials: "include",
@@ -655,7 +655,7 @@ class DashboardComponent extends React.Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/prometheus/ping",
+      "/api/telemetry/metrics/ping",
       {
         credentials: "same-origin",
         credentials: "include",
