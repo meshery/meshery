@@ -397,15 +397,20 @@ class GrafanaCustomChart extends Component {
 
     getData = async (ind, target) => {
       const {
-        prometheusURL, grafanaURL, panel, from, to, templateVars, testUUID, panelData,
+        prometheusURL, grafanaURL,grafanaAPIKey, panel, from, to, templateVars, testUUID, panelData,
       } = this.props;
       const { chartData } = this.state;
       let { xAxis } = this.state;
 
       let queryRangeURL = '';
+      let endpointURL = '';
+      let endpointAPIKey='';
       if (prometheusURL && prometheusURL !== '') {
+        endpointURL=prometheusURL;
         queryRangeURL = '/api/prometheus/query_range';
       } else if (grafanaURL && grafanaURL !== '') {
+        endpointURL = grafanaURL;
+        endpointAPIKey = grafanaAPIKey;
         queryRangeURL = '/api/grafana/query_range';
       }
       const self = this;
@@ -488,6 +493,7 @@ class GrafanaCustomChart extends Component {
       if (panelData && panelData[expr]) {
         processReceivedData(panelData[expr]);
       } else {
+        queryParams+=`&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(endpointAPIKey)}`
         dataFetch(`${queryRangeURL}?${queryParams}`, {
           method: 'GET',
           credentials: 'include',
@@ -785,7 +791,7 @@ class GrafanaCustomChart extends Component {
 
 GrafanaCustomChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  // grafanaURL: PropTypes.string.isRequired,
+  grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   board: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,

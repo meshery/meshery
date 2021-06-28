@@ -63,7 +63,7 @@ const getGrafanaBoards = (self, cb = () => {}) => {
   }
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    `/api/grafana/boards?dashboardSearch=${grafanaBoardSearch}`,
+    `/api/telemetry/metrics/grafana/boards?dashboardSearch=${grafanaBoardSearch}`,
     {
       credentials: "same-origin",
       method: "GET",
@@ -104,7 +104,7 @@ export const submitGrafanaConfigure = (self, cb) => {
   // console.log(`data to be submitted for load test: ${params}`);
   self.props.updateProgress({ showProgress: true });
   dataFetch(
-    "/api/grafana/config",
+    "/api/telemetry/metrics/grafana/config",
     {
       credentials: "same-origin",
       method: "POST",
@@ -181,20 +181,38 @@ class GrafanaComponent extends Component {
 
   componentDidMount() {
     const self = this;
-    let selector = {
-      serviceMesh: "ALL_MESH",
-    };
-    fetchAvailableAddons(selector).subscribe({
-      next: (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "grafana" && self.state.grafanaURL === "") {
-            self.setState({grafanaURL: "http://" + addon.endpoint})
-            submitGrafanaConfigure(self, () => self.setState({ selectedBoardsConfigs: self.state.grafanaBoards?.[2] ? [self.state.grafanaBoards[2]] : [] }));
-          }
-        });
+
+    dataFetch(
+      "/api/grafana/config",
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
       },
-      error: (err) => console.log("error registering grafana: " + err),
-    });
+      (result) => {
+        self.props.updateProgress({ showProgress: false });
+        if (!(typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL !="")) {
+          let selector = {
+            serviceMesh: "ALL_MESH",
+          };
+          fetchAvailableAddons(selector).subscribe({
+            next: (res) => {
+              res?.addonsState?.forEach((addon) => {
+                if (addon.name === "grafana" && self.state.grafanaURL === "") {
+                  self.setState({grafanaURL: "http://" + addon.endpoint})
+                  submitGrafanaConfigure(self, () => self.setState({ selectedBoardsConfigs: self.state.grafanaBoards?.[2] ? [self.state.grafanaBoards[2]] : [] }));
+                }
+              });
+            },
+            error: (err) => console.log("error registering grafana: " + err),
+          });
+        }
+      },
+      self.handleError("There was an error communicating with grafana config")
+    )
+    
   }
 
   handleChange = (name) => (event) => {
@@ -244,7 +262,7 @@ class GrafanaComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/grafana/config",
+      "/api/telemetry/metrics/grafana/config",
       {
         credentials: "same-origin",
         method: "DELETE",
@@ -280,7 +298,7 @@ class GrafanaComponent extends Component {
     this.props.updateProgress({ showProgress: true });
     const self = this;
     dataFetch(
-      "/api/grafana/ping",
+      "/api/telemetry/metrics/grafana/ping",
       {
         credentials: "same-origin",
         credentials: "include",
@@ -325,7 +343,7 @@ class GrafanaComponent extends Component {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch } = this.state;
     const self = this;
     dataFetch(
-      "/api/grafana/boards",
+      "/api/telemetry/metrics/grafana/boards",
       {
         credentials: "same-origin",
         method: "POST",

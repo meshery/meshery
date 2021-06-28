@@ -163,6 +163,7 @@ func main() {
 		models.MesheryResult{},
 		models.MesheryPattern{},
 		models.MesheryFilter{},
+		models.MesheryApplication{},
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -177,6 +178,7 @@ func main() {
 		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
 		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
 		MesheryFilterPersister:       &models.MesheryFilterPersister{DB: &dbHandler},
+		MesheryApplicationPersister:  &models.MesheryApplicationPersister{DB: &dbHandler},
 		GenericPersister:             dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,

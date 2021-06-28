@@ -12,9 +12,6 @@ import (
 
 	"github.com/layer5io/meshery/helpers"
 	"github.com/layer5io/meshery/models"
-
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -24,22 +21,21 @@ func init() {
 // ScanPromGrafanaHandler - fetches  Prometheus and Grafana
 func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		err := ErrInvalidK8SConfig
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	availablePromGrafana, err := helpers.ScanPromGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
-		err = errors.Wrap(err, "unable to scan Kubernetes")
-		logrus.Error(err)
+		h.log.Error(err)
 		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(err)
-		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err))
+		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -47,48 +43,74 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 // ScanPrometheusHandler - fetches  Prometheus
 func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		err := ErrInvalidK8SConfig
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	availablePrometheus, err := helpers.ScanPrometheus(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
-		err = errors.Wrap(err, "unable to scan Kubernetes")
-		logrus.Error(err)
-		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availablePrometheus); err != nil {
-		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(err)
-		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err))
+		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
+// swagger:route GET /api/telemetry/metrics/grafana/scan GrafanaAPI idGetGrafana
+// Handle GET request for Grafana
+//
+// Fetches and returns Grafana
+// responses:
+// 	200: v1ServicesMapResponseWrapper
+
 // ScanGrafanaHandler - fetches  Grafana
 func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		err := ErrInvalidK8SConfig
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	availableGrafana, err := helpers.ScanGrafana(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 	if err != nil {
-		err = errors.Wrap(err, "unable to scan Kubernetes")
-		logrus.Error(err)
-		http.Error(w, "unable to scan Kubernetes", http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availableGrafana); err != nil {
-		err = errors.Wrap(err, "unable to marshal the payload")
-		logrus.Error(err)
-		http.Error(w, "unable to marshal the payload", http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err))
+		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
+// swagger:route GET /api/telemetry/metrics/config PrometheusAPI idGetPrometheusConfig
+// Handle GET for Prometheus configuration
+//
+// Used for fetching Prometheus configuration
+// responses:
+//  200: prometheusConfigResponseWrapper
+
+// swagger:route POST /api/telemetry/metrics/config PrometheusAPI idPostPrometheusConfig
+// Handle POST for Prometheus configuration
+//
+// Used for persisting Prometheus configuration
+// responses:
+//  200:
+
+// swagger:route DELETE /api/telemetry/metrics/config PrometheusAPI idDeletePrometheusConfig
+// Handle DELETE for Prometheus configuration
+//
+// Used for deleting Prometheus configuration
+// responses:
+//  200:
 
 // PrometheusConfigHandler is used for persisting prometheus configuration
 func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -97,11 +119,21 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	// 	return
 	// }
 
+	if req.Method == http.MethodGet {
+		err := json.NewEncoder(w).Encode(prefObj.Prometheus)
+		if err != nil {
+			h.log.Error(ErrMarshal(err))
+			http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+			return
+		}
+		return
+	}
+
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
-			logrus.Errorf("unable to connect to prometheus: %v", err)
-			http.Error(w, "unable to connect to prometheus", http.StatusInternalServerError)
+			h.log.Error(ErrPrometheusScan(err))
+			http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -116,20 +148,27 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		prefObj.Prometheus = &models.Prometheus{
 			PrometheusURL: promURL,
 		}
-		logrus.Debugf("Prometheus URL %s successfully saved", promURL)
+		h.log.Debug("Prometheus URL %s successfully saved", promURL)
 	} else if req.Method == http.MethodDelete {
 		prefObj.Prometheus = nil
 	}
 
 	err := provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		logrus.Errorf("unable to save user config data: %v", err)
-		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
+		h.log.Error(ErrRecordPreferences(err))
+		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	_, _ = w.Write([]byte("{}"))
 }
+
+// swagger:route GET /api/telemetry/metrics/ping PrometheusAPI idGetPrometheusPing
+// Handle GET request for Prometheus Ping
+//
+// Used to ping prometheus
+// responses:
+// 	200:
 
 // PrometheusPingHandler - fetches server version to simulate ping
 func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -139,23 +178,33 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
+		h.log.Error(ErrPrometheusConfig)
+		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		err := ErrInvalidK8SConfig
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := h.config.PrometheusClient.Validate(req.Context(), prefObj.Prometheus.PrometheusURL); err != nil {
-		http.Error(w, "connection to Prometheus failed", http.StatusInternalServerError)
+		h.log.Error(ErrPrometheusScan(err))
+		http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	_, _ = w.Write([]byte("{}"))
 }
+
+// swagger:route POST /api/telemetry/metrics/board_import PrometheusAPI idPostPrometheusBoardImport
+// Handle POST request for Prometheus board import
+//
+// Used for importing Grafana board for Prometheus
+// responses:
+// 	200: prometheusBoardImportRespWrapper
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -165,7 +214,8 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
+		h.log.Error(ErrPrometheusConfig)
+		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -175,25 +225,30 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 
 	boardData, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		msg := "unable to read the board payload"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusUnauthorized)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	board, err := h.config.PrometheusClient.ImportGrafanaBoard(req.Context(), boardData)
 	if err != nil {
-		msg := "unable to import the boards"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
+		h.log.Error(ErrPrometheusBoards(err))
+		http.Error(w, ErrPrometheusBoards(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
-		logrus.Errorf("error marshaling board: %v", err)
-		http.Error(w, "unable to marshal the board instance", http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err))
+		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
+// swagger:route GET /api/telemetry/metrics/query PrometheusAPI idGetPrometheusQuery
+// Handle GET request for Prometheus Query
+//
+// Used to prometheus queries
+// responses:
+// 	200:
 
 // PrometheusQueryHandler handles prometheus queries
 func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -203,7 +258,8 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
+		h.log.Error(ErrPrometheusConfig)
+		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -211,25 +267,19 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 
 	data, err := h.config.PrometheusClientForQuery.Query(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
 	if err != nil {
-		msg := "connection to prometheus failed"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
+		h.log.Error(ErrPrometheusQuery(err))
+		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(data)
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
-func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
 	// }
-
-	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
-		return
-	}
 
 	reqQuery := req.URL.Query()
 
@@ -239,15 +289,21 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		h.config.QueryTracker.AddOrFlagQuery(req.Context(), testUUID, q, false)
 	}
 
-	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), prefObj.Prometheus.PrometheusURL, &reqQuery)
+	data, err := h.config.PrometheusClientForQuery.QueryRange(req.Context(), reqQuery.Get("url"), &reqQuery)
 	if err != nil {
-		msg := "connection to prometheus failed"
-		logrus.Error(errors.Wrap(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
+		h.log.Error(ErrPrometheusQuery(err))
+		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(data)
 }
+
+// swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard
+// Handle GET request for Prometheus static board
+//
+// Used to fetch the static board
+// responses:
+// 	200: prometheusStaticBoardRespWrapper
 
 // PrometheusStaticBoardHandler returns the static board
 func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -288,17 +344,25 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	resultWG.Wait()
 
 	if len(result) != len(boardFunc) {
-		http.Error(w, "unable to get static board", http.StatusInternalServerError)
+		h.log.Error(ErrStaticBoards)
+		http.Error(w, ErrStaticBoards.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
-		logrus.Errorf("error marshaling board: %v", err)
-		http.Error(w, "unable to marshal board instance", http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err))
+		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
+// swagger:route POST /api/telemetry/metrics/boards PrometheusAPI idPostPrometheusBoard
+// Handle POST request for Prometheus board
+//
+// Used to persist selected board and panels
+// responses:
+// 	200:
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
@@ -308,7 +372,8 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	// }
 
 	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		http.Error(w, "Prometheus URL is not configured", http.StatusBadRequest)
+		h.log.Error(ErrPrometheusConfig)
+		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -322,17 +387,15 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		msg := "unable to read the request body"
-		logrus.Error(errors.Wrapf(err, msg))
-		http.Error(w, msg, http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	boards := []*models.SelectedGrafanaConfig{}
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
-		msg := "unable to parse the request body"
-		logrus.Error(errors.Wrapf(err, msg))
-		http.Error(w, msg, http.StatusBadRequest)
+		h.log.Error(ErrUnmarshal(err))
+		http.Error(w, ErrUnmarshal(err).Error(), http.StatusBadRequest)
 		return
 	}
 	if len(boards) > 0 {
@@ -342,8 +405,8 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	}
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		logrus.Errorf("unable to save user config data: %v", err)
-		http.Error(w, "unable to save user config data", http.StatusInternalServerError)
+		h.log.Error(ErrRecordPreferences(err))
+		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write([]byte("{}"))
