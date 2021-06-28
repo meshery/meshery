@@ -73,8 +73,9 @@ func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request
 	}
 	if trackStats {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
-			h.log.Error(ErrEncodeUserPreference(err))
-			http.Error(w, ErrEncodeUserPreference(err).Error(), http.StatusInternalServerError)
+			obj := "user preferences"
+			h.log.Error(ErrEncoding(err, obj))
+			http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 		return
