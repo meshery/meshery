@@ -4,8 +4,9 @@ import classNames from "classnames";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import InfoIcon from "@material-ui/icons/Info";
-import CloseIcon from "@material-ui/icons/Close";
+import DoneIcon from '@material-ui/icons/Done';
 import IconButton from "@material-ui/core/IconButton";
+import Grid from '@material-ui/core/Grid';
 import { SnackbarContent } from 'notistack';
 import WarningIcon from "@material-ui/icons/Warning";
 import { withStyles } from "@material-ui/core/styles";
@@ -140,33 +141,35 @@ function MesherySnackbarWrapper(props) {
         onMouseLeave={() => setCardHover(false)}
       >
         <CardActions classes={{ root: classes.actionRoot }} >
-          <Typography variant="subtitle2">
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Icon className={classNames(classes.icon, classes.iconVariant)} />
-              <div>{message}</div>
+          <Grid container direction="row" justify="space-between" alignItems="center">
+            <Typography variant="subtitle2">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Icon className={classNames(classes.icon, classes.iconVariant)} />
+                <div>{message}</div>
+              </div>
+            </Typography>
+            <div className={classes.icons}>
+              <IconButton
+                aria-label="Show more"
+                className={classNames(classes.expand, { [classes.expandOpen]: expanded })}
+                onClick={handleExpandClick}
+              >
+                <ExpandMoreIcon className={classNames({[classes.iconColor]: !cardHover, [classes[variant]]: cardHover })} />
+              </IconButton> 
+              
+              <IconButton className={classes.expand} onClick={onClose}>
+                <DoneIcon 
+                  className={classNames(classes.iconColor, classes[variantHoverColor[variant]]  )} 
+                  onMouseEnter={() => setCardHover(false)} 
+                  onMouseLeave={() => setCardHover(true)}
+                />
+              </IconButton>
             </div>
-          </Typography>
-          <div className={classes.icons}>
-            <IconButton
-              aria-label="Show more"
-              className={classNames(classes.expand, { [classes.expandOpen]: expanded })}
-              onClick={handleExpandClick}
-            >
-              <ExpandMoreIcon className={classNames({[classes.iconColor]: !cardHover, [classes[variant]]: cardHover })} />
-            </IconButton> 
-            
-            <IconButton className={classes.expand} onClick={onClose}>
-              <CloseIcon 
-                className={classNames(classes.iconColor, classes[variantHoverColor[variant]]  )} 
-                onMouseEnter={() => setCardHover(false)} 
-                onMouseLeave={() => setCardHover(true)}
-              />
-            </IconButton>
-          </div>
+          </Grid>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit >
           <Paper className={classes.collapse} square variant="outlined" elevation={0}>
-            <Typography gutterBottom>DETAILS</Typography>
+            <Typography variant="subtitle2" gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
         </Collapse>

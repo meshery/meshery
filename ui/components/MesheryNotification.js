@@ -8,11 +8,12 @@ import {
   Tooltip, 
   Divider, 
   Typography, 
+  Tabs,
+  Tab
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ErrorIcon from '@material-ui/icons/Error';
-import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import { eventTypes } from '../lib/event-types';
@@ -114,6 +115,7 @@ function getNotifications(events, type) {
 
   if (type === "error") return events.filter(ev => ev.event_type === 2);
   if (type === "warning") return events.filter(ev => ev.event_type === 1)
+  if (type === "success") return events.filter(ev => ev.event_type === 0)
   
   return events;
 }
@@ -160,6 +162,7 @@ class MesheryNotification extends React.Component {
     meshAdapters: [],
     createStream: false,
     displayEventType: "*",
+    tabValue: 0,
   }
 
   handleToggle = () => {
@@ -296,6 +299,10 @@ class MesheryNotification extends React.Component {
     }
   }
 
+  handleTabChange = (event, newTabValue) => {
+    this.setState({ tabValue: newTabValue })
+  }
+
   render() {
     const { classes } = this.props;
     const {
@@ -360,7 +367,7 @@ class MesheryNotification extends React.Component {
                     </Tooltip>
                   </div>
                   <div className={classes.notificationTitle}>
-                    <Typography variant="subtitle1">
+                    <Typography variant="subtitle1" align="center">
                       Notifications
                     </Typography>
                   </div>
@@ -377,6 +384,18 @@ class MesheryNotification extends React.Component {
                   </div>
                 </div>
                 <Divider light />
+                <Tabs
+                  value={this.state.tabValue}
+                  onChange={this.handleTabChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{minWidth:"15%"}}/>
+                  <Tab label="Error"  onClick={this.handleNotifFiltering('error')} style={{minWidth:"15%"}}/>
+                  <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{minWidth:"15%"}}/>
+                  <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{minWidth:"15%"}}/>
+                </Tabs>
                 {getNotifications(events, this.state.displayEventType).map((event, ind) => (
                   <MesheryEventViewer
                     eventVariant={event.event_type}
@@ -385,19 +404,6 @@ class MesheryNotification extends React.Component {
                     eventDetails={event.details || "Details Unavailable"}
                   />
                 ))}
-              </div>
-            </div>
-            <div className={classes.listTop}>
-              <div >
-                <Tooltip title="Close notifications drawer">
-                  <IconButton
-                    color="inherit"
-                    className={classes.drawerButton}
-                    onClick={this.handleToggle}
-                  >
-                    <ArrowForwardIosRoundedIcon className={classes.HeaderItem}/>
-                  </IconButton>
-                </Tooltip>
               </div>
             </div>
           </Drawer>
