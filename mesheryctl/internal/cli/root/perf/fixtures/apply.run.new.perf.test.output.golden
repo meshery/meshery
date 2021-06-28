@@ -1,0 +1,9 @@
+data: {"status":"info","message":"Initiating load test . . . "}
+
+data: {"status":"info","message":"Load test completed, fetching metadata now"}
+
+data: {"status":"info","message":"Obtained the needed metadatas, attempting to persist the result"}
+
+data: {"status":"info","message":"Done persisting the load test results."}
+
+data: {"status":"success","result":{"meshery_id":"6f184dd8-b17a-49e4-99f5-6581a0a95edf","name":"consul_1624870050097","mesh":"consul","test_id":"","runner_results":{"AbortOn":0,"ActualDuration":30309681008,"ActualQPS":1.847594502404009,"DurationHistogram":{"Avg":0.541242561767857,"Count":56,"Data":[{"Count":10,"End":0.5,"Percent":17.857142857142858,"Start":0.470886082},{"Count":37,"End":0.6,"Percent":83.92857142857143,"Start":0.5},{"Count":6,"End":0.7000000000000001,"Percent":94.64285714285714,"Start":0.6},{"Count":2,"End":0.8,"Percent":98.21428571428571,"Start":0.7000000000000001},{"Count":1,"End":0.819501272,"Percent":100,"Start":0.8}],"Max":0.819501272,"Min":0.470886082,"Percentiles":[{"Percentile":50,"Value":0.5486486486486486},{"Percentile":75,"Value":0.5864864864864865},{"Percentile":90,"Value":0.6566666666666667},{"Percentile":99,"Value":0.8085805596800001},{"Percentile":99.9,"Value":0.8184092007680001}],"StdDev":0.06823607468791255,"Sum":30.309583458999995},"Exactly":0,"HeaderSizes":{"Avg":0,"Count":56,"Data":[{"Count":56,"End":0,"Percent":100,"Start":0}],"Max":0,"Min":0,"Percentiles":null,"StdDev":0,"Sum":0},"Jitter":false,"Labels":"consul_1624870050097 -_- https://google.com","NumThreads":1,"RequestedDuration":"30s","RequestedQPS":"max","RetCodes":{"200":56},"RunType":"HTTP","Sizes":{"Avg":15222.910714285714,"Count":56,"Data":[{"Count":56,"End":15292,"Percent":100,"Start":15162}],"Max":15292,"Min":15162,"Percentiles":null,"StdDev":26.266679589120486,"Sum":852483},"SocketCount":0,"StartTime":"2021-06-28T09:00:22.935762222Z","URL":"https://google.com","Version":"dev","load-generator":"fortio"},"-":{}}}

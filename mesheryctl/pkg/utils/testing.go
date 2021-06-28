@@ -20,6 +20,15 @@ type TestHelper struct {
 	BaseURL string
 }
 
+type MockURL struct {
+	// method such as GET or POST
+	Method string
+	// url to mock the request
+	URL string
+	// response for the request
+	Response string
+}
+
 func NewTestHelper(t *testing.T) *TestHelper {
 	return &TestHelper{
 		Version: "v0.5.10",

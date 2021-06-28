@@ -80,6 +80,16 @@ func TestPerfView(t *testing.T) {
 			Token:            "",
 			ExpectError:      true,
 		},
+		{
+			Name:             "View Invalid Profile Name",
+			Args:             []string{"view", "invalid-name", "-t", filepath.Join(fixturesDir, "token.golden")},
+			View:             "Profiles",
+			ExpectedResponse: "view.invalid.profile.output.golden",
+			Fixture:          "view.invalid.profile.api.response.golden",
+			URL:              testContext.BaseURL + "/api/user/performance/profiles?page_size=25&search=invalid-name",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
 	}
 
 	// Run tests
