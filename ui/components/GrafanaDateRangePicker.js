@@ -23,6 +23,22 @@ const styles = (theme) => ({
   space: {
     margin: theme.spacing(1),
   },
+  rangeButton:{
+    backgroundColor:'#607d8b',
+    color:'white',
+    boxShadow:'none',
+    '&:hover':{
+      position:'relative',
+      bottom:'2px',
+      color:'#607d8b',
+      boxShadow:'0px 2px 1px #a1a1a1',
+    },
+    '&:active':{
+      position:'relative',
+      bottom:'0px',
+      boxShadow:'none',
+    },
+  },
 });
 
 const refreshIntervals = [
@@ -525,13 +541,14 @@ class GrafanaDateRangePicker extends Component {
         <NoSsr>
           <React.Fragment>
             <Button
-              variant="outlined"
+              variant="filled"
               // buttonRef={node => {
               //     this.anchorEl = node;
               // }}
               // aria-owns={open ? 'daterange-popper' : undefined}
               // aria-haspopup="true"
               onClick={this.handleClick}
+              classes={{root:classes.rangeButton}}
             >
               <AccessTimeIcon style={{ marginRight: "0.25rem" }}/>
               <Moment format="LLLL">{startDate}</Moment>
@@ -600,6 +617,7 @@ class GrafanaDateRangePicker extends Component {
                         margin="normal"
                         variant="outlined"
                         onChange={this.handleChange('refresh')}
+                        disabled={liveTail}
                       >
                         {refreshIntervals.map((ri) => (
                           <MenuItem key={`ri_-_-_${ri}`} value={ri}>{ri}</MenuItem>
