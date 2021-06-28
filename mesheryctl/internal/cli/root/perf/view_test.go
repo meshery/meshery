@@ -128,9 +128,8 @@ func TestPerfView(t *testing.T) {
 
 					utils.Equals(t, expectedResponse, err.Error())
 					return
-				} else {
-					t.Error(err)
 				}
+				t.Error(err)
 			}
 
 			w.Close()

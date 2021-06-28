@@ -158,7 +158,6 @@ func TestApplyCmd(t *testing.T) {
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-
 			for _, url := range tt.URLs {
 				// View api response from golden files
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
@@ -193,9 +192,8 @@ func TestApplyCmd(t *testing.T) {
 
 					utils.Equals(t, expectedResponse, err.Error())
 					return
-				} else {
-					t.Error(err)
 				}
+				t.Error(err)
 			}
 
 			// response being printed in console

@@ -115,7 +115,7 @@ func (ctx *Context) ValidateVersion() error {
 func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	currentContext, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Warn(err)
+		log.Fatal(err)
 	}
 
 	return currentContext.Endpoint
