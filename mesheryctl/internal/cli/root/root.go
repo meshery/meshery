@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
@@ -142,13 +143,13 @@ func initConfig() {
 				}
 
 				// Add Token to context file
-				err = utils.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
 					log.Fatal(err)
 				}
 
 				// Add Context to context file
-				err = utils.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
+				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true)
 				if err != nil {
 					log.Fatal(err)
 				}
