@@ -1,14 +1,14 @@
 ---
 layout: page
-title: Using Meshery Errors
+title: Creating Meshery Errors
 permalink: project/contributing-error
-description: How to declare errors in meshery projects.
+description: How to declare errors in Meshery components.
 language: en
 type: project
 category: contributing
 ---
 
-Meshery Error helps populate error messages with certain set of meaningful attributes. 
+Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes. 
 The below are the listed attributes:
 - Code
 - Short Description
@@ -18,7 +18,7 @@ The below are the listed attributes:
 
 Inorder to create a meshery error object, you will need to create a custom wrapper object for the native golang error. This can be done from the <a href="https://github.com/layer5io/meshkit/tree/master/errors">Meshkit Error</a> package. 
 
-Use `errors.New()` the above function to create a new instance of an error object and pass in the above listed attributes as function arguments. Refer below for an example.
+Use the `errors.New()` function to create a new instance of the error object and pass situation-specific attributes as function arguments. See the following example for reference.
 
 ```code
 var (
