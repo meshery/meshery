@@ -88,58 +88,14 @@ type performanceProfileResponseWrapper struct {
 // swagger:parameters idSavePerformanceProfile
 type performanceProfileParameterWrapper struct {
 	// in: body
-	// name of performance profile
-	// required: true
-	Name string `json:"name,omitempty"`
-	// array of load generators
-	// required: true
-	LoadGenerators []string `json:"load_generators,omitempty" gorm:"type:text[]"`
-	// array of urls of performance results
-	// required: true
-	Endpoints []string `json:"endpoints,omitempty" gorm:"type:text[]"`
-	// service mesh for performance tests
-	// required: true
-	ServiceMesh string `json:"service_mesh,omitempty"`
-	// number of concurrent requests
-	// required: true
-	ConcurrentRequest int `json:"concurrent_request,omitempty"`
-	// qps in integer
-	// required: true
-	QPS int `json:"qps,omitempty"`
-	// duration of tests e.g. 30s
-	// required: true
-	Duration string `json:"duration,omitempty"`
+	Body *models.PerformanceProfileParameters
 }
 
 // Run a performance test with params
 // swagger:parameters idRunPerformanceTest
 type performanceTestParameterWrapper struct {
 	// in: query
-
-	// test-id of pre-existing test
-	TestID strfmt.UUID `json:"uuid,omitempty"`
-	// name of performance test
-	Name string `json:"name"`
-	// load generator for performance test
-	// required: true
-	LoadGenerator string `json:"loadGenerator"`
-	// url for test
-	// required: true
-	URL string `json:"url"`
-	// service mesh for performance test
-	// required: true
-	ServiceMesh string `json:"mesh"`
-	// concurrent request in number
-	// required: true
-	ConcurrentRequest int `json:"c"`
-	// qps in number
-	// required: true
-	QPS int `json:"qps"`
-	// time in integer e.g. 30
-	// required: true
-	Time int `json:"t"`
-	// duration e.g. s for second
-	Duration string `json:"dur"`
+	Body *models.PerformanceTestParameters
 }
 
 // swagger:parameters idPostGrafanaConfig

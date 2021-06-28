@@ -2,6 +2,133 @@ basePath: /
 consumes:
 - application/json
 definitions:
+  Alert:
+    properties:
+      conditions:
+        items:
+          $ref: '#/definitions/AlertCondition'
+        type: array
+        x-go-name: Conditions
+      executionErrorState:
+        type: string
+        x-go-name: ExecutionErrorState
+      for:
+        type: string
+        x-go-name: For
+      frequency:
+        type: string
+        x-go-name: Frequency
+      handler:
+        format: int64
+        type: integer
+        x-go-name: Handler
+      message:
+        type: string
+        x-go-name: Message
+      name:
+        type: string
+        x-go-name: Name
+      noDataState:
+        type: string
+        x-go-name: NoDataState
+      notifications:
+        items:
+          $ref: '#/definitions/AlertNotification'
+        type: array
+        x-go-name: Notifications
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertCondition:
+    properties:
+      evaluator:
+        $ref: '#/definitions/AlertEvaluator'
+      operator:
+        $ref: '#/definitions/AlertOperator'
+      query:
+        $ref: '#/definitions/AlertQuery'
+      reducer:
+        $ref: '#/definitions/AlertReducer'
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertEvaluator:
+    properties:
+      params:
+        items:
+          format: double
+          type: number
+        type: array
+        x-go-name: Params
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertNotification:
+    description: |-
+      AlertNotification as described in the doc
+      https://grafana.com/docs/grafana/latest/http_api/alerting_notification_channels/
+    properties:
+      disableResolveMessage:
+        type: boolean
+        x-go-name: DisableResolveMessage
+      frequency:
+        type: string
+        x-go-name: Frequency
+      id:
+        format: int64
+        type: integer
+        x-go-name: ID
+      isDefault:
+        type: boolean
+        x-go-name: IsDefault
+      name:
+        type: string
+        x-go-name: Name
+      sendReminder:
+        type: boolean
+        x-go-name: SendReminder
+      settings:
+        type: object
+        x-go-name: Settings
+      type:
+        type: string
+        x-go-name: Type
+      uid:
+        type: string
+        x-go-name: UID
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertOperator:
+    properties:
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertQuery:
+    properties:
+      params:
+        items:
+          type: string
+        type: array
+        x-go-name: Params
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  AlertReducer:
+    properties:
+      params:
+        items:
+          type: string
+        type: array
+        x-go-name: Params
+      type:
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   AuthenticateOKBody:
     description: AuthenticateOKBody authenticate o k body
     properties:
@@ -17,6 +144,99 @@ definitions:
     - Status
     type: object
     x-go-package: github.com/docker/docker/api/types/registry
+  Axis:
+    description: for a graph panel
+    properties:
+      format:
+        type: string
+        x-go-name: Format
+      label:
+        type: string
+        x-go-name: Label
+      logBase:
+        format: int64
+        type: integer
+        x-go-name: LogBase
+      max:
+        $ref: '#/definitions/FloatString'
+      min:
+        $ref: '#/definitions/FloatString'
+      show:
+        type: boolean
+        x-go-name: Show
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  BoolString:
+    properties:
+      Flag:
+        type: boolean
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  ClientIPConfig:
+    properties:
+      timeoutSeconds:
+        description: |-
+          timeoutSeconds specifies the seconds of ClientIP type session sticky time.
+          The value must be >0 && <=86400(for 1 day) if ServiceAffinity == "ClientIP".
+          Default value is 10800(for 3 hours).
+          +optional
+        format: int32
+        type: integer
+        x-go-name: TimeoutSeconds
+    title: ClientIPConfig represents the configurations of Client IP based session
+      affinity.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  Column:
+    description: for a table
+    properties:
+      text:
+        type: string
+        x-go-name: TextType
+      value:
+        type: string
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  ColumnStyle:
+    description: for a table
+    properties:
+      alias:
+        type: string
+        x-go-name: Alias
+      colorMode:
+        type: string
+        x-go-name: ColorMode
+      colors:
+        items:
+          type: string
+        type: array
+        x-go-name: Colors
+      dateFormat:
+        type: string
+        x-go-name: DateFormat
+      decimals:
+        format: uint64
+        type: integer
+        x-go-name: Decimals
+      pattern:
+        type: string
+        x-go-name: Pattern
+      thresholds:
+        items:
+          type: string
+        type: array
+        x-go-name: Thresholds
+      type:
+        type: string
+        x-go-name: Type
+      unit:
+        type: string
+        x-go-name: Unit
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   ContainerChangeResponseItem:
     description: ContainerChangeResponseItem change item in response to ContainerChanges
       operation
@@ -116,6 +336,145 @@ definitions:
     title: ErrorResponse Represents an error.
     type: object
     x-go-package: github.com/docker/docker/api/types
+  FieldsV1:
+    description: |-
+      Each key is either a '.' representing the field itself, and will always map to an empty set,
+      or a string representing a sub-field or item. The string will follow one of these four formats:
+      'f:<name>', where <name> is the name of a field in a struct, or key in a map
+      'v:<value>', where <value> is the exact json formatted value of a list item
+      'i:<index>', where <index> is position of a item in a list
+      'k:<keys>', where <keys> is a map of  a list item's key fields to their unique values
+      If a key maps to an empty Fields value, the field that key represents is part of the set.
+
+      The exact format is defined in sigs.k8s.io/structured-merge-diff
+    title: FieldsV1 stores a set of fields in a data structure like a Trie, in JSON
+      format.
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  FloatString:
+    properties:
+      Valid:
+        type: boolean
+      Value:
+        format: double
+        type: number
+    title: 'FloatString represents special type for json values that could be strings
+      or ints: 100 or "100"'
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Gauge:
+    description: for a singlestat
+    properties:
+      maxValue:
+        format: float
+        type: number
+        x-go-name: MaxValue
+      minValue:
+        format: float
+        type: number
+        x-go-name: MinValue
+      show:
+        type: boolean
+        x-go-name: Show
+      thresholdLabels:
+        type: boolean
+        x-go-name: ThresholdLabels
+      thresholdMarkers:
+        type: boolean
+        x-go-name: ThresholdMarkers
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Grafana:
+    description: Grafana represents the Grafana session config
+    properties:
+      grafanaAPIKey:
+        type: string
+        x-go-name: GrafanaAPIKey
+      grafanaURL:
+        type: string
+        x-go-name: GrafanaURL
+      selectedBoardsConfigs:
+        description: GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
+        items:
+          $ref: '#/definitions/SelectedGrafanaConfig'
+        type: array
+        x-go-name: GrafanaBoards
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  GrafanaBoard:
+    description: GrafanaBoard represents a Grafana board
+    properties:
+      org_id:
+        format: uint64
+        type: integer
+        x-go-name: OrgID
+      panels:
+        items:
+          $ref: '#/definitions/Panel'
+        type: array
+        x-go-name: Panels
+      slug:
+        type: string
+        x-go-name: Slug
+      template_vars:
+        items:
+          $ref: '#/definitions/GrafanaTemplateVars'
+        type: array
+        x-go-name: TemplateVars
+      title:
+        type: string
+        x-go-name: Title
+      uid:
+        type: string
+        x-go-name: UID
+      uri:
+        type: string
+        x-go-name: URI
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  GrafanaConfigParams:
+    description: Parameters to save Grafana configuration
+    properties:
+      grafanaAPIKey:
+        type: string
+        x-go-name: GrafanaAPIKey
+      grafanaURL:
+        type: string
+        x-go-name: GrafanaURL
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  GrafanaDataSource:
+    description: GrafanaDataSource represents a Grafana datasource like Prometheus
+    properties:
+      id:
+        format: uint64
+        type: integer
+        x-go-name: ID
+      name:
+        type: string
+        x-go-name: Name
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  GrafanaTemplateVars:
+    description: GrafanaTemplateVars represents template variables in a bboard
+    properties:
+      datasource:
+        $ref: '#/definitions/GrafanaDataSource'
+      hide:
+        format: uint8
+        type: integer
+        x-go-name: Hide
+      name:
+        type: string
+        x-go-name: Name
+      query:
+        type: string
+        x-go-name: Query
+      value:
+        type: object
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   GraphDriverData:
     properties:
       Data:
@@ -168,6 +527,12 @@ definitions:
     - Tags
     type: object
     x-go-package: github.com/docker/docker/api/types/image
+  IPFamily:
+    description: |-
+      IPFamily represents the IP Family (IPv4 or IPv6). This type is used
+      to express the family of an IP expressed by a type (i.e. service.Spec.IPFamily)
+    type: string
+    x-go-package: k8s.io/api/core/v1
   IdResponse:
     description: IDResponse Response to an API call that returns just an Id
     properties:
@@ -250,6 +615,150 @@ definitions:
     - VirtualSize
     type: object
     x-go-package: github.com/docker/docker/api/types
+  IntOrString:
+    description: |-
+      +protobuf=true
+      +protobuf.options.(gogoproto.goproto_stringer)=false
+      +k8s:openapi-gen=true
+    properties:
+      IntVal:
+        format: int32
+        type: integer
+      StrVal:
+        type: string
+      Type:
+        $ref: '#/definitions/Type'
+    title: |-
+      IntOrString is a type that can hold an int32 or a string.  When used in
+      JSON or YAML marshalling and unmarshalling, it produces or consumes the
+      inner type.  This allows you to have, for example, a JSON field that can
+      accept a name or number.
+      TODO: Rename to Int32OrString
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/util/intstr
+  IntString:
+    properties:
+      Valid:
+        type: boolean
+      Value:
+        format: int64
+        type: integer
+    title: 'IntString represents special type for json values that could be strings
+      or ints: 100 or "100"'
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Legend:
+    description: for a graph panel
+    properties:
+      alignAsTable:
+        type: boolean
+        x-go-name: AlignAsTable
+      avg:
+        type: boolean
+        x-go-name: Avg
+      current:
+        type: boolean
+        x-go-name: Current
+      hideEmpty:
+        type: boolean
+        x-go-name: HideEmpty
+      hideZero:
+        type: boolean
+        x-go-name: HideZero
+      max:
+        type: boolean
+        x-go-name: Max
+      min:
+        type: boolean
+        x-go-name: Min
+      rightSide:
+        type: boolean
+        x-go-name: RightSide
+      show:
+        type: boolean
+        x-go-name: Show
+      sideWidth:
+        format: uint64
+        type: integer
+        x-go-name: SideWidth
+      total:
+        type: boolean
+        x-go-name: Total
+      values:
+        type: boolean
+        x-go-name: Values
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  LoadBalancerIngress:
+    description: traffic intended for the service should be sent to an ingress point.
+    properties:
+      hostname:
+        description: |-
+          Hostname is set for load-balancer ingress points that are DNS based
+          (typically AWS load-balancers)
+          +optional
+        type: string
+        x-go-name: Hostname
+      ip:
+        description: |-
+          IP is set for load-balancer ingress points that are IP based
+          (typically GCE or OpenStack load-balancers)
+          +optional
+        type: string
+        x-go-name: IP
+    title: 'LoadBalancerIngress represents the status of a load-balancer ingress point:'
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  LoadBalancerStatus:
+    properties:
+      ingress:
+        description: |-
+          Ingress is a list containing ingress points for the load-balancer.
+          Traffic intended for the service should be sent to these ingress points.
+          +optional
+        items:
+          $ref: '#/definitions/LoadBalancerIngress'
+        type: array
+        x-go-name: Ingress
+    title: LoadBalancerStatus represents the status of a load-balancer.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  ManagedFieldsEntry:
+    description: |-
+      ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
+      that the fieldset applies to.
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the version of this resource that this field set
+          applies to. The format is "group/version" just like the top-level
+          APIVersion field. It is necessary to track the version of a field
+          set because it cannot be automatically converted.
+        type: string
+        x-go-name: APIVersion
+      fieldsType:
+        description: |-
+          FieldsType is the discriminator for the different fields format and version.
+          There is currently only one possible value: "FieldsV1"
+        type: string
+        x-go-name: FieldsType
+      fieldsV1:
+        $ref: '#/definitions/FieldsV1'
+      manager:
+        description: Manager is an identifier of the workflow managing these fields.
+        type: string
+        x-go-name: Manager
+      operation:
+        $ref: '#/definitions/ManagedFieldsOperationType'
+      time:
+        $ref: '#/definitions/Time'
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  ManagedFieldsOperationType:
+    title: ManagedFieldsOperationType is the type of operation which lead to a ManagedFieldsEntry
+      being created.
+    type: string
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
   Map:
     additionalProperties:
       type: object
@@ -260,6 +769,17 @@ definitions:
     title: Map type is an alias for map[string]interface{}
     type: object
     x-go-package: github.com/layer5io/meshery/internal/sql
+  MapType:
+    properties:
+      name:
+        type: string
+        x-go-name: Name
+      value:
+        format: int64
+        type: integer
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   MesheryPattern:
     description: MesheryPattern represents the patterns that needs to be saved
     properties:
@@ -289,6 +809,375 @@ definitions:
         x-go-name: UserID
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  OwnerReference:
+    description: |-
+      OwnerReference contains enough information to let you identify an owning
+      object. An owning object must be in the same namespace as the dependent, or
+      be cluster-scoped, so there is no namespace field.
+    properties:
+      apiVersion:
+        description: API version of the referent.
+        type: string
+        x-go-name: APIVersion
+      blockOwnerDeletion:
+        description: |-
+          If true, AND if the owner has the "foregroundDeletion" finalizer, then
+          the owner cannot be deleted from the key-value store until this
+          reference is removed.
+          Defaults to false.
+          To set this field, a user needs "delete" permission of the owner,
+          otherwise 422 (Unprocessable Entity) will be returned.
+          +optional
+        type: boolean
+        x-go-name: BlockOwnerDeletion
+      controller:
+        description: |-
+          If true, this reference points to the managing controller.
+          +optional
+        type: boolean
+        x-go-name: Controller
+      kind:
+        description: |-
+          Kind of the referent.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        type: string
+        x-go-name: Kind
+      name:
+        description: |-
+          Name of the referent.
+          More info: http://kubernetes.io/docs/user-guide/identifiers#names
+        type: string
+        x-go-name: Name
+      uid:
+        $ref: '#/definitions/UID'
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  Panel:
+    properties:
+      Panels:
+        items:
+          $ref: '#/definitions/Panel'
+        type: array
+      alert:
+        $ref: '#/definitions/Alert'
+      aliasColors:
+        type: object
+        x-go-name: AliasColors
+      bars:
+        type: boolean
+        x-go-name: Bars
+      colorBackground:
+        type: boolean
+        x-go-name: ColorBackground
+      colorValue:
+        type: boolean
+        x-go-name: ColorValue
+      colors:
+        items:
+          type: string
+        type: array
+        x-go-name: Colors
+      columns:
+        items:
+          $ref: '#/definitions/Column'
+        type: array
+        x-go-name: Columns
+      content:
+        type: string
+        x-go-name: Content
+      dashLength:
+        format: uint64
+        type: integer
+        x-go-name: DashLength
+      dashboardTags:
+        items:
+          type: string
+        type: array
+        x-go-name: DashboardTags
+      dashes:
+        type: boolean
+        x-go-name: Dashes
+      datasource:
+        type: string
+        x-go-name: Datasource
+      decimals:
+        format: int64
+        type: integer
+        x-go-name: Decimals
+      description:
+        type: string
+        x-go-name: Description
+      editable:
+        type: boolean
+        x-go-name: Editable
+      error:
+        type: boolean
+        x-go-name: Error
+      fill:
+        format: int64
+        type: integer
+        x-go-name: Fill
+      format:
+        type: string
+        x-go-name: Format
+      gauge:
+        $ref: '#/definitions/Gauge'
+      gridPos:
+        properties:
+          h:
+            format: int64
+            type: integer
+            x-go-name: H
+          w:
+            format: int64
+            type: integer
+            x-go-name: W
+          x:
+            format: int64
+            type: integer
+            x-go-name: X
+          "y":
+            format: int64
+            type: integer
+            x-go-name: "Y"
+        type: object
+        x-go-name: GridPos
+      height:
+        type: string
+        x-go-name: Height
+      hideTimeOverride:
+        type: boolean
+        x-go-name: HideTimeOverride
+      id:
+        format: uint64
+        type: integer
+        x-go-name: ID
+      isNew:
+        type: boolean
+        x-go-name: IsNew
+      leftYAxisLabel:
+        type: string
+        x-go-name: LeftYAxisLabel
+      legend:
+        $ref: '#/definitions/Legend'
+      limit:
+        format: int64
+        type: integer
+        x-go-name: Limit
+      lines:
+        type: boolean
+        x-go-name: Lines
+      linewidth:
+        format: uint64
+        type: integer
+        x-go-name: Linewidth
+      links:
+        items:
+          $ref: '#/definitions/link'
+        type: array
+        x-go-name: Links
+      mappingType:
+        format: uint64
+        type: integer
+        x-go-name: MappingType
+      mappingTypes:
+        items:
+          $ref: '#/definitions/MapType'
+        type: array
+        x-go-name: MappingTypes
+      maxDataPoints:
+        $ref: '#/definitions/IntString'
+      minSpan:
+        format: float
+        type: number
+        x-go-name: MinSpan
+      mode:
+        type: string
+        x-go-name: Mode
+      nameFilter:
+        type: string
+        x-go-name: NameFilter
+      nullPointMode:
+        type: string
+        x-go-name: NullPointMode
+      onlyAlertsOnDashboard:
+        type: boolean
+        x-go-name: OnlyAlertsOnDashboard
+      pageSize:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      percentage:
+        type: boolean
+        x-go-name: Percentage
+      pointradius:
+        format: int64
+        type: integer
+        x-go-name: Pointradius
+      points:
+        type: boolean
+        x-go-name: Points
+      postfix:
+        type: string
+        x-go-name: Postfix
+      postfixFontSize:
+        type: string
+        x-go-name: PostfixFontSize
+      prefix:
+        type: string
+        x-go-name: Prefix
+      prefixFontSize:
+        type: string
+        x-go-name: PrefixFontSize
+      query:
+        type: string
+        x-go-name: Query
+      rangeMaps:
+        items:
+          $ref: '#/definitions/RangeMap'
+        type: array
+        x-go-name: RangeMaps
+      renderer:
+        type: string
+        x-go-name: Renderer
+      repeat:
+        type: string
+        x-go-name: Repeat
+      repeatPanelId:
+        description: RepeatIteration *int64   `json:"repeatIteration,omitempty"`
+        format: uint64
+        type: integer
+        x-go-name: RepeatPanelID
+      rightYAxisLabel:
+        type: string
+        x-go-name: RightYAxisLabel
+      scopedVars:
+        additionalProperties:
+          properties:
+            selected:
+              type: boolean
+              x-go-name: Selected
+            text:
+              type: string
+              x-go-name: Text
+            value:
+              type: string
+              x-go-name: Value
+          type: object
+        type: object
+        x-go-name: ScopedVars
+      scroll:
+        type: boolean
+        x-go-name: Scroll
+      seriesOverrides:
+        items:
+          $ref: '#/definitions/SeriesOverride'
+        type: array
+        x-go-name: SeriesOverrides
+      show:
+        type: string
+        x-go-name: Show
+      showHeader:
+        type: boolean
+        x-go-name: ShowHeader
+      sort:
+        $ref: '#/definitions/Sort'
+      sortOrder:
+        format: int64
+        type: integer
+        x-go-name: SortOrder
+      spaceLength:
+        format: uint64
+        type: integer
+        x-go-name: SpaceLength
+      span:
+        format: float
+        type: number
+        x-go-name: Span
+      sparkline:
+        $ref: '#/definitions/SparkLine'
+      stack:
+        type: boolean
+        x-go-name: Stack
+      stateFilter:
+        items:
+          type: string
+        type: array
+        x-go-name: StateFilter
+      steppedLine:
+        type: boolean
+        x-go-name: SteppedLine
+      styles:
+        items:
+          $ref: '#/definitions/ColumnStyle'
+        type: array
+        x-go-name: Styles
+      tags:
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      targets:
+        items:
+          $ref: '#/definitions/Target'
+        type: array
+        x-go-name: Targets
+      thresholds:
+        items:
+          $ref: '#/definitions/Threshold'
+        type: string
+        x-go-name: Thresholds
+      timeFrom:
+        type: string
+        x-go-name: TimeFrom
+      timeShift:
+        type: string
+        x-go-name: TimeShift
+      title:
+        type: string
+        x-go-name: Title
+      tooltip:
+        $ref: '#/definitions/Tooltip'
+      transform:
+        type: string
+        x-go-name: Transform
+      transparent:
+        type: boolean
+        x-go-name: Transparent
+      type:
+        type: string
+        x-go-name: Type
+      valueFontSize:
+        type: string
+        x-go-name: ValueFontSize
+      valueMaps:
+        items:
+          $ref: '#/definitions/ValueMap'
+        type: array
+        x-go-name: ValueMaps
+      valueName:
+        type: string
+        x-go-name: ValueName
+      x-axis:
+        type: boolean
+        x-go-name: XAxis
+      xaxis:
+        $ref: '#/definitions/Axis'
+      y-axis:
+        type: boolean
+        x-go-name: YAxis
+      y_formats:
+        items:
+          type: string
+        type: array
+        x-go-name: YFormats
+      yaxes:
+        items:
+          $ref: '#/definitions/Axis'
+        type: array
+        x-go-name: Yaxes
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   PatternsAPIResponse:
     description: PatternsAPIResponse response retruned by patternfile endpoint on
       meshery server
@@ -325,9 +1214,7 @@ definitions:
         type: string
         x-go-name: ContentType
       created_at:
-        format: date-time
-        type: string
-        x-go-name: CreatedAt
+        $ref: '#/definitions/Time'
       duration:
         type: string
         x-go-name: Duration
@@ -336,9 +1223,7 @@ definitions:
       id:
         $ref: '#/definitions/UUID'
       last_run:
-        format: date-time
-        type: string
-        x-go-name: LastRun
+        $ref: '#/definitions/Time'
       load_generators:
         $ref: '#/definitions/StringArray'
       name:
@@ -367,9 +1252,55 @@ definitions:
         type: integer
         x-go-name: TotalResults
       updated_at:
-        format: date-time
+        $ref: '#/definitions/Time'
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceProfileParameters:
+    description: PerformanceProfileParameters structs contains parameters to save
+      a performance profile
+    properties:
+      concurrent_request:
+        description: number of concurrent requests
+        format: int64
+        type: integer
+        x-go-name: ConcurrentRequest
+      duration:
+        description: duration of tests e.g. 30s
         type: string
-        x-go-name: UpdatedAt
+        x-go-name: Duration
+      endpoints:
+        description: array of urls of performance results
+        items:
+          type: string
+        type: array
+        x-go-name: Endpoints
+      load_generators:
+        description: array of load generators
+        items:
+          type: string
+        type: array
+        x-go-name: LoadGenerators
+      name:
+        description: name of performance profile
+        type: string
+        x-go-name: Name
+      qps:
+        description: qps in integer
+        format: int64
+        type: integer
+        x-go-name: QPS
+      service_mesh:
+        description: service mesh for performance tests
+        type: string
+        x-go-name: ServiceMesh
+    required:
+    - name
+    - load_generators
+    - endpoints
+    - service_mesh
+    - concurrent_request
+    - qps
+    - duration
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PerformanceProfilesAPIResponse:
@@ -416,13 +1347,12 @@ definitions:
       server_metrics:
         type: object
         x-go-name: ServerMatrics
-      test_id:
-        type: string
-        x-go-name: TestID
       test_start_time:
         format: date-time
         type: string
         x-go-name: TestStartTime
+      user_id:
+        $ref: '#/definitions/UUID'
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PerformanceResultsAPIResponse:
@@ -446,6 +1376,59 @@ definitions:
         format: uint64
         type: integer
         x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PerformanceTestParameters:
+    description: PerformanceTestParameters contains paramters to run a performance
+      test
+    properties:
+      c:
+        description: concurrent request in number
+        format: int64
+        type: integer
+        x-go-name: ConcurrentRequest
+      dur:
+        description: duration e.g. s for second
+        type: string
+        x-go-name: Duration
+      loadGenerator:
+        description: load generator for performance test
+        type: string
+        x-go-name: LoadGenerator
+      mesh:
+        description: service mesh for performance test
+        type: string
+        x-go-name: ServiceMesh
+      name:
+        description: name of performance test
+        type: string
+        x-go-name: Name
+      qps:
+        description: qps in number
+        format: int64
+        type: integer
+        x-go-name: QPS
+      t:
+        description: time in integer e.g. 30
+        format: int64
+        type: integer
+        x-go-name: Time
+      url:
+        description: url for test
+        type: string
+        x-go-name: URL
+      uuid:
+        description: test-id of pre-existing test
+        format: uuid
+        type: string
+        x-go-name: TestID
+    required:
+    - loadGenerator
+    - url
+    - mesh
+    - c
+    - qps
+    - t
     type: object
     x-go-package: github.com/layer5io/meshery/models
   Plugin:
@@ -804,6 +1787,37 @@ definitions:
     - Type
     type: object
     x-go-package: github.com/docker/docker/api/types
+  Prometheus:
+    description: Prometheus represents the prometheus session config
+    properties:
+      prometheusURL:
+        type: string
+        x-go-name: PrometheusURL
+      selectedPrometheusBoardsConfigs:
+        items:
+          $ref: '#/definitions/SelectedGrafanaConfig'
+        type: array
+        x-go-name: SelectedPrometheusBoardsConfigs
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  Protocol:
+    title: Protocol defines network protocols supported for things like container
+      ports.
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  RangeMap:
+    properties:
+      from:
+        type: string
+        x-go-name: From
+      text:
+        type: string
+        x-go-name: Text
+      to:
+        type: string
+        x-go-name: To
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   RunnerResults:
     properties:
       ActualDuration:
@@ -816,6 +1830,16 @@ definitions:
         x-go-name: QPS
       DurationHistogram:
         properties:
+          Avg:
+            format: double
+            type: number
+            x-go-name: Average
+          Max:
+            format: double
+            type: number
+          Min:
+            format: double
+            type: number
           Percentiles:
             items:
               properties:
@@ -831,8 +1855,483 @@ definitions:
       StartTime:
         format: date-time
         type: string
+      URL:
+        type: string
+      load-generator:
+        type: string
+        x-go-name: LoadGenerator
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  SelectedGrafanaConfig:
+    description: SelectedGrafanaConfig represents the selected boards, panels, and
+      template variables
+    properties:
+      board:
+        $ref: '#/definitions/GrafanaBoard'
+      panels:
+        items:
+          $ref: '#/definitions/Panel'
+        type: array
+        x-go-name: GrafanaPanels
+      templateVars:
+        items:
+          type: string
+        type: array
+        x-go-name: SelectedTemplateVars
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  SeriesOverride:
+    description: for a graph panel
+    properties:
+      alias:
+        type: string
+        x-go-name: Alias
+      bars:
+        type: boolean
+        x-go-name: Bars
+      color:
+        type: string
+        x-go-name: Color
+      fill:
+        format: int64
+        type: integer
+        x-go-name: Fill
+      fillBelowTo:
+        type: string
+        x-go-name: FillBelowTo
+      legend:
+        type: boolean
+        x-go-name: Legend
+      lines:
+        type: boolean
+        x-go-name: Lines
+      nullPointMode:
+        type: string
+        x-go-name: NullPointMode
+      stack:
+        $ref: '#/definitions/BoolString'
+      transform:
+        type: string
+        x-go-name: Transform
+      yaxis:
+        format: int64
+        type: integer
+        x-go-name: YAxis
+      zindex:
+        format: int64
+        type: integer
+        x-go-name: ZIndex
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Service:
+    description: |-
+      Service is a named abstraction of software service (for example, mysql) consisting of local port
+      (for example 3306) that the proxy listens on, and the selector that determines which pods
+      will answer requests sent through the proxy.
+    properties:
+      annotations:
+        additionalProperties:
+          type: string
+        description: |-
+          Annotations is an unstructured key value map stored with a resource that may be
+          set by external tools to store and retrieve arbitrary metadata. They are not
+          queryable and should be preserved when modifying objects.
+          More info: http://kubernetes.io/docs/user-guide/annotations
+          +optional
+        type: object
+        x-go-name: Annotations
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+          +optional
+        type: string
+        x-go-name: APIVersion
+      clusterName:
+        description: |-
+          The name of the cluster which the object belongs to.
+          This is used to distinguish resources with same name and namespace in different clusters.
+          This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
+          +optional
+        type: string
+        x-go-name: ClusterName
+      creationTimestamp:
+        $ref: '#/definitions/Time'
+      deletionGracePeriodSeconds:
+        description: |-
+          Number of seconds allowed for this object to gracefully terminate before
+          it will be removed from the system. Only set when deletionTimestamp is also set.
+          May only be shortened.
+          Read-only.
+          +optional
+        format: int64
+        type: integer
+        x-go-name: DeletionGracePeriodSeconds
+      deletionTimestamp:
+        $ref: '#/definitions/Time'
+      finalizers:
+        description: |-
+          Must be empty before the object is deleted from the registry. Each entry
+          is an identifier for the responsible component that will remove the entry
+          from the list. If the deletionTimestamp of the object is non-nil, entries
+          in this list can only be removed.
+          Finalizers may be processed and removed in any order.  Order is NOT enforced
+          because it introduces significant risk of stuck finalizers.
+          finalizers is a shared field, any actor with permission can reorder it.
+          If the finalizer list is processed in order, then this can lead to a situation
+          in which the component responsible for the first finalizer in the list is
+          waiting for a signal (field value, external system, or other) produced by a
+          component responsible for a finalizer later in the list, resulting in a deadlock.
+          Without enforced ordering finalizers are free to order amongst themselves and
+          are not vulnerable to ordering changes in the list.
+          +optional
+          +patchStrategy=merge
+        items:
+          type: string
+        type: array
+        x-go-name: Finalizers
+      generateName:
+        description: |-
+          GenerateName is an optional prefix, used by the server, to generate a unique
+          name ONLY IF the Name field has not been provided.
+          If this field is used, the name returned to the client will be different
+          than the name passed. This value will also be combined with a unique suffix.
+          The provided value has the same validation rules as the Name field,
+          and may be truncated by the length of the suffix required to make the value
+          unique on the server.
+
+          If this field is specified and the generated name exists, the server will
+          NOT return a 409 - instead, it will either return 201 Created or 500 with Reason
+          ServerTimeout indicating a unique name could not be found in the time allotted, and the client
+          should retry (optionally after the time indicated in the Retry-After header).
+
+          Applied only if Name is not specified.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
+          +optional
+        type: string
+        x-go-name: GenerateName
+      generation:
+        description: |-
+          A sequence number representing a specific generation of the desired state.
+          Populated by the system. Read-only.
+          +optional
+        format: int64
+        type: integer
+        x-go-name: Generation
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+          +optional
+        type: string
+        x-go-name: Kind
+      labels:
+        additionalProperties:
+          type: string
+        description: |-
+          Map of string keys and values that can be used to organize and categorize
+          (scope and select) objects. May match selectors of replication controllers
+          and services.
+          More info: http://kubernetes.io/docs/user-guide/labels
+          +optional
+        type: object
+        x-go-name: Labels
+      managedFields:
+        description: |-
+          ManagedFields maps workflow-id and version to the set of fields
+          that are managed by that workflow. This is mostly for internal
+          housekeeping, and users typically shouldn't need to set or
+          understand this field. A workflow can be the user's name, a
+          controller's name, or the name of a specific apply path like
+          "ci-cd". The set of fields is always in the version that the
+          workflow used when modifying the object.
+
+          +optional
+        items:
+          $ref: '#/definitions/ManagedFieldsEntry'
+        type: array
+        x-go-name: ManagedFields
+      name:
+        description: |-
+          Name must be unique within a namespace. Is required when creating resources, although
+          some resources may allow a client to request the generation of an appropriate name
+          automatically. Name is primarily intended for creation idempotence and configuration
+          definition.
+          Cannot be updated.
+          More info: http://kubernetes.io/docs/user-guide/identifiers#names
+          +optional
+        type: string
+        x-go-name: Name
+      namespace:
+        description: |-
+          Namespace defines the space within each name must be unique. An empty namespace is
+          equivalent to the "default" namespace, but "default" is the canonical representation.
+          Not all objects are required to be scoped to a namespace - the value of this field for
+          those objects will be empty.
+
+          Must be a DNS_LABEL.
+          Cannot be updated.
+          More info: http://kubernetes.io/docs/user-guide/namespaces
+          +optional
+        type: string
+        x-go-name: Namespace
+      ownerReferences:
+        description: |-
+          List of objects depended by this object. If ALL objects in the list have
+          been deleted, this object will be garbage collected. If this object is managed by a controller,
+          then an entry in this list will point to this controller, with the controller field set to true.
+          There cannot be more than one managing controller.
+          +optional
+          +patchMergeKey=uid
+          +patchStrategy=merge
+        items:
+          $ref: '#/definitions/OwnerReference'
+        type: array
+        x-go-name: OwnerReferences
+      resourceVersion:
+        description: |-
+          An opaque value that represents the internal version of this object that can
+          be used by clients to determine when objects have changed. May be used for optimistic
+          concurrency, change detection, and the watch operation on a resource or set of resources.
+          Clients must treat these values as opaque and passed unmodified back to the server.
+          They may only be valid for a particular resource or set of resources.
+
+          Populated by the system.
+          Read-only.
+          Value must be treated as opaque by clients and .
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+          +optional
+        type: string
+        x-go-name: ResourceVersion
+      selfLink:
+        description: |-
+          SelfLink is a URL representing this object.
+          Populated by the system.
+          Read-only.
+
+          DEPRECATED
+          Kubernetes will stop propagating this field in 1.20 release and the field is planned
+          to be removed in 1.21 release.
+          +optional
+        type: string
+        x-go-name: SelfLink
+      spec:
+        $ref: '#/definitions/ServiceSpec'
+      status:
+        $ref: '#/definitions/ServiceStatus'
+      uid:
+        $ref: '#/definitions/UID'
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  ServiceAffinity:
+    description: Session Affinity Type string
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  ServiceExternalTrafficPolicyType:
+    description: Service External Traffic Policy Type string
+    type: string
+    x-go-package: k8s.io/api/core/v1
+  ServicePort:
+    properties:
+      appProtocol:
+        description: |-
+          The application protocol for this port.
+          This field follows standard Kubernetes label syntax.
+          Un-prefixed names are reserved for IANA standard service names (as per
+          RFC-6335 and http://www.iana.org/assignments/service-names).
+          Non-standard protocols should use prefixed names such as
+          mycompany.com/my-custom-protocol.
+          Field can be enabled with ServiceAppProtocol feature gate.
+          +optional
+        type: string
+        x-go-name: AppProtocol
+      name:
+        description: |-
+          The name of this port within the service. This must be a DNS_LABEL.
+          All ports within a ServiceSpec must have unique names. When considering
+          the endpoints for a Service, this must match the 'name' field in the
+          EndpointPort.
+          Optional if only one ServicePort is defined on this service.
+          +optional
+        type: string
+        x-go-name: Name
+      nodePort:
+        description: |-
+          The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
+          Usually assigned by the system. If specified, it will be allocated to the service
+          if unused or else creation of the service will fail.
+          Default is to auto-allocate a port if the ServiceType of this Service requires one.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+          +optional
+        format: int32
+        type: integer
+        x-go-name: NodePort
+      port:
+        description: The port that will be exposed by this service.
+        format: int32
+        type: integer
+        x-go-name: Port
+      protocol:
+        $ref: '#/definitions/Protocol'
+      targetPort:
+        $ref: '#/definitions/IntOrString'
+    title: ServicePort contains information on service's port.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  ServiceSpec:
+    properties:
+      clusterIP:
+        description: |-
+          clusterIP is the IP address of the service and is usually assigned
+          randomly by the master. If an address is specified manually and is not in
+          use by others, it will be allocated to the service; otherwise, creation
+          of the service will fail. This field can not be changed through updates.
+          Valid values are "None", empty string (""), or a valid IP address. "None"
+          can be specified for headless services when proxying is not required.
+          Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if
+          type is ExternalName.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+          +optional
+        type: string
+        x-go-name: ClusterIP
+      externalIPs:
+        description: |-
+          externalIPs is a list of IP addresses for which nodes in the cluster
+          will also accept traffic for this service.  These IPs are not managed by
+          Kubernetes.  The user is responsible for ensuring that traffic arrives
+          at a node with this IP.  A common example is external load-balancers
+          that are not part of the Kubernetes system.
+          +optional
+        items:
+          type: string
+        type: array
+        x-go-name: ExternalIPs
+      externalName:
+        description: |-
+          externalName is the external reference that kubedns or equivalent will
+          return as a CNAME record for this service. No proxying will be involved.
+          Must be a valid RFC-1123 hostname (https://tools.ietf.org/html/rfc1123)
+          and requires Type to be ExternalName.
+          +optional
+        type: string
+        x-go-name: ExternalName
+      externalTrafficPolicy:
+        $ref: '#/definitions/ServiceExternalTrafficPolicyType'
+      healthCheckNodePort:
+        description: |-
+          healthCheckNodePort specifies the healthcheck nodePort for the service.
+          If not specified, HealthCheckNodePort is created by the service api
+          backend with the allocated nodePort. Will use user-specified nodePort value
+          if specified by the client. Only effects when Type is set to LoadBalancer
+          and ExternalTrafficPolicy is set to Local.
+          +optional
+        format: int32
+        type: integer
+        x-go-name: HealthCheckNodePort
+      ipFamily:
+        $ref: '#/definitions/IPFamily'
+      loadBalancerIP:
+        description: |-
+          Only applies to Service Type: LoadBalancer
+          LoadBalancer will get created with the IP specified in this field.
+          This feature depends on whether the underlying cloud-provider supports specifying
+          the loadBalancerIP when a load balancer is created.
+          This field will be ignored if the cloud-provider does not support the feature.
+          +optional
+        type: string
+        x-go-name: LoadBalancerIP
+      loadBalancerSourceRanges:
+        description: |-
+          If specified and supported by the platform, this will restrict traffic through the cloud-provider
+          load-balancer will be restricted to the specified client IPs. This field will be ignored if the
+          cloud-provider does not support the feature."
+          More info: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+          +optional
+        items:
+          type: string
+        type: array
+        x-go-name: LoadBalancerSourceRanges
+      ports:
+        description: |-
+          The list of ports that are exposed by this service.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+          +patchMergeKey=port
+          +patchStrategy=merge
+          +listType=map
+          +listMapKey=port
+          +listMapKey=protocol
+        items:
+          $ref: '#/definitions/ServicePort'
+        type: array
+        x-go-name: Ports
+      publishNotReadyAddresses:
+        description: |-
+          publishNotReadyAddresses, when set to true, indicates that DNS implementations
+          must publish the notReadyAddresses of subsets for the Endpoints associated with
+          the Service. The default value is false.
+          The primary use case for setting this field is to use a StatefulSet's Headless Service
+          to propagate SRV records for its Pods without respect to their readiness for purpose
+          of peer discovery.
+          +optional
+        type: boolean
+        x-go-name: PublishNotReadyAddresses
+      selector:
+        additionalProperties:
+          type: string
+        description: |-
+          Route service traffic to pods with label keys and values matching this
+          selector. If empty or not present, the service is assumed to have an
+          external process managing its endpoints, which Kubernetes will not
+          modify. Only applies to types ClusterIP, NodePort, and LoadBalancer.
+          Ignored if type is ExternalName.
+          More info: https://kubernetes.io/docs/concepts/services-networking/service/
+          +optional
+        type: object
+        x-go-name: Selector
+      sessionAffinity:
+        $ref: '#/definitions/ServiceAffinity'
+      sessionAffinityConfig:
+        $ref: '#/definitions/SessionAffinityConfig'
+      topologyKeys:
+        description: |-
+          topologyKeys is a preference-order list of topology keys which
+          implementations of services should use to preferentially sort endpoints
+          when accessing this Service, it can not be used at the same time as
+          externalTrafficPolicy=Local.
+          Topology keys must be valid label keys and at most 16 keys may be specified.
+          Endpoints are chosen based on the first topology key with available backends.
+          If this field is specified and all entries have no backends that match
+          the topology of the client, the service has no backends for that client
+          and connections should fail.
+          The special value "*" may be used to mean "any topology". This catch-all
+          value, if used, only makes sense as the last value in the list.
+          If this is not specified or empty, no topology constraints will be applied.
+          +optional
+        items:
+          type: string
+        type: array
+        x-go-name: TopologyKeys
+      type:
+        $ref: '#/definitions/ServiceType'
+    title: ServiceSpec describes the attributes that a user creates on a service.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  ServiceStatus:
+    properties:
+      loadBalancer:
+        $ref: '#/definitions/LoadBalancerStatus'
+    title: ServiceStatus represents the current status of a service.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  ServiceType:
+    description: Service Type string describes ingress methods for a service
+    type: string
+    x-go-package: k8s.io/api/core/v1
   ServiceUpdateResponse:
     description: ServiceUpdateResponse service update response
     properties:
@@ -843,6 +2342,50 @@ definitions:
         type: array
     type: object
     x-go-package: github.com/docker/docker/api/types
+  SessionAffinityConfig:
+    properties:
+      clientIP:
+        $ref: '#/definitions/ClientIPConfig'
+    title: SessionAffinityConfig represents the configurations of session affinity.
+    type: object
+    x-go-package: k8s.io/api/core/v1
+  Sort:
+    description: for a graph panel
+    properties:
+      col:
+        format: int64
+        type: integer
+        x-go-name: Col
+      desc:
+        type: boolean
+        x-go-name: Desc
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  SparkLine:
+    description: for a singlestat
+    properties:
+      fillColor:
+        type: string
+        x-go-name: FillColor
+      full:
+        type: boolean
+        x-go-name: Full
+      lineColor:
+        type: string
+        x-go-name: LineColor
+      show:
+        type: boolean
+        x-go-name: Show
+      ymax:
+        format: double
+        type: number
+        x-go-name: YMax
+      ymin:
+        format: double
+        type: number
+        x-go-name: YMin
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   StringArray:
     items:
       type: string
@@ -850,6 +2393,211 @@ definitions:
       types.
     type: array
     x-go-package: github.com/lib/pq
+  Target:
+    description: for an any panel
+    properties:
+      alias:
+        type: string
+        x-go-name: Alias
+      bucketAggs:
+        items:
+          properties:
+            field:
+              type: string
+              x-go-name: Field
+            id:
+              type: string
+              x-go-name: ID
+            settings:
+              properties:
+                interval:
+                  type: string
+                  x-go-name: Interval
+                min_doc_count:
+                  format: int64
+                  type: integer
+                  x-go-name: MinDocCount
+                order:
+                  type: string
+                  x-go-name: Order
+                orderBy:
+                  type: string
+                  x-go-name: OrderBy
+                size:
+                  type: string
+                  x-go-name: Size
+              type: object
+              x-go-name: Settings
+            type:
+              type: string
+              x-go-name: Type
+          type: object
+        type: array
+        x-go-name: BucketAggs
+      datasource:
+        type: string
+        x-go-name: Datasource
+      dimensions:
+        additionalProperties:
+          type: string
+        type: object
+        x-go-name: Dimensions
+      dsType:
+        description: For Elasticsearch
+        type: string
+        x-go-name: DsType
+      expr:
+        description: For Prometheus
+        type: string
+        x-go-name: Expr
+      format:
+        type: string
+        x-go-name: Format
+      instant:
+        type: boolean
+        x-go-name: Instant
+      interval:
+        type: string
+        x-go-name: Interval
+      intervalFactor:
+        format: int64
+        type: integer
+        x-go-name: IntervalFactor
+      legendFormat:
+        type: string
+        x-go-name: LegendFormat
+      metricName:
+        type: string
+        x-go-name: MetricName
+      metrics:
+        items:
+          properties:
+            field:
+              type: string
+              x-go-name: Field
+            id:
+              type: string
+              x-go-name: ID
+            type:
+              type: string
+              x-go-name: Type
+          type: object
+        type: array
+        x-go-name: Metrics
+      namespace:
+        description: For CloudWatch
+        type: string
+        x-go-name: Namespace
+      period:
+        type: string
+        x-go-name: Period
+      query:
+        type: string
+        x-go-name: Query
+      rawQuery:
+        type: boolean
+        x-go-name: RawQuery
+      refId:
+        type: string
+        x-go-name: RefID
+      region:
+        type: string
+        x-go-name: Region
+      statistics:
+        items:
+          type: string
+        type: array
+        x-go-name: Statistics
+      step:
+        format: int64
+        type: integer
+        x-go-name: Step
+      target:
+        description: For Graphite
+        type: string
+        x-go-name: Target
+      timeField:
+        type: string
+        x-go-name: TimeField
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Threshold:
+    properties:
+      colorMode:
+        description: critical, warning, ok, custom
+        type: string
+        x-go-name: ColorMode
+      fill:
+        type: boolean
+        x-go-name: Fill
+      fillColor:
+        description: 'hexadecimal color (e.g. #629e51, only when ColorMode is "custom")'
+        type: string
+        x-go-name: FillColor
+      line:
+        type: boolean
+        x-go-name: Line
+      lineColor:
+        description: 'hexadecimal color (e.g. #629e51, only when ColorMode is "custom")'
+        type: string
+        x-go-name: LineColor
+      op:
+        description: gt or lt
+        type: string
+        x-go-name: Op
+      value:
+        description: |-
+          the alert threshold value, we do not omitempty, since 0 is a valid
+          threshold
+        format: float
+        type: number
+        x-go-name: Value
+      yaxis:
+        description: left or right
+        type: string
+        x-go-name: Yaxis
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Time:
+    description: |-
+      +protobuf.options.marshal=false
+      +protobuf.as=Timestamp
+      +protobuf.options.(gogoproto.goproto_stringer)=false
+    title: |-
+      Time is a wrapper around time.Time which supports correct
+      marshaling to YAML and JSON.  Wrappers are provided for many
+      of the factory methods that the time package offers.
+    type: object
+    x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
+  Tooltip:
+    properties:
+      msResolution:
+        type: boolean
+        x-go-name: MsResolution
+      shared:
+        type: boolean
+        x-go-name: Shared
+      sort:
+        format: int64
+        type: integer
+        x-go-name: Sort
+      value_type:
+        type: string
+        x-go-name: ValueType
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  Type:
+    format: int64
+    title: Type represents the stored type of IntOrString.
+    type: integer
+    x-go-package: k8s.io/apimachinery/pkg/util/intstr
+  UID:
+    description: |-
+      UID is a type that holds unique ID values, including UUIDs.  Because we
+      don't ONLY use UUIDs, this is an alias to string.  Being a type captures
+      intent and helps make sure that UIDs and names do not get conflated.
+    type: string
+    x-go-package: k8s.io/apimachinery/pkg/types
   UUID:
     items:
       format: uint8
@@ -857,6 +2605,20 @@ definitions:
     title: UUID is an array type to represent the value of a UUID, as defined in RFC-4122.
     type: array
     x-go-package: github.com/gofrs/uuid
+  ValueMap:
+    description: for a singlestat
+    properties:
+      op:
+        type: string
+        x-go-name: Op
+      text:
+        type: string
+        x-go-name: TextType
+      value:
+        type: string
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   Volume:
     description: Volume volume
     properties:
@@ -977,6 +2739,52 @@ definitions:
     - Size
     type: object
     x-go-package: github.com/docker/docker/api/types
+  link:
+    description: link represents link to another dashboard or external weblink
+    properties:
+      asDropdown:
+        type: boolean
+        x-go-name: AsDropdown
+      dashUri:
+        type: string
+        x-go-name: DashURI
+      dashboard:
+        type: string
+        x-go-name: Dashboard
+      icon:
+        type: string
+        x-go-name: Icon
+      includeVars:
+        type: boolean
+        x-go-name: IncludeVars
+      keepTime:
+        type: boolean
+        x-go-name: KeepTime
+      params:
+        type: string
+        x-go-name: Params
+      tags:
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      targetBlank:
+        type: boolean
+        x-go-name: TargetBlank
+      title:
+        type: string
+        x-go-name: Title
+      tooltip:
+        type: string
+        x-go-name: Tooltip
+      type:
+        type: string
+        x-go-name: Type
+      url:
+        type: string
+        x-go-name: URL
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
 info:
   description: |-
     the purpose of this application is to provide an application
@@ -990,32 +2798,7 @@ info:
   title: Meshery API.
   version: 0.4.27
 paths:
-  /api/oam/{type}:
-    get:
-      description: |-
-        Getting list of workloads/traits/scopes
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idGETOAMMesheryPattern
-      responses:
-        "200":
-          description: ""
-      summary: Handles the get requests for the OAM objects
-      tags:
-      - PatternsAPI
-    post:
-      description: |-
-        Adding a workload/trait/scope
-
-        {type} being of either trait, scope, workload; registration of adapter capabilities.
-      operationId: idPOSTOAMMesheryPattern
-      responses:
-        "200":
-          description: ""
-      summary: Handles registering OMA objects
-      tags:
-      - PatternsAPI
-  /api/pattern:
+  /api/experimental/pattern:
     get:
       description: |-
         Returns the list of all the patterns saved by the current user
@@ -1036,7 +2819,7 @@ paths:
       summary: Handle POST requests for patterns
       tags:
       - PatternsAPI
-  /api/pattern/{id}:
+  /api/experimental/pattern/{id}:
     delete:
       description: 'Deletes a meshery pattern with ID: id'
       operationId: idDeleteMesheryPattern
@@ -1071,6 +2854,211 @@ paths:
       summary: Handle GET for a Meshery Pattern
       tags:
       - PatternsAPI
+  /api/oam/{type}:
+    get:
+      description: |-
+        Getting list of workloads/traits/scopes
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idGETOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles the get requests for the OAM objects
+      tags:
+      - PatternsAPI
+    post:
+      description: |-
+        Adding a workload/trait/scope
+
+        {type} being of either trait, scope, workload; registration of adapter capabilities.
+      operationId: idPOSTOAMMesheryPattern
+      responses:
+        "200":
+          description: ""
+      summary: Handles registering OMA objects
+      tags:
+      - PatternsAPI
+  /api/telemetry/metrics/board_import:
+    post:
+      description: Used for importing Grafana board for Prometheus
+      operationId: idPostPrometheusBoardImport
+      responses:
+        "200":
+          $ref: '#/responses/prometheusBoardImportRespWrapper'
+      summary: Handle POST request for Prometheus board import
+      tags:
+      - PrometheusAPI
+  /api/telemetry/metrics/boards:
+    post:
+      description: Used to persist selected board and panels
+      operationId: idPostPrometheusBoard
+      parameters:
+      - in: body
+        name: Body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/SelectedGrafanaConfig'
+          type: array
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for Prometheus board
+      tags:
+      - PrometheusAPI
+  /api/telemetry/metrics/config:
+    delete:
+      description: Used for deleting Prometheus configuration
+      operationId: idDeletePrometheusConfig
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE for Prometheus configuration
+      tags:
+      - PrometheusAPI
+    get:
+      description: Used for fetching Prometheus configuration
+      operationId: idGetPrometheusConfig
+      responses:
+        "200":
+          $ref: '#/responses/prometheusConfigResponseWrapper'
+      summary: Handle GET for Prometheus configuration
+      tags:
+      - PrometheusAPI
+    post:
+      description: Used for persisting Prometheus configuration
+      operationId: idPostPrometheusConfig
+      parameters:
+      - in: body
+        name: prometheusURL
+        schema:
+          type: string
+        x-go-name: PrometheusURL
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST for Prometheus configuration
+      tags:
+      - PrometheusAPI
+  /api/telemetry/metrics/grafana/boards:
+    get:
+      description: Used for fetching Grafana boards and panels
+      operationId: idGetGrafanaBoards
+      parameters:
+      - in: query
+        name: dashboardSearch
+        type: string
+        x-go-name: DashboardSearch
+      responses:
+        "200":
+          $ref: '#/responses/grafanaBoardsResponseWrapper'
+      summary: Handle GET request for Grafana boards
+      tags:
+      - GrafanaAPI
+    post:
+      description: Used for persist Grafana boards and panel selections
+      operationId: idPostGrafanaBoards
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for Grafana boards
+      tags:
+      - GrafanaAPI
+  /api/telemetry/metrics/grafana/config:
+    delete:
+      description: Used for Delete Grafana configuration
+      operationId: idDeleteGrafanaConfig
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for Grafana configuration
+      tags:
+      - GrafanaAPI
+    get:
+      description: Used for fetching Grafana configuration
+      operationId: idGetGrafanaConfig
+      responses:
+        "200":
+          $ref: '#/responses/grafanaConfigResponseWrapper'
+      summary: Handle GET request for Grafana configuration
+      tags:
+      - GrafanaAPI
+    post:
+      description: Used for persisting Grafana configuration
+      operationId: idPostGrafanaConfig
+      parameters:
+      - in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/GrafanaConfigParams'
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for Grafana configuration
+      tags:
+      - GrafanaAPI
+  /api/telemetry/metrics/grafana/ping:
+    get:
+      description: Used to initiate a Grafana ping
+      operationId: idGetGrafanaPing
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for Grafana ping
+      tags:
+      - GrafanaAPI
+  /api/telemetry/metrics/grafana/query:
+    get:
+      description: Used for handling Grafana queries
+      operationId: idGetGrafanaQuery
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for Grafana queries
+      tags:
+      - GrafanaAPI
+  /api/telemetry/metrics/grafana/scan:
+    get:
+      description: Fetches and returns Grafana
+      operationId: idGetGrafana
+      responses:
+        "200":
+          $ref: '#/responses/v1ServicesMapResponseWrapper'
+      summary: Handle GET request for Grafana
+      tags:
+      - GrafanaAPI
+  /api/telemetry/metrics/ping:
+    get:
+      description: Used to ping prometheus
+      operationId: idGetPrometheusPing
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for Prometheus Ping
+      tags:
+      - PrometheusAPI
+  /api/telemetry/metrics/query:
+    get:
+      description: Used to prometheus queries
+      operationId: idGetPrometheusQuery
+      responses:
+        "200":
+          description: ""
+      summary: Handle GET request for Prometheus Query
+      tags:
+      - PrometheusAPI
+  /api/telemetry/metrics/static-board:
+    get:
+      description: Used to fetch the static board
+      operationId: idGetPrometheusStaticBoard
+      responses:
+        "200":
+          $ref: '#/responses/prometheusStaticBoardRespWrapper'
+      summary: Handle GET request for Prometheus static board
+      tags:
+      - PrometheusAPI
   /api/user/performance/profiles:
     get:
       description: Returns the list of all the performance profiles saved by the current
@@ -1088,53 +3076,9 @@ paths:
       operationId: idSavePerformanceProfile
       parameters:
       - in: body
-        name: name
-        required: true
+        name: Body
         schema:
-          type: string
-        x-go-name: Name
-      - description: array of load generators
-        in: query
-        items:
-          type: string
-        name: load_generators
-        required: true
-        type: array
-        x-go-name: LoadGenerators
-      - description: array of urls of performance results
-        in: query
-        items:
-          type: string
-        name: endpoints
-        required: true
-        type: array
-        x-go-name: Endpoints
-      - description: service mesh for performance tests
-        in: query
-        name: service_mesh
-        required: true
-        type: string
-        x-go-name: ServiceMesh
-      - description: number of concurrent requests
-        format: int64
-        in: query
-        name: concurrent_request
-        required: true
-        type: integer
-        x-go-name: ConcurrentRequest
-      - description: qps in integer
-        format: int64
-        in: query
-        name: qps
-        required: true
-        type: integer
-        x-go-name: QPS
-      - description: duration of tests e.g. 30s
-        in: query
-        name: duration
-        required: true
-        type: string
-        x-go-name: Duration
+          $ref: '#/definitions/PerformanceProfileParameters'
       responses:
         "200":
           $ref: '#/responses/performanceProfileResponseWrapper'
@@ -1199,61 +3143,9 @@ paths:
       description: Runs the load test with the given parameters
       operationId: idRunPerformanceTest
       parameters:
-      - description: test-id of pre-existing test
-        format: uuid
+      - $ref: '#/definitions/PerformanceTestParameters'
         in: query
-        name: uuid
-        type: string
-        x-go-name: TestID
-      - description: name of performance test
-        in: query
-        name: name
-        type: string
-        x-go-name: Name
-      - description: load generator for performance test
-        in: query
-        name: loadGenerator
-        required: true
-        type: string
-        x-go-name: LoadGenerator
-      - description: url for test
-        in: query
-        name: url
-        required: true
-        type: string
-        x-go-name: URL
-      - description: service mesh for performance test
-        in: query
-        name: mesh
-        required: true
-        type: string
-        x-go-name: ServiceMesh
-      - description: concurrent request in number
-        format: int64
-        in: query
-        name: c
-        required: true
-        type: integer
-        x-go-name: ConcurrentRequest
-      - description: qps in number
-        format: int64
-        in: query
-        name: qps
-        required: true
-        type: integer
-        x-go-name: QPS
-      - description: time in integer e.g. 30
-        format: int64
-        in: query
-        name: t
-        required: true
-        type: integer
-        x-go-name: Time
-      - description: duration e.g. s for second
-        in: query
-        name: dur
-        type: string
-        x-go-name: Duration
+        name: Query
       responses:
         "200":
           description: ""
@@ -1273,6 +3165,16 @@ paths:
 produces:
 - application/json
 responses:
+  grafanaBoardsResponseWrapper:
+    description: Returns Grafana boards and panels
+    schema:
+      items:
+        $ref: '#/definitions/GrafanaBoard'
+      type: array
+  grafanaConfigResponseWrapper:
+    description: Returns Grafana configs
+    schema:
+      $ref: '#/definitions/Grafana'
   mesheryPatternResponseWrapper:
     description: Returns a single meshery pattern
     schema:
@@ -1295,6 +3197,28 @@ responses:
     description: Returns all performance results
     schema:
       $ref: '#/definitions/PerformanceResultsAPIResponse'
+  prometheusBoardImportRespWrapper:
+    description: Response for prometheus board import
+    schema:
+      $ref: '#/definitions/GrafanaBoard'
+  prometheusConfigResponseWrapper:
+    description: Returns prometheus configuration
+    schema:
+      $ref: '#/definitions/Prometheus'
+  prometheusStaticBoardRespWrapper:
+    description: Returns Prometheus static board
+    schema:
+      additionalProperties:
+        $ref: '#/definitions/GrafanaBoard'
+      type: object
+  v1ServicesMapResponseWrapper:
+    description: Returns a map for v1 services
+    schema:
+      additionalProperties:
+        items:
+          $ref: '#/definitions/Service'
+        type: array
+      type: object
 schemes:
 - http
 security:

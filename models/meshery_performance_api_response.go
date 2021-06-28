@@ -3,8 +3,49 @@ package models
 import (
 	"time"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/gofrs/uuid"
 )
+
+// PerformanceProfileParameters structs contains parameters to save a performance profile
+type PerformanceProfileParameters struct {
+	// name of performance profile
+	Name string `json:"name,omitempty"`
+	// array of load generators
+	LoadGenerators []string `json:"load_generators,omitempty" gorm:"type:text[]"`
+	// array of urls of performance results
+	Endpoints []string `json:"endpoints,omitempty" gorm:"type:text[]"`
+	// service mesh for performance tests
+	ServiceMesh string `json:"service_mesh,omitempty"`
+	// number of concurrent requests
+	ConcurrentRequest int `json:"concurrent_request,omitempty"`
+	// qps in integer
+	QPS int `json:"qps,omitempty"`
+	// duration of tests e.g. 30s
+	Duration string `json:"duration,omitempty"`
+}
+
+// PerformanceTestParameters contains paramters to run a performance test
+type PerformanceTestParameters struct {
+	// test-id of pre-existing test
+	TestID strfmt.UUID `json:"uuid,omitempty"`
+	// name of performance test
+	Name string `json:"name"`
+	// load generator for performance test
+	LoadGenerator string `json:"loadGenerator"`
+	// url for test
+	URL string `json:"url"`
+	// service mesh for performance test
+	ServiceMesh string `json:"mesh"`
+	// concurrent request in number
+	ConcurrentRequest int `json:"c"`
+	// qps in number
+	QPS int `json:"qps"`
+	// time in integer e.g. 30
+	Time int `json:"t"`
+	// duration e.g. s for second
+	Duration string `json:"dur"`
+}
 
 // PerformanceProfilesAPIResponse response retruned by performance endpoint on meshery server
 type PerformanceProfilesAPIResponse struct {
