@@ -61,7 +61,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Run Test with Existing profile with new URL",
+			Name:             "Run Test with Existing profile with --url",
 			Args:             []string{"apply", "new", "--url", "https://www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
 			ExpectedResponse: "apply.success.output.golden",
 			URLs: []utils.MockURL{
@@ -82,7 +82,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Run Test with Existing profile with new URL without protocol",
+			Name:             "Run Test with Existing profile with --url without protocol",
 			Args:             []string{"apply", "new", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
 			ExpectedResponse: "apply.no.protocol.output.golden",
 			URLs: []utils.MockURL{
@@ -103,7 +103,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Name:             "Run Test with new profile without protocol",
+			Name:             "Run Test with new profile with --url without protocol",
 			Args:             []string{"apply", "--profile", "test", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
 			ExpectedResponse: "apply.no.protocol.output.golden",
 			URLs: []utils.MockURL{
