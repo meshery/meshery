@@ -18,26 +18,7 @@ on:
         default: 'warning'
 
 jobs:
-  golangci:
-    name: golangci-lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.32
-          # Optional: working directory, useful for monorepos
-          working-directory: mesheryctl
-
-          # Optional: golangci-lint command line arguments.
-          # args: --issues-exit-code=0
-
-          # Optional: show only new issues if it's a pull request. The default value is `false`.
-          # only-new-issues: true
   unit-tests:
-    needs: [golangci]
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +38,6 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
   integration-tests:
-    needs: [golangci]
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
