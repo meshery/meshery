@@ -121,7 +121,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
+			ExpectError: true,
 		},
 		{
 			Name:             "Run Test with new profile",
@@ -158,7 +158,7 @@ func TestApplyCmd(t *testing.T) {
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
-					Response:     "apply.run.new.profile.test.output.golden",
+					Response:     "apply.run.new.profile.test.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -179,7 +179,7 @@ func TestApplyCmd(t *testing.T) {
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
-					Response:     "apply.run.new.profile.test.output.golden",
+					Response:     "apply.run.new.profile.test.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -200,7 +200,7 @@ func TestApplyCmd(t *testing.T) {
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
-					Response:     "apply.run.new.perf.test.output.golden",
+					Response:     "apply.run.new.perf.test.response.golden",
 					ResponseCode: 200,
 				},
 			},
