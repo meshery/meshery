@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 // Our variables
 $base-font-family: Helvetica, Arial, sans-serif;
@@ -144,3 +145,155 @@ $on-laptop:        800px;
         color: red;
     }
 }
+=======
+
+// Our variables
+$base-font-family: Helvetica, Arial, sans-serif;
+$base-font-size:   16px;
+$small-font-size:  $base-font-size * 0.875;
+$base-line-height: 1.5;
+
+$spacing-unit:     30px;
+
+$text-color:       #111;
+$background-color: #fdfdfd;
+$brand-color:      #2a7ae2;
+
+$grey-color:       #828282;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark:  darken($grey-color, 25%);
+
+// Width of the content area
+$content-width:    800px;
+
+$on-palm:          600px;
+$on-laptop:        800px;
+
+@mixin swagger-method($color) {
+    border: 1px solid $color;
+
+    .swagger-method-title {
+        background: lighten($color, 30%);
+    }
+
+    .swagger-method-link {
+        color: darken($color, 20%);
+    }
+
+    .swagger-method-name {
+        background: $color;
+    }
+}
+
+.swagger-path {
+    font-weight: bolder;
+    font-size: $base-font-size * 1.2;
+    margin: 0 0 30px 0;
+    font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+}
+
+.swagger-method {
+    align-self: center;
+    border-radius: 5px;
+    margin:0 0 5px 0;
+}
+
+.swagger-method-title {
+    padding: 8px 5px 5px 5px;
+    font-size: $base-font-size;
+    margin: 0;
+    cursor: pointer;
+}
+
+.swagger-method-link {
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.swagger-method-name {
+    font-weight: bolder;
+    padding: 6px 0;
+    display: inline-block;
+    width: 80px;
+    text-align: center;
+    color: white;
+    margin-right: 10px;
+}
+
+.swagger-method-get {
+    @include swagger-method(#4fc49d);
+}
+
+.swagger-method-post {
+    @include swagger-method(#87adb6);
+}
+
+.swagger-method-put {
+    @include swagger-method(#1eaaaf);
+}
+
+.swagger-method-patch {
+    @include swagger-method(#36bea1);
+}
+
+.swagger-method-delete {
+    @include swagger-method(#E27A7A);
+}
+
+.swagger-method-details {
+    padding: 20px;
+    display: none;
+    &.open {
+        display: block;
+    }
+}
+
+.swagger-response {
+    font-size: $base-font-size;
+    font-weight: bolder;
+    h5 {
+        margin: 10px 0 10px 0;
+    }
+}
+
+.swagger-response-code {
+    font-weight: bolder;
+    font-size: $base-font-size;
+    margin: 2px 0 2px 0;
+    &:after {
+        content: ' — ';
+    }
+}
+
+.swagger-parameters-table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    margin-bottom: $spacing-unit;
+    width: 100%;
+    display:table-header-group;
+    font-size: 0.9rem;
+
+    th, td {
+        border: 1px solid darken($grey-color-light, 5%);
+        padding: 4px 10px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    th {
+        background: lighten($grey-color-light, 6%);
+    }
+}
+
+.swagger-parameter-required {
+    &:after {
+        content: ' *';
+        color: red;
+    }
+}
+
+
+
+
+>>>>>>> 2c65cef6 (update REST API Docs)

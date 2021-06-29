@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 layout: default
 ---
@@ -178,3 +179,185 @@ else {
     document.addEventListener("DOMContentLoaded", init);
 }
 </script>
+=======
+---
+layout: default
+---
+
+{{ content }}
+
+{% if page.data %}
+{% assign swagger = site.data[page.data] %}
+{% else %}
+{% assign swagger = page %}
+{% endif %}
+
+{% for route in swagger.paths %}
+<div class="swagger-path">
+    <h2 class="swagger-path">{{ route[0] }}</h>
+    {% for method in route[1] %}
+    <div class="swagger-method swagger-method-{{ method[0] }}">
+        <h3 class="swagger-method-title">
+            <a href="#" class="swagger-method-link">
+                <span class="swagger-method-name">{{ method[0] | upcase }}</span>
+                {{ method[1].summary }}
+            </a>
+        </h3>
+        <div class="swagger-method-details">
+            {% if method[1].parameters %}
+            <div class="swagger-parameters">
+                <h5><b>Parameters</b></h5>
+                <table class="swagger-parameters-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Located in</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for parameter in method[1].parameters %}
+                        <tr>
+                            <td>
+                                {% if parameter.required %}
+                                <span class="swagger-parameter-required">
+                                {% endif %}
+                                {{ parameter.name }}
+                                {% if parameter.required %}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ parameter.in }}</td>
+                            <td>{{ parameter.description }}</td>
+                            <td>
+                                {% if parameter.type %}
+                                {{ parameter.type | capitalize }}
+                                {% if parameter.items %}
+                                of {{ parameter.items.type | capitalize }}
+                                {% endif %}
+                                {% else %}
+                                Unknown
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div><br>
+            {% endif %}
+            {% if method[1].responses %} 
+            <div class="swagger-response">
+                <h5><b>Responses</b></h5>
+                {% for response in method[1].responses %}
+                <h5>
+                    <span class="swagger-response-code">{{ response[0] }}</span>
+                    <span class="swagger-response">{{ response[1].description }}</span>
+                </h5>
+                {% if response[1].schema.properties %}
+                 <table class="swagger-parameters-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Format</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for parameter in response[1].schema.properties %}
+                        <tr>
+                            <td>{{ parameter[0] }}</td>
+                            <td>
+                                {% if parameter[1].format %}
+                                {{ parameter[1].format }}
+                                {% else %}
+                                Object
+                                {% endif %}
+
+                            </td>
+                            <td>{{ parameter[1].type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                {% for content_type in swagger.produces %}
+                    {% if response[1].examples[content_type] %}
+                        {% assign example = response[1].examples[content_type] %}
+                        {% if content_type contains 'json' %}
+                            {% highlight json %}{{ example }}{% endhighlight %}
+                        {% elsif content_type contains 'xml' %}
+                            {% highlight xml %}{{ example }}{% endhighlight %}
+                        {% else %}
+                            {% highlight http %}{{ example }}{% endhighlight %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<script type="text/javascript">
+// Helpers
+
+var slice = Array.prototype.slice;
+
+function $(expr, parent) {
+    return typeof expr === "string" ? (parent || document).querySelector(expr) : expr || null;
+}
+
+function $$(expr, parent) {
+    return slice.call((parent || document).querySelectorAll(expr));
+}
+
+bind = function(element, o) {
+    if (element) {
+        for (var event in o) {
+            var callback = o[event];
+
+            event.split(/\s+/).forEach(function (event) {
+                element.addEventListener(event, callback);
+            });
+        }
+    }
+};
+
+toggleDetails = function(element) {
+    if (element.classList.contains('open')) {
+        element.classList.remove('open');
+    }
+    else {
+        element.classList.add('open');
+    }
+}
+
+// Initialization
+
+function init() {
+    $$('.swagger-method-title').forEach(function (title) {
+        bind(title, {
+            'click': function (e) {
+                var details = $('.swagger-method-details', title.parentNode)
+                toggleDetails(details[0]);
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+
+// DOM already loaded?
+if (document.readyState !== "loading") {
+    init();
+}
+else {
+    // Wait for it
+    document.addEventListener("DOMContentLoaded", init);
+}
+</script>
+>>>>>>> 2c65cef6 (update REST API Docs)
