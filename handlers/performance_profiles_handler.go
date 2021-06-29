@@ -9,6 +9,13 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
+// swagger:route POST /api/user/performance/profiles PerformanceAPI idSavePerformanceProfile
+// Handle POST requests for saving performance profile
+//
+// Save performance profile using the current provider's persistence mechanism
+// responses:
+// 	200: performanceProfileResponseWrapper
+
 // SavePerformanceProfileHandler will save performance profile using the current provider's persistence mechanism
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
@@ -45,6 +52,13 @@ func (h *Handler) SavePerformanceProfileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/user/performance/profiles PerformanceAPI idGetPerformanceProfiles
+// Handle GET requests for performance profiles
+//
+// Returns the list of all the performance profiles saved by the current user
+// responses:
+// 	200: performanceProfilesResponseWrapper
+
 // GetPerformanceProfilesHandler returns the list of all the performance profiles saved by the current user
 func (h *Handler) GetPerformanceProfilesHandler(
 	rw http.ResponseWriter,
@@ -64,6 +78,13 @@ func (h *Handler) GetPerformanceProfilesHandler(
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
+
+// swagger:route DELETE /api/user/performance/profiles/{id} PerformanceProfile idDeletePerformanceProfile
+// Handle Delete requests for performance profiles
+//
+// Deletes a performance profile with the given id
+// responses:
+// 	200: noContentWrapper
 
 // DeletePerformanceProfileHandler deletes a performance profile with the given id
 func (h *Handler) DeletePerformanceProfileHandler(
@@ -85,6 +106,12 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/user/performance/profiles/{id} PerformanceAPI idGetSinglePerformanceProfile
+// Handle GET requests for performance results of a profile
+//
+// Returns single performance profile with the given id
+// responses:
+// 	200: performanceProfileResponseWrapper
 // GetPerformanceProfileHandler fetched the performance profile with the given id
 func (h *Handler) GetPerformanceProfileHandler(
 	rw http.ResponseWriter,
