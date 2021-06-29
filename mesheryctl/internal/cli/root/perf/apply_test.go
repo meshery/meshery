@@ -45,14 +45,16 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.success.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response: "apply.fetch.profile.response.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
+					Response:     "apply.fetch.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
-					Response: "apply.run.existing.perf.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
+					Response:     "apply.run.existing.perf.test.response.golden",
+					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -64,14 +66,58 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.success.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response: "apply.fetch.profile.response.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
+					Response:     "apply.fetch.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
-					Response: "apply.run.new.perf.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
+					Response:     "apply.run.new.perf.test.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "Run Test with Existing profile with new URL without protocol",
+			Args:             []string{"apply", "new", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
+			ExpectedResponse: "apply.no.protocol.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
+					Response:     "apply.fetch.profile.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
+					Response:     "apply.no.protocol.response.golden",
+					ResponseCode: 400,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: true,
+		},
+		{
+			Name:             "Run Test with new profile without protocol",
+			Args:             []string{"apply", "--profile", "test", "--url", "www.google.com", "--token", filepath.Join(fixturesDir, "token.golden")},
+			ExpectedResponse: "apply.no.protocol.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles",
+					Response:     "apply.create.profile.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
+					Response:     "apply.no.protocol.response.golden",
+					ResponseCode: 400,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -83,14 +129,16 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.success.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "POST",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles",
-					Response: "apply.create.profile.response.golden",
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles",
+					Response:     "apply.create.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
-					Response: "apply.run.new.profile.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
+					Response:     "apply.run.new.profile.test.response.golden",
+					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -102,14 +150,16 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.no.url.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "POST",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles",
-					Response: "apply.create.profile.response.golden",
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles",
+					Response:     "apply.create.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
-					Response: "apply.run.new.profile.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
+					Response:     "apply.run.new.profile.test.output.golden",
+					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -121,14 +171,16 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.invalid.url.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "POST",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles",
-					Response: "apply.create.profile.response.golden",
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles",
+					Response:     "apply.create.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
-					Response: "apply.run.new.profile.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "906f8876-33b5-4a97-906e-7a409d3b8ae9" + "/run",
+					Response:     "apply.run.new.profile.test.output.golden",
+					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -140,14 +192,16 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedResponse: "apply.invalid.url.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles?search=new",
-					Response: "apply.fetch.profile.response.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles?search=new",
+					Response:     "apply.fetch.profile.response.golden",
+					ResponseCode: 200,
 				},
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
-					Response: "apply.run.new.perf.test.output.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/user/performance/profiles/" + "8f3daf25-e58e-4c59-8bf8-f474b76463ec" + "/run",
+					Response:     "apply.run.new.perf.test.output.golden",
+					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
@@ -164,7 +218,7 @@ func TestApplyCmd(t *testing.T) {
 
 				// mock response
 				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(200, apiResponse))
+					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
 			}
 
 			// set token

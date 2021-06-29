@@ -27,6 +27,8 @@ type MockURL struct {
 	URL string
 	// response for the request
 	Response string
+	// response code
+	ResponseCode int
 }
 
 func NewTestHelper(t *testing.T) *TestHelper {
