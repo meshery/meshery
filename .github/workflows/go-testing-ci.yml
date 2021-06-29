@@ -1,4 +1,4 @@
-name: Go Testing
+name: Testing
 on:
   push:
     branches:
