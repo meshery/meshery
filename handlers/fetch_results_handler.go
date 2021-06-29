@@ -12,6 +12,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// swagger:route GET /api/user/performance/profiles/{id}/results PerformanceAPI idGETProfileResults
+// Handle GET request for results of a profile
+//
+// Fetchs pages of results from Remote Provider for the given id
+// responses:
+// 	200:performanceResultsResponseWrapper
+
 // FetchResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	profileID := mux.Vars(req)["id"]
@@ -32,6 +39,14 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	w.Header().Set("content-type", "application/json")
 	_, _ = w.Write(bdr)
 }
+
+// swagger:route GET /api/user/performance/profiles/results PerformanceAPI idGetAllPerformanceResults
+// Handles GET requests for performance results
+//
+// Returns pages of all the performance results from Remote Provider
+//
+// responses:
+// 	200: performanceResultsResponseWrapper
 
 // FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {

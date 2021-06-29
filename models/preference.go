@@ -101,3 +101,9 @@ type PreferencePersister interface {
 	// Unlock(userID string)
 	ClosePersister()
 }
+
+// Parameters to save Grafana configuration
+type GrafanaConfigParams struct {
+	GrafanaURL    string `json:"grafanaURL,omitempty"`
+	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
+}
