@@ -14,6 +14,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.1 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
