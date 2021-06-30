@@ -38,19 +38,20 @@ $on-laptop:        800px;
 }
 
 .swagger-path {
+    font-weight: bolder;
     font-size: $base-font-size * 1.2;
-    margin: 25px 0 10px 0;
-    font-family: Courier New,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono, monospace;
+    margin: 0 0 30px 0;
+    font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
 }
 
 .swagger-method {
-    padding: 0;
-    margin: 10px 0;
+    align-self: center;
     border-radius: 5px;
-
+    margin:0 0 5px 0;
 }
 
 .swagger-method-title {
+    padding: 8px 5px 5px 5px;
     font-size: $base-font-size;
     margin: 0;
     cursor: pointer;
@@ -63,6 +64,7 @@ $on-laptop:        800px;
 }
 
 .swagger-method-name {
+    font-weight: bolder;
     padding: 6px 0;
     display: inline-block;
     width: 80px;
@@ -72,19 +74,19 @@ $on-laptop:        800px;
 }
 
 .swagger-method-get {
-    @include swagger-method(#6BBD5B);
+    @include swagger-method(#4fc49d);
 }
 
 .swagger-method-post {
-    @include swagger-method(#248FB2);
+    @include swagger-method(#87adb6);
 }
 
 .swagger-method-put {
-    @include swagger-method(#9B708B);
+    @include swagger-method(#1eaaaf);
 }
 
 .swagger-method-patch {
-    @include swagger-method(#D88541);
+    @include swagger-method(#36bea1);
 }
 
 .swagger-method-delete {
@@ -92,10 +94,8 @@ $on-laptop:        800px;
 }
 
 .swagger-method-details {
-    margin: 0;
-    padding: 15px;
+    padding: 20px;
     display: none;
-
     &.open {
         display: block;
     }
@@ -103,15 +103,16 @@ $on-laptop:        800px;
 
 .swagger-response {
     font-size: $base-font-size;
-
+    font-weight: bolder;
     h5 {
-        margin: 10px 0 5px 0;
+        margin: 10px 0 10px 0;
     }
 }
 
 .swagger-response-code {
-    font-weight: 600;
-
+    font-weight: bolder;
+    font-size: $base-font-size;
+    margin: 2px 0 2px 0;
     &:after {
         content: ' — ';
     }
@@ -122,10 +123,14 @@ $on-laptop:        800px;
     border-collapse: collapse;
     margin-bottom: $spacing-unit;
     width: 100%;
+    display:table-header-group;
+    font-size: 0.9rem;
 
     th, td {
         border: 1px solid darken($grey-color-light, 5%);
         padding: 4px 10px;
+        text-align: center;
+        font-size: 0.9rem;
     }
 
     th {
@@ -139,4 +144,3 @@ $on-laptop:        800px;
         color: red;
     }
 }
-
