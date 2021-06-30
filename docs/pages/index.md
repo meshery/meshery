@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Meshery Documentation
+title: Meshery Documentation s
 permalink: /
 display-title: "false"
 ---
