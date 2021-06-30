@@ -112,16 +112,14 @@ var statusCmd = &cobra.Command{
 				var containerReady int
 				var totalContainers int
 
-				if len(pod.Spec.Containers) > 0 {
+				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
 					// If a pod has multiple containers, get the status from all
-					if len(podStatus.ContainerStatuses) > 0 {
-						for container := range pod.Spec.Containers {
-							containerRestarts += podStatus.ContainerStatuses[container].RestartCount
-							if podStatus.ContainerStatuses[container].Ready {
-								containerReady++
-							}
-							totalContainers++
+					for container := range pod.Spec.Containers {
+						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
+						if podStatus.ContainerStatuses[container].Ready {
+							containerReady++
 						}
+						totalContainers++
 					}
 				}
 
