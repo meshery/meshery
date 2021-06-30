@@ -16,9 +16,9 @@ jobs:
           persist-credentials: false
 
       - name: Install and Build 🔧 
-        run: make build
-          # npm install
-          # npm run noIndex
+        run: |
+          cd docs
+          make build
 
       - name: Zip Site
         run: bash ./script.sh
