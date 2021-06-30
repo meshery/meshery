@@ -25,19 +25,25 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 ### `Query.getAvailableAddons`
 
+Query details about Addons available (Eg. Prometheus and Grafana).
+
 ###### **Returns** [`[AddonList!]!`](#addonlist).
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetavailableaddonsselector"></a>`selector` | [`MeshType`](#meshtype) |  |
+| <a id="querygetavailableaddonsselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
 
 ### `Query.getAvailableNamespaces`
+
+Query available Namesapces in your cluster.
 
 ###### **Returns** [`[NameSpace!]!`](#namespace).
 
 ### `Query.getControlPlanes`
+
+Query Control Plane data for a Service Mesh (or all) in your cluster.
 
 ###### **Returns** [`[ControlPlane!]!`](#controlplane).
 
@@ -45,9 +51,11 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) |  |
+| <a id="querygetcontrolplanesfilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Query.getOperatorStatus`
+
+Query status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus`](#operatorstatus).
 
@@ -59,18 +67,22 @@ All mutations receive their arguments in a single input object named `input`.
 
 ### `Mutation.changeAddonStatus`
 
+Change the Addon Status.
+
 ###### **Input type:** `AddonStatusInput`
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="mutationchangeaddonstatusselector"></a>`selector` | [`MeshType`](#meshtype) |  |
-| <a id="mutationchangeaddonstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) |  |
+| <a id="mutationchangeaddonstatusselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
+| <a id="mutationchangeaddonstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
 
 ###### **Returns** [`Status!`](#status).
 
 ### `Mutation.changeOperatorStatus`
+
+Change the Operator Status.
 
 ###### **Input type:** `OperatorStatusInput`
 
@@ -78,7 +90,7 @@ All mutations receive their arguments in a single input object named `input`.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) |  |
+| <a id="mutationchangeoperatorstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
 
 ###### **Returns** [`Status!`](#status).
 
@@ -88,15 +100,19 @@ The `Subscription` type contains all the Subscriptions you can listen to.
 
 ### `Subscription.listenToAddonState`
 
+Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
+
 ###### **Returns** [`[AddonList!]!`](#addonlist).
 
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) |  |
+| <a id="subscriptionlistentoaddonstateselector"></a>`selector` | [`MeshType`](#meshtype) | Select Mesh Type. |
 
 ### `Subscription.listenToControlPlaneState`
+
+Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.
 
 ###### **Returns** [`[ControlPlane!]!`](#controlplane).
 
@@ -104,13 +120,17 @@ The `Subscription` type contains all the Subscriptions you can listen to.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) |  |
+| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ControlPlaneFilter`](#controlplanefilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
+
+Listen to changes in the list of available Namesapces in your cluster.
 
 ###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
 ### `Subscription.listenToOperatorState`
+
+Listen to changes in status of Meshery Operator in your cluster.
 
 ###### **Returns** [`OperatorStatus!`](#operatorstatus).
 
@@ -129,33 +149,39 @@ on `graphql.org`.
 
 ### `AddonList`
 
+Deatils about the Addon Component.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="addonlistendpoint"></a>`endpoint` | [`String!`](#string) |  |
-| <a id="addonlistname"></a>`name` | [`String!`](#string) |  |
-| <a id="addonlistowner"></a>`owner` | [`String!`](#string) |  |
+| <a id="addonlistendpoint"></a>`endpoint` | [`String!`](#string) | Endpoint (if applicable). |
+| <a id="addonlistname"></a>`name` | [`String!`](#string) | Name. |
+| <a id="addonlistowner"></a>`owner` | [`String!`](#string) | Owner. |
 
 ### `ControlPlane`
 
+Control Plane data for a particular Mesh.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="controlplanemembers"></a>`members` | [`[ControlPlaneMember!]!`](#controlplanemember) |  |
-| <a id="controlplanename"></a>`name` | [`String!`](#string) |  |
+| <a id="controlplanemembers"></a>`members` | [`[ControlPlaneMember!]!`](#controlplanemember) | Members of the Mesh. |
+| <a id="controlplanename"></a>`name` | [`String!`](#string) | Service Mesh Name. |
 
 ### `ControlPlaneMember`
 
+Member Details.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="controlplanemembercomponent"></a>`component` | [`String!`](#string) |  |
-| <a id="controlplanemembername"></a>`name` | [`String!`](#string) |  |
-| <a id="controlplanemembernamespace"></a>`namespace` | [`String!`](#string) |  |
-| <a id="controlplanememberversion"></a>`version` | [`String!`](#string) |  |
+| <a id="controlplanemembercomponent"></a>`component` | [`String!`](#string) | Component. |
+| <a id="controlplanemembername"></a>`name` | [`String!`](#string) | Name. |
+| <a id="controlplanemembernamespace"></a>`namespace` | [`String!`](#string) | Namespace. |
+| <a id="controlplanememberversion"></a>`version` | [`String!`](#string) | Version. |
 
 ### `Error`
 
@@ -163,38 +189,44 @@ on `graphql.org`.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="errorcode"></a>`code` | [`String!`](#string) |  |
-| <a id="errordescription"></a>`description` | [`String!`](#string) |  |
+| <a id="errorcode"></a>`code` | [`String!`](#string) | Error Code. |
+| <a id="errordescription"></a>`description` | [`String!`](#string) | Error Details. |
 
 ### `NameSpace`
 
+Type to define a k8s Namespace.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) |  |
+| <a id="namespacenamespace"></a>`namespace` | [`String!`](#string) | Namespace Name. |
 
 ### `OperatorControllerStatus`
 
+Controllers of Meshery Operator.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="operatorcontrollerstatuserror"></a>`error` | [`Error`](#error) |  |
-| <a id="operatorcontrollerstatusname"></a>`name` | [`String!`](#string) |  |
-| <a id="operatorcontrollerstatusstatus"></a>`status` | [`Status!`](#status) |  |
-| <a id="operatorcontrollerstatusversion"></a>`version` | [`String!`](#string) |  |
+| <a id="operatorcontrollerstatuserror"></a>`error` | [`Error`](#error) | Controller Error Log. |
+| <a id="operatorcontrollerstatusname"></a>`name` | [`String!`](#string) | Controller Name. |
+| <a id="operatorcontrollerstatusstatus"></a>`status` | [`Status!`](#status) | Controller Status. |
+| <a id="operatorcontrollerstatusversion"></a>`version` | [`String!`](#string) | Controller Verison. |
 
 ### `OperatorStatus`
 
+Status of Meshery Operator and its controllers.
+
 #### **Fields**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="operatorstatuscontrollers"></a>`controllers` | [`[OperatorControllerStatus!]!`](#operatorcontrollerstatus) |  |
-| <a id="operatorstatuserror"></a>`error` | [`Error`](#error) |  |
-| <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) |  |
-| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) |  |
+| <a id="operatorstatuscontrollers"></a>`controllers` | [`[OperatorControllerStatus!]!`](#operatorcontrollerstatus) | Details about various Controllers of Meshery Operator. |
+| <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
+| <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
+| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
 
 ## Enumeration types
 
@@ -207,31 +239,33 @@ on `graphql.org`.
 
 ### `MeshType`
 
+Service Mesh Types.
+
 | Value | Description |
 | ----- | ----------- |
-| <a id="meshtypeall_mesh"></a>`ALL_MESH` |  |
-| <a id="meshtypeapp_mesh"></a>`APP_MESH` |  |
-| <a id="meshtypecitrix_service_mesh"></a>`CITRIX_SERVICE_MESH` |  |
-| <a id="meshtypeconsul"></a>`CONSUL` |  |
-| <a id="meshtypeinvalid_mesh"></a>`INVALID_MESH` |  |
-| <a id="meshtypeistio"></a>`ISTIO` |  |
-| <a id="meshtypekuma"></a>`KUMA` |  |
-| <a id="meshtypelinkerd"></a>`LINKERD` |  |
-| <a id="meshtypenetwork_service_mesh"></a>`NETWORK_SERVICE_MESH` |  |
-| <a id="meshtypenginx_service_mesh"></a>`NGINX_SERVICE_MESH` |  |
-| <a id="meshtypeoctarine"></a>`OCTARINE` |  |
-| <a id="meshtypeopen_service_mesh"></a>`OPEN_SERVICE_MESH` |  |
-| <a id="meshtypetanzu"></a>`TANZU` |  |
-| <a id="meshtypetraefik_mesh"></a>`TRAEFIK_MESH` |  |
+| <a id="meshtypeall_mesh"></a>`ALL_MESH` | All meshes that Meshery supports. |
+| <a id="meshtypeapp_mesh"></a>`APP_MESH` | AWS App Mesh. |
+| <a id="meshtypecitrix_service_mesh"></a>`CITRIX_SERVICE_MESH` | Citrix Service Mesh. |
+| <a id="meshtypeconsul"></a>`CONSUL` | Consul by HashiCorp. |
+| <a id="meshtypeinvalid_mesh"></a>`INVALID_MESH` | Invalid Mesh. |
+| <a id="meshtypeistio"></a>`ISTIO` | Istio Service Mesh. |
+| <a id="meshtypekuma"></a>`KUMA` | Kuma. |
+| <a id="meshtypelinkerd"></a>`LINKERD` | LinkerD Service Mesh. |
+| <a id="meshtypenetwork_service_mesh"></a>`NETWORK_SERVICE_MESH` | Network Service Mesh. |
+| <a id="meshtypenginx_service_mesh"></a>`NGINX_SERVICE_MESH` | NGINX Service Mesh. |
+| <a id="meshtypeoctarine"></a>`OCTARINE` | Octarine Mesh. |
+| <a id="meshtypeopen_service_mesh"></a>`OPEN_SERVICE_MESH` | Open Service Mesh. |
+| <a id="meshtypetanzu"></a>`TANZU` | VMware Tanzu Service Mesh. |
+| <a id="meshtypetraefik_mesh"></a>`TRAEFIK_MESH` | Traefik Mesh. |
 
 ### `Status`
 
 | Value | Description |
 | ----- | ----------- |
-| <a id="statusdisabled"></a>`DISABLED` |  |
-| <a id="statusenabled"></a>`ENABLED` |  |
-| <a id="statusprocessing"></a>`PROCESSING` |  |
-| <a id="statusunknown"></a>`UNKNOWN` |  |
+| <a id="statusdisabled"></a>`DISABLED` | Disabled. |
+| <a id="statusenabled"></a>`ENABLED` | Enabled. |
+| <a id="statusprocessing"></a>`PROCESSING` | Processing. |
+| <a id="statusunknown"></a>`UNKNOWN` | Unknown. |
 
 ## Scalar types
 
@@ -264,8 +298,10 @@ For more information, read about [Scalar Types](https://graphql.org/learn/schema
 
 ### `ControlPlaneFilter`
 
+Filter Control Plane Query.
+
 #### **Arguments**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="controlplanefiltertype"></a>`type` | [`MeshType`](#meshtype) |  |
+| <a id="controlplanefiltertype"></a>`type` | [`MeshType`](#meshtype) | Filter by Service Mesh. |
