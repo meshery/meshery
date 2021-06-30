@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
+import Tooltip from '@material-ui/core/Tooltip';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
@@ -23,7 +24,7 @@ const styles = () => ({
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
   let exportFileDefaultName = filename;
 
@@ -32,6 +33,19 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.setAttribute('download', exportFileDefaultName);
   linkElement.click();
   linkElement.remove()
+}
+
+function UserMenuItem({ user_id, ...rest }) {
+  const isNoneProvider = user_id === undefined || user_id === "meshery";
+  const tooltipText = isNoneProvider ? "Sign In with Providers to get the auth token" : "";
+
+  return (
+    <Tooltip style={{ zIndex: 120000 }} disableFocusListener title={tooltipText} placement="top-start">
+      <div>
+        <MenuItem disabled={isNoneProvider} {...rest}>Get Token</MenuItem>
+      </div>
+    </Tooltip>
+  );
 }
 
 class User extends React.Component {
@@ -81,9 +95,10 @@ class User extends React.Component {
     const {
       color, iconButtonClassName, avatarClassName, classes,
     } = this.props;
-    let avatar_url; 
+    let avatar_url, user_id;
     if (this.state.user && this.state.user !== null) {
       avatar_url = this.state.user.avatar_url;
+      user_id = this.state.user.user_id;
     }
     const { open } = this.state;
     return (
@@ -103,7 +118,7 @@ class User extends React.Component {
               <Avatar className={avatarClassName} src={avatar_url} />
             </IconButton>
           </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition  style={{zIndex: 10000}} placement="top-end">
+          <Popper open={open} anchorEl={this.anchorEl} transition style={{ zIndex: 1202 }} placement="top-end">
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
@@ -113,7 +128,7 @@ class User extends React.Component {
                 <Paper className={classes.popover}>
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList>
-                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
+                      <UserMenuItem user_id={user_id} onClick={this.handleGetToken}>Get Token</UserMenuItem>
                       <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                     </MenuList>
@@ -136,3 +151,4 @@ export default withStyles(styles)(connect(
   null,
   mapDispatchToProps,
 )(withRouter(User)));
+
