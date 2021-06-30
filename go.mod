@@ -10,7 +10,7 @@ replace (
 )
 
 require (
-	fortio.org/fortio v1.15.2
+	fortio.org/fortio v1.17.0
 	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/briandowns/spinner v1.15.0
