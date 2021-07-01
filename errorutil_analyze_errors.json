@@ -105,6 +105,38 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrMarshalCode",
+      "old_code": "2013",
+      "code": "2013",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrUnmarshalCode",
+      "old_code": "2014",
+      "code": "2014",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrEncodingCode",
+      "old_code": "2015",
+      "code": "2015",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrParseBoolCode",
+      "old_code": "2016",
+      "code": "2016",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidK8SConfig",
       "old_code": "",
       "code": "",
@@ -557,6 +589,46 @@
         "code_is_int": true,
         "path": "handlers/error.go"
       }
+    ],
+    "2013": [
+      {
+        "name": "ErrMarshalCode",
+        "old_code": "2013",
+        "code": "2013",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2014": [
+      {
+        "name": "ErrUnmarshalCode",
+        "old_code": "2014",
+        "code": "2014",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2015": [
+      {
+        "name": "ErrEncodingCode",
+        "old_code": "2015",
+        "code": "2015",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2016": [
+      {
+        "name": "ErrParseBoolCode",
+        "old_code": "2016",
+        "code": "2016",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
     ]
   },
   "call_expr_codes": [
@@ -702,24 +774,35 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrEncodingCode": [
+      {
+        "name": "ErrEncodingCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrGrafanaBoardsCode": [
       {
         "name": "ErrGrafanaBoardsCode",
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "unable to get grafana boards",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana endpoint is correct\nConnect to Grafana from the settings page in the UI"
       },
       {
         "name": "ErrGrafanaBoardsCode",
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "",
+        "short_description": "unable to get Prometheus boards",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus endpoint is correct.\nConnect to Prometheus from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus endpoint is correct\nConnect to Prometheus from the settings page in the UI"
       }
     ],
     "ErrGrafanaConfigCode": [
@@ -730,7 +813,7 @@
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
         "short_description": "Prometheus endpoint not configured.",
         "probable_cause": "",
-        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard."
+        "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
       {
         "name": "ErrGrafanaConfigCode",
@@ -739,7 +822,7 @@
         "long_description": "Cannot find valid grafana endpoint in user pref",
         "short_description": "Grafana endpoint not configured.",
         "probable_cause": "",
-        "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard."
+        "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       }
     ],
     "ErrGrafanaQueryCode": [
@@ -747,10 +830,10 @@
         "name": "ErrGrafanaQueryCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed querying Grafana Client",
-        "short_description": "",
+        "long_description": "",
+        "short_description": "Unable to query grafana",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana query is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
       }
     ],
     "ErrGrafanaScanCode": [
@@ -758,10 +841,10 @@
         "name": "ErrGrafanaScanCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed connecting to Grafna Client",
-        "short_description": "Unable to connect to grafana.",
+        "long_description": "",
+        "short_description": "Unable to connect to grafana",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Grafana Endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
       }
     ],
     "ErrInvalidK8SConfigCode": [
@@ -784,6 +867,17 @@
         "short_description": "Invalid query, please check syntax",
         "probable_cause": "",
         "suggested_remediation": "Check the query parameters and syntax of the query being run"
+      }
+    ],
+    "ErrMarshalCode": [
+      {
+        "name": "ErrMarshalCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrMesheryClientCode": [
@@ -879,15 +973,26 @@
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       }
     ],
+    "ErrParseBoolCode": [
+      {
+        "name": "ErrParseBoolCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrPrometheusQueryCode": [
       {
         "name": "ErrPrometheusQueryCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed querying Prometheus Client through Grafna Proxy",
-        "short_description": "",
+        "long_description": "",
+        "short_description": "Unable to query prometheus",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus query is correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       }
     ],
     "ErrPrometheusScanCode": [
@@ -895,10 +1000,10 @@
         "name": "ErrPrometheusScanCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed connecting to Prometheus Client through Grafna Proxy",
-        "short_description": "Unable to connect to prometheus.",
+        "long_description": "",
+        "short_description": "Unable to connect to prometheus",
         "probable_cause": "",
-        "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+        "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       }
     ],
     "ErrPublishBrokerCode": [
@@ -928,8 +1033,8 @@
         "name": "ErrRecordPreferencesCode",
         "code": "",
         "severity": "Alert",
-        "long_description": "Failed to record User Preferences.",
-        "short_description": "unable to save user config data.",
+        "long_description": "",
+        "short_description": "unable to save user config data",
         "probable_cause": "User token might be invalid\ndb might be corrupted",
         "suggested_remediation": "Relogin to Meshery"
       }
@@ -940,7 +1045,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to read the request body.",
+        "short_description": "unable to read the request body",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -965,6 +1070,17 @@
         "short_description": "Unable to subscribe to channel",
         "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
         "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+      }
+    ],
+    "ErrUnmarshalCode": [
+      {
+        "name": "ErrUnmarshalCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ]
   }

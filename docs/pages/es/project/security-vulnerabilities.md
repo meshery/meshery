@@ -15,7 +15,7 @@ sobre las vulnerabilidades de seguridad de Meshery. Investigamos cada informe a 
 Para realizar un informe, envía un correo electrónico
 a la lista de correo privada [meshery-security-vulns-reports@layer5.io](mailto:meshery-security-vulns-reports@layer5.io) con los detalles de la vulnerabilidad.
 Para los bugs normales del producto que no están relacionados con vulnerabilidades de seguridad latentes, diríjete al repositorio correspondiente
-y envía un [nuevo issue](https://github.com/layer5io/meshery/issues/new/choose).
+y envía un [nuevo issue](https://github.com/meshery/meshery/issues/new/choose).
 
 ### ¿Cuándo informar una vulnerabilidad de seguridad?
 
