@@ -750,6 +750,214 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 	return fmt.Errorf("error while sending metrics - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
+
+	data, err := json.Marshal(resource)
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery pattern resource"))
+		return nil, err
+	}
+
+	logrus.Debugf("Pattern Resource: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save pattern resource to remote provider")
+	bf := bytes.NewBuffer(data)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	logrus.Debugf("saving pattern to remote provider - constructed URL: %s", remoteProviderURL.String())
+	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	if err != nil {
+		logrus.Errorf("unable to persist pattern resource: %v", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		logrus.Errorf("unable to send pattern resource: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		var pr PatternResource
+		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
+			logrus.Errorf("unable to read response body: %v", err)
+			return nil, err
+		}
+
+		logrus.Infof("pattern successfully sent to remote provider: %+v", pr)
+		return &pr, nil
+	}
+
+	logrus.Errorf("error while sending pattern resource: %+v", resource)
+	return nil, fmt.Errorf("error while sending pattern resource - Status code: %d, Body: %+v", resp.StatusCode, string(data))
+}
+
+func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
+
+	logrus.Infof("attempting to fetch pattern resource from cloud for id: %s", resourceID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resourceID))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		var pr PatternResource
+		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
+			logrus.Errorf("unable to read response body: %v", err)
+			return nil, err
+		}
+
+		logrus.Infof("pattern resource successfully retrieved from remote provider")
+		return &pr, nil
+	}
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	logrus.Errorf("error while fetching pattern resource: %s", bdr)
+	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) GetMesheryPatternResources(
+	token,
+	page,
+	pageSize,
+	search,
+	order,
+	name,
+	namespace,
+	typ,
+	oamType string,
+) (*PatternResourcePage, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
+	logrus.Infof("attempting to fetch patterns resource from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if name != "" {
+		q.Set("name", name)
+	}
+	if namespace != "" {
+		q.Set("namespace", namespace)
+	}
+	if typ != "" {
+		q.Set("type", typ)
+	}
+	if oamType != "" {
+		q.Set("oam_type", oamType)
+	}
+
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed pattern resource url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		logrus.Errorf("unable to get pattern resource: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		var pr PatternResourcePage
+		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
+			logrus.Errorf("unable to read response body: %v", err)
+			return nil, err
+		}
+
+		logrus.Infof("pattern resources successfully retrieved from remote provider")
+		return &pr, nil
+	}
+
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	logrus.Errorf("error while fetching pattern resource: %s", bdr)
+	return nil, fmt.Errorf("error while fetching pattern resource - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) DeleteMesheryResource(token, resourceID string) error {
+	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+		logrus.Error("operation not available")
+		return fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatternResources, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
+
+	logrus.Infof("attempting to fetch pattern from cloud for id: %s", resourceID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resourceID))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		logrus.Errorf("unable to get patterns: %v", err)
+		return err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern resource successfully deleted from remote provider")
+		return nil
+	}
+
+	logrus.Errorf("error while deleting pattern resource")
+	return fmt.Errorf("error while deleting pattern resource - Status code: %d", resp.StatusCode)
+}
+
 // SaveMesheryPattern saves given pattern with the provider
 func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {

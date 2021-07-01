@@ -28,17 +28,18 @@ import (
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
 	ProviderProperties
-	ProviderBaseURL              string
-	ResultPersister              *MesheryResultsPersister
-	SmiResultPersister           *BitCaskSmiResultsPersister
-	TestProfilesPersister        *BitCaskTestProfilesPersister
-	PerformanceProfilesPersister *PerformanceProfilePersister
-	MesheryPatternPersister      *MesheryPatternPersister
-	MesheryFilterPersister       *MesheryFilterPersister
-	GenericPersister             database.Handler
-	GraphqlHandler               http.Handler
-	GraphqlPlayground            http.Handler
-	KubeClient                   *mesherykube.Client
+	ProviderBaseURL                 string
+	ResultPersister                 *MesheryResultsPersister
+	SmiResultPersister              *BitCaskSmiResultsPersister
+	TestProfilesPersister           *BitCaskTestProfilesPersister
+	PerformanceProfilesPersister    *PerformanceProfilePersister
+	MesheryPatternPersister         *MesheryPatternPersister
+	MesheryPatternResourcePersister *PatternResourcePersister
+	MesheryFilterPersister          *MesheryFilterPersister
+	GenericPersister                database.Handler
+	GraphqlHandler                  http.Handler
+	GraphqlPlayground               http.Handler
+	KubeClient                      *mesherykube.Client
 }
 
 // Initialize will initialize the local provider
@@ -412,6 +413,57 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 		return err
 	}
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
+}
+
+func (l *DefaultLocalProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
+	return l.MesheryPatternResourcePersister.SavePatternResource(resource)
+}
+
+func (l *DefaultLocalProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
+	id := uuid.FromStringOrNil(resourceID)
+	return l.MesheryPatternResourcePersister.GetPatternResource(id)
+}
+
+func (l *DefaultLocalProvider) GetMesheryPatternResources(
+	token,
+	page,
+	pageSize,
+	search,
+	order,
+	name,
+	namespace,
+	typ,
+	oamType string,
+) (*PatternResourcePage, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	pg, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page number")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	pgs, err := strconv.ParseUint(pageSize, 10, 32)
+	if err != nil {
+		err = errors.Wrapf(err, "unable to parse page size")
+		logrus.Error(err)
+		return nil, err
+	}
+
+	return l.MesheryPatternResourcePersister.GetPatternResources(
+		search, order, name, namespace, typ, oamType, pg, pgs,
+	)
+}
+
+func (l *DefaultLocalProvider) DeleteMesheryResource(token, resourceID string) error {
+	id := uuid.FromStringOrNil(resourceID)
+	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }
 
 // SaveMesheryPattern saves given pattern with the provider
