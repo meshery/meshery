@@ -170,15 +170,16 @@ func main() {
 	}
 
 	lProv := &models.DefaultLocalProvider{
-		ProviderBaseURL:              DefaultProviderURL,
-		MapPreferencePersister:       preferencePersister,
-		ResultPersister:              &models.MesheryResultsPersister{DB: &dbHandler},
-		SmiResultPersister:           smiResultPersister,
-		TestProfilesPersister:        testConfigPersister,
-		PerformanceProfilesPersister: &models.PerformanceProfilePersister{DB: &dbHandler},
-		MesheryPatternPersister:      &models.MesheryPatternPersister{DB: &dbHandler},
-		MesheryFilterPersister:       &models.MesheryFilterPersister{DB: &dbHandler},
-		GenericPersister:             dbHandler,
+		ProviderBaseURL:                 DefaultProviderURL,
+		MapPreferencePersister:          preferencePersister,
+		ResultPersister:                 &models.MesheryResultsPersister{DB: &dbHandler},
+		SmiResultPersister:              smiResultPersister,
+		TestProfilesPersister:           testConfigPersister,
+		PerformanceProfilesPersister:    &models.PerformanceProfilePersister{DB: &dbHandler},
+		MesheryPatternPersister:         &models.MesheryPatternPersister{DB: &dbHandler},
+		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: &dbHandler},
+		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
+		GenericPersister:                dbHandler,
 		GraphqlHandler: graphql.New(graphql.Options{
 			Logger:          log,
 			DBHandler:       &dbHandler,
