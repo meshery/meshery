@@ -271,6 +271,15 @@
       "short_description": "",
       "probable_cause": "",
       "suggested_remediation": ""
+    },
+    "3000": {
+      "name": "ErrGrafanaClientCode",
+      "code": "3000",
+      "severity": "Alert",
+      "long_description": "Unable to initializes client for interacting with an instance of Grafana server",
+      "short_description": "Unable to initialize Grafana Client",
+      "probable_cause": "Invalid Grafana Endpoint or API-Key",
+      "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
     }
   }
 }

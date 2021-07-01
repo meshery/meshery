@@ -59,7 +59,7 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 	}
 	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
 	if err != nil {
-		return err
+		return ErrGrafanaClient(err)
 	}
 
 	if _, err := c.GetActualOrg(ctx); err != nil {
@@ -107,7 +107,7 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 	}
 	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
 	if err != nil {
-		return nil, err
+		return nil, ErrGrafanaClient(err)
 	}
 
 	boardLinks, err := c.SearchDashboards(ctx, dashboardSearch, false)
@@ -346,7 +346,10 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey s
 		return nil, err
 	}
 
-	c, _ := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	if err != nil {
+		return nil, ErrGrafanaClient(err)
+	}
 
 	ds, err := c.GetDatasourceByName(ctx, queryData.Get("ds"))
 	if err != nil {

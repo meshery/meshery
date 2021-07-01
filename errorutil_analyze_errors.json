@@ -137,62 +137,6 @@
       "path": "handlers/error.go"
     },
     {
-      "name": "ErrInvalidK8SConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrPrometheusConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrGrafanaConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrStaticBoards",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrInvalidKubeConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
-      "name": "ErrInvalidK8sContextName",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -297,36 +241,12 @@
       "path": "internal/graphql/resolver/error.go"
     },
     {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrInvalidRequest",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrNoMeshSync",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrEmptyHandler",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
+      "name": "ErrGrafanaClientCode",
+      "old_code": "3000",
+      "code": "3000",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "models/error.go"
     }
   ],
   "literal_codes": {
@@ -629,99 +549,20 @@
         "code_is_int": true,
         "path": "handlers/error.go"
       }
+    ],
+    "3000": [
+      {
+        "name": "ErrGrafanaClientCode",
+        "old_code": "3000",
+        "code": "3000",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "models/error.go"
+      }
     ]
   },
-  "call_expr_codes": [
-    {
-      "name": "ErrInvalidK8SConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrPrometheusConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrGrafanaConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrStaticBoards",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/error.go"
-    },
-    {
-      "name": "ErrInvalidKubeConfig",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
-      "name": "ErrInvalidK8sContextName",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "handlers/k8sconfig_handler.go"
-    },
-    {
-      "name": "ErrNilClient",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrInvalidRequest",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrNoMeshSync",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    },
-    {
-      "name": "ErrEmptyHandler",
-      "old_code": "",
-      "code": "",
-      "code_is_literal": false,
-      "code_is_int": false,
-      "path": "internal/graphql/resolver/error.go"
-    }
-  ],
-  "deprecated_new_default": null,
+  "call_expr_codes": [],
+  "deprecated_new_default": [],
   "errors_raw": {
     "ErrAddonSubscriptionCode": [
       {
@@ -805,13 +646,24 @@
         "suggested_remediation": "Check if your Prometheus endpoint is correct\nConnect to Prometheus from the settings page in the UI"
       }
     ],
+    "ErrGrafanaClientCode": [
+      {
+        "name": "ErrGrafanaClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to initializes client for interacting with an instance of Grafana server",
+        "short_description": "Unable to initialize Grafana Client",
+        "probable_cause": "Invalid Grafana Endpoint or API-Key",
+        "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
+      }
+    ],
     "ErrGrafanaConfigCode": [
       {
         "name": "ErrGrafanaConfigCode",
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
-        "short_description": "Prometheus endpoint not configured.",
+        "short_description": "Prometheus endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
@@ -820,7 +672,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
-        "short_description": "Grafana endpoint not configured.",
+        "short_description": "Grafana endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       }
