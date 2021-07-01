@@ -253,9 +253,7 @@ func main() {
 
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
-	}, &kubeclient, meshsyncCh, log, brokerConn, handlers.LocalPersisters{
-		PatternResourcePersister: &models.PatternResourcePersister{DB: &dbHandler},
-	})
+	}, &kubeclient, meshsyncCh, log, brokerConn)
 
 	port := viper.GetInt("PORT")
 	r := router.NewRouter(ctx, h, port)

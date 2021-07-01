@@ -17,11 +17,6 @@ type Handler struct {
 	meshsyncChannel chan struct{}
 	log             logger.Handler
 	brokerConn      broker.Handler
-	localPersisters LocalPersisters
-}
-
-type LocalPersisters struct {
-	PatternResourcePersister *models.PatternResourcePersister
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -31,7 +26,6 @@ func NewHandlerInstance(
 	meshSyncCh chan struct{},
 	logger logger.Handler,
 	brokerConn broker.Handler,
-	localPersisters LocalPersisters,
 ) models.HandlerInterface {
 	h := &Handler{
 		config:          handlerConfig,
@@ -39,7 +33,6 @@ func NewHandlerInstance(
 		meshsyncChannel: meshSyncCh,
 		log:             logger,
 		brokerConn:      brokerConn,
-		localPersisters: localPersisters,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{
