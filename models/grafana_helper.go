@@ -57,7 +57,11 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
 	}
-	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	if err != nil {
+		return err
+	}
+
 	if _, err := c.GetActualOrg(ctx); err != nil {
 		err = errors.Wrapf(err, "connection to grafana failed")
 		logrus.Error(err)
@@ -101,7 +105,10 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 	if strings.HasSuffix(BaseURL, "/") {
 		BaseURL = strings.Trim(BaseURL, "/")
 	}
-	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	c, err := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	if err != nil {
+		return nil, err
+	}
 
 	boardLinks, err := c.SearchDashboards(ctx, dashboardSearch, false)
 	if err != nil {
@@ -120,10 +127,15 @@ func (g *GrafanaClient) GetGrafanaBoards(ctx context.Context, BaseURL, APIKey, d
 			logrus.Error(errors.Wrapf(err, err1.Error()))
 			return nil, err1
 		}
+		// b, _ := json.Marshal(board)
+		// logrus.Debugf("Board before foramating: %s", b)
+
 		grafBoard, err := g.ProcessBoard(ctx, c, &board, &link)
 		if err != nil {
 			return nil, err
 		}
+		// b, _ = json.Marshal(grafBoard)
+		// logrus.Debugf("Board after foramating: %s", b)
 		boards = append(boards, grafBoard)
 	}
 	return boards, nil
@@ -157,7 +169,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			var ds sdk.Datasource
 			var dsName string
 			if tmpVar.Type == "datasource" {
-				dsName = strings.Title(strings.ToLower(tmpVar.Query)) // datasource name can be found in the query field
+				dsName = strings.Title(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
 				tmpDsName[tmpVar.Name] = dsName
 			} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
 				if !strings.HasPrefix(*tmpVar.Datasource, "$") {
@@ -184,7 +196,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			tvVal := tmpVar.Current.Text
 			grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
 				Name:  tmpVar.Name,
-				Query: tmpVar.Query,
+				Query: fmt.Sprint(tmpVar.Query),
 				Datasource: &GrafanaDataSource{
 					ID:   ds.ID,
 					Name: ds.Name,
@@ -203,6 +215,21 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 					}
 				}
 				grafBoard.Panels = append(grafBoard.Panels, p1)
+			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 {
+				for _, p2 := range p1.Panels {
+					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text and table panels for now
+						if strings.HasPrefix(*p2.Datasource, "$") {
+							*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
+							// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
+						}
+						p3, _ := p2.MarshalJSON()
+						p4 := &sdk.Panel{}
+						if err := p4.UnmarshalJSON(p3); err != nil {
+							continue
+						}
+						grafBoard.Panels = append(grafBoard.Panels, p4)
+					}
+				}
 			}
 		}
 	} else if len(board.Rows) > 0 {
@@ -319,7 +346,7 @@ func (g *GrafanaClient) GrafanaQueryRange(ctx context.Context, BaseURL, APIKey s
 		return nil, err
 	}
 
-	c := sdk.NewClient(BaseURL, APIKey, g.httpClient)
+	c, _ := sdk.NewClient(BaseURL, APIKey, g.httpClient)
 
 	ds, err := c.GetDatasourceByName(ctx, queryData.Get("ds"))
 	if err != nil {
