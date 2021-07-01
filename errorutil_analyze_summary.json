@@ -1,18 +1,21 @@
 {
   "min_code": 1000,
-  "max_code": 1011,
-  "duplicate_codes": {
-    "1009": [
-      "ErrSubscribeChannelCode",
-      "ErrPublishBrokerCode"
-    ]
-  },
+  "max_code": 2016,
+  "duplicate_codes": {},
   "duplicate_names": [
+    "ErrGrafanaBoardsCode",
+    "ErrNoMeshSyncCode",
     "ErrMesheryClientCode",
-    "ErrCreateDataCode",
-    "ErrNoMeshSyncCode"
+    "ErrNilClientCode",
+    "ErrGrafanaConfigCode",
+    "ErrCreateDataCode"
   ],
   "call_expr_codes": [
+    "ErrInvalidK8SConfig",
+    "ErrNilClient",
+    "ErrPrometheusConfig",
+    "ErrGrafanaConfig",
+    "ErrStaticBoards",
     "ErrInvalidKubeConfig",
     "ErrInvalidK8sContextName",
     "ErrNilClient",
@@ -21,18 +24,36 @@
     "ErrEmptyHandler"
   ],
   "int_codes": [
+    2001,
+    2003,
+    2004,
+    2009,
+    2016,
+    2006,
     1001,
-    1003,
+    1004,
     1006,
+    1010,
+    2008,
+    1003,
+    1005,
+    1012,
+    2000,
+    2010,
+    1007,
+    2002,
+    1000,
     1008,
     1009,
-    1011,
-    1000,
+    2007,
+    2011,
+    2013,
+    2014,
     1002,
-    1004,
-    1005,
-    1007,
-    1010
+    2005,
+    2012,
+    2015,
+    1011
   ],
   "deprecated_new_default": null
 }

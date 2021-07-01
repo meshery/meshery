@@ -14,11 +14,11 @@
     "1001": {
       "name": "ErrNilClientCode",
       "code": "1001",
-      "severity": "Alert",
-      "long_description": "Kubernetes config is not initialized with Meshery",
-      "short_description": "Kubernetes client not initialized",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
       "probable_cause": "",
-      "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+      "suggested_remediation": ""
     },
     "1002": {
       "name": "ErrCreateDataCode",
@@ -83,22 +83,193 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "1009": {
+      "name": "ErrSubscribeChannelCode",
+      "code": "1009",
+      "severity": "Alert",
+      "long_description": "Unable to create a broker subscription",
+      "short_description": "Unable to subscribe to channel",
+      "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+      "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+    },
     "1010": {
-      "name": "ErrNoMeshSyncCode",
+      "name": "ErrPublishBrokerCode",
       "code": "1010",
+      "severity": "Alert",
+      "long_description": "Unable to create a broker publisher",
+      "short_description": "Unable to publish to broker",
+      "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
+      "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
+    },
+    "1011": {
+      "name": "ErrNoMeshSyncCode",
+      "code": "1011",
       "severity": "",
       "long_description": "",
       "short_description": "",
       "probable_cause": "",
       "suggested_remediation": ""
     },
-    "1011": {
+    "1012": {
       "name": "ErrNoExternalEndpointCode",
-      "code": "1011",
+      "code": "1012",
       "severity": "Alert",
       "long_description": "",
       "short_description": "Unable to find the External Endpoint",
       "probable_cause": "The service might not be exposed to External IP\nMeshsync cache is outdated",
+      "suggested_remediation": ""
+    },
+    "2000": {
+      "name": "ErrInvalidK8SConfigCode",
+      "code": "2000",
+      "severity": "Alert",
+      "long_description": "Kubernetes config is not initialized with Meshery",
+      "short_description": "No valid kubernetes config found",
+      "probable_cause": "",
+      "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+    },
+    "2001": {
+      "name": "ErrNilClientCode",
+      "code": "2001",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2002": {
+      "name": "ErrPrometheusScanCode",
+      "code": "2002",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to connect to prometheus",
+      "probable_cause": "",
+      "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct\nConnect to Prometheus and Grafana from the settings page in the UI"
+    },
+    "2003": {
+      "name": "ErrGrafanaScanCode",
+      "code": "2003",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to connect to grafana",
+      "probable_cause": "",
+      "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
+    },
+    "2004": {
+      "name": "ErrRecordPreferencesCode",
+      "code": "2004",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to save user config data",
+      "probable_cause": "User token might be invalid\ndb might be corrupted",
+      "suggested_remediation": "Relogin to Meshery"
+    },
+    "2005": {
+      "name": "ErrGrafanaConfigCode",
+      "code": "2005",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2006": {
+      "name": "ErrPrometheusConfigCode",
+      "code": "2006",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2007": {
+      "name": "ErrGrafanaQueryCode",
+      "code": "2007",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to query grafana",
+      "probable_cause": "",
+      "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
+    },
+    "2008": {
+      "name": "ErrPrometheusQueryCode",
+      "code": "2008",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to query prometheus",
+      "probable_cause": "",
+      "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
+    },
+    "2009": {
+      "name": "ErrGrafanaBoardsCode",
+      "code": "2009",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2010": {
+      "name": "ErrPrometheusBoardsCode",
+      "code": "2010",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2011": {
+      "name": "ErrStaticBoardsCode",
+      "code": "2011",
+      "severity": "Alert",
+      "long_description": "unable to get static board",
+      "short_description": "unable to get static board",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2012": {
+      "name": "ErrRequestBodyCode",
+      "code": "2012",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to read the request body",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2013": {
+      "name": "ErrMarshalCode",
+      "code": "2013",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2014": {
+      "name": "ErrUnmarshalCode",
+      "code": "2014",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2015": {
+      "name": "ErrEncodingCode",
+      "code": "2015",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2016": {
+      "name": "ErrParseBoolCode",
+      "code": "2016",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
       "suggested_remediation": ""
     }
   }

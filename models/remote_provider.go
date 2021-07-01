@@ -1468,6 +1468,261 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	return bdr, fmt.Errorf("error while sending filter - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
+// SaveMesheryApplication saves given application with the provider
+func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryApplications, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	data, err := json.Marshal(map[string]interface{}{
+		"application_data": application,
+		"save":             true,
+	})
+
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return nil, err
+	}
+
+	logrus.Debugf("Application: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save application to remote provider")
+	bf := bytes.NewBuffer(data)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	if err != nil {
+		logrus.Errorf("unable to get application: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send application: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application successfully sent to remote provider: %s", string(bdr))
+		return bdr, nil
+	}
+
+	logrus.Errorf("error while sending application: %s", bdr)
+	return bdr, fmt.Errorf("error while sending application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetMesheryApplications gives the applications stored with the provider
+func (l *RemoteProvider) GetMesheryApplications(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
+		logrus.Error("operation not available")
+		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	logrus.Infof("attempting to fetch applications from cloud")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("page_size", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("constructed applications url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("applications successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching applications: %s", bdr)
+	return nil, fmt.Errorf("error while fetching applications - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// GetMesheryApplication gets application for the given applicationID
+func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	logrus.Infof("attempting to fetch application from cloud for id: %s", applicationID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID))
+	logrus.Debugf("constructed application url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching application: %s", bdr)
+	return nil, fmt.Errorf("error while getting application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// DeleteMesheryApplication deletes a meshery application with the given id
+func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryApplications, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	logrus.Infof("attempting to fetch application from cloud for id: %s", applicationID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, applicationID))
+	logrus.Debugf("constructed application url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to get applications: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	logrus.Errorf("error while fetching application: %s", bdr)
+	return nil, fmt.Errorf("error while getting application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) RemoteApplicationFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+	if !l.Capabilities.IsSupported(PersistMesheryApplications) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not supported by provider: %s", PersistMesheryApplications, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryApplications)
+
+	data, err := json.Marshal(map[string]interface{}{
+		"url":  resourceURL,
+		"save": save,
+		"path": path,
+	})
+
+	if err != nil {
+		logrus.Error(errors.Wrap(err, "error - unable to marshal meshery metrics for shipping"))
+		return nil, err
+	}
+
+	logrus.Debugf("Application: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save application to remote provider")
+	bf := bytes.NewBuffer(data)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	if err != nil {
+		logrus.Errorf("unable to get application: %v", err)
+		return nil, err
+	}
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to send applications: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to send application: %v", err)
+		return nil, err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("application successfully sent to remote provider: %s", string(bdr))
+		return bdr, nil
+	}
+
+	logrus.Errorf("error while sending application: %s", bdr)
+	return bdr, fmt.Errorf("error while sending application - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
 // SavePerformanceProfile saves a performance profile into the remote provider
 func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *PerformanceProfile) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistPerformanceProfiles) {
