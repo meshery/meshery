@@ -811,7 +811,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
-        "short_description": "Prometheus endpoint not configured.",
+        "short_description": "Prometheus endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
@@ -820,7 +820,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
-        "short_description": "Grafana endpoint not configured.",
+        "short_description": "Grafana endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       }

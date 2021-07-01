@@ -136,7 +136,7 @@ func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, erro
 
 // Logout - logout from provider backend
 func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) {
-	http.Redirect(w, req, "/login", http.StatusFound)
+	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
 // FetchResults - fetches results from provider backend
