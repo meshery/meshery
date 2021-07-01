@@ -163,6 +163,8 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 		OrgID:        orgID,
 	}
 	var err error
+
+	// Process Template Variables
 	tmpDsName := map[string]string{}
 	if len(board.Templating.List) > 0 {
 		for _, tmpVar := range board.Templating.List {
@@ -206,21 +208,22 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 			})
 		}
 	}
+
+	//Process Board Panels
 	if len(board.Panels) > 0 {
 		for _, p1 := range board.Panels {
-			if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type != "row" { // turning off text and table panels for now
+			if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type != "row" { // turning off text ,table and row panels for now
 				if p1.Datasource != nil {
-					if strings.HasPrefix(*p1.Datasource, "$") {
+					if strings.HasPrefix(*p1.Datasource, "$") { // Formating Datasource id
 						*p1.Datasource = tmpDsName[strings.Replace(*p1.Datasource, "$", "", 1)]
 					}
 				}
 				grafBoard.Panels = append(grafBoard.Panels, p1)
-			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 {
-				for _, p2 := range p1.Panels {
-					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text and table panels for now
-						if strings.HasPrefix(*p2.Datasource, "$") {
+			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 { // Looking for Panels with Row
+				for _, p2 := range p1.Panels { // Adding Panels inside the Row Panel to grafBoard
+					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" {
+						if strings.HasPrefix(*p2.Datasource, "$") { // Formating Datasource id
 							*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
-							// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
 						}
 						p3, _ := p2.MarshalJSON()
 						p4 := &sdk.Panel{}
@@ -232,13 +235,12 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 				}
 			}
 		}
-	} else if len(board.Rows) > 0 {
+	} else if len(board.Rows) > 0 { //Process Board Rows
 		for _, r1 := range board.Rows {
 			for _, p2 := range r1.Panels {
-				if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text and table panels for now
-					if strings.HasPrefix(*p2.Datasource, "$") {
+				if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" { // turning off text, table and row panels for now
+					if strings.HasPrefix(*p2.Datasource, "$") { // Formating Datasource id
 						*p2.Datasource = tmpDsName[strings.Replace(*p2.Datasource, "$", "", 1)]
-						// logrus.Debugf("updated panel datasource: %s", *panel.Datasource)
 					}
 					p3, _ := p2.MarshalJSON()
 					p4 := &sdk.Panel{}
