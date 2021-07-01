@@ -16,10 +16,10 @@
   },
   "keywords": [],
   "author": "Layer5",
-  "repository": "https://github.com/layer5io/meshery",
+  "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@cypress/code-coverage": "^3.9.6",
+    "@cypress/code-coverage": "^3.9.7",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "babel-plugin-istanbul": "^6.0.0",
@@ -33,8 +33,8 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "cypress": "^7.4.0",
-    "eslint": "^7.27.0",
+    "cypress": "^7.6.0",
+    "eslint": "^7.29.0",
     "eslint-plugin-cypress": "^2.11.3",
     "eslint-plugin-react": "^7.24.0",
     "http-proxy": "^1.18.1",

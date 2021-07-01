@@ -22,7 +22,7 @@ Si bien este no es un paso necesario, si planeas hacer algo más que una pequeñ
 ## Agregar repositorio 'upstream' a la lista de remotos
 
 ```
-git remote add upstream https://github.com/layer5io/meshery.git
+git remote add upstream https://github.com/meshery/meshery.git
 ```
 
 ("meshery" se usa como repositorio de ejemplo. Asegúrate de hacer referencia al repositorio _actual_ al que está contribuyendo, por ejemplo, "meshery-linkerd").
