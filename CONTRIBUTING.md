@@ -79,7 +79,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
 
 1. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
    `git push origin <my-changes>`
-1. Open a pull request (in your web browser) against our main repo: https://github.com/layer5io/meshery.
+1. Open a pull request (in your web browser) against our main repo: https://github.com/meshery/meshery.
 
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
 
@@ -95,7 +95,7 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `Go` version 1.15+ installed if you want to build and/or make changes to the existing code.
 1. `GOPATH` environment variable should be configured appropriately
 1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/layer5io/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
+1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), clone your forked version of Meshery to your local, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
 #### Build and run Meshery server
@@ -148,7 +148,7 @@ make docker
 Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify and existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
+   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
 1. Generate code
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
@@ -158,12 +158,12 @@ Meshery uses adapters to provision and interact with different service meshes. F
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 
-_Tip:_ The [Meshery adapter for Istio](https://github.com/layer5io/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
+_Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
 
 #### <a name="meshery-istio">Running Meshery Adapter (Meshery-Istio)</a>
 **Meshery-Istio** is a pre-written example of Meshery Adapter written in Go. Follow these instuctions to run meshery-istio to avoid errors related to Meshery Adapters
 
-1. Fork [Meshery-Istio](https://github.com/layer5io/meshery-istio)
+1. Fork [Meshery-Istio](https://github.com/meshery/meshery-istio)
 2. Clone your fork locally
 3. Run this command from the root directory of **meshery-istio**
    ```sh
@@ -246,7 +246,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 
 ### Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
+Please refer the [Meshery Contributing Guidelines](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
 
 Refer the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
@@ -254,7 +254,7 @@ For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contribu
 
 ### Building and running `mesheryctl`
 
-The [`/mesheryctl`](https://github.com/layer5io/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
+The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) folder contains the complete code for `mesheryctl`.
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.15+.
 
@@ -289,7 +289,7 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 
 `mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). Refer it for lint checks.
 
-All contributors are invited to review [pull requests](https://github.com/layer5io/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
+All contributors are invited to review [pull requests](https://github.com/meshery/meshery/pulls) on `mesheryctl` as on other Layer5 projects.
 
 # <a name="maintaining"> Reviews</a>
 

@@ -16,9 +16,9 @@ builds:
     - CGO_ENABLED=0
     
   ldflags:
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.version={{.Tag}}
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.commitsha={{.ShortCommit}}
-    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.version={{.Tag}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.commitsha={{.ShortCommit}}
+    - -s -w -X github.com/meshery/meshery/mesheryctl/internal/cli/root.releasechannel={{.Env.RELEASE_CHANNEL}}
   # GOOS list to build for.
   # For more info refer to: https://golang.org/doc/install/source#environment
   # Defaults are darwin and linux.
