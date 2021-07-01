@@ -78,7 +78,7 @@
     "react-jss": "^10.7.1",
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.1",
-    "react-redux": "^7.2.3",
+    "react-redux": "^7.2.4",
     "react-relay": "^11.0.2",
     "react-runtime": "^1.1.0",
     "react-select": "^2.4.3",
