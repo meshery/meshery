@@ -21,7 +21,7 @@ Para preparar y ejecutar Meshery en Kubernetes:
 Ejecute lo siguiente:
 
 ```sh
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ git clone https://github.com/meshery/meshery.git; cd meshery
 $ kubectl create namespace meshery
 $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
 ```
@@ -31,7 +31,7 @@ $ helm install meshery --namespace meshery install/kubernetes/helm/meshery
 Ejecute lo siguiente:
 
 ```sh
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ git clone https://github.com/meshery/meshery.git; cd meshery
 $ kubectl create namespace meshery
 $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | kubectl apply -f -
 ```
@@ -41,7 +41,7 @@ $ helm template meshery --namespace meshery install/kubernetes/helm/meshery | ku
 Meshery también puede ser desplegado(deployed) en un clúster de Kubernetes existente.Vea [tabla de compatibilidades](#matriz-de-compatibilades) para la compatibilidad de versiones. Para instalar Meshery en su cluster, clone el repositorio de Meshery:
 
 ```sh
-$ git clone https://github.com/layer5io/meshery.git; cd meshery
+$ git clone https://github.com/meshery/meshery.git; cd meshery
 ```
 
 Cree un nombre de espacio (namespace) como un nuevo espacio lógico para hospedar Meshery y sus componentes:

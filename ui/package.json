@@ -30,7 +30,7 @@
   },
   "keywords": [],
   "author": "Layer5",
-  "repository": "https://github.com/layer5io/meshery",
+  "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
     "@cypress/code-coverage": "^3.9.4",
