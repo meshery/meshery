@@ -1,6 +1,10 @@
 package models
 
-import "github.com/gofrs/uuid"
+import (
+	"time"
+
+	"github.com/gofrs/uuid"
+)
 
 // PatternResource represents a pattern resource that is provisioned
 // by meshery
@@ -13,4 +17,7 @@ type PatternResource struct {
 	OAMType   string     `json:"oam_type,omitempty"`
 	Deleted   bool       `json:"deleted,omitempty"`
 	// History   []PatternResource `json:"history,omitempty"` // Maybe reused when audit trail arrives
+
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }

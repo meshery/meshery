@@ -68,6 +68,14 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
+	// Get the user token
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		rw.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
@@ -108,13 +116,14 @@ func (h *Handler) PatternFileHandler(
 
 	msg, err := createCompConfigPairsAndExecuteAction(
 		r.Context(),
-		plan,
-		patternFile,
+		h,
 		prefObj,
 		user,
+		provider,
+		token,
+		plan,
+		patternFile,
 		isDel,
-		h.kubeclient,
-		h.localPersisters,
 	)
 
 	if err != nil {
@@ -208,13 +217,14 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 func createCompConfigPairsAndExecuteAction(
 	ctx context.Context,
-	plan *OAM.Plan,
-	patternFile OAM.Pattern,
+	h *Handler,
 	prefObj *models.Preference,
 	user *models.User,
+	provider models.Provider,
+	token string,
+	plan *OAM.Plan,
+	patternFile OAM.Pattern,
 	isDel bool,
-	kclient *meshkube.Client,
-	localPersisters LocalPersisters,
 ) (string, error) {
 	var internalErrs []error
 	var msgs []string
@@ -245,34 +255,52 @@ func createCompConfigPairsAndExecuteAction(
 		}
 
 		// Check if a similar resource has been previously provisioned
-		exists := localPersisters.PatternResourcePersister.Exists(
+		exists := patternResourceExists(
+			h,
+			prefObj,
+			user,
+			provider,
+			token,
 			comp.Name,
 			comp.Namespace,
 			comp.Spec.Type,
 			"workload",
 		)
 
-		// If resource does not exists but a delete operation is insisted
-		// then return error
-		if !exists && isDel {
-			internalErrs = append(internalErrs, fmt.Errorf("cannot delete non-existent resource: %s", svcName))
-			return false
-		}
-
 		if exists {
-			resource, err := localPersisters.PatternResourcePersister.GetPatternResourceByAttributes(
+			resourcePage, err := provider.GetMesheryPatternResources(
+				token,
+				"0",
+				"1",
+				"",
+				"",
 				comp.Name,
 				comp.Namespace,
 				comp.Spec.Type,
 				"workload",
 			)
-
 			if err != nil {
 				internalErrs = append(internalErrs, err)
 				return false
 			}
 
+			if len(resourcePage.Resources) < 1 {
+				err := fmt.Errorf(
+					"resource with name: %s, namespace: %s, type: %s, oam_type: %s not found",
+					comp.Name,
+					comp.Namespace,
+					comp.Spec.Type,
+					"workload",
+				)
+
+				internalErrs = append(internalErrs, err)
+				return false
+			}
+
+			resource := resourcePage.Resources[0]
 			id = resource.ID.String()
+
+			logrus.Debug("resource exists with id: ", id)
 		}
 
 		// Assign ID to the component
@@ -302,13 +330,14 @@ func createCompConfigPairsAndExecuteAction(
 		if !ok { // If no configuration exists corresponding to the component then proceed
 			msg, err := handleCompConfigPairAction(
 				ctx,
+				h,
 				compcon,
 				prefObj,
 				user,
+				provider,
+				token,
 				isDel,
 				exists && !isDel,
-				kclient,
-				localPersisters,
 			)
 			msgs = append(msgs, msg)
 			if err != nil {
@@ -341,13 +370,14 @@ func createCompConfigPairsAndExecuteAction(
 
 		msg, err := handleCompConfigPairAction(
 			ctx,
+			h,
 			compcon,
 			prefObj,
 			user,
+			provider,
+			token,
 			isDel,
 			exists && !isDel,
-			kclient,
-			localPersisters,
 		)
 		msgs = append(msgs, msg)
 		if err != nil {
@@ -363,13 +393,14 @@ func createCompConfigPairsAndExecuteAction(
 
 func handleCompConfigPairAction(
 	ctx context.Context,
+	h *Handler,
 	ccp compConfigPair,
 	prefObj *models.Preference,
 	user *models.User,
+	provider models.Provider,
+	token string,
 	isDel bool,
 	isUpdate bool,
-	kclient *meshkube.Client,
-	localPersisters LocalPersisters,
 ) (string, error) {
 	var msgs []string
 	var errs []error
@@ -409,8 +440,7 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
-			kclient,
-			localPersisters,
+			h.kubeclient,
 		)
 		if err != nil {
 			errs = append(errs, err)
@@ -425,11 +455,11 @@ func handleCompConfigPairAction(
 	if len(errs) == 0 && !isUpdate {
 		id := uuid.FromStringOrNil(ccp.Component.GetLabels()["resource.pattern.meshery.io/id"])
 		if isDel {
-			if err := localPersisters.PatternResourcePersister.DeletePatternResource(id); err != nil {
+			if err := provider.DeleteMesheryResource(token, id.String()); err != nil {
 				logrus.Error("failed to delete the pattern resource:", err)
 			}
 		} else {
-			if _, err := localPersisters.PatternResourcePersister.SavePatternResource(&models.PatternResource{
+			if _, err := provider.SaveMesheryPatternResource(token, &models.PatternResource{
 				ID:        &id,
 				Name:      ccp.Component.Name,
 				Namespace: ccp.Component.Namespace,
@@ -501,7 +531,6 @@ func executeAction(
 	oamComps []string,
 	oamConfig string,
 	kClient *meshkube.Client,
-	localPersisters LocalPersisters,
 ) (string, error) {
 	logrus.Debugf("Adapter to execute operations on: %s", adapter)
 
@@ -575,14 +604,23 @@ func mergeMsgs(msgs []string) string {
 	return strings.Join(finalMsgs, "\n")
 }
 
-func (h *Handler) savePatternResource(pr models.PatternResource) {
-	// Check if the resource already exists in the database
-	if h.localPersisters.PatternResourcePersister.Exists(pr.Name, pr.Namespace, pr.Type, pr.OAMType) {
-		return
+func patternResourceExists(
+	h *Handler,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+	token,
+	name,
+	namespace,
+	typ,
+	oamType string,
+) bool {
+	res, err := provider.GetMesheryPatternResources(token, "0", "1", "", "", name, namespace, typ, oamType)
+	if err != nil {
+		return false
 	}
 
-	// If the resource does not exists then create the resource
-	if _, err := h.localPersisters.PatternResourcePersister.SavePatternResource(&pr); err != nil {
-		h.log.Debug("failed to save the pattern resource to the database: ", err)
-	}
+	logrus.Debugf("&&&&&%+v\n", res)
+
+	return len(res.Resources) > 0
 }
