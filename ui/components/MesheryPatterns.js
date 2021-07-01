@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
-import UpdateIcon from "@material-ui/icons/Update";
+import SaveIcon from '@material-ui/icons/Save';
 import UploadIcon from "@material-ui/icons/Publish";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -21,7 +21,8 @@ import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import EditIcon from '@material-ui/icons/Edit';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
@@ -82,7 +83,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             color="primary"
             onClick={() => onSubmit(yaml, pattern.id, pattern.name, "update")}
           >
-            <UpdateIcon />
+            <SaveIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete Pattern">
@@ -308,7 +309,7 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
       },
     },
     {
-      name: "Details",
+      name: "Actions",
       options: {
         filter: false,
         sort: false,
@@ -322,13 +323,23 @@ function MesheryPatterns({ updateProgress, enqueueSnackbar, closeSnackbar, user,
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <IconButton
-              aria-label="more"
-              color="inherit"
-              onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])}
-            >
-              <MoreHorizIcon />
-            </IconButton>
+            <>
+              <IconButton>
+                <EditIcon
+                  title="Config"  
+                  aria-label="config"
+                  color="inherit"
+                  onClick={() => setSelectedRowData(patterns[tableMeta.rowIndex])}/>
+              </IconButton>
+              <IconButton>               
+                <PlayArrowIcon
+                  title="Deploy"  
+                  aria-label="deploy"
+                  color="inherit"
+                  // onClick={() => dataFetch()} //deploy endpoint to be called here
+                />
+              </IconButton>
+            </>    
           );
         },
       },
