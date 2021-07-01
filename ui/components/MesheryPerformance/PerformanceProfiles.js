@@ -116,7 +116,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar }) 
 
       subtitle: "Are you sure you want to delete this performance profile?",
 
-      options: ["yes", "no"],
+      options: ["YES", "NO"],
+
     })
     if(response == "no") return
     dataFetch(
