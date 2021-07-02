@@ -2,8 +2,35 @@ basePath: /
 consumes:
 - application/json
 definitions:
+  Adapter:
+    description: Adapter represents an adapter in Meshery
+    properties:
+      adapter_location:
+        type: string
+        x-go-name: Location
+      git_commit_sha:
+        type: string
+        x-go-name: GitCommitSHA
+      name:
+        type: string
+        x-go-name: Name
+      ops:
+        items:
+          $ref: '#/definitions/SupportedOperation'
+        type: array
+        x-go-name: Ops
+      version:
+        type: string
+        x-go-name: Version
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   Alert:
     properties:
+      alertRuleTags:
+        additionalProperties:
+          type: string
+        type: object
+        x-go-name: AlertRuleTags
       conditions:
         items:
           $ref: '#/definitions/AlertCondition'
@@ -147,6 +174,10 @@ definitions:
   Axis:
     description: for a graph panel
     properties:
+      decimals:
+        format: int64
+        type: integer
+        x-go-name: Decimals
       format:
         type: string
         x-go-name: Format
@@ -221,6 +252,22 @@ definitions:
         format: uint64
         type: integer
         x-go-name: Decimals
+      link:
+        type: boolean
+        x-go-name: Link
+      linkTargetBlank:
+        type: boolean
+        x-go-name: LinkTargetBlank
+      linkTooltip:
+        type: string
+        x-go-name: LinkTooltip
+      linkUrl:
+        type: string
+        x-go-name: LinkUrl
+      mappingType:
+        format: int64
+        type: integer
+        x-go-name: MappingType
       pattern:
         type: string
         x-go-name: Pattern
@@ -235,6 +282,11 @@ definitions:
       unit:
         type: string
         x-go-name: Unit
+      valueMaps:
+        items:
+          $ref: '#/definitions/ValueMap'
+        type: array
+        x-go-name: ValueMaps
     type: object
     x-go-package: github.com/grafana-tools/sdk
   ContainerChangeResponseItem:
@@ -336,6 +388,36 @@ definitions:
     title: ErrorResponse Represents an error.
     type: object
     x-go-package: github.com/docker/docker/api/types
+  FieldConfig:
+    properties:
+      defaults:
+        properties:
+          threshold:
+            properties:
+              mode:
+                type: string
+                x-go-name: Mode
+              steps:
+                items:
+                  properties:
+                    color:
+                      type: string
+                      x-go-name: Color
+                    value:
+                      type: string
+                      x-go-name: Value
+                  type: object
+                type: array
+                x-go-name: Steps
+            type: object
+            x-go-name: Threshold
+          unit:
+            type: string
+            x-go-name: Unit
+        type: object
+        x-go-name: Defaults
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   FieldsV1:
     description: |-
       Each key is either a '.' representing the field itself, and will always map to an empty set,
@@ -363,7 +445,7 @@ definitions:
     type: object
     x-go-package: github.com/grafana-tools/sdk
   Gauge:
-    description: for a singlestat
+    description: for a stat
     properties:
       maxValue:
         format: float
@@ -647,6 +729,81 @@ definitions:
       or ints: 100 or "100"'
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  K8SConfig:
+    description: K8SConfig represents all the k8s session config
+    properties:
+      clusterConfigured:
+        type: boolean
+        x-go-name: ClusterConfigured
+      config:
+        items:
+          format: uint8
+          type: integer
+        type: array
+        x-go-name: Config
+      configuredServer:
+        type: string
+        x-go-name: Server
+      contextName:
+        type: string
+        x-go-name: ContextName
+      inClusterConfig:
+        type: boolean
+        x-go-name: InClusterConfig
+      k8sfile:
+        type: string
+        x-go-name: K8Sfile
+      nodes:
+        items:
+          $ref: '#/definitions/K8SNode'
+        type: array
+        x-go-name: Nodes
+      server_version:
+        type: string
+        x-go-name: ServerVersion
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  K8SNode:
+    description: K8SNode - represents a kubernetes node
+    properties:
+      allocatable_cpu:
+        type: string
+        x-go-name: AllocatableCPU
+      allocatable_memory:
+        type: string
+        x-go-name: AllocatableMemory
+      architecture:
+        type: string
+        x-go-name: Architecture
+      capacity_cpu:
+        type: string
+        x-go-name: CapacityCPU
+      capacity_memory:
+        type: string
+        x-go-name: CapacityMemory
+      container_runtime_version:
+        type: string
+        x-go-name: ContainerRuntimeVersion
+      hostname:
+        type: string
+        x-go-name: HostName
+      internal_ip:
+        type: string
+        x-go-name: InternalIP
+      kubelet_version:
+        type: string
+        x-go-name: KubeletVersion
+      kubeproxy_version:
+        type: string
+        x-go-name: KubeProxyVersion
+      operating_system:
+        type: string
+        x-go-name: OperatingSystem
+      os_image:
+        type: string
+        x-go-name: OSImage
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   Legend:
     description: for a graph panel
     properties:
@@ -689,6 +846,51 @@ definitions:
         x-go-name: Values
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  Link:
+    properties:
+      asDropdown:
+        type: boolean
+        x-go-name: AsDropdown
+      dashUri:
+        type: string
+        x-go-name: DashURI
+      dashboard:
+        type: string
+        x-go-name: Dashboard
+      icon:
+        type: string
+        x-go-name: Icon
+      includeVars:
+        type: boolean
+        x-go-name: IncludeVars
+      keepTime:
+        type: boolean
+        x-go-name: KeepTime
+      params:
+        type: string
+        x-go-name: Params
+      tags:
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      targetBlank:
+        type: boolean
+        x-go-name: TargetBlank
+      title:
+        type: string
+        x-go-name: Title
+      tooltip:
+        type: string
+        x-go-name: Tooltip
+      type:
+        type: string
+        x-go-name: Type
+      url:
+        type: string
+        x-go-name: URL
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   LoadBalancerIngress:
     description: traffic intended for the service should be sent to an ingress point.
     properties:
@@ -723,6 +925,25 @@ definitions:
     title: LoadBalancerStatus represents the status of a load-balancer.
     type: object
     x-go-package: k8s.io/api/core/v1
+  LoadTestPreferences:
+    description: LoadTestPreferences represents the load test preferences
+    properties:
+      c:
+        format: int64
+        type: integer
+        x-go-name: ConcurrentRequests
+      gen:
+        type: string
+        x-go-name: LoadGenerator
+      qps:
+        format: int64
+        type: integer
+        x-go-name: QueriesPerSecond
+      t:
+        type: string
+        x-go-name: Duration
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   ManagedFieldsEntry:
     description: |-
       ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
@@ -809,6 +1030,53 @@ definitions:
         x-go-name: UserID
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  OpCategory:
+    format: int32
+    type: integer
+    x-go-package: github.com/layer5io/meshery/meshes
+  Options:
+    properties:
+      colorMode:
+        type: string
+        x-go-name: ColorMode
+      content:
+        type: string
+        x-go-name: Content
+      displayMode:
+        type: string
+        x-go-name: DisplayMode
+      graphMode:
+        type: string
+        x-go-name: GraphMode
+      justifyMode:
+        type: string
+        x-go-name: JustifyMode
+      mode:
+        type: string
+        x-go-name: Mode
+      orientation:
+        type: string
+        x-go-name: Orientation
+      reduceOptions:
+        properties:
+          calcs:
+            items:
+              type: string
+            type: array
+            x-go-name: Calcs
+          fields:
+            type: string
+            x-go-name: Fields
+          values:
+            type: boolean
+            x-go-name: Values
+        type: object
+        x-go-name: ReduceOptions
+      textMode:
+        type: string
+        x-go-name: TextMode
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   OwnerReference:
     description: |-
       OwnerReference contains enough information to let you identify an owning
@@ -854,10 +1122,6 @@ definitions:
     x-go-package: k8s.io/apimachinery/pkg/apis/meta/v1
   Panel:
     properties:
-      Panels:
-        items:
-          $ref: '#/definitions/Panel'
-        type: array
       alert:
         $ref: '#/definitions/Alert'
       aliasColors:
@@ -866,6 +1130,49 @@ definitions:
       bars:
         type: boolean
         x-go-name: Bars
+      cards:
+        properties:
+          cardPadding:
+            format: double
+            type: number
+            x-go-name: CardPadding
+          cardRound:
+            format: double
+            type: number
+            x-go-name: CardRound
+        type: object
+        x-go-name: Cards
+      collapsed:
+        type: boolean
+        x-go-name: Collapsed
+      color:
+        properties:
+          cardColor:
+            type: string
+            x-go-name: CardColor
+          colorScale:
+            type: string
+            x-go-name: ColorScale
+          colorScheme:
+            type: string
+            x-go-name: ColorScheme
+          exponent:
+            format: double
+            type: number
+            x-go-name: Exponent
+          max:
+            format: double
+            type: number
+            x-go-name: Max
+          min:
+            format: double
+            type: number
+            x-go-name: Min
+          mode:
+            type: string
+            x-go-name: Mode
+        type: object
+        x-go-name: Color
       colorBackground:
         type: boolean
         x-go-name: ColorBackground
@@ -897,6 +1204,9 @@ definitions:
       dashes:
         type: boolean
         x-go-name: Dashes
+      dataFormat:
+        type: string
+        x-go-name: DataFormat
       datasource:
         type: string
         x-go-name: Datasource
@@ -913,10 +1223,16 @@ definitions:
       error:
         type: boolean
         x-go-name: Error
+      fieldConfig:
+        $ref: '#/definitions/FieldConfig'
       fill:
         format: int64
         type: integer
         x-go-name: Fill
+      folderId:
+        format: int64
+        type: integer
+        x-go-name: FolderID
       format:
         type: string
         x-go-name: Format
@@ -942,12 +1258,21 @@ definitions:
             x-go-name: "Y"
         type: object
         x-go-name: GridPos
+      headings:
+        type: boolean
+        x-go-name: Headings
       height:
-        type: string
+        type: object
         x-go-name: Height
       hideTimeOverride:
         type: boolean
         x-go-name: HideTimeOverride
+      hideZeroBuckets:
+        type: boolean
+        x-go-name: HideZeroBuckets
+      highlightCards:
+        type: boolean
+        x-go-name: HighlightCards
       id:
         format: uint64
         type: integer
@@ -960,6 +1285,11 @@ definitions:
         x-go-name: LeftYAxisLabel
       legend:
         $ref: '#/definitions/Legend'
+        properties:
+          show:
+            type: boolean
+            x-go-name: Show
+        type: object
       limit:
         format: int64
         type: integer
@@ -973,7 +1303,7 @@ definitions:
         x-go-name: Linewidth
       links:
         items:
-          $ref: '#/definitions/link'
+          $ref: '#/definitions/Link'
         type: array
         x-go-name: Links
       mappingType:
@@ -1003,16 +1333,32 @@ definitions:
       onlyAlertsOnDashboard:
         type: boolean
         x-go-name: OnlyAlertsOnDashboard
+      options:
+        $ref: '#/definitions/Options'
+        properties:
+          content:
+            type: string
+            x-go-name: Content
+          mode:
+            type: string
+            x-go-name: Mode
+        type: object
+        x-go-name: Options
       pageSize:
         format: uint64
         type: integer
         x-go-name: PageSize
+      panels:
+        items:
+          $ref: '#/definitions/Panel'
+        type: array
+        x-go-name: Panels
       percentage:
         type: boolean
         x-go-name: Percentage
       pointradius:
-        format: int64
-        type: integer
+        format: float
+        type: number
         x-go-name: Pointradius
       points:
         type: boolean
@@ -1037,6 +1383,9 @@ definitions:
           $ref: '#/definitions/RangeMap'
         type: array
         x-go-name: RangeMaps
+      recent:
+        type: boolean
+        x-go-name: Recent
       renderer:
         type: string
         x-go-name: Renderer
@@ -1048,6 +1397,9 @@ definitions:
         format: uint64
         type: integer
         x-go-name: RepeatPanelID
+      reverseYBuckets:
+        type: boolean
+        x-go-name: ReverseYBuckets
       rightYAxisLabel:
         type: string
         x-go-name: RightYAxisLabel
@@ -1069,6 +1421,9 @@ definitions:
       scroll:
         type: boolean
         x-go-name: Scroll
+      search:
+        type: boolean
+        x-go-name: Search
       seriesOverrides:
         items:
           $ref: '#/definitions/SeriesOverride'
@@ -1099,6 +1454,9 @@ definitions:
       stack:
         type: boolean
         x-go-name: Stack
+      starred:
+        type: boolean
+        x-go-name: Starred
       stateFilter:
         items:
           type: string
@@ -1138,6 +1496,18 @@ definitions:
         x-go-name: Title
       tooltip:
         $ref: '#/definitions/Tooltip'
+        properties:
+          show:
+            type: boolean
+            x-go-name: Show
+          showHistogram:
+            type: boolean
+            x-go-name: ShowHistogram
+        type: object
+      tooltipDecimals:
+        format: int64
+        type: integer
+        x-go-name: TooltipDecimals
       transform:
         type: string
         x-go-name: Transform
@@ -1161,6 +1531,20 @@ definitions:
       x-axis:
         type: boolean
         x-go-name: XAxis
+      xAxis:
+        properties:
+          show:
+            type: boolean
+            x-go-name: Show
+        type: object
+        x-go-name: XAxis
+      xBucketNumber:
+        format: double
+        type: number
+        x-go-name: XBucketNumber
+      xBucketSize:
+        type: string
+        x-go-name: XBucketSize
       xaxis:
         $ref: '#/definitions/Axis'
       y-axis:
@@ -1171,6 +1555,45 @@ definitions:
           type: string
         type: array
         x-go-name: YFormats
+      yAxis:
+        properties:
+          decimals:
+            format: int64
+            type: integer
+            x-go-name: Decimals
+          format:
+            type: string
+            x-go-name: Format
+          logBase:
+            format: int64
+            type: integer
+            x-go-name: LogBase
+          max:
+            type: string
+            x-go-name: Max
+          min:
+            type: string
+            x-go-name: Min
+          show:
+            type: boolean
+            x-go-name: Show
+          splitFactor:
+            format: double
+            type: number
+            x-go-name: SplitFactor
+        type: object
+        x-go-name: YAxis
+      yBucketBound:
+        type: string
+        x-go-name: YBucketBound
+      yBucketNumber:
+        format: double
+        type: number
+        x-go-name: YBucketNumber
+      yBucketSize:
+        format: double
+        type: number
+        x-go-name: YBucketSize
       yaxes:
         items:
           $ref: '#/definitions/Axis'
@@ -1293,14 +1716,6 @@ definitions:
         description: service mesh for performance tests
         type: string
         x-go-name: ServiceMesh
-    required:
-    - name
-    - load_generators
-    - endpoints
-    - service_mesh
-    - concurrent_request
-    - qps
-    - duration
     type: object
     x-go-package: github.com/layer5io/meshery/models
   PerformanceProfilesAPIResponse:
@@ -1378,8 +1793,82 @@ definitions:
         x-go-name: TotalCount
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  PerformanceTestConfig:
+    properties:
+      clients:
+        description: Single or distributed load generators
+        items:
+          $ref: '#/definitions/PerformanceTestConfig_Client'
+        type: array
+        x-go-name: Clients
+      duration:
+        description: Length of time the endpoint will be under load
+        type: string
+        x-go-name: Duration
+      id:
+        type: string
+        x-go-name: Id
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+        x-go-name: Labels
+      name:
+        type: string
+        x-go-name: Name
+      smp_version:
+        description: Spec version
+        type: string
+        x-go-name: SmpVersion
+    type: object
+    x-go-package: github.com/layer5io/service-mesh-performance/spec
+  PerformanceTestConfig_Client:
+    properties:
+      body:
+        type: string
+        x-go-name: Body
+      connections:
+        format: int32
+        type: integer
+        x-go-name: Connections
+      content_type:
+        type: string
+        x-go-name: ContentType
+      cookies:
+        additionalProperties:
+          type: string
+        type: object
+        x-go-name: Cookies
+      endpoint_urls:
+        items:
+          type: string
+        type: array
+        x-go-name: EndpointUrls
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+        x-go-name: Headers
+      internal:
+        type: boolean
+        x-go-name: Internal
+      load_generator:
+        type: string
+        x-go-name: LoadGenerator
+      protocol:
+        $ref: '#/definitions/PerformanceTestConfig_Client_Protocol'
+      rps:
+        format: int64
+        type: integer
+        x-go-name: Rps
+    type: object
+    x-go-package: github.com/layer5io/service-mesh-performance/spec
+  PerformanceTestConfig_Client_Protocol:
+    format: int32
+    type: integer
+    x-go-package: github.com/layer5io/service-mesh-performance/spec
   PerformanceTestParameters:
-    description: PerformanceTestParameters contains paramters to run a performance
+    description: PerformanceTestParameters contains parameters to run a performance
       test
     properties:
       c:
@@ -1422,13 +1911,6 @@ definitions:
         format: uuid
         type: string
         x-go-name: TestID
-    required:
-    - loadGenerator
-    - url
-    - mesh
-    - c
-    - qps
-    - t
     type: object
     x-go-package: github.com/layer5io/meshery/models
   Plugin:
@@ -1787,6 +2269,45 @@ definitions:
     - Type
     type: object
     x-go-package: github.com/docker/docker/api/types
+  Preference:
+    description: Preference represents the data stored in session / local DB
+    properties:
+      anonymousPerfResults:
+        type: boolean
+        x-go-name: AnonymousPerfResults
+      anonymousUsageStats:
+        type: boolean
+        x-go-name: AnonymousUsageStats
+      grafana:
+        $ref: '#/definitions/Grafana'
+      k8sConfig:
+        $ref: '#/definitions/K8SConfig'
+      loadTestPrefs:
+        $ref: '#/definitions/LoadTestPreferences'
+      meshAdapters:
+        items:
+          $ref: '#/definitions/Adapter'
+        type: array
+        x-go-name: MeshAdapters
+      prometheus:
+        $ref: '#/definitions/Prometheus'
+      updated_at:
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  PreferenceParams:
+    description: Parameters to updates Anonymous stats
+    properties:
+      anonymousPerfResults:
+        type: boolean
+        x-go-name: AnonymousPerfResults
+      anonymousUsageStats:
+        type: boolean
+        x-go-name: AnonymousUsageStats
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   Prometheus:
     description: Prometheus represents the prometheus session config
     properties:
@@ -1862,6 +2383,39 @@ definitions:
         x-go-name: LoadGenerator
     type: object
     x-go-package: github.com/layer5io/meshery/models
+  Schedule:
+    description: Schedule is the struct for representing schedules
+    properties:
+      cron_expression:
+        description: CronExpression is the UNIX cron expression (quartz expression)
+        type: string
+        x-go-name: CronExpression
+      id:
+        $ref: '#/definitions/UUID'
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
+  SchedulesAPIResponse:
+    description: API response model for SchedulesAPI
+    properties:
+      page:
+        format: uint64
+        type: integer
+        x-go-name: Page
+      page_size:
+        format: uint64
+        type: integer
+        x-go-name: PageSize
+      schedules:
+        items:
+          $ref: '#/definitions/Schedule'
+        type: array
+        x-go-name: Schedules
+      total_count:
+        format: uint64
+        type: integer
+        x-go-name: TotalCount
+    type: object
+    x-go-package: github.com/layer5io/meshery/models
   SelectedGrafanaConfig:
     description: SelectedGrafanaConfig represents the selected boards, panels, and
       template variables
@@ -1892,6 +2446,9 @@ definitions:
       color:
         type: string
         x-go-name: Color
+      dashes:
+        type: boolean
+        x-go-name: Dashes
       fill:
         format: int64
         type: integer
@@ -1905,6 +2462,10 @@ definitions:
       lines:
         type: boolean
         x-go-name: Lines
+      linewidth:
+        format: int64
+        type: integer
+        x-go-name: LineWidth
       nullPointMode:
         type: string
         x-go-name: NullPointMode
@@ -2362,7 +2923,7 @@ definitions:
     type: object
     x-go-package: github.com/grafana-tools/sdk
   SparkLine:
-    description: for a singlestat
+    description: for a stat
     properties:
       fillColor:
         type: string
@@ -2386,6 +2947,50 @@ definitions:
         x-go-name: YMin
     type: object
     x-go-package: github.com/grafana-tools/sdk
+  StackdriverAlignOption:
+    description: |-
+      StackdriverAlignOption defines a single alignment option shown in Grafana
+      during query configuration.
+    properties:
+      label:
+        type: string
+        x-go-name: Label
+      metricKinds:
+        items:
+          type: string
+        type: array
+        x-go-name: MetricKinds
+      text:
+        type: string
+        x-go-name: Text
+      value:
+        type: string
+        x-go-name: Value
+      valueTypes:
+        items:
+          type: string
+        type: array
+        x-go-name: ValueTypes
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
+  StackdriverAlignOptions:
+    description: |-
+      StackdriverAlignOptions defines the list of alignment options shown in
+      Grafana during query configuration.
+    properties:
+      expanded:
+        type: boolean
+        x-go-name: Expanded
+      label:
+        type: string
+        x-go-name: Label
+      options:
+        items:
+          $ref: '#/definitions/StackdriverAlignOption'
+        type: array
+        x-go-name: Options
+    type: object
+    x-go-package: github.com/grafana-tools/sdk
   StringArray:
     items:
       type: string
@@ -2393,12 +2998,35 @@ definitions:
       types.
     type: array
     x-go-package: github.com/lib/pq
+  SupportedOperation:
+    properties:
+      category:
+        $ref: '#/definitions/OpCategory'
+      key:
+        type: string
+        x-go-name: Key
+      value:
+        type: string
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/layer5io/meshery/meshes
   Target:
     description: for an any panel
     properties:
       alias:
         type: string
         x-go-name: Alias
+      aliasBy:
+        type: string
+        x-go-name: AliasBy
+      alignOptions:
+        items:
+          $ref: '#/definitions/StackdriverAlignOptions'
+        type: array
+        x-go-name: AlignOptions
+      alignmentPeriod:
+        type: string
+        x-go-name: AlignmentPeriod
       bucketAggs:
         items:
           properties:
@@ -2414,8 +3042,7 @@ definitions:
                   type: string
                   x-go-name: Interval
                 min_doc_count:
-                  format: int64
-                  type: integer
+                  type: object
                   x-go-name: MinDocCount
                 order:
                   type: string
@@ -2434,6 +3061,9 @@ definitions:
           type: object
         type: array
         x-go-name: BucketAggs
+      crossSeriesReducer:
+        type: string
+        x-go-name: CrossSeriesReducer
       datasource:
         type: string
         x-go-name: Datasource
@@ -2450,9 +3080,36 @@ definitions:
         description: For Prometheus
         type: string
         x-go-name: Expr
+      filters:
+        items:
+          type: string
+        type: array
+        x-go-name: Filters
       format:
         type: string
         x-go-name: Format
+      group:
+        items:
+          properties:
+            params:
+              items:
+                type: string
+              type: array
+              x-go-name: Params
+            type:
+              type: string
+              x-go-name: Type
+          type: object
+        type: array
+        x-go-name: Group
+      groupBys:
+        items:
+          type: string
+        type: array
+        x-go-name: GroupBys
+      hide:
+        type: boolean
+        x-go-name: Hide
       instant:
         type: boolean
         x-go-name: Instant
@@ -2466,9 +3123,22 @@ definitions:
       legendFormat:
         type: string
         x-go-name: LegendFormat
+      measurement:
+        description: For InfluxDB
+        type: string
+        x-go-name: Measurement
+      metricColumn:
+        type: string
+        x-go-name: MetricColumn
+      metricKind:
+        type: string
+        x-go-name: MetricKind
       metricName:
         type: string
         x-go-name: MetricName
+      metricType:
+        type: string
+        x-go-name: MetricType
       metrics:
         items:
           properties:
@@ -2488,21 +3158,49 @@ definitions:
         description: For CloudWatch
         type: string
         x-go-name: Namespace
+      perSeriesAligner:
+        type: string
+        x-go-name: PerSeriesAligner
       period:
         type: string
         x-go-name: Period
+      projectName:
+        description: |-
+          For the Stackdriver data source. Find out more information at
+          https:/grafana.com/docs/grafana/v6.0/features/datasources/stackdriver/
+        type: string
+        x-go-name: ProjectName
       query:
         type: string
         x-go-name: Query
       rawQuery:
         type: boolean
         x-go-name: RawQuery
+      rawSql:
+        type: string
+        x-go-name: RawSql
       refId:
         type: string
         x-go-name: RefID
       region:
         type: string
         x-go-name: Region
+      select:
+        items:
+          items:
+            properties:
+              params:
+                items:
+                  type: string
+                type: array
+                x-go-name: Params
+              type:
+                type: string
+                x-go-name: Type
+            type: object
+          type: array
+        type: array
+        x-go-name: Select
       statistics:
         items:
           type: string
@@ -2512,13 +3210,43 @@ definitions:
         format: int64
         type: integer
         x-go-name: Step
+      table:
+        description: For PostgreSQL
+        type: string
+        x-go-name: Table
       target:
         description: For Graphite
         type: string
         x-go-name: Target
+      timeColumn:
+        type: string
+        x-go-name: TimeColumn
       timeField:
         type: string
         x-go-name: TimeField
+      valueType:
+        type: string
+        x-go-name: ValueType
+      where:
+        items:
+          properties:
+            datatype:
+              type: string
+              x-go-name: Datatype
+            name:
+              type: string
+              x-go-name: Name
+            params:
+              items:
+                type: string
+              type: array
+              x-go-name: Params
+            type:
+              type: string
+              x-go-name: Type
+          type: object
+        type: array
+        x-go-name: Where
     type: object
     x-go-package: github.com/grafana-tools/sdk
   Threshold:
@@ -2606,7 +3334,7 @@ definitions:
     type: array
     x-go-package: github.com/gofrs/uuid
   ValueMap:
-    description: for a singlestat
+    description: for a stat
     properties:
       op:
         type: string
@@ -2739,52 +3467,6 @@ definitions:
     - Size
     type: object
     x-go-package: github.com/docker/docker/api/types
-  link:
-    description: link represents link to another dashboard or external weblink
-    properties:
-      asDropdown:
-        type: boolean
-        x-go-name: AsDropdown
-      dashUri:
-        type: string
-        x-go-name: DashURI
-      dashboard:
-        type: string
-        x-go-name: Dashboard
-      icon:
-        type: string
-        x-go-name: Icon
-      includeVars:
-        type: boolean
-        x-go-name: IncludeVars
-      keepTime:
-        type: boolean
-        x-go-name: KeepTime
-      params:
-        type: string
-        x-go-name: Params
-      tags:
-        items:
-          type: string
-        type: array
-        x-go-name: Tags
-      targetBlank:
-        type: boolean
-        x-go-name: TargetBlank
-      title:
-        type: string
-        x-go-name: Title
-      tooltip:
-        type: string
-        x-go-name: Tooltip
-      type:
-        type: string
-        x-go-name: Type
-      url:
-        type: string
-        x-go-name: URL
-    type: object
-    x-go-package: github.com/grafana-tools/sdk
 info:
   description: |-
     the purpose of this application is to provide an application
@@ -3059,6 +3741,26 @@ paths:
       summary: Handle GET request for Prometheus static board
       tags:
       - PrometheusAPI
+  /api/user/login:
+    get:
+      description: Redirects user for auth or issues session
+      operationId: idGetUserLogin
+      responses:
+        "200":
+          description: ""
+      summary: Handlers GET request for User login
+      tags:
+      - UserAPI
+  /api/user/logout:
+    get:
+      description: Redirects user for auth or issues session
+      operationId: idGetUserLogout
+      responses:
+        "200":
+          description: ""
+      summary: Handlers GET request for User logout
+      tags:
+      - UserAPI
   /api/user/performance/profiles:
     get:
       description: Returns the list of all the performance profiles saved by the current
@@ -3145,7 +3847,7 @@ paths:
       parameters:
       - $ref: '#/definitions/PerformanceTestParameters'
         in: query
-        name: Query
+        name: Body
       responses:
         "200":
           description: ""
@@ -3162,9 +3864,155 @@ paths:
       summary: Handles GET requests for performance results
       tags:
       - PerformanceAPI
+  /api/user/prefs:
+    get:
+      description: Returns anonymous stats for user
+      operationId: idGetAnonymousStats
+      responses:
+        "200":
+          $ref: '#/responses/anonymousStatsResponseWrapper'
+      summary: Handle GET for anonymous stats
+      tags:
+      - UserAPI
+    post:
+      description: Updates anonymous stats for user
+      operationId: idPostAnonymousStats
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/PreferenceParams'
+      responses:
+        "200":
+          $ref: '#/responses/anonymousStatsResponseWrapper'
+      summary: Handle GET for anonymous stats
+      tags:
+      - UserAPI
+  /api/user/prefs/perf:
+    delete:
+      description: Used for deleting load test preferences
+      operationId: idDeleteLoadPreferences
+      parameters:
+      - format: uuid
+        in: query
+        name: uuid
+        type: string
+        x-go-name: UUID
+      responses:
+        "200":
+          description: ""
+      summary: Handle DELETE request for load test preferences
+      tags:
+      - UserAPI
+    get:
+      description: Used for fetching load test preferences
+      operationId: idGetLoadPreferences
+      parameters:
+      - format: uuid
+        in: query
+        name: uuid
+        type: string
+        x-go-name: UUID
+      responses:
+        "200":
+          $ref: '#/responses/loadTestPreferencesWrapper'
+      summary: Handle GET request for load test preferences
+      tags:
+      - UserAPI
+    post:
+      description: Used for persisting load test preferences
+      operationId: idPostLoadPreferences
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/PerformanceTestConfig'
+      responses:
+        "200":
+          description: ""
+      summary: Handle POST request for load test preferences
+      tags:
+      - UserAPI
+  /api/user/schedules:
+    get:
+      description: Returns the list of all the schedules saved by the current user
+      operationId: idGetSchedules
+      responses:
+        "200":
+          $ref: '#/responses/schedulesResponseWrapper'
+      summary: Handle GET reqeuest for Schedules
+      tags:
+      - SchedulesAPI
+    post:
+      description: Save schedule using the current provider's persistence mechanism
+      operationId: idPostSchedules
+      responses:
+        "200":
+          $ref: '#/responses/singleScheduleResponseWrapper'
+      summary: Handle POST reqeuest for Schedules
+      tags:
+      - SchedulesAPI
+  /api/user/schedules/{id}:
+    delete:
+      description: Deletes a schedule with the given id
+      operationId: idDeleteSchedules
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/schedulesResponseWrapper'
+      summary: Handle DELETE reqeuest for Schedules
+      tags:
+      - SchedulesAPI
+    get:
+      description: Fetches and returns the schedule with the given id
+      operationId: idGetSingleSchedule
+      parameters:
+      - description: id for a specific
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/singleScheduleResponseWrapper'
+      summary: Handle GET reqeuest for Schedules
+      tags:
+      - SchedulesAPI
+  /api/user/token:
+    get:
+      description: |-
+        Returns token from the actual provider in a file
+        resposese:
+        200:
+      operationId: idGetTokenProvider
+      summary: Handle GET request for tokens
+      tags:
+      - UserAPI
+    post:
+      description: |-
+        Receives token from the actual provider
+        resposese:
+        200:
+      operationId: idPostTokenProvider
+      summary: Handle POST request for tokens
+      tags:
+      - UserAPI
 produces:
 - application/json
 responses:
+  anonymousStatsResponseWrapper:
+    description: Returns Anonymous stats
+    schema:
+      $ref: '#/definitions/Preference'
   grafanaBoardsResponseWrapper:
     description: Returns Grafana boards and panels
     schema:
@@ -3175,6 +4023,10 @@ responses:
     description: Returns Grafana configs
     schema:
       $ref: '#/definitions/Grafana'
+  loadTestPreferencesWrapper:
+    description: Returns load test preferences
+    schema:
+      $ref: '#/definitions/PerformanceTestConfig'
   mesheryPatternResponseWrapper:
     description: Returns a single meshery pattern
     schema:
@@ -3211,6 +4063,14 @@ responses:
       additionalProperties:
         $ref: '#/definitions/GrafanaBoard'
       type: object
+  schedulesResponseWrapper:
+    description: Returns List of saved schedules
+    schema:
+      $ref: '#/definitions/SchedulesAPIResponse'
+  singleScheduleResponseWrapper:
+    description: Returns a single schedules
+    schema:
+      $ref: '#/definitions/Schedule'
   v1ServicesMapResponseWrapper:
     description: Returns a map for v1 services
     schema:

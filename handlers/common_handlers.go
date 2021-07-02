@@ -50,6 +50,13 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 // swagger:route GET /api/user/token UserAPI idGetTokenProvider
 // Handle GET request for tokens
 //
+// Returns token from the actual provider in a file
+// resposese:
+// 	200:
+
+// swagger:route POST /api/user/token UserAPI idPostTokenProvider
+// Handle POST request for tokens
+//
 // Receives token from the actual provider
 // resposese:
 // 	200:
