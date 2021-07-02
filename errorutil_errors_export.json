@@ -167,20 +167,20 @@
     "2005": {
       "name": "ErrGrafanaConfigCode",
       "code": "2005",
-      "severity": "",
-      "long_description": "",
-      "short_description": "",
+      "severity": "Alert",
+      "long_description": "Cannot find valid grafana endpoint in user pref",
+      "short_description": "Grafana endpoint not configured",
       "probable_cause": "",
-      "suggested_remediation": ""
+      "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
     },
     "2006": {
       "name": "ErrPrometheusConfigCode",
       "code": "2006",
-      "severity": "",
-      "long_description": "",
-      "short_description": "",
+      "severity": "Alert",
+      "long_description": "Cannot find valid Prometheus endpoint in user pref",
+      "short_description": "Prometheus endpoint not configured",
       "probable_cause": "",
-      "suggested_remediation": ""
+      "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
     },
     "2007": {
       "name": "ErrGrafanaQueryCode",
@@ -387,6 +387,114 @@
       "long_description": "",
       "short_description": "unable to fetch SMI results",
       "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2030": {
+      "name": "ErrFormFileCode",
+      "code": "2030",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "error getting k8s file",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2031": {
+      "name": "ErrReadConfigCode",
+      "code": "2031",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "error reading config",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2032": {
+      "name": "ErrLoadConfigCode",
+      "code": "2032",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to load kubernetes config",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2033": {
+      "name": "ErrOpenFileCode",
+      "code": "2033",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to open file: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2034": {
+      "name": "ErrKubeVersionCode",
+      "code": "2034",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to get kubernetes version",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2035": {
+      "name": "ErrAddAdapterCode",
+      "code": "2035",
+      "severity": "Alert",
+      "long_description": "meshLocationURL is empty to add an adapter",
+      "short_description": "meshLocationURL is empty",
+      "probable_cause": "meshLocationURL cannot be empty to add an adapter",
+      "suggested_remediation": "please provide the meshLocationURL"
+    },
+    "2036": {
+      "name": "ErrRetrieveDataCode",
+      "code": "2036",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to retrieve the requested data",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2037": {
+      "name": "ErrValidAdapterCode",
+      "code": "2037",
+      "severity": "Alert",
+      "long_description": "unable to find a valid adapter for the given adapter URL",
+      "short_description": "Unable to find valid Adapter URL",
+      "probable_cause": "Given adapter URL is not valid",
+      "suggested_remediation": "Please provide a valid Adapter URL"
+    },
+    "2038": {
+      "name": "ErrOperationIDCode",
+      "code": "2038",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error generating the operation Id",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2039": {
+      "name": "ErrMeshClientCode",
+      "code": "2039",
+      "severity": "Alert",
+      "long_description": "Unable to create a mesh client\nUnable to ping the mesh adapter",
+      "short_description": "Error creating a mesh client\nError pinging the mesh adapter",
+      "probable_cause": "Adapter could not be pinged",
+      "suggested_remediation": "Unable to connect to the Mesh adapter using the given config, please try again"
+    },
+    "2040": {
+      "name": "ErrApplyChangeCode",
+      "code": "2040",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error applying the change",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2041": {
+      "name": "ErrRetrieveMeshDataCode",
+      "code": "2041",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error getting operations for the mesh\nError getting service mesh name",
+      "probable_cause": "unable to retrieve the requested data",
       "suggested_remediation": ""
     },
     "3000": {
