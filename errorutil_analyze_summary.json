@@ -3,12 +3,12 @@
   "max_code": 3000,
   "duplicate_codes": {},
   "duplicate_names": [
-    "ErrNilClientCode",
-    "ErrGrafanaBoardsCode",
+    "ErrNoMeshSyncCode",
     "ErrCreateDataCode",
-    "ErrMesheryClientCode",
+    "ErrNilClientCode",
     "ErrGrafanaConfigCode",
-    "ErrNoMeshSyncCode"
+    "ErrMesheryClientCode",
+    "ErrGrafanaBoardsCode"
   ],
   "call_expr_codes": [],
   "int_codes": [
@@ -42,6 +42,19 @@
     2014,
     2015,
     2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
     3000
   ],
   "deprecated_new_default": []
