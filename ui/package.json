@@ -110,6 +110,6 @@
     "nodemon": "^2.0.9",
     "nyc": "^15.1.0",
     "relay-compiler": "^11.0.2",
-    "start-server-and-test": "^1.12.1"
+    "start-server-and-test": "^1.12.5"
   }
 }
