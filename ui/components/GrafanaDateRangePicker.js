@@ -42,10 +42,7 @@ const styles = (theme) => ({
   },
   rangeButton:{
      border:'1px solid rgba(0, 0, 0, 0.23)'
-  }
-  rangeButton:{
-     border:"1px solid rgba(0, 0, 0, 0.23)"
-    },
+  },
 });
 
 const refreshIntervals = [
@@ -539,34 +536,34 @@ class GrafanaDateRangePicker extends Component {
     this.setState({ [name]: event.target.value });
   };
 
-    render() {
-      const { open } = this.state;
-      const {
-        startDate, endDate, liveTail, refresh, classes,
-      } = this.props;
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <Button
-              variant="filled"
-              // buttonRef={node => {
-              //     this.anchorEl = node;
-              // }}
-              // aria-owns={open ? 'daterange-popper' : undefined}
-              // aria-haspopup="true"
-              onClick={this.handleClick}
-              classes={{root:classes.rangeButton}}
-            >
-              <AccessTimeIcon style={{ marginRight: "0.25rem" }}/>
-              <Moment format="LLLL">{startDate}</Moment>
-              <span className={classes.space}>-</span>
-              {liveTail ? 'now' : (<Moment format="LLLL">{endDate}</Moment>)}
-              <span className={classes.space}>
-                ,
-                {refresh}
-              </span>
-            </Button>
-            {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
+  render() {
+    const { open } = this.state;
+    const {
+      startDate, endDate, liveTail, refresh, classes,
+    } = this.props;
+    return (
+      <NoSsr>
+        <React.Fragment>
+          <Button
+            variant="filled"
+            // buttonRef={node => {
+            //     this.anchorEl = node;
+            // }}
+            // aria-owns={open ? 'daterange-popper' : undefined}
+            // aria-haspopup="true"
+            onClick={this.handleClick}
+            classes={{ root: classes.rangeButton }}
+          >
+            <AccessTimeIcon style={{ marginRight: "0.25rem" }} />
+            <Moment format="LLLL">{startDate}</Moment>
+            <span className={classes.space}>-</span>
+            {liveTail ? 'now' : (<Moment format="LLLL">{endDate}</Moment>)}
+            <span className={classes.space}>
+              ,
+              {refresh}
+            </span>
+          </Button>
+          {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
