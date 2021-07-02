@@ -13,7 +13,7 @@ require (
 	fortio.org/fortio v1.17.0
 	github.com/99designs/gqlgen v0.13.0
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
-	github.com/briandowns/spinner v1.15.0
+	github.com/briandowns/spinner v1.16.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
 	github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0
