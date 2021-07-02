@@ -93,10 +93,6 @@ var statusCmd = &cobra.Command{
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPods(client, utils.MesheryNamespace)
 
-			if len(podList.Items) == 0 {
-				log.Fatal("no pods up yet...try again in a while")
-			}
-
 			if err != nil {
 				return err
 			}
