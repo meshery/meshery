@@ -1,14 +1,22 @@
 {
   "min_code": 1000,
   "max_code": 3000,
-  "duplicate_codes": {},
+  "duplicate_codes": {
+    "test": [
+      "ErrFormFileCode",
+      "ErrReadConfigCode",
+      "ErrLoadConfigCode",
+      "ErrOpenFileCode",
+      "ErrKubeVersionCode"
+    ]
+  },
   "duplicate_names": [
-    "ErrNoMeshSyncCode",
-    "ErrCreateDataCode",
-    "ErrNilClientCode",
     "ErrGrafanaConfigCode",
+    "ErrGrafanaBoardsCode",
+    "ErrNoMeshSyncCode",
     "ErrMesheryClientCode",
-    "ErrGrafanaBoardsCode"
+    "ErrCreateDataCode",
+    "ErrNilClientCode"
   ],
   "call_expr_codes": [],
   "int_codes": [

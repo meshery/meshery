@@ -36,6 +36,11 @@ const (
 	ErrGetResultCode         = "2027"
 	ErrConvertToSpecCode     = "2028"
 	ErrFetchSMIResultsCode   = "2029"
+	ErrFormFileCode          = "2017"
+	ErrReadConfigCode        = "2018"
+	ErrLoadConfigCode        = "2019"
+	ErrOpenFileCode          = "2020"
+	ErrKubeVersionCode       = "2021"
 )
 
 var (
@@ -136,4 +141,24 @@ func ErrConvertToSpec(err error) error {
 
 func ErrFetchSMIResults(err error) error {
 	return errors.New(ErrFetchSMIResultsCode, errors.Alert, []string{"unable to fetch SMI results"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFormFile(err error) error {
+	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrReadConfig(err error) error {
+	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadConfig(err error) error {
+	return errors.New(ErrLoadConfigCode, errors.Alert, []string{"unable to load kubernetes config"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrOpenFile(file string) error {
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{}, []string{})
+}
+
+func ErrKubeVersion(err error) error {
+	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"unable to get kubernetes version"}, []string{err.Error()}, []string{}, []string{})
 }
