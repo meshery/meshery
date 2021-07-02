@@ -20,6 +20,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	"net/http"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,21 +34,9 @@ var dashboardCmd = &cobra.Command{
 	Short: "Open Meshery UI",
 	Long:  `Well we might change it later`,
 	Args:  cobra.NoArgs,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		err := RunPreflightHealthChecks(true, cmd.Use)
-		if err != nil {
-			cmd.SilenceUsage = true
-
-		}
-
-		return err
-
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := dashboard(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to open the Meshery UI"))
+			return errors.Wrap(err, "failed to open the Meshery UI")
 
 		}
 		return nil
@@ -66,13 +57,21 @@ func dashboard() error {
 	if err != nil {
 		return err
 	}
-
+	//Adding a timeout for a 2 second delay
+	timeout := time.Duration(1 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	//Testing if the UI is accesible at the endpoint
+	resp, err := client.Get(currCtx.Endpoint)
+	if err != nil {
+		return err
+	}
+	log.Info("Meshery UI is accesible at " + currCtx.Endpoint + "status:" + string(rune(resp.StatusCode)))
 	log.Info("Opening Meshery in your browser. If Meshery does not open, please point your browser to " + currCtx.Endpoint + " to access Meshery.")
-
 	err = utils.NavigateToBrowser(currCtx.Endpoint)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
