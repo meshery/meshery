@@ -8,13 +8,6 @@ import (
 	"github.com/layer5io/meshery/models"
 )
 
-// swagger:route GET /api/user/login UserAPI idGetUserLogin
-// Handlers GET request for User login
-//
-// Redirects user for auth or issues session
-// responses:
-// 	200:
-
 // LoginHandler redirects user for auth or issues session
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {
 	if r.Method != http.MethodGet {
@@ -23,13 +16,6 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 	}
 	p.InitiateLogin(w, r, fromMiddleWare)
 }
-
-// swagger:route GET /api/user/logout UserAPI idGetUserLogout
-// Handlers GET request for User logout
-//
-// Redirects user for auth or issues session
-// responses:
-// 	200:
 
 // LogoutHandler destroys the session and redirects to home.
 func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p models.Provider) {
@@ -46,13 +32,6 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 	})
 	p.Logout(w, req)
 }
-
-// swagger:route GET /api/user/token UserAPI idGetTokenProvider
-// Handle GET request for tokens
-//
-// Receives token from the actual provider
-// resposese:
-// 	200:
 
 // TokenHandler Receives token from the actual provider
 func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.Provider, fromMiddleWare bool) {

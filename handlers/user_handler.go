@@ -24,20 +24,6 @@ func (h *Handler) UserHandler(w http.ResponseWriter, req *http.Request, _ *model
 	}
 }
 
-// swagger:route GET /api/user/prefs UserAPI idGetAnonymousStats
-// Handle GET for anonymous stats
-//
-// Returns anonymous stats for user
-// responses:
-// 	200: anonymousStatsResponseWrapper
-
-// swagger:route POST /api/user/prefs UserAPI idPostAnonymousStats
-// Handle GET for anonymous stats
-//
-// Updates anonymous stats for user
-// responses:
-// 	200: anonymousStatsResponseWrapper
-
 // AnonymousStatsHandler updates anonymous stats for user
 func (h *Handler) AnonymousStatsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodGet {

@@ -24,7 +24,7 @@ app.prepare().then(() => {
     // Be sure to pass `true` as the second argument to `url.parse`.
     // This tells it to parse the query portion of the URL.
     const { pathname } = parse(req.url, true);
-    if (pathname.startsWith("/api") || pathname.startsWith("/user/logout") || pathname.startsWith("/user/login")){
+    if (pathname.startsWith("/api") || pathname.startsWith("/logout") || pathname.startsWith("/login")){
       proxy.web(req, res, { target: 'http://localhost:9081' });
     } else {
       handle(req, res)
