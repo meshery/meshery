@@ -371,9 +371,7 @@ func start() error {
 			}
 		}
 
-		if err != nil {
-			log.Info("service endpoint not discovered. Meshery deployed on default endpoint")
-		} else {
+		if err == nil {
 			currCtx.Endpoint = utils.EndpointProtocol + "://" + endpoint.External.Address + ":" + strconv.Itoa(int(endpoint.External.Port))
 
 			err = utils.ChangeConfigEndpoint(mctlCfg.CurrentContext, currCtx)
