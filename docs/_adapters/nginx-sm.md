@@ -6,7 +6,7 @@ mesh_name: NGINX Service Mesh
 version: v0.6.0
 port: 10010/tcp
 project_status: beta
-github_link: https://github.com/layer5io/meshery-nginx-sm
+github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
 ---

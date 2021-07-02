@@ -45,7 +45,7 @@ func UpdateAuthDetails(filepath string) error {
 	}
 
 	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/gettoken", bytes.NewBuffer([]byte("")))
+	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		err = errors.Wrap(err, "error Creating the request :")
 		return err
