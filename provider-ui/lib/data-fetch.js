@@ -9,7 +9,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     .then(res => {
       if (res.status === 401 || res.redirected){
         if (window.location.host.endsWith('3000')){
-          window.location = "/user/login"; // for local dev thru node server
+          window.location = "/login"; // for local dev thru node server
         } else {
           window.location.reload(); // for use with Go server
         }

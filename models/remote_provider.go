@@ -365,7 +365,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) {
 		ck.MaxAge = -1
 		http.SetCookie(w, ck)
 	}
-	http.Redirect(w, req, "/user/login", http.StatusFound)
+	http.Redirect(w, req, "/login", http.StatusFound)
 }
 
 // FetchResults - fetches results for profile id from provider backend

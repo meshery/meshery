@@ -1,14 +1,22 @@
 {
   "min_code": 1000,
   "max_code": 3000,
-  "duplicate_codes": {},
+  "duplicate_codes": {
+    "test": [
+      "ErrFormFileCode",
+      "ErrReadConfigCode",
+      "ErrLoadConfigCode",
+      "ErrOpenFileCode",
+      "ErrKubeVersionCode"
+    ]
+  },
   "duplicate_names": [
-    "ErrNilClientCode",
-    "ErrGrafanaBoardsCode",
-    "ErrCreateDataCode",
-    "ErrMesheryClientCode",
     "ErrGrafanaConfigCode",
-    "ErrNoMeshSyncCode"
+    "ErrGrafanaBoardsCode",
+    "ErrNoMeshSyncCode",
+    "ErrMesheryClientCode",
+    "ErrCreateDataCode",
+    "ErrNilClientCode"
   ],
   "call_expr_codes": [],
   "int_codes": [
@@ -42,6 +50,19 @@
     2014,
     2015,
     2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
     3000
   ],
   "deprecated_new_default": []

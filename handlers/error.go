@@ -23,6 +23,24 @@ const (
 	ErrUnmarshalCode         = "2014"
 	ErrEncodingCode          = "2015"
 	ErrParseBoolCode         = "2016"
+	ErrStreamEventsCode      = "2017"
+	ErrStreamClientCode      = "2018"
+	ErrUnmarshalEventCode    = "2019"
+	ErrPublishSmiResultsCode = "2020"
+	ErrMarshalEventCode      = "2021"
+	ErrPluginOpenCode        = "2022"
+	ErrPluginLookupCode      = "2023"
+	ErrPluginRunCode         = "2024"
+	ErrParseFormCode         = "2025"
+	ErrQueryGetCode          = "2026"
+	ErrGetResultCode         = "2027"
+	ErrConvertToSpecCode     = "2028"
+	ErrFetchSMIResultsCode   = "2029"
+	ErrFormFileCode          = "2017"
+	ErrReadConfigCode        = "2018"
+	ErrLoadConfigCode        = "2019"
+	ErrOpenFileCode          = "2020"
+	ErrKubeVersionCode       = "2021"
 )
 
 var (
@@ -79,4 +97,68 @@ func ErrEncoding(err error, obj string) error {
 
 func ErrParseBool(err error, obj string) error {
 	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : " + obj}, []string{err.Error()}, []string{"Failed due to invalid value of : " + obj}, []string{"please provide a valid value for : " + obj})
+}
+
+func ErrStreamEvents(err error) error {
+	return errors.New(ErrStreamEventsCode, errors.Alert, []string{"There was an error connecting to the backend to get events"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrStreamClient(err error) error {
+	return errors.New(ErrStreamClientCode, errors.Alert, []string{"Event streaming ended"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPublishSmiResults(err error) error {
+	return errors.New(ErrPublishSmiResultsCode, errors.Alert, []string{"Error publishing SMI results"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPluginOpen(err error) error {
+	return errors.New(ErrPluginOpenCode, errors.Alert, []string{"Error opening the plugin"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPluginLookup(err error) error {
+	return errors.New(ErrPluginLookupCode, errors.Alert, []string{"Error performing a plugin lookup"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrPluginRun(err error) error {
+	return errors.New(ErrPluginRunCode, errors.Alert, []string{"Error running meshery plugin"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrParseForm(err error) error {
+	return errors.New(ErrParseFormCode, errors.Alert, []string{"unable to parse form"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrQueryGet(obj string) error {
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{}, []string{})
+}
+
+func ErrGetResult(err error) error {
+	return errors.New(ErrGetResultCode, errors.Alert, []string{"unable to get result"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrConvertToSpec(err error) error {
+	return errors.New(ErrConvertToSpecCode, errors.Alert, []string{"unable to convert to spec"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFetchSMIResults(err error) error {
+	return errors.New(ErrFetchSMIResultsCode, errors.Alert, []string{"unable to fetch SMI results"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrFormFile(err error) error {
+	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrReadConfig(err error) error {
+	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadConfig(err error) error {
+	return errors.New(ErrLoadConfigCode, errors.Alert, []string{"unable to load kubernetes config"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrOpenFile(file string) error {
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{}, []string{})
+}
+
+func ErrKubeVersion(err error) error {
+	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"unable to get kubernetes version"}, []string{err.Error()}, []string{}, []string{})
 }
