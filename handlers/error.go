@@ -23,6 +23,11 @@ const (
 	ErrUnmarshalCode         = "2014"
 	ErrEncodingCode          = "2015"
 	ErrParseBoolCode         = "2016"
+	ErrBlankName             = "2017"
+    ErrConversion            = "2018"
+    ErrParseDuration         = "2019"
+    ErrLoadTest              = "2020"
+    ErrFetchKubernetes       = "2021"
 )
 
 var (
@@ -80,3 +85,23 @@ func ErrEncoding(err error, obj string) error {
 func ErrParseBool(err error, obj string) error {
 	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : " + obj}, []string{err.Error()}, []string{"Failed due to invalid value of : " + obj}, []string{"please provide a valid value for : " + obj})
 }
+
+func ErrBlankName(err error) error {
+    return errors.New(ErrBlankName, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{},[]string{"Provide a name for the test."})
+}
+
+func ErrConversion(err error) error {
+    return errors.New(ErrConversion, errors.Alert, []string{"unable to convert YAML to JSON"}, []string{err.Error()}, []string{}, []string{})
+
+func ErrParseDuration(err error) error {
+    return errors.New(ErrParseDuration, errors.Alert, []string{"error parsing test duration"}, []string{err.Error()}, []string{}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"}
+}   
+
+func ErrLoadTest(err error) error {
+    return errors.New(ErrLoadTest, errors.Alert, []string{"load test error:" +obj}, []string{err.Error()}, []string{}, []string{})
+
+}
+
+func ErrFetchKubernetes(err error) error {
+    return errors.New(ErrLoadTest, errors.Alert, []string{"kubernetes error", +obj}, []string{err.Error()}, []string{}, []string{})
+

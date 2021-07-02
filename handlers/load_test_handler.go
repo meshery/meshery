@@ -36,35 +36,31 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}()
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		msg := "unable to read request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
+		h.log.Error(ErrRequestBody(err) 
+
+        http.Error(w, ErrRequestBody(err),Error(), http.StatusInternalServerError)
+        return
 	}
 	jsonBody, err := yamlj.YAMLToJSON(body)
 	if err != nil {
-		msg := "unable to convert YAML to JSON"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
+		h.log.Error(ErrConversion(err))
+        http.Error(w, ErrConversion(err).Error(), http.StatusInternalServerError)
+        return
 	}
 	perfTest := &SMP.PerformanceTestConfig{}
 	if err := protojson.Unmarshal(jsonBody, perfTest); err != nil {
-		msg := "unable to parse the provided input"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
+		obj :="provided input"
+        h.log.Error(ErrParseBool(err,obj))
+        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
+        return
 	}
 
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Name
 	if testName == "" {
-		logrus.Errorf("Error: name field is blank")
-		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
-		return
+		h.log.Error(ErrBlankName(err))
+        http.Error(w, ErrBlankName(err).Error(), http.StatusForbidden)
+        return
 	}
 	// meshName := q.Get("mesh")
 	testUUID := perfTest.Id
@@ -75,9 +71,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		msg := "error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"
 		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
+		h.log.Error(ErrParseDuration(err))
+        http.Error(w, ErrParseDuration(err).Error(), http.StatusBadRequest)
+        return
 	}
 	loadTestOptions.Duration = testDuration
 	if loadTestOptions.Duration.Seconds() <= 0 {
@@ -98,9 +94,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
 	if err != nil || !ltURL.IsAbs() {
-		logrus.Errorf("unable to parse the provided load test url: %v", err)
-		http.Error(w, "invalid load test URL", http.StatusBadRequest)
-		return
+		h.log.Error(ErrParseBool(err,obj))
+        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
+        return
 	}
 	loadTestOptions.Name = testName
 
@@ -148,17 +144,19 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	err := req.ParseForm()
 	if err != nil {
-		logrus.Errorf("Error: unable to parse form: %v", err)
-		http.Error(w, "unable to process the received data", http.StatusForbidden)
-		return
+		obj := "form"
+        h.log.Errorf(ErrParseBool(err,obj))
+        http.Error(w, ErrParseBool(err,obj),Error(), http.StatusForbidden)
+        return
+
 	}
 	q := req.URL.Query()
 
 	testName := q.Get("name")
 	if testName == "" {
-		logrus.Errorf("Error: name field is blank")
-		http.Error(w, "Provide a name for the test.", http.StatusForbidden)
-		return
+		h.log.Errorf(ErrBlankName(err))
+        http.Error(w, ErrBlankName(err),Error(), http.StatusForbidden)
+        return
 	}
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
@@ -171,7 +169,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	headers := h.jsonToMap(headersString)
 	cookies := h.jsonToMap(cookiesString)
 	body := []byte(bodyString)
-	logrus.Debugf("Headers : %v", headers)
+	h.log.Debugf("Headers : %v", headers)
 
 	loadTestOptions := &models.LoadTestOptions{}
 	loadTestOptions.Headers = headers
@@ -195,9 +193,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 	loadTestOptions.Duration, err = time.ParseDuration(fmt.Sprintf("%d%s", tt, dur))
 	if err != nil {
-		logrus.Errorf("Error: unable to parse load test duration: %v", err)
-		http.Error(w, "unable to process the received data", http.StatusForbidden)
-		return
+		h.log.Error(ErrParseBool(err,obj))
+        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusForbidden)
+        return
 	}
 
 	cc, _ := strconv.Atoi(q.Get("c"))
@@ -209,9 +207,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
 	if err != nil || !ltURL.IsAbs() {
-		logrus.Errorf("unable to parse the provided load test url: %v", err)
-		http.Error(w, "invalid load test URL", http.StatusBadRequest)
-		return
+		obj := the provided load test url
+        h.log.Error(ErrParseBool(err,obj))
+        http.Error(w, ErrParseBool(err,obj).Error(), http.StatusBadRequest)
+        return
+
 	}
 	loadTestOptions.URL = loadTestURL
 	loadTestOptions.Name = testName
@@ -233,13 +233,13 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	default:
 		loadTestOptions.LoadGenerator = models.FortioLG
 	}
-	logrus.Infof("perf test with config: %v", loadTestOptions)
+	h.log.Infof("perf test with config: %v", loadTestOptions)
 	h.loadTestHelperHandler(w, req, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
 }
 
 func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, testName, meshName, testUUID string,
 	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, provider models.Provider) {
-	log := logrus.WithField("file", "load_test_handler")
+	log := h.log.WithField("file", "load_test_handler")
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -267,9 +267,10 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
-				logrus.Errorf("error: unable to marshal meshery result for shipping: %v", err)
-				http.Error(w, "error while running load test", http.StatusInternalServerError)
-				return
+				obj:= meshery result for shipping
+                h.log.Errorf(ErrMarshal(err,obj))
+                http.Error(w, ErrMarshal(err,obj).Error(), http.StatusInternalServerError)
+                return
 			}
 
 			log.Debug("received new data on response channel")
@@ -316,10 +317,10 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 	if err != nil {
 		msg := "error: unable to perform load test"
 		err = errors.Wrap(err, msg)
-		logrus.Error(err)
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: msg,
+		h.log.Error(ErrLoadTest(err,obj))
+        respChan <- &models.LoadTestResponse{
+            Status:  models.LoadTestError,
+            ErrLoadTest(err,obj),Error()
 		}
 		return
 	}
@@ -342,9 +343,10 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 			if len(prefObj.K8SConfig.Nodes) == 0 {
 				nodes, err = helpers.FetchKubernetesNodes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
+					obj:="unable to ping"
 					err = errors.Wrap(err, "unable to ping kubernetes")
 					// logrus.Error(err)
-					logrus.Warn(err)
+					h.log.Warn(ErrFetchKubernetes(err,obj)
 					// return
 				}
 			}
@@ -356,17 +358,21 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 			if prefObj.K8SConfig.ServerVersion == "" {
 				serverVersion, err = helpers.FetchKubernetesVersion(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 				if err != nil {
-					err = errors.Wrap(err, "unable to ping kubernetes")
-					logrus.Error(err)
-				}
+					obj:="unable to ping"
+                    
+                    h.log.Error(ErrFetchKubernetes(err,obj)
+                }
+
 			}
 			versionChan <- serverVersion
 		}()
 		go func() {
 			installedMeshes, err := helpers.ScanKubernetes(prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName)
 			if err != nil {
-				err = errors.Wrap(err, "unable to scan kubernetes")
-				logrus.Warn(err)
+				obj:="unable to scan"
+                
+                h.log.Warn(ErrFetchKubernetes(err,obj)
+
 			}
 			installedMeshesChan <- installedMeshes
 		}()
@@ -398,12 +404,14 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 	resultID, err := provider.PublishResults(req, result, mux.Vars(req)["id"])
 	if err != nil {
-		msg := "error: unable to persist the load test results"
-		err = errors.Wrap(err, msg)
-		logrus.Error(err)
+		obj:="unable to persist"
+        
+        h.log.Error(ErrLoadTest(err,obj))
+
 		respChan <- &models.LoadTestResponse{
 			Status:  models.LoadTestError,
-			Message: msg,
+			ErrLoadTest(err,obj).Error()
+
 		}
 		return
 	}
@@ -419,7 +427,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 	tokenVal, _ := provider.GetProviderToken(req)
 
-	logrus.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
+	h.log.Debugf("promURL: %s, testUUID: %s, resultID: %s", promURL, testUUID, resultID)
 	if promURL != "" && testUUID != "" && resultID != "" &&
 		(provider.GetProviderType() == models.RemoteProviderType ||
 			(provider.GetProviderType() == models.LocalProviderType && prefObj.AnonymousPerfResults)) {
@@ -447,7 +455,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, testNa
 
 // CollectStaticMetrics is used for collecting static metrics from prometheus and submitting it to Remote Provider
 func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error {
-	logrus.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
+	h.log.Debugf("initiating collecting prometheus static board metrics for test id: %s", config.TestUUID)
 	ctx := context.Background()
 	queries := h.config.QueryTracker.GetQueriesForUUID(ctx, config.TestUUID)
 	queryResults := map[string]map[string]interface{}{}
@@ -477,7 +485,9 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 
 	resultUUID, err := uuid.FromString(config.ResultID)
 	if err != nil {
-		logrus.Error(errors.Wrap(err, "error parsing result uuid"))
+		obj:= result uuid
+        h.log.Error(ErrParseBool(err, obj))
+
 		return err
 	}
 	result := &models.MesheryResult{
