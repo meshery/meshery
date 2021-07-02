@@ -91,7 +91,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/traverse": "^7.12.12",
+    "@babel/traverse": "^7.14.7",
     "@babel/types": "^7.14.0",
     "@types/react-relay": "^11.0.1",
     "babel-eslint": "^10.1.0",
