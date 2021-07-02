@@ -26,7 +26,7 @@ const (
 	ErrAddAdapterCode        = "2017"
 	ErrRetrieveDataCode      = "2018"
 	ErrValidAdapterCode      = "2019"
-	ErrOperationIdCode       = "2020"
+	ErrOperationIDCode       = "2020"
 	ErrMeshClientCode        = "2021"
 	ErrApplyChangeCode       = "2022"
 	ErrRetrieveMeshDataCode  = "2023"
@@ -95,8 +95,8 @@ func ErrRetrieveData(err error) error {
 	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrOperationId(err error) error {
-	return errors.New(ErrOperationIdCode, errors.Alert, []string{"Error generating the operation Id"}, []string{err.Error()}, []string{}, []string{})
+func ErrOperationID(err error) error {
+	return errors.New(ErrOperationIDCode, errors.Alert, []string{"Error generating the operation Id"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrApplyChange(err error) error {

@@ -255,8 +255,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	operationID, err := uuid.NewV4()
 
 	if err != nil {
-		h.log.Error(ErrOperationId(err))
-		http.Error(w, ErrOperationId(err).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrOperationID(err))
+		http.Error(w, ErrOperationID(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
