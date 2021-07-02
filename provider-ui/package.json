@@ -40,6 +40,6 @@
     "http-proxy": "^1.18.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
-    "start-server-and-test": "^1.12.3"
+    "start-server-and-test": "^1.12.5"
   }
 }
