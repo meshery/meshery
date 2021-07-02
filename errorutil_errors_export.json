@@ -272,6 +272,123 @@
       "probable_cause": "",
       "suggested_remediation": ""
     },
+    "2017": {
+      "name": "ErrStreamEventsCode",
+      "code": "2017",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "There was an error connecting to the backend to get events",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2018": {
+      "name": "ErrStreamClientCode",
+      "code": "2018",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Event streaming ended",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2019": {
+      "name": "ErrUnmarshalEventCode",
+      "code": "2019",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2020": {
+      "name": "ErrPublishSmiResultsCode",
+      "code": "2020",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error publishing SMI results",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2021": {
+      "name": "ErrMarshalEventCode",
+      "code": "2021",
+      "severity": "",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2022": {
+      "name": "ErrPluginOpenCode",
+      "code": "2022",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error opening the plugin",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2023": {
+      "name": "ErrPluginLookupCode",
+      "code": "2023",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error performing a plugin lookup",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2024": {
+      "name": "ErrPluginRunCode",
+      "code": "2024",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error running meshery plugin",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2025": {
+      "name": "ErrParseFormCode",
+      "code": "2025",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to parse form",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2026": {
+      "name": "ErrQueryGetCode",
+      "code": "2026",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to get: ",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2027": {
+      "name": "ErrGetResultCode",
+      "code": "2027",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to get result",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2028": {
+      "name": "ErrConvertToSpecCode",
+      "code": "2028",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to convert to spec",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2029": {
+      "name": "ErrFetchSMIResultsCode",
+      "code": "2029",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "unable to fetch SMI results",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
     "3000": {
       "name": "ErrGrafanaClientCode",
       "code": "3000",

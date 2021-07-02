@@ -137,6 +137,150 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrStreamEventsCode",
+      "old_code": "2017",
+      "code": "2017",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrStreamClientCode",
+      "old_code": "2018",
+      "code": "2018",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrUnmarshalEventCode",
+      "old_code": "2019",
+      "code": "2019",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPublishSmiResultsCode",
+      "old_code": "2020",
+      "code": "2020",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMarshalEventCode",
+      "old_code": "2021",
+      "code": "2021",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginOpenCode",
+      "old_code": "2022",
+      "code": "2022",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginLookupCode",
+      "old_code": "2023",
+      "code": "2023",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrPluginRunCode",
+      "old_code": "2024",
+      "code": "2024",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrParseFormCode",
+      "old_code": "2025",
+      "code": "2025",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrQueryGetCode",
+      "old_code": "2026",
+      "code": "2026",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrGetResultCode",
+      "old_code": "2027",
+      "code": "2027",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrConvertToSpecCode",
+      "old_code": "2028",
+      "code": "2028",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFetchSMIResultsCode",
+      "old_code": "2029",
+      "code": "2029",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrFormFileCode",
+      "old_code": "test",
+      "code": "2017",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrReadConfigCode",
+      "old_code": "test",
+      "code": "2018",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrLoadConfigCode",
+      "old_code": "test",
+      "code": "2019",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrOpenFileCode",
+      "old_code": "test",
+      "code": "2020",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrKubeVersionCode",
+      "old_code": "test",
+      "code": "2021",
+      "code_is_literal": true,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidRequestCode",
       "old_code": "1000",
       "code": "1000",
@@ -550,6 +694,136 @@
         "path": "handlers/error.go"
       }
     ],
+    "2017": [
+      {
+        "name": "ErrStreamEventsCode",
+        "old_code": "2017",
+        "code": "2017",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2018": [
+      {
+        "name": "ErrStreamClientCode",
+        "old_code": "2018",
+        "code": "2018",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2019": [
+      {
+        "name": "ErrUnmarshalEventCode",
+        "old_code": "2019",
+        "code": "2019",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2020": [
+      {
+        "name": "ErrPublishSmiResultsCode",
+        "old_code": "2020",
+        "code": "2020",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2021": [
+      {
+        "name": "ErrMarshalEventCode",
+        "old_code": "2021",
+        "code": "2021",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2022": [
+      {
+        "name": "ErrPluginOpenCode",
+        "old_code": "2022",
+        "code": "2022",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2023": [
+      {
+        "name": "ErrPluginLookupCode",
+        "old_code": "2023",
+        "code": "2023",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2024": [
+      {
+        "name": "ErrPluginRunCode",
+        "old_code": "2024",
+        "code": "2024",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2025": [
+      {
+        "name": "ErrParseFormCode",
+        "old_code": "2025",
+        "code": "2025",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2026": [
+      {
+        "name": "ErrQueryGetCode",
+        "old_code": "2026",
+        "code": "2026",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2027": [
+      {
+        "name": "ErrGetResultCode",
+        "old_code": "2027",
+        "code": "2027",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2028": [
+      {
+        "name": "ErrConvertToSpecCode",
+        "old_code": "2028",
+        "code": "2028",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2029": [
+      {
+        "name": "ErrFetchSMIResultsCode",
+        "old_code": "2029",
+        "code": "2029",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
     "3000": [
       {
         "name": "ErrGrafanaClientCode",
@@ -558,6 +832,48 @@
         "code_is_literal": true,
         "code_is_int": true,
         "path": "models/error.go"
+      }
+    ],
+    "test": [
+      {
+        "name": "ErrFormFileCode",
+        "old_code": "test",
+        "code": "2017",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "handlers/error.go"
+      },
+      {
+        "name": "ErrReadConfigCode",
+        "old_code": "test",
+        "code": "2018",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "handlers/error.go"
+      },
+      {
+        "name": "ErrLoadConfigCode",
+        "old_code": "test",
+        "code": "2019",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "handlers/error.go"
+      },
+      {
+        "name": "ErrOpenFileCode",
+        "old_code": "test",
+        "code": "2020",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "handlers/error.go"
+      },
+      {
+        "name": "ErrKubeVersionCode",
+        "old_code": "test",
+        "code": "2021",
+        "code_is_literal": true,
+        "code_is_int": false,
+        "path": "handlers/error.go"
       }
     ]
   },
@@ -584,6 +900,17 @@
         "short_description": "Control Plane Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrConvertToSpecCode": [
+      {
+        "name": "ErrConvertToSpecCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to convert to spec",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrCreateDataCode": [
@@ -622,6 +949,39 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFetchSMIResultsCode": [
+      {
+        "name": "ErrFetchSMIResultsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to fetch SMI results",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrFormFileCode": [
+      {
+        "name": "ErrFormFileCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error getting k8s file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrGetResultCode": [
+      {
+        "name": "ErrGetResultCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get result",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -721,6 +1081,28 @@
         "suggested_remediation": "Check the query parameters and syntax of the query being run"
       }
     ],
+    "ErrKubeVersionCode": [
+      {
+        "name": "ErrKubeVersionCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get kubernetes version",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrLoadConfigCode": [
+      {
+        "name": "ErrLoadConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to load kubernetes config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrMarshalCode": [
       {
         "name": "ErrMarshalCode",
@@ -814,6 +1196,17 @@
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       }
     ],
+    "ErrOpenFileCode": [
+      {
+        "name": "ErrOpenFileCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to open file: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrOperatorSubscriptionCode": [
       {
         "name": "ErrOperatorSubscriptionCode",
@@ -832,6 +1225,50 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrParseFormCode": [
+      {
+        "name": "ErrParseFormCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to parse form",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginLookupCode": [
+      {
+        "name": "ErrPluginLookupCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error performing a plugin lookup",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginOpenCode": [
+      {
+        "name": "ErrPluginOpenCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error opening the plugin",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrPluginRunCode": [
+      {
+        "name": "ErrPluginRunCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error running meshery plugin",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -869,6 +1306,17 @@
         "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
       }
     ],
+    "ErrPublishSmiResultsCode": [
+      {
+        "name": "ErrPublishSmiResultsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error publishing SMI results",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrQueryCode": [
       {
         "name": "ErrQueryCode",
@@ -876,6 +1324,28 @@
         "severity": "Alert",
         "long_description": "Invalid Query performed in Meshery Database",
         "short_description": "Error while querying data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrQueryGetCode": [
+      {
+        "name": "ErrQueryGetCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to get: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrReadConfigCode": [
+      {
+        "name": "ErrReadConfigCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading config",
         "probable_cause": "",
         "suggested_remediation": ""
       }
@@ -909,6 +1379,28 @@
         "severity": "Alert",
         "long_description": "unable to get static board",
         "short_description": "unable to get static board",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrStreamClientCode": [
+      {
+        "name": "ErrStreamClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Event streaming ended",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrStreamEventsCode": [
+      {
+        "name": "ErrStreamEventsCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "There was an error connecting to the backend to get events",
         "probable_cause": "",
         "suggested_remediation": ""
       }
