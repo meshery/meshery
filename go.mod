@@ -12,14 +12,14 @@ replace (
 require (
 	fortio.org/fortio v1.17.0
 	github.com/99designs/gqlgen v0.13.0
-	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.16.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v1.13.1
 	github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.19.29
-	github.com/go-openapi/strfmt v0.19.5
+	github.com/go-openapi/strfmt v0.20.1
 	github.com/gofrs/uuid v3.4.0+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible // indirect
