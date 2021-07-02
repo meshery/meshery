@@ -271,6 +271,69 @@
       "short_description": "",
       "probable_cause": "",
       "suggested_remediation": ""
+    },
+    "2017": {
+      "name": "ErrAddAdapterCode",
+      "code": "2017",
+      "severity": "Alert",
+      "long_description": "meshLocationURL is empty to add an adapter",
+      "short_description": "meshLocationURL is empty",
+      "probable_cause": "meshLocationURL cannot be empty to add an adapter",
+      "suggested_remediation": "please provide the meshLocationURL"
+    },
+    "2018": {
+      "name": "ErrRetrieveDataCode",
+      "code": "2018",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Unable to retrieve the requested data",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2019": {
+      "name": "ErrValidAdapterCode",
+      "code": "2019",
+      "severity": "Alert",
+      "long_description": "unable to find a valid adapter for the given adapter URL",
+      "short_description": "Unable to find valid Adapter URL",
+      "probable_cause": "Given adapter URL is not valid",
+      "suggested_remediation": "Please provide a valid Adapter URL"
+    },
+    "2020": {
+      "name": "ErrOperationIDCode",
+      "code": "2020",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error generating the operation Id",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2021": {
+      "name": "ErrMeshClientCode",
+      "code": "2021",
+      "severity": "Alert",
+      "long_description": "Unable to create a mesh client\nUnable to ping the mesh adapter",
+      "short_description": "Error creating a mesh client\nError pinging the mesh adapter",
+      "probable_cause": "Adapter could not be pinged",
+      "suggested_remediation": "Unable to connect to the Mesh adapter using the given config, please try again"
+    },
+    "2022": {
+      "name": "ErrApplyChangeCode",
+      "code": "2022",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error applying the change",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2023": {
+      "name": "ErrRetrieveMeshDataCode",
+      "code": "2023",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "Error getting operations for the mesh\nError getting service mesh name",
+      "probable_cause": "unable to retrieve the requested data",
+      "suggested_remediation": ""
     }
   }
 }

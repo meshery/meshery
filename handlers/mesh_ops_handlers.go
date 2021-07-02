@@ -46,7 +46,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	case http.MethodPost:
 		meshLocationURL := req.FormValue("meshLocationURL")
 
-		h.log.Debug("meshLocationURL: %s", meshLocationURL)
+		h.log.Debug("meshLocationURL: ", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
 			h.log.Error(ErrAddAdapter)
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
@@ -128,7 +128,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return meshAdapters, ErrMeshClient
 	}
-	h.log.Debug("created client for adapter: %s", meshLocationURL)
+	h.log.Debug("created client for adapter: ", meshLocationURL)
 	defer func() {
 		_ = mClient.Close()
 	}()
@@ -138,14 +138,14 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
-	h.log.Debug("retrieved supported ops for adapter: %s", meshLocationURL)
+	h.log.Debug("retrieved supported ops for adapter: ", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
 		h.log.Error(ErrRetrieveMeshData(err))
 		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
-	h.log.Debug("retrieved name for adapter: %s", meshLocationURL)
+	h.log.Debug("retrieved name for adapter: ", meshLocationURL)
 	result := &models.Adapter{
 		Location:     meshLocationURL,
 		Name:         meshInfo.Name,
@@ -161,7 +161,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 	adapterLoc := req.URL.Query().Get("adapter")
-	h.log.Debug("URL of adapter to be removed: %s.", adapterLoc)
+	h.log.Debug("URL of adapter to be removed: ", adapterLoc)
 
 	adaptersLen := len(meshAdapters)
 
@@ -187,9 +187,9 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[aID+1:]...)
 	}
 	b, _ := json.Marshal(meshAdapters)
-	h.log.Debug("Old adapters: %s.", b)
+	h.log.Debug("Old adapters: ", b)
 	b, _ = json.Marshal(newMeshAdapters)
-	h.log.Debug("New adapters: %s.", b)
+	h.log.Debug("New adapters: ", b)
 	return newMeshAdapters, nil
 }
 
@@ -214,7 +214,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	adapterLoc := req.PostFormValue("adapter")
-	h.log.Debug("Adapter URL to execute operations on: %s.", adapterLoc)
+	h.log.Debug("Adapter URL to execute operations on: ", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -290,7 +290,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	// adapterLoc := req.PostFormValue("adapter")
 	adapterLoc := req.URL.Query().Get("adapter")
-	h.log.Debug("Adapter url to ping: %s.", adapterLoc)
+	h.log.Debug("Adapter url to ping: ", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -312,6 +312,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
+		h.log.Error(ErrMeshClient)
 		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
 		return
 	}

@@ -137,6 +137,62 @@
       "path": "handlers/error.go"
     },
     {
+      "name": "ErrAddAdapterCode",
+      "old_code": "2017",
+      "code": "2017",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRetrieveDataCode",
+      "old_code": "2018",
+      "code": "2018",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapterCode",
+      "old_code": "2019",
+      "code": "2019",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrOperationIDCode",
+      "old_code": "2020",
+      "code": "2020",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClientCode",
+      "old_code": "2021",
+      "code": "2021",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrApplyChangeCode",
+      "old_code": "2022",
+      "code": "2022",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrRetrieveMeshDataCode",
+      "old_code": "2023",
+      "code": "2023",
+      "code_is_literal": true,
+      "code_is_int": true,
+      "path": "handlers/error.go"
+    },
+    {
       "name": "ErrInvalidK8SConfig",
       "old_code": "",
       "code": "",
@@ -170,6 +226,30 @@
     },
     {
       "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrAddAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClient",
       "old_code": "",
       "code": "",
       "code_is_literal": false,
@@ -629,6 +709,76 @@
         "code_is_int": true,
         "path": "handlers/error.go"
       }
+    ],
+    "2017": [
+      {
+        "name": "ErrAddAdapterCode",
+        "old_code": "2017",
+        "code": "2017",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2018": [
+      {
+        "name": "ErrRetrieveDataCode",
+        "old_code": "2018",
+        "code": "2018",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2019": [
+      {
+        "name": "ErrValidAdapterCode",
+        "old_code": "2019",
+        "code": "2019",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2020": [
+      {
+        "name": "ErrOperationIDCode",
+        "old_code": "2020",
+        "code": "2020",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2021": [
+      {
+        "name": "ErrMeshClientCode",
+        "old_code": "2021",
+        "code": "2021",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2022": [
+      {
+        "name": "ErrApplyChangeCode",
+        "old_code": "2022",
+        "code": "2022",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
+    ],
+    "2023": [
+      {
+        "name": "ErrRetrieveMeshDataCode",
+        "old_code": "2023",
+        "code": "2023",
+        "code_is_literal": true,
+        "code_is_int": true,
+        "path": "handlers/error.go"
+      }
     ]
   },
   "call_expr_codes": [
@@ -666,6 +816,30 @@
     },
     {
       "name": "ErrStaticBoards",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrValidAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrAddAdapter",
+      "old_code": "",
+      "code": "",
+      "code_is_literal": false,
+      "code_is_int": false,
+      "path": "handlers/error.go"
+    },
+    {
+      "name": "ErrMeshClient",
       "old_code": "",
       "code": "",
       "code_is_literal": false,
@@ -723,6 +897,17 @@
   ],
   "deprecated_new_default": null,
   "errors_raw": {
+    "ErrAddAdapterCode": [
+      {
+        "name": "ErrAddAdapterCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "meshLocationURL is empty to add an adapter",
+        "short_description": "meshLocationURL is empty",
+        "probable_cause": "meshLocationURL cannot be empty to add an adapter",
+        "suggested_remediation": "please provide the meshLocationURL"
+      }
+    ],
     "ErrAddonSubscriptionCode": [
       {
         "name": "ErrAddonSubscriptionCode",
@@ -732,6 +917,17 @@
         "short_description": "Addons Subscription failed",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
+      }
+    ],
+    "ErrApplyChangeCode": [
+      {
+        "name": "ErrApplyChangeCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying the change",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrControlPlaneSubscriptionCode": [
@@ -811,7 +1007,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
-        "short_description": "Prometheus endpoint not configured.",
+        "short_description": "Prometheus endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
@@ -820,7 +1016,7 @@
         "code": "",
         "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
-        "short_description": "Grafana endpoint not configured.",
+        "short_description": "Grafana endpoint not configured",
         "probable_cause": "",
         "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       }
@@ -878,6 +1074,17 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      }
+    ],
+    "ErrMeshClientCode": [
+      {
+        "name": "ErrMeshClientCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "Unable to create a mesh client\nUnable to ping the mesh adapter",
+        "short_description": "Error creating a mesh client\nError pinging the mesh adapter",
+        "probable_cause": "Adapter could not be pinged",
+        "suggested_remediation": "Unable to connect to the Mesh adapter using the given config, please try again"
       }
     ],
     "ErrMesheryClientCode": [
@@ -960,6 +1167,17 @@
         "short_description": "Database handler not initialized",
         "probable_cause": "Meshery Database is crashed or not reachable",
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
+      }
+    ],
+    "ErrOperationIDCode": [
+      {
+        "name": "ErrOperationIDCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error generating the operation Id",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     ],
     "ErrOperatorSubscriptionCode": [
@@ -1050,6 +1268,28 @@
         "suggested_remediation": ""
       }
     ],
+    "ErrRetrieveDataCode": [
+      {
+        "name": "ErrRetrieveDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to retrieve the requested data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      }
+    ],
+    "ErrRetrieveMeshDataCode": [
+      {
+        "name": "ErrRetrieveMeshDataCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting operations for the mesh\nError getting service mesh name",
+        "probable_cause": "unable to retrieve the requested data",
+        "suggested_remediation": ""
+      }
+    ],
     "ErrStaticBoardsCode": [
       {
         "name": "ErrStaticBoardsCode",
@@ -1081,6 +1321,17 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      }
+    ],
+    "ErrValidAdapterCode": [
+      {
+        "name": "ErrValidAdapterCode",
+        "code": "",
+        "severity": "Alert",
+        "long_description": "unable to find a valid adapter for the given adapter URL",
+        "short_description": "Unable to find valid Adapter URL",
+        "probable_cause": "Given adapter URL is not valid",
+        "suggested_remediation": "Please provide a valid Adapter URL"
       }
     ]
   }
