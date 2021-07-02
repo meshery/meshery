@@ -10,7 +10,7 @@ type: project
 
 Por favor, ¡hazlo! ¡Gracias por tu ayuda! :balloon:
 
-Este proyecto está construido por la comunidad y la colaboración es bienvenida. Se espera que cada persona colaboradora se adhiera al [Código de conducta de CNCF](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
+Este proyecto está construido por la comunidad y la colaboración es bienvenida. Se espera que cada persona colaboradora se adhiera al [Código de conducta de CNCF](https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md).
 
 ¿No estás seguro/a por dónde empezar?
 
@@ -24,7 +24,7 @@ Sigue estos pasos y te sentirás como en casa.
 - **Ejecuta** Meshery: Ponte en los zapatos del usuario y recorre todas las características y funciones de Meshery como usuario.
 - **Construye** Meshery: Asegurate que tienes un entorno de desarrollo usable.
 - **Comunicate** con la comunidad de Layer5 uniéndote a la [cuenta de Slack](http://slack.layer5.io).
-- **Contribuye** tomando cualquier issue abierto con la etiqueta [help wanted](https://github.com/layer5io/meshery/issues/) y entrale. Si es necesario, crea un [nuevo issue](https://github.com/layer5io/meshery/issues/new/choose). Todas las [pull requests](https://github.com/layer5io/meshery/pulls) deben hacer referencia a un issue abierto. Incluye palabras clave en las descripciones de tus pull requests, así como mensajes de commits, para [cerrar automáticamente los issues en GitHub](https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue).
+- **Contribuye** tomando cualquier issue abierto con la etiqueta [help wanted](https://github.com/meshery/meshery/issues/) y entrale. Si es necesario, crea un [nuevo issue](https://github.com/meshery/meshery/issues/new/choose). Todas las [pull requests](https://github.com/meshery/meshery/pulls) deben hacer referencia a un issue abierto. Incluye palabras clave en las descripciones de tus pull requests, así como mensajes de commits, para [cerrar automáticamente los issues en GitHub](https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue).
 
 **Secciones**
 
@@ -88,7 +88,7 @@ O puedes configurar tu IDE, por ejemplo , Visual Studio Code para cerrar automá
    `make site`
 1. Has commit, [sign-off](#commit-signing), y envía los cambios a tu rama remota
    `git push origin <my-changes>`
-1. Abre pull request (en su navegador web) en nuestro repositorio principal: https://github.com/layer5io/meshery.
+1. Abre pull request (en su navegador web) en nuestro repositorio principal: https://github.com/meshery/meshery.
 
 ### <a name="contributing-meshery">Flujo de contribución de Meshery</a>
 
@@ -103,7 +103,7 @@ Las guías de estilo de programacción relevantes son los [Comentarios de revisi
 1. Tener la versión 1.11+ de`Go` instalada si quieres compilar y/o hacer cambios en el código existente.
 1. La variable de entorno `GOPATH` debe configurarse de manera apropiada.
 1. `npm` y `node` deben estar instalados en tu máquina, preferiblemente las últimas versiones.
-1. Haz fork de este repoisitorio (`https://github.com/layer5io/meshery.git`), clona tu version forked de Meshery a tu maquina local, preferiblemente fuera de tu `GOPATH`. Si llegase a suceder que copiaras Meshery dentro de tu `GOPATH` y tuvieras una version de go `Go` anterior a la versión 1.13, por favor establece la variable de entorno `GO111MODULE=on` para habilitar los modulos de Go.
+1. Haz fork de este repoisitorio (`https://github.com/meshery/meshery.git`), clona tu version forked de Meshery a tu maquina local, preferiblemente fuera de tu `GOPATH`. Si llegase a suceder que copiaras Meshery dentro de tu `GOPATH` y tuvieras una version de go `Go` anterior a la versión 1.13, por favor establece la variable de entorno `GO111MODULE=on` para habilitar los modulos de Go.
 
 #### Construir y ejecutar el servidor Meshery
 
@@ -130,7 +130,7 @@ make docker
 Meshery usa adaptadores para hacer provisiones e interactuar con diferentes meshes de servicio. Sigue estas instrucciones para crear un nuevo adaptador o modificar un adaptador existente.
 
 1. Obtén el archivo proto buf spec del repositorio de Meshery:
-   `wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto`
+   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
 1. Genera el código
    1. Usando Go como ejemplo, haz lo siguiente::
       - agrega GOPATH a tu PATH: `export PATH=$PATH:$GOPATH/bin`
@@ -140,7 +140,7 @@ Meshery usa adaptadores para hacer provisiones e interactuar con diferentes mesh
    1. Para otros lenguajes consulta gRPC.io para las guías especificas del lenguaje.
 1. Implementa los métodos de servicio (service method) y expón el puerto de gRPC en el puerto de tu elección (por ejemplo 10000).
 
-_Tip:_ El [adaptador de Meshery para Istio](https://github.com/layer5io/meshery-istio) es un buen adaptador de referencia para usar como ejemplo de un adaptador Meshery escrito en Go.
+_Tip:_ El [adaptador de Meshery para Istio](https://github.com/meshery/meshery-istio) es un buen adaptador de referencia para usar como ejemplo de un adaptador Meshery escrito en Go.
 
 ### <a name="contributing-ui">Flujo de Contribución al UI</a>
 

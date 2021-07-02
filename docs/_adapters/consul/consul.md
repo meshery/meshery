@@ -8,7 +8,7 @@ port: 10002/tcp
 project_status: stable
 adapter_version: v0.5.2
 lab: consul-meshery-adapter
-github_link: https://github.com/layer5io/meshery-consul
+github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul

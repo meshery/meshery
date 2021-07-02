@@ -8,7 +8,7 @@ port: 10007/tcp
 project_status: stable
 adapter_version: v0.5.2
 lab: kuma-meshery-adapter
-github_link: https://github.com/layer5io/meshery-kuma
+github_link: https://github.com/meshery/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
 permalink: service-meshes/adapters/kuma
 ---

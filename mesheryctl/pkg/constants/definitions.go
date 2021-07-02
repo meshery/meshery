@@ -2,7 +2,7 @@ package constants
 
 const (
 	// Meshery Repository Location
-	mesheryGitHubOrg  string = "layer5io"
+	mesheryGitHubOrg  string = "meshery"
 	mesheryGitHubRepo string = "meshery"
 )
 

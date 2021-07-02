@@ -1,3 +1,4 @@
 name: --tokenpath, -t
 description: (required) path to token for authenticating to Meshery API
 usage: |
+    mesheryctl mesh validate --tokenPath [path to token for authentication]

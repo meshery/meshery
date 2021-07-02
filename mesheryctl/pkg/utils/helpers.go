@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"context"
 	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/json"
@@ -29,10 +28,6 @@ import (
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
-
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -235,121 +230,6 @@ func SetFileLocation() error {
 	return nil
 }
 
-func Startdockerdaemon(subcommand string) error {
-	userResponse := false
-	// read user input on whether to start Docker daemon or not.
-	if SilentFlag {
-		userResponse = true
-	} else {
-		userResponse = AskForConfirmation("Start Docker now")
-	}
-	if userResponse != true {
-		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
-	}
-
-	log.Info("Attempting to start Docker...")
-	// once user gaves permission, start docker daemon on linux/macOS
-	if runtime.GOOS == "linux" {
-		if err := exec.Command("sudo", "service", "docker", "start").Run(); err != nil {
-			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
-		}
-	} else {
-		// Assuming we are on macOS, try to start Docker from default path
-		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
-		err := cmd.Start()
-		if err != nil {
-			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
-		}
-		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "30").Run()
-		if err != nil {
-			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
-		}
-		// check whether docker started successfully or not, throw an error message otherwise
-		if err := exec.Command("docker", "ps").Run(); err != nil {
-			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
-		}
-	}
-	log.Info("Prerequisite Docker started.")
-	return nil
-}
-
-func InstallprereqDocker() error {
-	log.Info("Attempting Docker-Compose installation...")
-	ostype, osarch, err := prereq()
-	if err != nil {
-		return errors.Wrap(err, "failed to get prerequisites")
-	}
-
-	osdetails := strings.TrimRight(string(ostype), "\r\n") + "-" + strings.TrimRight(string(osarch), "\r\n")
-
-	dockerComposeBinaryURL := dockerComposeBinaryURL
-	//checks for the latest docker-compose
-	resp, err := http.Get(dockerComposeWebURL)
-	if err != nil {
-		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
-	} else {
-		var dat map[string]interface{}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return errors.Wrap(err, "failed to read response body")
-		}
-		if err := json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal json into object")
-		}
-		num := dat["tag_name"]
-		dockerComposeBinaryURL = fmt.Sprintf(dockerComposeBinaryURL+"%v/docker-compose", num)
-	}
-	dockerComposeBinaryURL = dockerComposeBinaryURL + "-" + osdetails
-	if err := DownloadFile(dockerComposeBinary, dockerComposeBinaryURL); err != nil {
-		return errors.Wrapf(err, "failed to download %s from %s", dockerComposeBinary, dockerComposeBinaryURL)
-	}
-	if err := exec.Command("chmod", "+x", dockerComposeBinary).Run(); err != nil {
-		return errors.Wrap(err, "failed to execute command")
-	}
-	log.Info("Prerequisite Docker Compose is installed.")
-	return nil
-}
-
-// IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning(currPlatform string) (bool, error) {
-	switch currPlatform {
-	case "docker":
-		{
-			op, err := exec.Command("docker-compose", "-f", DockerComposeFile, "ps").Output()
-			if err != nil {
-				return false, err
-			}
-			return strings.Contains(string(op), "meshery"), nil
-		}
-	case "kubernetes":
-		{
-			client, err := meshkitkube.New([]byte(""))
-
-			if err != nil {
-				return false, errors.Wrap(err, "failed to create new client")
-			}
-
-			podInterface := client.KubeClient.CoreV1().Pods(MesheryNamespace)
-			podList, err := podInterface.List(context.TODO(), v1.ListOptions{})
-
-			if err != nil {
-				return false, err
-			}
-
-			for _, pod := range podList.Items {
-				if strings.Contains(pod.GetName(), "meshery") {
-					return true, nil
-				}
-			}
-
-			return false, err
-		}
-	}
-
-	return false, nil
-}
-
 // NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer, based on the host operating system.
 func NavigateToBrowser(endpoint string) error {
 	//check for os of host machine
@@ -379,70 +259,6 @@ func NavigateToBrowser(endpoint string) error {
 	}
 
 	return nil
-}
-
-// AddAuthDetails Adds authentication cookies to the request
-func AddAuthDetails(req *http.Request, filepath string) error {
-	file, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		err = errors.Wrap(err, "could not read token:")
-		return err
-	}
-	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid:")
-		return err
-	}
-	req.AddCookie(&http.Cookie{
-		Name:     tokenName,
-		Value:    tokenObj[tokenName],
-		HttpOnly: true,
-	})
-	req.AddCookie(&http.Cookie{
-		Name:     providerName,
-		Value:    tokenObj[providerName],
-		HttpOnly: true,
-	})
-	return nil
-}
-
-// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
-func UpdateAuthDetails(filepath string) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-
-	// TODO: get this from the global config
-	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/gettoken", bytes.NewBuffer([]byte("")))
-	if err != nil {
-		err = errors.Wrap(err, "error Creating the request :")
-		return err
-	}
-	if err := AddAuthDetails(req, filepath); err != nil {
-		return err
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
-
-	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request :")
-		return err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		err = errors.Wrap(err, "error reading body :")
-		return err
-	}
-
-	if ContentTypeIsHTML(resp) {
-		return errors.New("invalid body")
-	}
-
-	return ioutil.WriteFile(filepath, data, os.ModePerm)
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -488,44 +304,6 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	}
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 	return request, nil
-}
-
-// RootError returns a formatted error message with a link to 'root' command usage page at
-// in addition to the error message
-func RootError(msg string) string {
-	return formatError(msg, cmdRoot)
-}
-
-// PerfError returns a formatted error message with a link to 'perf' command usage page at
-// in addition to the error message
-func PerfError(msg string) string {
-	return formatError(msg, cmdPerf)
-}
-
-// SystemError returns a formatted error message with a link to 'system' command usage page
-// in addition to the error message
-func SystemError(msg string) string {
-	return formatError(msg, cmdSystem)
-}
-
-// MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
-//func MeshError(msg string) string {
-//	return formatError(msg, cmdMesh)
-//}
-
-// formatError returns a formatted error message with a link to the meshery command URL
-func formatError(msg string, cmd cmdType) string {
-	switch cmd {
-	case cmdRoot:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, rootUsageURL)
-	case cmdPerf:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
-	case cmdMesh:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
-	case cmdSystem:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
-	}
-	return fmt.Sprintf("%s\n", msg)
 }
 
 // IsValidSubcommand checks if the passed subcommand is supported by the parent command
@@ -593,90 +371,6 @@ func CreateConfigFile() error {
 			return err
 		}
 	}
-	return nil
-}
-
-// AddTokenToConfig adds token passed to it to mesheryctl config file
-func AddTokenToConfig(token config.Token, configPath string) error {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return err
-	}
-
-	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-
-	if mctlCfg.Tokens == nil {
-		mctlCfg.Tokens = []config.Token{}
-	}
-
-	for i := range mctlCfg.Tokens {
-		if mctlCfg.Tokens[i].Name == token.Name {
-			return errors.New("error adding token: a token with same name already exists")
-		}
-	}
-
-	mctlCfg.Tokens = append(mctlCfg.Tokens, token)
-
-	viper.Set("contexts", mctlCfg.Contexts)
-	viper.Set("current-context", mctlCfg.CurrentContext)
-	viper.Set("tokens", mctlCfg.Tokens)
-
-	err = viper.WriteConfig()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AddContextToConfig adds context passed to it to mesheryctl config file
-func AddContextToConfig(contextName string, context config.Context, configPath string, set bool) error {
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return err
-	}
-
-	viper.SetConfigFile(configPath)
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return errors.Wrap(err, "error processing config")
-	}
-
-	if mctlCfg.Contexts == nil {
-		mctlCfg.Contexts = map[string]config.Context{}
-	}
-
-	_, exists := mctlCfg.Contexts[contextName]
-	if exists {
-		return errors.New("error adding context: a context with same name already exists")
-	}
-
-	mctlCfg.Contexts[contextName] = context
-	if set {
-		mctlCfg.CurrentContext = contextName
-	}
-
-	viper.Set("contexts", mctlCfg.Contexts)
-	viper.Set("current-context", mctlCfg.CurrentContext)
-	viper.Set("tokens", mctlCfg.Tokens)
-
-	err = viper.WriteConfig()
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -792,6 +486,28 @@ func AskForInput(prompt string, allowed []string) string {
 		}
 		log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
 	}
+}
+
+// PrintToTableInStringFormat prints the given data into a table format but return as a string
+func PrintToTableInStringFormat(header []string, data [][]string) string {
+	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	table.SetHeader(header) // The header of the table
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t")
+	table.SetNoWhiteSpace(true)
+	table.AppendBulk(data) // The data in the table
+	table.Render()         // Render the table
+
+	return tableString.String()
 }
 
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
