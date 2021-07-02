@@ -141,26 +141,26 @@
       "name": "ErrPrometheusScanCode",
       "code": "2002",
       "severity": "Alert",
-      "long_description": "Failed connecting to Prometheus Client through Grafna Proxy",
-      "short_description": "Unable to connect to prometheus.",
+      "long_description": "",
+      "short_description": "Unable to connect to prometheus",
       "probable_cause": "",
-      "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+      "suggested_remediation": "Check if your Prometheus and Grafana Endpoint are correct\nConnect to Prometheus and Grafana from the settings page in the UI"
     },
     "2003": {
       "name": "ErrGrafanaScanCode",
       "code": "2003",
       "severity": "Alert",
-      "long_description": "Failed connecting to Grafna Client",
-      "short_description": "Unable to connect to grafana.",
+      "long_description": "",
+      "short_description": "Unable to connect to grafana",
       "probable_cause": "",
-      "suggested_remediation": "Check if your Grafana Endpoint is correct.\nConnect to Grafana from the settings page in the UI"
+      "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
     },
     "2004": {
       "name": "ErrRecordPreferencesCode",
       "code": "2004",
       "severity": "Alert",
-      "long_description": "Failed to record User Preferences.",
-      "short_description": "unable to save user config data.",
+      "long_description": "",
+      "short_description": "unable to save user config data",
       "probable_cause": "User token might be invalid\ndb might be corrupted",
       "suggested_remediation": "Relogin to Meshery"
     },
@@ -186,19 +186,19 @@
       "name": "ErrGrafanaQueryCode",
       "code": "2007",
       "severity": "Alert",
-      "long_description": "Failed querying Grafana Client",
-      "short_description": "",
+      "long_description": "",
+      "short_description": "Unable to query grafana",
       "probable_cause": "",
-      "suggested_remediation": "Check if your Grafana query is correct.\nConnect to Grafana from the settings page in the UI"
+      "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
     },
     "2008": {
       "name": "ErrPrometheusQueryCode",
       "code": "2008",
       "severity": "Alert",
-      "long_description": "Failed querying Prometheus Client through Grafna Proxy",
-      "short_description": "",
+      "long_description": "",
+      "short_description": "Unable to query prometheus",
       "probable_cause": "",
-      "suggested_remediation": "Check if your Prometheus query is correct.\nConnect to Prometheus and Grafana from the settings page in the UI"
+      "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
     },
     "2009": {
       "name": "ErrGrafanaBoardsCode",
@@ -232,9 +232,54 @@
       "code": "2012",
       "severity": "Alert",
       "long_description": "",
-      "short_description": "unable to read the request body.",
+      "short_description": "unable to read the request body",
       "probable_cause": "",
       "suggested_remediation": ""
+    },
+    "2013": {
+      "name": "ErrMarshalCode",
+      "code": "2013",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2014": {
+      "name": "ErrUnmarshalCode",
+      "code": "2014",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2015": {
+      "name": "ErrEncodingCode",
+      "code": "2015",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "2016": {
+      "name": "ErrParseBoolCode",
+      "code": "2016",
+      "severity": "Alert",
+      "long_description": "",
+      "short_description": "",
+      "probable_cause": "",
+      "suggested_remediation": ""
+    },
+    "3000": {
+      "name": "ErrGrafanaClientCode",
+      "code": "3000",
+      "severity": "Alert",
+      "long_description": "Unable to initializes client for interacting with an instance of Grafana server",
+      "short_description": "Unable to initialize Grafana Client",
+      "probable_cause": "Invalid Grafana Endpoint or API-Key",
+      "suggested_remediation": "Update your Grafana URL and API-Key from the settings page in the UI"
     }
   }
 }

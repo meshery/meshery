@@ -8,7 +8,7 @@ port: 10000/tcp
 project_status: stable
 adapter_version: v0.5.4
 lab: istio-meshery-adapter
-github_link: https://github.com/layer5io/meshery-istio
+github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 ---

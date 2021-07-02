@@ -34,8 +34,9 @@ func (h *Handler) ScanPromGrafanaHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availablePromGrafana); err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "payloads"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -56,8 +57,9 @@ func (h *Handler) ScanPrometheusHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availablePrometheus); err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "payloads"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -85,8 +87,9 @@ func (h *Handler) ScanGrafanaHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 	if err = json.NewEncoder(w).Encode(availableGrafana); err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "payloads"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -122,8 +125,9 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 	if req.Method == http.MethodGet {
 		err := json.NewEncoder(w).Encode(prefObj.Prometheus)
 		if err != nil {
-			h.log.Error(ErrMarshal(err))
-			http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+			obj := "Prometheus config"
+			h.log.Error(ErrMarshal(err, obj))
+			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 		return
@@ -237,8 +241,9 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	}
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "board instance"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -351,8 +356,9 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
-		h.log.Error(ErrMarshal(err))
-		http.Error(w, ErrMarshal(err).Error(), http.StatusInternalServerError)
+		obj := "board instance"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -394,8 +400,9 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	boards := []*models.SelectedGrafanaConfig{}
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err))
-		http.Error(w, ErrUnmarshal(err).Error(), http.StatusBadRequest)
+		obj := "request body"
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if len(boards) > 0 {

@@ -6,7 +6,7 @@ mesh_name: Open Service Mesh
 version: v0.5.0
 port: 10009/tcp
 project_status: stable
-github_link: https://github.com/layer5io/meshery-osm
+github_link: https://github.com/meshery/meshery-osm
 image: /assets/img/service-meshes/osm.svg
 permalink: service-meshes/adapters/osm
 ---

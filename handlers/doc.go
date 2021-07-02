@@ -34,6 +34,7 @@ package handlers
 import (
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/models"
+	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -167,4 +168,33 @@ type prometheusBoardParamsWrapper struct {
 	// in: body
 	// required: true
 	Body []*models.SelectedGrafanaConfig
+}
+
+// Returns Anonymous stats
+// swagger:response anonymousStatsResponseWrapper
+type anonymousStatsResponseWrapper struct {
+	// in: body
+	Body *models.Preference
+}
+
+// Updates Anonymous stats
+// swagger:parameters idPostAnonymousStats
+type anonymousStatsParamsWrapper struct {
+	// in: body
+	Body *models.PreferenceParams
+}
+
+// Parameters Persists load test preferences
+// swagger:response loadTestPreferencesWrapper
+// swagger:parameters idPostLoadPreferences
+type loadTestPreferencesWrapper struct {
+	// in: body
+	Body SMP.PerformanceTestConfig
+}
+
+// Parameter
+// swagger:parameters idDeleteLoadPreferences idGetLoadPreferences
+type UUIDParamsWrapper struct {
+	// in: query
+	UUID strfmt.UUID `json:"uuid"`
 }

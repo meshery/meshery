@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ghodss/yaml"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/internal/store"
 	"github.com/layer5io/meshery/meshes"
@@ -67,6 +68,14 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
+	// Get the user token
+	token, err := provider.GetProviderToken(r)
+	if err != nil {
+		rw.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(rw, "failed to read request body: %s", err)
+		return
+	}
+
 	isDel := r.Method == http.MethodDelete
 
 	// Generate the pattern file object
@@ -92,6 +101,7 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	// If DynamicKubeClient hasn't been created yet then create one
 	if h.kubeclient.DynamicKubeClient == nil {
 		kc, err := meshkube.New(prefObj.K8SConfig.Config)
 		if err != nil {
@@ -106,12 +116,14 @@ func (h *Handler) PatternFileHandler(
 
 	msg, err := createCompConfigPairsAndExecuteAction(
 		r.Context(),
-		plan,
-		patternFile,
+		h,
 		prefObj,
 		user,
+		provider,
+		token,
+		plan,
+		patternFile,
 		isDel,
-		h.kubeclient,
 	)
 
 	if err != nil {
@@ -225,12 +237,14 @@ func GETOAMRegisterHandler(typ string, rw http.ResponseWriter) {
 
 func createCompConfigPairsAndExecuteAction(
 	ctx context.Context,
-	plan *OAM.Plan,
-	patternFile OAM.Pattern,
+	h *Handler,
 	prefObj *models.Preference,
 	user *models.User,
+	provider models.Provider,
+	token string,
+	plan *OAM.Plan,
+	patternFile OAM.Pattern,
 	isDel bool,
-	kclient *meshkube.Client,
 ) (string, error) {
 	var internalErrs []error
 	var msgs []string
@@ -245,12 +259,74 @@ func createCompConfigPairsAndExecuteAction(
 			Hosts: make(map[string]bool),
 		}
 
+		// Create an ID for the resource
+		_id, err := uuid.NewV4()
+		if err != nil {
+			internalErrs = append(internalErrs, err)
+			return false
+		}
+		id := _id.String()
+
 		// Convert the current service into application component
 		comp, err := patternFile.GetApplicationComponent(svcName)
 		if err != nil {
 			internalErrs = append(internalErrs, err)
 			return false
 		}
+
+		// Check if a similar resource has been previously provisioned
+		exists := patternResourceExists(
+			h,
+			prefObj,
+			user,
+			provider,
+			token,
+			comp.Name,
+			comp.Namespace,
+			comp.Spec.Type,
+			"workload",
+		)
+
+		if exists {
+			resourcePage, err := provider.GetMesheryPatternResources(
+				token,
+				"0",
+				"1",
+				"",
+				"",
+				comp.Name,
+				comp.Namespace,
+				comp.Spec.Type,
+				"workload",
+			)
+			if err != nil {
+				internalErrs = append(internalErrs, err)
+				return false
+			}
+
+			if len(resourcePage.Resources) < 1 {
+				err := fmt.Errorf(
+					"resource with name: %s, namespace: %s, type: %s, oam_type: %s not found",
+					comp.Name,
+					comp.Namespace,
+					comp.Spec.Type,
+					"workload",
+				)
+
+				internalErrs = append(internalErrs, err)
+				return false
+			}
+
+			resource := resourcePage.Resources[0]
+			id = resource.ID.String()
+
+			logrus.Debug("resource exists with id: ", id)
+		}
+
+		// Assign ID to the component
+		comp.SetLabels(map[string]string{
+			"resource.pattern.meshery.io/id": id,
+		})
 
 		// Get workload definition corresponding to the type of the workload
 		workload, err := getWorkloadDefinition(comp.Spec.Type)
@@ -271,8 +347,18 @@ func createCompConfigPairsAndExecuteAction(
 
 		// Get component from the configuration file
 		configComp, ok := getComponentFromConfiguration(aConfig, comp.Name)
-		if !ok {
-			msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
+		if !ok { // If no configuration exists corresponding to the component then proceed
+			msg, err := handleCompConfigPairAction(
+				ctx,
+				h,
+				compcon,
+				prefObj,
+				user,
+				provider,
+				token,
+				isDel,
+				exists && !isDel,
+			)
 			msgs = append(msgs, msg)
 			if err != nil {
 				internalErrs = append(internalErrs, err)
@@ -282,6 +368,8 @@ func createCompConfigPairsAndExecuteAction(
 			return true
 		}
 
+		// Configuration exists for the component
+		// Processing the traits applied to the component
 		for _, tr := range configComp.Traits {
 			traitDef, err := getTraitDefinition(tr.Name)
 			if err != nil {
@@ -300,7 +388,17 @@ func createCompConfigPairsAndExecuteAction(
 
 		compcon.Configuration = aConfig
 
-		msg, err := handleCompConfigPairAction(ctx, compcon, prefObj, user, isDel, kclient)
+		msg, err := handleCompConfigPairAction(
+			ctx,
+			h,
+			compcon,
+			prefObj,
+			user,
+			provider,
+			token,
+			isDel,
+			exists && !isDel,
+		)
 		msgs = append(msgs, msg)
 		if err != nil {
 			internalErrs = append(internalErrs, err)
@@ -315,13 +413,17 @@ func createCompConfigPairsAndExecuteAction(
 
 func handleCompConfigPairAction(
 	ctx context.Context,
+	h *Handler,
 	ccp compConfigPair,
 	prefObj *models.Preference,
 	user *models.User,
+	provider models.Provider,
+	token string,
 	isDel bool,
-	kclient *meshkube.Client,
+	isUpdate bool,
 ) (string, error) {
 	var msgs []string
+	var errs []error
 
 	// Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
@@ -358,16 +460,38 @@ func handleCompConfigPairAction(
 			callType,
 			[]string{string(jsonComp)},
 			string(jsonConfig),
-			kclient,
+			h.kubeclient,
 		)
 		if err != nil {
-			msgs = append(msgs, err.Error())
+			errs = append(errs, err)
 			continue
 		}
 
 		msgs = append(msgs, msg)
 	}
-	return strings.Join(msgs, "\n"), nil
+
+	// If no errors occurred add the resource and it's NOT and update operation then
+	// create an entry corresponding to this resource in the database
+	if len(errs) == 0 && !isUpdate {
+		id := uuid.FromStringOrNil(ccp.Component.GetLabels()["resource.pattern.meshery.io/id"])
+		if isDel {
+			if err := provider.DeleteMesheryResource(token, id.String()); err != nil {
+				logrus.Error("failed to delete the pattern resource:", err)
+			}
+		} else {
+			if _, err := provider.SaveMesheryPatternResource(token, &models.PatternResource{
+				ID:        &id,
+				Name:      ccp.Component.Name,
+				Namespace: ccp.Component.Namespace,
+				Type:      ccp.Component.Spec.Type,
+				OAMType:   "workload",
+			}); err != nil {
+				logrus.Error("failed to save the pattern resource:", err)
+			}
+		}
+	}
+
+	return mergeMsgs(msgs), mergeErrors(errs)
 }
 
 func getWorkloadDefinition(key string) (interface{}, error) {
@@ -498,4 +622,25 @@ func mergeMsgs(msgs []string) string {
 	}
 
 	return strings.Join(finalMsgs, "\n")
+}
+
+func patternResourceExists(
+	h *Handler,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+	token,
+	name,
+	namespace,
+	typ,
+	oamType string,
+) bool {
+	res, err := provider.GetMesheryPatternResources(token, "0", "1", "", "", name, namespace, typ, oamType)
+	if err != nil {
+		return false
+	}
+
+	logrus.Debugf("&&&&&%+v\n", res)
+
+	return len(res.Resources) > 0
 }
