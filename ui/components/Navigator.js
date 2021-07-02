@@ -437,7 +437,7 @@ const externlinks = [
   },
   {
     id: "issues",
-    href: "https://github.com/layer5io/meshery/issues/new/choose",
+    href: "https://github.com/meshery/meshery/issues/new/choose",
     title: "Issues",
     icon: <GitHubIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,

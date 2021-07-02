@@ -11,7 +11,7 @@ layout: default
 {% endif %}
 
 {% for route in swagger.paths %}
-<div class="swagger-paths">
+<div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h>
     {% for method in route[1] %}
     <div class="swagger-method swagger-method-{{ method[0] }}">
@@ -24,7 +24,7 @@ layout: default
         <div class="swagger-method-details">
             {% if method[1].parameters %}
             <div class="swagger-parameters">
-                <h4>Parameters</h4>
+                <h5><b>Parameters</b></h5>
                 <table class="swagger-parameters-table">
                     <thead>
                         <tr>
@@ -32,7 +32,7 @@ layout: default
                             <th>Located in</th>
                             <th>Description</th>
                             <th>Type</th>
-                        <tr>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for parameter in method[1].parameters %}
@@ -62,15 +62,15 @@ layout: default
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
+            </div><br>
             {% endif %}
             {% if method[1].responses %}
             <div class="swagger-response">
-                <h4>Responses</h4>
+                <h5><b>Responses</b></h5>
                 {% for response in method[1].responses %}
                 <h5>
                     <span class="swagger-response-code">{{ response[0] }}</span>
-                    {{ response[1].description }}
+                    <span class="swagger-response">{{ response[1].description }}</span>
                 </h5>
                 {% if response[1].schema.properties %}
                  <table class="swagger-parameters-table">
@@ -79,7 +79,7 @@ layout: default
                             <th>Name</th>
                             <th>Format</th>
                             <th>Type</th>
-                        <tr>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for parameter in response[1].schema.properties %}

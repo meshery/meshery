@@ -71,7 +71,7 @@ jobs:
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           charts_dir: install/kubernetes/helm
-          owner: layer5io
+          owner: meshery
           repository: meshery.io
           branch: master
           target_dir: charts
