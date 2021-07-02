@@ -361,7 +361,7 @@ func start() error {
 
 			if podsStatus {
 				break
-			}else {
+			} else {
 				time.Sleep(1 * time.Second)
 			}
 		}
@@ -371,7 +371,7 @@ func start() error {
 		podsStatus, err := utils.AreAllPodsRunning()
 		if !podsStatus {
 			log.Info("\nCurrently all the Meshery pods are not Running.\n Please check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery")
-		}else {
+		} else {
 			log.Info("Meshery is started.")
 		}
 
