@@ -13,30 +13,47 @@ const styles = (theme) => ({
   rangeDialog: {
     // width: window.innerWidth * 0.7,
   },
+  rangeDialogRow:{
+    display:'flex',
+    gap:'4rem',
+    '&>*':{ 
+      flex:'1',
+    },
+  },
   dateTimePicker: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },
   innerGrid: {
-    borderLeft: `1px solid ${theme.palette.divider}`,
+    borderTop: `1px solid ${theme.palette.divider}`,
+    paddingTop:theme.spacing(2),
+    marginTop:theme.spacing(2),
+  },
+  timeList:{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    '& *':{
+      textAlign:'left',
+    },
   },
   space: {
     margin: theme.spacing(1),
   },
-  rangeButton:{
-    backgroundColor:'#607d8b',
-    color:'white',
-    boxShadow:'none',
-    '&:hover':{
-      position:'relative',
-      bottom:'2px',
-      color:'#607d8b',
-      boxShadow:'0px 2px 1px #a1a1a1',
+  rangeButton: {
+    backgroundColor: '#607d8b',
+    color: 'white',
+    boxShadow: 'none',
+    '&:hover': {
+      position: 'relative',
+      bottom: '2px',
+      color: '#607d8b',
+      boxShadow: '0px 2px 1px #a1a1a1',
     },
-    '&:active':{
-      position:'relative',
-      bottom:'0px',
-      boxShadow:'none',
+    '&:active': {
+      position: 'relative',
+      bottom: '0px',
+      boxShadow: 'none',
     },
   },
 });
@@ -109,464 +126,464 @@ class GrafanaDateRangePicker extends Component {
     };
   }
 
-    handleClick = () => {
-      this.setState({
-        open: true,
-      });
-    };
+  handleClick = () => {
+    this.setState({
+      open: true,
+    });
+  };
 
-    setRange = (range) => () => {
-      let startDate; let endDate; let liveTail; let startGDate; let
-          endGDate;
-      switch (range) {
-        case 'Last 2 days':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 2);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-2d';
-          endGDate = 'now';
-          break;
-        case 'Last 7 days':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 7);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-7d';
-          endGDate = 'now';
-          break;
-        case 'Last 30 days':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 30);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-30d';
-          endGDate = 'now';
-          break;
-        case 'Last 90 days':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 90);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-90d';
-          endGDate = 'now';
-          break;
-        case 'Last 6 months':
-          startDate = new Date();
-          startDate.setMonth(startDate.getMonth() - 6);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-6M';
-          endGDate = 'now';
-          break;
-        case 'Last 1 year':
-          startDate = new Date();
-          startDate.setFullYear(startDate.getFullYear() - 1);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-1y';
-          endGDate = 'now';
-          break;
-        case 'Last 2 years':
-          startDate = new Date();
-          startDate.setFullYear(startDate.getFullYear() - 2);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-2y';
-          endGDate = 'now';
-          break;
-        case 'Last 5 years':
-          startDate = new Date();
-          startDate.setFullYear(startDate.getFullYear() - 5);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-5y';
-          endGDate = 'now';
-          break;
+  setRange = (range) => () => {
+    let startDate; let endDate; let liveTail; let startGDate; let
+        endGDate;
+    switch (range) {
+      case 'Last 2 days':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 2);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-2d';
+        endGDate = 'now';
+        break;
+      case 'Last 7 days':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 7);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-7d';
+        endGDate = 'now';
+        break;
+      case 'Last 30 days':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-30d';
+        endGDate = 'now';
+        break;
+      case 'Last 90 days':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 90);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-90d';
+        endGDate = 'now';
+        break;
+      case 'Last 6 months':
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 6);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-6M';
+        endGDate = 'now';
+        break;
+      case 'Last 1 year':
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-1y';
+        endGDate = 'now';
+        break;
+      case 'Last 2 years':
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-2y';
+        endGDate = 'now';
+        break;
+      case 'Last 5 years':
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 5);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-5y';
+        endGDate = 'now';
+        break;
 
-        case 'Yesterday':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setDate(endDate.getDate() - 1);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-1d/d';
-          endGDate = 'now-1d/d';
-          break;
-        case 'Day before yesterday':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 2);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setDate(endDate.getDate() - 2);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-2d/d';
-          endGDate = 'now-2d/d';
-          break;
-        case 'This day last week':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 7);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setDate(endDate.getDate() - 7);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-7d/d';
-          endGDate = 'now-7d/d';
-          break;
-        case 'Previous week':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - 6 - (startDate.getDay() + 8) % 7);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setDate(startDate.getDate() + 6);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-1w/w';
-          endGDate = 'now-1w/w';
-          break;
-        case 'Previous month':
-          startDate = new Date();
-          startDate.setMonth(startDate.getMonth() - 1);
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setMonth(endDate.getMonth());
-          endDate.setDate(0);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-1M/M';
-          endGDate = 'now-1M/M';
-          break;
-        case 'Previous year':
-          startDate = new Date();
-          startDate.setFullYear(startDate.getFullYear() - 1);
-          startDate.setMonth(0);
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setFullYear(endDate.getFullYear() - 1);
-          endDate.setMonth(12);
-          endDate.setDate(0);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now-1y/y';
-          endGDate = 'now-1y/y';
-          break;
+      case 'Yesterday':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setDate(endDate.getDate() - 1);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-1d/d';
+        endGDate = 'now-1d/d';
+        break;
+      case 'Day before yesterday':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 2);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setDate(endDate.getDate() - 2);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-2d/d';
+        endGDate = 'now-2d/d';
+        break;
+      case 'This day last week':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 7);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setDate(endDate.getDate() - 7);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-7d/d';
+        endGDate = 'now-7d/d';
+        break;
+      case 'Previous week':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 6 - (startDate.getDay() + 8) % 7);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setDate(startDate.getDate() + 6);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-1w/w';
+        endGDate = 'now-1w/w';
+        break;
+      case 'Previous month':
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 1);
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setMonth(endDate.getMonth());
+        endDate.setDate(0);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-1M/M';
+        endGDate = 'now-1M/M';
+        break;
+      case 'Previous year':
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        startDate.setMonth(0);
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setFullYear(endDate.getFullYear() - 1);
+        endDate.setMonth(12);
+        endDate.setDate(0);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now-1y/y';
+        endGDate = 'now-1y/y';
+        break;
 
-        case 'Today':
-          startDate = new Date();
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now/d';
-          endGDate = 'now/d';
-          break;
-        case 'Today so far':
-          startDate = new Date();
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now/d';
-          endGDate = 'now';
-          break;
-        case 'This week':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setDate(startDate.getDate() + 6);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now/w';
-          endGDate = 'now/w';
-          break;
-        case 'This week so far':
-          startDate = new Date();
-          startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now/w';
-          endGDate = 'now';
-          break;
-        case 'This month':
-          startDate = new Date();
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setMonth(endDate.getMonth() + 1);
-          endDate.setDate(0);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now/M';
-          endGDate = 'now/M';
-          break;
-        case 'This month so far':
-          startDate = new Date();
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now/M';
-          endGDate = 'now';
-          break;
-        case 'This year':
-          startDate = new Date();
-          startDate.setMonth(0);
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          endDate.setMonth(12);
-          endDate.setDate(0);
-          endDate.setHours(23);
-          endDate.setMinutes(59);
-          endDate.setSeconds(59);
-          endDate.setMilliseconds(999);
-          liveTail = false;
-          startGDate = 'now/y';
-          endGDate = 'now/y';
-          break;
-        case 'This year so far':
-          startDate = new Date();
-          startDate.setMonth(0);
-          startDate.setDate(1);
-          startDate.setHours(0);
-          startDate.setMinutes(0);
-          startDate.setSeconds(0);
-          startDate.setMilliseconds(0);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now/y';
-          endGDate = 'now';
-          break;
+      case 'Today':
+        startDate = new Date();
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now/d';
+        endGDate = 'now/d';
+        break;
+      case 'Today so far':
+        startDate = new Date();
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now/d';
+        endGDate = 'now';
+        break;
+      case 'This week':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setDate(startDate.getDate() + 6);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now/w';
+        endGDate = 'now/w';
+        break;
+      case 'This week so far':
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - (startDate.getDay() + 7) % 7);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now/w';
+        endGDate = 'now';
+        break;
+      case 'This month':
+        startDate = new Date();
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(0);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now/M';
+        endGDate = 'now/M';
+        break;
+      case 'This month so far':
+        startDate = new Date();
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now/M';
+        endGDate = 'now';
+        break;
+      case 'This year':
+        startDate = new Date();
+        startDate.setMonth(0);
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        endDate.setMonth(12);
+        endDate.setDate(0);
+        endDate.setHours(23);
+        endDate.setMinutes(59);
+        endDate.setSeconds(59);
+        endDate.setMilliseconds(999);
+        liveTail = false;
+        startGDate = 'now/y';
+        endGDate = 'now/y';
+        break;
+      case 'This year so far':
+        startDate = new Date();
+        startDate.setMonth(0);
+        startDate.setDate(1);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
+        startDate.setMilliseconds(0);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now/y';
+        endGDate = 'now';
+        break;
 
-        case 'Last 5 minutes':
-          startDate = new Date();
-          startDate.setMinutes(startDate.getMinutes() - 5);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-5m';
-          endGDate = 'now';
-          break;
-        case 'Last 15 minutes':
-          startDate = new Date();
-          startDate.setMinutes(startDate.getMinutes() - 15);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-15m';
-          endGDate = 'now';
-          break;
-        case 'Last 30 minutes':
-          startDate = new Date();
-          startDate.setMinutes(startDate.getMinutes() - 30);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-30m';
-          endGDate = 'now';
-          break;
-        case 'Last 1 hour':
-          startDate = new Date();
-          startDate.setHours(startDate.getHours() - 1);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-1h';
-          endGDate = 'now';
-          break;
-        case 'Last 3 hours':
-          startDate = new Date();
-          startDate.setHours(startDate.getHours() - 3);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-3h';
-          endGDate = 'now';
-          break;
-        case 'Last 6 hours':
-          startDate = new Date();
-          startDate.setHours(startDate.getHours() - 6);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-6h';
-          endGDate = 'now';
-          break;
-        case 'Last 12 hours':
-          startDate = new Date();
-          startDate.setHours(startDate.getHours() - 12);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-12h';
-          endGDate = 'now';
-          break;
-        case 'Last 24 hours':
-          startDate = new Date();
-          startDate.setHours(startDate.getHours() - 24);
-          endDate = new Date();
-          liveTail = true;
-          startGDate = 'now-24h';
-          endGDate = 'now';
-          break;
-      }
-      // this.setState({startDate, startendDate, liveTail})
-      this.props.updateDateRange(startGDate, startDate, endGDate, endDate, liveTail, this.props.refresh);
+      case 'Last 5 minutes':
+        startDate = new Date();
+        startDate.setMinutes(startDate.getMinutes() - 5);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-5m';
+        endGDate = 'now';
+        break;
+      case 'Last 15 minutes':
+        startDate = new Date();
+        startDate.setMinutes(startDate.getMinutes() - 15);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-15m';
+        endGDate = 'now';
+        break;
+      case 'Last 30 minutes':
+        startDate = new Date();
+        startDate.setMinutes(startDate.getMinutes() - 30);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-30m';
+        endGDate = 'now';
+        break;
+      case 'Last 1 hour':
+        startDate = new Date();
+        startDate.setHours(startDate.getHours() - 1);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-1h';
+        endGDate = 'now';
+        break;
+      case 'Last 3 hours':
+        startDate = new Date();
+        startDate.setHours(startDate.getHours() - 3);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-3h';
+        endGDate = 'now';
+        break;
+      case 'Last 6 hours':
+        startDate = new Date();
+        startDate.setHours(startDate.getHours() - 6);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-6h';
+        endGDate = 'now';
+        break;
+      case 'Last 12 hours':
+        startDate = new Date();
+        startDate.setHours(startDate.getHours() - 12);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-12h';
+        endGDate = 'now';
+        break;
+      case 'Last 24 hours':
+        startDate = new Date();
+        startDate.setHours(startDate.getHours() - 24);
+        endDate = new Date();
+        liveTail = true;
+        startGDate = 'now-24h';
+        endGDate = 'now';
+        break;
     }
+    // this.setState({startDate, startendDate, liveTail})
+    this.props.updateDateRange(startGDate, startDate, endGDate, endDate, liveTail, this.props.refresh);
+  }
 
-    // handleToggle = () => {
-    //     this.setState(state => ({ open: !state.open }));
-    // };
+  // handleToggle = () => {
+  //     this.setState(state => ({ open: !state.open }));
+  // };
 
-    handleClose = () => {
-      // if (this.anchorEl.contains(event.target)) {
-      //     return;
-      // }
-      this.setState({ open: false });
-      // this.setState({
-      //     anchorEl: null,
-      //   });
-    };
+  handleClose = () => {
+    // if (this.anchorEl.contains(event.target)) {
+    //     return;
+    // }
+    this.setState({ open: false });
+    // this.setState({
+    //     anchorEl: null,
+    //   });
+  };
 
-    handleChange = (name) => (event) => {
-      if (name === 'startDate' || name === 'endDate') {
-        const { startDate, endDate } = this.state;
-        const dt = event.toDate();
-        if (name === 'startDate') {
-          if (dt > endDate) {
-            // this.setState({ [name]: dt, endDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-            this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-            return;
-          }
-          // this.setState({ [name]: dt,  startGDate: dt.getTime().toString()});
-          this.props.updateDateRange(dt.getTime().toString(), dt, this.props.to, this.props.endDate, this.props.liveTail, this.props.refresh);
-        } else if (name === 'endDate') {
-          if (dt < startDate) {
-            // this.setState({ [name]: dt, startDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-            this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-            return;
-          }
-          // this.setState({ [name]: dt, endGDate: dt.getTime().toString() });
-          // this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-          this.props.updateDateRange(this.props.from, this.props.startDate, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-        }
-        return;
-      } if (name === 'liveTail') {
-        // this.setState({liveTail: event.target.checked});
-        if (event.target.checked) {
-          this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);
+  handleChange = (name) => (event) => {
+    if (name === 'startDate' || name === 'endDate') {
+      const { startDate, endDate } = this.state;
+      const dt = event.toDate();
+      if (name === 'startDate') {
+        if (dt > endDate) {
+          // this.setState({ [name]: dt, endDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
+          this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
           return;
         }
-        this.props.updateDateRange(this.props.startDate.getTime().toString(), this.props.startDate, this.props.endDate.getTime().toString(), this.props.endDate, event.target.checked, this.props.refresh);
-        return;
-      } if (name === 'refresh') {
-        this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);
+        // this.setState({ [name]: dt,  startGDate: dt.getTime().toString()});
+        this.props.updateDateRange(dt.getTime().toString(), dt, this.props.to, this.props.endDate, this.props.liveTail, this.props.refresh);
+      } else if (name === 'endDate') {
+        if (dt < startDate) {
+          // this.setState({ [name]: dt, startDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
+          this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+          return;
+        }
+        // this.setState({ [name]: dt, endGDate: dt.getTime().toString() });
+        // this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+        this.props.updateDateRange(this.props.from, this.props.startDate, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
+      }
+      return;
+    } if (name === 'liveTail') {
+      // this.setState({liveTail: event.target.checked});
+      if (event.target.checked) {
+        this.props.updateDateRange(this.props.from, this.props.startDate, 'now', this.props.endDate, event.target.checked, this.props.refresh);
         return;
       }
-      this.setState({ [name]: event.target.value });
-    };
+      this.props.updateDateRange(this.props.startDate.getTime().toString(), this.props.startDate, this.props.endDate.getTime().toString(), this.props.endDate, event.target.checked, this.props.refresh);
+      return;
+    } if (name === 'refresh') {
+      this.props.updateDateRange(this.props.from, this.props.startDate, this.props.to, this.props.endDate, this.props.liveTail, event.target.value);
+      return;
+    }
+    this.setState({ [name]: event.target.value });
+  };
 
-    render() {
-      const { open } = this.state;
-      const {
-        startDate, endDate, liveTail, refresh, classes,
-      } = this.props;
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <Button
-              variant="filled"
-              // buttonRef={node => {
-              //     this.anchorEl = node;
-              // }}
-              // aria-owns={open ? 'daterange-popper' : undefined}
-              // aria-haspopup="true"
-              onClick={this.handleClick}
-              classes={{root:classes.rangeButton}}
-            >
-              <AccessTimeIcon style={{ marginRight: "0.25rem" }}/>
-              <Moment format="LLLL">{startDate}</Moment>
-              <span className={classes.space}>-</span>
-              {liveTail ? 'now' : (<Moment format="LLLL">{endDate}</Moment>)}
-              <span className={classes.space}>
-                ,
-                {refresh}
-              </span>
-            </Button>
-            {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
+  render() {
+    const { open } = this.state;
+    const {
+      startDate, endDate, liveTail, refresh, classes,
+    } = this.props;
+    return (
+      <NoSsr>
+        <React.Fragment>
+          <Button
+            variant="filled"
+            // buttonRef={node => {
+            //     this.anchorEl = node;
+            // }}
+            // aria-owns={open ? 'daterange-popper' : undefined}
+            // aria-haspopup="true"
+            onClick={this.handleClick}
+            classes={{ root: classes.rangeButton }}
+          >
+            <AccessTimeIcon style={{ marginRight: "0.25rem" }} />
+            <Moment format="LLLL">{startDate}</Moment>
+            <span className={classes.space}>-</span>
+            {liveTail ? 'now' : (<Moment format="LLLL">{endDate}</Moment>)}
+            <span className={classes.space}>
+              ,
+              {refresh}
+            </span>
+          </Button>
+          {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="dateRange-list-grow"
                 style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
               > */}
-            {/* <Popover
+          {/* <Popover
                  id="daterange-popper"
                  open={open}
                  anchorEl={anchorEl}
@@ -579,24 +596,27 @@ class GrafanaDateRangePicker extends Component {
                     vertical: 'top',
                     horizontal: 'left',
                 }} */}
-            {/* > */}
-            {/* <Paper> */}
-            <Dialog
-              open={open}
-              onClose={this.handleClose}
-              scroll="paper"
-              aria-labelledby="daterange-dialog-title"
-              fullWidth
-              maxWidth="md"
-            >
-              <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
-              <DialogContent>
-                <DialogContentText className={classes.rangeDialog}>
-                  <Grid container spacing={5}>
-                    <Grid item xs={12} sm={4}>
-                      Custom Range
+          {/* > */}
+          {/* <Paper> */}
+          <Dialog
+            open={open}
+            onClose={this.handleClose}
+            scroll="paper"
+            aria-labelledby="daterange-dialog-title"
+            // fullWidth
+            maxWidth="md"
+          >
+            <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
+            <DialogContent>
+              <DialogContentText className={classes.rangeDialog}>
+                <Grid container>
+                  <Grid item xs={12} >
+                    Custom Range
+                    <div className={classes.rangeDialogRow}>
                       <MesheryDateTimePicker selectedDate={startDate} onChange={this.handleChange('startDate')} label="Start" className={classes.dateTimePicker} />
                       <MesheryDateTimePicker disabled={liveTail} selectedDate={endDate} onChange={this.handleChange('endDate')} label="End" className={classes.dateTimePicker} />
+                    </div>
+                    <div className={classes.rangeDialogRow}>
                       <FormControlLabel
                         control={(
                           <Switch
@@ -623,38 +643,39 @@ class GrafanaDateRangePicker extends Component {
                           <MenuItem key={`ri_-_-_${ri}`} value={ri}>{ri}</MenuItem>
                         ))}
                       </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={8} className={classes.innerGrid}>
-                      Quick Ranges
-                      <Grid container spacing={0}>
-                        {quickRanges.map((qr) => (
-                          <Grid item xs={12} sm={3}>
-                            {qr.map((q) => (
-                              <Button size="small" variant="text" mini onClick={this.setRange(q)}>{q}</Button>
-                            ))}
-                          </Grid>
-                        ))}
-                      </Grid>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} className={classes.innerGrid}>
+                    Quick Ranges
+                    <Grid container spacing={0}>
+                      {quickRanges.map((qr) => (
+                        <Grid item xs={12} sm={3} className={classes.timeList}>
+                          {qr.map((q) => (
+                            <Button variant="text" onClick={this.setRange(q)}>{q}</Button>
+                          ))}
+                        </Grid>
+                      ))}
                     </Grid>
                   </Grid>
-                </DialogContentText>
-              </DialogContent>
-              <Divider light variant="fullWidth" />
-              <DialogActions>
-                <Button onClick={this.handleClose} color="primary" variant="outlined">
-                  Close
-                </Button>
-              </DialogActions>
-            </Dialog>
-            {/* </Paper> */}
-            {/* </Popover> */}
-            {/* </Grow> */}
-            {/* )} */}
-            {/* </Popper> */}
-          </React.Fragment>
-        </NoSsr>
-      );
-    }
+                </Grid>
+              </DialogContentText>
+            </DialogContent>
+            <Divider light variant="fullWidth" />
+            <DialogActions>
+              <Button onClick={this.handleClose} color="primary" variant="outlined">
+                Done
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {/* </Paper> */}
+          {/* </Popover> */}
+          {/* </Grow> */}
+          {/* )} */}
+          {/* </Popper> */}
+        </React.Fragment>
+      </NoSsr>
+    );
+  }
 }
 
 GrafanaDateRangePicker.propTypes = {
