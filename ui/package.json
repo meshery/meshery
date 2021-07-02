@@ -83,7 +83,7 @@
     "react-runtime": "^1.1.0",
     "react-select": "^2.4.3",
     "redux": "^4.1.0",
-    "redux-devtools-extension": "^2.13.8",
+    "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
     "relay-runtime": "^11.0.0",
     "styled-jsx": "latest",
