@@ -57,7 +57,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
-	gonum.org/v1/gonum v0.9.1
+	gonum.org/v1/gonum v0.9.3
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
