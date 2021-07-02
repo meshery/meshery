@@ -196,11 +196,11 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int) *Router
 			return
 		}
 		h.TokenHandler(w, req, provider, false)
-	})))
-	gMux.Handle("/api/user/gettoken", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
+	}))).Methods("POST")
+	gMux.Handle("/api/user/token", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)
-		}))))
+		})))).Methods("GET")
 
 	// TODO: have to change this too
 	gMux.Handle("/favicon.ico", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

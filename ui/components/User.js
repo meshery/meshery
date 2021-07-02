@@ -60,7 +60,7 @@ class User extends React.Component {
   };
 
   handleGetToken = () => {
-    dataFetch('/api/user/gettoken', { credentials: 'same-origin' }, (data) => {
+    dataFetch('/api/user/token', { credentials: 'same-origin' }, (data) => {
       exportToJsonFile(data, "auth.json");
     }, (error) => ({
       error,
