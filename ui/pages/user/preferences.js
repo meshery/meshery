@@ -26,7 +26,7 @@ class UserPref extends React.Component {
     this.props.updatepagepath({ path: getPath() });
 
     await new Promise(resolve => {
-      dataFetch('/api/user/stats', {
+      dataFetch('/api/user/prefs', {
         credentials: 'same-origin',
         method: 'GET',
         credentials: 'include',
