@@ -341,7 +341,7 @@ func start() error {
 		// downloaded required files successfully now apply the manifest files
 		log.Info("Starting Meshery...")
 
-		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes.", "...Meshery deployed on Kubernetes.")
+		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes.", "Meshery deployed on Kubernetes.")
 		spinner.Start()
 
 		// apply the adapters mentioned in the config.yaml file to the Kubernetes cluster
@@ -350,24 +350,30 @@ func start() error {
 			break
 		}
 
-		deadline := time.Now().Add(10 * time.Second)
+		deadline := time.Now().Add(20 * time.Second)
 
-		// check if the pods are running
+		// check if all the pods are running
 		for !(time.Now().After(deadline)) {
-			ok, err := utils.IsMesheryRunning("kubernetes")
+			podsStatus, err := utils.AreAllPodsRunning()
 			if err != nil {
 				return err
 			}
-			if ok {
+
+			if podsStatus {
 				break
-			} else {
+			}else {
 				time.Sleep(1 * time.Second)
 			}
 		}
 
 		spinner.Stop()
 
-		log.Info("Meshery is started.")
+		podsStatus, err := utils.AreAllPodsRunning()
+		if !podsStatus {
+			log.Info("\nCurrently all the Meshery pods are not Running.\n Please check the status of the pods by executing “kubectl get pods -—namespace=meshery” before using meshery")
+		}else {
+			log.Info("Meshery is started.")
+		}
 
 		clientset := kubeClient.KubeClient
 
