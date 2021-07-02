@@ -130,7 +130,7 @@ class PrometheusComponent extends Component {
     const self = this;
 
     dataFetch(
-      "/api/prometheus/config",
+      "/api/telemetry/metrics/config",
       {
         method: "GET",
         credentials: "include",
