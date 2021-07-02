@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,8 +12,6 @@ import (
 	"github.com/layer5io/meshery/meshes"
 	"github.com/layer5io/meshery/models"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -31,8 +28,9 @@ func (h *Handler) GetAllAdaptersHandler(w http.ResponseWriter, req *http.Request
 
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
-		logrus.Errorf("Error marshaling data: %v.", err)
-		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
+		obj := "data"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -48,24 +46,23 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	case http.MethodPost:
 		meshLocationURL := req.FormValue("meshLocationURL")
 
-		logrus.Debugf("meshLocationURL: %s", meshLocationURL)
+		h.log.Debug("meshLocationURL: %s", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
-			err = errors.New("meshLocationURL cannot be empty to add an adapter")
-			logrus.Error(err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			h.log.Error(ErrAddAdapter)
+			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
 
 		if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-			err = errors.New("no valid kubernetes config found")
-			logrus.Error(err)
-			http.Error(w, "No valid Kubernetes config found.", http.StatusBadRequest)
+			h.log.Error(ErrInvalidK8SConfig)
+			http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 			return
 		}
 
 		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
-			http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
+			// h.log.Error(ErrRetrieveData(err))
+			http.Error(w, ErrRetrieveData(err).Error(), http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
 	case http.MethodDelete:
@@ -81,15 +78,16 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	prefObj.MeshAdapters = meshAdapters
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
-		logrus.Errorf("Unable to save session: %v.", err)
-		http.Error(w, "Unable to save session.", http.StatusInternalServerError)
+		h.log.Error(ErrRecordPreferences(err))
+		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
-		logrus.Errorf("error marshaling data: %v.", err)
-		http.Error(w, "Unable to retrieve the requested data.", http.StatusInternalServerError)
+		obj := "data"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -99,7 +97,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
 			// err := errors.New("Adapter with the given meshLocationURL already exists.")
-			// logrus.Error(err)
+			// h.log.Error(err)
 			// http.Error(w, err.Error(), http.StatusForbidden)
 			// return nil, err
 			alreadyConfigured = true
@@ -108,50 +106,46 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	}
 
 	if alreadyConfigured {
-		logrus.Debugf("Adapter already configured...")
+		h.log.Debug("Adapter already configured...")
 		return meshAdapters, nil
 	}
 	if prefObj.K8SConfig == nil {
-		err := fmt.Errorf("k8s config is nil")
-		logrus.Error(err)
-		return nil, err
+		h.log.Error(ErrInvalidK8SConfig)
+		return nil, ErrInvalidK8SConfig
 	}
 
 	kubeclient, err := mesherykube.New(prefObj.K8SConfig.Config)
 	if err != nil {
-		err = fmt.Errorf("unable to create Kubernetes client")
-		logrus.Error(err)
-		return nil, err
+		h.log.Error(ErrNilClient)
+		return nil, ErrNilClient
 	}
 	*h.kubeclient = *kubeclient
 	provider.SetKubeClient(h.kubeclient)
 
 	mClient, err := meshes.CreateClient(ctx, prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshLocationURL)
 	if err != nil || prefObj.K8SConfig == nil {
-		err = errors.Wrapf(err, "Error creating a mesh client.")
-		logrus.Error(err)
-		// http.Error(w, "Unable to connect to the Mesh adapter using the given config, please try again", http.StatusInternalServerError)
-		return meshAdapters, err
+		h.log.Error(ErrMeshClient)
+		// http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
+		return meshAdapters, ErrMeshClient
 	}
-	logrus.Debugf("created client for adapter: %s", meshLocationURL)
+	h.log.Debug("created client for adapter: %s", meshLocationURL)
 	defer func() {
 		_ = mClient.Close()
 	}()
 	respOps, err := mClient.MClient.SupportedOperations(ctx, &meshes.SupportedOperationsRequest{})
 	if err != nil {
-		logrus.Errorf("Error getting operations for the mesh: %v.", err)
-		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveMeshData(err))
+		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
-	logrus.Debugf("retrieved supported ops for adapter: %s", meshLocationURL)
+	h.log.Debug("retrieved supported ops for adapter: %s", meshLocationURL)
 	meshInfo, err := mClient.MClient.ComponentInfo(ctx, &meshes.ComponentInfoRequest{})
 	if err != nil {
-		err = errors.Wrapf(err, "Error getting service mesh name.")
-		logrus.Error(err)
-		// http.Error(w, "unable to retrieve the requested data", http.StatusInternalServerError)
+		h.log.Error(ErrRetrieveMeshData(err))
+		// http.Error(w, ErrRetrieveMeshData(err).Error(), http.StatusInternalServerError)
 		return meshAdapters, err
 	}
-	logrus.Debugf("retrieved name for adapter: %s", meshLocationURL)
+	h.log.Debug("retrieved name for adapter: %s", meshLocationURL)
 	result := &models.Adapter{
 		Location:     meshLocationURL,
 		Name:         meshInfo.Name,
@@ -167,7 +161,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 
 func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseWriter, req *http.Request) ([]*models.Adapter, error) {
 	adapterLoc := req.URL.Query().Get("adapter")
-	logrus.Debugf("URL of adapter to be removed: %s.", adapterLoc)
+	h.log.Debug("URL of adapter to be removed: %s.", adapterLoc)
 
 	adaptersLen := len(meshAdapters)
 
@@ -178,10 +172,9 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		}
 	}
 	if aID < 0 {
-		err := errors.New("unable to find a valid adapter for the given adapter URL")
-		logrus.Error(err)
-		http.Error(w, "Given adapter URL is not valid.", http.StatusBadRequest)
-		return meshAdapters, err
+		h.log.Error(ErrValidAdapter)
+		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
+		return meshAdapters, ErrValidAdapter
 	}
 
 	newMeshAdapters := []*models.Adapter{}
@@ -193,12 +186,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[0:aID]...)
 		newMeshAdapters = append(newMeshAdapters, meshAdapters[aID+1:]...)
 	}
-	if logrus.GetLevel() == logrus.DebugLevel {
-		b, _ := json.Marshal(meshAdapters)
-		logrus.Debugf("Old adapters: %s.", b)
-		b, _ = json.Marshal(newMeshAdapters)
-		logrus.Debugf("New adapters: %s.", b)
-	}
+	b, _ := json.Marshal(meshAdapters)
+	h.log.Debug("Old adapters: %s.", b)
+	b, _ = json.Marshal(newMeshAdapters)
+	h.log.Debug("New adapters: %s.", b)
 	return newMeshAdapters, nil
 }
 
@@ -223,7 +214,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	adapterLoc := req.PostFormValue("adapter")
-	logrus.Debugf("Adapter URL to execute operations on: %s.", adapterLoc)
+	h.log.Debug("Adapter URL to execute operations on: %s.", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -232,9 +223,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		}
 	}
 	if aID < 0 {
-		err := errors.New("unable to find a valid adapter for the given adapter URL")
-		logrus.Error(err)
-		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
+		h.log.Error(ErrValidAdapter)
+		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -247,15 +237,15 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
-		logrus.Errorf("Error creating a mesh client: %v.", err)
-		http.Error(w, "Unable to create a mesh client.", http.StatusBadRequest)
+		//h.log.Error(ErrMeshClient)
+		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
 		return
 	}
 	defer func() {
@@ -265,8 +255,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	operationID, err := uuid.NewV4()
 
 	if err != nil {
-		logrus.Errorf("Error generating an operation id: %v.", err)
-		http.Error(w, "Error generating an operation id.", http.StatusInternalServerError)
+		h.log.Error(ErrOperationId(err))
+		http.Error(w, ErrOperationId(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -279,8 +269,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		DeleteOp:    (delete != ""),
 	})
 	if err != nil {
-		logrus.Error(err)
-		http.Error(w, "There was an error applying the change.", http.StatusInternalServerError)
+		h.log.Error(ErrApplyChange(err))
+		http.Error(w, ErrApplyChange(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write([]byte("{}"))
@@ -300,7 +290,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	// adapterLoc := req.PostFormValue("adapter")
 	adapterLoc := req.URL.Query().Get("adapter")
-	logrus.Debugf("Adapter url to ping: %s.", adapterLoc)
+	h.log.Debug("Adapter url to ping: %s.", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {
@@ -309,22 +299,20 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 		}
 	}
 	if aID < 0 {
-		err := errors.New("unable to find a valid adapter for the given adapter URL")
-		logrus.Error(err)
-		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
+		h.log.Error(ErrValidAdapter)
+		http.Error(w, ErrValidAdapter.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if prefObj.K8SConfig == nil || !prefObj.K8SConfig.InClusterConfig && (prefObj.K8SConfig.Config == nil || len(prefObj.K8SConfig.Config) == 0) {
-		logrus.Error("No valid kubernetes config found.")
-		http.Error(w, `No valid kubernetes config found.`, http.StatusBadRequest)
+		h.log.Error(ErrInvalidK8SConfig)
+		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
 		return
 	}
 
 	mClient, err := meshes.CreateClient(req.Context(), prefObj.K8SConfig.Config, prefObj.K8SConfig.ContextName, meshAdapters[aID].Location)
 	if err != nil {
-		logrus.Errorf("Error creating a mesh client: %v.", err)
-		http.Error(w, "Adapter could not be pinged.", http.StatusBadRequest)
+		http.Error(w, ErrMeshClient.Error(), http.StatusBadRequest)
 		return
 	}
 	defer func() {
@@ -333,9 +321,8 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 
 	_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
 	if err != nil {
-		err = errors.Wrapf(err, "Error pinging service mesh adapter.")
-		logrus.Error(err)
-		http.Error(w, "Adapter could not be pinged.", http.StatusInternalServerError)
+		h.log.Error(ErrMeshClient)
+		http.Error(w, ErrMeshClient.Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write([]byte("{}"))
